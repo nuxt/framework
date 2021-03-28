@@ -56,7 +56,7 @@ async function main () {
       if (entry.bundle) {
         const input = resolve(ctx.rootDir, entry.input)
         stubbed.push(entry.output)
-        const output = resolve(ctx.rootDir, entry.output) + '.js'
+        const output = resolve(ctx.rootDir, entry.output) + '.ts'
         await mkdir(dirname(output)).catch(() => { })
         await writeFile(output, entry.format === 'cjs'
           ? `module.exports = require('jiti')()('${input}')`
