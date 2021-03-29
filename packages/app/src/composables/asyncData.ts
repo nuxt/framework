@@ -1,7 +1,7 @@
-import { Ref, ref, onMounted, watch, getCurrentInstance, onUnmounted } from 'vue'
+import { getCurrentInstance, Ref, ref, onMounted, watch, onUnmounted } from 'vue'
 import { Nuxt, useNuxt } from '@nuxt/app'
 
-import { ensureReactive, useData } from './data'
+import { ensureReactive, useGlobalData } from './data'
 
 export type AsyncDataFn<T> = (ctx?: Nuxt) => Promise<T>
 
@@ -20,10 +20,6 @@ export interface AsyncDataObj<T> {
 export function useAsyncData (defaults?: AsyncDataOptions) {
   const nuxt = useNuxt()
   const vm = getCurrentInstance()
-
-  const data = useData(nuxt, vm)
-  let dataRef = 1
-
   const onMountedCbs: Array<() => void> = []
 
   if (process.client) {
@@ -35,10 +31,11 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     onUnmounted(() => onMountedCbs.splice(0, onMountedCbs.length))
   }
 
-  return async function asyncData<T = Record<string, any>> (
+  return function asyncData<T = Record<string, any>> (
+    key: string,
     handler: AsyncDataFn<T>,
     options?: AsyncDataOptions
-  ): Promise<AsyncDataObj<T>> {
+  ): AsyncDataObj<T> {
     if (typeof handler !== 'function') {
       throw new TypeError('asyncData handler must be a function')
     }
@@ -49,7 +46,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       ...options
     }
 
-    const key = String(dataRef++)
+    const data = useGlobalData(key, nuxt)
     const pending = ref(true)
 
     const datastore = ensureReactive(data, key)
@@ -92,7 +89,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
           onMountedCbs.push(fetch)
         } else {
           // 4. Navigation (defer: false): await fetch
-          await fetch()
+          vm._pendingPromises.push(fetch())
         }
       }
       // Watch handler
@@ -101,7 +98,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
 
     // Server side
     if (process.server && !clientOnly) {
-      await fetch()
+      vm._pendingPromises.push(fetch())
     }
     return {
       data: datastore,
@@ -112,8 +109,9 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
 }
 
 export function asyncData<T = Record<string, any>> (
+  key: string,
   handler: AsyncDataFn<T>,
   options?: AsyncDataOptions
-): Promise<AsyncDataObj<T>> {
-  return useAsyncData()(handler, options)
+): AsyncDataObj<T> {
+  return useAsyncData()(key, handler, options)
 }
