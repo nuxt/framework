@@ -9,6 +9,7 @@ export function renderToString (component, context) {
       if (err) {
         return reject(err)
       }
+      context.nuxt.hooks.callHook('vue-renderer:done')
       return resolve(result)
     })
   })
