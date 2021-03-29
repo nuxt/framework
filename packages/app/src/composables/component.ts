@@ -1,5 +1,15 @@
 import { ComponentInternalInstance, DefineComponent, defineComponent, getCurrentInstance } from 'vue'
 
+export interface NuxtComponentInternalInstance extends ComponentInternalInstance {
+  _pendingPromises: Array<Promise<void>>
+}
+
+export function getCurrentNuxtComponentInstance (): NuxtComponentInternalInstance {
+  const vm = getCurrentInstance() as NuxtComponentInternalInstance
+  vm._pendingPromises = vm._pendingPromises || []
+  return vm
+}
+
 export const defineNuxtComponent: typeof defineComponent = function defineNuxtComponent (options: any): any {
   const { setup } = options
   if (!setup) {
@@ -8,9 +18,7 @@ export const defineNuxtComponent: typeof defineComponent = function defineNuxtCo
   return {
     ...options,
     setup (props, ctx) {
-      const vm = getCurrentInstance() as ComponentInternalInstance & { _pendingPromises: Array<Promise<void>> }
-
-      vm._pendingPromises = []
+      const vm = getCurrentNuxtComponentInstance()
 
       const p = setup(props, ctx)
 
