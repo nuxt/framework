@@ -26,11 +26,17 @@ export const defineNuxtComponent: typeof defineComponent = function defineNuxtCo
         return p.then(async (result) => {
           await Promise.all(vm._pendingPromises)
           return result
+        }).finally(() => {
+          vm._pendingPromises.length = 0
         })
       }
 
       if (vm._pendingPromises.length) {
-        return Promise.all(vm._pendingPromises).then(() => p)
+        return Promise.all(vm._pendingPromises)
+          .then(() => p)
+          .finally(() => {
+            vm._pendingPromises.length = 0
+          })
       }
 
       return p
