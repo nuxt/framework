@@ -57,10 +57,7 @@ export function useData<T = Record<string, any>> (
  * @param key - A Vue component - by default it will use the current instance
  * @param nuxt - (optional) A Nuxt instance
  */
-export function useGlobalData<T = Record<string, any>> (
-  key: string,
-  nuxt = useNuxt()
-): UnwrapRef<T> {
+export function useGlobalData (nuxt = useNuxt()): Record<string, any> {
   nuxt.payload.data = nuxt.payload.data || {}
-  return ensureReactive(nuxt.payload.data, key)
+  return nuxt.payload.data
 }

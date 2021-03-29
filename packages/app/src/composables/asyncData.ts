@@ -46,7 +46,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       ...options
     }
 
-    const data = useGlobalData(key, nuxt)
+    const data = useGlobalData(nuxt)
     const pending = ref(true)
 
     const datastore = ensureReactive(data, key)
