@@ -90,7 +90,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
           onMountedCbs.push(fetch)
         } else {
           // 4. Navigation (defer: false): await fetch
-          vm._pendingPromises.push(fetch())
+          vm._pendingPromises?.push(fetch())
         }
       }
       // Watch handler
@@ -99,7 +99,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
 
     // Server side
     if (process.server && !clientOnly) {
-      vm._pendingPromises.push(fetch())
+      vm._pendingPromises?.push(fetch())
     }
     return {
       data: datastore,
