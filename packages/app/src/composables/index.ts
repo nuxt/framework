@@ -1,4 +1,4 @@
 export { useAsyncData, asyncData } from './asyncData'
 export { useData } from './data'
 export { useHydration } from './hydrate'
-export { ssrRef } from './sref'
+export { ssrShallowRef, ssrRef, ssrReactive } from './sref'

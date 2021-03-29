@@ -1,24 +1,32 @@
 <template>
   <pre>
-    {{ serverSet }}
+    {{ ssrRefTest }}
     {{ factoryFunction }}
+    {{ ssrShallowRefTest }}
+    {{ JSON.stringify(reactiveTest) }}
   </pre>
 </template>
 
 <script>
 import { defineComponent } from 'vue'
-import { ssrRef } from 'nuxt/app/composables'
+import { ssrRef, ssrShallowRef, ssrReactive } from 'nuxt/app/composables'
 
 export default defineComponent({
   setup () {
-    const serverSet = ssrRef('not set', 'test')
+    const ssrRefTest = ssrRef('not set', 'ssrRef')
+    const ssrShallowRefTest = ssrShallowRef('not set', 'ssrShallowRef')
+    const reactiveTest = ssrReactive({ test: 'not set' }, 'ssrReactive')
     if (process.server) {
-      serverSet.value = 'set on server'
+      ssrRefTest.value = 'set on server'
+      ssrShallowRefTest.value = 'set on server'
+      reactiveTest.another = 'set on server'
     }
-    const factoryFunction = ssrRef(() => 'function value', 'test2')
+    const factoryFunction = ssrRef(() => 'function value', 'factoryFunction')
     return {
-      serverSet,
-      factoryFunction
+      ssrRefTest,
+      factoryFunction,
+      ssrShallowRefTest,
+      reactiveTest
     }
   }
 })
