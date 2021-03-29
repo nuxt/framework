@@ -22,6 +22,10 @@ export const defineNuxtComponent: typeof defineComponent = function defineNuxtCo
 
       const p = setup(props, ctx)
 
+      if (p instanceof Function) {
+        return p
+      }
+
       if (p instanceof Promise) {
         return p.then(async (result) => {
           await Promise.all(vm._pendingPromises)
