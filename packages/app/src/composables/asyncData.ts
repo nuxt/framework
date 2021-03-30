@@ -1,7 +1,7 @@
 import { Ref, ref, onMounted, watch, onUnmounted } from 'vue'
 import { Nuxt, useNuxt } from '@nuxt/app'
 
-import { getCurrentNuxtComponentInstance } from './component'
+import { useAsyncSetup } from './component'
 import { ensureReactive, useGlobalData } from './data'
 
 export type AsyncDataFn<T> = (ctx?: Nuxt) => Promise<T>
@@ -20,7 +20,7 @@ export interface AsyncDataObj<T> {
 
 export function useAsyncData (defaults?: AsyncDataOptions) {
   const nuxt = useNuxt()
-  const vm = getCurrentNuxtComponentInstance()
+  const { waitFor } = useAsyncSetup()
   const onMountedCbs: Array<() => void> = []
 
   if (process.client) {
@@ -90,7 +90,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
           onMountedCbs.push(fetch)
         } else {
           // 4. Navigation (defer: false): await fetch
-          vm._pendingPromises?.push(fetch())
+          waitFor(fetch())
         }
       }
       // Watch handler
@@ -99,7 +99,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
 
     // Server side
     if (process.server && !clientOnly) {
-      vm._pendingPromises?.push(fetch())
+      waitFor(fetch())
     }
     return {
       data: datastore,

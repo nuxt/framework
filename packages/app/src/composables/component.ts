@@ -8,6 +8,29 @@ export function getCurrentNuxtComponentInstance (): NuxtComponentInternalInstanc
   return getCurrentInstance() as NuxtComponentInternalInstance
 }
 
+export function useAsyncSetup () {
+  const vm = getCurrentNuxtComponentInstance()
+  vm._pendingPromises = vm._pendingPromises || []
+
+  function clearPromises () {
+    vm._pendingPromises.length = 0
+  }
+
+  function waitFor (promise: Promise<any>): void {
+    vm._pendingPromises.push(promise)
+  }
+
+  function waitOnPromises () {
+    return Promise.all(vm._pendingPromises).finally(clearPromises)
+  }
+
+  return {
+    promises: vm._pendingPromises,
+    waitFor,
+    waitOnPromises
+  }
+}
+
 export const defineNuxtComponent: typeof defineComponent = function defineNuxtComponent (options: any): any {
   const { setup } = options
   if (!setup) {
@@ -16,8 +39,7 @@ export const defineNuxtComponent: typeof defineComponent = function defineNuxtCo
   return {
     ...options,
     setup (props, ctx) {
-      const vm = getCurrentNuxtComponentInstance()
-      vm._pendingPromises = vm._pendingPromises || []
+      const { waitOnPromises, promises } = useAsyncSetup()
 
       const p = setup(props, ctx)
 
@@ -27,19 +49,14 @@ export const defineNuxtComponent: typeof defineComponent = function defineNuxtCo
 
       if (p instanceof Promise) {
         return p.then(async (result) => {
-          await Promise.all(vm._pendingPromises)
+          await waitOnPromises()
           return result
-        }).finally(() => {
-          vm._pendingPromises.length = 0
         })
       }
 
-      if (vm._pendingPromises.length) {
-        return Promise.all(vm._pendingPromises)
+      if (promises.length) {
+        return waitOnPromises()
           .then(() => p)
-          .finally(() => {
-            vm._pendingPromises.length = 0
-          })
       }
 
       return p
