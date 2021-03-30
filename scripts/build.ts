@@ -1,7 +1,7 @@
 import { promisify } from 'util'
 import { resolve, relative, dirname } from 'path'
 import Module from 'module'
-import { writeFile, mkdir } from 'fs/promises'
+import { writeFile, mkdir, unlink, symlink } from 'fs/promises'
 import chalk from 'chalk'
 import consola from 'consola'
 import rimraf from 'rimraf'
@@ -52,7 +52,9 @@ async function main () {
     ctx.externals.push(...buildOptions.externals)
   }
 
-  await promisify(rimraf)(resolve(ctx.rootDir, 'dist'))
+  const distDir = resolve(ctx.rootDir, 'dist')
+  await unlink(distDir).catch(() => {})
+  await promisify(rimraf)(distDir)
 
   if (args.includes('--stub')) {
     const stubbed: string[] = []
@@ -66,9 +68,13 @@ async function main () {
         const esStub = `export * from '${input}'`
         await writeFile(output, entry.format === 'cjs' ? cjsStub : esStub)
         await writeFile(output.replace('.js', '.d.ts'), esStub)
+      } else {
+        const outDir = resolve(ctx.rootDir, entry.output)
+        const srcDir = resolve(ctx.rootDir, entry.input)
+        await unlink(outDir).catch(() => { })
+        await symlink(srcDir, outDir)
       }
     }
-    consola.success(`Stub done: ${stubbed.join(', ')}`)
     return
   }
 
@@ -82,24 +88,25 @@ ${ctx.entries.map(entry => ' ' + dumpObject(entry)).join('\n')}
   }
 
   const rollupOptions = getRollupOptions(ctx)
-  const buildResult = await rollup(rollupOptions)
-  const outputOptions = rollupOptions.output as OutputOptions
-  const { output } = await buildResult.write(outputOptions)
-
-  const usedImports = new Set<string>()
   const buildEntries: { path: string, bytes?: number, exports?: string[], chunks?: string[] }[] = []
+  const usedImports = new Set<string>()
+  if (rollupOptions) {
+    const buildResult = await rollup(rollupOptions)
+    const outputOptions = rollupOptions.output as OutputOptions
+    const { output } = await buildResult.write(outputOptions)
 
-  for (const entry of output.filter(e => e.type === 'chunk') as OutputChunk[]) {
-    // consola.log(entry)
-    for (const id of entry.imports) {
-      usedImports.add(id)
-    }
-    if (entry.isEntry) {
-      buildEntries.push({
-        path: entry.fileName,
-        bytes: entry.code.length * 4,
-        exports: entry.exports
-      })
+    for (const entry of output.filter(e => e.type === 'chunk') as OutputChunk[]) {
+      // consola.log(entry)
+      for (const id of entry.imports) {
+        usedImports.add(id)
+      }
+      if (entry.isEntry) {
+        buildEntries.push({
+          path: relative(ctx.rootDir, resolve(outputOptions.dir, entry.fileName)),
+          bytes: entry.code.length * 4,
+          exports: entry.exports
+        })
+      }
     }
   }
 
@@ -111,50 +118,51 @@ ${ctx.entries.map(entry => ' ' + dumpObject(entry)).join('\n')}
       format: entry.format
     })
     buildEntries.push({
-      path: entry.output,
-      bytes: 0,
-      chunks: writtenFiles.map(p => relative(resolve(ctx.rootDir, entry.output), p))
+      path: relative(ctx.rootDir, entry.output),
+      chunks: [`${writtenFiles.length} files`]
     })
   }
 
-  consola.success(chalk.green('Build succeed'))
-
-  if (process.env.DEBUG) {
-    consola.log(`
-${buildEntries.map(entry => `${chalk.bold(entry.path)}
-  size: ${chalk.cyan(entry.bytes ? prettyBytes(entry.bytes) : '-')}
-  exports: ${chalk.gray(entry.exports ? entry.exports.join(', ') : '-')}
-  chunks: ${chalk.gray(entry.chunks ? entry.chunks.join(', ') : '-')}`
-    ).join('\n')}`)
+  consola.success(chalk.green('Build succeed for ' + pkg.name))
+  for (const entry of buildEntries) {
+    consola.log(`  ${chalk.bold(entry.path)} (` + [
+      entry.bytes && `size: ${chalk.cyan(prettyBytes(entry.bytes))}`,
+      entry.exports && `exports: ${chalk.gray(entry.exports.join(', '))}`,
+      entry.chunks && `chunks: ${chalk.gray(entry.chunks.join(', '))}`
+    ].filter(Boolean).join(', ') + ')')
   }
 
-  const usedDependencies = new Set<string>()
-  const unusedDependencies = new Set<string>(Object.keys(pkg.dependencies || {}))
-  const implicitDependnecies = new Set<string>()
-  for (const id of usedImports) {
-    unusedDependencies.delete(id)
-    usedDependencies.add(id)
-  }
-  if (Array.isArray(buildOptions.dependencies)) {
-    for (const id of buildOptions.dependencies) {
+  if (rollupOptions) {
+    const usedDependencies = new Set<string>()
+    const unusedDependencies = new Set<string>(Object.keys(pkg.dependencies || {}))
+    const implicitDependnecies = new Set<string>()
+    for (const id of usedImports) {
       unusedDependencies.delete(id)
+      usedDependencies.add(id)
+    }
+    if (Array.isArray(buildOptions.dependencies)) {
+      for (const id of buildOptions.dependencies) {
+        unusedDependencies.delete(id)
+      }
+    }
+    for (const id of usedDependencies) {
+      if (
+        !ctx.externals.includes(id) &&
+        !id.startsWith('chunks/') &&
+        !ctx.externals.includes(id.split('/')[0]) // lodash/get
+      ) {
+        implicitDependnecies.add(id)
+      }
+    }
+    if (unusedDependencies.size) {
+      consola.warn('Potential unused dependencies found:', Array.from(unusedDependencies).map(id => chalk.cyan(id)).join(', '))
+    }
+    if (implicitDependnecies.size) {
+      consola.warn('Potential implicit dependencies found:', Array.from(implicitDependnecies).map(id => chalk.cyan(id)).join(', '))
     }
   }
-  for (const id of usedDependencies) {
-    if (
-      !ctx.externals.includes(id) &&
-      !id.startsWith('chunks/') &&
-      !ctx.externals.includes(id.split('/')[0]) // lodash/get
-    ) {
-      implicitDependnecies.add(id)
-    }
-  }
-  if (unusedDependencies.size) {
-    consola.warn('Potential unused dependencies found:', Array.from(unusedDependencies).map(id => chalk.cyan(id)).join(', '))
-  }
-  if (implicitDependnecies.size) {
-    consola.warn('Potential implicit dependencies found:', Array.from(implicitDependnecies).map(id => chalk.cyan(id)).join(', '))
-  }
+
+  consola.log('')
 }
 
 function resolveEntry (input: string | [string, Partial<BuildEntry>] | Partial<BuildEntry>): BuildEntry {
@@ -165,9 +173,9 @@ function resolveEntry (input: string | [string, Partial<BuildEntry>] | Partial<B
   if (Array.isArray(input)) {
     entry = { name: input[0], ...input[1] }
   }
-  entry.input = entry.input ?? `src/${entry.name}`
-  entry.output = entry.output ?? `dist/${entry.name}`
-  entry.bundle = entry.bundle ?? !entry.input.endsWith('/')
+  entry.input = entry.input ?? resolve('src', './' + entry.name)
+  entry.output = entry.output ?? resolve('dist', './' + entry.name)
+  entry.bundle = entry.bundle ?? !(entry.input.endsWith('/') || entry.name.endsWith('/'))
   entry.format = entry.format ?? 'esm'
   return entry as BuildEntry
 }
@@ -176,13 +184,18 @@ function dumpObject (obj) {
   return '{ ' + Object.keys(obj).map(key => `${key}: ${JSON.stringify(obj[key])}`).join(', ') + ' }'
 }
 
-function getRollupOptions (ctx: BuildContext): RollupOptions {
+function getRollupOptions (ctx: BuildContext): RollupOptions | null {
   const extensions = ['.ts', '.mjs', '.js', '.json']
 
   const r = (...path) => resolve(ctx.rootDir, ...path)
 
+  const entries = ctx.entries.filter(e => e.bundle)
+  if (!entries.length) {
+    return null
+  }
+
   return <RollupOptions>{
-    input: ctx.entries.filter(e => e.bundle).map(e => e.input),
+    input: entries.map(e => e.input),
 
     output: {
       dir: r('dist'),

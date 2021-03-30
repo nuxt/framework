@@ -10,9 +10,8 @@
     "types"
   ],
   "scripts": {
-    "build": "jiti ../../scripts/build . && yarn genconfig",
+    "build": "jiti ../../scripts/build .",
     "genconfig": "jiti ./scripts/genconfig",
-    "stub": "yarn build --stub && yarn genconfig",
     "prepublishOnly": "yarn build && yarn genconfig"
   },
   "dependencies": {

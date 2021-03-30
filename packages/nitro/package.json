@@ -9,7 +9,6 @@
   ],
   "scripts": {
     "build": "jiti ../../scripts/build .",
-    "stub": "yarn build --stub",
     "prepublishOnly": "yarn build"
   },
   "build": {

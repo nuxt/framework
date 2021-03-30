@@ -7,12 +7,12 @@
   ],
   "scripts": {
     "link": "lerna link",
-    "build": "yarn workspaces run build --silent",
-    "stub": "yarn workspaces run stub --silent",
+    "build": "yarn --silent workspaces run build",
+    "stub": "yarn --silent build --stub",
     "play": "yarn nu dev playground",
     "lint": "eslint --ext .vue,.ts,.js .",
     "test": "yarn lint",
-    "postinstall": "yarn stub"
+    "postinstall": "yarn --silent stub"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^6.0.0",
@@ -29,7 +29,7 @@
     "jest": "^26.6.3",
     "jiti": "^1.6.4",
     "lerna": "^4.0.0",
-    "mkdist": "^0.1.2",
+    "mkdist": "^0.1.3",
     "pretty-bytes": "^5.6.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.43.1",

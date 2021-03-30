@@ -7544,10 +7544,10 @@ mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.1:
   dependencies:
     minimist "^1.2.5"
 
-mkdist@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/mkdist/-/mkdist-0.1.2.tgz#7365d975005976a7ac22540c0e76f8b21b33cdb0"
-  integrity sha512-NELp7Nnz8pKek6pvIz4snM1j+D8ni9Gm5UhKApuK9pgrbd/Q3KveVg2HtEWy73AKuG1wXnK9O3cjfKD5OgG9Ww==
+mkdist@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/mkdist/-/mkdist-0.1.3.tgz#46787c2493493d8eff1770700da23d5c4fc3d844"
+  integrity sha512-WQ0l+v0ICvxvsmgi2MtePzeyis5kMDRUMnibUDsc1NdVSo+lsoiIYbLrvIBgKJGJ2ITMaLDtCAHiFjF3U7h29A==
   dependencies:
     defu "^3.2.2"
     esbuild "^0.8.56"

@@ -1,4 +1,4 @@
-import { resolve } from 'upath'
+import { resolve, dirname } from 'upath'
 import defu from 'defu'
 import type { NuxtOptions } from '@nuxt/kit'
 import Hookable, { configHooksT } from 'hookable'
@@ -106,7 +106,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
       }
     },
     _internal: {
-      runtimeDir: resolve(__dirname, './runtime'),
+      runtimeDir: resolve(dirname(require.resolve('@nuxt/nitro')), 'runtime'),
       hooks: new Hookable()
     }
   }

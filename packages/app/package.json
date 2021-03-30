@@ -3,13 +3,12 @@
   "version": "0.0.0",
   "repository": "nuxt/framework",
   "license": "MIT",
-  "main": "./dist/index.ts",
+  "main": "./dist/index.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "mkdist",
-    "stub": "rm -rf dist && ln -s src dist #",
+    "build": "jiti ../../scripts/build .",
     "prepublishOnly": "yarn build"
   },
   "dependencies": {
@@ -25,7 +24,7 @@
   },
   "build": {
     "entries": {
-      "index": {}
+      "/": {}
     }
   }
 }

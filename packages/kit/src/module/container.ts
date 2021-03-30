@@ -1,6 +1,6 @@
 import type { Nuxt } from '@nuxt/kit'
 
-export default class ModuleContainer {
+export class ModuleContainer {
   nuxt: Nuxt
   options: Nuxt['options']
   requiredModules: Record<string, {
