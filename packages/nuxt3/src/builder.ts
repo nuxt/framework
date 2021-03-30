@@ -1,7 +1,7 @@
 import { join, relative } from 'path'
 import fsExtra from 'fs-extra'
 import { debounce } from 'lodash'
-import { DeterminedGlobals, determineGlobals } from '@nuxt/kit'
+import { determineGlobals } from '@nuxt/kit'
 import { Nuxt } from './nuxt'
 import {
   templateData,
@@ -15,7 +15,7 @@ import Ignore from './utils/ignore'
 
 export class Builder {
   nuxt: Nuxt
-  globals: DeterminedGlobals
+  globals: any
   ignore: Ignore
   templates: NuxtTemplate[]
   app: NuxtApp

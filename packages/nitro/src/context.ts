@@ -1,6 +1,6 @@
 import { resolve } from 'upath'
 import defu from 'defu'
-import type { NuxtOptions } from '@nuxt/types'
+import type { NuxtOptions } from '@nuxt/kit'
 import Hookable, { configHooksT } from 'hookable'
 import type { Preset } from '@nuxt/un'
 import { tryImport, resolvePath, detectTarget, extendPreset } from './utils'

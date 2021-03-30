@@ -17,6 +17,9 @@
     "prepublishOnly": "yarn build"
   },
   "build": {
+    "externals": [
+      "nuxt3"
+    ],
     "entries": {
       "index": { "format": "cjs" }
     }

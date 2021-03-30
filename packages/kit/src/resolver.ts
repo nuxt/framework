@@ -1,28 +1,23 @@
 import { resolve, join } from 'path'
 import fs from 'fs-extra'
-
 import jiti from 'jiti'
-import {
-  startsWithRootAlias,
-  startsWithSrcAlias,
-  isExternalDependency,
-  clearRequireCache
-} from '@nuxt/kit'
-import { Nuxt } from './nuxt'
+import type { Nuxt } from '../types'
+import { isExternalDependency, clearRequireCache } from './utils/cjs'
+import { startsWithRootAlias, startsWithSrcAlias } from './utils/resolve'
 
-interface ResolvePathOptions {
+export interface ResolvePathOptions {
   isAlias?: boolean
   isModule?: boolean
   isStyle?: boolean
 }
 
-interface RequireModuleOptions {
+export interface RequireModuleOptions {
   useESM?: boolean
   isAlias?: boolean
   interopDefault?: any
 }
 
-export default class Resolver {
+export class Resolver {
   _require: NodeJS.Require
   _resolve: NodeJS.RequireResolve
   nuxt: Nuxt

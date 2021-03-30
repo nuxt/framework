@@ -12,6 +12,7 @@ import alias from '@rollup/plugin-alias'
 import esbuild from 'rollup-plugin-esbuild'
 import { mkdist } from 'mkdist'
 import prettyBytes from 'pretty-bytes'
+// import dts from 'rollup-plugin-dts'
 
 interface BuildEntry {
   name: string
@@ -89,6 +90,7 @@ ${ctx.entries.map(entry => ' ' + dumpObject(entry)).join('\n')}
   const buildEntries: { path: string, bytes?: number, exports?: string[], chunks?: string[] }[] = []
 
   for (const entry of output.filter(e => e.type === 'chunk') as OutputChunk[]) {
+    // consola.log(entry)
     for (const id of entry.imports) {
       usedImports.add(id)
     }
@@ -218,6 +220,8 @@ function getRollupOptions (ctx: BuildContext): RollupOptions {
       commonjs({
         extensions
       })
+
+      // dts()
     ]
   }
 }
