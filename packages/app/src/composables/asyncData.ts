@@ -12,6 +12,7 @@ export interface AsyncDataOptions {
 }
 
 export interface AsyncDataObj<T> {
+  initialFetch: Promise<unknown>
   data: Ref<T>
   pending: Ref<boolean>
   refresh: () => Promise<void>
@@ -39,7 +40,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
   return function asyncData<T = Record<string, any>> (
     key: string,
     handler: AsyncDataFn<T>,
-    options?: AsyncDataOptions
+    options: AsyncDataOptions = {}
   ): AsyncDataObj<T> {
     if (typeof handler !== 'function') {
       throw new TypeError('asyncData handler must be a function')
@@ -79,37 +80,40 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       }
     }
 
-    const clientOnly = options.server === false
+    const promise = new Promise((resolve, reject) => {
+      const clientOnly = options.server === false
 
-    // Client side
-    if (process.client) {
+      // Client side
+      if (process.client) {
       // 1. Hydration (server: true): no fetch
-      if (nuxt.isHydrating && options.server) {
-        pending.value = false
-      }
-      // 2. Initial load (server: false): fetch on mounted
-      if (nuxt.isHydrating && !options.server) {
-        // Fetch on mounted (initial load or deferred fetch)
-        onBeforeMountCbs.push(fetch)
-      } else if (!nuxt.isHydrating) {
-        if (options.defer) {
-          // 3. Navigation (defer: true): fetch on mounted
-          onBeforeMountCbs.push(fetch)
-        } else {
-          // 4. Navigation (defer: false): await fetch
-          waitFor(fetch())
+        if (nuxt.isHydrating && options.server) {
+          pending.value = false
         }
+        // 2. Initial load (server: false): fetch on mounted
+        if (nuxt.isHydrating && !options.server) {
+        // Fetch on mounted (initial load or deferred fetch)
+          onBeforeMountCbs.push(fetch)
+        } else if (!nuxt.isHydrating) {
+          if (options.defer) {
+          // 3. Navigation (defer: true): fetch on mounted
+            onBeforeMountCbs.push(fetch)
+          } else {
+          // 4. Navigation (defer: false): await fetch
+            fetch().then(resolve).catch(reject)
+          }
+        }
+        // Watch handler
+        watch(handler.bind(null, nuxt), fetch)
       }
-      // Watch handler
-      watch(handler.bind(null, nuxt), fetch)
-    }
 
-    // Server side
-    if (process.server && !clientOnly) {
-      waitFor(fetch())
-    }
+      // Server side
+      if (process.server && !clientOnly) {
+        fetch().then(resolve).catch(reject)
+      }
+    })
 
     return {
+      initialFetch: promise,
       data: datastore,
       pending,
       refresh: fetch
@@ -117,10 +121,28 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
   }
 }
 
-export function asyncData<T = Record<string, any>> (
+export function syncData<T = Record<string, any>> (
   key: string,
   handler: AsyncDataFn<T>,
   options?: AsyncDataOptions
 ): AsyncDataObj<T> {
-  return useAsyncData()(key, handler, options)
+  const { waitFor } = useAsyncSetup()
+
+  const results = useAsyncData()(key, handler, options)
+
+  waitFor(results.initialFetch)
+
+  return results
+}
+
+export async function asyncData<T = Record<string, any>> (
+  key: string,
+  handler: AsyncDataFn<T>,
+  options?: AsyncDataOptions
+): Promise<AsyncDataObj<T>> {
+  const results = useAsyncData()(key, handler, options)
+
+  await results.initialFetch
+
+  return results
 }
