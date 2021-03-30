@@ -101,6 +101,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     if (process.server && !clientOnly) {
       waitFor(fetch())
     }
+
     return {
       data: datastore,
       pending,
