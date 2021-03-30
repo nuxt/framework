@@ -1,4 +1,4 @@
-import { Ref, ref, onMounted, watch, onUnmounted } from 'vue'
+import { Ref, ref, onBeforeMount, watch, onUnmounted } from 'vue'
 import { Nuxt, useNuxt } from '@nuxt/app'
 
 import { useAsyncSetup } from './component'
@@ -18,18 +18,22 @@ export interface AsyncDataObj<T> {
   error?: any
 }
 
+export interface AsyncDataFetchOptions {
+  deduplicate: boolean
+}
+
 export function useAsyncData (defaults?: AsyncDataOptions) {
   const nuxt = useNuxt()
   const { waitFor } = useAsyncSetup()
-  const onMountedCbs: Array<() => void> = []
+  const onBeforeMountCbs: Array<() => void> = []
 
   if (process.client) {
-    onMounted(() => {
-      onMountedCbs.forEach((cb) => { cb() })
-      onMountedCbs.splice(0, onMountedCbs.length)
+    onBeforeMount(() => {
+      onBeforeMountCbs.forEach((cb) => { cb() })
+      onBeforeMountCbs.splice(0, onBeforeMountCbs.length)
     })
 
-    onUnmounted(() => onMountedCbs.splice(0, onMountedCbs.length))
+    onUnmounted(() => onBeforeMountCbs.splice(0, onBeforeMountCbs.length))
   }
 
   return function asyncData<T = Record<string, any>> (
@@ -52,7 +56,10 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
 
     const datastore = ensureReactive(data, key)
 
-    const fetch = async () => {
+    const fetch = async (opts: Partial<AsyncDataFetchOptions> = {}) => {
+      if (opts.deduplicate !== false && pending.value) {
+        return
+      }
       pending.value = true
       const _handler = handler(nuxt)
 
@@ -83,11 +90,11 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       // 2. Initial load (server: false): fetch on mounted
       if (nuxt.isHydrating && !options.server) {
         // Fetch on mounted (initial load or deferred fetch)
-        onMountedCbs.push(fetch)
+        onBeforeMountCbs.push(fetch)
       } else if (!nuxt.isHydrating) {
         if (options.defer) {
           // 3. Navigation (defer: true): fetch on mounted
-          onMountedCbs.push(fetch)
+          onBeforeMountCbs.push(fetch)
         } else {
           // 4. Navigation (defer: false): await fetch
           waitFor(fetch())
