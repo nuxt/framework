@@ -4,13 +4,13 @@ const NuxtComponentIndicator = Symbol('Nuxt component')
 
 export interface NuxtComponentInternalInstance extends ComponentInternalInstance {
   [NuxtComponentIndicator]: true
-  _pendingPromises?: Array<Promise<void>>
+  _pendingPromises: Array<Promise<void>>
 }
 
 export function getCurrentNuxtComponentInstance (): NuxtComponentInternalInstance {
   const vm = getCurrentInstance()
 
-  if (!vm || !vm[NuxtComponentIndicator]) {
+  if (!vm || !(vm as any)[NuxtComponentIndicator]) {
     throw new Error('This method can only be used within a component defined with `getCurrentNuxtComponentInstance()`.')
   }
 
