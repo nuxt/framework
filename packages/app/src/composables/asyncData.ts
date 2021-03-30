@@ -25,7 +25,6 @@ export interface AsyncDataFetchOptions {
 
 export function useAsyncData (defaults?: AsyncDataOptions) {
   const nuxt = useNuxt()
-  const { waitFor } = useAsyncSetup()
   const onBeforeMountCbs: Array<() => void> = []
 
   if (process.client) {
@@ -80,7 +79,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       }
     }
 
-    const promise = new Promise((resolve, reject) => {
+    const initialFetch = new Promise((resolve, reject) => {
       const clientOnly = options.server === false
 
       // Client side
@@ -113,7 +112,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     })
 
     return {
-      initialFetch: promise,
+      initialFetch,
       data: datastore,
       pending,
       refresh: fetch
