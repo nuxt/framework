@@ -219,7 +219,11 @@ function getRollupOptions (ctx: BuildContext): RollupOptions | null {
       if (id[0] === '.' || id[0] === '/' || id.includes('src/')) {
         return false
       }
-      return !!ctx.externals.find(ext => id.includes(ext))
+      const isExplicitExternal = !!ctx.externals.find(ext => id.includes(ext))
+      if (!isExplicitExternal) {
+        consola.warn(`Inlining external ${id}`)
+      }
+      return isExplicitExternal
     },
 
     plugins: [

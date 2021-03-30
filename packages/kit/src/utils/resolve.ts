@@ -1,6 +1,6 @@
 import path from 'path'
 import consola from 'consola'
-import escapeRegExp from 'lodash/escapeRegExp'
+import { escapeRegExp } from 'lodash'
 
 export const startsWithAlias = (aliasArray: string[]) => (str: string) =>
   aliasArray.some(c => str.startsWith(c))

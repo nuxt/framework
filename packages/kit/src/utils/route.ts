@@ -1,5 +1,5 @@
 import path from 'path'
-import get from 'lodash/get'
+import { get } from 'lodash'
 import consola from 'consola'
 
 // Guard dir1 from dir2 which can be indiscriminately removed

@@ -4,9 +4,8 @@ import { dirname } from 'path'
 import isPlainObject from 'lodash/isPlainObject'
 import consola from 'consola'
 import Hookable from 'hookable'
-import { loadNuxtConfig, LoadNuxtConfigOptions, ModuleContainer } from '@nuxt/kit'
+import { loadNuxtConfig, LoadNuxtConfigOptions, ModuleContainer, Resolver } from '@nuxt/kit'
 
-import { Resolver } from '@nuxt/kit/src'
 import { version } from '../package.json'
 
 import { initNitro } from './nitro'
