@@ -1,25 +1,24 @@
-import type { Nuxt } from '@nuxt/kit'
+import type { Nuxt } from '../types'
+import {
+  addErrorLayout,
+  addLayout,
+  addPlugin,
+  addServerMiddleware,
+  extendBuild,
+  extendRoutes
+} from './utils'
+import { addTemplate, TemplateOpts } from './template'
+import { installModule } from './install'
 
 export class ModuleContainer {
   nuxt: Nuxt
   options: Nuxt['options']
-  requiredModules: Record<string, {
-    src: string
-    options: Record<string, any>
-    handler
-  }>
+  requiredModules: Record<string, { src: string, options: any, handler: Function }>
 
   constructor (nuxt: Nuxt) {
     this.nuxt = nuxt
     this.options = nuxt.options
     this.requiredModules = {}
-
-    // Self bind to allow destructre from container
-    for (const method of Object.getOwnPropertyNames(ModuleContainer.prototype)) {
-      if (typeof this[method] === 'function') {
-        this[method] = this[method].bind(this)
-      }
-    }
   }
 
   ready () {
@@ -30,31 +29,39 @@ export class ModuleContainer {
     console.warn('addVendor has been deprecated')
   }
 
-  addTemplate (template: TemplateInput | string) {
+  addTemplate (tmpl: TemplateOpts | string) {
+    return addTemplate(tmpl)
   }
 
-  addPlugin (template: TemplateInput) {
-
+  addPlugin (tmpl: TemplateOpts) {
+    return addPlugin(tmpl)
   }
 
-  addLayout (template: TemplateInput, name: string) {
+  addLayout (tmpl: TemplateOpts, name: string) {
+    return addLayout(tmpl, name)
   }
 
   addErrorLayout (dst: string) {
+    return addErrorLayout(dst)
   }
 
   addServerMiddleware (middleware) {
+    return addServerMiddleware(middleware)
   }
 
   extendBuild (fn) {
+    return extendBuild(fn)
   }
 
   extendRoutes (fn) {
+    return extendRoutes(fn)
   }
 
   requireModule (moduleOpts) {
+    return installModule(moduleOpts)
   }
 
-  async addModule (moduleOpts) {
+  addModule (moduleOpts) {
+    return installModule(moduleOpts)
   }
 }

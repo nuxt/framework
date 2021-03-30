@@ -1,7 +1,7 @@
 import { resolve, join } from 'path'
 import fs from 'fs-extra'
 import jiti from 'jiti'
-import type { Nuxt } from '../types'
+import type { Nuxt } from './types'
 import { isExternalDependency, clearRequireCache } from './utils/cjs'
 import { startsWithRootAlias, startsWithSrcAlias } from './utils/resolve'
 

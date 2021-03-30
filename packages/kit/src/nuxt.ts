@@ -1,5 +1,5 @@
 import { useContext } from 'unctx'
-import type { Nuxt, NuxtConfig } from '@nuxt/kit'
+import type { Nuxt, NuxtConfig } from './types'
 
 export const useNuxt = useContext<Nuxt>('nuxt')
 

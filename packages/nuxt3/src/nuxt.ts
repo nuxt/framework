@@ -94,7 +94,9 @@ export class Nuxt extends Hookable {
   }
 }
 
-interface LoadNuxtOptions extends LoadNuxtConfigOptions {}
+interface LoadNuxtOptions extends LoadNuxtConfigOptions {
+  for: string
+}
 
 export async function loadNuxt (opts: LoadNuxtOptions) {
   const options = await loadNuxtConfig(opts)

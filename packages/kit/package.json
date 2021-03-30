@@ -4,15 +4,14 @@
   "repository": "nuxt/framework",
   "license": "MIT",
   "main": "./dist/index.js",
-  "types": "./types/index.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "types"
+    "dist"
   ],
   "scripts": {
     "build": "jiti ../../scripts/build .",
-    "genconfig": "jiti ./scripts/genconfig",
-    "prepublishOnly": "yarn build && yarn genconfig"
+    "gentypes": "jiti ./scripts/gentypes",
+    "prepublishOnly": "yarn build && yarn gentypes"
   },
   "dependencies": {
     "create-require": "^1.1.1",
@@ -28,6 +27,7 @@
     "untyped": "^0.2.2"
   },
   "build": {
+    "prebuild": "yarn -s gentypes",
     "entries": {
       "index": {
         "format": "cjs"

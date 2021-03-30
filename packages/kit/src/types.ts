@@ -1,7 +1,4 @@
-import { ConfigSchema } from '../dist/config/config'
-
-// Kit utils
-export * from '../dist'
+import { ConfigSchema } from '../.gen/config'
 
 // Nuxt Config
 type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]>; }
@@ -22,4 +19,6 @@ export interface Nuxt {
   options: NuxtOptions
   hook(hookName: NuxtHookName, callback: NuxtHookCallback)
   callHook(hookbname: NuxtHookName, ...args: any[])
+
+  resolver: any
 }

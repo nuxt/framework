@@ -1,3 +1,7 @@
+import consola from 'consola'
+import { sequence } from '../utils'
+import { useNuxt } from '../nuxt'
+
 export async function registerModules () {
   // Call before hook
   await this.nuxt.callHook('modules:before', this, this.options.modules)
@@ -48,7 +52,7 @@ export async function installModule (moduleOpts) {
   // Resolve handler
   if (!handler && typeof src === 'string') {
     try {
-      handler = nuxt.nuxt.resolver.requireModule(src, { useESM: true })
+      handler = nuxt.resolver.requireModule(src, { useESM: true })
     } catch (error) {
       if (error.code !== 'MODULE_NOT_FOUND') {
         throw error
@@ -89,7 +93,7 @@ export async function installModule (moduleOpts) {
     const metaKey = handler.meta && handler.meta.name
     const key = metaKey || src
     if (typeof key === 'string') {
-      if (nuxt.requiredModules[key]) {
+      if (nuxt.options._requiredModules[key]) {
         if (!metaKey) {
           // TODO: Skip with nuxt3
           consola.warn('Modules should be only specified once:', key)
@@ -97,7 +101,7 @@ export async function installModule (moduleOpts) {
           return
         }
       }
-      nuxt.requiredModules[key] = { src, options, handler }
+      nuxt.options._requiredModules[key] = { src, options, handler }
     }
   }
 

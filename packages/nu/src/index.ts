@@ -13,10 +13,12 @@ async function _main () {
   const isDev = cmd === 'dev'
   const rootDir = resolve(process.cwd(), args[1] || '.')
 
-  // @ts-ignore
   const { loadNuxt, build } = await import('nuxt3')
 
-  const nuxt = await loadNuxt({ for: isDev ? 'dev' : 'build', rootDir })
+  const nuxt = await loadNuxt({
+    for: isDev ? 'dev' : 'build',
+    rootDir
+  })
 
   if (isDev) {
     // https://github.com/nuxt-contrib/listhen

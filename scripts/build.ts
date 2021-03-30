@@ -12,7 +12,8 @@ import alias from '@rollup/plugin-alias'
 import esbuild from 'rollup-plugin-esbuild'
 import { mkdist } from 'mkdist'
 import prettyBytes from 'pretty-bytes'
-// import dts from 'rollup-plugin-dts'
+import execa from 'execa'
+import dts from 'rollup-plugin-dts'
 
 interface BuildEntry {
   name: string
@@ -56,6 +57,11 @@ async function main () {
   await unlink(distDir).catch(() => {})
   await promisify(rimraf)(distDir)
 
+  if (buildOptions.prebuild) {
+    const [cmd, ...args] = buildOptions.prebuild.split(' ')
+    await execa(cmd, args)
+  }
+
   if (args.includes('--stub')) {
     const stubbed: string[] = []
     for (const entry of ctx.entries) {
@@ -78,12 +84,12 @@ async function main () {
     return
   }
 
+  consola.info(chalk.cyan(`Builduing ${pkg.name}`))
   if (process.env.DEBUG) {
-    consola.info(`${chalk.cyan(`Builduing ${pkg.name}`)}
-
-${chalk.bold('Root dir:')} ${ctx.rootDir}
-${chalk.bold('Entries:')}
-${ctx.entries.map(entry => ' ' + dumpObject(entry)).join('\n')}
+    consola.info(`
+  ${chalk.bold('Root dir:')} ${ctx.rootDir}
+  ${chalk.bold('Entries:')}
+  ${ctx.entries.map(entry => ' ' + dumpObject(entry)).join('\n')}
 `)
   }
 
@@ -96,7 +102,6 @@ ${ctx.entries.map(entry => ' ' + dumpObject(entry)).join('\n')}
     const { output } = await buildResult.write(outputOptions)
 
     for (const entry of output.filter(e => e.type === 'chunk') as OutputChunk[]) {
-      // consola.log(entry)
       for (const id of entry.imports) {
         usedImports.add(id)
       }
@@ -108,6 +113,11 @@ ${ctx.entries.map(entry => ' ' + dumpObject(entry)).join('\n')}
         })
       }
     }
+
+    // Types
+    rollupOptions.plugins.push(dts())
+    const typesBuild = await rollup(rollupOptions)
+    await typesBuild.write(outputOptions)
   }
 
   for (const entry of ctx.entries.filter(e => !e.bundle)) {
@@ -233,8 +243,6 @@ function getRollupOptions (ctx: BuildContext): RollupOptions | null {
       commonjs({
         extensions
       })
-
-      // dts()
     ]
   }
 }
