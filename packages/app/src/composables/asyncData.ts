@@ -1,4 +1,4 @@
-import { Ref, ref, onBeforeMount, watch, onUnmounted } from 'vue'
+import { Ref, ref, onBeforeMount, onUnmounted, UnwrapRef, watch } from 'vue'
 import { Nuxt, useNuxt } from '@nuxt/app'
 
 import { useAsyncSetup } from './component'
@@ -13,7 +13,7 @@ export interface AsyncDataOptions {
 
 export interface AsyncDataObj<T> {
   initialFetch: Promise<unknown>
-  data: Ref<T>
+  data: UnwrapRef<T>
   pending: Ref<boolean>
   refresh: () => Promise<void>
   error?: any
@@ -54,9 +54,9 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     const data = useGlobalData(nuxt)
     const pending = ref(true)
 
-    const datastore = ensureReactive(data, key)
+    const datastore = ensureReactive(data, key) as UnwrapRef<T>
 
-    const fetch = async (opts: Partial<AsyncDataFetchOptions> = {}) => {
+    const fetch = async (opts: Partial<AsyncDataFetchOptions> = {}): Promise<void> => {
       if (opts.deduplicate !== false && pending.value) {
         return
       }
@@ -69,7 +69,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
         const result = await _handler
 
         for (const _key in result) {
-          datastore[_key] = result[_key]
+          datastore[_key as string] = result[_key]
         }
 
         pending.value = false
