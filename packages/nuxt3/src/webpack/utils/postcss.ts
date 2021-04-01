@@ -5,10 +5,7 @@ import defaults from 'lodash/defaults'
 import merge from 'lodash/merge'
 import cloneDeep from 'lodash/cloneDeep'
 import createResolver from 'postcss-import-resolver'
-
-import { isPureObject } from '@nuxt/kit'
-import type { Nuxt } from '../../../core'
-import type { NormalizedConfiguration } from '../../../config'
+import { Nuxt, NuxtOptions, tryRequire } from '@nuxt/kit'
 
 export const orderPresets = {
   cssnanoLast (names) {
@@ -150,7 +147,7 @@ export default class PostcssConfig {
       // Map postcss plugins into instances on object mode once
       config.plugins = this.sortPlugins(config)
         .map((p) => {
-          const plugin = this.nuxt.resolver.requireModule(p)
+          const plugin = tryRequire(p)
           const opts = plugins[p]
           if (opts === false) {
             return false // Disabled

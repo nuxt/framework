@@ -1,25 +1,8 @@
 import consola from 'consola'
-import { sequence } from '../utils'
+import jiti from 'jiti'
 import { useNuxt } from '../nuxt'
 
-export async function registerModules () {
-  // Call before hook
-  await this.nuxt.callHook('modules:before', this, this.options.modules)
-
-  if (this.options.buildModules && !this.options._start) {
-    // Load every devModule in sequence
-    await sequence(this.options.buildModules, this.addModule)
-  }
-
-  // Load every module in sequence
-  await sequence(this.options.modules, this.addModule)
-
-  // Load ah-hoc modules last
-  await sequence(this.options._modules, this.addModule)
-
-  // Call done hook
-  await this.nuxt.callHook('modules:done', this)
-}
+const _require = jiti(process.cwd())
 
 export async function installModule (moduleOpts) {
   const nuxt = useNuxt()
@@ -51,36 +34,7 @@ export async function installModule (moduleOpts) {
 
   // Resolve handler
   if (!handler && typeof src === 'string') {
-    try {
-      handler = nuxt.resolver.requireModule(src, { useESM: true })
-    } catch (error) {
-      if (error.code !== 'MODULE_NOT_FOUND') {
-        throw error
-      }
-
-      // Hint only if entrypoint is not found and src is not local alias or path
-      if (error.message.includes(src) && !/^[~.]|^@\//.test(src)) {
-        let message = 'Module `{name}` not found.'
-
-        if (nuxt.options.buildModules.includes(src)) {
-          message += ' Please ensure `{name}` is in `devDependencies` and installed. HINT: During build step, for npm/yarn, `NODE_ENV=production` or `--production` should NOT be used.'.replace('{name}', src)
-        } else if (nuxt.options.modules.includes(src)) {
-          message += ' Please ensure `{name}` is in `dependencies` and installed.'
-        }
-
-        message = message.replace(/{name}/g, src)
-
-        consola.warn(message)
-      }
-
-      if (nuxt.options._cli) {
-        throw error
-      } else {
-        // TODO: Remove in next major version
-        consola.warn('Silently ignoring module as programatic usage detected.')
-        return
-      }
-    }
+    handler = _require(src)
   }
 
   // Validate handler
@@ -109,6 +63,7 @@ export async function installModule (moduleOpts) {
   if (options === undefined) {
     options = {}
   }
+
   const result = await handler.call(this, options)
   return result
 }

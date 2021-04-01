@@ -1,4 +1,6 @@
-import type { Nuxt } from '../types'
+import type { Nuxt } from '../nuxt'
+import { addTemplate, TemplateOpts } from './template'
+import { installModule } from './install'
 import {
   addErrorLayout,
   addLayout,
@@ -7,8 +9,6 @@ import {
   extendBuild,
   extendRoutes
 } from './utils'
-import { addTemplate, TemplateOpts } from './template'
-import { installModule } from './install'
 
 export class ModuleContainer {
   nuxt: Nuxt

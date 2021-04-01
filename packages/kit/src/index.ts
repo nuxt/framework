@@ -1,9 +1,8 @@
-export * from './config'
+export * from './config/load'
 export * from './nuxt'
-export * from './module'
 
-export * from './resolver'
+export * from './module/container'
+export * from './module/install'
+export * from './module/utils'
 
-export { determineGlobals } from './utils'
-
-export * from './types'
+export * from './utils/resolve'

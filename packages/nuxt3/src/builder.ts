@@ -1,8 +1,8 @@
 import { join, relative } from 'path'
 import fsExtra from 'fs-extra'
 import { debounce } from 'lodash'
-import { determineGlobals } from '@nuxt/kit'
-import { Nuxt } from './nuxt'
+import { Nuxt } from '@nuxt/kit'
+
 import {
   templateData,
   compileTemplates,
@@ -22,7 +22,6 @@ export class Builder {
 
   constructor (nuxt) {
     this.nuxt = nuxt
-    this.globals = determineGlobals(nuxt.options.globalName, nuxt.options.globals)
     this.ignore = new Ignore({
       rootDir: nuxt.options.srcDir,
       ignoreArray: nuxt.options.ignore.concat(
@@ -53,7 +52,7 @@ async function _build (builder: Builder) {
 
   await bundle(builder)
 
-  await nuxt.callHook('build:done')
+  await nuxt.callHook('build:done', builder)
 }
 
 function watch (builder: Builder) {

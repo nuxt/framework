@@ -2,7 +2,7 @@ import path from 'path'
 
 import consola from 'consola'
 import { useNuxt } from '../nuxt'
-import { chainFn } from '../utils'
+import { chainFn } from '../utils/task'
 import { addTemplate, TemplateOpts } from './template'
 
 export function addPlugin (tmpl: TemplateOpts) {
