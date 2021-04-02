@@ -1,7 +1,7 @@
-import { Ref, ref, onBeforeMount, onUnmounted, UnwrapRef, watch } from 'vue'
+import { Ref, ref, onBeforeMount, onUnmounted, UnwrapRef, watch, getCurrentInstance } from 'vue'
 import { Nuxt, useNuxt } from '@nuxt/app'
 
-import { useAsyncSetup } from './component'
+import { NuxtComponentPendingPromises } from './component'
 import { ensureReactive, useGlobalData } from './data'
 
 export type AsyncDataFn<T> = (ctx?: Nuxt) => Promise<T>
@@ -11,8 +11,7 @@ export interface AsyncDataOptions {
   defer?: boolean
 }
 
-export interface AsyncDataObj<T> {
-  initialFetch: Promise<unknown>
+export interface AsyncDataResult<T> extends Promise<void> {
   data: UnwrapRef<T>
   pending: Ref<boolean>
   refresh: () => Promise<void>
@@ -25,6 +24,7 @@ export interface AsyncDataFetchOptions {
 
 export function useAsyncData (defaults?: AsyncDataOptions) {
   const nuxt = useNuxt()
+  const vm = getCurrentInstance()
   const onBeforeMountCbs: Array<() => void> = []
 
   if (process.client) {
@@ -40,7 +40,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     key: string,
     handler: AsyncDataFn<T>,
     options: AsyncDataOptions = {}
-  ): AsyncDataObj<T> {
+  ): AsyncDataResult<T> {
     if (typeof handler !== 'function') {
       throw new TypeError('asyncData handler must be a function')
     }
@@ -76,69 +76,53 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       }
     }
 
-    const initialFetch = new Promise((resolve, reject) => {
-      const clientOnly = options.server === false
+    let initialFetch: Partial<AsyncDataResult<T>> = Promise.resolve()
 
-      // Client side
-      if (process.client) {
-      // 1. Hydration (server: true): no fetch
-        if (nuxt.isHydrating && options.server) {
-          pending.value = false
-        }
-        // 2. Initial load (server: false): fetch on mounted
-        if (nuxt.isHydrating && !options.server) {
-        // Fetch on mounted (initial load or deferred fetch)
-          onBeforeMountCbs.push(fetch)
-        } else if (!nuxt.isHydrating) {
-          if (options.defer) {
-          // 3. Navigation (defer: true): fetch on mounted
-            onBeforeMountCbs.push(fetch)
-          } else {
-          // 4. Navigation (defer: false): await fetch
-            fetch().then(resolve).catch(reject)
-          }
-        }
-        // Watch handler
-        watch(handler.bind(null, nuxt), fetch)
-      }
-
-      // Server side
-      if (process.server && !clientOnly) {
-        fetch().then(resolve).catch(reject)
-      }
-    })
-
-    return {
-      initialFetch,
-      data: datastore,
-      pending,
-      refresh: fetch
+    // Server side
+    if (process.server && options.server !== false) {
+      initialFetch = fetch()
     }
+
+    // Client side
+    if (process.client) {
+      // Watch handler
+      watch(handler.bind(null, nuxt), fetch)
+
+      // 1. Hydration (server: true): no fetch
+      if (nuxt.isHydrating && options.server) {
+        pending.value = false
+      }
+      // 2. Initial load (server: false or server: undefined): fetch on mounted
+      if (nuxt.isHydrating && !options.server) {
+        // Fetch on mounted (initial load or deferred fetch)
+        onBeforeMountCbs.push(fetch)
+      } else if (!nuxt.isHydrating) {
+        if (options.defer) {
+          // 3. Navigation (defer: true): fetch on mounted
+          onBeforeMountCbs.push(fetch)
+        } else {
+          // 4. Navigation (defer: false or defer: undefined): await fetch
+          initialFetch = fetch()
+        }
+      }
+    }
+
+    // Append utils
+    initialFetch.data = datastore
+    initialFetch.pending = pending
+    initialFetch.refresh = fetch
+
+    // Auto enqueue if within nuxt component instance
+    if (vm[NuxtComponentPendingPromises]) {
+      vm[NuxtComponentPendingPromises].push(initialFetch)
+    }
+
+    return initialFetch as AsyncDataResult<T>
   }
 }
 
-export function syncData<T = Record<string, any>> (
-  key: string,
-  handler: AsyncDataFn<T>,
-  options?: AsyncDataOptions
-): AsyncDataObj<T> {
-  const { waitFor } = useAsyncSetup()
-
-  const results = useAsyncData()(key, handler, options)
-
-  waitFor(results.initialFetch)
-
-  return results
-}
-
-export async function asyncData<T = Record<string, any>> (
-  key: string,
-  handler: AsyncDataFn<T>,
-  options?: AsyncDataOptions
-): Promise<AsyncDataObj<T>> {
-  const results = useAsyncData()(key, handler, options)
-
-  await results.initialFetch
-
-  return results
+export function asyncData<T = Record<string, any>> (
+  key: string, handler: AsyncDataFn<T>, options?: AsyncDataOptions
+): AsyncDataResult<T> {
+  return useAsyncData()(key, handler, options)
 }
