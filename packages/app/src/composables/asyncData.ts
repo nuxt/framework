@@ -34,7 +34,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     onUnmounted(() => onBeforeMountCbs.splice(0, onBeforeMountCbs.length))
   }
 
-  nuxt.asyncPromises = nuxt.asyncPromises || {}
+  nuxt._asyncDataPromises = nuxt._asyncDataPromises || {}
 
   return function asyncData<T extends Record<string, any>> (
     key: string,
@@ -59,20 +59,20 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     } as AsyncDataState<T>
 
     const fetch = (force?: boolean): Promise<UnwrapRef<T>> => {
-      if (nuxt.asyncPromises[key] && !force) {
-        return nuxt.asyncPromises[key]
+      if (nuxt._asyncDataPromises[key] && !force) {
+        return nuxt._asyncDataPromises[key]
       }
       state.pending.value = true
-      nuxt.asyncPromises[key] = Promise.resolve(handler(nuxt)).then((result) => {
+      nuxt._asyncDataPromises[key] = Promise.resolve(handler(nuxt)).then((result) => {
         for (const _key in result) {
           state.data[_key] = unref(result[_key])
         }
         return state.data
       }).finally(() => {
         state.pending.value = false
-        nuxt.asyncPromises[key] = null
+        nuxt._asyncDataPromises[key] = null
       })
-      return nuxt.asyncPromises[key]
+      return nuxt._asyncDataPromises[key]
     }
 
     const fetchOnServer = options.server !== false
@@ -108,11 +108,11 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     }
 
     // Auto enqueue if within nuxt component instance
-    if (nuxt.asyncPromises[key] && vm[NuxtComponentPendingPromises]) {
-      vm[NuxtComponentPendingPromises].push(nuxt.asyncPromises[key])
+    if (nuxt._asyncDataPromises[key] && vm[NuxtComponentPendingPromises]) {
+      vm[NuxtComponentPendingPromises].push(nuxt._asyncDataPromises[key])
     }
 
-    const res = Promise.resolve(nuxt.asyncPromises[key]).then(() => state) as AsyncDataResult<T>
+    const res = Promise.resolve(nuxt._asyncDataPromises[key]).then(() => state) as AsyncDataResult<T>
     res.data = state.data
     res.pending = state.pending
     res.fetch = fetch
