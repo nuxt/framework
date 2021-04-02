@@ -4,10 +4,15 @@ import { useNuxt, nuxtCtx } from '../nuxt'
 import type { Nuxt } from '../types/nuxt'
 import type { NuxtModule, LegacyNuxtModule, ModuleOptions } from '../types/module'
 
-export function defineNuxtModule<OptionsT extends ModuleOptions> (m: NuxtModule<OptionsT>): LegacyNuxtModule {
+export function defineNuxtModule<OptionsT extends ModuleOptions> (m: NuxtModule<OptionsT> | ((nuxt: Nuxt) => NuxtModule<OptionsT>)): LegacyNuxtModule {
   function wrappedModule (inlineOptions: OptionsT) {
     // Get nuxt context
     const nuxt: Nuxt = this.nuxt || useNuxt()
+
+    // Resolve function
+    if (typeof m === 'function') {
+      m = m(nuxt)
+    }
 
     // Install hooks
     if (m.hooks) {

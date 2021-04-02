@@ -18,7 +18,7 @@ export interface LegacyNuxtModule {
 export interface NuxtModule<T extends ModuleOptions = any> extends ModuleMeta {
   defaults?: T
   install?: (this: null, resolvedOptions: T, nuxt: Nuxt) => void | Promise<void>
-  hooks?: NuxtHooks
+  hooks?: Partial<NuxtHooks>
 }
 
 export type ModuleSrc = string | NuxtModule | LegacyNuxtModule
