@@ -1,9 +1,12 @@
 <template>
-  <pre>
-    {{ test.sample }}
-    {{ test2.sample }}
-    {{ secondTest.another }}
-  </pre>
+  <div>
+    <h2>asyncdata</h2>
+    <pre>
+      {{ test.sample }}
+      {{ test2.sample }}
+      {{ secondTest.another }}
+    </pre>
+  </div>
 </template>
 
 <script>
