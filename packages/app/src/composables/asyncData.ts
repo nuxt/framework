@@ -14,7 +14,7 @@ export interface AsyncDataOptions {
 export interface AsyncDataState<T> {
   data: UnwrapRef<T>
   pending: Ref<boolean>
-  refresh: () => Promise<void>
+  fetch: (force?: boolean) => Promise<void>
   error?: any
 }
 
@@ -60,34 +60,30 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       pending: ref(true)
     } as AsyncDataState<T>
 
-    const fetch = async (): Promise<any> => {
+    let currentFetch
+
+    const fetch = (force?: boolean): Promise<void> => {
+      if (currentFetch && !force) {
+        return currentFetch
+      }
       state.pending.value = true
-      const _handler = handler(nuxt)
-
-      if (_handler instanceof Promise) {
-        // Let user resolve if request is promise
-        // TODO: handle error
-        const result = await _handler
-
+      currentFetch = Promise.resolve(handler(nuxt)).then((result) => {
         for (const _key in result) {
           state.data[_key as string] = result[_key]
         }
-
+      }).finally(() => {
         state.pending.value = false
-      } else {
-        // Invalid request
-        throw new TypeError('Invalid asyncData handler: ' + _handler)
-      }
+        currentFetch = null
+      })
+      return currentFetch
     }
 
     const fetchOnServer = options.server !== false
     const clientOnly = options.server === false
 
-    let initialFetch
-
     // Server side
     if (process.server && fetchOnServer) {
-      initialFetch = fetch()
+      fetch()
     }
 
     // Client side
@@ -109,20 +105,20 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
           onBeforeMountCbs.push(fetch)
         } else {
           // 4. Navigation (defer: false): await fetch
-          initialFetch = fetch()
+          fetch()
         }
       }
     }
 
     // Auto enqueue if within nuxt component instance
-    if (initialFetch && vm[NuxtComponentPendingPromises]) {
-      vm[NuxtComponentPendingPromises].push(initialFetch)
+    if (currentFetch && vm[NuxtComponentPendingPromises]) {
+      vm[NuxtComponentPendingPromises].push(currentFetch)
     }
 
-    const res = Promise.resolve(initialFetch).then(() => state) as AsyncDataResult<T>
+    const res = Promise.resolve(currentFetch).then(() => state) as AsyncDataResult<T>
     res.data = state.data
     res.pending = state.pending
-    res.refresh = fetch
+    res.fetch = fetch
     return res
   }
 }
