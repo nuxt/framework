@@ -11,10 +11,10 @@ export interface AsyncDataOptions {
   defer?: boolean
 }
 
-export interface AsyncDataResult<T> extends Promise<void> {
+export interface AsyncDataResult<T> extends Promise<UnwrapRef<T>> {
   data: UnwrapRef<T>
   pending: Ref<boolean>
-  refresh: () => Promise<void>
+  refresh: () => Promise<UnwrapRef<T>>
   error?: any
 }
 
@@ -56,7 +56,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
 
     const datastore = ensureReactive(data, key) as UnwrapRef<T>
 
-    const fetch = async (): Promise<void> => {
+    const fetch = async (): Promise<any> => {
       pending.value = true
       const _handler = handler(nuxt)
 
@@ -70,16 +70,20 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
         }
 
         pending.value = false
+        return datastore
       } else {
         // Invalid request
         throw new TypeError('Invalid asyncData handler: ' + _handler)
       }
     }
 
-    let initialFetch: Partial<AsyncDataResult<T>> = Promise.resolve()
+    let initialFetch: Partial<AsyncDataResult<T>> = Promise.resolve(datastore)
+
+    const fetchOnServer = options.server !== false
+    const clientOnly = options.server === false
 
     // Server side
-    if (process.server && options.server !== false) {
+    if (process.server && fetchOnServer) {
       initialFetch = fetch()
     }
 
@@ -89,19 +93,19 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       watch(handler.bind(null, nuxt), fetch)
 
       // 1. Hydration (server: true): no fetch
-      if (nuxt.isHydrating && options.server) {
+      if (nuxt.isHydrating && fetchOnServer) {
         pending.value = false
       }
-      // 2. Initial load (server: false or server: undefined): fetch on mounted
-      if (nuxt.isHydrating && !options.server) {
+      // 2. Initial load (server: false): fetch on mounted
+      if (nuxt.isHydrating && clientOnly) {
         // Fetch on mounted (initial load or deferred fetch)
         onBeforeMountCbs.push(fetch)
-      } else if (!nuxt.isHydrating) {
+      } else if (!nuxt.isHydrating) { // Navigation
         if (options.defer) {
           // 3. Navigation (defer: true): fetch on mounted
           onBeforeMountCbs.push(fetch)
         } else {
-          // 4. Navigation (defer: false or defer: undefined): await fetch
+          // 4. Navigation (defer: false): await fetch
           initialFetch = fetch()
         }
       }
