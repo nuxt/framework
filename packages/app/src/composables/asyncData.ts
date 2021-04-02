@@ -1,4 +1,4 @@
-import { Ref, ref, onBeforeMount, onUnmounted, UnwrapRef, watch, getCurrentInstance } from 'vue'
+import { getCurrentInstance, onBeforeMount, onUnmounted, Ref, ref, unref, UnwrapRef, watch } from 'vue'
 import { Nuxt, useNuxt } from '@nuxt/app'
 
 import { NuxtComponentPendingPromises } from './component'
@@ -34,7 +34,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     onUnmounted(() => onBeforeMountCbs.splice(0, onBeforeMountCbs.length))
   }
 
-  return function asyncData<T = Record<string, any>> (
+  return function asyncData<T extends Record<string, any>> (
     key: string,
     handler: AsyncDataFn<T>,
     options: AsyncDataOptions = {}
@@ -65,7 +65,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       state.pending.value = true
       currentFetch = Promise.resolve(handler(nuxt)).then((result) => {
         for (const _key in result) {
-          state.data[_key as string] = result[_key]
+          state.data[_key] = unref(result[_key])
         }
         return state.data
       }).finally(() => {
@@ -120,7 +120,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
   }
 }
 
-export function asyncData<T = Record<string, any>> (
+export function asyncData<T extends Record<string, any>> (
   key: string, handler: AsyncDataFn<T>, options?: AsyncDataOptions
 ): AsyncDataResult<T> {
   return useAsyncData()(key, handler, options)
