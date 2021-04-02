@@ -1,7 +1,10 @@
-import type { Nuxt } from '../nuxt'
-import { addTemplate, TemplateOpts } from './template'
+import type { Nuxt } from '../types/nuxt'
+import type { NuxtOptions } from '../types/config'
+import type { TemplateOpts, PluginTemplateOpts } from '../types/module'
+import { nuxtCtx } from '../nuxt'
 import { installModule } from './install'
 import {
+  addTemplate,
   addErrorLayout,
   addLayout,
   addPlugin,
@@ -12,13 +15,16 @@ import {
 
 export class ModuleContainer {
   nuxt: Nuxt
-  options: Nuxt['options']
-  requiredModules: Record<string, { src: string, options: any, handler: Function }>
+  options: NuxtOptions
 
   constructor (nuxt: Nuxt) {
     this.nuxt = nuxt
     this.options = nuxt.options
-    this.requiredModules = {}
+  }
+
+  private _call<F extends (...args: any) => any>(fn: F, ...args: Parameters<F>): ReturnType<F> {
+    // @ts-ignore
+    return nuxtCtx.call(this.nuxt, () => fn(...args))
   }
 
   ready () {
@@ -30,38 +36,38 @@ export class ModuleContainer {
   }
 
   addTemplate (tmpl: TemplateOpts | string) {
-    return addTemplate(tmpl)
+    return this._call(addTemplate, tmpl)
   }
 
-  addPlugin (tmpl: TemplateOpts) {
-    return addPlugin(tmpl)
+  addPlugin (tmpl: PluginTemplateOpts) {
+    return this._call(addPlugin, tmpl)
   }
 
   addLayout (tmpl: TemplateOpts, name: string) {
-    return addLayout(tmpl, name)
+    return this._call(addLayout, tmpl, name)
   }
 
   addErrorLayout (dst: string) {
-    return addErrorLayout(dst)
+    return this._call(addErrorLayout, dst)
   }
 
   addServerMiddleware (middleware) {
-    return addServerMiddleware(middleware)
+    return this._call(addServerMiddleware, middleware)
   }
 
   extendBuild (fn) {
-    return extendBuild(fn)
+    return this._call(extendBuild, fn)
   }
 
   extendRoutes (fn) {
-    return extendRoutes(fn)
+    return this._call(extendRoutes, fn)
   }
 
   requireModule (moduleOpts) {
-    return installModule(moduleOpts)
+    return installModule(this.nuxt, moduleOpts)
   }
 
   addModule (moduleOpts) {
-    return installModule(moduleOpts)
+    return installModule(this.nuxt, moduleOpts)
   }
 }

@@ -30,8 +30,9 @@ async function initNuxt (nuxt: Nuxt) {
   ]
 
   for (const m of modulesToInstall) {
-    await installModule(m)
+    await installModule(nuxt, m)
   }
+
   await nuxt.callHook('modules:done', nuxt)
 
   await nuxt.callHook('ready', nuxt)

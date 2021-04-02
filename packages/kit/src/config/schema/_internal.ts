@@ -6,5 +6,6 @@ export default {
   _generate: false,
   _cli: false,
   _requiredModules: {},
-  appDir: ''
+  appDir: '',
+  vite: false
 }

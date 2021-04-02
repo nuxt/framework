@@ -3,7 +3,7 @@ import defu from 'defu'
 import jiti from 'jiti'
 import { applyDefaults } from 'untyped'
 import * as rc from 'rc9'
-import { NuxtOptions } from '../nuxt'
+import { NuxtOptions } from '../types/config'
 import nuxtConfigSchema from './schema'
 
 export interface LoadNuxtConfigOptions {

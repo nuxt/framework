@@ -1,69 +1,60 @@
-import consola from 'consola'
-import jiti from 'jiti'
-import { useNuxt } from '../nuxt'
+import type { Nuxt } from '../types/nuxt'
+import type { LegacyNuxtModule, NuxtModule, ModuleMeta, ModuleInstallOptions, ModuleOptions, ModuleSrc } from '../types/module'
+import { requireModule } from '../utils/cjs'
+import { nuxtCtx } from '../nuxt'
+import { defineNuxtModule } from './define'
+import { ModuleContainer } from './container'
 
-const _require = jiti(process.cwd())
+export async function installModule (nuxt: Nuxt, installOpts: ModuleInstallOptions) {
+  let src: ModuleSrc
+  let options: ModuleOptions = {}
+  const meta: ModuleMeta = {}
 
-export async function installModule (moduleOpts) {
-  const nuxt = useNuxt()
-
-  let src
-  let options: Record<string, any>
-  let handler
-
-  // Type 1: String or Function
-  if (typeof moduleOpts === 'string' || typeof moduleOpts === 'function') {
-    src = moduleOpts
-  } else if (Array.isArray(moduleOpts)) {
-    // Type 2: Babel style array
-    [src, options] = moduleOpts
-  } else if (typeof moduleOpts === 'object') {
-    // Type 3: Pure object
-    ({ src, options, handler } = moduleOpts)
+  // Extract src, meta and options
+  if (typeof installOpts === 'string') {
+    src = installOpts
+  } else if (Array.isArray(installOpts)) {
+    [src, options] = installOpts
+  } else if (typeof installOpts === 'object') {
+    if (installOpts.src || installOpts.handler) {
+      src = installOpts.src || installOpts.handler
+      options = installOpts.options
+      Object.assign(meta, installOpts.meta)
+    } else {
+      src = installOpts as NuxtModule
+    }
+  } else {
+    src = installOpts
   }
 
-  // Define handler if src is a function
-  if (src instanceof Function) {
+  // Resolve as legacy handler
+  let handler: LegacyNuxtModule
+  if (typeof src === 'string') {
+    handler = requireModule(src)
+    if (!meta.name) {
+      meta.name = src
+    }
+  } else if (typeof src === 'function') {
     handler = src
+  } else {
+    handler = defineNuxtModule(src)
   }
 
-  // Prevent adding buildModules-listed entries in production
-  if (nuxt.options.buildModules.includes(handler) && nuxt.options._start) {
-    return
-  }
-
-  // Resolve handler
-  if (!handler && typeof src === 'string') {
-    handler = _require(src)
-  }
-
-  // Validate handler
-  if (typeof handler !== 'function') {
-    throw new TypeError('Module should export a function: ' + src)
+  // Merge meta
+  if (handler.meta) {
+    Object.assign(meta, handler.meta)
   }
 
   // Ensure module is required once
-  if ('meta' in handler && typeof src === 'string') {
-    const metaKey = handler.meta && handler.meta.name
-    const key = metaKey || src
-    if (typeof key === 'string') {
-      if (nuxt.options._requiredModules[key]) {
-        if (!metaKey) {
-          // TODO: Skip with nuxt3
-          consola.warn('Modules should be only specified once:', key)
-        } else {
-          return
-        }
-      }
-      nuxt.options._requiredModules[key] = { src, options, handler }
+  if (typeof meta.name === 'string') {
+    nuxt.options._requiredModules = nuxt.options._requiredModules || {}
+    if (nuxt.options._requiredModules[meta.name]) {
+      return
     }
+    nuxt.options._requiredModules[meta.name] = true
   }
 
-  // Default module options to empty object
-  if (options === undefined) {
-    options = {}
-  }
-
-  const result = await handler.call(this, options)
-  return result
+  // Execute in legacy container
+  const container = new ModuleContainer(nuxt)
+  await nuxtCtx.call(nuxt, () => handler.call(container, options))
 }

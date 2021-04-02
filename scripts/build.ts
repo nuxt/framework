@@ -20,6 +20,8 @@ interface BuildEntry {
   input: string
   output: string
   bundle: boolean
+  srcDir: string
+  distDir: string
   format: 'esm' | 'cjs'
 }
 
@@ -183,8 +185,8 @@ function resolveEntry (input: string | [string, Partial<BuildEntry>] | Partial<B
   if (Array.isArray(input)) {
     entry = { name: input[0], ...input[1] }
   }
-  entry.input = entry.input ?? resolve('src', './' + entry.name)
-  entry.output = entry.output ?? resolve('dist', './' + entry.name)
+  entry.input = entry.input ?? resolve(entry.srcDir || 'src', './' + entry.name)
+  entry.output = entry.output ?? resolve(entry.distDir || 'dist', './' + entry.name)
   entry.bundle = entry.bundle ?? !(entry.input.endsWith('/') || entry.name.endsWith('/'))
   entry.format = entry.format ?? 'esm'
   return entry as BuildEntry
@@ -226,6 +228,12 @@ function getRollupOptions (ctx: BuildContext): RollupOptions | null {
       return isExplicitExternal
     },
 
+    onwarn (warning, rollupWarn) {
+      if (!['CIRCULAR_DEPENDENCY'].includes(warning.code)) {
+        rollupWarn(warning)
+      }
+    },
+
     plugins: [
       alias({
         entries: {
@@ -251,4 +259,7 @@ function getRollupOptions (ctx: BuildContext): RollupOptions | null {
   }
 }
 
-main().catch(consola.error)
+main().catch((err) => {
+  consola.error(err)
+  process.exit(1)
+})
