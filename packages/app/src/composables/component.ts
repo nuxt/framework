@@ -1,20 +1,19 @@
 import { ComponentInternalInstance, DefineComponent, defineComponent, getCurrentInstance } from 'vue'
 
-const NuxtComponentIndicator = Symbol('Nuxt component')
+const NuxtComponentIndicator = '__nuxt_component'
 
 export interface NuxtComponentInternalInstance extends ComponentInternalInstance {
-  [NuxtComponentIndicator]: true
   _pendingPromises: Array<Promise<void>>
 }
 
 export function getCurrentNuxtComponentInstance (): NuxtComponentInternalInstance {
-  const vm = getCurrentInstance()
+  const vm = getCurrentInstance() as NuxtComponentInternalInstance
 
-  if (!vm || !(vm as any)[NuxtComponentIndicator]) {
-    throw new Error('This method can only be used within a component defined with `getCurrentNuxtComponentInstance()`.')
+  if (!vm || !vm.proxy.$options[NuxtComponentIndicator]) {
+    throw new Error('This method can only be used within a component defined with `defineNuxtComponent()`.')
   }
 
-  return vm as NuxtComponentInternalInstance
+  return vm
 }
 
 export function useAsyncSetup () {
@@ -41,7 +40,14 @@ export function useAsyncSetup () {
 }
 
 export const defineNuxtComponent: typeof defineComponent = function defineNuxtComponent (options: any): any {
-  const { setup = () => null } = options
+  const { setup } = options
+
+  if (!setup) {
+    return {
+      [NuxtComponentIndicator]: true,
+      ...options
+    }
+  }
 
   return {
     [NuxtComponentIndicator]: true,

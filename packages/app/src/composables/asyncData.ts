@@ -56,10 +56,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
 
     const datastore = ensureReactive(data, key) as UnwrapRef<T>
 
-    const fetch = async (opts: Partial<AsyncDataFetchOptions> = {}): Promise<void> => {
-      if (opts.deduplicate !== false && pending.value) {
-        return
-      }
+    const fetch = async (): Promise<void> => {
       pending.value = true
       const _handler = handler(nuxt)
 
