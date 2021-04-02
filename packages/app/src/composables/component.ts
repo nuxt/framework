@@ -1,9 +1,10 @@
 import { ComponentInternalInstance, DefineComponent, defineComponent, getCurrentInstance } from 'vue'
 
-const NuxtComponentIndicator = '__nuxt_component'
+export const NuxtComponentIndicator = '__nuxt_component'
+export const NuxtComponentPendingPromises = '_pendingPromises'
 
 export interface NuxtComponentInternalInstance extends ComponentInternalInstance {
-  _pendingPromises: Array<Promise<void>>
+  [NuxtComponentPendingPromises]: Array<Promise<void>>
 }
 
 export function getCurrentNuxtComponentInstance (): NuxtComponentInternalInstance {
@@ -16,64 +17,47 @@ export function getCurrentNuxtComponentInstance (): NuxtComponentInternalInstanc
   return vm
 }
 
-export function useAsyncSetup () {
+export function enqueNuxtComponent (p: Promise<void>) {
   const vm = getCurrentNuxtComponentInstance()
-  vm._pendingPromises = vm._pendingPromises || []
-
-  function clearPromises () {
-    vm._pendingPromises.length = 0
-  }
-
-  function waitFor (promise: Promise<any>): void {
-    vm._pendingPromises.push(promise)
-  }
-
-  function waitOnPromises () {
-    return Promise.all(vm._pendingPromises).finally(clearPromises)
-  }
-
-  return {
-    promises: vm._pendingPromises,
-    waitFor,
-    waitOnPromises
-  }
+  vm[NuxtComponentPendingPromises].push(p)
 }
 
-export const defineNuxtComponent: typeof defineComponent = function defineNuxtComponent (options: any): any {
-  const { setup } = options
+export const defineNuxtComponent: typeof defineComponent =
+  function defineNuxtComponent (options: any): any {
+    const { setup } = options
 
-  if (!setup) {
+    if (!setup) {
+      return {
+        [NuxtComponentIndicator]: true,
+        ...options
+      }
+    }
+
     return {
       [NuxtComponentIndicator]: true,
-      ...options
-    }
+      ...options,
+      setup (props, ctx) {
+        const vm = getCurrentNuxtComponentInstance()
+        let promises = vm[NuxtComponentPendingPromises] = vm[NuxtComponentPendingPromises] || []
+
+        const res = setup(props, ctx)
+
+        const asyncRes = res && typeof res.then === 'function'
+        if (asyncRes) {
+          promises.push(res)
+        }
+
+        if (!promises.length) {
+          return res
+        }
+
+        return Promise.all(promises)
+          .then(r => asyncRes ? r.pop() : undefined)
+          .finally(() => {
+            promises.length = 0
+            promises = null
+            delete vm[NuxtComponentPendingPromises]
+          })
+      }
+    } as DefineComponent
   }
-
-  return {
-    [NuxtComponentIndicator]: true,
-    ...options,
-    setup (props, ctx) {
-      const { waitOnPromises, promises } = useAsyncSetup()
-
-      const p = setup(props, ctx)
-
-      if (p instanceof Function) {
-        return p
-      }
-
-      if (p instanceof Promise) {
-        return p.then(async (result) => {
-          await waitOnPromises()
-          return result
-        })
-      }
-
-      if (promises.length) {
-        return waitOnPromises()
-          .then(() => p)
-      }
-
-      return p
-    }
-  } as DefineComponent
-}
