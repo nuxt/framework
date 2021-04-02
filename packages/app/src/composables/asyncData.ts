@@ -14,15 +14,11 @@ export interface AsyncDataOptions {
 export interface AsyncDataState<T> {
   data: UnwrapRef<T>
   pending: Ref<boolean>
-  fetch: (force?: boolean) => Promise<void>
+  fetch: (force?: boolean) => Promise<UnwrapRef<T>>
   error?: any
 }
 
 export type AsyncDataResult<T> = AsyncDataState<T> & Promise<AsyncDataState<T>>
-
-export interface AsyncDataFetchOptions {
-  deduplicate: boolean
-}
 
 export function useAsyncData (defaults?: AsyncDataOptions) {
   const nuxt = useNuxt()
@@ -60,9 +56,9 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       pending: ref(true)
     } as AsyncDataState<T>
 
-    let currentFetch
+    let currentFetch: Promise<UnwrapRef<T>>
 
-    const fetch = (force?: boolean): Promise<void> => {
+    const fetch = (force?: boolean): Promise<UnwrapRef<T>> => {
       if (currentFetch && !force) {
         return currentFetch
       }
@@ -71,6 +67,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
         for (const _key in result) {
           state.data[_key as string] = result[_key]
         }
+        return state.data
       }).finally(() => {
         state.pending.value = false
         currentFetch = null
