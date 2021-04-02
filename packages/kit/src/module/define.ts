@@ -25,7 +25,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
     }
 
     // Stop if no install provided
-    if (typeof mod.install !== 'function') {
+    if (typeof mod.setup !== 'function') {
       return
     }
 
@@ -34,8 +34,8 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
     const userOptions = defu(inlineOptions, nuxt.options[configKey]) as OptionsT
     const resolvedOptions = applyDefaults(mod.defaults as any, userOptions) as OptionsT
 
-    // Call install
-    return nuxtCtx.call(nuxt, () => mod.install.call(null, resolvedOptions, nuxt))
+    // Call setup
+    return nuxtCtx.call(nuxt, () => mod.setup.call(null, resolvedOptions, nuxt))
   }
 
   wrappedModule.meta = mod
