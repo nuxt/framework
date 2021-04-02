@@ -42,17 +42,12 @@ export const defineNuxtComponent: typeof defineComponent =
 
         const res = setup(props, ctx)
 
-        const asyncRes = res && typeof res.then === 'function'
-        if (asyncRes) {
-          promises.push(res)
-        }
-
         if (!promises.length) {
           return res
         }
 
         return Promise.all(promises)
-          .then(r => asyncRes ? r.pop() : undefined)
+          .then(() => res)
           .finally(() => {
             promises.length = 0
             promises = null
