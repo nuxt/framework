@@ -11,12 +11,14 @@ export interface AsyncDataOptions {
   defer?: boolean
 }
 
-export interface AsyncDataResult<T> extends Promise<UnwrapRef<T>> {
+export interface AsyncDataState<T> {
   data: UnwrapRef<T>
   pending: Ref<boolean>
-  refresh: () => Promise<UnwrapRef<T>>
+  refresh: () => Promise<void>
   error?: any
 }
+
+export type AsyncDataResult<T> = AsyncDataState<T> & Promise<AsyncDataState<T>>
 
 export interface AsyncDataFetchOptions {
   deduplicate: boolean
@@ -51,13 +53,15 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       ...options
     }
 
-    const data = useGlobalData(nuxt)
-    const pending = ref(true)
+    const globalData = useGlobalData(nuxt)
 
-    const datastore = ensureReactive(data, key) as UnwrapRef<T>
+    const state = {
+      data: ensureReactive(globalData, key) as UnwrapRef<T>,
+      pending: ref(true)
+    } as AsyncDataState<T>
 
     const fetch = async (): Promise<any> => {
-      pending.value = true
+      state.pending.value = true
       const _handler = handler(nuxt)
 
       if (_handler instanceof Promise) {
@@ -66,21 +70,20 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
         const result = await _handler
 
         for (const _key in result) {
-          datastore[_key as string] = result[_key]
+          state.data[_key as string] = result[_key]
         }
 
-        pending.value = false
-        return datastore
+        state.pending.value = false
       } else {
         // Invalid request
         throw new TypeError('Invalid asyncData handler: ' + _handler)
       }
     }
 
-    let initialFetch: Partial<AsyncDataResult<T>> = Promise.resolve(datastore)
-
     const fetchOnServer = options.server !== false
     const clientOnly = options.server === false
+
+    let initialFetch
 
     // Server side
     if (process.server && fetchOnServer) {
@@ -94,7 +97,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
 
       // 1. Hydration (server: true): no fetch
       if (nuxt.isHydrating && fetchOnServer) {
-        pending.value = false
+        state.pending.value = false
       }
       // 2. Initial load (server: false): fetch on mounted
       if (nuxt.isHydrating && clientOnly) {
@@ -111,17 +114,16 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       }
     }
 
-    // Append utils
-    initialFetch.data = datastore
-    initialFetch.pending = pending
-    initialFetch.refresh = fetch
-
     // Auto enqueue if within nuxt component instance
-    if (vm[NuxtComponentPendingPromises]) {
+    if (initialFetch && vm[NuxtComponentPendingPromises]) {
       vm[NuxtComponentPendingPromises].push(initialFetch)
     }
 
-    return initialFetch as AsyncDataResult<T>
+    const res = Promise.resolve(initialFetch).then(() => state) as AsyncDataResult<T>
+    res.data = state.data
+    res.pending = state.pending
+    res.refresh = fetch
+    return res
   }
 }
 
