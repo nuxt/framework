@@ -34,6 +34,8 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     onUnmounted(() => onBeforeMountCbs.splice(0, onBeforeMountCbs.length))
   }
 
+  nuxt.asyncPromises = nuxt.asyncPromises || {}
+
   return function asyncData<T extends Record<string, any>> (
     key: string,
     handler: AsyncDataFn<T>,
@@ -56,23 +58,21 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       pending: ref(true)
     } as AsyncDataState<T>
 
-    let currentFetch: Promise<UnwrapRef<T>>
-
     const fetch = (force?: boolean): Promise<UnwrapRef<T>> => {
-      if (currentFetch && !force) {
-        return currentFetch
+      if (nuxt.asyncPromises[key] && !force) {
+        return nuxt.asyncPromises[key]
       }
       state.pending.value = true
-      currentFetch = Promise.resolve(handler(nuxt)).then((result) => {
+      nuxt.asyncPromises[key] = Promise.resolve(handler(nuxt)).then((result) => {
         for (const _key in result) {
           state.data[_key] = unref(result[_key])
         }
         return state.data
       }).finally(() => {
         state.pending.value = false
-        currentFetch = null
+        nuxt.asyncPromises[key] = null
       })
-      return currentFetch
+      return nuxt.asyncPromises[key]
     }
 
     const fetchOnServer = options.server !== false
@@ -108,11 +108,11 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     }
 
     // Auto enqueue if within nuxt component instance
-    if (currentFetch && vm[NuxtComponentPendingPromises]) {
-      vm[NuxtComponentPendingPromises].push(currentFetch)
+    if (nuxt.asyncPromises[key] && vm[NuxtComponentPendingPromises]) {
+      vm[NuxtComponentPendingPromises].push(nuxt.asyncPromises[key])
     }
 
-    const res = Promise.resolve(currentFetch).then(() => state) as AsyncDataResult<T>
+    const res = Promise.resolve(nuxt.asyncPromises[key]).then(() => state) as AsyncDataResult<T>
     res.data = state.data
     res.pending = state.pending
     res.fetch = fetch
