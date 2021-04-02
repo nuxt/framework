@@ -17,7 +17,7 @@ export function getCurrentNuxtComponentInstance (): NuxtComponentInternalInstanc
   return vm
 }
 
-export function enqueNuxtComponent (p: Promise<void>) {
+export function enqueueNuxtComponent (p: Promise<void>) {
   const vm = getCurrentNuxtComponentInstance()
   vm[NuxtComponentPendingPromises].push(p)
 }
@@ -42,11 +42,12 @@ export const defineNuxtComponent: typeof defineComponent =
 
         const res = setup(props, ctx)
 
-        if (!promises.length) {
+        if (!promises.length && !(res instanceof Promise)) {
           return res
         }
 
-        return Promise.all(promises)
+        return Promise.resolve(res)
+          .then(() => Promise.all(promises))
           .then(() => res)
           .finally(() => {
             promises.length = 0
