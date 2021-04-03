@@ -1,4 +1,4 @@
-import { ProvidePlugin } from 'webpack'
+import { HotModuleReplacementPlugin, ProvidePlugin } from 'webpack'
 import { WebpackConfigContext, applyPresets, getWebpackConfig } from '../utils/config'
 import { nuxt } from '../presets/nuxt'
 import { node } from '../presets/node'
@@ -12,10 +12,21 @@ export function server (ctx: WebpackConfigContext) {
     node,
     serverStandalone,
     serverPreset,
-    serverPlugins
+    serverPlugins,
+    serverHMR
   ])
 
   return getWebpackConfig(ctx)
+}
+
+function serverHMR (ctx: WebpackConfigContext) {
+  const { config } = ctx
+
+  if (!ctx.isDev) {
+    return
+  }
+
+  config.plugins.push(new HotModuleReplacementPlugin())
 }
 
 function serverPreset (ctx: WebpackConfigContext) {

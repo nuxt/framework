@@ -31,13 +31,6 @@ export default class VueSSRServerPlugin {
 
         const entryAssets = entryInfo.assets.filter(asset => isJS(asset.name))
 
-        if (entryAssets.length > 1) {
-          throw new Error(
-            'Server-side bundle should have one single entry file. ' +
-            'Avoid using CommonsChunkPlugin in the server config.'
-          )
-        }
-
         const [entry] = entryAssets
         if (!entry || typeof entry.name !== 'string') {
           throw new Error(
