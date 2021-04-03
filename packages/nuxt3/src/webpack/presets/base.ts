@@ -31,6 +31,11 @@ function baseConfig (ctx: WebpackConfigContext) {
       ...options.build.optimization as any,
       minimizer: []
     },
+    experiments: {
+      lazyCompilation: {
+        imports: true
+      }
+    },
     mode: ctx.isDev ? 'development' : 'production',
     cache: getCache(ctx),
     output: getOutput(ctx),
