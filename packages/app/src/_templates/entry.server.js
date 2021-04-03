@@ -14,9 +14,5 @@ export default async function createNuxtAppServer (ssrContext = {}) {
 
   await nuxt.hooks.callHook('app:created', app)
 
-  nuxt.hooks.hook('vue-renderer:done',
-    () => nuxt.hooks.callHook('app:rendered', app)
-  )
-
   return app
 }
