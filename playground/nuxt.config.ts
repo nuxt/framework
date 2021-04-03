@@ -1,3 +1,5 @@
-export default {
-  vite: true
-}
+import { defineNuxtConfig } from '@nuxt/kit'
+
+export default defineNuxtConfig({
+  vite: !true
+})

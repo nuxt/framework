@@ -98,7 +98,10 @@ export default {
 
   modulesDir: {
     $default: ['node_modules'],
-    $resolve: (val, get) => val.map(dir => resolve(get('rootDir'), dir))
+    $resolve: (val, get) => [].concat(
+      val.map(dir => resolve(get('rootDir'), dir)),
+      resolve(process.cwd(), 'node_modules')
+    )
   },
 
   dir: {
@@ -112,10 +115,10 @@ export default {
   },
 
   extensions: {
-    $resolve: val => ['js', 'mjs', 'ts', 'tsx', 'vue'].concat(val).filter(Boolean)
+    $resolve: val => ['.js', '.mjs', '.ts', '.tsx', '.vue'].concat(val).filter(Boolean)
   },
 
-  styleExtensions: ['css', 'pcss', 'postcss', 'styl', 'stylus', 'scss', 'sass', 'less'],
+  styleExtensions: ['.css', '.pcss', '.postcss', '.styl', '.stylus', '.scss', '.sass', '.less'],
 
   alias: {
     $resolve: (val, get) => ({

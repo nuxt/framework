@@ -1,5 +1,4 @@
 import TerserWebpackPlugin from 'terser-webpack-plugin'
-import { WebpackPluginInstance } from 'webpack'
 import { reservedVueTags } from '../utils/reserved-tags'
 import { WebpackConfigContext } from '../utils/config'
 
@@ -44,7 +43,7 @@ export function babel (ctx: WebpackConfigContext) {
       ...options.build.terser as any
     })
 
-    config.plugins.push(terser as WebpackPluginInstance)
+    config.plugins.push(terser as any)
   }
 }
 

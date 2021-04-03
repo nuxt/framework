@@ -16,7 +16,7 @@ async function initApp () {
   await nuxt.hooks.callHook('app:created', app)
   await nuxt.hooks.callHook('app:beforeMount', app)
 
-  app.mount('#<%= globals.id %>')
+  app.mount('#__nuxt')
 
   await nuxt.hooks.callHook('app:mounted', app)
   await nextTick()
