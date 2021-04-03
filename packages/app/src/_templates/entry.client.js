@@ -1,14 +1,21 @@
 <%= nuxtOptions.vite ? "import('vite/dynamic-import-polyfill')" : '' %>
-import { createSSRApp, nextTick } from 'vue'
+import { createSSRApp, h, nextTick } from 'vue'
 import { createNuxt, applyPlugins } from '@nuxt/app'
 import plugins from './plugins'
 import clientPlugins from './plugins.client'
 import App from '<%= app.main %>'
 
 async function initApp () {
-  const app = createSSRApp(App)
+  const globalSetups = []
+  const app = createSSRApp({
+    render: () => h(App),
+    setup(_props, context) {
+      globalSetups.forEach(setup => setup(context))
+    }
+  })
 
   const nuxt = createNuxt({ app })
+  nuxt._globalSetups = globalSetups
 
   await applyPlugins(nuxt, plugins)
   await applyPlugins(nuxt, clientPlugins)

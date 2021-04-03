@@ -1,5 +1,5 @@
 import Hookable from 'hookable'
-import type { App } from 'vue'
+import type { App, SetupContext } from 'vue'
 import { defineGetter } from '../utils'
 import { callWithNuxt } from './composables'
 
@@ -14,6 +14,7 @@ export interface Nuxt {
   [key: string]: any
 
   _asyncDataPromises?: Record<string, Promise<any>>
+  _globalSetups?: Array<(context: SetupContext) => void>
 
   ssrContext?: Record<string, any>
   payload: {
