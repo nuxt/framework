@@ -16,6 +16,9 @@ export const useHydration = <T>(key: string, get: () => T, set: (value: T) => vo
   }
 
   if (process.client) {
+    if (nuxt.isHydrating) {
+      set(nuxt.payload[key])
+    }
     nuxt.hooks.hook('app:created', () => {
       set(nuxt.payload[key])
     })
