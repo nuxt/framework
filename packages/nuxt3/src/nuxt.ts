@@ -1,4 +1,3 @@
-import { dirname } from 'path'
 import Hookable from 'hookable'
 import { loadNuxtConfig, LoadNuxtConfigOptions, Nuxt, NuxtOptions, installModule } from '@nuxt/kit'
 import { initNitro } from './nitro'
@@ -52,9 +51,10 @@ export async function loadNuxt (loadOpts: LoadNuxtOptions = {}): Promise<Nuxt> {
   })
 
   // Temp
-  // @ts-ignore
-  options.appDir = dirname(require.resolve('@nuxt/app'))
+  const { appDir } = await import('@nuxt/app/meta')
+  options.appDir = appDir
   options._majorVersion = 3
+  options.alias.vue = require.resolve('vue/dist/vue.esm-bundler.js')
 
   const nuxt = createNuxt(options)
 

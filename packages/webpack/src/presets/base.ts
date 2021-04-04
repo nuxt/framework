@@ -4,7 +4,7 @@ import WebpackBar from 'webpackbar'
 import consola from 'consola'
 import { DefinePlugin, Configuration } from 'webpack'
 import FriendlyErrorsWebpackPlugin from '@nuxt/friendly-errors-webpack-plugin'
-import escapeRegExp from 'lodash/escapeRegExp'
+import { escapeRegExp } from 'lodash'
 import { hasProtocol, joinURL } from 'ufo'
 import WarningIgnorePlugin from '../plugins/warning-ignore'
 import { WebpackConfigContext, applyPresets, fileName } from '../utils/config'
@@ -164,18 +164,22 @@ export function baseTranspile (ctx: WebpackConfigContext) {
 function getCache (ctx: WebpackConfigContext): Configuration['cache'] {
   const { options } = ctx
 
-  if (!options.build.cache) {
+  if (!options.dev) {
     return false
   }
 
   return {
+    name: ctx.name,
     type: 'filesystem',
-    cacheDirectory: resolve('node_modules/.cache/@nuxt/webpack/'),
+    cacheDirectory: resolve(ctx.options.rootDir, 'node_modules/.cache/webpack'),
+    managedPaths: [
+      ...ctx.options.modulesDir
+    ],
     buildDependencies: {
-      config: [...options._nuxtConfigFiles]
-    },
-    ...(options.build.cache as any),
-    name
+      config: [
+        ...ctx.options._nuxtConfigFiles
+      ]
+    }
   }
 }
 
