@@ -17,7 +17,7 @@ export function createWatcher (
   options?: WatchOptions,
   ignore?: Ignore
 ) {
-  const opts = defu(options || {}, {
+  const opts = defu(options!, {
     ignored: [],
     ignoreInitial: true
   })

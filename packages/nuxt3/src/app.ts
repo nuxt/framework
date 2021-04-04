@@ -28,13 +28,13 @@ export async function createApp (
   const app: NuxtApp = defu(options, {
     dir: nuxt.options.srcDir,
     extensions: nuxt.options.extensions,
-    routes: [] as NuxtApp['routes'],
-    plugins: [] as NuxtApp['plugins'],
-    templates: {} as NuxtApp['templates'],
+    routes: [],
+    plugins: [],
+    templates: {},
     pages: {
       dir: 'pages'
     }
-  })
+  } as NuxtApp)
 
   // Resolve app.main
   const resolveOptions = {
