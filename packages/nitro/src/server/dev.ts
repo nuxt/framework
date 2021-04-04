@@ -10,8 +10,8 @@ import { listen, Listener, ListenOptions } from 'listhen'
 import servePlaceholder from 'serve-placeholder'
 import serveStatic from 'serve-static'
 import { resolve } from 'upath'
-
 import type { NitroContext } from '../context'
+import type { ServerMiddleware } from './middleware'
 
 export function createDevServer (nitroContext: NitroContext) {
   // Worker
@@ -127,7 +127,7 @@ export function createDevServer (nitroContext: NitroContext) {
 }
 
 interface DynamicMiddleware {
-  set: (input: Middleware | Array<{ path?: string, handler?: Middleware } & { route?: string, handle?: Middleware }>) => void
+  set: (input: Middleware | ServerMiddleware[]) => void
   middleware: Middleware
 }
 
