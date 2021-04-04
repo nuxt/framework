@@ -15,7 +15,7 @@ package-lock.json
 .cache
 
 # Yarn
-.yarn/cache
+.yarn
 
 # Generated dirs
 dist
