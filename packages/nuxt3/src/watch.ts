@@ -4,13 +4,10 @@ import consola from 'consola'
 
 import Ignore from './utils/ignore'
 
-export interface WatchEvent {
-  event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir'
-  path: string
-}
+export type WatchEvent = 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir'
 
-export type WatchCallback = (event: WatchEvent) => void
-export type WatchFilter = (event: WatchEvent) => boolean | null
+export type WatchCallback = (event: WatchEvent, path: string) => void
+export type WatchFilter = (event: WatchEvent, path: string) => boolean | null
 
 export function createWatcher (
   pattern: string,
@@ -27,20 +24,19 @@ export function createWatcher (
       if (ignore && ignore.ignores(path)) {
         return
       }
-      const _event = { event, path }
-      if (!filter || filter(_event)) {
-        cb(_event)
+      if (!filter || filter(event, path)) {
+        cb(event, path)
       }
     })
   }
 
-  const watch = (pattern: string | RegExp, cb: WatchCallback, events?: WatchEvent['event'][]) =>
-    watchAll(cb, ({ event, path }) => path.match(pattern) && (!events || events.includes(event)))
+  const watch = (pattern: string | RegExp, cb: WatchCallback, events?: WatchEvent[]) =>
+    watchAll(cb, (event, path) => path.match(pattern) && (!events || events.includes(event)))
 
   const debug = (tag: string = '[Watcher]') => {
     consola.log(tag, 'Watching ', pattern)
-    watchAll((e) => {
-      consola.log(tag, e.event, e.path)
+    watchAll((event, path) => {
+      consola.log(tag, event, path)
     })
   }
 

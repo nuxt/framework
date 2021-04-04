@@ -65,7 +65,7 @@ function watch (builder: Builder) {
 
   // Watch user app
   // TODO: handle multiples app dirs
-  const appPattern = `${builder.app.dir}/**/*.{${nuxt.options.extensions.join(',')}}`
+  const appPattern = `${builder.app.dir}/**/*{${nuxt.options.extensions.join(',')}}`
   const appWatcher = createWatcher(appPattern, { ...options, cwd: builder.app.dir }, ignore)
   // appWatcher.debug('srcDir')
   const refreshTemplates = debounce(() => generate(builder), 100)
@@ -77,7 +77,7 @@ function watch (builder: Builder) {
   appWatcher.watch(/^plugins/, refreshTemplates, ['add', 'unlink'])
 
   // Shared Watcher
-  const watchHook: WatchCallback = ({ event, path }) => builder.nuxt.callHook('builder:watch', event, path)
+  const watchHook: WatchCallback = (event, path) => builder.nuxt.callHook('builder:watch', event, path)
   const watchHookDebounced = debounce(watchHook, 100)
   appWatcher.watchAll(watchHookDebounced)
   nuxtAppWatcher.watchAll(watchHookDebounced)
