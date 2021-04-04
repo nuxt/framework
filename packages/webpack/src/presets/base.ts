@@ -33,8 +33,8 @@ function baseConfig (ctx: WebpackConfigContext) {
     },
     experiments: {
       lazyCompilation: {
-        imports: false,
-        entries: true
+        entries: false,
+        imports: true
       }
     },
     mode: ctx.isDev ? 'development' : 'production',
