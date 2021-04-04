@@ -1,8 +1,7 @@
-import type { IncomingMessage, ServerResponse } from 'http'
 import { Worker } from 'worker_threads'
 
 import chokidar, { FSWatcher } from 'chokidar'
-import type { HandleFunction, NextFunction, Server } from 'connect'
+import type { Server } from 'connect'
 import debounce from 'debounce'
 import { stat } from 'fs-extra'
 import { createApp, Middleware } from 'h3'
@@ -82,7 +81,7 @@ export function createDevServer (nitroContext: NitroContext) {
 
   // Listen
   let listeners: Listener[] = []
-  const _listen = async (port: string | number, opts?: Partial<ListenOptions>) => {
+  const _listen = async (port: ListenOptions['port'], opts?: Partial<ListenOptions>) => {
     const listener = await listen(app, { port, ...opts })
     listeners.push(listener)
     return listener
@@ -127,10 +126,15 @@ export function createDevServer (nitroContext: NitroContext) {
   }
 }
 
-function createDynamicMiddleware () {
+interface DynamicMiddlewareResponse {
+  set: (input: Middleware | Array<{ path?: string, handler?: Middleware } & { route?: string, handle?: Middleware }>) => void
+  middleware: Middleware
+}
+
+function createDynamicMiddleware (): DynamicMiddlewareResponse {
   let middleware: Middleware
   return {
-    set: (input: Middleware | Array<{ path?: string, route?: string, handler?: HandleFunction, handle?: HandleFunction }>) => {
+    set: (input) => {
       if (!Array.isArray(input)) {
         middleware = input
         return
@@ -141,7 +145,7 @@ function createDynamicMiddleware () {
       }
       middleware = app
     },
-    middleware: (req: IncomingMessage, res: ServerResponse, next: NextFunction) =>
+    middleware: (req, res, next) =>
       middleware ? middleware(req, res, next) : next()
   }
 }
