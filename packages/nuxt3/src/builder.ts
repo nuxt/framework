@@ -9,7 +9,7 @@ import {
   scanTemplates,
   NuxtTemplate
 } from './template'
-import { createWatcher } from './watch'
+import { createWatcher, WatchCallback, WatchEvent } from './watch'
 import { createApp, NuxtApp } from './app'
 import Ignore from './utils/ignore'
 
@@ -20,7 +20,7 @@ export class Builder {
   templates: NuxtTemplate[]
   app: NuxtApp
 
-  constructor (nuxt) {
+  constructor (nuxt: Nuxt) {
     this.nuxt = nuxt
     this.ignore = new Ignore({
       rootDir: nuxt.options.srcDir,
@@ -77,7 +77,7 @@ function watch (builder: Builder) {
   appWatcher.watch(/^plugins/, refreshTemplates, ['add', 'unlink'])
 
   // Shared Watcher
-  const watchHookDebounced = debounce((event, file) => builder.nuxt.callHook('builder:watch', event, file), 100)
+  const watchHookDebounced = debounce((event: WatchEvent, file: string) => builder.nuxt.callHook('builder:watch', event, file), 100) as any as WatchCallback
   appWatcher.watchAll(watchHookDebounced)
   nuxtAppWatcher.watchAll(watchHookDebounced)
 }

@@ -28,9 +28,9 @@ export async function createApp (
   const app: NuxtApp = defu(options, {
     dir: nuxt.options.srcDir,
     extensions: nuxt.options.extensions,
-    routes: [],
-    plugins: [],
-    templates: {},
+    routes: [] as NuxtApp['routes'],
+    plugins: [] as NuxtApp['plugins'],
+    templates: {} as NuxtApp['templates'],
     pages: {
       dir: 'pages'
     }
