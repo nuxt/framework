@@ -1,26 +1,26 @@
 {
-  "name": "@nuxt/nu",
-  "version": "0.1.0",
+  "name": "nuxt-cli",
+  "version": "0.1.1",
   "repository": "nuxt/framework",
   "license": "MIT",
   "main": "./dist/index.js",
   "bin": {
-    "nu": "./bin/nu.js"
+    "nu": "./bin/nuxt.js",
+    "nuxt": "./bin/nuxt.js",
+    "nuxt-cli": "./bin/nuxt.js"
   },
   "files": [
     "bin",
     "dist"
   ],
-  "scripts": {
-    "build": "jiti ../../scripts/build .",
-    "prepublishOnly": "yarn build"
-  },
   "build": {
     "externals": [
       "nuxt3"
     ],
     "entries": {
-      "index": { "format": "cjs" }
+      "index": {
+        "format": "cjs"
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/app",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repository": "nuxt/framework",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -9,10 +9,6 @@
     "dist",
     "meta.js"
   ],
-  "scripts": {
-    "build": "jiti ../../scripts/build .",
-    "prepublishOnly": "yarn build"
-  },
   "dependencies": {
     "@vueuse/head": "^0.5.1",
     "hookable": "^4.4.1",
