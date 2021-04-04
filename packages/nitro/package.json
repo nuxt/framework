@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/nitro",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "main": "dist/index.js",
   "files": [
@@ -83,5 +83,12 @@
     "vue": "3.0.11",
     "vue-bundle-renderer": "^0.2.3",
     "vue-server-renderer": "^2.6.12"
+  },
+  "devDependencies": {
+    "@types/debounce": "^1.2.0",
+    "@types/fs-extra": "^9.0.10",
+    "@types/http-proxy": "^1.17.5",
+    "@types/node-fetch": "^2.5.9",
+    "@types/serve-static": "^1.13.9"
   }
 }
