@@ -77,7 +77,8 @@ function watch (builder: Builder) {
   appWatcher.watch(/^plugins/, refreshTemplates, ['add', 'unlink'])
 
   // Shared Watcher
-  const watchHookDebounced = debounce((event: WatchEvent, file: string) => builder.nuxt.callHook('builder:watch', event, file), 100) as any as WatchCallback
+  const watchHook: WatchCallback = ({ event, path }) => builder.nuxt.callHook('builder:watch', event, path)
+  const watchHookDebounced = debounce(watchHook, 100)
   appWatcher.watchAll(watchHookDebounced)
   nuxtAppWatcher.watchAll(watchHookDebounced)
 }

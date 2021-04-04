@@ -34,7 +34,7 @@ export function createWatcher (
     })
   }
 
-  const watch = (pattern: string | RegExp, cb: WatchCallback, events?: string[]) =>
+  const watch = (pattern: string | RegExp, cb: WatchCallback, events?: WatchEvent['event'][]) =>
     watchAll(cb, ({ event, path }) => path.match(pattern) && (!events || events.includes(event)))
 
   const debug = (tag: string = '[Watcher]') => {
