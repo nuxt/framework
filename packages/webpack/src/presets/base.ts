@@ -170,18 +170,14 @@ export function baseTranspile (ctx: WebpackConfigContext) {
 function getCache (ctx: WebpackConfigContext): Configuration['cache'] {
   const { options } = ctx
 
-  if (!options.build.cache) {
-    return false
-  }
+  // if (!options.build.cache) {
+  //   return false
+  // }
 
   return {
     type: 'filesystem',
-    cacheDirectory: resolve('node_modules/.cache/@nuxt/webpack/'),
-    buildDependencies: {
-      config: [...options._nuxtConfigFiles]
-    },
-    ...(options.build.cache as any),
-    name
+    name: ctx.name,
+    ...(options.build.cache as any)
   }
 }
 
