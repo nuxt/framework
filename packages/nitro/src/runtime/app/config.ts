@@ -17,3 +17,11 @@ export default {
   public: runtimeConfig.public,
   private: $config
 }
+
+declare global {
+  namespace NodeJS {
+    interface Global {
+      $config: typeof runtimeConfig['public'] & typeof runtimeConfig['private'] // = any
+    }
+  }
+}
