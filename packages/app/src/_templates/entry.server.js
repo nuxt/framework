@@ -14,5 +14,10 @@ export default async function createNuxtAppServer (ssrContext = {}) {
 
   await nuxt.hooks.callHook('app:created', app)
 
+  // Call render hook on Nuxt 2
+  nuxt.hooks.hook('render:routeContext',
+    () => nuxt.hooks.callHook('app:rendered', app)
+  )
+
   return app
 }
