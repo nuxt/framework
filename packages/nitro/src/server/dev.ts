@@ -126,12 +126,12 @@ export function createDevServer (nitroContext: NitroContext) {
   }
 }
 
-interface DynamicMiddlewareResponse {
+interface DynamicMiddleware {
   set: (input: Middleware | Array<{ path?: string, handler?: Middleware } & { route?: string, handle?: Middleware }>) => void
   middleware: Middleware
 }
 
-function createDynamicMiddleware (): DynamicMiddlewareResponse {
+function createDynamicMiddleware (): DynamicMiddleware {
   let middleware: Middleware
   return {
     set: (input) => {
