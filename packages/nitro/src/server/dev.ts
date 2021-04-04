@@ -1,21 +1,25 @@
+import type { IncomingMessage, ServerResponse } from 'http'
 import { Worker } from 'worker_threads'
-import { createApp } from 'h3'
-import { resolve } from 'upath'
+
+import chokidar, { FSWatcher } from 'chokidar'
+import type { HandleFunction, NextFunction, Server } from 'connect'
 import debounce from 'debounce'
-import chokidar from 'chokidar'
-import { listen, Listener } from 'listhen'
-import serveStatic from 'serve-static'
-import servePlaceholder from 'serve-placeholder'
-import { createProxy } from 'http-proxy'
 import { stat } from 'fs-extra'
+import { createApp, Middleware } from 'h3'
+import { createProxy } from 'http-proxy'
+import { listen, Listener, ListenOptions } from 'listhen'
+import servePlaceholder from 'serve-placeholder'
+import serveStatic from 'serve-static'
+import { resolve } from 'upath'
+
 import type { NitroContext } from '../context'
 
 export function createDevServer (nitroContext: NitroContext) {
   // Worker
   const workerEntry = resolve(nitroContext.output.dir, nitroContext.output.serverDir, 'index.js')
-  let pendingWorker: Worker
+  let pendingWorker: Worker | null
   let activeWorker: Worker
-  let workerAddress: string
+  let workerAddress: string | null
   async function reload () {
     if (pendingWorker) {
       await pendingWorker.terminate()
@@ -68,7 +72,7 @@ export function createDevServer (nitroContext: NitroContext) {
   const proxy = createProxy()
   app.use((req, res) => {
     if (workerAddress) {
-      proxy.web(req, res, { target: workerAddress }, (_err) => {
+      proxy.web(req, res, { target: workerAddress }, (_err: unknown) => {
         // console.error('[proxy]', err)
       })
     } else {
@@ -78,7 +82,7 @@ export function createDevServer (nitroContext: NitroContext) {
 
   // Listen
   let listeners: Listener[] = []
-  const _listen = async (port, opts?) => {
+  const _listen = async (port: string | number, opts?: Partial<ListenOptions>) => {
     const listener = await listen(app, { port, ...opts })
     listeners.push(listener)
     return listener
@@ -87,7 +91,7 @@ export function createDevServer (nitroContext: NitroContext) {
   // Watch for dist and reload worker
   const pattern = '**/*.{js,json}'
   const events = ['add', 'change']
-  let watcher
+  let watcher: FSWatcher
   function watch () {
     if (watcher) { return }
     const dReload = debounce(() => reload().catch(console.warn), 200, true)
@@ -124,20 +128,20 @@ export function createDevServer (nitroContext: NitroContext) {
 }
 
 function createDynamicMiddleware () {
-  let middleware
+  let middleware: Middleware
   return {
-    set: (input) => {
+    set: (input: Middleware | Array<{ path?: string, route?: string, handler?: HandleFunction, handle?: HandleFunction }>) => {
       if (!Array.isArray(input)) {
         middleware = input
         return
       }
-      const app = require('connect')()
+      const app: Server = require('connect')()
       for (const m of input) {
-        app.use(m.path || m.route || '/', m.handler || m.handle)
+        app.use(m.path || m.route || '/', m.handler || m.handle!)
       }
       middleware = app
     },
-    middleware: (req, res, next) =>
+    middleware: (req: IncomingMessage, res: ServerResponse, next: NextFunction) =>
       middleware ? middleware(req, res, next) : next()
   }
 }
