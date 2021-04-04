@@ -10,9 +10,7 @@ export const useHydration = <T>(key: string, get: () => T, set: (value: T) => vo
   const nuxt = useNuxt()
 
   if (process.server) {
-    nuxt.hooks.hook('app:rendered', () => {
-      nuxt.payload[key] = get()
-    })
+    nuxt.payload[key] = get()
   }
 
   if (process.client && nuxt.isHydrating) {
