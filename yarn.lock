@@ -2479,6 +2479,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/mri@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@types/mri@npm:1.1.0"
+  checksum: 6e7ef55196c46115bb9b31a86751a9f14056459364540328419fcecb35f5379ec47ad35e73c957b7cd2fd7b087edd383b58a6734dce7a9d2b3296b03aa971a53
+  languageName: node
+  linkType: hard
+
 "@types/node-fetch@npm:^2.5.9":
   version: 2.5.9
   resolution: "@types/node-fetch@npm:2.5.9"
@@ -5438,6 +5445,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"define-lazy-prop@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "define-lazy-prop@npm:2.0.0"
+  checksum: aefea62111b83127cdbc030a230e06a1c718049f737ef72892b036aeaa882fcbd801f311145fbbb66df0c34b035dfe745eab1ad76c52e633427ca6f84eca38ef
+  languageName: node
+  linkType: hard
+
 "define-properties@npm:^1.1.3":
   version: 1.1.3
   resolution: "define-properties@npm:1.1.3"
@@ -7966,6 +7980,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"is-docker@npm:^2.1.1":
+  version: 2.2.0
+  resolution: "is-docker@npm:2.2.0"
+  bin:
+    is-docker: cli.js
+  checksum: 18deebbc7ffa9c60abdd6797cd840cfabe4384f19c54d810aad68cbe644227056a83f9fdc7d8446e1654e95f39cb70ccda4fca59a3a8663e29bc931157ad32de
+  languageName: node
+  linkType: hard
+
 "is-extendable@npm:^0.1.0, is-extendable@npm:^0.1.1":
   version: 0.1.1
   resolution: "is-extendable@npm:0.1.1"
@@ -9168,6 +9191,20 @@ __metadata:
     selfsigned: ^1.10.8
     ufo: ^0.6.6
   checksum: ce3d3a9c46afd77282364af0eb5ec584a72e40fa27ae111393a9c8110192e5bf5efd1afb941433d4907dd2f6d2f3499d2311280ec3271c9091b2ac7c276bc79a
+  languageName: node
+  linkType: hard
+
+"listhen@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "listhen@npm:0.2.3"
+  dependencies:
+    clipboardy: ^2.3.0
+    colorette: ^1.2.2
+    get-port-please: ^2.1.0
+    http-shutdown: ^1.2.2
+    open: ^8.0.5
+    selfsigned: ^1.10.8
+  checksum: 4b028e5b0b629337376239664540b2cdedce0aa905ed26dd1705153d7e7ab7fbc67052a9bbe9321fedb559314cb0abb9767e90257673388cdba6654fe753aa35
   languageName: node
   linkType: hard
 
@@ -10453,6 +10490,12 @@ __metadata:
 "nuxt-cli@^0.1.1, nuxt-cli@workspace:packages/cli":
   version: 0.0.0-use.local
   resolution: "nuxt-cli@workspace:packages/cli"
+  dependencies:
+    "@types/mri": ^1.1.0
+    colorette: ^1.2.2
+    listhen: ^0.2.3
+    mri: ^1.1.6
+    v8-compile-cache: ^2.3.0
   bin:
     nu: ./bin/nuxt.js
     nuxt: ./bin/nuxt.js
@@ -10662,6 +10705,17 @@ __metadata:
     is-docker: ^2.0.0
     is-wsl: ^2.1.1
   checksum: 07545fa768e5fbc25c6f53c6f17465f1b7ee663a494f87608d99a7b3227c83d2d2e0f0e5ecb70325b4ddef97dcd02d206f9afe3f8d6bb3d6612db9ca310ed4eb
+  languageName: node
+  linkType: hard
+
+"open@npm:^8.0.5":
+  version: 8.0.5
+  resolution: "open@npm:8.0.5"
+  dependencies:
+    define-lazy-prop: ^2.0.0
+    is-docker: ^2.1.1
+    is-wsl: ^2.2.0
+  checksum: aecfd0b0edd37f7a58f3e71a32726ecbc91e6c19c475896c80085e38a3c9eb4a11d3311226ac2a4f33ff51ff42c1ef39077cff0b50f74da86c2c3ffcf1f0b97f
   languageName: node
   linkType: hard
 
@@ -14341,7 +14395,7 @@ typescript@^4.2.3:
   languageName: node
   linkType: hard
 
-"v8-compile-cache@npm:^2.0.3":
+"v8-compile-cache@npm:^2.0.3, v8-compile-cache@npm:^2.3.0":
   version: 2.3.0
   resolution: "v8-compile-cache@npm:2.3.0"
   checksum: b56f83d9ff14187562badc4955dadeef53ff3abde478ce60759539dd8d5472a91fce9db6083fc2450e54cef6f2110c1a28d8c12162dbf575a6cfcb846986904b

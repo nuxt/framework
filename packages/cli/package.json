@@ -22,5 +22,12 @@
         "format": "cjs"
       }
     }
+  },
+  "devDependencies": {
+    "@types/mri": "^1.1.0",
+    "colorette": "^1.2.2",
+    "listhen": "^0.2.3",
+    "mri": "^1.1.6",
+    "v8-compile-cache": "^2.3.0"
   }
 }
