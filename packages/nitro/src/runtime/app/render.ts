@@ -41,6 +41,8 @@ export async function renderMiddleware (req, res) {
     ...(req.context || {})
   }
   const rendered = await renderer.renderToString(ssrContext)
+  // TODO: implement nuxt2 runtime hooks
+  await (ssrContext.hooks /* nuxt 2 */ || ssrContext.nuxt.hooks /* nuxt 3 */)?.callHook('app:rendered')
   // TODO: nuxt3 should not reuse `nuxt` property for different purpose!
   const payload = ssrContext.payload /* nuxt 3 */ || ssrContext.nuxt /* nuxt 2 */
 
