@@ -32,6 +32,8 @@ interface BuildContext {
 }
 
 export async function build (rootDir: string, stub: boolean) {
+  process.chdir(rootDir)
+
   const ctx: BuildContext = {
     rootDir,
     entries: [],
