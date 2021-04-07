@@ -14,6 +14,8 @@ import { mkdist } from 'mkdist'
 import prettyBytes from 'pretty-bytes'
 import execa from 'execa'
 import dts from 'rollup-plugin-dts'
+import { resolveSchema, generateTypes, generateMarkdown } from 'untyped'
+import { pascalCase } from 'scule'
 
 interface BuildEntry {
   name: string
@@ -96,6 +98,11 @@ export async function build (rootDir: string, stub: boolean) {
 `)
   }
 
+  // untyped
+  if (buildOptions.untyped) {
+    await genTypes(buildOptions.untyped, ctx)
+  }
+
   const rollupOptions = getRollupOptions(ctx)
   const buildEntries: { path: string, bytes?: number, exports?: string[], chunks?: string[] }[] = []
   const usedImports = new Set<string>()
@@ -124,6 +131,7 @@ export async function build (rootDir: string, stub: boolean) {
     await typesBuild.write(outputOptions)
   }
 
+  // mkdist
   for (const entry of ctx.entries.filter(e => !e.bundle)) {
     const { writtenFiles } = await mkdist({
       rootDir: ctx.rootDir,
@@ -177,6 +185,18 @@ export async function build (rootDir: string, stub: boolean) {
   }
 
   consola.log('')
+}
+
+async function genTypes ({ src, dst, name, defaults = {} }, { rootDir }) {
+  const srcConfig = await import(resolve(rootDir, src)).then(r => r.default)
+  const genDir = resolve(rootDir, dst)
+  const schema = resolveSchema(srcConfig, defaults)
+
+  await mkdir(genDir).catch(() => { })
+  await writeFile(resolve(genDir, `${name}.md`), generateMarkdown(schema))
+  await writeFile(resolve(genDir, `${name}.schema.json`), JSON.stringify(schema, null, 2))
+  await writeFile(resolve(genDir, `${name}.defaults.json`), JSON.stringify(defaults, null, 2))
+  await writeFile(resolve(genDir, `${name}.d.ts`), 'export ' + generateTypes(schema, pascalCase(name + '-schema')))
 }
 
 function resolveEntry (input: string | [string, Partial<BuildEntry>] | Partial<BuildEntry>): BuildEntry {

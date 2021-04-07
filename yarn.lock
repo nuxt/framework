@@ -1610,7 +1610,9 @@ __metadata:
     rollup: ^2.44.0
     rollup-plugin-dts: ^3.0.1
     rollup-plugin-esbuild: ^3.0.2
+    scule: ^0.1.1
     typescript: ^4.2.3
+    untyped: ^0.2.4
   bin:
     pkg: ./bin/pkg.js
   languageName: unknown

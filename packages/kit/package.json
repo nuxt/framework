@@ -24,7 +24,11 @@
     "upath": "^2.0.1"
   },
   "build": {
-    "prebuild": "jiti ./scripts/gentypes",
+    "untyped": {
+      "src": "src/config/schema",
+      "dst": ".gen",
+      "name": "config"
+    },
     "entries": {
       "index": {
         "format": "cjs"
