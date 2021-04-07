@@ -9,12 +9,13 @@
     "build": "jiti ./scripts/build-all",
     "stub": "yarn build --stub",
     "gentypes": "yarn workspace @nuxt/kit jiti ./scripts/gentypes",
-    "release": "yarn build && lerna publish -m \"chore: release\"",
+    "release": "yarn build && lerna publish -m \"chore: release\" && yarn stub",
     "nu": "./scripts/nu",
     "play": "./scripts/nu dev playground",
     "lint": "yarn gentypes && eslint --ext .vue,.ts,.js .",
     "test": "yarn lint",
-    "postinstall": "yarn stub"
+    "postinstall": "yarn stub",
+    "version": "yarn && git add yarn.lock"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^6.0.0",
