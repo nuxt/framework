@@ -9,18 +9,12 @@
     "nuxt": "./bin/nuxt.js",
     "nuxt-cli": "./bin/nuxt.js"
   },
+  "scripts": {
+    "build": "unbuild",
+    "prepublishOnly": "unbuild"
+  },
   "files": [
     "bin",
     "dist"
-  ],
-  "build": {
-    "externals": [
-      "nuxt3"
-    ],
-    "entries": {
-      "index": {
-        "format": "cjs"
-      }
-    }
-  }
+  ]
 }

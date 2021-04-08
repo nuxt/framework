@@ -1591,33 +1591,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/build-scripts@workspace:scripts":
-  version: 0.0.0-use.local
-  resolution: "@nuxt/build-scripts@workspace:scripts"
-  dependencies:
-    "@rollup/plugin-alias": ^3.1.2
-    "@rollup/plugin-commonjs": ^18.0.0
-    "@rollup/plugin-node-resolve": ^11.2.1
-    chalk: ^4.1.0
-    defu: ^3.2.2
-    esbuild: ^0.10.0
-    execa: ^5.0.0
-    jiti: ^1.6.4
-    mkdist: ^0.1.3
-    mri: ^1.1.6
-    pretty-bytes: ^5.6.0
-    rimraf: ^3.0.2
-    rollup: ^2.44.0
-    rollup-plugin-dts: ^3.0.1
-    rollup-plugin-esbuild: ^3.0.2
-    scule: ^0.1.1
-    typescript: ^4.2.3
-    untyped: ^0.2.4
-  bin:
-    pkg: ./bin/pkg.js
-  languageName: unknown
-  linkType: soft
-
 "@nuxt/devalue@npm:^1.2.5":
   version: 1.2.5
   resolution: "@nuxt/devalue@npm:1.2.5"
@@ -9552,6 +9525,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mkdist@npm:^0.1.4":
+  version: 0.1.4
+  resolution: "mkdist@npm:0.1.4"
+  dependencies:
+    defu: ^3.2.2
+    esbuild: ^0.8.56
+    fs-extra: ^9.1.0
+    globby: ^11.0.2
+    jiti: ^1.6.3
+    mri: ^1.1.6
+    upath: ^2.0.1
+    vue-template-compiler: ^2.6.12
+  bin:
+    mkdist: dist/cli.js
+  checksum: 711e1152a8e1ef59d08d2c6eb036227a19d27f73e390980e811013224490956496fa85fb9b2fc504b7c638e9ebbb8669fedfd589b463ec0a4350c1287013d35b
+  languageName: node
+  linkType: hard
+
 "modify-values@npm:^1.0.0":
   version: 1.0.1
   resolution: "modify-values@npm:1.0.1"
@@ -10059,7 +10050,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxt-framework@workspace:."
   dependencies:
-    "@nuxt/build-scripts": "workspace:scripts"
     "@nuxtjs/eslint-config": ^6.0.0
     "@nuxtjs/eslint-config-typescript": ^6.0.0
     "@types/jest": ^26.0.22
@@ -10071,6 +10061,7 @@ __metadata:
     mkdist: ^0.1.3
     ts-jest: ^26.5.4
     typescript: ^4.2.3
+    unbuild: ^0.1.1
   languageName: unknown
   linkType: soft
 
@@ -13620,6 +13611,34 @@ typescript@^4.2.3:
     has-symbols: ^1.0.2
     which-boxed-primitive: ^1.0.2
   checksum: aa944f1ecfec638b841b331383d0b80edc40855271ecc213c1aa736096d8d0b39ba25b64d102f56c597521db9cd3f0ddbcb97a0f760c240ab584e94e457518c1
+  languageName: node
+  linkType: hard
+
+"unbuild@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "unbuild@npm:0.1.1"
+  dependencies:
+    "@rollup/plugin-alias": ^3.1.2
+    "@rollup/plugin-commonjs": ^18.0.0
+    "@rollup/plugin-node-resolve": ^11.2.1
+    chalk: ^4.1.0
+    consola: ^2.15.3
+    defu: ^3.2.2
+    esbuild: ^0.10.0
+    jiti: ^1.6.4
+    mkdist: ^0.1.4
+    mri: ^1.1.6
+    pretty-bytes: ^5.6.0
+    rimraf: ^3.0.2
+    rollup: ^2.44.0
+    rollup-plugin-dts: ^3.0.1
+    rollup-plugin-esbuild: ^3.0.2
+    scule: ^0.1.1
+    untyped: ^0.2.4
+    upath: ^2.0.1
+  bin:
+    unbuild: bin/unbuild.js
+  checksum: 735a87fb16286283d3b3aef2c226911e227da448c7e2a47acbd64bd8e06fe7ecf1c5dbf9a26279c43f222690c96d1b35d7ed698d5fee6a30fcbb010fa66a629d
   languageName: node
   linkType: hard
 

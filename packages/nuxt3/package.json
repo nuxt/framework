@@ -7,18 +7,9 @@
   "files": [
     "dist"
   ],
-  "build": {
-    "entries": {
-      "index": {
-        "format": "cjs"
-      }
-    },
-    "dependencies": [
-      "@nuxt/app",
-      "@nuxt/vite-builder",
-      "@nuxt/webpack-builder",
-      "nuxt-cli"
-    ]
+  "scripts": {
+    "build": "unbuild",
+    "prepublishOnly": "unbuild"
   },
   "dependencies": {
     "@nuxt/app": "^0.2.1",

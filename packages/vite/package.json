@@ -7,17 +7,9 @@
   "files": [
     "dist"
   ],
-  "build": {
-    "entries": {
-      "index": {
-        "format": "cjs"
-      }
-    },
-    "dependencies": [
-      "@nuxt/kit",
-      "@vue/compiler-sfc",
-      "vue"
-    ]
+  "scripts": {
+    "build": "unbuild",
+    "prepublishOnly": "unbuild"
   },
   "dependencies": {
     "@nuxt/kit": "^0.2.0",

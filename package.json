@@ -6,19 +6,16 @@
     "packages/*"
   ],
   "scripts": {
-    "link": "lerna link",
-    "build": "pkg --all",
-    "stub": "pkg --all --stub",
-    "gentypes": "yarn workspace @nuxt/kit jiti ./scripts/gentypes",
+    "build": "FORCE_COLOR=1 lerna run build --stream --no-prefix",
+    "stub": "lerna run build -- --stub",
     "release": "yarn build && lerna publish -m \"chore: release\" && yarn stub",
     "nu": "./node_modules/.bin/nu",
     "play": "yarn run nu dev playground",
     "lint": "yarn gentypes && eslint --ext .vue,.ts,.js .",
     "test": "yarn lint",
-    "postinstall": "yarn stub"
+    "postinstall2": "yarn stub"
   },
   "devDependencies": {
-    "@nuxt/build-scripts": "workspace:scripts",
     "@nuxtjs/eslint-config": "^6.0.0",
     "@nuxtjs/eslint-config-typescript": "^6.0.0",
     "@types/jest": "^26.0.22",
@@ -29,6 +26,7 @@
     "lerna": "^4.0.0",
     "mkdist": "^0.1.3",
     "ts-jest": "^26.5.4",
-    "typescript": "^4.2.3"
+    "typescript": "^4.2.3",
+    "unbuild": "^0.1.1"
   }
 }

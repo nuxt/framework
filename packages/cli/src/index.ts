@@ -13,7 +13,8 @@ async function _main () {
   const isDev = cmd === 'dev'
   const rootDir = resolve(process.cwd(), args[1] || '.')
 
-  const { loadNuxt, build } = await import('nuxt3')
+  // @ts-ignore
+  const { loadNuxt, build } = require('nuxt3')
 
   const nuxt = await loadNuxt({
     for: isDev ? 'dev' : 'build',

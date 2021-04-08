@@ -1,5 +1,6 @@
 import Hookable from 'hookable'
 import { loadNuxtConfig, LoadNuxtConfigOptions, Nuxt, NuxtOptions, installModule } from '@nuxt/kit'
+import { NuxtConfig } from '../../kit/src'
 import { initNitro } from './nitro'
 
 export function createNuxt (options: NuxtOptions): Nuxt {
@@ -39,6 +40,8 @@ async function initNuxt (nuxt: Nuxt) {
 
 export interface LoadNuxtOptions extends LoadNuxtConfigOptions {
   for?: 'dev' | 'build'
+  rootDir?: string
+  config?: NuxtConfig
 }
 
 export async function loadNuxt (loadOpts: LoadNuxtOptions = {}): Promise<Nuxt> {

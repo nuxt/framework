@@ -8,6 +8,10 @@
   "files": [
     "dist"
   ],
+  "scripts": {
+    "build": "unbuild",
+    "prepublishOnly": "unbuild"
+  },
   "dependencies": {
     "consola": "^2.15.3",
     "create-require": "^1.1.1",
@@ -22,17 +26,5 @@
     "unctx": "^0.0.3",
     "untyped": "^0.2.4",
     "upath": "^2.0.1"
-  },
-  "build": {
-    "untyped": {
-      "src": "src/config/schema",
-      "dst": ".gen",
-      "name": "config"
-    },
-    "entries": {
-      "index": {
-        "format": "cjs"
-      }
-    }
   }
 }
