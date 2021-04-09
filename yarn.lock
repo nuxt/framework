@@ -5616,6 +5616,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"esbuild@npm:^0.11.6":
+  version: 0.11.6
+  resolution: "esbuild@npm:0.11.6"
+  bin:
+    esbuild: bin/esbuild
+  checksum: 8ce783c9b06dea2fb742ad0e8b05f1a8cf5cfaa474123db2a166beedfc24a78ced42a9d7b7bc400438cbb403439dd8246e1d38fe43441610a0d633b905e8d94b
+  languageName: node
+  linkType: hard
+
 "esbuild@npm:^0.8.56":
   version: 0.8.57
   resolution: "esbuild@npm:0.8.57"
@@ -8450,6 +8459,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jiti@npm:^1.9.1":
+  version: 1.9.1
+  resolution: "jiti@npm:1.9.1"
+  bin:
+    jiti: bin/jiti.js
+  checksum: 8d1264e8a031d65dead645299472321ed39cf1a5eedf4992f06c2892ede4acad6d876ea37b5643de96d6a94d8e33c9c12caf158243a747093647b040ef00ab4c
+  languageName: node
+  linkType: hard
+
 "joycon@npm:^3.0.0, joycon@npm:^3.0.1":
   version: 3.0.1
   resolution: "joycon@npm:3.0.1"
@@ -9542,9 +9560,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mkdist@npm:^0.1.4":
-  version: 0.1.4
-  resolution: "mkdist@npm:0.1.4"
+"mkdist@npm:^0.1.5":
+  version: 0.1.5
+  resolution: "mkdist@npm:0.1.5"
   dependencies:
     defu: ^3.2.2
     esbuild: ^0.8.56
@@ -9554,9 +9572,14 @@ __metadata:
     mri: ^1.1.6
     upath: ^2.0.1
     vue-template-compiler: ^2.6.12
+  peerDependencies:
+    typescript: ">=3.7"
+  peerDependenciesMeta:
+    typescript:
+      optional: true
   bin:
     mkdist: dist/cli.js
-  checksum: 711e1152a8e1ef59d08d2c6eb036227a19d27f73e390980e811013224490956496fa85fb9b2fc504b7c638e9ebbb8669fedfd589b463ec0a4350c1287013d35b
+  checksum: 518a92be2dd71b25e268309cc2b7ef0c1bd79b3d098a804c26df3f22f3fd426c92e0dd7c4365884434722356d0c821f26df1688aca265a95e91ca0a5a2dd3d74
   languageName: node
   linkType: hard
 
@@ -10078,7 +10101,7 @@ __metadata:
     mkdist: ^0.1.3
     ts-jest: ^26.5.4
     typescript: ^4.2.3
-    unbuild: ^0.1.1
+    unbuild: ^0.1.5
   languageName: unknown
   linkType: soft
 
@@ -13631,9 +13654,9 @@ typescript@^4.2.3:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "unbuild@npm:0.1.1"
+"unbuild@npm:^0.1.5":
+  version: 0.1.5
+  resolution: "unbuild@npm:0.1.5"
   dependencies:
     "@rollup/plugin-alias": ^3.1.2
     "@rollup/plugin-commonjs": ^18.0.0
@@ -13641,9 +13664,10 @@ typescript@^4.2.3:
     chalk: ^4.1.0
     consola: ^2.15.3
     defu: ^3.2.2
-    esbuild: ^0.10.0
-    jiti: ^1.6.4
-    mkdist: ^0.1.4
+    esbuild: ^0.11.6
+    jiti: ^1.9.1
+    mkdirp: ^1.0.4
+    mkdist: ^0.1.5
     mri: ^1.1.6
     pretty-bytes: ^5.6.0
     rimraf: ^3.0.2
@@ -13651,11 +13675,11 @@ typescript@^4.2.3:
     rollup-plugin-dts: ^3.0.1
     rollup-plugin-esbuild: ^3.0.2
     scule: ^0.1.1
-    untyped: ^0.2.4
+    untyped: ^0.2.5
     upath: ^2.0.1
   bin:
     unbuild: bin/unbuild.js
-  checksum: 735a87fb16286283d3b3aef2c226911e227da448c7e2a47acbd64bd8e06fe7ecf1c5dbf9a26279c43f222690c96d1b35d7ed698d5fee6a30fcbb010fa66a629d
+  checksum: e994ffb5e5aea4b186eada5763210a4e5151eea66a777e72c3b984af29852b6a21c48b0893c4535d4fa89baa5a00b9f0fb49eb1af05b7777c83b2ae805aa5af1
   languageName: node
   linkType: hard
 
@@ -13759,6 +13783,13 @@ typescript@^4.2.3:
   version: 0.2.4
   resolution: "untyped@npm:0.2.4"
   checksum: 10ff7d19a36fe4f7f03c2ba5bb4da249477f06d31823967527900ffb9469d930916c37450449cf04de9828e1110da61151d2b720509c2cea235798d45957f9de
+  languageName: node
+  linkType: hard
+
+"untyped@npm:^0.2.5":
+  version: 0.2.5
+  resolution: "untyped@npm:0.2.5"
+  checksum: d97ef36a9d0e5271f082e88c72abdb548ab93c154253e029c847eb3d03bac9bb621fde50bfc754857e3835289894fa044f7504573ee5a0d0c2b68b6d54298d2e
   languageName: node
   linkType: hard
 
