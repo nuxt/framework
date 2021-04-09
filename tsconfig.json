@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -11,5 +12,6 @@
       "node",
       "jest"
     ]
-  }
+  },
+  "exclude": ["./packages/*/dist/*"]
 }
