@@ -5612,39 +5612,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.10.0, esbuild@npm:^0.10.2":
+"esbuild@npm:0.10.2":
   version: 0.10.2
   resolution: "esbuild@npm:0.10.2"
   bin:
     esbuild: bin/esbuild
   checksum: 54bb44ea101f8dedea286b321c71b9ba2c739e6979b06696009da0bdd4fc8cf61a452e055ddef5b458c25e6c7ce353ba09e56b592b2beaaffaa72b13ed9b4d6c
-  languageName: node
-  linkType: hard
-
-"esbuild@npm:^0.11.6":
-  version: 0.11.6
-  resolution: "esbuild@npm:0.11.6"
-  bin:
-    esbuild: bin/esbuild
-  checksum: 8ce783c9b06dea2fb742ad0e8b05f1a8cf5cfaa474123db2a166beedfc24a78ced42a9d7b7bc400438cbb403439dd8246e1d38fe43441610a0d633b905e8d94b
-  languageName: node
-  linkType: hard
-
-"esbuild@npm:^0.8.56":
-  version: 0.8.57
-  resolution: "esbuild@npm:0.8.57"
-  bin:
-    esbuild: bin/esbuild
-  checksum: 0942950a21a30b57a324380cfedcb425cc1245412e720593415afa0d4f1b7c5f931aa6330937dc1353c754d45c1e5ff7dbc52eb514f54d85517114971300b454
-  languageName: node
-  linkType: hard
-
-"esbuild@npm:^0.9.3":
-  version: 0.9.7
-  resolution: "esbuild@npm:0.9.7"
-  bin:
-    esbuild: bin/esbuild
-  checksum: 78a45e561156d8ecedfdbccddb83486b14f892a2624c100ff4a5150353a416b85a881d298a11da3447d3a2655571237dc9049a011ca10f4fedded2ffaab397c9
   languageName: node
   linkType: hard
 
