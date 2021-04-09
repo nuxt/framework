@@ -2,7 +2,8 @@
   "name": "nuxt-framework",
   "license": "MIT",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*"
   ],
   "scripts": {
     "link": "lerna link",

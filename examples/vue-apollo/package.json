@@ -1,0 +1,11 @@
+{
+  "name": "vue-apollo",
+  "dependencies": {
+    "@apollo/client": "^3.3.14",
+    "graphql": "^15.5.0",
+    "graphql-tag": "^2.11.0"
+  },
+  "scripts": {
+    "dev": "../../node_modules/.bin/nu dev"
+  }
+}
