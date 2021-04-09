@@ -26,6 +26,6 @@
     "mkdist": "^0.1.3",
     "ts-jest": "^26.5.4",
     "typescript": "^4.2.3",
-    "unbuild": "^0.1.5"
+    "unbuild": "^0.1.6"
   }
 }

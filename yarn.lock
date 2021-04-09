@@ -10101,7 +10101,7 @@ __metadata:
     mkdist: ^0.1.3
     ts-jest: ^26.5.4
     typescript: ^4.2.3
-    unbuild: ^0.1.5
+    unbuild: ^0.1.6
   languageName: unknown
   linkType: soft
 
@@ -13654,9 +13654,9 @@ typescript@^4.2.3:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.1.5":
-  version: 0.1.5
-  resolution: "unbuild@npm:0.1.5"
+"unbuild@npm:^0.1.6":
+  version: 0.1.6
+  resolution: "unbuild@npm:0.1.6"
   dependencies:
     "@rollup/plugin-alias": ^3.1.2
     "@rollup/plugin-commonjs": ^18.0.0
@@ -13677,9 +13677,12 @@ typescript@^4.2.3:
     scule: ^0.1.1
     untyped: ^0.2.5
     upath: ^2.0.1
+  peerDependencies:
+    rollup: ^2.40.0
+    typescript: ^4.2.3
   bin:
     unbuild: bin/unbuild.js
-  checksum: e994ffb5e5aea4b186eada5763210a4e5151eea66a777e72c3b984af29852b6a21c48b0893c4535d4fa89baa5a00b9f0fb49eb1af05b7777c83b2ae805aa5af1
+  checksum: acd2ff224ed22ed4dea7b7d7b6b9dc01be88da4861991fcd5ed03031a13ba38e04a7a0d0fd2004f09b472bd06288abd8b10476bf7e2063dc738672dae1c3bdbb
   languageName: node
   linkType: hard
 
