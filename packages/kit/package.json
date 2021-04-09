@@ -8,10 +8,6 @@
   "files": [
     "dist"
   ],
-  "scripts": {
-    "build": "unbuild",
-    "prepublishOnly": "unbuild"
-  },
   "dependencies": {
     "consola": "^2.15.3",
     "create-require": "^1.1.1",

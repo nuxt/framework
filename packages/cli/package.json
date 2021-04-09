@@ -9,10 +9,6 @@
     "nuxt": "./bin/nuxt.js",
     "nuxt-cli": "./bin/nuxt.js"
   },
-  "scripts": {
-    "build": "unbuild",
-    "prepublishOnly": "unbuild"
-  },
   "files": [
     "bin",
     "dist"

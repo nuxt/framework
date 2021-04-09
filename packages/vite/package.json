@@ -7,10 +7,6 @@
   "files": [
     "dist"
   ],
-  "scripts": {
-    "build": "unbuild",
-    "prepublishOnly": "unbuild"
-  },
   "dependencies": {
     "@nuxt/kit": "^0.2.0",
     "@vitejs/plugin-vue": "^1.2.1",

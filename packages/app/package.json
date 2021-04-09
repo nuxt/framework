@@ -6,10 +6,6 @@
   "main": "./dist/app/index.js",
   "module": "./dist/app/index.js",
   "types": "./dist/app.d.ts",
-  "scripts": {
-    "build": "unbuild",
-    "prepublishOnly": "unbuild"
-  },
   "files": [
     "dist",
     "meta.js"

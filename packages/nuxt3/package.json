@@ -7,10 +7,6 @@
   "files": [
     "dist"
   ],
-  "scripts": {
-    "build": "unbuild",
-    "prepublishOnly": "unbuild"
-  },
   "dependencies": {
     "@nuxt/app": "^0.2.1",
     "@nuxt/kit": "^0.2.0",

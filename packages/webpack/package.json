@@ -7,10 +7,6 @@
   "files": [
     "dist"
   ],
-  "scripts": {
-    "build": "unbuild",
-    "prepublishOnly": "unbuild"
-  },
   "dependencies": {
     "@babel/core": "^7.13.14",
     "@nuxt/friendly-errors-webpack-plugin": "^2.5.0",
