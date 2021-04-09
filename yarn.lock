@@ -1594,7 +1594,7 @@ __metadata:
     "@vueuse/head": ^0.5.1
     hookable: ^4.4.1
     ohmyfetch: ^0.2.0
-    unbuild: ^0.1.7
+    unbuild: ^0.1.8
     vue: ^3.0.11
     vue-router: ^4.0.6
     vuex5: ^0.5.0-testing.3
@@ -1638,7 +1638,7 @@ __metadata:
     scule: ^0.1.1
     std-env: ^2.3.0
     ufo: ^0.6.10
-    unbuild: ^0.1.7
+    unbuild: ^0.1.8
     unctx: ^0.0.3
     untyped: ^0.2.4
     upath: ^2.0.1
@@ -1705,7 +1705,7 @@ __metadata:
     std-env: ^2.3.0
     table: ^6.0.9
     ufo: ^0.6.10
-    unbuild: ^0.1.7
+    unbuild: ^0.1.8
     upath: ^2.0.1
     vue: 3.0.11
     vue-bundle-renderer: ^0.2.3
@@ -1739,7 +1739,7 @@ __metadata:
     "@vue/compiler-sfc": ^3.0.11
     consola: ^2.15.3
     fs-extra: ^9.1.0
-    unbuild: ^0.1.7
+    unbuild: ^0.1.8
     vite: ^2.1.5
     vue: 3.0.11
   languageName: unknown
@@ -1777,7 +1777,7 @@ __metadata:
     style-resources-loader: ^1.4.1
     time-fix-plugin: ^2.0.7
     ufo: ^0.6.10
-    unbuild: ^0.1.7
+    unbuild: ^0.1.8
     url-loader: ^4.1.1
     vue: 3.0.11
     vue-loader: ^16.2.0
@@ -10085,7 +10085,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxt-cli@workspace:packages/cli"
   dependencies:
-    unbuild: ^0.1.7
+    unbuild: ^0.1.8
   bin:
     nu: ./bin/nuxt.js
     nuxt: ./bin/nuxt.js
@@ -10108,7 +10108,6 @@ __metadata:
     mkdist: ^0.1.3
     ts-jest: ^26.5.4
     typescript: ^4.2.3
-    unbuild: ^0.1.7
   languageName: unknown
   linkType: soft
 
@@ -10136,7 +10135,7 @@ __metadata:
     nuxt-cli: ^0.1.1
     scule: ^0.1.1
     ufo: ^0.6.10
-    unbuild: ^0.1.7
+    unbuild: ^0.1.8
     upath: ^2.0.1
   languageName: unknown
   linkType: soft
@@ -13662,9 +13661,9 @@ typescript@^4.2.3:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.1.7":
-  version: 0.1.7
-  resolution: "unbuild@npm:0.1.7"
+"unbuild@npm:^0.1.8":
+  version: 0.1.8
+  resolution: "unbuild@npm:0.1.8"
   dependencies:
     "@rollup/plugin-alias": ^3.1.2
     "@rollup/plugin-commonjs": ^18.0.0
@@ -13687,7 +13686,7 @@ typescript@^4.2.3:
     upath: ^2.0.1
   bin:
     unbuild: bin/unbuild.js
-  checksum: f4e3b25f50214ccc10ca038aeb64301555651ae85608840577d60618d782b329b4a4186e80f843359bd969c0102d8c73df91594d5db49d060af5d2730f956c4d
+  checksum: b784a2acdf9ca6fb9c8e9e8d73fb028f178f1c9e37f4c658556cf1f1d47b244b0d0ba1d4ba9f32b7ad06fc0445ad5f2596fe325b6d320ebe87390fd015134c3e
   languageName: node
   linkType: hard
 
