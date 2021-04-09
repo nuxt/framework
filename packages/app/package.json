@@ -5,7 +5,7 @@
   "license": "MIT",
   "main": "./dist/app/index.js",
   "module": "./dist/app/index.js",
-  "types": "./dist/app.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "meta.js"
