@@ -1,5 +1,4 @@
-import { cyan, green } from 'colorette'
-import { version } from '../../package.json'
+import { cyan } from 'colorette'
 import { commands } from './index'
 
 export function invoke (_args) {
