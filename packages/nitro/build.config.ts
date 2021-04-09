@@ -8,6 +8,7 @@ export default <BuildConfig>{
   ],
   dependencies: [
     '@cloudflare/kv-asset-handler',
+    '@netlify/functions',
     '@nuxt/devalue',
     'connect',
     'destr',
