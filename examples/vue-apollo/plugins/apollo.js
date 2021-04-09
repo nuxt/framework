@@ -13,9 +13,6 @@ const apolloClient = new ApolloClient({
   cache
 })
 
-export function provideApollo () {
-}
-
 export default ({ app }) => {
   // https://v3.vuejs.org/api/application-api.html#provide
   app.provide(DefaultApolloClient, apolloClient)
