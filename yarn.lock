@@ -10166,6 +10166,32 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"nuxt3@npm:latest":
+  version: 0.2.6
+  resolution: "nuxt3@npm:0.2.6"
+  dependencies:
+    "@nuxt/app": ^0.2.1
+    "@nuxt/kit": ^0.2.0
+    "@nuxt/nitro": ^0.3.0
+    "@nuxt/vite-builder": ^0.1.1
+    "@nuxt/webpack-builder": ^0.1.2
+    chokidar: ^3.5.1
+    consola: ^2.15.3
+    defu: ^3.2.2
+    fs-extra: ^9.1.0
+    globby: ^11.0.3
+    hash-sum: ^2.0.0
+    hookable: ^4.4.1
+    ignore: ^5.1.8
+    lodash: ^4.17.21
+    nuxt-cli: ^0.1.1
+    scule: ^0.1.1
+    ufo: ^0.6.10
+    upath: ^2.0.1
+  checksum: cc555412e38873c3c72d1d2d302455cfdd361f956ce1e8e3c9f74a35935fdca8847c62160a4e5812bc80feeb10ed70ff2eaa3fb12709f49cf880fff091aaa877
+  languageName: node
+  linkType: hard
+
 "nuxt3@workspace:packages/nuxt3":
   version: 0.0.0-use.local
   resolution: "nuxt3@workspace:packages/nuxt3"
@@ -14094,6 +14120,7 @@ typescript@^4.2.4:
     "@apollo/client": ^3.3.14
     graphql: ^15.5.0
     graphql-tag: ^2.11.0
+    nuxt3: latest
   languageName: unknown
   linkType: soft
 

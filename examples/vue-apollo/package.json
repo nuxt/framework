@@ -1,11 +1,12 @@
 {
   "name": "vue-apollo",
-  "dependencies": {
+  "devDependencies": {
     "@apollo/client": "^3.3.14",
     "graphql": "^15.5.0",
-    "graphql-tag": "^2.11.0"
+    "graphql-tag": "^2.11.0",
+    "nuxt3": "latest"
   },
   "scripts": {
-    "dev": "../../node_modules/.bin/nu dev"
+    "dev": "nu dev"
   }
 }
