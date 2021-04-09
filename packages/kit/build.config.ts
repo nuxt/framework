@@ -1,6 +1,7 @@
 import type { BuildConfig } from 'unbuild'
 
 export default <BuildConfig>{
+  declaration: true,
   entries: [
     {
       input: 'src/config/schema/index',

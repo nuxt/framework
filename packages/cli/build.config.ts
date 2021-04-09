@@ -1,6 +1,7 @@
 import type { BuildConfig } from 'unbuild'
 
-export default <BuildConfig> {
+export default <BuildConfig>{
+  declaration: false,
   entries: [
     'src/index'
   ],

@@ -1,10 +1,11 @@
 import type { BuildConfig } from 'unbuild'
 
 export default <BuildConfig>{
+  declaration: true,
   entries: [
     'src/index',
     'src/compat',
-    { input: 'src/runtime/', format: 'esm' }
+    { input: 'src/runtime/', format: 'esm', declaration: false }
   ],
   dependencies: [
     '@cloudflare/kv-asset-handler',
