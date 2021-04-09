@@ -1,17 +1,17 @@
 <template>
   <div>
     <div v-for="user in users" :key="user.id">
-      {{ users.firstname }} {{ users.lastname }}
+      {{ user.firstname }} {{ user.lastname }}
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineNuxtComponent } from '@nuxt/app'
 import { gql } from 'graphql-tag'
 import { useQuery } from '@vue/apollo-composable'
 
-export default defineComponent({
+export default defineNuxtComponent({
   setup () {
     const { result } = useQuery(gql`
       query getUsers {
