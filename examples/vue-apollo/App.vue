@@ -6,11 +6,11 @@
 
 <script>
 import { defineComponent } from 'vue'
-import { useApollo } from './composables/apollo'
+import { provideApollo } from './composables/apollo'
 
 export default defineComponent({
   setup () {
-    useApollo()
+    provideApollo()
   }
 })
 </script>
