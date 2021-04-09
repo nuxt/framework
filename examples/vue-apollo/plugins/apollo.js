@@ -1,4 +1,3 @@
-import { provide } from 'vue'
 import { DefaultApolloClient } from '@vue/apollo-composable'
 
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core'
@@ -15,5 +14,9 @@ const apolloClient = new ApolloClient({
 })
 
 export function provideApollo () {
-  provide(DefaultApolloClient, apolloClient)
+}
+
+export default ({ app }) => {
+  // https://v3.vuejs.org/api/application-api.html#provide
+  app.provide(DefaultApolloClient, apolloClient)
 }
