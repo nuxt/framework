@@ -10,6 +10,12 @@
     "dist",
     "meta.js"
   ],
+  "scripts": {
+    "prepack": "unbuild"
+  },
+  "devDependencies": {
+    "unbuild": "^0.1.7"
+  },
   "dependencies": {
     "@vueuse/head": "^0.5.1",
     "hookable": "^4.4.1",
