@@ -14,6 +14,9 @@
     "postinstall": "yarn stub",
     "version": "yarn && git add yarn.lock"
   },
+  "resolutions": {
+    "esbuild": "0.10.2"
+  },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^6.0.0",
     "@nuxtjs/eslint-config-typescript": "^6.0.0",
