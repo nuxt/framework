@@ -2,8 +2,7 @@
   "name": "nuxt-framework",
   "license": "MIT",
   "workspaces": [
-    "packages/*",
-    "examples/*"
+    "packages/*"
   ],
   "scripts": {
     "build": "FORCE_COLOR=1 lerna run prepack --stream --no-prefix",
