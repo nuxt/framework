@@ -15,13 +15,7 @@ package-lock.json
 .cache
 
 # Yarn
-.yarn/*
-!.yarn/patches
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
-.pnp.*
+.yarn
 
 # Generated dirs
 dist
