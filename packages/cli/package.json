@@ -16,16 +16,6 @@
     "bin",
     "dist"
   ],
-  "build": {
-    "externals": [
-      "nuxt3"
-    ],
-    "entries": {
-      "index": {
-        "format": "cjs"
-      }
-    }
-  },
   "devDependencies": {
     "@types/mri": "^1.1.0",
     "colorette": "^1.2.2",

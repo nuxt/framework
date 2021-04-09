@@ -1,71 +1,38 @@
 import 'v8-compile-cache'
-import * as c from 'colorette'
 import mri from 'mri'
-import { listen } from 'listhen'
+import { red, cyan, green } from 'colorette'
 import { version } from '../package.json'
-
-const commands = {
-  dev: {},
-  build: {}
-}
+import { commands } from './commands'
+import { showHelp } from './utils/help'
 
 async function _main () {
   const _argv = process.argv.slice(2)
   const args = mri(_argv)
-  const [command, rootDir] = args._
+  // @ts-ignore
+  let command = args._.shift() || 'usage'
+
+  console.log(green(`Nuxt CLI v${version}`))
 
   if (!(command in commands)) {
-    usage()
+    console.log('\n' + red('Invalid command ' + command))
+    command = 'usage'
+  }
+
+  if (command === 'usage') {
+    console.log(`\nUsage: ${cyan(`nu ${Object.keys(commands).join('|')} [args]`)}\n`)
     process.exit(1)
   }
 
-  const isDev = command === 'dev'
-
-  let handler
-  let listenerP
-  if (isDev) {
-    handler = (_req, res) => {
-      res.setHeader('Content-Type', 'text/html; charset=UTF-8')
-      res.end('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="1"><head><body>...')
+  try {
+    const cmd = await commands[command]()
+    if (args.h || args.help) {
+      showHelp(cmd.meta)
+    } else {
+      await cmd.invoke(args)
     }
-    // https://github.com/unjs/listhen
-    listenerP = listen((req, res) => { handler(req, res) }, { clipboard: true })
+  } catch (err) {
+    onFatalError(err)
   }
-
-  const { loadNuxt, build } = await import('nuxt3')
-  const nuxt = await loadNuxt({
-    for: isDev ? 'dev' : 'build',
-    rootDir
-  })
-
-  if (isDev) {
-    handler = nuxt.server.app
-  }
-
-  printTime('Starting build')
-  await build(nuxt)
-
-  const listener = await listenerP
-  printTime('Ready')
-  listener.open().catch(() => {})
-
-  return Promise.resolve()
-}
-
-function usage () {
-  console.log(`Usage: ${c.cyan(`nu ${Object.keys(commands).join('|')} [<rootDir>] [args]`)}`)
-}
-
-function measureTime () {
-  if (!('_startTime' in process)) {
-    return 0
-  }
-  // @ts-ignore
-  return (Date.now() - process._startTime as number)
-}
-
-function printTime (pointName: string) {
-  console.log(c.gray((`⧗ ${pointName} after ${c.bold(measureTime() + 'ms')}`)))
 }
 
 function onFatalError (err) {
@@ -74,6 +41,5 @@ function onFatalError (err) {
 }
 
 export function main () {
-  console.log(c.green(`Nuxt CLI v${version}\n`))
   _main().catch(onFatalError)
 }
