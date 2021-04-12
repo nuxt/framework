@@ -9,11 +9,8 @@ export interface ResolveModuleOptions {
 }
 
 export interface RequireModuleOptions extends ResolveModuleOptions {
-  /**
-   * Not currently used.
-   * @deprecated
-   */
-  native?: boolean
+  // TODO: use create-require for jest environment
+  // native?: boolean
   /** Clear the require cache (force fresh require) but only if not within `node_modules` */
   clearCache?: boolean
   /** Automatically de-default the result of requiring the module. */
