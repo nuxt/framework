@@ -7,8 +7,9 @@ import globby from 'globby'
 import virtual from './virtual'
 
 export interface AssetOptions {
+  inline: Boolean
   dirs: {
-    [groupname: string]: {
+    [assetdir: string]: {
       dir: string
       meta?: boolean
     }
@@ -27,26 +28,44 @@ export function assets (opts: AssetOptions): Plugin {
   return virtual({
     '~nitro/assets': {
       async load () {
-        const assets: Record<string, Record<string, Asset>> = {}
-        for (const groupname in opts.dirs) {
-          const dirOpts = opts.dirs[groupname]
+        const assets: Record<string, Asset> = {}
+        for (const assetdir in opts.dirs) {
+          const dirOpts = opts.dirs[assetdir]
           const files = globby.sync('**/*.*', { cwd: dirOpts.dir, absolute: false })
-          assets[groupname] = {}
-          for (const id of files) {
-            const fsPath = resolve(dirOpts.dir, id)
-            assets[groupname][id] = { fsPath, meta: {} }
+          for (const _id of files) {
+            const fsPath = resolve(dirOpts.dir, _id)
+            const id = assetdir + '/' + _id
+            assets[id] = { fsPath, meta: {} }
             if (dirOpts.meta) {
               let type = mime.getType(id) || 'text/plain'
               if (type.startsWith('text')) { type += '; charset=utf-8' }
               const etag = createEtag(await readFile(fsPath))
               const mtime = await stat(fsPath).then(s => s.mtime.toJSON())
-              assets[groupname][id].meta = { type, etag, mtime }
+              assets[id].meta = { type, etag, mtime }
             }
           }
         }
-        return `${Object.keys(assets).map(groupname => `export const ${groupname} = {\n  ${
-          Object.keys(assets[groupname]).map(id => `['${id}']: { load: () => import('${assets[groupname][id].fsPath}'), meta: ${JSON.stringify(assets[groupname][id].meta)} }`).join(',\n  ')}\n}`
-        ).join('\n\n')}`
+
+        const inlineAssets = `export const assets = {\n${Object.keys(assets).map(id =>
+          `  ['${id}']: {\n    read: () => import('${assets[id].fsPath}'),\n    meta: ${JSON.stringify(assets[id].meta)}\n  }`
+        ).join(',\n')}\n}
+        `
+
+        return `${inlineAssets}
+        export function readAsset (id) {
+          return getAsset(id).read()
+        }
+
+        export function statAsset (id) {
+          return getAsset(id).meta
+        }
+
+        export function getAsset (id, assetdir) {
+          if (!assets[id]) {
+            throw new Error('Asset not found : ' + id)
+          }
+          return assets[id]
+        }`
       }
     }
   })

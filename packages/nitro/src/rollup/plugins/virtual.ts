@@ -47,7 +47,8 @@ export default function virtual (modules: RollupVirtualOptions): Plugin {
         m = await m.load()
       }
 
-      console.log('[virtual]', idNoPrefix, '\n', m)
+      // console.log('[virtual]', idNoPrefix, '\n', m)
+
       return {
         code: m as string,
         map: null
