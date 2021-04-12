@@ -25,6 +25,45 @@ export function assets (opts: AssetOptions): Plugin {
       mtime?: string
     }
   }
+
+  const assetUtils = `
+export function readAsset (id) {
+  return getAsset(id).read()
+}
+
+export function statAsset (id) {
+  return getAsset(id).meta
+}
+`
+
+  if (!opts.inline) {
+    return virtual({
+      '~nitro/assets': `
+import { promises as fsp } from 'fs'
+import { resolve } from 'path'
+
+const dirs = ${JSON.stringify(opts.dirs)}
+
+${assetUtils}
+
+export function getAsset (id) {
+  for (const dirname in dirs) {
+    if (id.startsWith(dirname + '/')) {
+      const dirOpts = dirs[dirname]
+      const path = resolve(dirOpts.dir, id.substr(dirname.length + 1))
+      const asset = {
+        read: () => fsp.readFile(path, 'utf-8'),
+        meta: {}
+      }
+      return asset
+    }
+  }
+  throw new Error('Asset dir not found: ' + id)
+}
+      `
+    })
+  }
+
   return virtual({
     '~nitro/assets': {
       async load () {
@@ -45,27 +84,16 @@ export function assets (opts: AssetOptions): Plugin {
             }
           }
         }
-
         const inlineAssets = `export const assets = {\n${Object.keys(assets).map(id =>
           `  ['${id}']: {\n    read: () => import('${assets[id].fsPath}'),\n    meta: ${JSON.stringify(assets[id].meta)}\n  }`
-        ).join(',\n')}\n}
-        `
-
-        return `${inlineAssets}
-        export function readAsset (id) {
-          return getAsset(id).read()
-        }
-
-        export function statAsset (id) {
-          return getAsset(id).meta
-        }
-
-        export function getAsset (id, assetdir) {
-          if (!assets[id]) {
-            throw new Error('Asset not found : ' + id)
-          }
-          return assets[id]
-        }`
+        ).join(',\n')}\n}`
+        return `${inlineAssets}\n${assetUtils}
+export function getAsset (id) {
+  if (!assets[id]) {
+    throw new Error('Asset not found : ' + id)
+  }
+  return assets[id]
+}`
       }
     }
   })

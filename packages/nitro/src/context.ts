@@ -90,7 +90,10 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
       publicDir: '{{ output.dir }}/public'
     },
     storage: { mounts: { } },
-    assets: { dirs: {} },
+    assets: {
+      inline: !nuxtOptions.dev,
+      dirs: {}
+    },
     _nuxt: {
       majorVersion: nuxtOptions._majorVersion || 2,
       dev: nuxtOptions.dev,
