@@ -3,7 +3,14 @@ import { Nuxt } from './nuxt'
 import { NuxtHooks } from './hooks'
 
 export interface ModuleMeta {
+  /**
+   * The module name.
+   */
   name?: string
+  /**
+   * The configuration key used within `nuxt.config` for this module's options.
+   * For example, `@nuxtjs/axios` uses `axios`.
+   */
   configKey?: string
   [key: string]: any
 }
