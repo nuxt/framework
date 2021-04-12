@@ -3,12 +3,11 @@ import { existsSync, promises as fsp } from 'fs'
 import dotenv from 'dotenv'
 
 export interface LoadDotEnvOptions {
-  /**
-   * The project root directory (either absolute or relative to the current working directory).
-   */
+  /** The project root directory (either absolute or relative to the current working directory). */
   rootDir: string
   /**
-   * What file to look in for environment variables, for example, `.env` (either absolute or relative to the current working directory).
+   * What file to look in for environment variables (either absolute or relative
+   * to the current working directory). For example, `.env`.
    */
   dotenvFile: string
   /**
@@ -21,9 +20,7 @@ export interface LoadDotEnvOptions {
    * ```
    */
   expand: boolean
-  /**
-   * An object describing environment variables (key, value pairs).
-   */
+  /** An object describing environment variables (key, value pairs). */
   env: NodeJS.ProcessEnv
 }
 
@@ -49,9 +46,7 @@ export async function loadEnv (rootDir: string) {
   }
 }
 
-/**
- * Load environment variables into an object.
- */
+/** Load environment variables into an object. */
 export async function loadDotenv (opts: LoadDotEnvOptions) {
   const env = Object.create(null)
 

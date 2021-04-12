@@ -7,17 +7,11 @@ import { NuxtOptions } from '../types/config'
 import nuxtConfigSchema from './schema'
 
 export interface LoadNuxtConfigOptions {
-  /**
-   * Your project root directory (either absolute or relative to the current working directory).
-   */
+  /** Your project root directory (either absolute or relative to the current working directory). */
   rootDir?: string
-  /**
-   * The path to your `nuxt.config` file (either absolute or relative to your project `rootDir`).
-   */
+  /** The path to your `nuxt.config` file (either absolute or relative to your project `rootDir`). */
   configFile?: string
-  /**
-   * Any overrides to your Nuxt configuration.
-   */
+  /** Any overrides to your Nuxt configuration. */
   config?: Record<string, any>
 }
 

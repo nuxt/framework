@@ -13,9 +13,7 @@ import {
   extendRoutes
 } from './utils'
 
-/**
- * Legacy ModuleContainer for backwards compatibility with existing Nuxt 2 modules.
- */
+/** Legacy ModuleContainer for backwards compatibility with existing Nuxt 2 modules. */
 export class ModuleContainer {
   nuxt: Nuxt
   options: NuxtOptions
@@ -38,9 +36,7 @@ export class ModuleContainer {
     return Promise.resolve()
   }
 
-  /**
-   * @deprecated
-   */
+  /** @deprecated */
   addVendor () {
     console.warn('addVendor has been deprecated and has no effect.')
   }
@@ -77,9 +73,7 @@ export class ModuleContainer {
     return this._call(addPlugin, tmpl)
   }
 
-  /**
-   * Register a custom layout. If its name is 'error' it will override the default error layout.
-   */
+  /** Register a custom layout. If its name is 'error' it will override the default error layout. */
   addLayout (tmpl: TemplateOpts, name: string) {
     return this._call(addLayout, tmpl, name)
   }
@@ -92,37 +86,27 @@ export class ModuleContainer {
     return this._call(addErrorLayout, dst)
   }
 
-  /**
-   * Adds a new server middleware to the end of the server middleware array.
-   */
+  /** Adds a new server middleware to the end of the server middleware array. */
   addServerMiddleware (middleware) {
     return this._call(addServerMiddleware, middleware)
   }
 
-  /**
-   * Allows extending webpack build config by chaining `options.build.extend` function.
-   */
+  /** Allows extending webpack build config by chaining `options.build.extend` function. */
   extendBuild (fn) {
     return this._call(extendBuild, fn)
   }
 
-  /**
-   * Allows extending routes by chaining `options.build.extendRoutes` function.
-   */
+  /** Allows extending routes by chaining `options.build.extendRoutes` function. */
   extendRoutes (fn) {
     return this._call(extendRoutes, fn)
   }
 
-  /**
-   * `requireModule` is a shortcut for `addModule`
-   */
+  /** `requireModule` is a shortcut for `addModule` */
   requireModule (moduleOpts: string | [src: string, options: any]) {
     return installModule(this.nuxt, moduleOpts)
   }
 
-  /**
-   * Registers a module. moduleOpts can be a string or an array ([src, options]).
-   */
+  /** Registers a module. moduleOpts can be a string or an array ([src, options]). */
   addModule (moduleOpts: string | [src: string, options: any]) {
     return installModule(this.nuxt, moduleOpts)
   }

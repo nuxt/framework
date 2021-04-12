@@ -12,9 +12,7 @@ export interface ResolveOptions {
    * `{ 'example/alias': '/full/path/to/alias' }`
    */
   alias?: Record<string, string>
-  /**
-   * The file extensions to try (for example, ['js', 'ts'])
-   */
+  /** The file extensions to try (for example, ['js', 'ts']) */
   extensions?: string[]
 }
 

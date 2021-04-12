@@ -4,9 +4,7 @@ import defu from 'defu'
 import { isRelative, joinURL, hasProtocol } from 'ufo'
 
 export default {
-  /**
-   * Vue.js configuration
-   */
+  /** Vue.js configuration */
   vue: {
     config: {
       silent: { $resolve: (val, get) => val ?? get('dev') },
@@ -26,9 +24,7 @@ export default {
     }
   },
 
-  /**
-   * Uses {srcDir}/app.html if exists by default otherwise nuxt default
-   */
+  /** Uses {srcDir}/app.html if exists by default otherwise nuxt default */
   appTemplatePath: {
     $resolve: (val, get) => {
       if (val) {
@@ -48,9 +44,7 @@ export default {
         .find(filename => filename !== 'README.md' && filename[0] !== '.')
   },
 
-  /**
-   * debug errorss
-   */
+  /** debug errorss */
   debug: {
     $resolve: (val, get) => val ?? get('dev')
   },

@@ -2,9 +2,7 @@ export default {
   bundleRenderer: {
     shouldPrefetch: () => false,
     shouldPreload: (_fileWithoutQuery, asType) => ['script', 'style'].includes(asType),
-    /**
-     * enabled by default for development
-     */
+    /** enabled by default for development */
     runInNewContext: { $resolve: (val, get) => val ?? get('dev') }
   },
   crossorigin: undefined,

@@ -76,9 +76,7 @@ export function addPlugin (tmpl: PluginTemplateOpts) {
   })
 }
 
-/**
- * Register a custom layout. If its name is 'error' it will override the default error layout.
- */
+/** Register a custom layout. If its name is 'error' it will override the default error layout. */
 export function addLayout (tmpl: TemplateOpts, name: string) {
   const nuxt = useNuxt()
 
@@ -110,17 +108,13 @@ export function addErrorLayout (dst: string) {
   nuxt.options.ErrorPage = `~/${relativeBuildDir}/${dst}`
 }
 
-/**
- * Adds a new server middleware to the end of the server middleware array.
- */
+/** Adds a new server middleware to the end of the server middleware array. */
 export function addServerMiddleware (middleware) {
   const nuxt = useNuxt()
 
   nuxt.options.serverMiddleware.push(middleware)
 }
-/**
- * Allows extending webpack build config by chaining `options.build.extend` function.
- */
+/** Allows extending webpack build config by chaining `options.build.extend` function. */
 export function extendBuild (fn) {
   const nuxt = useNuxt()
 
@@ -128,9 +122,7 @@ export function extendBuild (fn) {
   nuxt.options.build.extend = chainFn(nuxt.options.build.extend, fn)
 }
 
-/**
- * Allows extending routes by chaining `options.build.extendRoutes` function.
- */
+/** Allows extending routes by chaining `options.build.extendRoutes` function. */
 export function extendRoutes (fn) {
   const nuxt = useNuxt()
 

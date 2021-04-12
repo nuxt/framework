@@ -14,13 +14,9 @@ export interface RequireModuleOptions extends ResolveModuleOptions {
    * @deprecated
    */
   native?: boolean
-  /**
-   * Clear the require cache (force fresh require) but only if not within `node_modules`
-   */
+  /** Clear the require cache (force fresh require) but only if not within `node_modules` */
   clearCache?: boolean
-  /**
-   * Automatically de-default the result of requiring the module.
-   */
+  /** Automatically de-default the result of requiring the module. */
   interopDefault?: boolean
 }
 
@@ -73,9 +69,7 @@ export function scanRequireTree (id: string, files = new Set<string>()) {
   return files
 }
 
-/**
- * Access the require cache by module id.
- */
+/** Access the require cache by module id. */
 export function getRequireCacheItem (id: string) {
   try {
     return _require.cache[id]
@@ -83,25 +77,19 @@ export function getRequireCacheItem (id: string) {
   }
 }
 
-/**
- * Resolve the `package.json` file for a given module.
- */
+/** Resolve the `package.json` file for a given module. */
 export function requireModulePkg (id: string, opts: RequireModuleOptions = {}) {
   return requireModule(join(id, 'package.json'), opts)
 }
 
-/**
- * Resolve the path of a module.
- */
+/** Resolve the path of a module. */
 export function resolveModule (id: string, opts: ResolveModuleOptions = {}) {
   return _require.resolve(id, {
     paths: opts.paths
   })
 }
 
-/**
- * Try to resolve the path of a module, but don't emit an error if it can't be found.
- */
+/** Try to resolve the path of a module, but don't emit an error if it can't be found. */
 export function tryResolveModule (path: string, opts: ResolveModuleOptions = {}) {
   try {
     return resolveModule(path, opts)
@@ -112,9 +100,7 @@ export function tryResolveModule (path: string, opts: ResolveModuleOptions = {})
   }
 }
 
-/**
- * Require a module and return it.
- */
+/** Require a module and return it. */
 export function requireModule (id: string, opts: RequireModuleOptions = {}) {
   // Resolve id
   const resolvedPath = resolveModule(id, opts)
@@ -135,9 +121,7 @@ export function requireModule (id: string, opts: RequireModuleOptions = {}) {
   return requiredModule
 }
 
-/**
- * Try to require a module, but don't emit an error if the module can't be required.
- */
+/** Try to require a module, but don't emit an error if the module can't be required. */
 export function tryRequireModule (id: string, opts: RequireModuleOptions = {}) {
   try {
     return requireModule(id, opts)

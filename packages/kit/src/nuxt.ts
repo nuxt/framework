@@ -2,9 +2,7 @@ import { getContext } from 'unctx'
 import type { Nuxt } from './types/nuxt'
 import type { NuxtConfig } from './types/config'
 
-/**
- * Direct access to the Nuxt context - see https://github.com/unjs/unctx.
- */
+/** Direct access to the Nuxt context - see https://github.com/unjs/unctx. */
 export const nuxtCtx = getContext<Nuxt>('nuxt')
 /**
  * Get access to Nuxt (if run within the Nuxt context) - see https://github.com/unjs/unctx.
