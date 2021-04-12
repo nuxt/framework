@@ -39,7 +39,7 @@ export function statAsset (id) {
   if (!opts.inline) {
     return virtual({
       '~nitro/assets': `
-import { promises as fsp } from 'fs'
+import { statSync, promises as fsp } from 'fs'
 import { resolve } from 'path'
 
 const dirs = ${JSON.stringify(opts.dirs)}
@@ -51,9 +51,12 @@ export function getAsset (id) {
     if (id.startsWith(dirname + '/')) {
       const dirOpts = dirs[dirname]
       const path = resolve(dirOpts.dir, id.substr(dirname.length + 1))
+      let stat = statSync(path)
       const asset = {
         read: () => fsp.readFile(path, 'utf-8'),
-        meta: {}
+        meta: {
+          mtime: stat.mtime
+        }
       }
       return asset
     }
