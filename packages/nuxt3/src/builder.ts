@@ -9,15 +9,9 @@ import {
   scanTemplates,
   NuxtTemplate
 } from './template'
-import { createWatcher, WatchCallback, WatchEvent } from './watch'
+import { createWatcher, WatchCallback } from './watch'
 import { createApp, NuxtApp } from './app'
 import Ignore from './utils/ignore'
-
-declare module '@nuxt/kit' {
-  interface NuxtHooks {
-    'builder:watch': (event: WatchEvent, path: string) => void | Promise<void>
-  }
-}
 
 export class Builder {
   nuxt: Nuxt

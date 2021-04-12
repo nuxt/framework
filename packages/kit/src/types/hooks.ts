@@ -18,7 +18,12 @@ type TemplateFile = string | {
   options?: any
 }
 
+type WatchEvent = 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir'
+
 export interface NuxtHooks {
+  // Don't break usage of untyped hooks
+  [key: string]: (...args: any[]) => HookResult
+
   // @nuxt/builder
   'build:before':
   (builder: Builder, buildOptions: NuxtOptions['build']) => HookResult
@@ -33,6 +38,7 @@ export interface NuxtHooks {
   'build:done': (builder: Builder) => HookResult
   'watch:restart': (event: { event: string, path: string }) => HookResult
   // 'watch:fileChanged': (builder: Builder, fileName: string) => HookResult
+  'builder:watch': (event: WatchEvent, path: string) => HookResult
 
   // @nuxt/cli
   'cli:buildError': (error: unknown) => HookResult
@@ -98,14 +104,15 @@ export interface NuxtHooks {
   'generate:routeFailed': ({ route, errors }: { route: any, errors: any[] }) => HookResult
   'generate:manifest': (manifest: any, generator: Generator) => HookResult
   'generate:done': (generator: Generator, errors: any[]) => HookResult
-  // 'export:before': (generator: Generator) => HookResult
-  // 'export:distRemoved': (generator: Generator) => HookResult
-  // 'export:distCopied': (generator: Generator) => HookResult
-  // 'export:route': ({ route, setPayload }: { route: any, setPayload: any }) => HookResult
-  // 'export:routeCreated': ({ route, path, errors }: { route: any, path: string, errors: any[] }) => HookResult
-  // 'export:extendRoutes': ({ routes }: { routes: any[] }) => HookResult
-  // 'export:routeFailed': ({ route, errors }: { route: any, errors: any[] }) => HookResult
-  // 'export:done': (generator: Generator, { errors }: { errors: any[] }) => HookResult
+
+  'export:before': (generator: Generator) => HookResult
+  'export:distRemoved': (generator: Generator) => HookResult
+  'export:distCopied': (generator: Generator) => HookResult
+  'export:route': ({ route, setPayload }: { route: any, setPayload: any }) => HookResult
+  'export:routeCreated': ({ route, path, errors }: { route: any, path: string, errors: any[] }) => HookResult
+  'export:extendRoutes': ({ routes }: { routes: any[] }) => HookResult
+  'export:routeFailed': ({ route, errors }: { route: any, errors: any[] }) => HookResult
+  'export:done': (generator: Generator, { errors }: { errors: any[] }) => HookResult
 }
 
 export type NuxtHookName = keyof NuxtHooks
