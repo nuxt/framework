@@ -5085,6 +5085,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"deep-object-diff@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "deep-object-diff@npm:1.1.0"
+  checksum: 2667c43932d14c908d03f813cd2846a626bda1d320f8f1dee3c7bd00ff8058713bb8f5d995fabd617e09229cf64bf16e53579233e29da870fd27bde23d5f5b20
+  languageName: node
+  linkType: hard
+
 "deepmerge@npm:^4.2.2":
   version: 4.2.2
   resolution: "deepmerge@npm:4.2.2"
@@ -6336,7 +6343,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"flat@npm:^5.0.0":
+"flat@npm:^5.0.0, flat@npm:^5.0.2":
   version: 5.0.2
   resolution: "flat@npm:5.0.2"
   bin:
@@ -10013,6 +10020,8 @@ __metadata:
     clear: ^0.1.0
     colorette: ^1.2.2
     debounce-promise: ^3.1.2
+    deep-object-diff: ^1.1.0
+    flat: ^5.0.2
     listhen: ^0.2.4
     mri: ^1.1.6
     unbuild: ^0.1.12

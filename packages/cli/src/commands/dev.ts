@@ -3,7 +3,8 @@ import chokidar from 'chokidar'
 import debounce from 'debounce-promise'
 import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
-import { error } from '../utils/log'
+import { error, info } from '../utils/log'
+import { diff, printDiff } from '../utils/diff'
 
 export async function invoke (args) {
   const server = createServer()
@@ -13,21 +14,43 @@ export async function invoke (args) {
 
   const { loadNuxt, buildNuxt } = await import('@nuxt/kit')
 
-  const watcherFiles = new Set<String>()
+  const watcherFiles = new Set()
   const watcher = chokidar.watch([rootDir], { ignoreInitial: true, depth: 0 })
 
-  let nuxt
+  let currentNuxt
   const load = async () => {
     try {
-      if (nuxt) {
-        await nuxt.close()
-        showBanner(true)
-        listener.showURL()
+      const newNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
+      watcherFiles.add(newNuxt.options.watch)
+
+      let configChanges
+      if (currentNuxt) {
+        configChanges = diff(currentNuxt.options, newNuxt.options, [
+          'generate.staticAssets.version',
+          'env.NITRO_PRESET'
+        ])
+        server.setApp(createLoadingHandler('Restaring...', 1))
+        await currentNuxt.close()
+        currentNuxt = newNuxt
+      } else {
+        currentNuxt = newNuxt
       }
-      nuxt = await loadNuxt({ rootDir, dev: true })
-      watcherFiles.add(nuxt.options.watch)
-      await buildNuxt(nuxt)
-      server.setApp(nuxt.server.app)
+
+      showBanner(true)
+      listener.showURL()
+
+      if (configChanges) {
+        if (configChanges.length) {
+          info('Nuxt config updated:')
+          printDiff(configChanges)
+        } else {
+          info('Restarted nuxt due to config changes')
+        }
+      }
+
+      await currentNuxt.ready()
+      await buildNuxt(currentNuxt)
+      server.setApp(currentNuxt.server.app)
     } catch (err) {
       error('Cannot load nuxt.', err)
       server.setApp(createLoadingHandler(
