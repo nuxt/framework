@@ -3,6 +3,7 @@ import chokidar from 'chokidar'
 import debounce from 'debounce-promise'
 import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
+import { error } from '../utils/log'
 
 export async function invoke (args) {
   const server = createServer()
@@ -28,9 +29,9 @@ export async function invoke (args) {
       await buildNuxt(nuxt)
       server.setApp(nuxt.server.app)
     } catch (err) {
-      console.error('Error while loading nuxt: ', err)
+      error('Cannot load nuxt.', err)
       server.setApp(createLoadingHandler(
-        'Error while loading nuxt. Please check console and fix error.'
+        'Error while loading nuxt. Please check console and fix errors.'
       ))
     }
   }
