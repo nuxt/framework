@@ -42,6 +42,7 @@ export function addTemplate (tmpl: TemplateOpts | string) {
 
   return tmplObj
 }
+
 /**
  * Registers a plugin using `addTemplate` and prepends it to the plugins[] array.
  *
@@ -115,6 +116,7 @@ export function addServerMiddleware (middleware) {
 
   nuxt.options.serverMiddleware.push(middleware)
 }
+
 /** Allows extending webpack build config by chaining `options.build.extend` function. */
 export function extendBuild (fn) {
   const nuxt = useNuxt()
