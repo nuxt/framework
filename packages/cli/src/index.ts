@@ -1,5 +1,6 @@
 import 'v8-compile-cache'
 import mri from 'mri'
+import clear from 'clear'
 import { red, cyan, green } from 'colorette'
 import { version } from '../package.json'
 import { commands } from './commands'
@@ -11,6 +12,7 @@ async function _main () {
   // @ts-ignore
   let command = args._.shift() || 'usage'
 
+  if (command === 'dev') { clear() }
   console.log(green(`Nuxt CLI v${version}`))
 
   if (!(command in commands)) {

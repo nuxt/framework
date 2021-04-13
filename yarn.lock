@@ -2158,6 +2158,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/clear@npm:^0":
+  version: 0.1.1
+  resolution: "@types/clear@npm:0.1.1"
+  checksum: ded7ef18386cb110b1293e91640b11a03c1006a9c2c04336fad39b55a7bfff8f700468748432a3e6614cbeaaed8efc0d4608d003372784128129c230ac061cf3
+  languageName: node
+  linkType: hard
+
 "@types/connect@npm:*":
   version: 3.4.34
   resolution: "@types/connect@npm:3.4.34"
@@ -4192,6 +4199,13 @@ __metadata:
   version: 2.2.0
   resolution: "clean-stack@npm:2.2.0"
   checksum: e291ce2b8c8c59e6449ac9a7a726090264bea6696e5343b21385e16d279c808ca09d73a1abea8fd23a9b7699e6ef5ce582df203511f71c8c27666bf3b2e300c5
+  languageName: node
+  linkType: hard
+
+"clear@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "clear@npm:0.1.0"
+  checksum: 5bb327928ac437961b25b51c8ab637b9c6dd74e53ff1d76928c71900f27ef8774da778da81b6cc7d9aba3467da508be9bbd4968a347ba6467761643111d34948
   languageName: node
   linkType: hard
 
@@ -9978,9 +9992,11 @@ __metadata:
   resolution: "nuxt-cli@workspace:packages/cli"
   dependencies:
     "@nuxt/kit": ^0.4.0
+    "@types/clear": ^0
     "@types/debounce-promise": ^3
     "@types/mri": ^1.1.0
     chokidar: ^3.5.1
+    clear: ^0.1.0
     colorette: ^1.2.2
     debounce-promise: ^3.1.2
     listhen: ^0.2.3
