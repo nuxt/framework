@@ -30,6 +30,7 @@ export class ModuleContainer {
 
   /**
    * Returns a resolved promise immediately.
+   *
    * @deprecated
    */
   ready () {
@@ -80,6 +81,7 @@ export class ModuleContainer {
 
   /**
    * Set the layout that will render Nuxt errors. It should already have been added via addLayout or addTemplate.
+   *
    * @param dst - Path to layout file within the buildDir (`.nuxt/<dst>.vue`)
    */
   addErrorLayout (dst: string) {

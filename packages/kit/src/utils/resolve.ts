@@ -4,6 +4,7 @@ import { resolve, join } from 'upath'
 export interface ResolveOptions {
   /**
    * The base path against which to resolve the path
+   *
    * @default .
    */
   base?: string
@@ -66,6 +67,7 @@ function resolvePath (path: string, opts: ResolveOptions = {}) {
 
 /**
  * Return a path with any relevant aliases resolved.
+ *
  * @example
  * ```js
  * const aliases = { 'test': '/here/there' }

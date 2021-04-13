@@ -12,6 +12,7 @@ export interface LoadDotEnvOptions {
   dotenvFile: string
   /**
    * Whether to interpolate variables within .env.
+   *
    * @example
    * ```env
    * BASE_DIR="/test"
@@ -27,6 +28,7 @@ export interface LoadDotEnvOptions {
 /**
  * Load and interpolate environment variables into `process.env`.
  * If you need more control (or access to the values), consider using `loadDotenv` instead
+ *
  * @param rootDir - The project root directory (either absolute or relative to the current working directory).
  */
 export async function loadEnv (rootDir: string) {
