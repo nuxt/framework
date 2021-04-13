@@ -25,7 +25,7 @@
     "clear": "^0.1.0",
     "colorette": "^1.2.2",
     "debounce-promise": "^3.1.2",
-    "listhen": "^0.2.3",
+    "listhen": "^0.2.4",
     "mri": "^1.1.6",
     "unbuild": "^0.1.12",
     "v8-compile-cache": "^2.3.0"

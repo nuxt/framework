@@ -8744,6 +8744,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"listhen@npm:^0.2.4":
+  version: 0.2.4
+  resolution: "listhen@npm:0.2.4"
+  dependencies:
+    clipboardy: ^2.3.0
+    colorette: ^1.2.2
+    get-port-please: ^2.1.0
+    http-shutdown: ^1.2.2
+    open: ^8.0.5
+    selfsigned: ^1.10.8
+  checksum: e297ecd7215f907b26ffbd5df03fbb25d92ef01a5d3f92e1134d0c599d76f98ab150453103c05800f23564df56d3aa7097dd01d3b6383990089f4c46bc51d754
+  languageName: node
+  linkType: hard
+
 "load-json-file@npm:^1.0.0":
   version: 1.1.0
   resolution: "load-json-file@npm:1.1.0"
@@ -9999,7 +10013,7 @@ __metadata:
     clear: ^0.1.0
     colorette: ^1.2.2
     debounce-promise: ^3.1.2
-    listhen: ^0.2.3
+    listhen: ^0.2.4
     mri: ^1.1.6
     unbuild: ^0.1.12
     v8-compile-cache: ^2.3.0
