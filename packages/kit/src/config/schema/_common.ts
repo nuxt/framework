@@ -135,7 +135,17 @@ export default {
   },
 
   watch: {
-    $resolve: (val, get) => [].concat(val, get('_nuxtConfigFiles')).filter(Boolean)
+    $resolve: (val, get) => {
+      const rootDir = get('rootDir')
+      return Array.from(new Set([].concat(
+        val,
+        get('_nuxtConfigFiles'),
+        'nuxt.config.js',
+        'nuxt.config.ts',
+        '.nuxtrc'
+      ).filter(Boolean).map(p => resolve(rootDir, p))
+      ))
+    }
   },
 
   watchers: {
