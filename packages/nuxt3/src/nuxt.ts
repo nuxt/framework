@@ -10,7 +10,8 @@ export function createNuxt (options: NuxtOptions): Nuxt {
     hooks,
     callHook: hooks.callHook,
     hook: hooks.hook,
-    ready: () => initNuxt(nuxt)
+    ready: () => initNuxt(nuxt),
+    close: () => Promise.resolve(hooks.callHook('close', nuxt))
   }
 
   return nuxt

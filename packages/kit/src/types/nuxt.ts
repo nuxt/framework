@@ -13,6 +13,7 @@ export interface Nuxt {
   callHook: Nuxt['hooks']['callHook']
 
   ready: () => Promise<void>
+  close: () => Promise<void>
 
   server?: any
 }
