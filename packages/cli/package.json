@@ -18,8 +18,11 @@
   ],
   "devDependencies": {
     "@nuxt/kit": "^0.4.0",
+    "@types/debounce-promise": "^3",
     "@types/mri": "^1.1.0",
+    "chokidar": "^3.5.1",
     "colorette": "^1.2.2",
+    "debounce-promise": "^3.1.2",
     "listhen": "^0.2.3",
     "mri": "^1.1.6",
     "unbuild": "^0.1.12",

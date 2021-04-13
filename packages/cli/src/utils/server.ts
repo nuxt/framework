@@ -1,10 +1,12 @@
 import type { RequestListener } from 'http'
 
+const defaultListener: RequestListener = (_req, res) => {
+  res.setHeader('Content-Type', 'text/html; charset=UTF-8')
+  res.end('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="1"><head><body>...')
+}
+
 export function createServer () {
-  const listener = createDynamicFunction <RequestListener>((_req, res) => {
-    res.setHeader('Content-Type', 'text/html; charset=UTF-8')
-    res.end('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="1"><head><body>...')
-  })
+  const listener = createDynamicFunction(defaultListener)
 
   async function listen (opts) {
     const { listen } = await import('listhen')
@@ -12,7 +14,7 @@ export function createServer () {
   }
 
   return {
-    setApp: (app: RequestListener) => listener.set(app),
+    setApp: (app: RequestListener = defaultListener) => listener.set(app),
     listen
   }
 }
