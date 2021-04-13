@@ -1,13 +1,14 @@
 import { createServer } from '../utils/server'
-import { buildNuxt, loadNuxt } from '../utils/nuxt'
 
 export async function invoke (args) {
   const server = createServer()
   const listenPromise = server.listen({ clipboard: true })
 
+  const { loadNuxt, buildNuxt } = await import('@nuxt/kit')
+
   const nuxt = await loadNuxt({
     rootDir: args._[0],
-    for: 'dev'
+    dev: true
   })
 
   server.setApp(nuxt.server.app)

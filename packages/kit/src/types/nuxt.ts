@@ -12,5 +12,7 @@ export interface Nuxt {
   hook: Nuxt['hooks']['hook']
   callHook: Nuxt['hooks']['callHook']
 
+  ready: () => Promise<void>
+
   server?: any
 }

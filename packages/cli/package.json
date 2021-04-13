@@ -17,6 +17,7 @@
     "dist"
   ],
   "devDependencies": {
+    "@nuxt/kit": "^0.4.0",
     "@types/mri": "^1.1.0",
     "colorette": "^1.2.2",
     "listhen": "^0.2.3",

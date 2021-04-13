@@ -1,11 +1,8 @@
-import { buildNuxt, loadNuxt } from '../utils/nuxt'
 
 export async function invoke (args) {
-  const nuxt = await loadNuxt({
-    rootDir: args._[0],
-    for: 'build'
-  })
+  const { loadNuxt, buildNuxt } = await import('@nuxt/kit')
 
+  const nuxt = await loadNuxt({ rootDir: args._[0] })
   await buildNuxt(nuxt)
 }
 

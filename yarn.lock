@@ -9963,6 +9963,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxt-cli@workspace:packages/cli"
   dependencies:
+    "@nuxt/kit": ^0.4.0
     "@types/mri": ^1.1.0
     colorette: ^1.2.2
     listhen: ^0.2.3
