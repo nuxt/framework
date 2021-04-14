@@ -29,7 +29,7 @@ export async function invoke (args) {
           'generate.staticAssets.version',
           'env.NITRO_PRESET'
         ])
-        server.setApp(createLoadingHandler('Restaring...', 1))
+        server.setApp(createLoadingHandler('Restarting...', 1))
         await currentNuxt.close()
         currentNuxt = newNuxt
       } else {
