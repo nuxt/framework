@@ -1,7 +1,6 @@
 import { join } from 'path'
 import jiti from 'jiti'
 
-
 // TODO: use create-require for jest environment
 const _require = jiti(process.cwd())
 
