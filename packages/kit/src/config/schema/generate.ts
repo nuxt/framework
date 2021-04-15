@@ -4,7 +4,7 @@ import { joinURL } from 'ufo'
 export default {
   /**
    * Directory name that holds all the assets and generated pages for a `static` build.
-  */
+   */
   dir: {
     $resolve: (val = 'dist', get) => resolve(get('rootDir'), val)
   },

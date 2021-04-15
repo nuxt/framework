@@ -76,14 +76,14 @@ export default {
 
   /**
    * Whether your app is being unit tested
-  */
+   */
   test: Boolean(env.test),
 
   /**
    * Set to true to enable debug mode.
    * By default it's only enabled in development mode.
    */
-   debug: {
+  debug: {
     $resolve: (val, get) => val ?? get('dev')
   },
 
@@ -151,7 +151,7 @@ export default {
 
   /**
    * @deprecated use ssr option
-  */
+   */
   mode: {
     $resolve: (val, get) => val || (get('ssr') ? 'spa' : 'universal'),
     $schema: { deprecated: '`mode` option is deprecated' }
@@ -238,9 +238,9 @@ export default {
    */
   buildModules: [],
 
-
   /**
    * Built-in ah-hoc modules
+   *
    *  @private
    */
   _modules: [],
@@ -255,7 +255,7 @@ export default {
 
   /**
    * Customizes specific global names (they are based on `globalName` by default).
-  */
+   */
   globals: {
     id: globalName => `__${globalName}`,
     nuxt: globalName => `$${globalName}`,
@@ -390,14 +390,14 @@ export default {
 
   /**
    * The extensions that should be resolved by the Nuxt resolver.
-  */
+   */
   extensions: {
     $resolve: val => ['.js', '.mjs', '.ts', '.tsx', '.vue'].concat(val).filter(Boolean)
   },
 
   /**
    * The style extensions that should be resolved by the Nuxt resolver (for example, in `css` property).
-  */
+   */
   styleExtensions: ['.css', '.pcss', '.postcss', '.styl', '.stylus', '.scss', '.sass', '.less'],
 
   /**
@@ -511,6 +511,7 @@ export default {
     rewatchOnRawEvents: undefined,
     /**
      * `watchOptions` to pass directly to webpack.
+     *
      * @see [webpack@4 watch options](https://v4.webpack.js.org/configuration/watch/#watchoptions).
      *  */
     webpack: {
@@ -528,8 +529,9 @@ export default {
 
   /**
    * Your preferred code editor to launch when debugging.
+   *
    * @see [documentation](https://github.com/yyx990803/launch-editor#supported-editors)
-  */
+   */
   editor: undefined,
 
   /**

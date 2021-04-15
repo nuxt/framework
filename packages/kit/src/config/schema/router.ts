@@ -5,7 +5,7 @@ export default {
    * Configure the router mode.
    *
    * For server-side rendering it is not recommended to change it.
-  */
+   */
   mode: 'history',
 
   /**
@@ -44,12 +44,12 @@ export default {
 
   /**
    * Globally configure `<nuxt-link>` default active class.
-  */
+   */
   linkActiveClass: 'nuxt-link-active',
 
   /**
    * Globally configure `<nuxt-link>` default exact active class.
-  */
+   */
   linkExactActiveClass: 'nuxt-link-exact-active',
 
   /**

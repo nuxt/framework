@@ -18,5 +18,5 @@ export default {
   /** @private */
   _nuxtConfigFiles: [],
   /** @private */
-  appDir: '',
+  appDir: ''
 }

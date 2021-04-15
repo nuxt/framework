@@ -80,21 +80,21 @@ export default {
 
   /**
    * Enables CSS source map support (defaults to true in development)
-  */
+   */
   cssSourceMap: {
     $resolve: (val, get) => val ?? get('dev')
   },
 
   /**
    * Creates special webpack bundle for SSR renderer. It is normally not necessary to change this value.
-  */
+   */
   ssr: undefined,
 
   /**
    * Enable [thread-loader](https://github.com/webpack-contrib/thread-loader#thread-loader) when building app with webpack.
    *
    * @warning This is an unstable feature.
-  */
+   */
   parallel: {
     $resolve: (val, get) => get('build.extractCSS') ? false : Boolean(val)
   },
@@ -104,7 +104,7 @@ export default {
    * and [`cache-loader`](https://github.com/webpack-contrib/cache-loader#cache-loader)
    *
    * @warning This is an unstable feature.
-  */
+   */
   cache: false,
 
   /**
@@ -178,7 +178,7 @@ export default {
 
   /**
    * Customize the options of Nuxt's integrated webpack loaders.
-  */
+   */
   loaders: {
     $resolve: (val, get) => {
       const styleLoaders = [
@@ -266,12 +266,12 @@ export default {
    * Enables the [HardSourceWebpackPlugin](https://github.com/mzgoddard/hard-source-webpack-plugin) for improved caching.
    *
    * @warning unstable
-  */
+   */
   hardSource: false,
 
   /**
    * Hard-replaces `typeof process`, `typeof window` and `typeof document` to tree-shake bundle.
-  */
+   */
   aggressiveCodeRemoval: false,
 
   /**
@@ -287,7 +287,7 @@ export default {
 
   /**
    * Configure [webpack optimization](https://webpack.js.org/configuration/optimization/).
-  */
+   */
   optimization: {
     runtimeChunk: 'single',
     /** Set minimize to false to disable all minimizers. (It is disabled in development by default) */
@@ -390,14 +390,13 @@ export default {
 
   /**
    * Customize PostCSS Loader plugins.
-  */
+   */
   postcss: {
     preset: {
       // https://cssdb.org/#staging-process
       stage: 2
     }
   },
-
 
   html: {
     /**

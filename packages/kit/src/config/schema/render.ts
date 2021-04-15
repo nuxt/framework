@@ -42,7 +42,7 @@ export default {
 
   /**
    * Configuration for HTTP2 push headers
-  */
+   */
   http2: {
     /** Set to true to enable HTTP2 push headers */
     push: false,

@@ -14,5 +14,13 @@
     "jsdoc/require-param": "off",
     "jsdoc/require-returns": "off",
     "jsdoc/require-param-type": "off"
+  },
+  "settings": {
+    "jsdoc": {
+      "tagNamePreference": {
+        "warning": "warning",
+        "note": "note"
+      }
+    }
   }
 }

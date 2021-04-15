@@ -8,9 +8,10 @@ export default {
   vue: {
     /**
      * Properties that will be set directly on `Vue.config` for vue@2 and `app.config` for vue@3.
+     *
      * @see [vue@2 Documentation](https://vuejs.org/v2/api/#Global-Config)
      * @see [vue@3 Documentation](https://v3.vuejs.org/api/application-config.html)
-    */
+     */
     config: {
       silent: { $resolve: (val, get) => val ?? get('dev') },
       performance: { $resolve: (val, get) => val ?? get('dev') }
@@ -64,7 +65,7 @@ export default {
   /**
    * Enable or disable vuex store.
    * By default is enbled if there is store / directory
-  */
+   */
   store: {
     $resolve: (val, get) => val !== false &&
       existsSync(join(get('srcDir'), get('dir.store'))) &&
@@ -74,12 +75,14 @@ export default {
 
   /**
    * Options to pass directly to `vue-meta`.
+   *
    * @see [documentation](https://vue-meta.nuxtjs.org/api/#plugin-options).
-  */
+   */
   vueMeta: null,
 
   /**
    * Set default configuration for `<head>` on every page.
+   *
    * @see [documentation](https://vue-meta.nuxtjs.org/api/#metainfo-properties) for specifics.
    */
   head: {
@@ -95,7 +98,7 @@ export default {
 
   /**
    * Configuration for the Nuxt `fetch()` hook.
-  */
+   */
   fetch: {
     /** Whether to enable `fetch()` on the server. */
     server: true,
@@ -263,7 +266,7 @@ export default {
 
   /**
    * You can disable specific Nuxt features that you do not want.
-  */
+   */
   features: {
     /** Set to false to disable Nuxt vuex integration */
     store: true,
