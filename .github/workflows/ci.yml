@@ -37,9 +37,6 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn --immutable
 
-      - name: Stub
-        run: yarn stub
-
       - name: Lint
         run: yarn lint
 
