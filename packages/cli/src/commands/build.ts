@@ -1,8 +1,13 @@
 
-export async function invoke (args) {
-  const { loadNuxt, buildNuxt } = await import('@nuxt/kit')
+import { resolve } from 'path'
+import { requireModule } from '../utils/cjs'
 
-  const nuxt = await loadNuxt({ rootDir: args._[0] })
+export async function invoke (args) {
+  const rootDir = resolve(args._[0] || '.')
+
+  const { loadNuxt, buildNuxt } = requireModule('@nuxt/kit', rootDir)
+
+  const nuxt = await loadNuxt({ rootDir })
   await buildNuxt(nuxt)
 }
 

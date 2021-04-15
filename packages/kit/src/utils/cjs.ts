@@ -5,7 +5,7 @@ import jiti from 'jiti'
 const _require = jiti(process.cwd())
 
 export interface ResolveModuleOptions {
-  paths?: string[]
+  paths?: string | string[]
 }
 
 export interface RequireModuleOptions extends ResolveModuleOptions {
@@ -82,7 +82,12 @@ export function requireModulePkg (id: string, opts: RequireModuleOptions = {}) {
 /** Resolve the path of a module. */
 export function resolveModule (id: string, opts: ResolveModuleOptions = {}) {
   return _require.resolve(id, {
-    paths: opts.paths
+    paths: [].concat(
+      global['__NUXT_PREPATHS__'],
+      opts.paths,
+      process.cwd(),
+      global['__NUXT_PATHS__']
+    ).filter(Boolean)
   })
 }
 

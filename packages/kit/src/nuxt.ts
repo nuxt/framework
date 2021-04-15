@@ -43,14 +43,14 @@ export interface LoadNuxtOptions extends LoadNuxtConfigOptions {
 export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   // Nuxt 3
   if (opts.version !== 2) {
-    const { loadNuxt } = requireModule('nuxt3')
+    const { loadNuxt } = requireModule('nuxt3', { paths: opts.rootDir })
     const nuxt = await loadNuxt(opts)
     return nuxt
   }
 
   // Compat
   // @ts-ignore
-  const { loadNuxt } = requireModule('nuxt')
+  const { loadNuxt } = requireModule('nuxt', { paths: opts.rootDir })
   const nuxt = await loadNuxt({
     rootDir: opts.rootDir,
     for: opts.dev ? 'dev' : 'build',
@@ -63,12 +63,12 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
 export function buildNuxt (nuxt: Nuxt): Promise<any> {
   // Nuxt 3
   if (nuxt.options._majorVersion === 3) {
-    const { build } = requireModule('nuxt3')
+    const { build } = requireModule('nuxt3', { paths: nuxt.options.rootDir })
     return build(nuxt)
   }
 
   // Compat
   // @ts-ignore
-  const { build } = requireModule('nuxt')
+  const { build } = requireModule('nuxt', { paths: nuxt.options.rootDir })
   return build(nuxt)
 }

@@ -3,6 +3,7 @@ import chokidar from 'chokidar'
 import debounce from 'debounce-promise'
 import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
+import { requireModule } from '../utils/cjs'
 import { error, info } from '../utils/log'
 import { diff, printDiff } from '../utils/diff'
 
@@ -12,7 +13,7 @@ export async function invoke (args) {
 
   const rootDir = resolve(args._[0] || '.')
 
-  const { loadNuxt, buildNuxt } = await import('@nuxt/kit')
+  const { loadNuxt, buildNuxt } = requireModule('@nuxt/kit', rootDir)
 
   const watcherFiles = new Set()
   const watcher = chokidar.watch([rootDir], { ignoreInitial: true, depth: 0 })
