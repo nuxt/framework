@@ -9,7 +9,7 @@ export default {
    * Define the workspace directory of your application.
    *
    * This property can be overwritten (for example, running `nuxt ./my-app/`
-   * will set the `rootDir` to the absolute path of ./my-app/ from the
+   * will set the `rootDir` to the absolute path of `./my-app/` from the
    * current/working directory.
    *
    * It is normally not needed to configure this option.
@@ -19,12 +19,12 @@ export default {
   },
 
   /**
-   * Define the source directory of your Nuxt.js application.
+   * Define the source directory of your Nuxt application.
    *
    * If a relative path is specified it will be relative to the `rootDir`.
    *
    * @example
-   * ```js{}[]
+   * ```js
    * export default {
    *   srcDir: 'client/'
    * }
@@ -71,15 +71,22 @@ export default {
    * Whether Nuxt is running in development mode.
    *
    * Normally you should not need to set this.
-   *
-   * This property is overridden by the CLI. `nuxt` and `nuxt dev` force this to `true`.
-   * `nuxt build`, `nuxt start` and `nuxt generate` force this to `false`.
    */
   dev: Boolean(env.dev),
-  /** Whether your app is being unit tested - disables telemetry and adds eslint rules. */
+
+  /**
+   * Whether your app is being unit tested
+  */
   test: Boolean(env.test),
-  /** Whether debug mode should be on. */
-  debug: undefined,
+
+  /**
+   * Set to true to enable debug mode.
+   * By default it's only enabled in development mode.
+   */
+   debug: {
+    $resolve: (val, get) => val ?? get('dev')
+  },
+
   /**
    * The env property defines environment variables that should be available
    * throughout your app (server- and client-side). They can be assigned using
@@ -109,7 +116,7 @@ export default {
    * Set the method Nuxt uses to require modules, such as loading `nuxt.config`, server
    * middleware, and so on - defaulting to `jiti` (which has support for TypeScript and ESM syntax).
    *
-   * [Read more about jiti here](https://github.com/unjs/jiti).
+   * @see [jiti](https://github.com/unjs/jiti)
    */
   createRequire: {
     $resolve: (val: any) => {
@@ -142,7 +149,9 @@ export default {
    */
   ssr: true,
 
-  /** Now replaced by the `ssr` option. */
+  /**
+   * @deprecated use ssr option
+  */
   mode: {
     $resolve: (val, get) => val || (get('ssr') ? 'spa' : 'universal'),
     $schema: { deprecated: '`mode` option is deprecated' }
@@ -165,7 +174,7 @@ export default {
    *
    * If you have set `modern: true` and are serving your app, modern will be set to `'server'`.
    *
-   * [Read more about the concept of modern mode](https://philipwalton.com/articles/deploying-es2015-code-in-production-today/).
+   * @see [concept of modern mode](https://philipwalton.com/articles/deploying-es2015-code-in-production-today/)
    */
   modern: undefined,
 
@@ -195,6 +204,7 @@ export default {
    * ```
    */
   modules: [],
+
   /**
    * Modules that are only required during development and build time.
    *
@@ -227,7 +237,12 @@ export default {
    * module's documentation to see if it is recommended to use `modules` or `buildModules`.
    */
   buildModules: [],
-  /** @private */
+
+
+  /**
+   * Built-in ah-hoc modules
+   *  @private
+   */
   _modules: [],
 
   /**
@@ -238,7 +253,9 @@ export default {
     $resolve: val => (typeof val === 'string' && /^[a-zA-Z]+$/.test(val)) ? val.toLocaleLowerCase() : 'nuxt'
   },
 
-  /** Customizes specific global names (they are based on `globalName` by default). */
+  /**
+   * Customizes specific global names (they are based on `globalName` by default).
+  */
   globals: {
     id: globalName => `__${globalName}`,
     nuxt: globalName => `$${globalName}`,
@@ -326,12 +343,11 @@ export default {
 
   /**
    * Used to set the modules directories for path resolving (for example, webpack's
-   * `resolveLoading`, `nodeExternals` and `postcss`.
+   * `resolveLoading`, `nodeExternals` and `postcss`).
    *
-   * The configuration path is relative to options.rootDir (default: process.cwd()).
+   * The configuration path is relative to `options.rootDir` (default is current working directory).
    *
-   * Setting this field may be necessary if your project is organized as a Yarn
-   * workspace-styled mono-repository.
+   * Setting this field may be necessary if your project is organized as a yarn workspace-styled mono-repository.
    *
    * @example
    * ```js
@@ -348,7 +364,10 @@ export default {
     )
   },
 
-  /** Define custom directories for core Nuxt features. */
+  /**
+   * Customize default directory structure used by nuxt.
+   * It is better to stick with defaults unless needed.
+   */
   dir: {
     /** The assets directory (aliased as `~assets` in your build) */
     assets: 'assets',
@@ -369,12 +388,16 @@ export default {
     store: 'store'
   },
 
-  /** The JS extensions that should be resolved by the Nuxt resolver. */
+  /**
+   * The extensions that should be resolved by the Nuxt resolver.
+  */
   extensions: {
     $resolve: val => ['.js', '.mjs', '.ts', '.tsx', '.vue'].concat(val).filter(Boolean)
   },
 
-  /** The style extensions that should be resolved by the Nuxt resolver (for example, in `css` property). */
+  /**
+   * The style extensions that should be resolved by the Nuxt resolver (for example, in `css` property).
+  */
   styleExtensions: ['.css', '.pcss', '.postcss', '.styl', '.stylus', '.scss', '.sass', '.less'],
 
   /**
@@ -434,7 +457,7 @@ export default {
   /**
    * Pass options directly to `node-ignore` (which is used by Nuxt to ignore files).
    *
-   * [Read documentation](https://github.com/kaelzhang/node-ignore).
+   * @see [node-ignore](https://github.com/kaelzhang/node-ignore)
    *
    * @example
    * ```js
@@ -444,11 +467,13 @@ export default {
    * ```
    */
   ignoreOptions: undefined,
+
   /**
    * Any file in `pages/`, `layouts/`, `middleware/` or `store/` will be ignored during
    * building if its filename starts with the prefix specified by `ignorePrefix`.
    */
   ignorePrefix: '-',
+
   /**
    * More customizable than `ignorePrefix`: all files matching glob patterns specified
    * inside the `ignore` array will be ignored in building.
@@ -465,7 +490,9 @@ export default {
    * The watch property lets you watch custom files for restarting the server.
    *
    * `chokidar` is used to set up the watchers. To learn more about its pattern
-   * options, see its [API documentation](https://github.com/paulmillr/chokidar#api).
+   * options, see chokidar documentation.
+   *
+   * @see [chokidar](https://github.com/paulmillr/chokidar#api)
    *
    * @example
    * ```js
@@ -482,24 +509,35 @@ export default {
   watchers: {
     /** An array of event types, which, when received, will cause the watcher to restart. */
     rewatchOnRawEvents: undefined,
-    /** `watchOptions` to pass directly to webpack. See [documentation](https://v4.webpack.js.org/configuration/watch/#watchoptions). */
+    /**
+     * `watchOptions` to pass directly to webpack.
+     * @see [webpack@4 watch options](https://v4.webpack.js.org/configuration/watch/#watchoptions).
+     *  */
     webpack: {
       aggregateTimeout: 1000
     },
-    /** Options to pass directly to `chokidar`. See [documentation](https://github.com/paulmillr/chokidar#api). */
+    /**
+     * Options to pass directly to `chokidar`.
+     *
+     * @see [chokidar](https://github.com/paulmillr/chokidar#api)
+     */
     chokidar: {
       ignoreInitial: true
     }
   },
 
-  /** Your preferred code editor to launch when debugging. [See docs for options](https://github.com/yyx990803/launch-editor#supported-editors).  */
+  /**
+   * Your preferred code editor to launch when debugging.
+   * @see [documentation](https://github.com/yyx990803/launch-editor#supported-editors)
+  */
   editor: undefined,
 
   /**
    * Hooks are listeners to Nuxt events that are typically used in modules, but are also available in `nuxt.config`.
    *
-   * Internally, hooks follow a naming pattern using colons (e.g., build:done). For ease of configuration, you
-   * can also structure them as an hierarchical object in `nuxt.config` (as below).
+   * Internally, hooks follow a naming pattern using colons (e.g., build:done).
+   *
+   * For ease of configuration, you can also structure them as an hierarchical object in `nuxt.config` (as below).
    *
    * @example
    * ```js
@@ -523,17 +561,18 @@ export default {
   hooks: null,
 
   /**
-   * Runtime config allows passing dynamic config and environment variables to the Nuxt context.
+   * Runtime config allows passing dynamic config and environment variables to the Nuxt app context.
    *
    * It is added to the Nuxt payload so there is no need to rebuild to update your configuration in
    * development or if your application is served by the Nuxt server. (For static sites you will still
    * need to regenerate your site to see changes.)
    *
-   * The value of this object is accessible from server only using `$config`. It will override `publicRuntimeConfig`
-   * on the server-side.
+   * The value of this object is accessible from server only using `$config`.
    *
-   * It should hold _private_ env variables (that should not be exposed on the frontend).
-   * This could include a reference to your API secret tokens, for example.
+   * It will override `publicRuntimeConfig` on the server-side.
+   *
+   * It should hold _private_ environment variables (that should not be exposed on the frontend).
+   * This could include a reference to your API secret tokens.
    *
    * @example
    * ```js
@@ -545,8 +584,9 @@ export default {
    * ```
    */
   privateRuntimeConfig: {},
+
   /**
-   * Runtime config allows passing dynamic config and environment variables to the Nuxt context.
+   * Runtime config allows passing dynamic config and environment variables to the Nuxt app context.
    *
    * It is added to the Nuxt payload so there is no need to rebuild to update your configuration in
    * development or if your application is served by the Nuxt server. (For static sites you will still
@@ -554,7 +594,7 @@ export default {
    *
    * The value of this object is accessible from both client and server using `$config`. It should hold env
    * variables that are _public_ as they will be accessible on the frontend. This could include a
-   * reference to your public URL for example.
+   * reference to your public URL.
    *
    * @example
    * ```js
@@ -569,5 +609,10 @@ export default {
     app: {
       $resolve: (val, get) => ({ ...get('app'), ...(val || {}) })
     }
-  }
+  },
+
+  /**
+   * Enable vite mode.
+   */
+  vite: false
 }

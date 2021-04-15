@@ -17,6 +17,6 @@ export default {
   _nuxtConfigFile: undefined,
   /** @private */
   _nuxtConfigFiles: [],
+  /** @private */
   appDir: '',
-  vite: false
 }

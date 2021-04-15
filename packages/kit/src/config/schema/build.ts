@@ -5,10 +5,12 @@ export default {
   /**
    * Suppresses most of the build output log.
    *
-   * It is enabled by default when a CI or test environment is detected by
-   * [std-env](https://github.com/unjs/std-env).
+   * It is enabled by default when a CI or test environment is detected.
+   *
+   * @see [std-env](https://github.com/unjs/std-env)
    */
   quiet: Boolean(env.ci || env.test),
+
   /**
    * Nuxt uses `webpack-bundle-analyzer` to visualize your bundles and how to optimize them.
    *
@@ -24,13 +26,16 @@ export default {
    * ```
    */
   analyze: false,
+
   /**
-   * Enable the profiler in [WebpackBar](https://github.com/unjs/webpackbar#profile)
+   * Enable the profiler in webpackbar.
    *
    * It is normally enabled by CLI argument `--profile`.
    *
+   * @see [webpackbar](https://github.com/unjs/webpackbar#profile)
    */
   profile: process.argv.includes('--profile'),
+
   /**
    * Enables Common CSS Extraction using
    * [Vue Server Renderer guidelines](https://ssr.vuejs.org/guide/css.html).
@@ -72,32 +77,54 @@ export default {
    * ```
    */
   extractCSS: false,
-  /** Enables CSS source map support (defaults to true in development) */
+
+  /**
+   * Enables CSS source map support (defaults to true in development)
+  */
   cssSourceMap: {
     $resolve: (val, get) => val ?? get('dev')
   },
-  /** Creates special webpack bundle for SSR renderer. It is normally not necessary to change this value. */
+
+  /**
+   * Creates special webpack bundle for SSR renderer. It is normally not necessary to change this value.
+  */
   ssr: undefined,
-  /** ⚠️ Experimental: Enable [thread-loader](https://github.com/webpack-contrib/thread-loader#thread-loader) when building app */
+
+  /**
+   * Enable [thread-loader](https://github.com/webpack-contrib/thread-loader#thread-loader) when building app with webpack.
+   *
+   * @warning This is an unstable feature.
+  */
   parallel: {
     $resolve: (val, get) => get('build.extractCSS') ? false : Boolean(val)
   },
-  /** ⚠ Experimental: Enable caching for [`terser-webpack-plugin`](https://github.com/webpack-contrib/terser-webpack-plugin#options) and [`cache-loader`](https://github.com/webpack-contrib/cache-loader#cache-loader) */
-  cache: false,
+
   /**
-   * Inline server bundle dependencies (advanced)
+   * Enable caching for [`terser-webpack-plugin`](https://github.com/webpack-contrib/terser-webpack-plugin#options)
+   * and [`cache-loader`](https://github.com/webpack-contrib/cache-loader#cache-loader)
    *
-   * This mode bundles `node_modules` that are normally preserved as externals in the server build ([more information](https://github.com/nuxt/nuxt.js/pull/4661)).
+   * @warning This is an unstable feature.
+  */
+  cache: false,
+
+  /**
+   * Inline server bundle dependencies
    *
-   * **Warning**: Runtime dependencies (modules, `nuxt.config`, server middleware and the static directory) are not bundled. This feature only disables use of [webpack-externals](https://webpack.js.org/configuration/externals/) for server-bundle.
+   * This mode bundles `node_modules` that are normally preserved as externals in the server build.
    *
-   * **Note**: You can enable standalone bundling by passing `--standalone` via the command line.
+   * @warning Runtime dependencies (modules, `nuxt.config`, server middleware and the static directory) are not bundled.
+   * This feature only disables use of [webpack-externals](https://webpack.js.org/configuration/externals/) for server-bundle.
+   *
+   * @note You can enable standalone bundling by passing `--standalone` via the command line.
+   *
+   * @see [context](https://github.com/nuxt/nuxt.js/pull/4661)
    */
   standalone: false,
+
   /**
    * If you are uploading your dist files to a CDN, you can set the publicPath to your CDN.
    *
-   * **Note**: This is only applied in production.
+   * @note This is only applied in production.
    *
    * The value of this property at runtime will override the configuration of an app that
    * has already been built.
@@ -115,18 +142,20 @@ export default {
       return (val || '/_nuxt/').replace(/([^/])$/, '$1/')
     }
   },
+
   /**
    * The polyfill library to load to provide URL and URLSearchParams.
    *
    * Defaults to `'url'` ([see package](https://www.npmjs.com/package/url)).
    */
   serverURLPolyfill: 'url',
+
   /**
    * Customize bundle filenames.
    *
    * To understand a bit more about the use of manifests, take a look at [this webpack documentation](https://webpack.js.org/guides/code-splitting/).
    *
-   * **Note**: Be careful when using non-hashed based filenames in production
+   * @note Be careful when using non-hashed based filenames in production
    * as most browsers will cache the asset and not detect the changes on first load.
    *
    * This example changes fancy chunk names to numerical ids:
@@ -146,7 +175,10 @@ export default {
     font: ({ isDev }) => isDev ? '[path][name].[ext]' : 'fonts/[name].[contenthash:7].[ext]',
     video: ({ isDev }) => isDev ? '[path][name].[ext]' : 'videos/[name].[contenthash:7].[ext]'
   },
-  /** Customize the options of Nuxt's integrated webpack loaders. */
+
+  /**
+   * Customize the options of Nuxt's integrated webpack loaders.
+  */
   loaders: {
     $resolve: (val, get) => {
       const styleLoaders = [
@@ -195,14 +227,12 @@ export default {
     stylus: {},
     vueStyle: {}
   },
+
   /**
-   * This property is deprecated. Please use
-   * [style-resources-module](https://github.com/nuxt-community/style-resources-module/)
-   * instead for improved performance and better DX!
-   *
-   * @deprecated
+   * @deprecated  Use [style-resources-module](https://github.com/nuxt-community/style-resources-module/)
    */
   styleResources: {},
+
   /**
    * Add webpack plugins.
    *
@@ -219,32 +249,46 @@ export default {
    * ```
    */
   plugins: [],
+
   /**
    * Terser plugin options.
    *
-   * Set to false to disable this plugin, or pass an object of options (see [docs](https://github.com/webpack-contrib/terser-webpack-plugin)).
+   * Set to false to disable this plugin, or pass an object of options.
    *
-   * **Note**: Enabling sourceMap will leave `//# sourceMappingURL` linking comment at
+   * @see [terser-webpack-plugin documentation](https://github.com/webpack-contrib/terser-webpack-plugin)
+   *
+   * @note Enabling sourceMap will leave `//# sourceMappingURL` linking comment at
    * the end of each output file if webpack `config.devtool` is set to `source-map`.
    */
   terser: {},
-  /** ⚠️ Experimental: Enables the [HardSourceWebpackPlugin](https://github.com/mzgoddard/hard-source-webpack-plugin) for improved caching */
+
+  /**
+   * Enables the [HardSourceWebpackPlugin](https://github.com/mzgoddard/hard-source-webpack-plugin) for improved caching.
+   *
+   * @warning unstable
+  */
   hardSource: false,
-  /** Hard-replaces `typeof process`, `typeof window` and `typeof document` to tree-shake bundle. */
+
+  /**
+   * Hard-replaces `typeof process`, `typeof window` and `typeof document` to tree-shake bundle.
+  */
   aggressiveCodeRemoval: false,
+
   /**
    * OptimizeCSSAssets plugin options.
    *
    * Defaults to true when `extractCSS` is enabled.
    *
-   * See [docs](https://github.com/NMFR/optimize-css-assets-webpack-plugin).
+   * @see [optimize-css-assets-webpack-plugin documentation](https://github.com/NMFR/optimize-css-assets-webpack-plugin).
    */
   optimizeCSS: {
     $resolve: (val, get) => val ?? (get('build.extractCSS') ? {} : false)
   },
-  /** Configure [webpack optimization](https://webpack.js.org/configuration/optimization/). */
+
+  /**
+   * Configure [webpack optimization](https://webpack.js.org/configuration/optimization/).
+  */
   optimization: {
-    /** */
     runtimeChunk: 'single',
     /** Set minimize to false to disable all minimizers. (It is disabled in development by default) */
     minimize: { $resolve: (val, get) => val ?? get('dev') },
@@ -256,6 +300,7 @@ export default {
       cacheGroups: {}
     }
   },
+
   /**
    * Whether to split code for `layout`, `pages` and `commons` chunks.
    *
@@ -266,18 +311,20 @@ export default {
     pages: true,
     commons: true
   },
+
   /**
    * Nuxt will automatically detect the current version of `core-js` in your project (`'auto'`),
    * or you can specify which version you want to use (`2` or `3`).
    */
   corejs: 'auto',
+
   /**
    * Customize your Babel configuration.
    *
    * See [babel-loader options](https://github.com/babel/babel-loader#options) and
    * [babel options](https://babeljs.io/docs/en/options).
    *
-   * **Note**: `.babelrc` is ignored by default.
+   * @note `.babelrc` is ignored by default.
    */
   babel: {
     configFile: false,
@@ -324,6 +371,7 @@ export default {
       $resolve: (val, get) => val ?? get('dev')
     }
   },
+
   /**
    * If you want to transpile specific dependencies with Babel, you can add them here.
    * Each item in transpile can be a package name, a function, a string or regex object matching the
@@ -339,13 +387,18 @@ export default {
   transpile: {
     $resolve: val => [].concat(val).filter(Boolean)
   },
-  /** Customize PostCSS Loader plugins. */
+
+  /**
+   * Customize PostCSS Loader plugins.
+  */
   postcss: {
     preset: {
       // https://cssdb.org/#staging-process
       stage: 2
     }
   },
+
+
   html: {
     /**
      * Configuration for the html-minifier plugin used to minify HTML files created

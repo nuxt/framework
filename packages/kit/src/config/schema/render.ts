@@ -11,16 +11,19 @@ export default {
     /** enabled by default for development */
     runInNewContext: { $resolve: (val, get) => val ?? get('dev') }
   },
+
   /**
    * Configure the crossorigin attribute on `<link rel="stylesheet">` and `<script>`
    * tags in generated HTML. [More information](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/crossorigin).
    */
   crossorigin: undefined,
+
   /**
    * Adds prefetch and preload links for faster initial page load time.
    * You probably don't want to disable this option unless you have many pages and routes.
    */
   resourceHints: true,
+
   /**
    * Whether to enable rendering of HTML - either dynamically (in server mode) or at generate time.
    *
@@ -29,13 +32,17 @@ export default {
    * (with docker for example).
    */
   ssr: undefined,
+
   /**
    * Forward server-side logs to the browser for better debugging (only available in development)
    *
    * Set to `collapsed` to collapse the logs, or false to disable.
    */
   ssrLog: { $resolve: (val, get) => get('dev') ? Boolean(val) : false },
-  /** Configuration for HTTP2 push headers */
+
+  /**
+   * Configuration for HTTP2 push headers
+  */
   http2: {
     /** Set to true to enable HTTP2 push headers */
     push: false,
@@ -61,6 +68,7 @@ export default {
      */
     pushAssets: null
   },
+
   /**
    * Configure the behavior of the `static/` directory.
    *
@@ -80,6 +88,7 @@ export default {
      */
     prefix: true
   },
+
   /**
    * Configure server compression.
    *
@@ -91,6 +100,7 @@ export default {
   compressor: {
     threshold: 0
   },
+
   /**
    * To disable etag for pages set `etag: false`. See
    * [etag docs](https://github.com/jshttp/etag) for possible options.
@@ -116,6 +126,7 @@ export default {
     hash: false,
     weak: false
   },
+
   /**
    * Use this to configure Content-Security-Policy to load external resources. [Read more](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP).
    *
@@ -214,6 +225,7 @@ export default {
       }
     }
   },
+
   /**
    * Options used for serving distribution files. Only applicable in production.
    *
@@ -223,6 +235,7 @@ export default {
     index: false,
     maxAge: '1y'
   },
+
   /**
    * Configure fallback behavior for [`serve-placeholder` middleware](https://github.com/nuxt/serve-placeholder).
    *
@@ -246,6 +259,7 @@ export default {
      * Disable by setting to false.
      */
     dist: {},
+
     /**
      * For all other routes (`/*`)
      * Disable by setting to false.

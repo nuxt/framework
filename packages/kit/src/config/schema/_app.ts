@@ -4,9 +4,13 @@ import defu from 'defu'
 import { isRelative, joinURL, hasProtocol } from 'ufo'
 
 export default {
-  /** Interact directly with Vue. */
+  /** Vue.js config */
   vue: {
-    /** Properties that will be set directly on Vue.config ([Vue 2](https://vuejs.org/v2/api/#Global-Config)) or app.config ([Vue 3](https://v3.vuejs.org/api/application-config.html)) */
+    /**
+     * Properties that will be set directly on `Vue.config` for vue@2 and `app.config` for vue@3.
+     * @see [vue@2 Documentation](https://vuejs.org/v2/api/#Global-Config)
+     * @see [vue@3 Documentation](https://v3.vuejs.org/api/application-config.html)
+    */
     config: {
       silent: { $resolve: (val, get) => val ?? get('dev') },
       performance: { $resolve: (val, get) => val ?? get('dev') }
@@ -14,9 +18,7 @@ export default {
   },
 
   /**
-   * Internal Nuxt namespace for configuration
-   *
-   * @private
+   * Nuxt App configuration.
    */
   app: {
     $resolve: (val, get) => {
@@ -32,9 +34,9 @@ export default {
 
   /**
    * The path to a templated HTML file for rendering Nuxt responses.
-   * Defaults to using `<srcDir>/app.html` if it exists or the Nuxt default template if not.
+   * Uses `<srcDir>/app.html` if it exists or the Nuxt default template if not.
    *
-   * The Nuxt default template is:
+   * @example
    * ```html
    * <!DOCTYPE html>
    * <html {{ HTML_ATTRS }}>
@@ -59,7 +61,10 @@ export default {
     }
   },
 
-  /** Set to false to disable the store. */
+  /**
+   * Enable or disable vuex store.
+   * By default is enbled if there is store / directory
+  */
   store: {
     $resolve: (val, get) => val !== false &&
       existsSync(join(get('srcDir'), get('dir.store'))) &&
@@ -67,15 +72,16 @@ export default {
         .find(filename => filename !== 'README.md' && filename[0] !== '.')
   },
 
-  /** Set to true to enable debug mode. By default it's only enabled if `dev: true` */
-  debug: {
-    $resolve: (val, get) => val ?? get('dev')
-  },
-
-  /** Options to pass directly to `vue-meta`. See [documentation](https://vue-meta.nuxtjs.org/api/#plugin-options). */
+  /**
+   * Options to pass directly to `vue-meta`.
+   * @see [documentation](https://vue-meta.nuxtjs.org/api/#plugin-options).
+  */
   vueMeta: null,
 
-  /** Set default configuration for `<head>` on every page. See [documentation](https://vue-meta.nuxtjs.org/api/#metainfo-properties) for specifics. */
+  /**
+   * Set default configuration for `<head>` on every page.
+   * @see [documentation](https://vue-meta.nuxtjs.org/api/#metainfo-properties) for specifics.
+   */
   head: {
     /** Each item in the array maps to a newly-created <meta> element, where object properties map to attributes. */
     meta: [],
@@ -87,7 +93,9 @@ export default {
     script: []
   },
 
-  /** Configuration for the Nuxt `fetch()` hook. */
+  /**
+   * Configuration for the Nuxt `fetch()` hook.
+  */
   fetch: {
     /** Whether to enable `fetch()` on the server. */
     server: true,
@@ -96,7 +104,7 @@ export default {
   },
 
   /**
-   * An array of plugins to enable.
+   * An array of nuxt app plugins.
    *
    * Each plugin can be a string (which can be an absolute or relative path to a file).
    * If it ends with `.client` or `.server` then it will be automatically loaded only
@@ -225,7 +233,8 @@ export default {
    * You can either pass a string (the transition name) or an object with properties to bind
    * to the `<Transition>` component that will wrap your pages.
    *
-   * Read more about Vue transitions in the [Vue 2 docs](https://vuejs.org/v2/guide/transitions.html) or [Vue 3 docs](https://v3.vuejs.org/guide/transitions-enterleave.html).
+   * @see [vue@2 documentation](https://vuejs.org/v2/guide/transitions.html)
+   * @see [vue@3 documentation](https://v3.vuejs.org/guide/transitions-enterleave.html)
    */
   pageTransition: {
     $resolve: val => typeof val === 'string' ? { name: val } : val,
@@ -243,7 +252,8 @@ export default {
    * You can either pass a string (the transition name) or an object with properties to bind
    * to the `<Transition>` component that will wrap your layouts.
    *
-   * Read more about Vue transitions in the [Vue 2 docs](https://vuejs.org/v2/guide/transitions.html) or [Vue 3 docs](https://v3.vuejs.org/guide/transitions-enterleave.html).
+   * @see [vue@2 documentation](https://vuejs.org/v2/guide/transitions.html)
+   * @see [vue@3 documentation](https://v3.vuejs.org/guide/transitions-enterleave.html)
    */
   layoutTransition: {
     $resolve: val => typeof val === 'string' ? { name: val } : val,
@@ -251,7 +261,9 @@ export default {
     mode: 'out-in'
   },
 
-  /** You can disable specific Nuxt features that you do not want. */
+  /**
+   * You can disable specific Nuxt features that you do not want.
+  */
   features: {
     /** Set to false to disable Nuxt vuex integration */
     store: true,

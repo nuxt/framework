@@ -2,10 +2,13 @@ import { resolve } from 'path'
 import { joinURL } from 'ufo'
 
 export default {
-  /** Directory name that holds all the assets and generated pages for a `static` build. */
+  /**
+   * Directory name that holds all the assets and generated pages for a `static` build.
+  */
   dir: {
     $resolve: (val = 'dist', get) => resolve(get('rootDir'), val)
   },
+
   /**
    * The routes to generate.
    *
@@ -50,18 +53,22 @@ export default {
    * ```
    */
   routes: [],
+
   /**
    * An array of string or regular expressions that will prevent generation
    * of routes matching them. The routes will still be accessible when `fallback` is set.
    */
   exclude: [],
+
   /** The number of routes that are generated concurrently in the same thread. */
   concurrency: 500,
+
   /**
    * Interval in milliseconds between two render cycles to avoid flooding a potential
    * API with calls.
    */
   interval: 0,
+
   /**
    * Set to `false` to disable creating a directory + `index.html` for each route.
    *
@@ -85,6 +92,7 @@ export default {
    * ```
    */
   subFolders: true,
+
   /**
    * The path to the fallback HTML file.
    *
@@ -100,15 +108,19 @@ export default {
    * to find out how to set up an error page (and set it to the 404.html file)
    */
   fallback: { $resolve: val => val === true ? '400.html' : (val || '200.html') },
+
   /**
    * Set to `false` to disable generating pages discovered through crawling relative
    * links in generated pages.
    */
   crawler: true,
+
   /** Set to `false` to disable generating a `manifest.js` with a list of all generated pages. */
   manifest: true,
+
   /** Set to `false` to disable generating a `.nojekyll` file (which aids compatibility with GitHub Pages). */
   nojekyll: true,
+
   /**
    * Configure the cache (used with `static` target to avoid rebuilding when no files have changed).
    *
@@ -125,7 +137,7 @@ export default {
       gitignore: true
     }
   },
-  /** */
+
   staticAssets: {
     /** The directory underneath `/_nuxt/`, where static assets (payload, state and manifest files) will live. */
     dir: 'static',
