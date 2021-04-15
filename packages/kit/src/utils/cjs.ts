@@ -1,6 +1,7 @@
 import { join } from 'path'
 import jiti from 'jiti'
 
+
 // TODO: use create-require for jest environment
 const _require = jiti(process.cwd())
 
@@ -83,10 +84,12 @@ export function requireModulePkg (id: string, opts: RequireModuleOptions = {}) {
 export function resolveModule (id: string, opts: ResolveModuleOptions = {}) {
   return _require.resolve(id, {
     paths: [].concat(
-      global['__NUXT_PREPATHS__'],
+      // @ts-ignore
+      global.__NUXT_PREPATHS__,
       opts.paths,
       process.cwd(),
-      global['__NUXT_PATHS__']
+      // @ts-ignore
+      global.__NUXT_PATHS__
     ).filter(Boolean)
   })
 }
