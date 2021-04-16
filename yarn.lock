@@ -1593,7 +1593,7 @@ __metadata:
     "@vueuse/head": ^0.5.1
     hookable: ^4.4.1
     ohmyfetch: ^0.2.0
-    unbuild: ^0.1.13
+    unbuild: ^0.1.12
     vue: ^3.0.11
     vue-router: ^4.0.6
     vuex5: ^0.5.0-testing.3
@@ -1637,7 +1637,7 @@ __metadata:
     scule: ^0.1.1
     std-env: ^2.3.0
     ufo: ^0.6.11
-    unbuild: ^0.1.13
+    unbuild: ^0.1.12
     unctx: ^0.0.3
     untyped: ^0.2.5
     upath: ^2.0.1
@@ -1702,7 +1702,7 @@ __metadata:
     std-env: ^2.3.0
     table: ^6.1.0
     ufo: ^0.6.11
-    unbuild: ^0.1.13
+    unbuild: ^0.1.12
     unstorage: ^0.1.4
     upath: ^2.0.1
     vue: 3.0.11
@@ -1737,7 +1737,7 @@ __metadata:
     "@vue/compiler-sfc": ^3.0.11
     consola: ^2.15.3
     fs-extra: ^9.1.0
-    unbuild: ^0.1.13
+    unbuild: ^0.1.12
     vite: ^2.1.5
     vue: 3.0.11
   languageName: unknown
@@ -1776,7 +1776,7 @@ __metadata:
     style-resources-loader: ^1.4.1
     time-fix-plugin: ^2.0.7
     ufo: ^0.6.11
-    unbuild: ^0.1.13
+    unbuild: ^0.1.12
     url-loader: ^4.1.1
     vue: 3.0.11
     vue-loader: ^16.2.0
@@ -10076,7 +10076,7 @@ __metadata:
     fsevents: ~2.3.2
     listhen: ^0.2.4
     mri: ^1.1.6
-    unbuild: ^0.1.13
+    unbuild: ^0.1.12
     v8-compile-cache: ^2.3.0
   dependenciesMeta:
     fsevents:
@@ -10103,7 +10103,7 @@ __metadata:
     lerna: ^4.0.0
     ts-jest: ^26.5.5
     typescript: ^4.2.4
-    unbuild: ^0.1.13
+    unbuild: ^0.1.12
   languageName: unknown
   linkType: soft
 
@@ -10131,7 +10131,7 @@ __metadata:
     nuxt-cli: ^0.3.0
     scule: ^0.1.1
     ufo: ^0.6.11
-    unbuild: ^0.1.13
+    unbuild: ^0.1.12
     upath: ^2.0.1
   languageName: unknown
   linkType: soft
@@ -13696,7 +13696,7 @@ typescript@^4.2.4:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.1.13":
+"unbuild@npm:^0.1.12":
   version: 0.1.13
   resolution: "unbuild@npm:0.1.13"
   dependencies:
