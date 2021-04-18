@@ -1,6 +1,6 @@
 {
   "name": "nuxt3",
-  "version": "0.1.0",
+  "version": "0.5.1",
   "repository": "nuxt/framework",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -8,25 +8,14 @@
     "dist"
   ],
   "scripts": {
-    "build": "jiti ../../scripts/build .",
-    "prepublishOnly": "yarn build"
-  },
-  "build": {
-    "entries": {
-      "index": { "format": "cjs" }
-    },
-    "dependencies": [
-      "@nuxt/app",
-      "@nuxt/vite-builder",
-      "@nuxt/webpack-builder"
-    ]
+    "prepack": "unbuild"
   },
   "dependencies": {
-    "@nuxt/kit": "^0.1.0",
-    "@nuxt/app": "^0.1.0",
-    "@nuxt/vite-builder": "^0.1.0",
-    "@nuxt/webpack-builder": "^0.1.0",
-    "@nuxt/nitro": "^0.1.11",
+    "@nuxt/app": "^0.3.1",
+    "@nuxt/kit": "^0.5.0",
+    "@nuxt/nitro": "^0.5.2",
+    "@nuxt/vite-builder": "^0.3.0",
+    "@nuxt/webpack-builder": "^0.3.1",
     "chokidar": "^3.5.1",
     "consola": "^2.15.3",
     "defu": "^3.2.2",
@@ -36,9 +25,15 @@
     "hookable": "^4.4.1",
     "ignore": "^5.1.8",
     "lodash": "^4.17.21",
+    "nuxt-cli": "^0.3.0",
     "scule": "^0.1.1",
-    "ufo": "^0.6.10"
+    "ufo": "^0.6.11",
+    "upath": "^2.0.1"
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.11",
+    "@types/hash-sum": "^1.0.0",
+    "@types/lodash": "^4.14.168",
+    "unbuild": "^0.1.13"
   }
 }

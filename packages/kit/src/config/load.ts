@@ -1,4 +1,5 @@
 import { resolve } from 'path'
+import { existsSync } from 'fs'
 import defu from 'defu'
 import { applyDefaults } from 'untyped'
 import * as rc from 'rc9'
@@ -7,9 +8,12 @@ import { NuxtOptions } from '../types/config'
 import nuxtConfigSchema from './schema'
 
 export interface LoadNuxtConfigOptions {
+  /** Your project root directory (either absolute or relative to the current working directory). */
   rootDir?: string
+  /** The path to your `nuxt.config` file (either absolute or relative to your project `rootDir`). */
   configFile?: string
-  config?: any
+  /** Any overrides to your Nuxt configuration. */
+  config?: Record<string, any>
 }
 
 export function loadNuxtConfig (opts: LoadNuxtConfigOptions): NuxtOptions {
@@ -19,7 +23,7 @@ export function loadNuxtConfig (opts: LoadNuxtConfigOptions): NuxtOptions {
 
   let nuxtConfig: any = {}
 
-  if (nuxtConfigFile) {
+  if (nuxtConfigFile && existsSync(nuxtConfigFile)) {
     nuxtConfig = requireModule(nuxtConfigFile, { clearCache: true })
     nuxtConfig = { ...nuxtConfig }
     nuxtConfig._nuxtConfigFile = nuxtConfigFile

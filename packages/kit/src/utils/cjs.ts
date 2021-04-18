@@ -5,12 +5,15 @@ import jiti from 'jiti'
 const _require = jiti(process.cwd())
 
 export interface ResolveModuleOptions {
-  paths?: string[]
+  paths?: string | string[]
 }
 
 export interface RequireModuleOptions extends ResolveModuleOptions {
-  native?: boolean
+  // TODO: use create-require for jest environment
+  // native?: boolean
+  /** Clear the require cache (force fresh require) but only if not within `node_modules` */
   clearCache?: boolean
+  /** Automatically de-default the result of requiring the module. */
   interopDefault?: boolean
 }
 
@@ -63,6 +66,7 @@ export function scanRequireTree (id: string, files = new Set<string>()) {
   return files
 }
 
+/** Access the require cache by module id. */
 export function getRequireCacheItem (id: string) {
   try {
     return _require.cache[id]
@@ -70,16 +74,26 @@ export function getRequireCacheItem (id: string) {
   }
 }
 
+/** Resolve the `package.json` file for a given module. */
 export function requireModulePkg (id: string, opts: RequireModuleOptions = {}) {
   return requireModule(join(id, 'package.json'), opts)
 }
 
+/** Resolve the path of a module. */
 export function resolveModule (id: string, opts: ResolveModuleOptions = {}) {
   return _require.resolve(id, {
-    paths: opts.paths
+    paths: [].concat(
+      // @ts-ignore
+      global.__NUXT_PREPATHS__,
+      opts.paths,
+      process.cwd(),
+      // @ts-ignore
+      global.__NUXT_PATHS__
+    ).filter(Boolean)
   })
 }
 
+/** Try to resolve the path of a module, but don't emit an error if it can't be found. */
 export function tryResolveModule (path: string, opts: ResolveModuleOptions = {}) {
   try {
     return resolveModule(path, opts)
@@ -90,6 +104,7 @@ export function tryResolveModule (path: string, opts: ResolveModuleOptions = {})
   }
 }
 
+/** Require a module and return it. */
 export function requireModule (id: string, opts: RequireModuleOptions = {}) {
   // Resolve id
   const resolvedPath = resolveModule(id, opts)
@@ -110,6 +125,7 @@ export function requireModule (id: string, opts: RequireModuleOptions = {}) {
   return requiredModule
 }
 
+/** Try to require a module, but don't emit an error if the module can't be required. */
 export function tryRequireModule (id: string, opts: RequireModuleOptions = {}) {
   try {
     return requireModule(id, opts)

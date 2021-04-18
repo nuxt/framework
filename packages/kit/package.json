@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/kit",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "repository": "nuxt/framework",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -9,9 +9,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "jiti ../../scripts/build .",
-    "gentypes": "jiti ./scripts/gentypes",
-    "prepublishOnly": "yarn build && yarn gentypes"
+    "prepack": "unbuild"
+  },
+  "devDependencies": {
+    "unbuild": "^0.1.13"
   },
   "dependencies": {
     "consola": "^2.15.3",
@@ -19,21 +20,13 @@
     "defu": "^3.2.2",
     "dotenv": "^8.2.0",
     "hash-sum": "^2.0.0",
-    "jiti": "^1.6.4",
+    "jiti": "^1.9.1",
     "rc9": "^1.2.0",
     "scule": "^0.1.1",
     "std-env": "^2.3.0",
-    "ufo": "^0.6.10",
+    "ufo": "^0.6.11",
     "unctx": "^0.0.3",
-    "untyped": "^0.2.4",
+    "untyped": "^0.2.5",
     "upath": "^2.0.1"
-  },
-  "build": {
-    "prebuild": "yarn -s gentypes",
-    "entries": {
-      "index": {
-        "format": "cjs"
-      }
-    }
   }
 }

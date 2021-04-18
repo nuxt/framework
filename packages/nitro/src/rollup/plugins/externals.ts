@@ -1,4 +1,3 @@
-import { isAbsolute, relative } from 'path'
 import type { Plugin } from 'rollup'
 import { resolve, dirname } from 'upath'
 import { copyFile, mkdirp } from 'fs-extra'
@@ -44,8 +43,8 @@ export function externals (opts: NodeExternalsOptions): Plugin {
       } catch (_err) { }
 
       return {
-        id: isAbsolute(id) ? relative(opts.outDir, id) : id,
-        external: true
+        id,
+        external: 'absolute'
       }
     },
     async buildEnd () {

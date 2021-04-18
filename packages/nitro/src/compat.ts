@@ -1,5 +1,6 @@
 import fetch from 'node-fetch'
 import { resolve } from 'upath'
+import { resolveModule } from '@nuxt/kit'
 import { build, generate, prepare } from './build'
 import { getNitroContext, NitroContext } from './context'
 import { createDevServer } from './server/dev'
@@ -55,9 +56,18 @@ export default function nuxt2CompatModule () {
     src: resolve(nitroContext._internal.runtimeDir, 'app/nitro.client.js')
   })
 
+  // Fix module resolution
+  nuxt.hook('webpack:config', (configs) => {
+    for (const config of configs) {
+      if (config.name === 'client') {
+        config.resolve.alias.ufo = resolveModule('ufo/dist/index.mjs')
+      }
+    }
+  })
+
   // Resolve middleware
   nuxt.hook('modules:done', () => {
-    const { middleware, legacyMiddleware } = resolveMiddleware(nuxt.options.serverMiddleware)
+    const { middleware, legacyMiddleware } = resolveMiddleware(nuxt)
     if (nuxt.server) {
       nuxt.server.setLegacyMiddleware(legacyMiddleware)
     }

@@ -21,8 +21,11 @@ import { externals } from './plugins/externals'
 import { timing } from './plugins/timing'
 import { autoMock } from './plugins/automock'
 import { staticAssets, dirnames } from './plugins/static'
+import { assets } from './plugins/assets'
 import { middleware } from './plugins/middleware'
 import { esbuild } from './plugins/esbuild'
+import { raw } from './plugins/raw'
+import { storage } from './plugins/storage'
 
 export type RollupConfig = InputOptions & { output: OutputOptions }
 
@@ -79,8 +82,10 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
           prefix = 'nuxt'
         } else if (lastModule.startsWith(nitroContext._internal.runtimeDir)) {
           prefix = 'nitro'
-        } else if (!prefix && nitroContext.middleware.find(m => lastModule.startsWith(m.handle))) {
+        } else if (!prefix && nitroContext.middleware.find(m => lastModule.startsWith(m.handle as string))) {
           prefix = 'middleware'
+        } else if (lastModule.includes('assets')) {
+          prefix = 'assets'
         }
         return join('chunks', prefix, '[name].js')
       },
@@ -97,6 +102,8 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       }
     },
     external: env.external,
+    // https://github.com/rollup/rollup/pull/4021#issuecomment-809985618
+    makeAbsoluteExternalsRelative: 'ifRelativeSource',
     plugins: [],
     onwarn (warning, rollupWarn) {
       if (!['CIRCULAR_DEPENDENCY', 'EVAL'].includes(warning.code)) {
@@ -108,6 +115,9 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   if (nitroContext.timing) {
     rollupConfig.plugins.push(timing())
   }
+
+  // Raw asset loader
+  rollupConfig.plugins.push(raw())
 
   // https://github.com/rollup/plugins/tree/master/packages/replace
   rollupConfig.plugins.push(replace({
@@ -143,11 +153,18 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     }
   }))
 
+  // Assets
+  rollupConfig.plugins.push(assets(nitroContext.assets))
+
   // Static
+  // TODO: use assets plugin
   if (nitroContext.serveStatic) {
     rollupConfig.plugins.push(dirnames())
     rollupConfig.plugins.push(staticAssets(nitroContext))
   }
+
+  // Storage
+  rollupConfig.plugins.push(storage(nitroContext.storage))
 
   // Middleware
   rollupConfig.plugins.push(middleware(() => {
@@ -193,9 +210,14 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       moduleDirectories,
       ignore: [
         nitroContext._internal.runtimeDir,
-        ...(nitroContext._nuxt.dev ? [] : [nitroContext._nuxt.buildDir]),
-        ...nitroContext.middleware.map(m => m.handle),
-        nitroContext._nuxt.serverDir
+        ...((!nitroContext._nuxt.dev && [
+          // prod
+          nitroContext._nuxt.srcDir,
+          nitroContext._nuxt.rootDir,
+          nitroContext._nuxt.buildDir
+        ]) || []),
+        nitroContext._nuxt.serverDir,
+        ...nitroContext.middleware.map(m => m.handle)
       ],
       traceOptions: {
         base: nitroContext._nuxt.rootDir
