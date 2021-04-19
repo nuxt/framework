@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nu dev",
+    "vercel-build": "cd .. && yarn stub && cd docs && yarn build",
     "build": "nu build",
     "docs": "nu dev"
   },
