@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "nu dev",
+    "build": "nu build",
     "docs": "nu dev"
   },
   "devDependencies": {
