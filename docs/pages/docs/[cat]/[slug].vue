@@ -35,7 +35,7 @@ export default defineNuxtComponent({
 })
 </script>
 
-<style>
+<style scroped>
   .breadcrumb li {
     display: inline;
     /* padding: 0 .2em; */
@@ -45,33 +45,5 @@ export default defineNuxtComponent({
     padding: 0 .5em;
     @apply text-gray-400;
     content: "/";
-  }
-
-  .markdown h1 {
-    @apply text-4xl;
-  }
-
-  .markdown h2 {
-    @apply text-3xl;
-  }
-
-  .markdown h3 {
-    @apply text-2xl;
-  }
-
-  .markdown h4 {
-    @apply text-1xl;
-  }
-
-  .markdown blockquote {
-    @apply border-l-2 border-primary-500 pl-2 ml-1;
-  }
-
-  .markdown code {
-    @apply text-green-800 rounded;
-  }
-
-  .markdown code::before, .markdown code::after {
-    content: "`";
   }
 </style>
