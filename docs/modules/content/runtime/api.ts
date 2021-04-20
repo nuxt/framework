@@ -1,7 +1,6 @@
 import unified from 'unified'
 import remarkParse from 'remark-parse'
 import remark2rehype from 'remark-rehype'
-import rehypeDoc from 'rehype-document'
 import rehypeStringify from 'rehype-stringify'
 import rehypeRaw from 'rehype-raw'
 import { readAsset } from '#assets'
@@ -11,7 +10,6 @@ export default async (req) => {
     .use(remarkParse)
     .use(remark2rehype)
     .use(rehypeRaw)
-    .use(rehypeDoc)
     .use(rehypeStringify)
 
   const id = req.url
