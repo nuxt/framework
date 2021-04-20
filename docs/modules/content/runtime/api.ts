@@ -5,8 +5,7 @@ import remark2rehype from 'remark-rehype'
 import rehypeDoc from 'rehype-document'
 import rehypeStringify from 'rehype-stringify'
 import rehypeRaw from 'rehype-raw'
-
-import { readAsset } from '~nitro/assets'
+import { readAsset } from '#assets'
 
 export default async (req) => {
   const markdown = unified()
