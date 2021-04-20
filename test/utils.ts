@@ -1,6 +1,6 @@
 import { resolve, dirname } from 'path'
 import { existsSync, readFileSync, writeFileSync, rmSync, mkdirSync } from 'fs'
-import { exec } from 'child_process'
+import { execSync } from 'child_process'
 import defu from 'defu'
 import hash from 'object-hash'
 import { LoadNuxtOptions, NuxtConfig } from '@nuxt/kit'
@@ -22,12 +22,12 @@ export async function buildFixture (opts: LoadNuxtOptions) {
   const buildDir = resolve(opts.rootDir, '.nuxt', buildId)
 
   const lockFile = resolve(opts.rootDir, `.lock-build-${buildId}`)
+  mkdirpSync(dirname(lockFile))
   await waitWhile(() => isAlive(readSync(lockFile)))
+  writeFileSync(lockFile, process.pid + '', 'utf8')
 
   try {
-    mkdirpSync(dirname(lockFile))
-    writeFileSync(lockFile, process.pid + '', 'utf8')
-    const integrity = await gitHead() // TODO: Calculate hash from project source
+    const integrity = gitHead() // TODO: Calculate hash from project source
     const integrityFile = resolve(buildDir, '.integrity')
     const lastBuildIntegrity = readSync(integrityFile)
     if (integrity !== lastBuildIntegrity) {
@@ -75,14 +75,6 @@ function waitWhile (check, interval = 100, timeout = 30000) {
   })
 }
 
-function gitHead (): Promise<string> {
-  return new Promise((resolve, reject) => {
-    exec('git rev-parse HEAD', (err, stdout) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(stdout.trim())
-      }
-    })
-  })
+function gitHead (): string {
+  return execSync('git rev-parse HEAD').toString('utf8').trim()
 }
