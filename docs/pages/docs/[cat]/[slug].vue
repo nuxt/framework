@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { defineNuxtComponent } from '@nuxt/app'
 import { useContent, NuxtContent } from '~/modules/content/runtime'
@@ -23,8 +23,7 @@ export default defineNuxtComponent({
     const route = useRoute()
 
     // Slug and page data
-    const slug = ref(route.fullPath)
-
+    const slug = computed(() => route.fullPath + '.md')
     const { data: content } = useContent(slug.value)
 
     return {

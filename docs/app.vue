@@ -38,9 +38,9 @@ import { useContent } from '~/modules/content/runtime'
 
 export default defineNuxtComponent({
   setup () {
-    useHead({ title: 'Nuxt Documentation' })
+    const { data: menu } = useContent('/menu.json')
 
-    const { data: menu } = useContent('/menu', 'json')
+    useHead({ title: 'Nuxt Documentation' })
 
     return {
       menu
