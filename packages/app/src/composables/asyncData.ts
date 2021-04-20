@@ -86,7 +86,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     // Client side
     if (process.client) {
       // Watch handler
-      // watch(handler.bind(null, nuxt), fetch)
+      watch(handler.bind(null, nuxt), fetch)
 
       // 1. Hydration (server: true): no fetch
       if (nuxt.isHydrating && fetchOnServer) {
