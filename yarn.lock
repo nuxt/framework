@@ -5416,11 +5416,9 @@ __metadata:
   dependencies:
     "@nuxt/kit": ^0.5.0
     nuxt3: ^0.5.1
-    rehype-document: ^5.1.0
     rehype-raw: ^5.1.0
     rehype-stringify: ^8.0.0
     remark: ^13.0.0
-    remark-html: ^13.0.1
     remark-parse: ^9.0.0
     remark-rehype: ^8.1.0
     unified: ^9.2.1
@@ -5447,13 +5445,6 @@ __metadata:
   dependencies:
     esutils: ^2.0.2
   checksum: 2eae469bd2889ceee9892083a67340b3622568fe5290edce620e5d5ddab23d644b2a780e9a7c68ad9c8a62716a70c5e484402ac93a398fa78b54b7505592aa7f
-  languageName: node
-  linkType: hard
-
-"doctype@npm:^2.0.0":
-  version: 2.0.4
-  resolution: "doctype@npm:2.0.4"
-  checksum: 02747226c681fddef0bcbeb069238ba6d2cfdc152eca101c42ae46c26bd0688fb1b5ff5a57005a7f89ec2af92bc017d838e905e97145b0462e541b663c3dc00b
   languageName: node
   linkType: hard
 
@@ -7229,16 +7220,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hast-util-sanitize@npm:^3.0.0":
-  version: 3.0.2
-  resolution: "hast-util-sanitize@npm:3.0.2"
-  dependencies:
-    xtend: ^4.0.0
-  checksum: 4189e9b1b1e6a0f918efc5388ccce91da492a4932ad82e3c861d9b1e0ad16e3486c51addcbd6f7eb5af4e50099259fc6e691f851916d3cf2329696698bfecc94
-  languageName: node
-  linkType: hard
-
-"hast-util-to-html@npm:^7.0.0, hast-util-to-html@npm:^7.1.1":
+"hast-util-to-html@npm:^7.1.1":
   version: 7.1.2
   resolution: "hast-util-to-html@npm:7.1.2"
   dependencies:
@@ -7273,18 +7255,6 @@ __metadata:
   version: 1.0.4
   resolution: "hast-util-whitespace@npm:1.0.4"
   checksum: 4acef9a83ddaa40eeb03fd1098a8f01fd3f0f48377190146a007fcec5f32f85d93490d5439e513471474bb17439826f0241091f6e2fde15b9193f132fb342f5f
-  languageName: node
-  linkType: hard
-
-"hastscript@npm:^5.0.0":
-  version: 5.1.2
-  resolution: "hastscript@npm:5.1.2"
-  dependencies:
-    comma-separated-tokens: ^1.0.0
-    hast-util-parse-selector: ^2.0.0
-    property-information: ^5.0.0
-    space-separated-tokens: ^1.0.0
-  checksum: 4d2d5b37c1455ef7b9de77043c8388af7f05cfc7ab176160ae9927ae4a684b2768ae971decc7d63ea77c1e3c13aeff5218f9b0477d1842774e7b7a9a097598e8
   languageName: node
   linkType: hard
 
@@ -9542,7 +9512,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mdast-util-to-hast@npm:^10.0.0, mdast-util-to-hast@npm:^10.2.0":
+"mdast-util-to-hast@npm:^10.2.0":
   version: 10.2.0
   resolution: "mdast-util-to-hast@npm:10.2.0"
   dependencies:
@@ -12277,18 +12247,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rehype-document@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "rehype-document@npm:5.1.0"
-  dependencies:
-    "@types/hast": ^2.0.0
-    doctype: ^2.0.0
-    hastscript: ^5.0.0
-    unist-builder: ^2.0.0
-  checksum: c9ecd47b668f05f9d012dc5f628941fc7e2e6f02db99ca93b3bf1c94659d6233ae3501dfca5f9f9e7b658225c75ba584b55995c4d35fae4f950152761feaa795
-  languageName: node
-  linkType: hard
-
 "rehype-raw@npm:^5.1.0":
   version: 5.1.0
   resolution: "rehype-raw@npm:5.1.0"
@@ -12304,17 +12262,6 @@ __metadata:
   dependencies:
     hast-util-to-html: ^7.1.1
   checksum: c1d8472fc0f474d85be3c77f4929abb43eb92e445d7796b5a0bf17565f7dc7253c11ebeda9f00c8aad52bbf1b2fb31fa1f72900fe2f8e96a2826719a30031cc1
-  languageName: node
-  linkType: hard
-
-"remark-html@npm:^13.0.1":
-  version: 13.0.1
-  resolution: "remark-html@npm:13.0.1"
-  dependencies:
-    hast-util-sanitize: ^3.0.0
-    hast-util-to-html: ^7.0.0
-    mdast-util-to-hast: ^10.0.0
-  checksum: b59c71adad63bbfd627d3c6052b5200a131d6787357caf665bbe2ad6136f13232244de6cea7d637e76fd72c027747347e525cd2f2fb8e4d9dedb5530585d1e37
   languageName: node
   linkType: hard
 
