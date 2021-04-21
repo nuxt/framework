@@ -1671,7 +1671,7 @@ __metadata:
     "@vueuse/head": ^0.5.1
     hookable: ^4.4.1
     ohmyfetch: ^0.2.0
-    unbuild: ^0.2.1
+    unbuild: ^0.2.2
     vue: ^3.0.11
     vue-router: ^4.0.6
     vuex5: ^0.5.0-testing.3
@@ -1715,7 +1715,7 @@ __metadata:
     scule: ^0.1.1
     std-env: ^2.3.0
     ufo: ^0.6.11
-    unbuild: ^0.2.1
+    unbuild: ^0.2.2
     unctx: ^0.0.3
     untyped: ^0.2.5
     upath: ^2.0.1
@@ -1779,7 +1779,7 @@ __metadata:
     std-env: ^2.3.0
     table: ^6.3.0
     ufo: ^0.6.11
-    unbuild: ^0.2.1
+    unbuild: ^0.2.2
     unenv: ^0.2.1
     unstorage: ^0.1.5
     upath: ^2.0.1
@@ -1798,7 +1798,7 @@ __metadata:
     "@vue/compiler-sfc": ^3.0.11
     consola: ^2.15.3
     fs-extra: ^9.1.0
-    unbuild: ^0.2.1
+    unbuild: ^0.2.2
     vite: ^2.2.1
     vue: 3.0.11
   languageName: unknown
@@ -1837,7 +1837,7 @@ __metadata:
     style-resources-loader: ^1.4.1
     time-fix-plugin: ^2.0.7
     ufo: ^0.6.11
-    unbuild: ^0.2.1
+    unbuild: ^0.2.2
     url-loader: ^4.1.1
     vue: 3.0.11
     vue-loader: ^16.2.0
@@ -10549,7 +10549,7 @@ __metadata:
     fsevents: ~2.3.2
     listhen: ^0.2.4
     mri: ^1.1.6
-    unbuild: ^0.2.1
+    unbuild: ^0.2.2
     v8-compile-cache: ^2.3.0
   dependenciesMeta:
     fsevents:
@@ -10576,7 +10576,7 @@ __metadata:
     lerna: ^4.0.0
     ts-jest: ^26.5.5
     typescript: ^4.2.4
-    unbuild: ^0.2.1
+    unbuild: ^0.2.2
   languageName: unknown
   linkType: soft
 
@@ -10604,7 +10604,7 @@ __metadata:
     nuxt-cli: ^0.3.0
     scule: ^0.1.1
     ufo: ^0.6.11
-    unbuild: ^0.2.1
+    unbuild: ^0.2.2
     upath: ^2.0.1
   bin:
     nu: ./bin/nuxt.js
@@ -14345,9 +14345,9 @@ typescript@^4.2.4:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "unbuild@npm:0.2.1"
+"unbuild@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "unbuild@npm:0.2.2"
   dependencies:
     "@rollup/plugin-alias": ^3.1.2
     "@rollup/plugin-commonjs": ^18.0.0
@@ -14372,7 +14372,7 @@ typescript@^4.2.4:
     upath: ^2.0.1
   bin:
     unbuild: bin/unbuild.js
-  checksum: 2aa9a2165a184aae7460ced5fe83ffbcf9ae5d584e3ce584ad7669671e176cdb20eb36cffcc0f0d84ae685c8767a447427f47be964f267b36449b8e5aa03e1c5
+  checksum: 9f1e842aaf43bd6a29d9eeb158d647fd118ac466e3c82c6ae04547661fac087ff43f2abb03e13647a030f963ed9e942a3bf05fb674aa6900a43c4a5d61071985
   languageName: node
   linkType: hard
 
