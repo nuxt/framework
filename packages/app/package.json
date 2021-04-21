@@ -4,7 +4,7 @@
   "repository": "nuxt/framework",
   "license": "MIT",
   "exports": {
-    ".": "./dist/index.mjs",
+    ".": "./dist",
     "./meta": "./meta.js"
   },
   "types": "./types/index.d.ts",
