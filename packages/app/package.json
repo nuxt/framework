@@ -3,8 +3,10 @@
   "version": "0.3.1",
   "repository": "nuxt/framework",
   "license": "MIT",
-  "main": "./dist/app/index.js",
-  "module": "./dist/app/index.js",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./meta": "./meta.js"
+  },
   "types": "./types/index.d.ts",
   "files": [
     "dist",
@@ -15,7 +17,7 @@
     "prepack": "unbuild"
   },
   "devDependencies": {
-    "unbuild": "^0.1.13"
+    "unbuild": "^0.2.1"
   },
   "dependencies": {
     "@vueuse/head": "^0.5.1",
