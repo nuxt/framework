@@ -14,7 +14,7 @@
     "play": "yarn run nu dev playground",
     "lint": "eslint --ext .vue,.ts,.js .",
     "test": "yarn lint && jest",
-    "test:compat": "jest",
+    "test:compat": "TEST_COMPAT=1 jest",
     "version": "yarn && git add yarn.lock"
   },
   "resolutions": {
