@@ -13,6 +13,8 @@
     "docs": "yarn nu dev docs",
     "nu": "./node_modules/.bin/nu",
     "play": "yarn run nu dev playground",
+    "example": "yarn workspace example-$0 dev",
+    "example:build": "yarn workspace example-$0 build",
     "lint": "eslint --ext .vue,.ts,.js .",
     "version": "yarn && git add yarn.lock"
   },
