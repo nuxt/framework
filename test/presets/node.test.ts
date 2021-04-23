@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-import { testNitroBuild, startServer, setupTest, testNitroBehavior } from '../utils'
+import { testNitroBuild, startServer, setupTest, testNitroBehavior } from './_utils'
 
 describe('nitro:preset:node', () => {
   const ctx = setupTest({ fixture: 'basic' })

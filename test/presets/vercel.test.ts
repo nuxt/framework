@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-import { testNitroBuild, setupTest, startServer, testNitroBehavior } from '../utils'
+import { testNitroBuild, setupTest, startServer, testNitroBehavior } from './_utils'
 
 describe('nitro:preset:vercel', () => {
   const ctx = setupTest({ fixture: 'basic' })

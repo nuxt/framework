@@ -2,7 +2,7 @@ import { resolve } from 'path'
 import { readFile } from 'fs-extra'
 import { JSDOM } from 'jsdom'
 
-import { setupTest, testNitroBuild, testNitroBehavior } from '../utils'
+import { setupTest, testNitroBuild, testNitroBehavior } from './_utils'
 
 // TODO: fix SyntaxError: Unexpected end of input on script executation
 describe.skip('nitro:preset:cloudflare', () => {

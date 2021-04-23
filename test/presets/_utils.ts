@@ -5,7 +5,10 @@ import consola from 'consola'
 import { Listener, listen } from 'listhen'
 import { $fetch } from 'ohmyfetch/node'
 import createRequire from 'create-require'
-import { fixtureDir, buildFixture, loadFixture } from '../../../test/utils'
+import type { LoadNuxtOptions } from '@nuxt/kit'
+import { fixtureDir, buildFixture, loadFixture } from '../utils'
+
+const isCompat = Boolean(process.env.TEST_COMPAT)
 
 export interface SetupTestOptions {
   fixture: string
@@ -33,7 +36,7 @@ export interface AbstractResponse {
 export type AbstractHandler = (req: AbstractRequest) => Promise<AbstractResponse>
 
 export function setupTest (opts: SetupTestOptions): TestContext {
-  const rootDir = fixtureDir('basic')
+  const rootDir = fixtureDir(isCompat ? 'compat' : 'basic')
   const outDir = resolve(__dirname, '.output', opts.fixture)
 
   const ctx: TestContext = {
@@ -65,7 +68,7 @@ export function testNitroBuild (ctx: TestContext, preset: string) {
   test('nitro build', async () => {
     ctx.outDir = resolve(ctx.outDir, preset)
 
-    const loadOpts = { rootDir: ctx.rootDir, dev: false }
+    const loadOpts: LoadNuxtOptions = { rootDir: ctx.rootDir, dev: false, version: isCompat ? 2 : 3 }
     await buildFixture(loadOpts)
     const nuxt = await loadFixture(loadOpts, {
       nitro: {

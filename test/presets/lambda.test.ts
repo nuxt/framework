@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-import { testNitroBuild, setupTest, testNitroBehavior } from '../utils'
+import { testNitroBuild, setupTest, testNitroBehavior } from './_utils'
 
 describe('nitro:preset:lambda', () => {
   const ctx = setupTest({ fixture: 'basic' })

@@ -3,7 +3,7 @@ import { existsSync, readFileSync, writeFileSync, rmSync, mkdirSync } from 'fs'
 import { execSync } from 'child_process'
 import defu from 'defu'
 import hash from 'object-hash'
-import { LoadNuxtOptions, NuxtConfig } from '@nuxt/kit'
+import type { LoadNuxtOptions, NuxtConfig } from '@nuxt/kit'
 
 export function fixtureDir (name: string) {
   return resolve(__dirname, 'fixtures', name)
