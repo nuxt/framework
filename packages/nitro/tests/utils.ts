@@ -72,7 +72,7 @@ export function testNitroBuild (ctx: TestContext, preset: string) {
         preset,
         minify: false,
         serveStatic: false,
-        externals: { trace: false },
+        externals: preset === 'cloudflare' ? false : { trace: false },
         output: { dir: ctx.outDir }
       }
     })

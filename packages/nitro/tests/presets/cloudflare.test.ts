@@ -4,7 +4,7 @@ import { JSDOM } from 'jsdom'
 
 import { setupTest, testNitroBuild, testNitroBehavior } from '../utils'
 
-// setImmediate is not defined !?
+// TODO: fix SyntaxError: Unexpected end of input on script executation
 describe.skip('nitro:preset:cloudflare', () => {
   const ctx = setupTest({ fixture: 'basic' })
   testNitroBuild(ctx, 'cloudflare')
