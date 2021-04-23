@@ -6,7 +6,7 @@ import { setupTest, testNitroBuild, testNitroBehavior } from './_utils'
 
 // TODO: fix SyntaxError: Unexpected end of input on script executation
 describe.skip('nitro:preset:cloudflare', () => {
-  const ctx = setupTest({ fixture: 'basic' })
+  const ctx = setupTest()
   testNitroBuild(ctx, 'cloudflare')
   testNitroBehavior(ctx, async () => {
     const script = await readFile(resolve(ctx.outDir, 'server/index.js'), 'utf-8')

@@ -2,7 +2,7 @@ import { resolve } from 'path'
 import { testNitroBuild, setupTest, startServer, testNitroBehavior } from './_utils'
 
 describe('nitro:preset:vercel', () => {
-  const ctx = setupTest({ fixture: 'basic' })
+  const ctx = setupTest()
   testNitroBuild(ctx, 'vercel')
   testNitroBehavior(ctx, async () => {
     const handle = await import(resolve(ctx.outDir, 'functions/node/server/index.js'))

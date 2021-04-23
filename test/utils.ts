@@ -21,7 +21,7 @@ export async function buildFixture (opts: LoadNuxtOptions) {
   const buildId = hash(opts)
   const buildDir = resolve(opts.rootDir, '.nuxt', buildId)
 
-  const lockFile = resolve(opts.rootDir, `.lock-build-${buildId}`)
+  const lockFile = resolve(opts.rootDir, `.build-${buildId}.lock`)
   mkdirpSync(dirname(lockFile))
   await waitWhile(() => isAlive(readSync(lockFile)))
   writeFileSync(lockFile, process.pid + '', 'utf8')

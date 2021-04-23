@@ -2,7 +2,7 @@ import { resolve } from 'path'
 import { testNitroBuild, setupTest, testNitroBehavior } from './_utils'
 
 describe('nitro:preset:lambda', () => {
-  const ctx = setupTest({ fixture: 'basic' })
+  const ctx = setupTest()
   testNitroBuild(ctx, 'lambda')
   testNitroBehavior(ctx, async () => {
     const { handler } = await import(resolve(ctx.outDir, 'server/index.js'))

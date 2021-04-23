@@ -10,11 +10,7 @@ import { fixtureDir, buildFixture, loadFixture } from '../utils'
 
 const isCompat = Boolean(process.env.TEST_COMPAT)
 
-export interface SetupTestOptions {
-  fixture: string
-}
-
-export interface TestContext extends SetupTestOptions {
+export interface TestContext {
   rootDir: string
   outDir: string
   nuxt?: any
@@ -35,12 +31,12 @@ export interface AbstractResponse {
 
 export type AbstractHandler = (req: AbstractRequest) => Promise<AbstractResponse>
 
-export function setupTest (opts: SetupTestOptions): TestContext {
-  const rootDir = fixtureDir(isCompat ? 'compat' : 'basic')
-  const outDir = resolve(__dirname, '.output', opts.fixture)
+export function setupTest (): TestContext {
+  const fixture = isCompat ? 'compat' : 'basic'
+  const rootDir = fixtureDir(fixture)
+  const outDir = resolve(__dirname, '.output', fixture)
 
   const ctx: TestContext = {
-    ...opts,
     rootDir,
     outDir,
     fetch: url => $fetch<any>(url, { baseURL: ctx.server.url })
