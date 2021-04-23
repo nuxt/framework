@@ -13,7 +13,8 @@
     "nu": "./node_modules/.bin/nu",
     "play": "yarn run nu dev playground",
     "lint": "eslint --ext .vue,.ts,.js .",
-    "test": "yarn link && jest",
+    "test": "jest",
+    "test:compat": "jest",
     "version": "yarn && git add yarn.lock"
   },
   "resolutions": {
