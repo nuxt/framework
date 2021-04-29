@@ -1,6 +1,6 @@
 # Nuxt Framework
 
-This is home for new nuxt mono repo.
+This is the home for the new nuxt mono repo.
 
 Packages:
 
@@ -14,5 +14,5 @@ Packages:
 
 - Clone repository
 - Install dependencies with `yarn install`
-- Run `yarn stud`
+- Run `yarn stub`
 - Open playground with `yarn play`
