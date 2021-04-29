@@ -2,7 +2,7 @@ import { resolve } from 'path'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import { watch } from 'chokidar'
-import { mkdirp } from 'fs-extra'
+import { mkdirp, writeFile } from 'fs-extra'
 import debounce from 'debounce'
 import consola from 'consola'
 import { ViteBuildContext, ViteOptions } from './vite'
@@ -47,6 +47,9 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   const serverDist = resolve(ctx.nuxt.options.buildDir, 'dist/server')
   await mkdirp(serverDist)
+
+  await writeFile(resolve(serverDist, 'server.js'), 'try { module.exports = require("./entry.server") } catch (err) {  module.exports = () => { throw err } }', 'utf8')
+  await writeFile(resolve(serverDist, 'client.manifest.json'), 'false', 'utf8')
 
   const onBuild = () => ctx.nuxt.callHook('build:resources', wpfs)
 
