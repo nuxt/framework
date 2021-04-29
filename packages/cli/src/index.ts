@@ -13,6 +13,7 @@ async function _main () {
   let command = args._.shift() || 'usage'
 
   // showBanner(command === 'dev')
+  // TODO: handle an option to clear the console instead?
   showBanner()
 
   if (!(command in commands)) {
