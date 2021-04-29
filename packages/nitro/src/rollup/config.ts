@@ -205,7 +205,8 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     resolve(nitroContext._nuxt.rootDir, 'node_modules'),
     resolve(MODULE_DIR, 'node_modules'),
     resolve(MODULE_DIR, '../node_modules'),
-    'node_modules'
+    'node_modules',
+    ...env.moduleDirectories
   ]
 
   // Externals Plugin
