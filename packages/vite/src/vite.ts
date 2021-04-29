@@ -45,9 +45,9 @@ export async function bundle (nuxt: Nuxt) {
       const start = Date.now()
       await fn(ctx)
       const time = (Date.now() - start) / 1000
-      consola.success(`${name} compiled successfully in ${time}s`)
+      process.env.DEBUG && consola.success(`${name} compiled successfully in ${time}s`)
     } catch (err) {
-      consola.error(`${name} compiled with errors:`, err)
+      process.env.DEBUG && consola.error(`${name} compiled with errors:`, err)
     }
   }
 

@@ -34,5 +34,8 @@
     "mri": "^1.1.6",
     "unbuild": "^0.2.3",
     "v8-compile-cache": "^2.3.0"
+  },
+  "dependencies": {
+    "ora": "^5.4.0"
   }
 }

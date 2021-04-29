@@ -1,0 +1,7 @@
+{
+  "name": "@nuxt/translations",
+  "version": "0.5.3",
+  "repository": "nuxt/framework",
+  "license": "MIT",
+  "main": "./index.js"
+}

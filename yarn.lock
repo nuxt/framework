@@ -1711,6 +1711,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@nuxt/translations@workspace:packages/translations":
+  version: 0.0.0-use.local
+  resolution: "@nuxt/translations@workspace:packages/translations"
+  languageName: unknown
+  linkType: soft
+
 "@nuxt/vite-builder@^0.3.3, @nuxt/vite-builder@workspace:packages/vite":
   version: 0.0.0-use.local
   resolution: "@nuxt/vite-builder@workspace:packages/vite"
@@ -10547,6 +10553,7 @@ __metadata:
     fsevents: ~2.3.2
     listhen: ^0.2.4
     mri: ^1.1.6
+    ora: ^5.4.0
     unbuild: ^0.2.3
     v8-compile-cache: ^2.3.0
   dependenciesMeta:

@@ -20,7 +20,7 @@ export function middleware (getMiddleware: () => ServerMiddleware[]) {
           const dumped = dumpMiddleware(middleware)
           if (dumped !== lastDump) {
             lastDump = dumped
-            if (middleware.length) {
+            if (middleware.length && process.env.DEBUG) {
               console.log(dumped)
             }
           }

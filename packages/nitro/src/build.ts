@@ -97,7 +97,9 @@ function startRollupWatcher (nitroContext: NitroContext) {
       // Finished building all bundles
       case 'END':
         nitroContext._internal.hooks.callHook('nitro:compiled', nitroContext)
-        consola.success('Nitro built', start ? `in ${Date.now() - start} ms` : '')
+        if (process.env.DEBUG) {
+          consola.success('Nitro built', start ? `in ${Date.now() - start} ms` : '')
+        }
         return
 
       // Encountered an error while bundling

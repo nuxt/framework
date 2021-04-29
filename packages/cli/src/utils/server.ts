@@ -1,9 +1,10 @@
 import type { RequestListener } from 'http'
+import { ListenOptions } from 'listhen'
 
 export function createServer () {
   const listener = createDynamicFunction(createLoadingHandler('Loading...', 1))
 
-  async function listen (opts) {
+  async function listen (opts: Partial<ListenOptions>) {
     const { listen } = await import('listhen')
     return listen(listener.call, opts)
   }

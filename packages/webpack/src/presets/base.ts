@@ -91,7 +91,7 @@ function basePlugins (ctx: WebpackConfigContext) {
       done: ({ state }) => {
         if (state.hasErrors) {
           nuxt.callHook('bundler:error')
-        } else {
+        } else if (process.env.DEBUG) {
           consola.success(`${state.name} ${state.message}`)
         }
       },
