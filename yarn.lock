@@ -5449,7 +5449,6 @@ __metadata:
     unified: ^9.2.1
     untyped: ^0.2.5
     vite: ^2.2.3
-    vite-plugin-windicss: ^0.15.7
     vite-plugin-windicss: ^0.15.8
     windicss: ^2.5.14
     windicss-webpack-plugin: ^0.3.3
