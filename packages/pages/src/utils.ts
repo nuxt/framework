@@ -1,7 +1,6 @@
 import { extname, relative, resolve } from 'upath'
 import { encodePath } from 'ufo'
-import globby from 'globby'
-import type { Nuxt } from '@nuxt/kit'
+import { Nuxt, resolveFiles } from '@nuxt/kit'
 
 export interface NuxtRoute {
   name?: string
@@ -28,21 +27,12 @@ interface SegmentToken {
 
 export async function resolvePagesRoutes (nuxt: Nuxt) {
   const pagesDir = resolve(nuxt.options.srcDir, nuxt.options.dir.pages)
-  const files = await resolveFiles(nuxt, `${pagesDir}/**/*{${nuxt.options.extensions.join(',')}}`, nuxt.options.srcDir)
+  const files = await resolveFiles(`${pagesDir}/**/*{${nuxt.options.extensions.join(',')}}`, nuxt.options.srcDir)
 
   // Sort to make sure parent are listed first
   files.sort()
 
   return generateRoutesFromFiles(files, pagesDir)
-}
-
-// TODO: Refactor to kit
-async function resolveFiles (nuxt: Nuxt, pattern: string, srcDir: string) {
-  const files = await globby(pattern, {
-    cwd: srcDir,
-    followSymbolicLinks: nuxt.options.build.followSymlinks
-  })
-  return files.map(p => resolve(srcDir, p))
 }
 
 export function generateRoutesFromFiles (files: string[], pagesDir: string): NuxtRoute[] {
