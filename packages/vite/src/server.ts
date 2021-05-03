@@ -67,19 +67,6 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   await build()
 
-  const watcher = watch([
-    ctx.nuxt.options.buildDir,
-    ctx.nuxt.options.srcDir,
-    ctx.nuxt.options.rootDir
-  ], {
-    ignored: [
-      '**/dist/server/**'
-    ]
-  })
-
-  watcher.on('change', () => build())
-
-  ctx.nuxt.hook('close', async () => {
-    await watcher.close()
-  })
+  ctx.nuxt.hook('builder:watch', () => build())
+  ctx.nuxt.hook('app:templatesGenerated', () => build())
 }

@@ -3,7 +3,7 @@ import globby from 'globby'
 import lodashTemplate from 'lodash/template'
 import defu from 'defu'
 import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, NuxtTemplate, NuxtPlugin } from '@nuxt/kit'
-import { mkdirp, writeFile, readFile, emptyDir } from 'fs-extra'
+import { mkdirp, writeFile, readFile } from 'fs-extra'
 import * as templateUtils from './template.utils'
 
 export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp {
@@ -15,12 +15,7 @@ export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp 
   } as NuxtApp)
 }
 
-export async function generateApp (nuxt: Nuxt, app: NuxtApp, initial: Boolean = true) {
-  //  Clear buildDir once
-  if (initial) {
-    await emptyDir(nuxt.options.buildDir)
-  }
-
+export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
   // Resolve app
   await resolveApp(nuxt, app)
 
@@ -44,6 +39,8 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp, initial: Boolean = 
     nuxt,
     app
   })))
+
+  await nuxt.callHook('app:templatesGenerated', app)
 }
 
 export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
