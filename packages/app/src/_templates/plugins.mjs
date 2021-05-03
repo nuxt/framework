@@ -1,5 +1,4 @@
 import head from '#app/plugins/head'
-import vuex from '#app/plugins/vuex'
 import legacy from '#app/plugins/legacy'
 import preload from '#app/plugins/preload.server'
 
@@ -7,7 +6,6 @@ import preload from '#app/plugins/preload.server'
 
 const commonPlugins = [
   head,
-  vuex,
   legacy,
   <%= app.plugins.filter(p => !p.mode || p.mode === 'all').map(p => utils.importName(p.src)).join(',\n  ') %>
 ]
