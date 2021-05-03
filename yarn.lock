@@ -1711,6 +1711,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@nuxt/pages@^0.1.0, @nuxt/pages@workspace:packages/pages":
+  version: 0.0.0-use.local
+  resolution: "@nuxt/pages@workspace:packages/pages"
+  dependencies:
+    "@nuxt/kit": ^0.5.3
+    globby: ^11.0.3
+    ufo: ^0.7.2
+    unbuild: ^0.2.3
+    upath: ^2.0.1
+    vue-router: ^4.0.6
+  languageName: unknown
+  linkType: soft
+
 "@nuxt/vite-builder@^0.3.3, @nuxt/vite-builder@workspace:packages/vite":
   version: 0.0.0-use.local
   resolution: "@nuxt/vite-builder@workspace:packages/vite"
@@ -10591,6 +10604,7 @@ __metadata:
     "@nuxt/app": ^0.3.3
     "@nuxt/kit": ^0.5.3
     "@nuxt/nitro": ^0.6.3
+    "@nuxt/pages": ^0.1.0
     "@nuxt/vite-builder": ^0.3.3
     "@nuxt/webpack-builder": ^0.3.4
     "@types/fs-extra": ^9.0.11

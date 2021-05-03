@@ -7,9 +7,9 @@ import {
 } from 'vue-router'
 import type { Plugin } from '@nuxt/app'
 // @ts-ignore
-import NuxtPage from './NuxtPage.vue'
-import routes from '#build/routes'
+import NuxtPage from './page.vue'
 // @ts-ignore
+import routes from '#build/routes'
 
 export default <Plugin> function router (nuxt) {
   const { app } = nuxt
