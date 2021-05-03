@@ -1,6 +1,5 @@
 import Hookable from 'hookable'
 import { loadNuxtConfig, LoadNuxtOptions, Nuxt, NuxtOptions, installModule, ModuleContainer } from '@nuxt/kit'
-import { resolve } from 'upath'
 import { initNitro } from './nitro'
 
 export function createNuxt (options: NuxtOptions): Nuxt {

@@ -1,4 +1,4 @@
-import { promises as fsp, existsSync } from 'fs'
+import { existsSync } from 'fs'
 import { defineNuxtModule } from '@nuxt/kit'
 import { resolve } from 'upath'
 import { resolvePagesRoutes } from './utils'
