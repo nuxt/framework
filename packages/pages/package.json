@@ -14,7 +14,7 @@
   "dependencies": {
     "@nuxt/kit": "^0.5.3",
     "globby": "^11.0.3",
-    "ufo": "^0.7.2",
+    "ufo": "^0.7.5",
     "upath": "^2.0.1",
     "vue-router": "^4.0.6"
   },
