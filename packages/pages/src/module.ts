@@ -18,13 +18,16 @@ export default defineNuxtModule({
     })
 
     nuxt.hook('app:resolve', (app) => {
-      if (existsSync(pagesDir)) {
-        app.plugins.push({ src: routerPlugin })
+      if (!existsSync(pagesDir)) {
+        return
+      }
+      app.plugins.push({ src: routerPlugin })
+      if (app.main.includes('app.tutorial')) {
+        app.main = resolve(runtimeDir, 'app.vue')
       }
     })
 
     nuxt.hook('app:templates', async (app) => {
-      // Do not generate if there is no pages/
       if (!existsSync(pagesDir)) {
         return
       }

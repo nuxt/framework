@@ -8,6 +8,7 @@ import {
 // @ts-ignore
 import NuxtPage from './page.vue'
 import type { Plugin } from '@nuxt/app'
+// @ts-ignore
 import routes from '#build/routes'
 
 export default <Plugin> function router (nuxt) {
