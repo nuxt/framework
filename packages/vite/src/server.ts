@@ -1,7 +1,6 @@
 import { resolve } from 'path'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
-import { watch } from 'chokidar'
 import { mkdirp, writeFile } from 'fs-extra'
 import debounce from 'debounce'
 import consola from 'consola'
