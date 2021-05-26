@@ -1,8 +1,9 @@
+import { Nuxt, NuxtApp } from './nuxt'
+
 import type { IncomingMessage, ServerResponse } from 'http'
 import type { Compiler, Configuration, Stats } from 'webpack'
 import type { NuxtConfig, NuxtOptions } from '..'
 import type { ModuleContainer } from '../module/container'
-import { Nuxt, NuxtApp } from './nuxt'
 
 type HookResult = Promise<void> | void
 
@@ -18,6 +19,19 @@ type TemplateFile = string | {
 }
 
 type WatchEvent = 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir'
+interface PreloadFile {
+  asType: 'script' | 'style' | 'font'
+  extension: string
+  file: string
+  fileWithoutQuery: string
+}
+type RenderResult = {
+  html: string
+  cspScriptSrcHashes: string[]
+  error: any
+  redirected: boolean
+  preloadFiles: PreloadFile[]
+}
 
 export interface NuxtHooks {
   // Don't break usage of untyped hooks
@@ -64,9 +78,9 @@ export interface NuxtHooks {
   'render:done': (server: Server) => HookResult
   'listen': (listenerServer: any, listener: any) => HookResult
   'server:nuxt:renderLoading': (req: IncomingMessage, res: ServerResponse) => HookResult
-  'render:route': (url: string, result: string, context: any) => HookResult
-  'render:routeDone': (url: string, result: string, context: any) => HookResult
-  'render:beforeResponse': (url: string, result: string, context: any) => HookResult
+  'render:route': (url: string, result: RenderResult, context: any) => HookResult
+  'render:routeDone': (url: string, result: RenderResult, context: any) => HookResult
+  'render:beforeResponse': (url: string, result: RenderResult, context: any) => HookResult
 
   // @nuxt/vue-renderer
   'render:resourcesLoaded': (resources: any) => HookResult
