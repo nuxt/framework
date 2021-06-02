@@ -7,7 +7,7 @@ import { lambda } from './lambda'
 export const netlify: NitroPreset = extendPreset(lambda, {
   output: {
     dir: '{{ _nuxt.rootDir }}/netlify/functions',
-    publicDir: '{{ _nuxt.rootDir }}/public'
+    publicDir: '{{ _nuxt.rootDir }}/dist'
   },
   hooks: {
     async 'nitro:compiled' (ctx: NitroContext) {
