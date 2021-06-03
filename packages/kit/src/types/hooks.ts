@@ -58,7 +58,7 @@ export interface NuxtHooks {
   'builder:watch': (event: WatchEvent, path: string) => HookResult
 
   // @nuxt/nitro
-  'build:document': (template: { src: string, contents: string }) => HookResult
+  'nitro:template': (template: { src: string, contents: string }) => HookResult
 
   // @nuxt/cli
   'cli:buildError': (error: unknown) => HookResult
