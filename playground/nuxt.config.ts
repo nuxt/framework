@@ -1,5 +1,8 @@
 import { defineNuxtConfig } from '@nuxt/kit'
 
 export default defineNuxtConfig({
-  vite: true
+  vite: false,
+  build: {
+    transpile: ['vue-meta']
+  }
 })

@@ -1,11 +1,13 @@
-import head from '#app/plugins/head'
+// import head from '#app/plugins/head'
+import meta from '#app/plugins/meta'
 import legacy from '#app/plugins/legacy'
 import preload from '#app/plugins/preload.server'
 
 <%= utils.importSources(app.plugins.map(p => p.src)) %>
 
 const commonPlugins = [
-  head,
+  // head,
+  meta,
   legacy,
   <%= app.plugins.filter(p => !p.mode || p.mode === 'all').map(p => utils.importName(p.src)).join(',\n  ') %>
 ]

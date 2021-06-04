@@ -7,6 +7,7 @@ export default defineBuildConfig({
   ],
   dependencies: [
     '@vueuse/head',
+    'vue-meta',
     'ohmyfetch',
     'vue-router',
     'vuex5'
