@@ -1,7 +1,7 @@
 import type { Plugin } from '@nuxt/app'
 import { createMetaManager } from 'vue-meta'
 
-export default <Plugin>async function meta (nuxt) {
+export default <Plugin> async function meta (nuxt) {
   const { app, ssrContext } = nuxt
   const metaManager = createMetaManager(process.server)
   app.use(metaManager)
