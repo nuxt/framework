@@ -27,7 +27,7 @@
     "@rollup/pluginutils": "^4.1.0",
     "@types/jsdom": "^16.2.10",
     "@vercel/nft": "^0.12.2",
-    "@vue/server-renderer": "^3.0.11",
+    "@vue/server-renderer": "^3.1.0-0",
     "archiver": "^5.3.0",
     "chalk": "^4.1.1",
     "chokidar": "^3.5.1",
@@ -65,7 +65,7 @@
     "unenv": "^0.2.3",
     "unstorage": "^0.1.5",
     "upath": "^2.0.1",
-    "vue": "3.0.11",
+    "vue": "^3.1.0-0",
     "vue-bundle-renderer": "^0.2.3",
     "vue-server-renderer": "^2.6.12"
   },

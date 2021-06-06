@@ -1,5 +1,8 @@
 import { defineNuxtConfig } from '@nuxt/kit'
 
 export default defineNuxtConfig({
-  vite: true
+  vite: true,
+  buildModules: [
+    '../packages/compat'
+  ]
 })
