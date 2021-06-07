@@ -14,6 +14,10 @@
       {
         "key": "deployment",
         "title": "Deployment"
+      },
+      {
+        "key": "migration",
+        "title": "Migrating from Nuxt 2"
       }
     ]
   },
@@ -61,7 +65,7 @@
       },
       {
         "key": "middleware",
-        "title": "Server Middleware"
+        "title": "Middleware"
       },
       {
         "key": "functions",
@@ -118,12 +122,12 @@
     ]
   },
   {
-    "key": "archicucture",
-    "title": "Architucture",
+    "key": "architecture",
+    "title": "Architecture",
     "items": [
       {
         "key": "build",
-        "title": "How nuxt works?"
+        "title": "How Nuxt works"
       },
       {
         "key": "nitro",
