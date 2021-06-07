@@ -10,7 +10,7 @@ export default {
   },
   twitter: 'nuxt_js',
   github: {
-    repo: 'nuxt/image',
+    repo: 'nuxt/framework',
     dir: 'docs',
     branch: 'main'
   }

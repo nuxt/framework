@@ -2,8 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "nuxt dev",
-    "build": "nuxt build",
-    "start": "nuxt start",
+    "build": "nuxt generate",
     "generate": "nuxt generate"
   },
   "devDependencies": {
