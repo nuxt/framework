@@ -3,9 +3,7 @@
     "@nuxtjs"
   ],
   "ignoreDeps": [
-    "docus",
-    "jest",
-    "ts-jest"
+    "docus"
   ],
   "lockFileMaintenance": {
     "enabled": true
