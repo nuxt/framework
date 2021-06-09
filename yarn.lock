@@ -1615,7 +1615,7 @@ __metadata:
     ohmyfetch: ^0.2.0
     unbuild: ^0.3.0
     vue: ^3.0.11
-    vue-meta: 3.0.0-alpha.7
+    vue-meta: 3.0.0-alpha.8
     vue-router: ^4.0.8
     vuex5: ^0.5.0-testing.3
   languageName: unknown
@@ -14139,12 +14139,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-meta@npm:3.0.0-alpha.7":
-  version: 3.0.0-alpha.7
-  resolution: "vue-meta@npm:3.0.0-alpha.7"
+"vue-meta@npm:3.0.0-alpha.8":
+  version: 3.0.0-alpha.8
+  resolution: "vue-meta@npm:3.0.0-alpha.8"
   peerDependencies:
     vue: ^3.0.0
-  checksum: 8e6c113256f4cf66507bd04142aa0bfe8979f208a0ad25a2eacf99d2f2d91d78cfc307035f4a795c1f6d52fa53f805d6406a75ee75059800924d61b0cc92a162
+  checksum: 0da7647b9414c9424fa9accdd14ddbd84d87c4fb9cfa506dad84863b9759100a2c83dd48fe99416bdbc6f995fc0bb1e1111f46ef44d973de6f4e1bd9d2b17a23
   languageName: node
   linkType: hard
 
