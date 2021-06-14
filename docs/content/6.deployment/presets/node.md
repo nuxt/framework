@@ -1,6 +1,6 @@
-# NodeJS function
+# Node.js function
 
- - Compatible with many NodeJS servers
+ - Compatible with many Node.js servers
  - Drop-in usage with express or native http server
  - Loads only the chunks required to render the request for optimal cold start timing
 

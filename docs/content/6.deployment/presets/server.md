@@ -1,4 +1,4 @@
-# NodeJS server
+# Node.js server
 
  - Default preset if none is specified or auto-detected
  - Loads only the chunks required to render the request for optimal cold start timing

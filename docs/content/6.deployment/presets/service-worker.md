@@ -1,11 +1,11 @@
 # Service worker
 
  - Can be used for edge rendering
- - No dependency on NodeJS
- - No NodeJS environment and features
+ - No dependency on Node.js
+ - No Node.js environment and features
 
 **Warning**
-Deployment as service worker has some limitations since SSR code is not running in NodeJS environment but pure JavaScript.
+Deployment as service worker has some limitations since SSR code is not running in Node.js environment but pure JavaScript.
 
 ### Entrypoint
 
