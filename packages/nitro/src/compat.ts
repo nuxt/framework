@@ -27,13 +27,13 @@ export default function nuxt2CompatModule () {
   // Connect hooks
   nuxt.addHooks(nitroContext.nuxtHooks)
   nuxt.hook('close', () => nitroContext._internal.hooks.callHook('close'))
+  nitroContext._internal.hooks.hook('nitro:template:document', template => nuxt.callHook('nitro:template', template))
 
   nuxt.addHooks(nitroDevContext.nuxtHooks)
   nuxt.hook('close', () => nitroDevContext._internal.hooks.callHook('close'))
+  nitroDevContext._internal.hooks.hook('nitro:template:document', template => nuxt.callHook('nitro:template', template))
   nitroDevContext._internal.hooks.hook('renderLoading',
     (req, res) => nuxt.callHook('server:nuxt:renderLoading', req, res))
-
-  nitroContext._internal.hooks.hook('nitro:template:document', template => nuxt.callHook('nitro:template', template))
 
   // Expose process.env.NITRO_PRESET
   nuxt.options.env.NITRO_PRESET = nitroContext.preset
