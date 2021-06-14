@@ -14,7 +14,13 @@ export const netlify: NitroPreset = extendPreset(lambda, {
       const redirectsPath = join(ctx._nuxt.rootDir, '_redirects')
       let contents = '/* /.netlify/functions/server 200'
       if (existsSync(redirectsPath)) {
-        contents = await readFile(redirectsPath, 'utf-8') + '\n' + contents
+        const currentRedirects = await readFile(redirectsPath, 'utf-8')
+        if (currentRedirects.match(/^\/\* /m)) {
+          // Not adding Nitro fallback as an existing fallback rule was found
+          contents = currentRedirects
+        } else {
+          contents = currentRedirects + '\n' + contents
+        }
       }
       await writeFile(redirectsPath, contents)
     }
