@@ -33,7 +33,7 @@ export default function nuxt2CompatModule () {
   nitroDevContext._internal.hooks.hook('renderLoading',
     (req, res) => nuxt.callHook('server:nuxt:renderLoading', req, res))
 
-  nitroContext._internal.hooks.hook('nitro:template', template => nuxt.callHook('nitro:template', template))
+  nitroContext._internal.hooks.hook('nitro:template:document', template => nuxt.callHook('nitro:template', template))
 
   // Expose process.env.NITRO_PRESET
   nuxt.options.env.NITRO_PRESET = nitroContext.preset
