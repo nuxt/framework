@@ -15,12 +15,11 @@ export const netlify: NitroPreset = extendPreset(lambda, {
       let contents = '/* /.netlify/functions/server 200'
       if (existsSync(redirectsPath)) {
         const currentRedirects = await readFile(redirectsPath, 'utf-8')
+        // Not adding Nitro fallback as an existing fallback rule was found
         if (currentRedirects.match(/^\/\* /m)) {
-          // Not adding Nitro fallback as an existing fallback rule was found
-          contents = currentRedirects
-        } else {
-          contents = currentRedirects + '\n' + contents
+          return
         }
+        contents = currentRedirects + '\n' + contents
       }
       await writeFile(redirectsPath, contents)
     }
