@@ -1,6 +1,6 @@
 # PM2
 
-> How to deploy Nuxt to a Node.js host with Nuxt Nitro
+> How to deploy Nuxt to a NodeJS host with Nuxt Nitro
 
  - Support for ultra-minimal SSR build
  - Zero millisecond cold start
@@ -23,7 +23,7 @@ export default {
 
 After running `yarn build`, all you need is in the `.output` folder. Static assets are in the `public` subdirectory and the server and its dependencies are within the `server` subdirectory.
 
-This `.output` folder can be deployed to your Node.js host and the server can be run using [`pm2`](https://pm2.keymetrics.io/docs/).
+This `.output` folder can be deployed to your NodeJS host and the server can be run using [`pm2`](https://pm2.keymetrics.io/docs/).
 
 To start the server in production mode, run:
 
