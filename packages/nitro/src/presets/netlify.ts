@@ -17,9 +17,10 @@ export const netlify: NitroPreset = extendPreset(lambda, {
       if (existsSync(redirectsPath)) {
         const currentRedirects = await readFile(redirectsPath, 'utf-8')
         if (currentRedirects.match(/^\/\* /m)) {
-          consola.warn('Not adding Nitro fallback as an existing fallback rule was found')
+          consola.info('Not adding Nitro fallback to `_redirects` (as an existing fallback was found).')
           return
         }
+        consola.info('Adding Nitro fallback to `_redirects` to handle all unmatched routes.')
         contents = currentRedirects + '\n' + contents
       }
       await writeFile(redirectsPath, contents)
