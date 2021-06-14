@@ -2,9 +2,7 @@
   "extends": [
     "@nuxtjs"
   ],
-  "ignoreDeps": [
-    "esbuild"
-  ],
+  "ignoreDeps": [],
   "lockFileMaintenance": {
     "enabled": true
   }
