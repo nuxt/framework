@@ -7,20 +7,21 @@
       </NuxtLink>
       <nav class="px-5 pt-6 h-full overflow-y-auto">
         <ol type="i" class="list-none">
-          <li v-for="cat of menu" :key="cat.key">
+          <li v-for="cat of nav.links" :key="cat.slug">
             <h2 class="text-xl text-gray-900 font-semibold my-2">
-              {{ cat.title }}
+              <NuxtLink :to="cat.slug" class="no-underline text-gray-700">
+                {{ cat.title }}
+              </NuxtLink>
             </h2>
             <ol class="list-none">
-              <li v-for="item of cat.items" :key="item.key">
-                <NuxtLink :to="`/docs/${cat.key}/${item.key}`" class="no-underline text-gray-700">
+              <li v-for="item of cat.children" :key="item.slug">
+                <NuxtLink :to="item.slug" class="no-underline text-gray-700">
                   {{ item.title }}
                 </NuxtLink>
               </li>
             </ol>
           </li>
         </ol>
-        <nav />
       </nav>
     </aside>
     <!-- Main -->
@@ -32,18 +33,52 @@
 
 <script>
 import 'windi.css'
+import { computed } from 'vue'
+import { upperFirst } from 'scule'
 import { defineNuxtComponent } from '@nuxt/app'
 import { useHead } from '@vueuse/head'
-import { useContent } from '~/modules/content/runtime'
+import { useContent } from '#content'
+
+const humanizeName = str => upperFirst(str).replace(/-/g, ' ')
 
 export default defineNuxtComponent({
   setup () {
-    const { data: menu } = useContent('/menu.json')
-
     useHead({ title: 'Nuxt Documentation' })
 
+    const { data: menuContent } = useContent().list()
+
+    const parseId = (id) => {
+      const parts = id.split(':').map(p => p.replace(/^\d+\.|\.\w+$/g, ''))
+      return parts.splice(1)
+    }
+
+    const nav = computed(() => {
+      const cats = {}
+      menuContent.items
+        .sort((a, b) => a.id.localeCompare(b.id))
+        .forEach((item) => {
+          const parsedId = parseId(item.id)
+          const cat = parsedId[0]
+          cats[cat] = cats[cat] || []
+          cats[cat].push({
+            // category: humanizeName(cat),
+            slug: '/' + parsedId.join('/'),
+            title: item.meta.title || humanizeName(parsedId.splice(1).join(' '))
+          })
+        })
+      const _nav = { links: [] }
+      for (const cat in cats) {
+        _nav.links.push({
+          slug: cat,
+          title: humanizeName(cat),
+          children: cats[cat]
+        })
+      }
+      return _nav
+    })
+
     return {
-      menu
+      nav
     }
   }
 })
