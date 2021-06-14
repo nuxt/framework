@@ -1,5 +1,6 @@
 import { join } from 'upath'
 import { existsSync, readFile, writeFile } from 'fs-extra'
+import consola from 'consola'
 import { extendPreset } from '../utils'
 import { NitroContext, NitroPreset } from '../context'
 import { lambda } from './lambda'
@@ -15,8 +16,8 @@ export const netlify: NitroPreset = extendPreset(lambda, {
       let contents = '/* /.netlify/functions/server 200'
       if (existsSync(redirectsPath)) {
         const currentRedirects = await readFile(redirectsPath, 'utf-8')
-        // Not adding Nitro fallback as an existing fallback rule was found
         if (currentRedirects.match(/^\/\* /m)) {
+          consola.warn('Not adding Nitro fallback as an existing fallback rule was found')
           return
         }
         contents = currentRedirects + '\n' + contents
