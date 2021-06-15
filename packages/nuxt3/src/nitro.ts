@@ -14,13 +14,14 @@ export function initNitro (nuxt: Nuxt) {
   nuxt.hooks.addHooks(nitroContext.nuxtHooks)
   nuxt.hook('close', () => nitroContext._internal.hooks.callHook('close'))
 
-  nuxt.hook('app:resolve', (app) => {
-    app.plugins.push({ src: require.resolve('@nuxt/nitro/dist/runtime/app/nitro.client') })
-  })
-
   // @ts-ignore
   nuxt.hooks.addHooks(nitroDevContext.nuxtHooks)
   nuxt.hook('close', () => nitroDevContext._internal.hooks.callHook('close'))
+
+  // Add nitro client plugin
+  nuxt.hook('app:resolve', (app) => {
+    app.plugins.push({ src: require.resolve('@nuxt/nitro/dist/runtime/app/nitro.client') })
+  })
 
   // Expose process.env.NITRO_PRESET
   nuxt.options.env.NITRO_PRESET = nitroContext.preset
