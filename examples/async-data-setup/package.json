@@ -1,5 +1,5 @@
 {
-  "name": "example-async-data",
+  "name": "example-async-data-setup",
   "private": true,
   "devDependencies": {
     "nuxt3": "latest"
