@@ -23,5 +23,14 @@
         "note": "note"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.vue"],
+      "rules": {
+        "//": "handled by Volar",
+        "@typescript-eslint/no-unused-vars": "off"
+      }
+    }
+  ]
 }

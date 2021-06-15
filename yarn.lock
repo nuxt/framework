@@ -9769,6 +9769,7 @@ __metadata:
     ts-jest: ^27.0.3
     typescript: ^4.3.2
     unbuild: ^0.3.0
+    vue: 3
   languageName: unknown
   linkType: soft
 
@@ -13427,7 +13428,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:3.1.1, vue@npm:^3.1.1":
+"vue@npm:3, vue@npm:3.1.1, vue@npm:^3.1.1":
   version: 3.1.1
   resolution: "vue@npm:3.1.1"
   dependencies:
