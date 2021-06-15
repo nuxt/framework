@@ -328,6 +328,7 @@ export default {
    */
   babel: {
     configFile: false,
+    babelrc: false,
     /**
      * An array of Babel plugins to load, or a function that takes webpack context and returns
      * an array of Babel plugins.
@@ -336,7 +337,6 @@ export default {
      * and [babel-loader options](https://github.com/babel/babel-loader#options).
      */
     plugins: [],
-    babelrc: false,
     /**
      * The Babel presets to be applied.
      *
