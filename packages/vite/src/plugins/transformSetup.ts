@@ -1,5 +1,5 @@
 import type { Plugin } from 'vite'
-import { parseURL, getQuery } from 'ufo'
+import { getQuery } from 'ufo'
 import MagicString from 'magic-string'
 
 const DEFINE_COMPONENT_VUE = '_defineComponent('
@@ -9,9 +9,8 @@ export function transformNuxtSetup () {
   return <Plugin> {
     name: 'nuxt:transform-setup',
     transform (code, id) {
-      const { pathname, search } = parseURL(id)
-      const query = getQuery(search)
-      if (!(pathname.endsWith('.vue') || (query.nuxt && query.type === 'script'))) {
+      const query = getQuery(id)
+      if (!(id.endsWith('.vue') || (query.nuxt && query.setup && query.type === 'script'))) {
         return
       }
 
