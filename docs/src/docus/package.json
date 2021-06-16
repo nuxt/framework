@@ -8,6 +8,6 @@
     "docus": "^0.7.0"
   },
   "resolutions": {
-    "nuxt-windicss": "~0.6.0"
+    "nuxt-windicss": "~0.8.3"
   }
 }
