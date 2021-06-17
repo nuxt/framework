@@ -86,7 +86,7 @@ function mock (warning: string) {
   return mockContext
 }
 
-const unsupported: Array<keyof LegacyContext | keyof LegacyContext['ssrContext']> = [
+const unsupported = new Set<keyof LegacyContext | keyof LegacyContext['ssrContext']>([
   'isClient',
   'isServer',
   'isStatic',
@@ -95,9 +95,9 @@ const unsupported: Array<keyof LegacyContext | keyof LegacyContext['ssrContext']
   'spa',
   'modern',
   'fetchCounters'
-]
+])
 
-const todo: Array<keyof LegacyContext | keyof LegacyContext['ssrContext']> = [
+const todo = new Set<keyof LegacyContext | keyof LegacyContext['ssrContext']>([
   'isDev',
   'isHMR',
   // Routing handlers - needs implementation or deprecation
@@ -113,7 +113,7 @@ const todo: Array<keyof LegacyContext | keyof LegacyContext['ssrContext']> = [
   '$preview',
   'beforeNuxtRender',
   'beforeSerialize'
-]
+])
 
 const routerKeys: Array<keyof LegacyContext | keyof LegacyContext['ssrContext']> = ['route', 'params', 'query']
 
@@ -125,11 +125,11 @@ export function getLegacyContext (nuxt: Nuxt) {
   nuxt._legacyContext = new Proxy(nuxt, {
     get (nuxt, p: keyof LegacyContext | keyof LegacyContext['ssrContext']) {
       // Deprecated keys
-      if (unsupported.includes(p)) {
+      if (unsupported.has(p)) {
         return mock(`Accessing ${p} is not supported in Nuxt3.`)
       }
 
-      if (todo.includes(p)) {
+      if (todo.has(p)) {
         return mock(`Accessing ${p} is not yet supported in Nuxt3.`)
       }
 
