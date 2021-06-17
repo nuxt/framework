@@ -1,6 +1,7 @@
 import { App, getCurrentInstance } from 'vue'
 import Hookable from 'hookable'
 import { defineGetter } from './utils'
+import { getLegacyContext, LegacyContext } from './legacy'
 
 export interface Nuxt {
   app: App
@@ -13,6 +14,7 @@ export interface Nuxt {
   [key: string]: any
 
   _asyncDataPromises?: Record<string, Promise<any>>
+  _legacyContext?: LegacyContext
 
   ssrContext?: Record<string, any>
   payload: {
@@ -25,8 +27,13 @@ export interface Nuxt {
   provide: (name: string, value: any) => void
 }
 
+export const NuxtPluginIndicator = '__nuxt_plugin'
 export interface Plugin {
-  (nuxt: Nuxt, provide?: Nuxt['provide']): Promise<void> | void
+  (nuxt: Nuxt): Promise<void> | void
+  [NuxtPluginIndicator]?: true
+}
+export interface LegacyPlugin {
+  (context: LegacyContext, provide: Nuxt['provide']): Promise<void> | void
 }
 
 export interface CreateOptions {
@@ -84,13 +91,28 @@ export function createNuxt (options: CreateOptions) {
 
 export function applyPlugin (nuxt: Nuxt, plugin: Plugin) {
   if (typeof plugin !== 'function') { return }
-  return callWithNuxt(nuxt, () => plugin(nuxt, nuxt.provide))
+  if (isLegacyPlugin(plugin)) {
+    return plugin(getLegacyContext(nuxt), nuxt.provide)
+  }
+  return callWithNuxt(nuxt, () => plugin(nuxt))
 }
 
 export async function applyPlugins (nuxt: Nuxt, plugins: Plugin[]) {
   for (const plugin of plugins) {
     await applyPlugin(nuxt, plugin)
   }
+}
+
+export function defineNuxtPlugin (plugin: Plugin) {
+  if (plugin.length > 1) {
+    console.warn('Direct access to `inject` is no longer recommended. You can instead access `nuxt.provide` to inject into the Nuxt app.')
+  }
+  plugin[NuxtPluginIndicator] = true
+  return plugin
+}
+
+export function isLegacyPlugin (plugin: unknown): plugin is LegacyPlugin {
+  return !plugin[NuxtPluginIndicator]
 }
 
 let currentNuxtInstance: Nuxt | null

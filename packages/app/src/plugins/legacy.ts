@@ -1,5 +1,5 @@
 import type { App } from 'vue'
-import type { Plugin } from '@nuxt/app'
+import { defineNuxtPlugin } from '@nuxt/app'
 
 export type LegacyApp = App<Element> & {
   $root: LegacyApp
@@ -8,7 +8,7 @@ export type LegacyApp = App<Element> & {
 // TODO: plugins second argument (inject)
 // TODO: payload.serverRrendered
 
-export default <Plugin> function legacy ({ app }) {
+export default defineNuxtPlugin(({ app }) => {
   app.$nuxt.context = {}
 
   if (process.client) {
@@ -22,4 +22,4 @@ export default <Plugin> function legacy ({ app }) {
     app.$nuxt.context.req = ssrContext.req
     app.$nuxt.context.res = ssrContext.res
   }
-}
+})
