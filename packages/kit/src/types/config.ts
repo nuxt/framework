@@ -9,6 +9,7 @@ export interface TypedConfigSchema extends ConfigSchema {
 
   /**
    * Enable vite mode
+   *
    * @default false
    */
   vite: boolean | import('vite').InlineConfig
