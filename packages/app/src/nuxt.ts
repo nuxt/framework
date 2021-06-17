@@ -104,9 +104,6 @@ export async function applyPlugins (nuxt: Nuxt, plugins: Plugin[]) {
 }
 
 export function defineNuxtPlugin (plugin: Plugin) {
-  if (plugin.length > 1) {
-    console.warn('Direct access to `inject` is no longer recommended. You can instead access `nuxt.provide` to inject into the Nuxt app.')
-  }
   plugin[NuxtPluginIndicator] = true
   return plugin
 }
