@@ -93,6 +93,7 @@ const unsupported = new Set<keyof LegacyContext | keyof LegacyContext['ssrContex
   'store',
   'target',
   'spa',
+  'env',
   'modern',
   'fetchCounters'
 ])
@@ -133,11 +134,6 @@ export function getLegacyContext (nuxt: Nuxt) {
         return mock(`Accessing ${p} is not yet supported in Nuxt3.`)
       }
 
-      if (['$config', 'env'].includes(p)) {
-        // TODO: needs implementation
-        return mock('Accessing runtime config is not yet supported in Nuxt3.')
-      }
-
       // vue-router implementation
       if (routerKeys.includes(p)) {
         if (!('$router' in nuxt)) {
@@ -150,6 +146,11 @@ export function getLegacyContext (nuxt: Nuxt) {
           case 'query':
             return nuxt.$router.currentRoute.value[p]
         }
+      }
+
+      if (p === '$config') {
+        // TODO: needs implementation
+        return mock('Accessing runtime config is not yet supported in Nuxt3.')
       }
 
       if (p === 'ssrContext') {
