@@ -1,11 +1,16 @@
 import type { IncomingMessage, ServerResponse } from 'http'
+import type { App } from 'vue'
 import type { NuxtOptions } from '@nuxt/kit'
 import type { Component } from '@vue/runtime-core'
 import mockContext from 'unenv/runtime/mock/proxy'
-import { Nuxt } from './nuxt'
+import type { Nuxt } from './nuxt'
 
 type Route = any
 type Store = any
+
+export type LegacyApp = App<Element> & {
+  $root: LegacyApp
+}
 
 export interface LegacyContext {
   // -> $config
@@ -118,9 +123,9 @@ const todo = new Set<keyof LegacyContext | keyof LegacyContext['ssrContext']>([
 
 const routerKeys: Array<keyof LegacyContext | keyof LegacyContext['ssrContext']> = ['route', 'params', 'query']
 
-export function getLegacyContext (nuxt: Nuxt) {
+export function initializeLegacyContext (nuxt: Nuxt) {
   if (nuxt._legacyContext) {
-    return nuxt._legacyContext
+    return
   }
 
   nuxt._legacyContext = new Proxy(nuxt, {
@@ -181,5 +186,15 @@ export function getLegacyContext (nuxt: Nuxt) {
     }
   }) as unknown as LegacyContext
 
-  return nuxt._legacyContext
+  if (process.client) {
+    const legacyApp = { ...nuxt.app } as LegacyApp
+    legacyApp.$root = legacyApp
+    window[nuxt.globalName] = legacyApp
+  }
+
+  if (process.server) {
+    const { ssrContext } = nuxt
+    nuxt.context.req = ssrContext.req
+    nuxt.context.res = ssrContext.res
+  }
 }

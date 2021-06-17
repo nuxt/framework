@@ -1,7 +1,7 @@
 import { App, getCurrentInstance } from 'vue'
 import Hookable from 'hookable'
 import { defineGetter } from './utils'
-import { getLegacyContext, LegacyContext } from './legacy'
+import { initializeLegacyContext, LegacyContext } from './legacy'
 
 export interface Nuxt {
   app: App
@@ -73,7 +73,7 @@ export function createNuxt (options: CreateOptions) {
 
   if (process.server) {
     nuxt.payload = {
-      serverRendered: true // TODO: legacy
+      serverRendered: true
     }
 
     nuxt.ssrContext = nuxt.ssrContext || {}
@@ -91,15 +91,29 @@ export function createNuxt (options: CreateOptions) {
 
 export function applyPlugin (nuxt: Nuxt, plugin: Plugin) {
   if (typeof plugin !== 'function') { return }
-  if (isLegacyPlugin(plugin)) {
-    return plugin(getLegacyContext(nuxt), nuxt.provide)
-  }
   return callWithNuxt(nuxt, () => plugin(nuxt))
 }
 
 export async function applyPlugins (nuxt: Nuxt, plugins: Plugin[]) {
+  normalizePlugins(plugins)
+
   for (const plugin of plugins) {
     await applyPlugin(nuxt, plugin)
+  }
+}
+
+export function normalizePlugins (plugins: Array<Plugin | LegacyPlugin>): asserts plugins is Plugin[] {
+  let needsLegacyContext = false
+
+  plugins.forEach((plugin, index) => {
+    if (isLegacyPlugin(plugin)) {
+      needsLegacyContext = true
+      plugins[index] = (nuxt: Nuxt) => plugin(nuxt._legacyContext!, nuxt.provide)
+    }
+  })
+
+  if (needsLegacyContext) {
+    plugins.unshift((nuxt: Nuxt) => initializeLegacyContext(nuxt))
   }
 }
 
