@@ -157,7 +157,7 @@ export const legacyPlugin = (nuxt: Nuxt) => {
         return nuxt._legacyContext
       }
 
-      if (p in nuxt.ssrContext) {
+      if (nuxt.ssrContext && p in nuxt.ssrContext) {
         return nuxt.ssrContext[p]
       }
 
