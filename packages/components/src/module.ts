@@ -1,11 +1,11 @@
 import fs from 'fs'
 import { defineNuxtModule, resolveAlias } from '@nuxt/kit'
-import { resolve } from 'upath'
+import { resolve, dirname } from 'upath'
 import { scanComponents } from './scan'
 import type { ComponentsDir } from './types'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
-const getDir = (p: string) => fs.statSync(p).isDirectory() ? p : path.dirname(p)
+const getDir = (p: string) => fs.statSync(p).isDirectory() ? p : dirname(p)
 
 export default defineNuxtModule({
   name: 'components',
