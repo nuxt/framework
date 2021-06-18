@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { defineNuxtModule, resolveAlias, addPlugin } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias } from '@nuxt/kit'
 import { resolve } from 'upath'
 import { scanComponents } from './scan'
 import type { ComponentsDir } from './types'
@@ -63,12 +63,12 @@ export default defineNuxtModule({
 
       app.templates.push({
         path: 'components.mjs',
-        src: resolve(__dirname, 'runtime/components.mjs'),
+        src: resolve(__dirname, 'runtime/components.tmpl.mjs'),
         data: { components }
       })
       app.templates.push({
         path: 'components.d.ts',
-        src: resolve(__dirname, 'runtime/components.d.ts'),
+        src: resolve(__dirname, 'runtime/components.tmpl.d.ts'),
         data: { components }
       })
       app.plugins.push({ src: '#build/components' })
