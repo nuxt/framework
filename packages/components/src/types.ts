@@ -1,18 +1,22 @@
 export interface Component {
   pascalName: string
   kebabName: string
-  import: string
-  asyncImport: string
   export: string
   filePath: string
   shortPath: string
-  async?: boolean
   chunkName: string
-  /** @deprecated */
-  global: boolean
   level: number
   prefetch: boolean
   preload: boolean
+
+  /** @deprecated */
+  import?: string
+  /** @deprecated */
+  asyncImport?: string
+  /** @deprecated */
+  global?: boolean
+  /** @deprecated */
+  async?: boolean
 }
 
 export interface ScanDir {
@@ -20,13 +24,13 @@ export interface ScanDir {
   pattern?: string | string[]
   ignore?: string[]
   prefix?: string
-  /** @deprecated */
-  global?: boolean | 'dev'
   pathPrefix?: boolean
   level?: number
   prefetch?: boolean
   preload?: boolean
   extendComponent?: (component: Component) => Promise<Component | void> | (Component | void)
+  /** @deprecated */
+  global?: boolean | 'dev'
 }
 
 export interface ComponentsDir extends ScanDir {
@@ -43,13 +47,10 @@ export interface Options {
   loader: Boolean
 }
 
-declare module '@nuxt/types/config/index' {
+declare module '@nuxt/kit' {
   interface NuxtOptions {
     components: boolean | Options | Options['dirs']
   }
-}
-
-declare module '@nuxt/types/config/hooks' {
   interface NuxtOptionsHooks {
     'components:dirs'?: componentsDirHook
     'components:extend'?: componentsExtendHook
