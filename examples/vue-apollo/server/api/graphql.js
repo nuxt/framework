@@ -1,4 +1,3 @@
-import express from 'express'
 import { ApolloServer, gql } from 'apollo-server-express'
 
 // Construct a schema, using GraphQL schema language
@@ -44,8 +43,4 @@ const server = new ApolloServer({
   }
 })
 
-const app = express()
-
-app.use(server.getMiddleware({ path: '/' }))
-
-export default app
+export default server.getMiddleware({ path: '/' })
