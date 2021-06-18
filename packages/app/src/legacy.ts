@@ -9,6 +9,7 @@ type Store = any
 
 export type LegacyApp = App<Element> & {
   $root: LegacyApp
+  constructor: LegacyApp
 }
 
 export interface LegacyContext {
@@ -185,6 +186,10 @@ export const legacyPlugin = (nuxt: Nuxt) => {
     nuxt.hook('app:created', () => {
       const legacyApp = { ...nuxt.app } as LegacyApp
       legacyApp.$root = legacyApp
+      // @ts-ignore
+      // TODO: Fix devtools
+      // https://github.com/vuejs/vue-devtools/blob/legacy/packages/shell-chrome/src/detector.js#L23
+      // https://github.com/vuejs/vue-devtools/blob/next/packages/shell-chrome/src/detector.js#L23
       window[`$${nuxt.globalName}`] = legacyApp
     })
   }
