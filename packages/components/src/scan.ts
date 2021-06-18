@@ -67,14 +67,12 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
       const shortPath = relative(srcDir, filePath)
       const chunkName = 'components/' + kebabName
 
-      let component = {
+      let component: Component = {
         filePath,
         pascalName,
         kebabName,
         chunkName,
         shortPath,
-        import: '',
-        asyncImport: '',
         export: 'default',
         global: Boolean(global),
         level: Number(level),
@@ -85,9 +83,6 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
       if (typeof extendComponent === 'function') {
         component = (await extendComponent(component)) || component
       }
-
-      component.import = component.import || `require('${component.filePath}').${component.export}`
-      component.asyncImport = component.asyncImport || `function () { return import('${component.filePath}' /* webpackChunkName: "${component.chunkName}" */).then(function(m) { return m['${component.export}'] || m }) }`
 
       // Check if component is already defined, used to overwite if level is inferiour
       const definedComponent = components.find(c => c.pascalName === component.pascalName)
