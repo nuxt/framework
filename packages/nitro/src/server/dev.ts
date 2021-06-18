@@ -1,7 +1,6 @@
 import { Worker } from 'worker_threads'
 
 import chokidar, { FSWatcher } from 'chokidar'
-import type { Server } from 'connect'
 import debounce from 'debounce'
 import { stat } from 'fs-extra'
 import { createApp, Middleware } from 'h3'
@@ -10,6 +9,7 @@ import { listen, Listener, ListenOptions } from 'listhen'
 import servePlaceholder from 'serve-placeholder'
 import serveStatic from 'serve-static'
 import { resolve } from 'upath'
+import type { Server } from 'connect'
 import type { NitroContext } from '../context'
 
 export function createDevServer (nitroContext: NitroContext) {
@@ -64,7 +64,6 @@ export function createDevServer (nitroContext: NitroContext) {
 
   // serve placeholder 404 assets instead of hitting SSR
   app.use(nitroContext._nuxt.publicPath, servePlaceholder())
-  app.use(nitroContext._nuxt.routerBase, servePlaceholder({ skipUnknown: true }))
 
   // SSR Proxy
   const proxy = createProxy()
@@ -74,7 +73,8 @@ export function createDevServer (nitroContext: NitroContext) {
         // console.error('[proxy]', err)
       })
     } else {
-      res.end('Worker not ready!')
+      res.setHeader('Content-Type', 'text/html; charset=UTF-8')
+      res.end('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="1"><head><body>...')
     }
   })
 

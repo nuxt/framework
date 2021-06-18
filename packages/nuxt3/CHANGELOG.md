@@ -3,6 +3,135 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.4](https://github.com/nuxt/framework/compare/nuxt3@0.7.3...nuxt3@0.7.4) (2021-06-16)
+
+
+### Bug Fixes
+
+* **nuxt3:** add support for custom templates ([#225](https://github.com/nuxt/framework/issues/225)) ([5c67408](https://github.com/nuxt/framework/commit/5c6740819199d68ed64cb6afdc800df9fe0e1d4d))
+* add nitro client plugin ($fetch support) ([#223](https://github.com/nuxt/framework/issues/223)) ([e2d5a2f](https://github.com/nuxt/framework/commit/e2d5a2f4b3f27d1454321ab22958ef3941a02978)), closes [#213](https://github.com/nuxt/framework/issues/213)
+
+
+
+
+
+## [0.7.3](https://github.com/nuxt/framework/compare/nuxt3@0.7.2...nuxt3@0.7.3) (2021-06-04)
+
+**Note:** Version bump only for package nuxt3
+
+
+
+
+
+## [0.7.2](https://github.com/nuxt/framework/compare/nuxt3@0.7.1...nuxt3@0.7.2) (2021-06-04)
+
+**Note:** Version bump only for package nuxt3
+
+
+
+
+
+## [0.7.1](https://github.com/nuxt/framework/compare/nuxt3@0.7.0...nuxt3@0.7.1) (2021-05-24)
+
+**Note:** Version bump only for package nuxt3
+
+
+
+
+
+# [0.7.0](https://github.com/nuxt/framework/compare/nuxt3@0.6.3...nuxt3@0.7.0) (2021-05-20)
+
+
+### Features
+
+* optional pages and refactor nuxt3 ([#142](https://github.com/nuxt/framework/issues/142)) ([6b62d45](https://github.com/nuxt/framework/commit/6b62d456d7fe8c9dd92803a30dcebf0d481f65c7))
+* update vite implementation ([#130](https://github.com/nuxt/framework/issues/130)) ([9732d63](https://github.com/nuxt/framework/commit/9732d63c74b394706150ef35cc06c65d3fb185ad))
+
+
+
+
+
+## [0.6.3](https://github.com/nuxt/framework/compare/nuxt3@0.6.2...nuxt3@0.6.3) (2021-04-28)
+
+**Note:** Version bump only for package nuxt3
+
+
+
+
+
+## [0.6.2](https://github.com/nuxt/framework/compare/nuxt3@0.6.1...nuxt3@0.6.2) (2021-04-28)
+
+**Note:** Version bump only for package nuxt3
+
+
+
+
+
+## [0.6.1](https://github.com/nuxt/framework/compare/nuxt3@0.6.0...nuxt3@0.6.1) (2021-04-23)
+
+**Note:** Version bump only for package nuxt3
+
+
+
+
+
+# [0.6.0](https://github.com/nuxt/framework/compare/nuxt3@0.5.1...nuxt3@0.6.0) (2021-04-23)
+
+
+### Bug Fixes
+
+* **nuxt3:** binary proxy for cli ([7ee7a7a](https://github.com/nuxt/framework/commit/7ee7a7a7b58f31d27c61b43b43ef621cc83a2939))
+
+
+### Features
+
+* **nitro:** allow extending nitro context ([bef9f82](https://github.com/nuxt/framework/commit/bef9f82a8dd8ac916c9e9f82eafca7e916782500))
+
+
+
+
+
+## [0.5.1](https://github.com/nuxt/framework/compare/nuxt3@0.5.0...nuxt3@0.5.1) (2021-04-17)
+
+**Note:** Version bump only for package nuxt3
+
+
+
+
+
+# [0.5.0](https://github.com/nuxt/framework/compare/nuxt3@0.4.0...nuxt3@0.5.0) (2021-04-16)
+
+
+### Features
+
+* improve dev experience ([#89](https://github.com/nuxt/framework/issues/89)) ([e224818](https://github.com/nuxt/framework/commit/e224818395cd366f2a338ce3da4aaae993f641b7))
+
+
+
+
+
+# [0.4.0](https://github.com/nuxt/framework/compare/nuxt3@0.3.0...nuxt3@0.4.0) (2021-04-12)
+
+
+### Features
+
+* add hook signatures and basic typings ([#79](https://github.com/nuxt/framework/issues/79)) ([dacde63](https://github.com/nuxt/framework/commit/dacde630634700172ccd54a1e4f1d0469b28bd30))
+
+
+
+
+
+# [0.3.0](https://github.com/nuxt/framework/compare/nuxt3@0.2.6...nuxt3@0.3.0) (2021-04-09)
+
+
+### Features
+
+* initial version of nu cli ([#54](https://github.com/nuxt/framework/issues/54)) ([a030c62](https://github.com/nuxt/framework/commit/a030c62d29ba871f94a7152c7d5fa36d4de1d3b6))
+
+
+
+
+
 ## [0.2.6](https://github.com/nuxt/framework/compare/nuxt3@0.2.5...nuxt3@0.2.6) (2021-04-08)
 
 **Note:** Version bump only for package nuxt3

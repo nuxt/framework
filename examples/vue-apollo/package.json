@@ -1,7 +1,13 @@
 {
-  "name": "vue-apollo",
+  "name": "example-vue-apollo",
+  "dependencies": {
+    "apollo-server-express": "^2.25.1",
+    "express": "^4.17.1"
+  },
   "devDependencies": {
     "@apollo/client": "^3.3.14",
+    "@types/express": "^4",
+    "@vue/apollo-composable": "^4.0.0-alpha.12",
     "graphql": "^15.5.0",
     "graphql-tag": "^2.11.0",
     "nuxt3": "latest"

@@ -1,24 +1,31 @@
 import { createRenderer } from 'vue-bundle-renderer'
 import devalue from '@nuxt/devalue'
-import config from './config'
+import { runtimeConfig } from './config'
 // @ts-ignore
-import { renderToString } from '~renderer'
-// @ts-ignore
-import createApp from '~build/dist/server/server'
-// @ts-ignore
-import clientManifest from '~build/dist/server/client.manifest.json'
-// @ts-ignore
-import htmlTemplate from '~build/views/document.template.js'
+import htmlTemplate from '#build/views/document.template.js'
 
 function _interopDefault (e) { return e && typeof e === 'object' && 'default' in e ? e.default : e }
 
-const renderer = createRenderer(_interopDefault(createApp), {
-  clientManifest: _interopDefault(clientManifest),
-  renderToString
-})
-
 const STATIC_ASSETS_BASE = process.env.NUXT_STATIC_BASE + '/' + process.env.NUXT_STATIC_VERSION
 const PAYLOAD_JS = '/payload.js'
+
+let _renderer
+async function loadRenderer () {
+  if (_renderer) {
+    return _renderer
+  }
+  // @ts-ignore
+  const { renderToString } = await import('#nitro-renderer')
+  // @ts-ignore
+  const createApp = await import('#build/dist/server/server')
+  // @ts-ignore
+  const clientManifest = await import('#build/dist/server/client.manifest.json')
+  _renderer = createRenderer(_interopDefault(createApp), {
+    clientManifest: _interopDefault(clientManifest),
+    renderToString
+  })
+  return _renderer
+}
 
 export async function renderMiddleware (req, res) {
   let url = req.url
@@ -34,12 +41,10 @@ export async function renderMiddleware (req, res) {
     url,
     req,
     res,
-    runtimeConfig: {
-      public: config.public,
-      private: config.private
-    },
+    runtimeConfig,
     ...(req.context || {})
   }
+  const renderer = await loadRenderer()
   const rendered = await renderer.renderToString(ssrContext)
 
   if (ssrContext.nuxt.hooks) {
@@ -71,16 +76,54 @@ function renderHTML (payload, rendered, ssrContext) {
   const state = `<script>window.__NUXT__=${devalue(payload)}</script>`
   const _html = rendered.html
 
-  const { htmlAttrs = '', bodyAttrs = '', headTags = '', headAttrs = '' } =
-    (ssrContext.head && ssrContext.head()) || {}
+  const meta = {
+    htmlAttrs: '',
+    bodyAttrs: '',
+    headAttrs: '',
+    headTags: '',
+    bodyTags: '',
+    bodyScriptsPrepend: '',
+    bodyScripts: ''
+  }
+
+  // @vueuse/head
+  if (typeof ssrContext.head === 'function') {
+    Object.assign(meta, ssrContext.head())
+  }
+
+  // vue-meta
+  if (ssrContext.meta && typeof ssrContext.meta.inject === 'function') {
+    const _meta = ssrContext.meta.inject({
+      isSSR: ssrContext.nuxt.serverRendered,
+      ln: process.env.NODE_ENV === 'development'
+    })
+    meta.htmlAttrs += _meta.htmlAttrs.text()
+    meta.headAttrs += _meta.headAttrs.text()
+    meta.headTags +=
+      _meta.title.text() + _meta.base.text() +
+      _meta.meta.text() + _meta.link.text() +
+      _meta.style.text() + _meta.script.text() +
+      _meta.noscript.text()
+    meta.bodyAttrs += _meta.bodyAttrs.text()
+    meta.bodyScriptsPrepend =
+      _meta.meta.text({ pbody: true }) + _meta.link.text({ pbody: true }) +
+      _meta.style.text({ pbody: true }) + _meta.script.text({ pbody: true }) +
+      _meta.noscript.text({ pbody: true })
+    meta.bodyScripts =
+      _meta.meta.text({ body: true }) + _meta.link.text({ body: true }) +
+      _meta.style.text({ body: true }) + _meta.script.text({ body: true }) +
+      _meta.noscript.text({ body: true })
+  }
 
   return htmlTemplate({
-    HTML_ATTRS: htmlAttrs,
-    HEAD_ATTRS: headAttrs,
-    BODY_ATTRS: bodyAttrs,
-    HEAD: headTags +
+    HTML_ATTRS: meta.htmlAttrs,
+    HEAD_ATTRS: meta.headAttrs,
+    HEAD: meta.headTags +
       rendered.renderResourceHints() + rendered.renderStyles() + (ssrContext.styles || ''),
-    APP: _html + state + rendered.renderScripts()
+    BODY_ATTRS: meta.bodyAttrs,
+    BODY_SCRIPTS_PREPEND: meta.bodyScriptsPrepend,
+    APP: _html + state + rendered.renderScripts(),
+    BODY_SCRIPTS: meta.bodyScripts
   })
 }
 

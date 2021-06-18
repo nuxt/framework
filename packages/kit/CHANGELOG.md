@@ -3,6 +3,112 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.3](https://github.com/nuxt/framework/compare/@nuxt/kit@0.6.2...@nuxt/kit@0.6.3) (2021-06-16)
+
+
+### Bug Fixes
+
+* **kit:** add `build.babel.plugins` default option and docs ([#224](https://github.com/nuxt/framework/issues/224)) ([2c5ceab](https://github.com/nuxt/framework/commit/2c5ceab003dfe898536ee089e967ec0cedc2c81e))
+* **kit:** ignore @ alias without following slash (resolves [#210](https://github.com/nuxt/framework/issues/210)) ([eee4539](https://github.com/nuxt/framework/commit/eee45396d17ee6867913cf170d8aa95334bfd6c7))
+
+
+
+
+
+## [0.6.2](https://github.com/nuxt/framework/compare/@nuxt/kit@0.6.1...@nuxt/kit@0.6.2) (2021-06-04)
+
+
+### Bug Fixes
+
+* **kit:** correct render result types ([#170](https://github.com/nuxt/framework/issues/170)) ([4c0ba01](https://github.com/nuxt/framework/commit/4c0ba0151d21b59621b1b9dd0b7872e5ef4c9a58))
+
+
+
+
+
+## [0.6.1](https://github.com/nuxt/framework/compare/@nuxt/kit@0.6.0...@nuxt/kit@0.6.1) (2021-05-24)
+
+**Note:** Version bump only for package @nuxt/kit
+
+
+
+
+
+# [0.6.0](https://github.com/nuxt/framework/compare/@nuxt/kit@0.5.3...@nuxt/kit@0.6.0) (2021-05-20)
+
+
+### Features
+
+* optional pages and refactor nuxt3 ([#142](https://github.com/nuxt/framework/issues/142)) ([6b62d45](https://github.com/nuxt/framework/commit/6b62d456d7fe8c9dd92803a30dcebf0d481f65c7))
+
+
+
+
+
+## [0.5.3](https://github.com/nuxt/framework/compare/@nuxt/kit@0.5.2...@nuxt/kit@0.5.3) (2021-04-28)
+
+
+### Bug Fixes
+
+* **cli:** support nuxt2-edge ([f0dfb42](https://github.com/nuxt/framework/commit/f0dfb42a586ae7087b95e8fd6e3f0e94532e64ea))
+
+
+
+
+
+## [0.5.2](https://github.com/nuxt/framework/compare/@nuxt/kit@0.5.1...@nuxt/kit@0.5.2) (2021-04-28)
+
+**Note:** Version bump only for package @nuxt/kit
+
+
+
+
+
+## [0.5.1](https://github.com/nuxt/framework/compare/@nuxt/kit@0.5.0...@nuxt/kit@0.5.1) (2021-04-23)
+
+
+### Bug Fixes
+
+* **kit:** auto detect version if not specified ([342bf06](https://github.com/nuxt/framework/commit/342bf0665909090f562a96301d88b017b15fb714))
+* **kit:** resolve alias for `installModule` source ([4bcb8fa](https://github.com/nuxt/framework/commit/4bcb8fa791f5f0460d3c1f00fe3057d4fa7ddd81))
+
+
+
+
+
+# [0.5.0](https://github.com/nuxt/framework/compare/@nuxt/kit@0.4.0...@nuxt/kit@0.5.0) (2021-04-16)
+
+
+### Features
+
+* improve dev experience ([#89](https://github.com/nuxt/framework/issues/89)) ([e224818](https://github.com/nuxt/framework/commit/e224818395cd366f2a338ce3da4aaae993f641b7))
+
+
+
+
+
+# [0.4.0](https://github.com/nuxt/framework/compare/@nuxt/kit@0.3.0...@nuxt/kit@0.4.0) (2021-04-12)
+
+
+### Features
+
+* add hook signatures and basic typings ([#79](https://github.com/nuxt/framework/issues/79)) ([dacde63](https://github.com/nuxt/framework/commit/dacde630634700172ccd54a1e4f1d0469b28bd30))
+
+
+
+
+
+# [0.3.0](https://github.com/nuxt/framework/compare/@nuxt/kit@0.2.0...@nuxt/kit@0.3.0) (2021-04-09)
+
+
+### Features
+
+* initial version of nu cli ([#54](https://github.com/nuxt/framework/issues/54)) ([a030c62](https://github.com/nuxt/framework/commit/a030c62d29ba871f94a7152c7d5fa36d4de1d3b6))
+
+
+
+
+
 # 0.2.0 (2021-04-04)
 
 

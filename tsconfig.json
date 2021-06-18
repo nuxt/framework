@@ -7,10 +7,13 @@
     "moduleResolution": "Node",
     "strict": false,
     "allowJs": true,
+    "noUnusedLocals": true,
     "resolveJsonModule": true,
     "types": [
       "node",
-      "jest"
+      "jest",
+      "@nuxt/app",
+      "@nuxt/nitro",
     ]
   },
   "exclude": ["./packages/*/dist/*"]

@@ -84,7 +84,7 @@ export function createNuxt (options: CreateOptions) {
 
 export function applyPlugin (nuxt: Nuxt, plugin: Plugin) {
   if (typeof plugin !== 'function') { return }
-  return callWithNuxt(nuxt, () => plugin(nuxt))
+  return callWithNuxt(nuxt, () => plugin(nuxt, nuxt.provide))
 }
 
 export async function applyPlugins (nuxt: Nuxt, plugins: Plugin[]) {
@@ -101,6 +101,7 @@ export const setNuxtInstance = (nuxt: Nuxt | null) => {
 
 /**
  * Ensures that the setup function passed in has access to the Nuxt instance via `useNuxt`.
+ *
  * @param nuxt A Nuxt instance
  * @param setup The function to call
  */

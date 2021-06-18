@@ -1,17 +1,16 @@
-# Nuxt Framework
+# Nuxt
 
-This is home for new nuxt mono repo.
+This is the repository for Nuxt3.
 
-Packages:
+## Documentation
 
-- [packages/app](./packages/app)
-- [packages/kit](./packages/kit)
-- [packages/nitro](./packages/nitro)
-- [packages/nu](./packages/nu)
-- [packages/nuxt3](./packages/nuxt3)
+You can read documentation online [here](https://nuxt3-docs.vercel.app/get-started/installation)
+
+Contents are at [/docs/content](./docs/content) directory.
 
 ## Development
 
 - Clone repository
 - Install dependencies with `yarn install`
+- Run `yarn stub`
 - Open playground with `yarn play`

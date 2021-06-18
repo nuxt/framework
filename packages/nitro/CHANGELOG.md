@@ -3,6 +3,192 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.8.0...@nuxt/nitro@0.9.0) (2021-06-16)
+
+
+### Bug Fixes
+
+* add nitro client plugin ($fetch support) ([#223](https://github.com/nuxt/framework/issues/223)) ([e2d5a2f](https://github.com/nuxt/framework/commit/e2d5a2f4b3f27d1454321ab22958ef3941a02978)), closes [#213](https://github.com/nuxt/framework/issues/213)
+* **nitro:** set esbuild `target: '2019'` ([#189](https://github.com/nuxt/framework/issues/189)) ([7c85daa](https://github.com/nuxt/framework/commit/7c85daa64e8ba29d31f2de664e90e9cfb04a81b1))
+
+
+### Features
+
+* **nitro:** support netlify zero-config deployments ([#175](https://github.com/nuxt/framework/issues/175)) ([9750009](https://github.com/nuxt/framework/commit/9750009cc551bf50ee67007923bf798c95426108))
+
+
+
+
+
+# [0.8.0](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.7.2...@nuxt/nitro@0.8.0) (2021-06-04)
+
+
+### Bug Fixes
+
+* **nitro:** support ~/@ aliases and explicitly externalize buildDir ([f98be4b](https://github.com/nuxt/framework/commit/f98be4bfedb510fac1bc94cdff77306f7d756be2))
+
+
+### Features
+
+* **nitro:** #config ([0b7790f](https://github.com/nuxt/framework/commit/0b7790f6d02518a636045d5ec75c5e7859636731))
+
+
+
+
+
+## [0.7.2](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.7.1...@nuxt/nitro@0.7.2) (2021-06-04)
+
+**Note:** Version bump only for package @nuxt/nitro
+
+
+
+
+
+## [0.7.1](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.7.0...@nuxt/nitro@0.7.1) (2021-05-24)
+
+
+### Bug Fixes
+
+* **compat:** add template variables for compat module ([#162](https://github.com/nuxt/framework/issues/162)) ([f497020](https://github.com/nuxt/framework/commit/f497020f6e76eab58f2c289276f0052d32c6ba39))
+* **nitro:** set `makeAbsoluteExternalsRelative` to false (resolves [#160](https://github.com/nuxt/framework/issues/160)) ([a82e7b9](https://github.com/nuxt/framework/commit/a82e7b9008668897a73ec7c1d8328321211b08fd))
+* **nitro:** sort middleware fron long to short ([0317307](https://github.com/nuxt/framework/commit/03173075dac2f213cb0d1dd6819cd9e455a79d02))
+
+
+
+
+
+# [0.7.0](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.6.3...@nuxt/nitro@0.7.0) (2021-05-20)
+
+
+### Bug Fixes
+
+* **automock:** don't externalize .ts imports ([d95e002](https://github.com/nuxt/framework/commit/d95e002d5b960cd8fb64ef34cc9caa8dfabb989f))
+* **nitro:** add body + body prepended scripts to template ([#154](https://github.com/nuxt/framework/issues/154)) ([c732873](https://github.com/nuxt/framework/commit/c7328732fbf7c47a9a9a71291b54def3444e1463))
+
+
+### Features
+
+* optional pages and refactor nuxt3 ([#142](https://github.com/nuxt/framework/issues/142)) ([6b62d45](https://github.com/nuxt/framework/commit/6b62d456d7fe8c9dd92803a30dcebf0d481f65c7))
+
+
+
+
+
+## [0.6.3](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.6.2...@nuxt/nitro@0.6.3) (2021-04-28)
+
+**Note:** Version bump only for package @nuxt/nitro
+
+
+
+
+
+## [0.6.2](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.6.1...@nuxt/nitro@0.6.2) (2021-04-28)
+
+
+### Bug Fixes
+
+* **nitro:** don't externalize [@nuxt](https://github.com/nuxt), virtual: and # ([5e0abbc](https://github.com/nuxt/framework/commit/5e0abbcb1b05bc8377847126ab38f0bfce251e0b))
+* **nitro:** ensure that nitro runtime is not externalized ([#121](https://github.com/nuxt/framework/issues/121)) ([813df27](https://github.com/nuxt/framework/commit/813df279ec9025f69eaf24d07ad5d63e99d0dc21))
+* **nitro:** handle esm imports from cjs files ([51538bf](https://github.com/nuxt/framework/commit/51538bfcb1a77c85fb754ff30231fb0f9cfd4749))
+* **nitro:** remove depd unenv alias ([#120](https://github.com/nuxt/framework/issues/120)) ([2a2c4d5](https://github.com/nuxt/framework/commit/2a2c4d5e46b3d47c28807bb6f50fb480a34c34e3))
+
+
+
+
+
+## [0.6.1](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.6.0...@nuxt/nitro@0.6.1) (2021-04-23)
+
+
+### Bug Fixes
+
+* **nitro:** avoid using fs/promises ([47c2855](https://github.com/nuxt/framework/commit/47c28551c84f025eb9f9e29bd912026f7b143279))
+
+
+
+
+
+# [0.6.0](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.5.2...@nuxt/nitro@0.6.0) (2021-04-23)
+
+
+### Bug Fixes
+
+* **nitro:** mock consola ([#106](https://github.com/nuxt/framework/issues/106)) ([4c0dba2](https://github.com/nuxt/framework/commit/4c0dba202ff0b97ee8ebef06018471cb4d4fbaf5))
+* **nitro:** only serve placeholders for `publicPath` ([1b10a1f](https://github.com/nuxt/framework/commit/1b10a1f091242fba83785dea977f184a92e33757))
+* **nitro:** ovrride by user input ([8f8551c](https://github.com/nuxt/framework/commit/8f8551cd67b5d135774d39f757de9d02e4e0bed4))
+* **nitro:** resolve default export for assets ([49e4c03](https://github.com/nuxt/framework/commit/49e4c038b58720d6be29e3fc28359c0b33d71be2))
+* **nitro:** use globalThis ([5a3f4b7](https://github.com/nuxt/framework/commit/5a3f4b780029ffab4267c02193b938dd11b1f0d1))
+* issues with externals outside of rootDir ([4e18653](https://github.com/nuxt/framework/commit/4e1865358c1597cb68cc96bef2b30e2811fcd899))
+
+
+### Features
+
+* **nitro:** allow extending nitro context ([bef9f82](https://github.com/nuxt/framework/commit/bef9f82a8dd8ac916c9e9f82eafca7e916782500))
+
+
+
+
+
+## [0.5.2](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.5.1...@nuxt/nitro@0.5.2) (2021-04-17)
+
+
+### Bug Fixes
+
+* **nitro:** support vue-meta (compat) ([4dac07a](https://github.com/nuxt/framework/commit/4dac07a10459e1ae5c63361cf7a55cb2020244ff))
+
+
+
+
+
+## [0.5.1](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.5.0...@nuxt/nitro@0.5.1) (2021-04-16)
+
+
+### Bug Fixes
+
+* **nitro:** workaround for vue2 global style injection ([e5df083](https://github.com/nuxt/framework/commit/e5df083f6016219884d3d298e5d7ca2cf4a51d0b))
+
+
+
+
+
+# [0.5.0](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.4.0...@nuxt/nitro@0.5.0) (2021-04-12)
+
+
+### Bug Fixes
+
+* **nitro:** absolute external resolution ([#80](https://github.com/nuxt/framework/issues/80)) ([9a23c2a](https://github.com/nuxt/framework/commit/9a23c2a553e7a00952233ac9f2a35519047f27bc))
+
+
+### Features
+
+* **nitro:** raw loader ([#75](https://github.com/nuxt/framework/issues/75)) ([2d60e71](https://github.com/nuxt/framework/commit/2d60e71fcb612ec0d672ff031f8bfc628e842d19))
+* **nitro:** server assets ([#83](https://github.com/nuxt/framework/issues/83)) ([babb70a](https://github.com/nuxt/framework/commit/babb70a4bd7f01b6b2d30d264ac83f4ae06196b5))
+* **nitro:** storage support ([#76](https://github.com/nuxt/framework/issues/76)) ([31f06e9](https://github.com/nuxt/framework/commit/31f06e9f69614d2ace3c70d974ff4f946397b13d))
+
+
+### Performance Improvements
+
+* **nitro:** externalize buildDir in development ([f8cb258](https://github.com/nuxt/framework/commit/f8cb2586cfd509482705a8bc46ccdee7052dd931))
+
+
+
+
+
+# [0.4.0](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.3.0...@nuxt/nitro@0.4.0) (2021-04-09)
+
+
+### Bug Fixes
+
+* **nitro:** exclude `rootDir` from externals and reinstate automock warning ([#66](https://github.com/nuxt/framework/issues/66)) ([00c7ede](https://github.com/nuxt/framework/commit/00c7ede623728d289bb66b459b6eec184affcbfb))
+
+
+### Features
+
+* initial version of nu cli ([#54](https://github.com/nuxt/framework/issues/54)) ([a030c62](https://github.com/nuxt/framework/commit/a030c62d29ba871f94a7152c7d5fa36d4de1d3b6))
+
+
+
+
+
 # [0.3.0](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.2.4...@nuxt/nitro@0.3.0) (2021-04-08)
 
 

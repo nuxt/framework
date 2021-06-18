@@ -20,15 +20,18 @@ export default function nuxt2CompatModule () {
   nuxt.options.build.indicator = false
 
   // Create contexts
-  const nitroContext = getNitroContext(nuxt.options, nuxt.options.nitro || {})
-  const nitroDevContext = getNitroContext(nuxt.options, { preset: 'dev' })
+  const nitroOptions = (nuxt.options as any).nitro || {}
+  const nitroContext = getNitroContext(nuxt.options, nitroOptions)
+  const nitroDevContext = getNitroContext(nuxt.options, { ...nitroOptions, preset: 'dev' })
 
   // Connect hooks
   nuxt.addHooks(nitroContext.nuxtHooks)
   nuxt.hook('close', () => nitroContext._internal.hooks.callHook('close'))
+  nitroContext._internal.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
 
   nuxt.addHooks(nitroDevContext.nuxtHooks)
   nuxt.hook('close', () => nitroDevContext._internal.hooks.callHook('close'))
+  nitroDevContext._internal.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
   nitroDevContext._internal.hooks.hook('renderLoading',
     (req, res) => nuxt.callHook('server:nuxt:renderLoading', req, res))
 
@@ -50,6 +53,14 @@ export default function nuxt2CompatModule () {
     serverConfig.devtool = false
   })
 
+  // Add missing template variables (which normally renderer would create)
+  nitroContext._internal.hooks.hook('nitro:document', (htmlTemplate) => {
+    if (!htmlTemplate.contents.includes('BODY_SCRIPTS_PREPEND')) {
+      const fullTemplate = ['{{ BODY_SCRIPTS_PREPEND }}', '{{ APP }}', '{{ BODY_SCRIPTS }}'].join('\n    ')
+      htmlTemplate.contents = htmlTemplate.contents.replace('{{ APP }}', fullTemplate)
+    }
+  })
+
   // Nitro client plugin
   this.addPlugin({
     fileName: 'nitro.client.js',
@@ -65,8 +76,13 @@ export default function nuxt2CompatModule () {
     }
   })
 
-  // Resolve middleware
-  nuxt.hook('modules:done', () => {
+  // Wait for all modules to be ready
+  nuxt.hook('modules:done', async () => {
+    // Extend nitro with modules
+    await nuxt.callHook('nitro:context', nitroContext)
+    await nuxt.callHook('nitro:context', nitroDevContext)
+
+    // Resolve middleware
     const { middleware, legacyMiddleware } = resolveMiddleware(nuxt)
     if (nuxt.server) {
       nuxt.server.setLegacyMiddleware(legacyMiddleware)

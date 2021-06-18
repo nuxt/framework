@@ -2,8 +2,8 @@ import path from 'path'
 import querystring from 'querystring'
 import webpack from 'webpack'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
-import type { ClientOptions } from 'webpack-hot-middleware'
 
+import type { ClientOptions } from 'webpack-hot-middleware'
 import { applyPresets, WebpackConfigContext } from '../utils/config'
 import { nuxt } from '../presets/nuxt'
 
@@ -90,6 +90,7 @@ function clientPlugins (ctx: WebpackConfigContext) {
   if (!ctx.isDev && options.build.analyze) {
     const statsDir = path.resolve(options.buildDir, 'stats')
 
+    // @ts-ignore
     config.plugins.push(new BundleAnalyzerPlugin({
       analyzerMode: 'static',
       defaultSizes: 'gzip',

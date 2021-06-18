@@ -1,11 +1,13 @@
-import type { BuildConfig } from 'unbuild'
+import { defineBuildConfig } from 'unbuild'
 
-export default <BuildConfig>{
+export default defineBuildConfig({
   declaration: false,
+  inlineDependencies: true,
   entries: [
     'src/index'
   ],
   externals: [
-    'nuxt3'
+    '@nuxt/kit',
+    'fsevents'
   ]
-}
+})

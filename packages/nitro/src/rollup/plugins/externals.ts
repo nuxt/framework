@@ -1,11 +1,11 @@
-import { isAbsolute, relative } from 'path'
-import type { Plugin } from 'rollup'
 import { resolve, dirname } from 'upath'
 import { copyFile, mkdirp } from 'fs-extra'
 import { nodeFileTrace, NodeFileTraceOptions } from '@vercel/nft'
+import type { Plugin } from 'rollup'
 
 export interface NodeExternalsOptions {
-  ignore?: string[]
+  inline?: string[]
+  external?: string[]
   outDir?: string
   trace?: boolean
   traceOptions?: NodeFileTraceOptions
@@ -13,51 +13,56 @@ export interface NodeExternalsOptions {
 }
 
 export function externals (opts: NodeExternalsOptions): Plugin {
-  const resolvedExternals = {}
+  const resolvedExternals = new Set<string>()
+
   return {
     name: 'node-externals',
     resolveId (id) {
       // Internals
-      if (id.startsWith('\x00') || id.includes('?')) {
+      if (!id || id.startsWith('\x00') || id.includes('?') || id.startsWith('#')) {
         return null
       }
 
-      // Resolve relative paths and exceptions
-      if (id.startsWith('.') || opts.ignore.find(i => id.startsWith(i))) {
-        return null
-      }
+      // Normalize from node_modules
+      const _id = id.split('node_modules/').pop()
 
-      // Bundle ts
-      if (id.endsWith('.ts')) {
-        return null
-      }
-
-      for (const dir of opts.moduleDirectories) {
-        if (id.startsWith(dir)) {
-          id = id.substr(dir.length + 1)
-          break
+      // Skip checks if is an explicit external
+      if (!opts.external.find(i => _id.startsWith(i) || id.startsWith(i))) {
+        // Resolve relative paths and exceptions
+        // Ensure to take absolute and relative id
+        if (_id.startsWith('.') || opts.inline.find(i => _id.startsWith(i) || id.startsWith(i))) {
+          return null
+        }
+        // Bundle ts
+        if (_id.endsWith('.ts')) {
+          return null
         }
       }
 
-      try {
-        resolvedExternals[id] = require.resolve(id, { paths: opts.moduleDirectories })
-      } catch (_err) { }
+      // Try to resolve for nft
+      if (opts.trace !== false) {
+        let _resolvedId = _id
+        try { _resolvedId = require.resolve(_resolvedId, { paths: opts.moduleDirectories }) } catch (_err) {}
+        resolvedExternals.add(_resolvedId)
+      }
 
       return {
-        id: isAbsolute(id) ? relative(opts.outDir, id) : id,
+        id: _id,
         external: true
       }
     },
     async buildEnd () {
       if (opts.trace !== false) {
-        const { fileList } = await nodeFileTrace(Object.values(resolvedExternals), opts.traceOptions)
-        await Promise.all(fileList.map(async (file) => {
-          if (!file.startsWith('node_modules')) {
+        const tracedFiles = await nodeFileTrace(Array.from(resolvedExternals), opts.traceOptions)
+          .then(r => r.fileList.map(f => resolve(opts.traceOptions.base, f)))
+
+        await Promise.all(tracedFiles.map(async (file) => {
+          if (!file.includes('node_modules')) {
             return
           }
           // TODO: Minify package.json
           const src = resolve(opts.traceOptions.base, file)
-          const dst = resolve(opts.outDir, file)
+          const dst = resolve(opts.outDir, 'node_modules', file.split('node_modules/').pop())
           await mkdirp(dirname(dst))
           await copyFile(src, dst)
         }))

@@ -1,30 +1,32 @@
 {
   "name": "@nuxt/kit",
-  "version": "0.2.0",
+  "version": "0.6.3",
   "repository": "nuxt/framework",
   "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "schema"
   ],
   "scripts": {
     "prepack": "unbuild"
   },
   "devDependencies": {
-    "unbuild": "^0.1.11"
+    "unbuild": "^0.3.1"
   },
   "dependencies": {
     "consola": "^2.15.3",
     "create-require": "^1.1.1",
-    "defu": "^3.2.2",
-    "dotenv": "^8.2.0",
+    "defu": "^5.0.0",
+    "dotenv": "^10.0.0",
+    "globby": "^11.0.3",
     "hash-sum": "^2.0.0",
-    "jiti": "^1.9.1",
+    "jiti": "^1.10.1",
     "rc9": "^1.2.0",
-    "scule": "^0.1.1",
+    "scule": "^0.2.1",
     "std-env": "^2.3.0",
-    "ufo": "^0.6.11",
+    "ufo": "^0.7.5",
     "unctx": "^0.0.3",
     "untyped": "^0.2.5",
     "upath": "^2.0.1"

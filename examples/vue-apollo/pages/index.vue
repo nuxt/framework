@@ -9,7 +9,7 @@
 <script>
 import { defineNuxtComponent } from '@nuxt/app'
 import { gql } from 'graphql-tag'
-import { useQuery } from '@vue/apollo-composable'
+import { useQuery, useResult } from '@vue/apollo-composable/dist'
 
 export default defineNuxtComponent({
   setup () {
@@ -23,8 +23,9 @@ export default defineNuxtComponent({
         }
       }
     `)
+    const users = useResult(result)
 
-    return { users: result }
+    return { users }
   }
 })
 </script>

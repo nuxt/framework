@@ -2,8 +2,8 @@ import { resolve, join, extname } from 'upath'
 import { joinURL } from 'ufo'
 import globby from 'globby'
 import { watch } from 'chokidar'
-import type { Middleware } from 'h3'
 import { tryResolvePath, Nuxt } from '@nuxt/kit'
+import type { Middleware } from 'h3'
 
 export interface ServerMiddleware {
   route: string
@@ -31,7 +31,7 @@ function filesToMiddleware (files: string[], baseDir: string, basePath: string, 
       handle
     }
   })
-    .sort((a, b) => a.route.localeCompare(b.route))
+    .sort((a, b) => b.route.localeCompare(a.route))
     .map(m => ({ ...m, ...overrides }))
 }
 

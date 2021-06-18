@@ -1,11 +1,13 @@
 import { resolve, dirname } from 'upath'
 import defu from 'defu'
-import type { NuxtOptions } from '@nuxt/kit'
 import Hookable, { configHooksT } from 'hookable'
-import type { Preset } from '@nuxt/un'
+import type { Preset } from 'unenv'
+import type { NuxtOptions } from '@nuxt/kit'
 import { tryImport, resolvePath, detectTarget, extendPreset } from './utils'
 import * as PRESETS from './presets'
 import type { NodeExternalsOptions } from './rollup/plugins/externals'
+import type { StorageOptions } from './rollup/plugins/storage'
+import type { AssetOptions } from './rollup/plugins/assets'
 import type { ServerMiddleware } from './server/middleware'
 
 export interface NitroContext {
@@ -32,6 +34,8 @@ export interface NitroContext {
     serverDir: string
     publicDir: string
   }
+  storage: StorageOptions,
+  assets: AssetOptions,
   _nuxt: {
     majorVersion: number
     dev: boolean
@@ -85,6 +89,11 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
       serverDir: '{{ output.dir }}/server',
       publicDir: '{{ output.dir }}/public'
     },
+    storage: { mounts: { } },
+    assets: {
+      inline: !nuxtOptions.dev,
+      dirs: {}
+    },
     _nuxt: {
       majorVersion: nuxtOptions._majorVersion || 2,
       dev: nuxtOptions.dev,
@@ -98,7 +107,6 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
       publicPath: nuxtOptions.build.publicPath,
       isStatic: nuxtOptions.target === 'static' && !nuxtOptions.dev,
       fullStatic: nuxtOptions.target === 'static' && !nuxtOptions._legacyGenerate,
-      // @ts-ignore
       staticAssets: nuxtOptions.generate.staticAssets,
       runtimeConfig: {
         public: nuxtOptions.publicRuntimeConfig,
@@ -119,8 +127,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
   presetDefaults = presetDefaults.default || presetDefaults
 
   const _presetInput = defu(input, defaults)
-  // @ts-ignore
-  const _preset = extendPreset(input, presetDefaults)(_presetInput)
+  const _preset = (extendPreset(presetDefaults /* base */, input) as Function)(_presetInput)
   const nitroContext: NitroContext = defu(_preset, defaults) as any
 
   nitroContext.output.dir = resolvePath(nitroContext, nitroContext.output.dir)
@@ -128,6 +135,27 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
   nitroContext.output.serverDir = resolvePath(nitroContext, nitroContext.output.serverDir)
 
   nitroContext._internal.hooks.addHooks(nitroContext.hooks)
+
+  // Dev-only storage
+  if (nitroContext._nuxt.dev) {
+    const fsMounts = {
+      root: resolve(nitroContext._nuxt.rootDir),
+      src: resolve(nitroContext._nuxt.srcDir),
+      build: resolve(nitroContext._nuxt.buildDir),
+      cache: resolve(nitroContext._nuxt.rootDir, '.nuxt/nitro/cache')
+    }
+    for (const p in fsMounts) {
+      nitroContext.storage.mounts[p] = nitroContext.storage.mounts[p] || {
+        driver: 'fs',
+        driverOptions: { base: fsMounts[p] }
+      }
+    }
+  }
+
+  // Assets
+  nitroContext.assets.dirs.server = {
+    dir: resolve(nitroContext._nuxt.rootDir, 'server/assets'), meta: true
+  }
 
   // console.log(nitroContext)
   // process.exit(1)

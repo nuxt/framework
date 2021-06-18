@@ -34,11 +34,13 @@ function serverStandalone (ctx: WebpackConfigContext) {
   // TODO: Refactor this out of webpack
   const inline = [
     'src/',
-    'nuxt/app',
-    'nuxt/build',
     '@nuxt/app',
     'vuex5',
+    '!',
     '-!',
+    '~',
+    '@/',
+    '#',
     ...ctx.options.build.transpile
   ]
 
@@ -49,9 +51,10 @@ function serverStandalone (ctx: WebpackConfigContext) {
       request[0] === '/' ||
       inline.find(prefix => request.startsWith(prefix))
     ) {
+      // console.log('Inline', request)
       return cb(null, false)
     }
-    // console.log('External:', request)
+    // console.log('Ext', request)
     return cb(null, true)
   })
 }
