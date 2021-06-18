@@ -9,6 +9,7 @@ declare global {
   namespace NodeJS {
     interface Global {
       $fetch: $Fetch
+      $config: Record<string, any>
     }
     interface Process {
       browser: boolean
@@ -33,3 +34,5 @@ declare module 'vue' {
     $nuxt: Nuxt
   }
 }
+
+export { }

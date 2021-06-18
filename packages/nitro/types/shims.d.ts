@@ -7,6 +7,7 @@ declare global {
   namespace NodeJS {
     interface Global {
       $fetch: $Fetch
+      $config: Record<string, any>
     }
   }
 }

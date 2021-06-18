@@ -29,6 +29,7 @@ export interface Nuxt {
     renderMeta?: () => Promise<NuxtMeta> | NuxtMeta
   }
   payload: {
+    config: Record<string, any>
     serverRendered?: true
     data?: Record<string, any>
     rendered?: Function

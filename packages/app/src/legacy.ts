@@ -150,8 +150,8 @@ export const legacyPlugin = (nuxt: Nuxt) => {
       }
 
       if (p === '$config') {
-        // TODO: needs implementation
-        return mock('Accessing runtime config is not yet supported in Nuxt3.')
+        // @ts-ignore
+        return typeof $config !== 'undefined' ? $config : {}
       }
 
       if (p === 'ssrContext') {

@@ -1,8 +1,8 @@
-import '../app/config'
 import { createApp, useBase } from 'h3'
 import { createFetch } from 'ohmyfetch'
 import destr from 'destr'
 import { createCall, createFetch as createLocalFetch } from 'unenv/runtime/fetch/index'
+import $config from '../app/config'
 import { timingMiddleware } from './timing'
 import { handleError } from './error'
 // @ts-ignore
@@ -25,3 +25,4 @@ export const localFetch = createLocalFetch(localCall, globalThis.fetch)
 export const $fetch = createFetch({ fetch: localFetch })
 
 globalThis.$fetch = $fetch
+globalThis.$config = $config
