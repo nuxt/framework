@@ -186,10 +186,11 @@ export const legacyPlugin = (nuxt: Nuxt) => {
     nuxt.hook('app:created', () => {
       const legacyApp = { ...nuxt.app } as LegacyApp
       legacyApp.$root = legacyApp
+
       // @ts-ignore
-      // TODO: Fix devtools
-      // https://github.com/vuejs/vue-devtools/blob/legacy/packages/shell-chrome/src/detector.js#L23
-      // https://github.com/vuejs/vue-devtools/blob/next/packages/shell-chrome/src/detector.js#L23
+      // TODO: https://github.com/nuxt/framework/issues/244
+      legacyApp.constructor = legacyApp
+
       window[`$${nuxt.globalName}`] = legacyApp
     })
   }
