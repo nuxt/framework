@@ -1,6 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http'
 import type { App } from 'vue'
-import type { NuxtOptions } from '@nuxt/kit'
 import type { Component } from '@vue/runtime-core'
 import mockContext from 'unenv/runtime/mock/proxy'
 import type { Nuxt } from './nuxt'
@@ -18,14 +17,14 @@ export interface LegacyContext {
   env: Record<string, any>
   // -> app
   app: Component
-  // -> deprecated
+  // -> unsupported
   isClient: boolean
   isServer: boolean
   isStatic: boolean
   // TODO: needs app implementation
   isDev: boolean
   isHMR: boolean
-  // -> deprecated
+  // -> unsupported
   store: Store
   // vue-router integration
   route: Route
@@ -61,8 +60,8 @@ export interface LegacyContext {
       public: Record<string, any>
       private: Record<string, any>
     }
-    // -> deprecated
-    target: NuxtOptions['target']
+    // -> unsupported
+    target: string
     spa?: boolean
     modern: boolean
     fetchCounters: Record<string, number>
@@ -123,14 +122,10 @@ const todo = new Set<keyof LegacyContext | keyof LegacyContext['ssrContext']>([
 
 const routerKeys: Array<keyof LegacyContext | keyof LegacyContext['ssrContext']> = ['route', 'params', 'query']
 
-export function initializeLegacyContext (nuxt: Nuxt) {
-  if (nuxt._legacyContext) {
-    return
-  }
-
+export const legacyPlugin = (nuxt: Nuxt) => {
   nuxt._legacyContext = new Proxy(nuxt, {
     get (nuxt, p: keyof LegacyContext | keyof LegacyContext['ssrContext']) {
-      // Deprecated keys
+      // Unsupported keys
       if (unsupported.has(p)) {
         return mock(`Accessing ${p} is not supported in Nuxt3.`)
       }

@@ -1,7 +1,7 @@
 import { App, getCurrentInstance } from 'vue'
 import Hookable from 'hookable'
 import { defineGetter } from './utils'
-import { initializeLegacyApp, initializeLegacyContext, LegacyContext } from './legacy'
+import { initializeLegacyApp, legacyPlugin, LegacyContext } from './legacy'
 
 export interface Nuxt {
   app: App
@@ -96,26 +96,27 @@ export function applyPlugin (nuxt: Nuxt, plugin: Plugin) {
 }
 
 export async function applyPlugins (nuxt: Nuxt, plugins: Plugin[]) {
-  normalizePlugins(plugins)
-
   for (const plugin of plugins) {
     await applyPlugin(nuxt, plugin)
   }
 }
 
-export function normalizePlugins (plugins: Array<Plugin | LegacyPlugin>): asserts plugins is Plugin[] {
+export function normalizePlugins (_plugins: Array<Plugin | LegacyPlugin>) {
   let needsLegacyContext = false
 
-  plugins.forEach((plugin, index) => {
+  const plugins = _plugins.map((plugin) => {
     if (isLegacyPlugin(plugin)) {
       needsLegacyContext = true
-      plugins[index] = (nuxt: Nuxt) => plugin(nuxt._legacyContext!, nuxt.provide)
+      return (nuxt: Nuxt) => plugin(nuxt._legacyContext!, nuxt.provide)
     }
+    return plugin
   })
 
   if (needsLegacyContext) {
-    plugins.unshift((nuxt: Nuxt) => initializeLegacyContext(nuxt))
+    plugins.unshift(legacyPlugin)
   }
+
+  return plugins as Plugin[]
 }
 
 export function defineNuxtPlugin (plugin: Plugin) {
