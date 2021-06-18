@@ -180,12 +180,12 @@ export const legacyPlugin = (nuxt: Nuxt) => {
       return mock(`Accessing ${p} is not supported in Nuxt3.`)
     }
   }) as unknown as LegacyContext
-}
 
-export function initializeLegacyApp (nuxt: Nuxt) {
   if (process.client) {
-    const legacyApp = { ...nuxt.app } as LegacyApp
-    legacyApp.$root = legacyApp
-    window[`$${nuxt.globalName}`] = legacyApp
+    nuxt.hook('app:created', () => {
+      const legacyApp = { ...nuxt.app } as LegacyApp
+      legacyApp.$root = legacyApp
+      window[`$${nuxt.globalName}`] = legacyApp
+    })
   }
 }

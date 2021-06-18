@@ -1,7 +1,7 @@
 import { App, getCurrentInstance } from 'vue'
 import Hookable from 'hookable'
 import { defineGetter } from './utils'
-import { initializeLegacyApp, legacyPlugin, LegacyContext } from './legacy'
+import { legacyPlugin, LegacyContext } from './legacy'
 
 export interface Nuxt {
   app: App
@@ -84,7 +84,6 @@ export function createNuxt (options: CreateOptions) {
 
   if (process.client) {
     nuxt.payload = window.__NUXT__ || {}
-    initializeLegacyApp(nuxt)
   }
 
   return nuxt
