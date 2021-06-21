@@ -27,15 +27,16 @@ export default defineNuxtModule({
 
         dirOptions.level = Number(dirOptions.level || 0)
 
-        const enabled = isDirectory(dirPath)
-        if (!enabled && dirOptions.path !== '~/components') {
+        const present = isDirectory(dirPath)
+        if (!present && dirOptions.path !== '~/components') {
           // eslint-disable-next-line no-console
           console.warn('Components directory not found: `' + dirPath + '`')
         }
 
         return {
           ...dirOptions,
-          enabled,
+          // TODO: https://github.com/nuxt/framework/pull/251
+          enabled: true,
           path: dirPath,
           extensions,
           pattern: dirOptions.pattern || `**/*.{${extensions.join(',')},}`,
