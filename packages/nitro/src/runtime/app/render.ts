@@ -17,7 +17,7 @@ async function loadRenderer () {
   // @ts-ignore
   const { renderToString } = await import('#nitro-renderer')
   // @ts-ignore
-  const createApp = await import('#build/dist/server/server.js')
+  const createApp = await import('#build/dist/server/server.mjs')
   // @ts-ignore
   const clientManifest = await import('#build/dist/server/client.manifest.mjs')
   _renderer = createRenderer(_interopDefault(createApp), {
