@@ -62,7 +62,7 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
       }
       resolvedNames.set(componentName, filePath)
 
-      const pascalName = pascalCase(componentName).replace(/[^A-Za-z]/g, '')
+      const pascalName = pascalCase(componentName)
       const kebabName = hyphenate(componentName)
       const shortPath = relative(srcDir, filePath)
       const chunkName = 'components/' + kebabName
