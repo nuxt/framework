@@ -60,7 +60,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   delete env.alias['node-fetch'] // FIX ME
 
   if (nitroContext.sourceMap) {
-    env.polyfill.push('source-map-support/register')
+    env.polyfill.push('source-map-support/register.js')
   }
 
   const buildServerDir = join(nitroContext._nuxt.buildDir, 'dist/server')
@@ -70,7 +70,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     input: resolvePath(nitroContext, nitroContext.entry),
     output: {
       dir: nitroContext.output.serverDir,
-      entryFileNames: 'index.js',
+      entryFileNames: 'index.mjs',
       chunkFileNames (chunkInfo) {
         let prefix = ''
         const modules = Object.keys(chunkInfo.modules)
@@ -91,7 +91,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
         return join('chunks', prefix, '[name].js')
       },
       inlineDynamicImports: nitroContext.inlineDynamicImports,
-      format: 'cjs',
+      format: 'esm',
       exports: 'auto',
       intro: '',
       outro: '',
