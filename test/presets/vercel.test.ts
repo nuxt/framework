@@ -5,7 +5,7 @@ describe('nitro:preset:vercel', () => {
   const ctx = setupTest()
   testNitroBuild(ctx, 'vercel')
   testNitroBehavior(ctx, async () => {
-    const handle = await import(resolve(ctx.outDir, 'functions/node/server/index.js'))
+    const handle = await import(resolve(ctx.outDir, 'functions/node/server/index.mjs'))
       .then(r => r.default || r)
     await startServer(ctx, handle)
     return async ({ url }) => {

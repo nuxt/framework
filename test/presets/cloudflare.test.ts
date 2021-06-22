@@ -9,7 +9,7 @@ describe.skip('nitro:preset:cloudflare', () => {
   const ctx = setupTest()
   testNitroBuild(ctx, 'cloudflare')
   testNitroBehavior(ctx, async () => {
-    const script = await readFile(resolve(ctx.outDir, 'server/index.js'), 'utf-8')
+    const script = await readFile(resolve(ctx.outDir, 'server/index.mjs'), 'utf-8')
     const dom = new JSDOM(
       `<!DOCTYPE html>
       <html>

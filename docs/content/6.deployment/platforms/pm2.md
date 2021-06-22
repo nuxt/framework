@@ -2,9 +2,9 @@
 
 > How to deploy Nuxt to a Node.js host with Nuxt Nitro
 
- - Support for ultra-minimal SSR build
- - Zero millisecond cold start
- - More configuration required
+- Support for ultra-minimal SSR build
+- Zero millisecond cold start
+- More configuration required
 
 ## Setup
 
@@ -15,8 +15,8 @@ export default {
   nitro: {
     // this is the default preset so you can also just omit it entirely
     // preset: 'server'
-  }
-}
+  },
+};
 ```
 
 ## Deployment
@@ -37,13 +37,13 @@ For example, using `pm2`:
 module.exports = {
   apps: [
     {
-      name: 'NuxtAppName',
-      exec_mode: 'cluster',
-      instances: 'max',
-      script: './.output/server/index.js'
-    }
-  ]
-}
+      name: "NuxtAppName",
+      exec_mode: "cluster",
+      instances: "max",
+      script: "./.output/server/index.mjs",
+    },
+  ],
+};
 ```
 
 ## More information
