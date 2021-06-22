@@ -6,5 +6,10 @@ module.exports = {
   },
   testPathIgnorePatterns: [
     '.output/.*'
-  ]
+  ],
+  globals: {
+    'ts-jest': {
+      isolatedModules: true
+    }
+  }
 }
