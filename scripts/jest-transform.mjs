@@ -9,7 +9,7 @@ export default {
       sourcefile: path,
       loader: path.endsWith('.ts') ? 'ts' : 'default'
     })
-    r.code = r.code.replace(/import\(/g, 'require(')
+    r.code = r.code.replace(/import\((.*)\)/g, (_, id) => `Promise.resolve(require(${id}))`)
     return r
   }
 }
