@@ -1,6 +1,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  extensionsToTreatAsEsm: ['.ts'],
   transform: {
     '\\.[jt]sx?$': 'ts-jest'
   },
@@ -9,6 +10,7 @@ module.exports = {
   ],
   globals: {
     'ts-jest': {
+      useESM: true,
       isolatedModules: true
     }
   }
