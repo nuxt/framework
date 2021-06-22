@@ -2,7 +2,7 @@ import { createRenderer } from 'vue-bundle-renderer'
 import devalue from '@nuxt/devalue'
 import { runtimeConfig } from './config'
 // @ts-ignore
-import htmlTemplate from '#build/views/document.template.js'
+import htmlTemplate from '#build/views/document.template.mjs'
 
 function _interopDefault (e) { return e && typeof e === 'object' && 'default' in e ? e.default : e }
 
