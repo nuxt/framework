@@ -52,6 +52,8 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   if (opts.version !== 2) {
     const { loadNuxt } = requireModule('nuxt3', resolveOpts)
     const nuxt = await loadNuxt(opts)
+    nuxtCtx.set(nuxt)
+    nuxt.hook('close', () => { nuxtCtx.unset() })
     return nuxt
   }
 
@@ -64,6 +66,8 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
     configOverrides: opts.config,
     ready: opts.ready
   })
+  nuxtCtx.set(nuxt)
+  nuxt.hook('close', () => { nuxtCtx.unset() })
   return nuxt as Nuxt
 }
 
