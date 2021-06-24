@@ -57,7 +57,16 @@ export async function installModule (nuxt: Nuxt, installOpts: ModuleInstallOptio
     nuxt.options._requiredModules[meta.name] = true
   }
 
+  // Ensure nuxt instance is set for nuxt2
+  // @ts-ignore
+  if (!nuxt.__nuxtkit_close__) {
+    nuxt.hook('close', () => nuxtCtx.unset())
+    // @ts-ignore
+    nuxt.__nuxtkit_close__ = true
+  }
+  nuxtCtx.set(nuxt)
+
   // Execute in legacy container
   const container = new ModuleContainer(nuxt)
-  await nuxtCtx.call(nuxt, () => handler.call(container, options))
+  await handler.call(container, options)
 }
