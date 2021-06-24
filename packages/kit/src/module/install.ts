@@ -1,6 +1,5 @@
 import { resolveModule, requireModule } from '../utils/cjs'
 import { resolveAlias } from '../utils/resolve'
-import { nuxtCtx } from '../nuxt'
 import type { LegacyNuxtModule, NuxtModule, ModuleMeta, ModuleInstallOptions, ModuleOptions, ModuleSrc } from '../types/module'
 import type { Nuxt } from '../types/nuxt'
 import { defineNuxtModule } from './define'
