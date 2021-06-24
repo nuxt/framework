@@ -42,6 +42,8 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
     // @ts-ignore
     if (!nuxt.__nuxtkit_close__) {
       nuxt.hook('close', () => nuxtCtx.unset())
+      // @ts-ignore
+      nuxt.__nuxtkit_close__ = true
     }
 
     // Call setup
