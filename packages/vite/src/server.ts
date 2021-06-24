@@ -7,6 +7,7 @@ import consola from 'consola'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
+import { transformNuxtSetup } from './plugins/transformSetup'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -22,6 +23,9 @@ export async function buildServer (ctx: ViteBuildContext) {
     ssr: {
       external: [
         'axios'
+      ],
+      noExternal: [
+        '@nuxt/app'
       ]
     },
     build: {
@@ -38,7 +42,8 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
-      vuePlugin()
+      vuePlugin(),
+      transformNuxtSetup()
     ]
   } as ViteOptions)
 

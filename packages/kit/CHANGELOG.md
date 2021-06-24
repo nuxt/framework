@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.4](https://github.com/nuxt/framework/compare/@nuxt/kit@0.6.3...@nuxt/kit@0.6.4) (2021-06-24)
+
+
+### Bug Fixes
+
+* **nitro:** update nitro internal hook name ([#218](https://github.com/nuxt/framework/issues/218)) ([77e489a](https://github.com/nuxt/framework/commit/77e489aae37ce1bc8ad12e20b7a4dc3d6f1085a7))
+* **types:** type vite options ([#235](https://github.com/nuxt/framework/issues/235)) ([3e855c2](https://github.com/nuxt/framework/commit/3e855c280f01e373f136d1f0e35ff2dd66fdb3d9))
+
+
+
+
+
+## [0.6.3](https://github.com/nuxt/framework/compare/@nuxt/kit@0.6.2...@nuxt/kit@0.6.3) (2021-06-16)
+
+
+### Bug Fixes
+
+* **kit:** add `build.babel.plugins` default option and docs ([#224](https://github.com/nuxt/framework/issues/224)) ([2c5ceab](https://github.com/nuxt/framework/commit/2c5ceab003dfe898536ee089e967ec0cedc2c81e))
+* **kit:** ignore @ alias without following slash (resolves [#210](https://github.com/nuxt/framework/issues/210)) ([eee4539](https://github.com/nuxt/framework/commit/eee45396d17ee6867913cf170d8aa95334bfd6c7))
+
+
+
+
+
 ## [0.6.2](https://github.com/nuxt/framework/compare/@nuxt/kit@0.6.1...@nuxt/kit@0.6.2) (2021-06-04)
 
 

@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/nuxt/framework/compare/nuxt3@0.7.4...nuxt3@0.8.0) (2021-06-24)
+
+
+### Bug Fixes
+
+* use nitro plugin with explicit mjs extension ([1ed3387](https://github.com/nuxt/framework/commit/1ed33872433bc0d4d370fa8a9b35833793ee4bdb))
+* **nitro:** update nitro internal hook name ([#218](https://github.com/nuxt/framework/issues/218)) ([77e489a](https://github.com/nuxt/framework/commit/77e489aae37ce1bc8ad12e20b7a4dc3d6f1085a7))
+
+
+### Features
+
+* components discovery ([#243](https://github.com/nuxt/framework/issues/243)) ([a0f81cd](https://github.com/nuxt/framework/commit/a0f81cd1fbdfae8d8eabc8e015b7635bdaa93575))
+
+
+
+
+
+## [0.7.4](https://github.com/nuxt/framework/compare/nuxt3@0.7.3...nuxt3@0.7.4) (2021-06-16)
+
+
+### Bug Fixes
+
+* **nuxt3:** add support for custom templates ([#225](https://github.com/nuxt/framework/issues/225)) ([5c67408](https://github.com/nuxt/framework/commit/5c6740819199d68ed64cb6afdc800df9fe0e1d4d))
+* add nitro client plugin ($fetch support) ([#223](https://github.com/nuxt/framework/issues/223)) ([e2d5a2f](https://github.com/nuxt/framework/commit/e2d5a2f4b3f27d1454321ab22958ef3941a02978)), closes [#213](https://github.com/nuxt/framework/issues/213)
+
+
+
+
+
 ## [0.7.3](https://github.com/nuxt/framework/compare/nuxt3@0.7.2...nuxt3@0.7.3) (2021-06-04)
 
 **Note:** Version bump only for package nuxt3

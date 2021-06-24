@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.9.1](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.9.0...@nuxt/nitro@0.9.1) (2021-06-24)
+
+
+### Bug Fixes
+
+* use nitro plugin with explicit mjs extension ([1ed3387](https://github.com/nuxt/framework/commit/1ed33872433bc0d4d370fa8a9b35833793ee4bdb))
+* **nitro:** update nitro internal hook name ([#218](https://github.com/nuxt/framework/issues/218)) ([77e489a](https://github.com/nuxt/framework/commit/77e489aae37ce1bc8ad12e20b7a4dc3d6f1085a7))
+
+
+
+
+
+# [0.9.0](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.8.0...@nuxt/nitro@0.9.0) (2021-06-16)
+
+
+### Bug Fixes
+
+* add nitro client plugin ($fetch support) ([#223](https://github.com/nuxt/framework/issues/223)) ([e2d5a2f](https://github.com/nuxt/framework/commit/e2d5a2f4b3f27d1454321ab22958ef3941a02978)), closes [#213](https://github.com/nuxt/framework/issues/213)
+* **nitro:** set esbuild `target: '2019'` ([#189](https://github.com/nuxt/framework/issues/189)) ([7c85daa](https://github.com/nuxt/framework/commit/7c85daa64e8ba29d31f2de664e90e9cfb04a81b1))
+
+
+### Features
+
+* **nitro:** support netlify zero-config deployments ([#175](https://github.com/nuxt/framework/issues/175)) ([9750009](https://github.com/nuxt/framework/commit/9750009cc551bf50ee67007923bf798c95426108))
+
+
+
+
+
 # [0.8.0](https://github.com/nuxt/framework/compare/@nuxt/nitro@0.7.2...@nuxt/nitro@0.8.0) (2021-06-04)
 
 

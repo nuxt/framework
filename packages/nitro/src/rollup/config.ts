@@ -132,6 +132,8 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       'process.env.NODE_ENV': nitroContext._nuxt.dev ? '"development"' : '"production"',
       'typeof window': '"undefined"',
       'global.': 'globalThis.',
+      'process.server': 'true',
+      'process.client': 'false',
       'process.env.ROUTER_BASE': JSON.stringify(nitroContext._nuxt.routerBase),
       'process.env.PUBLIC_PATH': JSON.stringify(nitroContext._nuxt.publicPath),
       'process.env.NUXT_STATIC_BASE': JSON.stringify(nitroContext._nuxt.staticAssets.base),
@@ -145,6 +147,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // ESBuild
   rollupConfig.plugins.push(esbuild({
+    target: 'es2019',
     sourceMap: true
   }))
 
@@ -186,7 +189,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // Polyfill
   rollupConfig.plugins.push(virtual({
-    '~polyfill': env.polyfill.map(p => `import '${p}';`).join('\n')
+    '#polyfill': env.polyfill.map(p => `import '${p}';`).join('\n')
   }))
 
   // https://github.com/rollup/plugins/tree/master/packages/alias

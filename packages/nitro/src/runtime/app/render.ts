@@ -96,9 +96,7 @@ async function renderHTML (payload, rendered, ssrContext) {
     HEAD: meta.headTags +
       rendered.renderResourceHints() + rendered.renderStyles() + (ssrContext.styles || ''),
     BODY_ATTRS: meta.bodyAttrs,
-    BODY_SCRIPTS_PREPEND: meta.bodyScriptsPrepend,
-    APP: html,
-    BODY_SCRIPTS: state + rendered.renderScripts() + meta.bodyScripts
+    APP: meta.bodyScriptsPrepend + html + state + rendered.renderScripts() + meta.bodyScripts
   })
 }
 

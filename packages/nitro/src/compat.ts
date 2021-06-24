@@ -27,13 +27,13 @@ export default function nuxt2CompatModule () {
   // Connect hooks
   nuxt.addHooks(nitroContext.nuxtHooks)
   nuxt.hook('close', () => nitroContext._internal.hooks.callHook('close'))
+  nitroContext._internal.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
 
   nuxt.addHooks(nitroDevContext.nuxtHooks)
   nuxt.hook('close', () => nitroDevContext._internal.hooks.callHook('close'))
+  nitroDevContext._internal.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
   nitroDevContext._internal.hooks.hook('renderLoading',
     (req, res) => nuxt.callHook('server:nuxt:renderLoading', req, res))
-
-  nitroContext._internal.hooks.hook('nitro:template', template => nuxt.callHook('nitro:template', template))
 
   // Expose process.env.NITRO_PRESET
   nuxt.options.env.NITRO_PRESET = nitroContext.preset
@@ -51,14 +51,6 @@ export default function nuxt2CompatModule () {
   nuxt.hook('webpack:config', (webpackConfigs) => {
     const serverConfig = webpackConfigs.find(config => config.name === 'server')
     serverConfig.devtool = false
-  })
-
-  // Add missing template variables (which normally renderer would create)
-  nitroContext._internal.hooks.hook('nitro:template:document', (htmlTemplate) => {
-    if (!htmlTemplate.contents.includes('BODY_SCRIPTS_PREPEND')) {
-      const fullTemplate = ['{{ BODY_SCRIPTS_PREPEND }}', '{{ APP }}', '{{ BODY_SCRIPTS }}'].join('\n    ')
-      htmlTemplate.contents = htmlTemplate.contents.replace('{{ APP }}', fullTemplate)
-    }
   })
 
   // Nitro client plugin

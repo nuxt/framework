@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/app",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "repository": "nuxt/framework",
   "license": "MIT",
   "exports": {
@@ -25,10 +25,10 @@
     "ohmyfetch": "^0.2.0",
     "vue": "^3.1.1",
     "vue-meta": "3.0.0-alpha.9",
-    "vue-router": "^4.0.8",
+    "vue-router": "^4.0.9",
     "vuex5": "^0.5.0-testing.3"
   },
   "devDependencies": {
-    "unbuild": "^0.3.0"
+    "unbuild": "^0.3.1"
   }
 }

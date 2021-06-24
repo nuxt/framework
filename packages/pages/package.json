@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/pages",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "repository": "nuxt/framework",
   "license": "MIT",
   "types": "./dist/module.d.ts",
@@ -12,14 +12,14 @@
     "prepack": "unbuild"
   },
   "dependencies": {
-    "@nuxt/kit": "^0.6.2",
-    "globby": "^11.0.3",
+    "@nuxt/kit": "^0.6.4",
+    "globby": "^11.0.4",
     "ufo": "^0.7.5",
     "upath": "^2.0.1",
-    "vue-router": "^4.0.8"
+    "vue-router": "^4.0.9"
   },
   "devDependencies": {
-    "unbuild": "^0.3.0"
+    "unbuild": "^0.3.1"
   },
   "peerDependencies": {
     "vue": "3.1.1"
