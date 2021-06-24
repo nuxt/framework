@@ -17,8 +17,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
 
     // Resolve function
     if (typeof input === 'function') {
-      const fn = input
-      mod = nuxtCtx.call(nuxt, () => fn(nuxt))
+      mod = input(nuxt)
     } else {
       mod = input
     }
