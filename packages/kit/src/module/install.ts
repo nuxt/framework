@@ -57,14 +57,16 @@ export async function installModule (nuxt: Nuxt, installOpts: ModuleInstallOptio
     nuxt.options._requiredModules[meta.name] = true
   }
 
-  // Ensure nuxt instance is set for nuxt2
-  // @ts-ignore
-  if (!nuxt.__nuxtkit_close__) {
-    nuxt.hook('close', () => nuxtCtx.unset())
+  // Ensure nuxt instance exists (nuxt2 compatibility)
+  if (!nuxtCtx.use()) {
+    nuxtCtx.set(nuxt)
     // @ts-ignore
-    nuxt.__nuxtkit_close__ = true
+    if (!nuxt.__nuxtkit_close__) {
+      nuxt.hook('close', () => nuxtCtx.unset())
+      // @ts-ignore
+      nuxt.__nuxtkit_close__ = true
+    }
   }
-  nuxtCtx.set(nuxt)
 
   // Execute in legacy container
   const container = new ModuleContainer(nuxt)
