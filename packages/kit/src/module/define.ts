@@ -38,6 +38,12 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
     const userOptions = defu(inlineOptions, nuxt.options[configKey]) as OptionsT
     const resolvedOptions = applyDefaults(mod.defaults as any, userOptions) as OptionsT
 
+    // Patch nuxt to unset instance
+    // @ts-ignore
+    if (!nuxt.__nuxtkit_close__) {
+      nuxt.hook('close', () => nuxtCtx.unset())
+    }
+
     // Call setup
     return nuxtCtx.call(nuxt, () => mod.setup.call(null, resolvedOptions, nuxt))
   }
