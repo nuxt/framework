@@ -2,6 +2,7 @@ import { existsSync } from 'fs'
 import { defineNuxtModule } from '@nuxt/kit'
 import { resolve } from 'upath'
 import { resolvePagesRoutes } from './utils'
+import { resolveLayouts } from './layouts'
 
 export default defineNuxtModule({
   name: 'router',
@@ -12,7 +13,7 @@ export default defineNuxtModule({
 
     nuxt.hook('builder:watch', async (event, path) => {
       // Regenerate templates when adding or removing pages (plugin and routes)
-      if (event !== 'change' && path.startsWith('pages/')) {
+      if (event !== 'change' && path.match(new RegExp(`^(${nuxt.options.dir.pages}|${nuxt.options.dir.layouts})/`))) {
         await nuxt.callHook('builder:generateApp')
       }
     })
@@ -52,6 +53,16 @@ export default defineNuxtModule({
         compile: () => {
           const serializedRoutes = routes.map(route => ({ ...route, component: `{() => import('${route.file}')}` }))
           return `export default ${JSON.stringify(serializedRoutes, null, 2).replace(/"{(.+)}"/g, '$1')}`
+        }
+      })
+
+      const layouts = await resolveLayouts(nuxt)
+
+      // Add routes.js
+      app.templates.push({
+        path: 'layouts.js',
+        compile: () => {
+          return `export default ${JSON.stringify(layouts, null, 2).replace(/"{(.+)}"/g, '$1')}`
         }
       })
     })
