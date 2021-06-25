@@ -3,6 +3,8 @@ import type { App } from 'vue'
 import type { Component } from '@vue/runtime-core'
 import mockContext from 'unenv/runtime/mock/proxy'
 import type { Nuxt } from './nuxt'
+// @ts-ignore
+import $config from '#config'
 
 type Route = any
 type Store = any
@@ -150,8 +152,7 @@ export const legacyPlugin = (nuxt: Nuxt) => {
       }
 
       if (p === '$config') {
-        // TODO: needs implementation
-        return mock('Accessing runtime config is not yet supported in Nuxt3.')
+        return $config
       }
 
       if (p === 'ssrContext') {

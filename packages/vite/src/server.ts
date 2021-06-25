@@ -37,7 +37,10 @@ export async function buildServer (ctx: ViteBuildContext) {
           if (!['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
             rollupWarn(warning)
           }
-        }
+        },
+        external: [
+          '#config'
+        ]
       }
     },
     plugins: [

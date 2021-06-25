@@ -111,6 +111,7 @@ function baseAlias (ctx: WebpackConfigContext) {
   ctx.alias = {
     '#app': options.appDir,
     '#build': options.buildDir,
+    '#config': '@nuxt/nitro/dist/runtime/app/config',
     ...options.alias,
     ...ctx.alias
   }
@@ -237,6 +238,10 @@ function getEnv (ctx: WebpackConfigContext) {
     const isNative = ['boolean', 'number'].includes(typeof value)
     _env['process.env.' + key] = isNative ? value : JSON.stringify(value)
   })
+
+  if (ctx.isClient) {
+    _env['process.env'] = '{}'
+  }
 
   return _env
 }

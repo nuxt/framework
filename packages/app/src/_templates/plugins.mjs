@@ -1,3 +1,4 @@
+import config from '#app/plugins/config.server'
 import head from '#app/plugins/head'
 import preload from '#app/plugins/preload.server'
 
@@ -14,6 +15,7 @@ export const clientPlugins = [
 ]
 
 export const serverPlugins = [
+  config,
   ...commonPlugins,
   preload,
   <%= app.plugins.filter(p => p.mode === 'server').map(p => utils.importName(p.src)).join(',\n  ') %>

@@ -45,6 +45,7 @@ function serverStandalone (ctx: WebpackConfigContext) {
   ]
 
   if (!Array.isArray(ctx.config.externals)) { return }
+  ctx.config.externals.push('#config')
   ctx.config.externals.push(({ request }, cb) => {
     if (
       request[0] === '.' ||

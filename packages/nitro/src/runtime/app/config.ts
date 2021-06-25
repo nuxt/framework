@@ -2,7 +2,7 @@ import destr from 'destr'
 import defu from 'defu'
 
 // Bundled runtime config
-export const runtimeConfig = process.env.RUNTIME_CONFIG as any
+export const runtimeConfig = (typeof window !== 'undefined' ? { public: (window as any).__NUXT__.config } : process.env.RUNTIME_CONFIG as any) || {}
 
 // Allow override from process.env and deserialize
 for (const type of ['private', 'public']) {
