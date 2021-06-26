@@ -1,9 +1,9 @@
 <template>
   <RouterView v-slot="{ Component }">
-    <NuxtLayout :layout="Component.type.layout">
+    <NuxtLayout :layout="forcedUpdate || Component.type.layout">
       <transition name="page" mode="out-in">
         <!-- <keep-alive> -->
-        <Suspense @pending="$nuxt.callHook('page:start')" @resolve="$nuxt.callHook('page:finish')">
+        <Suspense @pending="$nuxt.callHook('page:start', Component)" @resolve="$nuxt.callHook('page:finish', Component)">
           <component :is="Component" :key="$route.path" />
         </Suspense>
         <!-- <keep-alive -->
@@ -17,6 +17,16 @@ import NuxtLayout from './layout'
 
 export default {
   name: 'NuxtPage',
-  components: { NuxtLayout }
+  components: { NuxtLayout },
+  data: () => ({
+    forcedUpdate: null
+  }),
+  created () {
+    if (process.dev && process.client) {
+      this.$nuxt.hook('page:start', (Component) => {
+        this.forcedUpdate = Component.type.layout
+      })
+    }
+  }
 }
 </script>
