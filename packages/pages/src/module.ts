@@ -1,8 +1,7 @@
 import { existsSync } from 'fs'
 import { defineNuxtModule } from '@nuxt/kit'
 import { resolve } from 'upath'
-import { resolvePagesRoutes } from './utils'
-import { resolveLayouts } from './layouts'
+import { resolveLayouts, resolvePagesRoutes } from './utils'
 
 export default defineNuxtModule({
   name: 'router',
