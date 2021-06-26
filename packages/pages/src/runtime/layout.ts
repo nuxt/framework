@@ -8,7 +8,7 @@ export default defineComponent({
   props: {
     layout: {
       type: String,
-      default: null
+      default: 'default'
     }
   },
   setup (props, context) {
