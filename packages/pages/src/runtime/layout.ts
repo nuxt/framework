@@ -21,7 +21,7 @@ export default defineComponent({
         loader: layouts[layout],
         suspensible: false
       })
-      return h(cachedComponents[layout], context, context.slots.default)
+      return h(cachedComponents[layout], props, context.slots)
     }
   }
 })
