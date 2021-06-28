@@ -8,6 +8,6 @@
     {{ APP }}
     {{ BODY_SCRIPTS }}
     <% if (nuxt.options.vite && nuxt.options.dev) { %><script type="module" src="/@vite/client"></script>
-    <script type="module" src="/.nuxt/entry.mjs"></script><% } %>
+    <script type="module" src="/@fs<%= nuxt.options.buildDir.replace(/\\/g, '/') %>/entry.mjs"></script><% } %>
   </body>
 </html>

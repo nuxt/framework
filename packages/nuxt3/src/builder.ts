@@ -32,8 +32,7 @@ function watch (nuxt: Nuxt) {
     ignored: [
       '.nuxt',
       '.output',
-      'node_modules',
-      '*.d.ts'
+      'node_modules'
     ]
   })
   const watchHook = (event, path) => nuxt.callHook('builder:watch', event, path)
