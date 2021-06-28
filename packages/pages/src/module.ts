@@ -12,7 +12,8 @@ export default defineNuxtModule({
 
     nuxt.hook('builder:watch', async (event, path) => {
       // Regenerate templates when adding or removing pages (plugin and routes)
-      if (event !== 'change' && path.match(new RegExp(`^(${nuxt.options.dir.pages}|${nuxt.options.dir.layouts})/`))) {
+      const pathPattern = new RegExp(`^(${nuxt.options.dir.pages}|${nuxt.options.dir.layouts})/`)
+      if (event !== 'change' && path.match(pathPattern)) {
         await nuxt.callHook('builder:generateApp')
       }
     })
@@ -61,7 +62,10 @@ export default defineNuxtModule({
       app.templates.push({
         path: 'layouts.js',
         compile: () => {
-          return `export default ${JSON.stringify(layouts, null, 2).replace(/"{(.+)}"/g, '$1')}`
+          return [
+            'import { defineAsyncComponent } from \'vue\'',
+            `export default ${JSON.stringify(layouts, null, 2).replace(/"{(.+)}"/g, '$1')}
+          `].join('\n')
         }
       })
     })

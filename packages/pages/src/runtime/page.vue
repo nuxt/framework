@@ -1,9 +1,9 @@
 <template>
   <RouterView v-slot="{ Component }">
-    <NuxtLayout :layout="forcedUpdate || Component.type.layout">
+    <NuxtLayout :name="layout || updatedComponentLayout || Component.type.layout">
       <transition name="page" mode="out-in">
         <!-- <keep-alive> -->
-        <Suspense @pending="$nuxt.callHook('page:start', Component)" @resolve="$nuxt.callHook('page:finish', Component)">
+        <Suspense @pending="() => onSuspensePending(Component)" @resolve="() => onSuspenseResolved(Component)">
           <component :is="Component" :key="$route.path" />
         </Suspense>
         <!-- <keep-alive -->
@@ -13,19 +13,41 @@
 </template>
 
 <script>
+import { useNuxt } from '@nuxt/kit'
+import { getCurrentInstance, ref } from 'vue'
+
 import NuxtLayout from './layout'
 
 export default {
   name: 'NuxtPage',
   components: { NuxtLayout },
-  data: () => ({
-    forcedUpdate: null
-  }),
-  created () {
-    if (process.dev && process.client) {
-      this.$nuxt.hook('page:start', (Component) => {
-        this.forcedUpdate = Component.type.layout
-      })
+  props: {
+    layout: {
+      type: String,
+      default: null
+    }
+  },
+  setup () {
+    // Disable HMR reactivity in production
+    const updatedComponentLayout = process.dev ? ref(null) : null
+
+    const { $nuxt } = getCurrentInstance().proxy
+
+    function onSuspensePending (Component) {
+      if (process.dev) {
+        updatedComponentLayout.value = Component.type.layout || null
+      }
+      return $nuxt.callHook('page:start', Component)
+    }
+
+    function onSuspenseResolved (Component) {
+      return $nuxt.callHook('page:finish', Component)
+    }
+
+    return {
+      updatedComponentLayout,
+      onSuspensePending,
+      onSuspenseResolved
     }
   }
 }
