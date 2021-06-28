@@ -2,9 +2,6 @@ import { transformSync } from 'esbuild'
 
 // https://jestjs.io/docs/next/code-transformation
 export default {
-  getCacheKey () {
-    return String(Math.random())
-  },
   process (src, path, _opts) {
     const r = transformSync(src, {
       target: 'node14',
