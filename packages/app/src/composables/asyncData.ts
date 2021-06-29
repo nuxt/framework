@@ -1,4 +1,4 @@
-import { getCurrentInstance, onBeforeMount, onUnmounted, Ref, ref, unref, UnwrapRef, watch } from 'vue'
+import { getCurrentInstance, onBeforeMount, onUnmounted, Ref, ref, unref, UnwrapRef, watchEffect } from 'vue'
 import { Nuxt, useNuxt } from '@nuxt/app'
 
 import { NuxtComponentPendingPromises } from './component'
@@ -58,7 +58,7 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       pending: ref(true)
     } as AsyncDataState<T>
 
-    const fetch = (force?: boolean): Promise<UnwrapRef<T>> => {
+    const _fetch = (force?: boolean): Promise<UnwrapRef<T>> => {
       if (nuxt._asyncDataPromises[key] && !force) {
         return nuxt._asyncDataPromises[key]
       }
@@ -74,6 +74,15 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
       })
       return nuxt._asyncDataPromises[key]
     }
+
+    let watching = false
+    const watchFetch = (force?: boolean) => watching
+      ? _fetch(force)
+      : new Promise<UnwrapRef<T>>(resolve => watchEffect(() => {
+        watching = true
+        resolve(_fetch(force))
+      }))
+    const fetch = process.server ? _fetch : watchFetch
 
     const fetchOnServer = options.server !== false
     const clientOnly = options.server === false
