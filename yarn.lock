@@ -6024,6 +6024,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-with-layouts@workspace:examples/with-layouts":
+  version: 0.0.0-use.local
+  resolution: "example-with-layouts@workspace:examples/with-layouts"
+  dependencies:
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-with-vite@workspace:examples/with-vite":
   version: 0.0.0-use.local
   resolution: "example-with-vite@workspace:examples/with-vite"
