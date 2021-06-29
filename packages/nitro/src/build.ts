@@ -35,7 +35,7 @@ export async function generate (nitroContext: NitroContext) {
     await copy(clientDist, join(nitroContext.output.publicDir, nitroContext._nuxt.publicPath))
   }
 
-  const staticDir = resolve(nitroContext._nuxt.srcDir, nitroContext._nuxt.staticDir)
+  const staticDir = nitroContext._nuxt.staticDir
   if (await isDirectory(staticDir)) {
     await copy(staticDir, nitroContext.output.publicDir)
   }
