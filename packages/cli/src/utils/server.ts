@@ -1,15 +1,16 @@
 import type { RequestListener } from 'http'
+import { createApp } from 'h3'
 
 export function createServer () {
-  const listener = createDynamicFunction(createLoadingHandler('Loading...', 1))
+  const app = createApp()
 
   async function listen (opts) {
     const { listen } = await import('listhen')
-    return listen(listener.call, opts)
+    return listen(app, opts)
   }
 
   return {
-    setApp: (app: RequestListener) => listener.set(app),
+    app,
     listen
   }
 }
@@ -23,7 +24,7 @@ export function createLoadingHandler (message: string, retryAfter = 60): Request
   }
 }
 
-function createDynamicFunction<T extends (...args) => any>(initialValue: T) {
+export function createDynamicFunction<T extends (...args) => any>(initialValue: T) {
   let fn: T = initialValue
   return {
     set: (newFn: T) => { fn = newFn },

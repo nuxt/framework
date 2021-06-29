@@ -8,6 +8,7 @@ export default defineBuildConfig({
   ],
   externals: [
     '@nuxt/kit',
+    '@nuxt/devtools',
     'fsevents'
   ]
 })

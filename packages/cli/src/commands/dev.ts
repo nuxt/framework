@@ -1,20 +1,32 @@
 import { resolve } from 'path'
 import chokidar from 'chokidar'
 import debounce from 'debounce-promise'
-import { createServer, createLoadingHandler } from '../utils/server'
-import { showBanner } from '../utils/banner'
+import { createServer, createLoadingHandler, createDynamicFunction } from '../utils/server'
 import { requireModule } from '../utils/cjs'
 import { error, info } from '../utils/log'
 import { diff, printDiff } from '../utils/diff'
+import { showBanner } from '../utils/banner'
 
 export async function invoke (args) {
+  // Set NODE_ENV
   process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+
+  // Start development server
   const server = createServer()
   const listener = await server.listen({ clipboard: args.clipboard, open: args.open || args.o })
 
+  // Resolve actual rootDir
   const rootDir = resolve(args._[0] || '.')
 
-  const { loadNuxt, buildNuxt } = requireModule('@nuxt/kit', rootDir)
+  // Add devtools
+  // TODO: Check if installed
+  const { createDevtoolsService } = requireModule('@nuxt/devtools', rootDir)
+  const devtools = createDevtoolsService()
+  server.app.use('/_devtools', devtools.app)
+
+  // Nuxt middleware
+  const nuxtMiddleware = createDynamicFunction(createLoadingHandler('Initializing nuxt...', 1))
+  server.app.use(nuxtMiddleware.call)
 
   let currentNuxt
   const load = async () => {
@@ -22,7 +34,9 @@ export async function invoke (args) {
       showBanner(true)
       listener.showURL()
 
+      const { loadNuxt, buildNuxt } = requireModule('@nuxt/kit', rootDir)
       const newNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
+      devtools.setNuxt(newNuxt)
 
       if (process.env.DEBUG) {
         let configChanges
@@ -31,7 +45,7 @@ export async function invoke (args) {
             'generate.staticAssets.version',
             'env.NITRO_PRESET'
           ])
-          server.setApp(createLoadingHandler('Restarting...', 1))
+          nuxtMiddleware.set(createLoadingHandler('Restarting nuxt...', 1))
           await currentNuxt.close()
           currentNuxt = newNuxt
         } else {
@@ -52,10 +66,10 @@ export async function invoke (args) {
 
       await currentNuxt.ready()
       await buildNuxt(currentNuxt)
-      server.setApp(currentNuxt.server.app)
+      nuxtMiddleware.set(currentNuxt.server.app)
     } catch (err) {
       error('Cannot load nuxt.', err)
-      server.setApp(createLoadingHandler(
+      nuxtMiddleware.set(createLoadingHandler(
         'Error while loading nuxt. Please check console and fix errors.'
       ))
     }

@@ -1,0 +1,27 @@
+{
+  "name": "@nuxt/devtools",
+  "version": "0.1.0",
+  "repository": "nuxt/framework",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepack": "unbuild && vite build"
+  },
+  "dependencies": {
+    "@nuxt/kit": "^0.6.4",
+    "serve-static": "^1.14.1",
+    "upath": "^2.0.1"
+  },
+  "devDependencies": {
+    "@types/serve-static": "^1.13.9",
+    "@vitejs/plugin-vue": "^1.2.3",
+    "unbuild": "^0.3.1",
+    "vite": "^2.3.8",
+    "vite-plugin-windicss": "^1.1.1",
+    "vue": "^3",
+    "windicss": "^3.1.3"
+  }
+}

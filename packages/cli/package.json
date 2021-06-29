@@ -20,6 +20,7 @@
     "fsevents": "~2.3.2"
   },
   "devDependencies": {
+    "@nuxt/devtools": "^0.1.0",
     "@nuxt/kit": "^0.6.4",
     "@types/clear": "^0",
     "@types/debounce-promise": "^3",
@@ -30,6 +31,7 @@
     "debounce-promise": "^3.1.2",
     "deep-object-diff": "^1.1.0",
     "flat": "^5.0.2",
+    "h3": "^0.2.11",
     "listhen": "^0.2.4",
     "mri": "^1.1.6",
     "unbuild": "^0.3.1",
