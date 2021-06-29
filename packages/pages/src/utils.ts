@@ -221,8 +221,8 @@ export async function resolveLayouts (nuxt: Nuxt) {
   const layoutDir = resolve(nuxt.options.srcDir, nuxt.options.dir.layouts)
   const files = await resolveFiles(layoutDir, `*{${nuxt.options.extensions.join(',')}}`)
 
-  return Object.fromEntries(files.map((file) => {
+  return files.map((file) => {
     const name = kebabCase(basename(file).replace(extname(file), '')).replace(/["']/g, '')
-    return [name, `{defineAsyncComponent({ suspensible: false, loader: () => import('${file}') })}`]
-  }))
+    return { name, file }
+  })
 }

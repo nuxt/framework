@@ -62,9 +62,12 @@ export default defineNuxtModule({
       app.templates.push({
         path: 'layouts.js',
         compile: () => {
+          const layoutsObject = Object.fromEntries(layouts.map(({ name, file }) => {
+            return [name, `{defineAsyncComponent({ suspensible: false, loader: () => import('${file}') })}`]
+          }))
           return [
             'import { defineAsyncComponent } from \'vue\'',
-            `export default ${JSON.stringify(layouts, null, 2).replace(/"{(.+)}"/g, '$1')}
+            `export default ${JSON.stringify(layoutsObject, null, 2).replace(/"{(.+)}"/g, '$1')}
           `].join('\n')
         }
       })
