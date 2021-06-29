@@ -54,7 +54,8 @@ export function createDevServer (nitroContext: NitroContext) {
 
   // _nuxt and static
   app.use(nitroContext._nuxt.publicPath, serveStatic(resolve(nitroContext._nuxt.buildDir, 'dist/client')))
-  app.use(nitroContext._nuxt.routerBase, serveStatic(resolve(nitroContext._nuxt.staticDir)))
+  console.log({ dir: resolve(nitroContext._nuxt.staticDir) })
+  app.use(nitroContext._nuxt.routerBase, serveStatic(resolve(nitroContext._nuxt.rootDir, nitroContext._nuxt.staticDir)))
 
   // Dynamic Middlwware
   const legacyMiddleware = createDynamicMiddleware()
