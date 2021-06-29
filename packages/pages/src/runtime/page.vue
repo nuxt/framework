@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import { useNuxt } from '@nuxt/kit'
 import { getCurrentInstance, ref } from 'vue'
 
 import NuxtLayout from './layout'
