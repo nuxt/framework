@@ -1634,9 +1634,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/app@^0.5.0, @nuxt/app@workspace:packages/app":
+"@nuxt/app-edge@workspace:packages/app, @nuxt/app@npm:@nuxt/app-edge@0.5.0-edge":
   version: 0.0.0-use.local
-  resolution: "@nuxt/app@workspace:packages/app"
+  resolution: "@nuxt/app-edge@workspace:packages/app"
   dependencies:
     "@vueuse/head": ^0.6.0
     hookable: ^4.4.1
@@ -1648,11 +1648,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/component-discovery@^0.2.0, @nuxt/component-discovery@workspace:packages/components":
+"@nuxt/component-discovery-edge@workspace:packages/components, @nuxt/component-discovery@npm:@nuxt/component-discovery-edge@0.2.0-edge":
   version: 0.0.0-use.local
-  resolution: "@nuxt/component-discovery@workspace:packages/components"
+  resolution: "@nuxt/component-discovery-edge@workspace:packages/components"
   dependencies:
-    "@nuxt/kit": ^0.6.4
+    "@nuxt/kit": "npm:@nuxt/kit-edge@0.6.4-edge"
     globby: ^11.0.4
     scule: ^0.2.1
     ufo: ^0.7.5
@@ -1686,9 +1686,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/kit@^0.6.4, @nuxt/kit@workspace:packages/kit":
+"@nuxt/kit-edge@workspace:packages/kit, @nuxt/kit@npm:@nuxt/kit-edge@0.6.4-edge":
   version: 0.0.0-use.local
-  resolution: "@nuxt/kit@workspace:packages/kit"
+  resolution: "@nuxt/kit-edge@workspace:packages/kit"
   dependencies:
     consola: ^2.15.3
     create-require: ^1.1.1
@@ -1708,14 +1708,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/nitro@^0.9.1, @nuxt/nitro@workspace:packages/nitro":
+"@nuxt/nitro-edge@workspace:packages/nitro, @nuxt/nitro@npm:@nuxt/nitro-edge@0.9.1-edge":
   version: 0.0.0-use.local
-  resolution: "@nuxt/nitro@workspace:packages/nitro"
+  resolution: "@nuxt/nitro-edge@workspace:packages/nitro"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.1.3
     "@netlify/functions": ^0.7.2
     "@nuxt/devalue": ^1.2.5
-    "@nuxt/kit": ^0.6.4
+    "@nuxt/kit": "npm:@nuxt/kit-edge@0.6.4-edge"
     "@rollup/plugin-alias": ^3.1.2
     "@rollup/plugin-commonjs": ^19.0.0
     "@rollup/plugin-inject": ^4.0.2
@@ -1776,11 +1776,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/pages@^0.3.0, @nuxt/pages@workspace:packages/pages":
+"@nuxt/pages-edge@workspace:packages/pages, @nuxt/pages@npm:@nuxt/pages-edge@0.3.0-edge":
   version: 0.0.0-use.local
-  resolution: "@nuxt/pages@workspace:packages/pages"
+  resolution: "@nuxt/pages-edge@workspace:packages/pages"
   dependencies:
-    "@nuxt/kit": ^0.6.4
+    "@nuxt/kit": "npm:@nuxt/kit-edge@0.6.4-edge"
     globby: ^11.0.4
     scule: ^0.2.1
     ufo: ^0.7.5
@@ -1792,11 +1792,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/vite-builder@^0.5.0, @nuxt/vite-builder@workspace:packages/vite":
+"@nuxt/vite-builder-edge@workspace:packages/vite, @nuxt/vite-builder@npm:@nuxt/vite-builder-edge@0.5.0-edge":
   version: 0.0.0-use.local
-  resolution: "@nuxt/vite-builder@workspace:packages/vite"
+  resolution: "@nuxt/vite-builder-edge@workspace:packages/vite"
   dependencies:
-    "@nuxt/kit": ^0.6.4
+    "@nuxt/kit": "npm:@nuxt/kit-edge@0.6.4-edge"
     "@types/debounce": ^1.2.0
     "@vitejs/plugin-vue": ^1.2.4
     "@vue/compiler-sfc": ^3.1.2
@@ -1813,13 +1813,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/webpack-builder@^0.5.0, @nuxt/webpack-builder@workspace:packages/webpack":
+"@nuxt/webpack-builder-edge@workspace:packages/webpack, @nuxt/webpack-builder@npm:@nuxt/webpack-builder-edge@0.5.0-edge":
   version: 0.0.0-use.local
-  resolution: "@nuxt/webpack-builder@workspace:packages/webpack"
+  resolution: "@nuxt/webpack-builder-edge@workspace:packages/webpack"
   dependencies:
     "@babel/core": ^7.14.6
     "@nuxt/friendly-errors-webpack-plugin": ^2.5.1
-    "@nuxt/kit": ^0.6.4
+    "@nuxt/kit": "npm:@nuxt/kit-edge@0.6.4-edge"
     "@types/pify": ^5.0.0
     "@types/terser-webpack-plugin": ^5.0.3
     "@types/webpack-bundle-analyzer": ^4.4.0
@@ -5972,7 +5972,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-async-data-setup@workspace:examples/async-data-setup"
   dependencies:
-    nuxt3: latest
+    nuxt3: 0.8.0-edge
   languageName: unknown
   linkType: soft
 
@@ -5980,7 +5980,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-async-data@workspace:examples/async-data"
   dependencies:
-    nuxt3: latest
+    nuxt3: 0.8.0-edge
   languageName: unknown
   linkType: soft
 
@@ -5988,7 +5988,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-hello-world@workspace:examples/hello-world"
   dependencies:
-    nuxt3: latest
+    nuxt3: 0.8.0-edge
   languageName: unknown
   linkType: soft
 
@@ -5996,7 +5996,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-pages@workspace:examples/pages"
   dependencies:
-    nuxt3: latest
+    nuxt3: 0.8.0-edge
   languageName: unknown
   linkType: soft
 
@@ -6004,7 +6004,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-with-components@workspace:examples/with-components"
   dependencies:
-    nuxt3: latest
+    nuxt3: 0.8.0-edge
   languageName: unknown
   linkType: soft
 
@@ -6012,7 +6012,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-with-layouts@workspace:examples/with-layouts"
   dependencies:
-    nuxt3: latest
+    nuxt3: 0.8.0-edge
   languageName: unknown
   linkType: soft
 
@@ -6020,7 +6020,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-with-vite@workspace:examples/with-vite"
   dependencies:
-    nuxt3: latest
+    nuxt3: 0.8.0-edge
   languageName: unknown
   linkType: soft
 
@@ -9756,11 +9756,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxt-cli@^0.3.8, nuxt-cli@workspace:packages/cli":
+"nuxt-cli-edge@workspace:packages/cli, nuxt-cli@npm:nuxt-cli-edge@0.3.8-edge":
   version: 0.0.0-use.local
-  resolution: "nuxt-cli@workspace:packages/cli"
+  resolution: "nuxt-cli-edge@workspace:packages/cli"
   dependencies:
-    "@nuxt/kit": ^0.6.4
+    "@nuxt/kit": "npm:@nuxt/kit-edge@0.6.4-edge"
     "@types/clear": ^0
     "@types/debounce-promise": ^3
     "@types/mri": ^1.1.0
@@ -9797,6 +9797,7 @@ __metadata:
     esbuild: ^0.12.12
     eslint: ^7.29.0
     eslint-plugin-jsdoc: ^35.4.1
+    globby: ^11.0.4
     jest: ^27.0.6
     jiti: ^1.10.1
     lerna: ^4.0.0
@@ -9810,13 +9811,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxt3@workspace:packages/nuxt3"
   dependencies:
-    "@nuxt/app": ^0.5.0
-    "@nuxt/component-discovery": ^0.2.0
-    "@nuxt/kit": ^0.6.4
-    "@nuxt/nitro": ^0.9.1
-    "@nuxt/pages": ^0.3.0
-    "@nuxt/vite-builder": ^0.5.0
-    "@nuxt/webpack-builder": ^0.5.0
+    "@nuxt/app": "npm:@nuxt/app-edge@0.5.0-edge"
+    "@nuxt/component-discovery": "npm:@nuxt/component-discovery-edge@0.2.0-edge"
+    "@nuxt/kit": "npm:@nuxt/kit-edge@0.6.4-edge"
+    "@nuxt/nitro": "npm:@nuxt/nitro-edge@0.9.1-edge"
+    "@nuxt/pages": "npm:@nuxt/pages-edge@0.3.0-edge"
+    "@nuxt/vite-builder": "npm:@nuxt/vite-builder-edge@0.5.0-edge"
+    "@nuxt/webpack-builder": "npm:@nuxt/webpack-builder-edge@0.5.0-edge"
     "@types/fs-extra": ^9.0.11
     "@types/hash-sum": ^1.0.0
     "@types/lodash": ^4.14.170
@@ -9829,7 +9830,7 @@ __metadata:
     hookable: ^4.4.1
     ignore: ^5.1.8
     lodash: ^4.17.21
-    nuxt-cli: ^0.3.8
+    nuxt-cli: "npm:nuxt-cli-edge@0.3.8-edge"
     scule: ^0.2.1
     ufo: ^0.7.5
     unbuild: ^0.3.1
