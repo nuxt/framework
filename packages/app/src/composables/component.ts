@@ -1,4 +1,8 @@
+import { toRefs } from '@vue/reactivity'
 import { ComponentInternalInstance, DefineComponent, defineComponent, getCurrentInstance } from 'vue'
+import type { LegacyContext } from '../legacy'
+import { useNuxt } from '../nuxt'
+import { asyncData } from './asyncData'
 
 export const NuxtComponentIndicator = '__nuxt_component'
 export const NuxtComponentPendingPromises = '_pendingPromises'
@@ -22,11 +26,18 @@ export function enqueueNuxtComponent (p: Promise<void>) {
   vm[NuxtComponentPendingPromises].push(p)
 }
 
+async function runLegacyAsyncData (res: Record<string, any> | Promise<Record<string, any>>, fn: (context: LegacyContext) => Promise<Record<string, any>>) {
+  const nuxt = useNuxt()
+  const vm = getCurrentNuxtComponentInstance()
+  const { data } = await asyncData(vm.proxy.$route.fullPath, () => fn(nuxt._legacyContext))
+  Object.assign(await res, toRefs(data))
+}
+
 export const defineNuxtComponent: typeof defineComponent =
   function defineNuxtComponent (options: any): any {
     const { setup } = options
 
-    if (!setup) {
+    if (!setup && !options.asyncData) {
       return {
         [NuxtComponentIndicator]: true,
         ...options
@@ -40,7 +51,11 @@ export const defineNuxtComponent: typeof defineComponent =
         const vm = getCurrentNuxtComponentInstance()
         let promises = vm[NuxtComponentPendingPromises] = vm[NuxtComponentPendingPromises] || []
 
-        const res = setup(props, ctx)
+        const res = setup?.(props, ctx) || {}
+
+        if (options.asyncData) {
+          promises.push(runLegacyAsyncData(res, options.asyncData))
+        }
 
         if (!promises.length && !(res instanceof Promise)) {
           return res
