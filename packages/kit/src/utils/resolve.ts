@@ -34,9 +34,11 @@ function resolvePath (path: string, opts: ResolveOptions = {}) {
   // Resolve relative to base or cwd
   resolvedPath = resolve(opts.base || '.', resolvedPath)
 
+  const resolvedPathFiles = readdirSync(dirname(resolvedPath))
+
   // Check if resolvedPath is a file
   let isDirectory = false
-  if (existsSyncSensitive(resolvedPath)) {
+  if (existsSyncSensitive(resolvedPath, resolvedPathFiles)) {
     isDirectory = lstatSync(resolvedPath).isDirectory()
     if (!isDirectory) {
       return resolvedPath
@@ -47,12 +49,12 @@ function resolvePath (path: string, opts: ResolveOptions = {}) {
   for (const ext of opts.extensions) {
     // resolvedPath.[ext]
     const resolvedPathwithExt = resolvedPath + ext
-    if (!isDirectory && existsSyncSensitive(resolvedPathwithExt)) {
+    if (!isDirectory && existsSyncSensitive(resolvedPathwithExt, resolvedPathFiles)) {
       return resolvedPathwithExt
     }
     // resolvedPath/index.[ext]
     const resolvedPathwithIndex = join(resolvedPath, 'index' + ext)
-    if (isDirectory && existsSyncSensitive(resolvedPathwithIndex)) {
+    if (isDirectory && existsSyncSensitive(resolvedPathwithIndex, resolvedPathFiles)) {
       return resolvedPathwithIndex
     }
   }
@@ -66,10 +68,10 @@ function resolvePath (path: string, opts: ResolveOptions = {}) {
   throw new Error(`Cannot resolve "${path}" from "${resolvedPath}"`)
 }
 
-export function existsSyncSensitive (path: string) {
+export function existsSyncSensitive (path: string, files?: string[]) {
   if (!existsSync(path)) { return false }
-  const files = readdirSync(dirname(path))
-  return files.includes(basename(path))
+  const _files = files || readdirSync(dirname(path))
+  return _files.includes(basename(path))
 }
 
 /**
