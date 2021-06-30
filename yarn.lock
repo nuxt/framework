@@ -1824,6 +1824,7 @@ __metadata:
     "@types/webpack-bundle-analyzer": ^4.4.0
     "@types/webpack-dev-middleware": ^5.0.0
     "@types/webpack-hot-middleware": ^2.25.4
+    "@types/webpack-virtual-modules": ^0
     "@vue/babel-preset-jsx": ^1.2.4
     "@vue/compiler-sfc": ^3.1.2
     babel-loader: ^8.2.2
@@ -1854,6 +1855,7 @@ __metadata:
     webpack-bundle-analyzer: ^4.4.2
     webpack-dev-middleware: ^5.0.0
     webpack-hot-middleware: ^2.25.0
+    webpack-virtual-modules: ^0.4.3
     webpackbar: ^5.0.0-3
   languageName: unknown
   linkType: soft
@@ -2586,6 +2588,15 @@ __metadata:
     "@types/source-list-map": "*"
     source-map: ^0.7.3
   checksum: 26aba8ae682529be737eff726dcf08019460b180e9d22e80925e65240c908312096067b5547ac3dcb6d7b383a4bf0473eb68d0fd4ff483b17f3147fefce149af
+  languageName: node
+  linkType: hard
+
+"@types/webpack-virtual-modules@npm:^0":
+  version: 0.1.1
+  resolution: "@types/webpack-virtual-modules@npm:0.1.1"
+  dependencies:
+    "@types/webpack": ^4
+  checksum: b84900c1c0638979773c9d8574fa67739e2c7bc0919a720c05eb3a4768e7447572463df9e2a68b2f7261ef6d4af6b4600301f81f05bb1ce24c8d34940f98a760
   languageName: node
   linkType: hard
 
@@ -13572,6 +13583,13 @@ __metadata:
     source-list-map: ^2.0.1
     source-map: ^0.6.1
   checksum: b929133f8b86fa91a42d2e557f2b2cd6136f62a50c10e32db9f37a63609cd4d1b3475772503c814baa2e25c02d3206110ec2add7a3aaf2794217fbf48664e72a
+  languageName: node
+  linkType: hard
+
+"webpack-virtual-modules@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "webpack-virtual-modules@npm:0.4.3"
+  checksum: 9d25285c2fcbfb54515e4fc0e12eb6261ad9565a6eb36e679e5277a0a4728425c59d75ae81f3d1536c73a6d446cb33338153b9e61b4f6c2c04c04394e57f06ff
   languageName: node
   linkType: hard
 

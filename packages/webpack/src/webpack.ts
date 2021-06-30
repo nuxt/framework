@@ -5,6 +5,7 @@ import webpack from 'webpack'
 import Glob from 'glob'
 import webpackDevMiddleware from 'webpack-dev-middleware'
 import webpackHotMiddleware from 'webpack-hot-middleware'
+import VirtualModulesPlugin from 'webpack-virtual-modules'
 import consola from 'consola'
 
 import type { Compiler, Watching } from 'webpack'
@@ -25,6 +26,7 @@ class WebpackBundler {
   // TODO: change this when pify has better types https://github.com/sindresorhus/pify/pull/76
   devMiddleware: Record<string, Function & { close?: () => Promise<void>, context?: WebpackDevMiddlewareContext }>
   hotMiddleware: Record<string, Function>
+  virtualModules: VirtualModulesPlugin
   mfs?: Compiler['outputFileSystem']
   __closed?: boolean
 
@@ -46,6 +48,14 @@ class WebpackBundler {
     if (this.nuxt.options.dev) {
       this.mfs = createMFS() as Compiler['outputFileSystem']
     }
+
+    // Initialize virtual modules instance
+    this.virtualModules = new VirtualModulesPlugin(nuxt.vfs)
+    nuxt.hook('app:templatesGenerated', () => {
+      for (const filePath in nuxt.vfs) {
+        this.virtualModules.writeModule(filePath, nuxt.vfs[filePath])
+      }
+    })
   }
 
   getWebpackConfig (name) {
@@ -95,6 +105,10 @@ class WebpackBundler {
 
     // Configure compilers
     this.compilers = webpackConfigs.map((config) => {
+      // Support virtual modules (input)
+      config.plugins.push(this.virtualModules)
+
+      // Create compiler
       const compiler = webpack(config)
 
       // In dev, write files in memory FS
