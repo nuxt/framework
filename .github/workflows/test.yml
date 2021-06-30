@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      # - edge
+      - edge
   pull_request:
     branches:
       - main
