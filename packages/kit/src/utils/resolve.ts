@@ -54,7 +54,7 @@ function resolvePath (path: string, opts: ResolveOptions = {}) {
     }
     // resolvedPath/index.[ext]
     const resolvedPathwithIndex = join(resolvedPath, 'index' + ext)
-    if (isDirectory && existsSyncSensitive(resolvedPathwithIndex, resolvedPathFiles)) {
+    if (isDirectory && existsSyncSensitive(resolvedPathwithIndex)) {
       return resolvedPathwithIndex
     }
   }
@@ -68,7 +68,7 @@ function resolvePath (path: string, opts: ResolveOptions = {}) {
   throw new Error(`Cannot resolve "${path}" from "${resolvedPath}"`)
 }
 
-export function existsSyncSensitive (path: string, files?: string[]) {
+function existsSyncSensitive (path: string, files?: string[]) {
   if (!existsSync(path)) { return false }
   const _files = files || readdirSync(dirname(path))
   return _files.includes(basename(path))
