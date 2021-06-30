@@ -10,7 +10,7 @@ yarn jiti ./scripts/bump-edge
 yarn
 
 # Build packages
-yarn build
+# yarn build
 
 # Release packages
 for p in packages/* ; do
@@ -21,4 +21,4 @@ for p in packages/* ; do
 done
 
 # Restore git
-git restore -s@ -SW  -- packages examples
+# git restore -s@ -SW  -- packages examples
