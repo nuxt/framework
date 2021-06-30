@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - edge
   pull_request:
     branches:
       - main
@@ -48,3 +49,10 @@ jobs:
 
       # - name: Coverage
       #   uses: codecov/codecov-action@v1
+
+  release-edge:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release Edge
+        run: ./scripts/release-edge.sh
