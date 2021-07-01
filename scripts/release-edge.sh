@@ -13,10 +13,11 @@ yarn
 # yarn build
 
 # Release packages
+npm whoami
 for p in packages/* ; do
   pushd $p
   echo "Publishing $p"
-  # npm publish
+  npm publish --dry-run
   popd
 done
 
