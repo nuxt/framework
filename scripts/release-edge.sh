@@ -6,6 +6,9 @@ git restore -s@ -SW  -- packages examples
 # Bump versions to edge
 yarn jiti ./scripts/bump-edge
 
+# Resolve yarn
+yarn
+
 # Update token
 if [[ ! -z ${NODE_AUTH_TOKEN} ]] ; then
   echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc
