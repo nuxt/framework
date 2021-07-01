@@ -21,6 +21,6 @@ fi
 for p in packages/* ; do
   pushd $p
   echo "Publishing $p"
-  npm publish --dry-run
+  npm publish --dry-run -q
   popd
 done
