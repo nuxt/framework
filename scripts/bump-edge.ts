@@ -1,5 +1,6 @@
 import { promises as fsp } from 'fs'
 import { resolve } from 'path'
+import { execSync } from 'child_process'
 import globby from 'globby'
 
 async function loadPackage (dir: string) {
@@ -89,8 +90,11 @@ async function loadWorkspace (dir: string) {
 async function main () {
   const workspace = await loadWorkspace(process.cwd())
 
+  const commit = execSync('git rev-parse --short HEAD').toString('utf-8').trim()
+  const date = Math.round(Date.now() / (1000 * 60))
+
   for (const pkg of workspace.packages.filter(p => !p.data.private)) {
-    workspace.setVersion(pkg.data.name, pkg.data.version + '-edge')
+    workspace.setVersion(pkg.data.name, `${pkg.data.version}-${date}.${commit}`)
     if (pkg.data.name !== 'nuxt3' /* TODO: Hardcoded! */) {
       workspace.rename(pkg.data.name, pkg.data.name + '-edge')
     }
