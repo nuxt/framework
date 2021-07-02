@@ -57,19 +57,18 @@ const Script = createHeadComponent('script', true)
 const Style = createHeadComponent('style', true)
 
 export default defineNuxtPlugin((nuxt) => {
-  const { app } = nuxt
   const head = createHead()
 
-  app.use(head)
+  nuxt.app.use(head)
 
-  app.component('NuxtHead', Head)
-  app.component('NuxtHtml', Html)
-  app.component('NuxtBody', Body)
-  app.component('NuxtTitle', Title)
-  app.component('NuxtMeta', Meta)
-  app.component('NuxtHeadLink', Link)
-  app.component('NuxtScript', Script)
-  app.component('NuxtStyle', Style)
+  nuxt.app.component('NuxtHead', Head)
+  nuxt.app.component('NuxtHtml', Html)
+  nuxt.app.component('NuxtBody', Body)
+  nuxt.app.component('NuxtTitle', Title)
+  nuxt.app.component('NuxtMeta', Meta)
+  nuxt.app.component('NuxtHeadLink', Link)
+  nuxt.app.component('NuxtScript', Script)
+  nuxt.app.component('NuxtStyle', Style)
 
   if (process.server) {
     nuxt.hook('app:renderMeta', (meta) => {
