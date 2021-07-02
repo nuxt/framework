@@ -1746,7 +1746,7 @@ __metadata:
     fs-extra: ^10.0.0
     globby: ^11.0.4
     gzip-size: ^6.0.0
-    h3: ^0.2.11
+    h3: ^0.2.12
     hasha: ^5.2.2
     hookable: ^4.4.1
     http-proxy: ^1.18.1
@@ -6726,10 +6726,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"h3@npm:^0.2.10, h3@npm:^0.2.11":
+"h3@npm:^0.2.10":
   version: 0.2.11
   resolution: "h3@npm:0.2.11"
   checksum: f12804a0a3265e3de142a72ef99224bfa6076bb0acbbc61dddf9e630e6375834780f6b6e7de8fcc753a01cbc20f6fc76769bf476df5bec211f6b85f81ad338f7
+  languageName: node
+  linkType: hard
+
+"h3@npm:^0.2.12":
+  version: 0.2.12
+  resolution: "h3@npm:0.2.12"
+  checksum: 31ce0b768e4d544011fa119b3accaa24222dfcb3f61415ba72140ee82a0e6ecac11b24bd32e510c4bd921c5adbaf439a9bd149c716362678f7c4300f19d19753
   languageName: node
   linkType: hard
 
