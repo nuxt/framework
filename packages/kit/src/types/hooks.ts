@@ -59,15 +59,6 @@ export interface NuxtHooks {
 
   // @nuxt/nitro
   'nitro:document': (template: { src: string, contents: string }) => HookResult
-  'app:renderMeta': (meta: {
-    htmlAttrs: string
-    bodyAttrs: string
-    headAttrs: string
-    headTags: string
-    bodyTags: string
-    bodyScriptsPrepend: string
-    bodyScripts: string
-  }) => HookResult
 
   // @nuxt/cli
   'cli:buildError': (error: unknown) => HookResult

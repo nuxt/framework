@@ -6,20 +6,20 @@ export default defineNuxtPlugin((nuxt) => {
   nuxt.app.use(metaManager)
 
   if (process.server) {
-    nuxt.hook('app:renderMeta', async (meta) => {
+    nuxt.ssrContext.renderMeta = async () => {
       const { renderMetaToString } = await import('vue-meta/ssr')
       nuxt.ssrContext.teleports = nuxt.ssrContext.teleports || {}
 
       await renderMetaToString(nuxt.app, nuxt.ssrContext)
 
-      Object.assign(meta, {
+      return {
         htmlAttrs: nuxt.ssrContext.teleports.htmlAttrs || '',
         headAttrs: nuxt.ssrContext.teleports.headAttrs || '',
         bodyAttrs: nuxt.ssrContext.teleports.bodyAttrs || '',
         headTags: nuxt.ssrContext.teleports.head || '',
         bodyPrepend: nuxt.ssrContext.teleports['body-prepend'] || '',
         bodyScripts: nuxt.ssrContext.teleports.body || ''
-      })
-    })
+      }
+    }
   }
 })

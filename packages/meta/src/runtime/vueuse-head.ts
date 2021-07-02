@@ -71,8 +71,6 @@ export default defineNuxtPlugin((nuxt) => {
   nuxt.app.component('NuxtStyle', Style)
 
   if (process.server) {
-    nuxt.hook('app:renderMeta', (meta) => {
-      Object.assign(meta, renderHeadToString(head))
-    })
+    nuxt.ssrContext.renderMeta = () => renderHeadToString(head)
   }
 })

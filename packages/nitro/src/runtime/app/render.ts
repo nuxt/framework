@@ -47,6 +47,10 @@ export async function renderMiddleware (req, res) {
   const renderer = await loadRenderer()
   const rendered = await renderer.renderToString(ssrContext)
 
+  if ('renderMeta' in ssrContext) {
+    rendered.meta = await ssrContext.renderMeta()
+  }
+
   if (ssrContext.nuxt.hooks) {
     await ssrContext.nuxt.hooks.callHook('app:rendered')
   }
@@ -63,7 +67,7 @@ export async function renderMiddleware (req, res) {
     data = renderPayload(payload, url)
     res.setHeader('Content-Type', 'text/javascript;charset=UTF-8')
   } else {
-    data = await renderHTML(payload, rendered, ssrContext)
+    data = renderHTML(payload, rendered, ssrContext)
     res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   }
 
@@ -72,35 +76,26 @@ export async function renderMiddleware (req, res) {
   res.end(data, 'utf-8')
 }
 
-async function renderHTML (payload, rendered, ssrContext) {
+function renderHTML (payload, rendered, ssrContext) {
   const state = `<script>window.__NUXT__=${devalue(payload)}</script>`
   const html = rendered.html
 
-  const meta = {
-    htmlAttrs: '',
-    bodyAttrs: '',
-    headAttrs: '',
-    headTags: '',
-    bodyTags: '',
-    bodyScriptsPrepend: '',
-    bodyScripts: ''
-  }
-
-  if (ssrContext.nuxt.hooks) {
-    // Nuxt3
-    await ssrContext.nuxt.hooks.callHook('app:renderMeta', meta)
-  } else if ('renderMeta' in ssrContext) {
-    // Nuxt2
-    Object.assign(meta, await ssrContext.renderMeta())
-  }
+  const {
+    htmlAttrs = '',
+    bodyAttrs = '',
+    headAttrs = '',
+    headTags = '',
+    bodyScriptsPrepend = '',
+    bodyScripts = ''
+  } = rendered.meta
 
   return htmlTemplate({
-    HTML_ATTRS: meta.htmlAttrs,
-    HEAD_ATTRS: meta.headAttrs,
-    HEAD: meta.headTags +
+    HTML_ATTRS: htmlAttrs,
+    HEAD_ATTRS: headAttrs,
+    HEAD: headTags +
       rendered.renderResourceHints() + rendered.renderStyles() + (ssrContext.styles || ''),
-    BODY_ATTRS: meta.bodyAttrs,
-    APP: meta.bodyScriptsPrepend + html + state + rendered.renderScripts() + meta.bodyScripts
+    BODY_ATTRS: bodyAttrs,
+    APP: bodyScriptsPrepend + html + state + rendered.renderScripts() + bodyScripts
   })
 }
 
