@@ -7,6 +7,8 @@ export default defineNuxtModule({
     // Add app plugin to install vue-meta or @vueuse/head
     const runtimeDir = resolve(__dirname, 'runtime')
     // TODO: support configurable meta plugins (vue-meta)
+    // const metaPlugin = resolve(runtimeDir, 'vue-meta')
+    // nuxt.options.build.transpile.push('vue-meta', 'vue-meta/ssr')
     const metaPlugin = resolve(runtimeDir, 'vueuse-head')
 
     nuxt.hook('app:resolve', (app) => {
