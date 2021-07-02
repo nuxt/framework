@@ -3,11 +3,13 @@ import { existsSync, readFileSync, writeFileSync, rmSync, mkdirSync } from 'fs'
 import { execSync } from 'child_process'
 import defu from 'defu'
 import hash from 'object-hash'
+import jiti from 'jiti'
 import type { LoadNuxtOptions, NuxtConfig } from '@nuxt/kit'
 
 export function fixtureDir (name: string) {
   return resolve(__dirname, 'fixtures', name)
 }
+
 
 export async function loadFixture (opts: LoadNuxtOptions, unhashedConfig?: NuxtConfig) {
   const buildId = hash(opts)

@@ -6,9 +6,14 @@ import { Listener, listen } from 'listhen'
 import { $fetch } from 'ohmyfetch/node'
 import createRequire from 'create-require'
 import type { LoadNuxtOptions } from '@nuxt/kit'
+import jiti from 'jiti'
 import { fixtureDir, buildFixture, loadFixture } from '../utils'
 
 const isCompat = Boolean(process.env.TEST_COMPAT)
+
+export function importModule (path: string) {
+  return Promise.resolve(jiti(__dirname)(path))
+}
 
 export interface TestContext {
   rootDir: string
