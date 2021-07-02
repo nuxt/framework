@@ -87,7 +87,7 @@ function renderHTML (payload, rendered, ssrContext) {
     headTags = '',
     bodyScriptsPrepend = '',
     bodyScripts = ''
-  } = rendered.meta
+  } = rendered.meta || {}
 
   return htmlTemplate({
     HTML_ATTRS: htmlAttrs,
