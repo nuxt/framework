@@ -34,8 +34,8 @@ export async function invoke (args) {
       await currentNuxt.ready()
       await buildNuxt(currentNuxt)
       server.setApp(currentNuxt.server.app)
-      if (isRestart) {
-        showBanner(args.clear !== false)
+      if (isRestart && args.clear !== false) {
+        showBanner()
         listener.showURL()
       }
     } catch (err) {
