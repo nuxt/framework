@@ -19,24 +19,27 @@ export async function invoke (args) {
   const { loadNuxt, buildNuxt } = requireModule('@nuxt/kit', rootDir)
 
   let currentNuxt
-  const load = async () => {
+  const load = async (isRestart) => {
     try {
-      if (currentNuxt) {
-        console.log('Restarting nuxt...')
-        showBanner(true)
-        listener.showURL()
+      const message = `${isRestart ? 'Restarting' : 'Starting'} nuxt...`
+      server.setApp(createLoadingHandler(message, 1))
+      if (isRestart) {
+        console.log(message)
       }
-      const newNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
       if (currentNuxt) {
-        server.setApp(createLoadingHandler('Restarting nuxt...', 1))
         await currentNuxt.close()
       }
+      const newNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
       currentNuxt = newNuxt
       await currentNuxt.ready()
       await buildNuxt(currentNuxt)
       server.setApp(currentNuxt.server.app)
+      if (isRestart) {
+        showBanner(true)
+        listener.showURL()
+      }
     } catch (err) {
-      error('Cannot load nuxt.', err)
+      error(`Cannot ${isRestart ? 'restart' : 'start'} nuxt: `, err)
       server.setApp(createLoadingHandler(
         'Error while loading nuxt. Please check console and fix errors.'
       ))
@@ -49,11 +52,11 @@ export async function invoke (args) {
   const watcher = chokidar.watch([rootDir], { ignoreInitial: true, depth: 1 })
   watcher.on('all', (_event, file) => {
     if (file.includes('nuxt.config') || file.includes('modules')) {
-      dLoad()
+      dLoad(true)
     }
   })
 
-  await load()
+  await load(false)
 }
 
 export const meta = {
