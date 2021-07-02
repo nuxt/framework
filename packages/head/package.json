@@ -1,5 +1,5 @@
 {
-  "name": "@nuxt/meta",
+  "name": "@nuxt/head",
   "version": "0.1.0",
   "repository": "nuxt/framework",
   "license": "MIT",
