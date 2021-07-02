@@ -4,8 +4,7 @@ import debounce from 'debounce-promise'
 import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
 import { requireModule } from '../utils/cjs'
-import { error, info } from '../utils/log'
-import { diff, printDiff } from '../utils/diff'
+import { error } from '../utils/log'
 
 export async function invoke (args) {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development'
@@ -21,35 +20,12 @@ export async function invoke (args) {
     try {
       showBanner(true)
       listener.showURL()
-
       const newNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
-
-      if (process.env.DEBUG) {
-        let configChanges
-        if (currentNuxt) {
-          configChanges = diff(currentNuxt.options, newNuxt.options, [
-            'generate.staticAssets.version',
-            'env.NITRO_PRESET'
-          ])
-          server.setApp(createLoadingHandler('Restarting...', 1))
-          await currentNuxt.close()
-          currentNuxt = newNuxt
-        } else {
-          currentNuxt = newNuxt
-        }
-
-        if (configChanges) {
-          if (configChanges.length) {
-            info('Nuxt config updated:')
-            printDiff(configChanges)
-          } else {
-            info('Restarted nuxt due to config changes')
-          }
-        }
-      } else {
-        currentNuxt = newNuxt
+      if (currentNuxt) {
+        server.setApp(createLoadingHandler('Restarting...', 1))
+        await currentNuxt.close()
       }
-
+      currentNuxt = newNuxt
       await currentNuxt.ready()
       await buildNuxt(currentNuxt)
       server.setApp(currentNuxt.server.app)
