@@ -9,6 +9,7 @@ export default {
       sourcefile: path,
       loader: path.endsWith('.ts') ? 'ts' : 'default'
     })
+    r.code = r.code.replace(/import ['"]([^'"]*)['"]/g, (_, id) => `require('${id}')`)
     r.code = r.code.replace(/import(\(.*\))/g, (_, id) => {
       let openBrackets = 0
 
