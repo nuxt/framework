@@ -1782,6 +1782,7 @@ __metadata:
   dependencies:
     "@nuxt/kit": ^0.6.4
     globby: ^11.0.4
+    scule: ^0.2.1
     ufo: ^0.7.5
     unbuild: ^0.3.1
     upath: ^2.0.1
@@ -6007,6 +6008,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-with-layouts@workspace:examples/with-layouts":
+  version: 0.0.0-use.local
+  resolution: "example-with-layouts@workspace:examples/with-layouts"
+  dependencies:
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-with-vite@workspace:examples/with-vite":
   version: 0.0.0-use.local
   resolution: "example-with-vite@workspace:examples/with-vite"
@@ -9788,6 +9797,7 @@ __metadata:
     esbuild: ^0.12.12
     eslint: ^7.29.0
     eslint-plugin-jsdoc: ^35.4.1
+    globby: ^11.0.4
     jest: ^27.0.6
     jiti: ^1.10.1
     lerna: ^4.0.0
