@@ -62,7 +62,7 @@ export default function nuxt2CompatModule () {
   // Nitro server plugin (for vue-meta)
   this.addPlugin({
     fileName: 'nitro.server.js',
-    src: resolve(nitroContext._internal.runtimeDir, 'app/nitro.server.js')
+    src: resolve(nitroContext._internal.runtimeDir, 'app/nitro-compat.server.js')
   })
 
   // Fix module resolution

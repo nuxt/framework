@@ -1,26 +1,26 @@
-import type { Plugin } from '@nuxt/app'
+import { defineNuxtPlugin } from '@nuxt/app'
 import { createMetaManager } from 'vue-meta'
 
-export default <Plugin> async function meta (nuxt) {
+export default defineNuxtPlugin((nuxt) => {
   const { app, ssrContext } = nuxt
   const metaManager = createMetaManager(process.server)
   app.use(metaManager)
 
   if (process.server) {
-    const { renderMetaToString } = await import('vue-meta/ssr')
-    ssrContext.renderMeta = async () => {
+    nuxt.hook('app:renderMeta', async (meta) => {
+      const { renderMetaToString } = await import('vue-meta/ssr')
       ssrContext.teleports = ssrContext.teleports || {}
 
       await renderMetaToString(app, ssrContext)
 
-      return {
+      Object.assign(meta, {
         htmlAttrs: ssrContext.teleports.htmlAttrs || '',
         headAttrs: ssrContext.teleports.headAttrs || '',
         bodyAttrs: ssrContext.teleports.bodyAttrs || '',
         headTags: ssrContext.teleports.head || '',
         bodyPrepend: ssrContext.teleports['body-prepend'] || '',
         bodyScripts: ssrContext.teleports.body || ''
-      }
-    }
+      })
+    })
   }
-}
+})

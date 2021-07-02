@@ -86,7 +86,11 @@ async function renderHTML (payload, rendered, ssrContext) {
     bodyScripts: ''
   }
 
-  if ('renderMeta' in ssrContext) {
+  if (ssrContext.nuxt.hooks) {
+    // Nuxt3
+    await ssrContext.nuxt.hooks.callHook('app:renderMeta', meta)
+  } else if ('renderMeta' in ssrContext) {
+    // Nuxt2
     Object.assign(meta, await ssrContext.renderMeta())
   }
 

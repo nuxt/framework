@@ -1,0 +1,25 @@
+{
+  "name": "@nuxt/meta",
+  "version": "0.1.0",
+  "repository": "nuxt/framework",
+  "license": "MIT",
+  "types": "./dist/module.d.ts",
+  "files": [
+    "dist",
+    "module.js"
+  ],
+  "scripts": {
+    "prepack": "unbuild"
+  },
+  "dependencies": {
+    "@nuxt/kit": "^0.6.4",
+    "@vueuse/head": "^0.6.0",
+    "vue-meta": "3.0.0-alpha.9"
+  },
+  "devDependencies": {
+    "unbuild": "^0.3.1"
+  },
+  "peerDependencies": {
+    "vue": "3.1.1"
+  }
+}

@@ -1638,12 +1638,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nuxt/app@workspace:packages/app"
   dependencies:
-    "@vueuse/head": ^0.6.0
     hookable: ^4.4.1
     ohmyfetch: ^0.2.0
     unbuild: ^0.3.1
     vue: ^3.1.2
-    vue-meta: 3.0.0-alpha.9
     vue-router: ^4.0.10
     vuex5: ^0.5.0-testing.3
   languageName: unknown
@@ -1706,6 +1704,19 @@ __metadata:
     unctx: ^1.0.1
     untyped: ^0.2.5
     upath: ^2.0.1
+  languageName: unknown
+  linkType: soft
+
+"@nuxt/meta@workspace:packages/meta":
+  version: 0.0.0-use.local
+  resolution: "@nuxt/meta@workspace:packages/meta"
+  dependencies:
+    "@nuxt/kit": ^0.6.4
+    "@vueuse/head": ^0.6.0
+    unbuild: ^0.3.1
+    vue-meta: 3.0.0-alpha.9
+  peerDependencies:
+    vue: 3.1.1
   languageName: unknown
   linkType: soft
 

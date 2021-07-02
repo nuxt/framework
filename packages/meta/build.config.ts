@@ -3,11 +3,11 @@ import { defineBuildConfig } from 'unbuild'
 export default defineBuildConfig({
   declaration: true,
   entries: [
-    { input: 'src/', name: 'app' }
+    'src/module',
+    { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm' }
   ],
   dependencies: [
-    'ohmyfetch',
-    'vue-router',
-    'vuex5'
+    '@vueuse/head',
+    'vue-meta'
   ]
 })
