@@ -16,7 +16,16 @@ export interface Nuxt {
   _asyncDataPromises?: Record<string, Promise<any>>
   _legacyContext?: LegacyContext
 
-  ssrContext?: Record<string, any>
+  ssrContext?: Record<string, any> & {
+    renderMeta: () => Promise<{
+      htmlAttrs: string
+      headAttrs: string
+      bodyAttrs: string
+      headTags: string
+      bodyPrepend: string
+      bodyScripts: string
+    }>
+  }
   payload: {
     serverRendered?: true
     data?: Record<string, any>
