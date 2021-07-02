@@ -9,7 +9,10 @@ import { error } from '../utils/log'
 export async function invoke (args) {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development'
   const server = createServer()
-  const listener = await server.listen({ clipboard: args.clipboard, open: args.open || args.o })
+  const listener = await server.listen({
+    clipboard: args.clipboard,
+    open: args.open || args.o
+  })
 
   const rootDir = resolve(args._[0] || '.')
 
@@ -18,11 +21,14 @@ export async function invoke (args) {
   let currentNuxt
   const load = async () => {
     try {
-      showBanner(true)
-      listener.showURL()
+      if (currentNuxt) {
+        console.log('Restarting nuxt...')
+        showBanner(true)
+        listener.showURL()
+      }
       const newNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
       if (currentNuxt) {
-        server.setApp(createLoadingHandler('Restarting...', 1))
+        server.setApp(createLoadingHandler('Restarting nuxt...', 1))
         await currentNuxt.close()
       }
       currentNuxt = newNuxt
