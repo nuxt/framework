@@ -241,7 +241,8 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       ],
       traceOptions: {
         base: '/',
-        processCwd: nitroContext._nuxt.rootDir
+        processCwd: nitroContext._nuxt.rootDir,
+        exportsOnly: true
       }
     })))
   }
@@ -252,7 +253,11 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     preferBuiltins: true,
     rootDir: nitroContext._nuxt.rootDir,
     moduleDirectories,
-    mainFields: ['main'] // Force resolve CJS (@vue/runtime-core ssrUtils)
+    exportConditions: [
+      'default',
+      'module',
+      'import'
+    ]
   }))
 
   // Automatically mock unresolved externals
