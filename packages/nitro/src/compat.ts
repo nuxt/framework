@@ -55,8 +55,8 @@ export default function nuxt2CompatModule () {
 
   // Nitro client plugin
   this.addPlugin({
-    fileName: 'nitro.client.js',
-    src: resolve(nitroContext._internal.runtimeDir, 'app/nitro.client.js')
+    fileName: 'nitro.client.mjs',
+    src: resolve(nitroContext._internal.runtimeDir, 'app/nitro.client.mjs')
   })
 
   // Fix module resolution
