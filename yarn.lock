@@ -1685,19 +1685,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/head@workspace:packages/head":
-  version: 0.0.0-use.local
-  resolution: "@nuxt/head@workspace:packages/head"
-  dependencies:
-    "@nuxt/kit": ^0.6.4
-    "@vueuse/head": ^0.6.0
-    unbuild: ^0.3.1
-    vue-meta: 3.0.0-alpha.9
-  peerDependencies:
-    vue: 3.1.1
-  languageName: unknown
-  linkType: soft
-
 "@nuxt/kit@^0.6.4, @nuxt/kit@workspace:packages/kit":
   version: 0.0.0-use.local
   resolution: "@nuxt/kit@workspace:packages/kit"
@@ -1717,6 +1704,19 @@ __metadata:
     unctx: ^1.0.1
     untyped: ^0.2.5
     upath: ^2.0.1
+  languageName: unknown
+  linkType: soft
+
+"@nuxt/meta@workspace:packages/meta":
+  version: 0.0.0-use.local
+  resolution: "@nuxt/meta@workspace:packages/meta"
+  dependencies:
+    "@nuxt/kit": ^0.6.4
+    "@vueuse/head": ^0.6.0
+    unbuild: ^0.3.1
+    vue-meta: 3.0.0-alpha.9
+  peerDependencies:
+    vue: 3.1.1
   languageName: unknown
   linkType: soft
 
