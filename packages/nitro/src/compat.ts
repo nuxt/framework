@@ -1,6 +1,5 @@
 import fetch from 'node-fetch'
 import { resolve } from 'upath'
-import { resolveModule } from '@nuxt/kit'
 import { build, generate, prepare } from './build'
 import { getNitroContext, NitroContext } from './context'
 import { createDevServer } from './server/dev'
@@ -62,9 +61,8 @@ export default function nuxt2CompatModule () {
   // Fix module resolution
   nuxt.hook('webpack:config', (configs) => {
     for (const config of configs) {
-      if (config.name === 'client') {
-        config.resolve.alias.ufo = resolveModule('ufo/dist/index.mjs')
-      }
+      config.resolve.alias.ufo = 'ufo/dist/index.mjs'
+      config.resolve.alias.ohmyfetch = 'ohmyfetch/dist/index.mjs'
     }
   })
 
