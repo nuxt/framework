@@ -1,5 +1,6 @@
 import fetch from 'node-fetch'
 import { resolve } from 'upath'
+import { readFile, writeFile } from 'fs-extra'
 import { build, generate, prepare } from './build'
 import { getNitroContext, NitroContext } from './context'
 import { createDevServer } from './server/dev'
@@ -63,6 +64,16 @@ export default function nuxt2CompatModule () {
     for (const config of configs) {
       config.resolve.alias.ufo = 'ufo/dist/index.mjs'
       config.resolve.alias.ohmyfetch = 'ohmyfetch/dist/index.mjs'
+    }
+  })
+
+  // Generate mjs resources
+  nuxt.hook('build:compiled', async ({ name }) => {
+    if (name === 'server') {
+      await writeFile(resolve(nuxt.options.buildDir, 'dist/server/server.mjs'), 'export { default } from "./server.js"', 'utf8')
+    } else if (name === 'client') {
+      const manifest = await readFile(resolve(nuxt.options.buildDir, 'dist/server/client.manifest.json'), 'utf8')
+      await writeFile(resolve(nuxt.options.buildDir, 'dist/server/client.manifest.mjs'), 'export default ' + manifest, 'utf8')
     }
   })
 
