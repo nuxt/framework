@@ -1,6 +1,6 @@
 module.exports = {
   testEnvironment: 'node',
-  extensionsToTreatAsEsm: ['.ts'],
+  // extensionsToTreatAsEsm: ['.ts'],
   transform: {
     '\\.[jt]sx?$': './scripts/jest-transform.mjs'
   },
