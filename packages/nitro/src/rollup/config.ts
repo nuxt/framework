@@ -51,7 +51,10 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       '@babel/parser': 'unenv/runtime/mock/proxy',
       '@vue/compiler-core': 'unenv/runtime/mock/proxy',
       '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
-      '@vue/compiler-ssr': 'unenv/runtime/mock/proxy'
+      '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
+      // SSR utils is only exposed in cjs builds
+      vue: 'vue/index.js',
+      '@vue/runtime-core': '@vue/runtime-core/index.js'
     }
   }
 
