@@ -9,5 +9,8 @@
   },
   "resolutions": {
     "nuxt-windicss": "~0.6.0"
+  },
+  "dependencies": {
+    "ezpass": "^0.0.1"
   }
 }
