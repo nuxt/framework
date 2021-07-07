@@ -16,12 +16,15 @@
   "dependencies": {
     "@nuxt/kit": "^0.6.4",
     "@vueuse/head": "^0.6.0",
-    "vue-meta": "3.0.0-alpha.9"
+    "upath": "^2.0.1"
   },
   "devDependencies": {
-    "unbuild": "^0.3.1"
+    "unbuild": "^0.3.1",
+    "vue-meta": "3.0.0-alpha.9"
   },
   "peerDependencies": {
+    "@vue/reactivity": "3.1.1",
+    "@vue/shared": "3.1.1",
     "vue": "3.1.1"
   }
 }

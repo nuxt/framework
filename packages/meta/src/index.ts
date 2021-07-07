@@ -1,7 +1,6 @@
 // import { useMeta as useVueMeta } from 'vue-meta'
-import { computed } from 'vue'
 import { isFunction } from '@vue/shared'
-import type { ComputedGetter } from '@vue/reactivity'
+import { computed, ComputedGetter } from '@vue/reactivity'
 import { useHead } from '@vueuse/head'
 
 /**

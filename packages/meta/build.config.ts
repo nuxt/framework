@@ -7,8 +7,9 @@ export default defineBuildConfig({
     'src/index',
     { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm' }
   ],
-  dependencies: [
-    '@vueuse/head',
-    'vue-meta'
+  externals: [
+    '@vue/reactivity',
+    '@vue/shared',
+    '@vueuse/head'
   ]
 })
