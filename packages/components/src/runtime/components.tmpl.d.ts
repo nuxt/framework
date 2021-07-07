@@ -1,3 +1,4 @@
+import type { } from 'vue'
 declare module 'vue' {
   export interface GlobalComponents {
 <%= components.map(c => {
