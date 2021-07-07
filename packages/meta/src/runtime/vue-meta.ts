@@ -1,9 +1,19 @@
 import { defineNuxtPlugin } from '@nuxt/app'
+import { createApp } from 'vue'
 import { createMetaManager } from 'vue-meta'
 
 export default defineNuxtPlugin((nuxt) => {
-  const metaManager = createMetaManager(process.server)
-  nuxt.app.use(metaManager)
+  const manager = createMetaManager(process.server)
+
+  nuxt.app.use(manager)
+
+  if (process.client) {
+    const teleportTarget = document.createElement('div')
+    teleportTarget.id = 'head-target'
+    document.body.appendChild(teleportTarget)
+
+    createApp({ render: () => manager.render({}) }).mount('#head-target')
+  }
 
   if (process.server) {
     nuxt.ssrContext.renderMeta = async () => {
