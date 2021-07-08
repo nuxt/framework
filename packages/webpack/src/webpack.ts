@@ -51,13 +51,17 @@ class WebpackBundler {
 
     // Initialize virtual modules instance
     this.virtualModules = new VirtualModulesPlugin(nuxt.vfs)
-    nuxt.hook('build:compile', ({ compiler }) => {
-      if (compiler.name === 'client') { return }
-
+    const writeFiles = () => {
       for (const filePath in nuxt.vfs) {
         this.virtualModules.writeModule(filePath, nuxt.vfs[filePath])
       }
+    }
+    // Workaround to initialize virtual modules
+    nuxt.hook('build:compile', ({ compiler }) => {
+      if (compiler.name === 'server') { writeFiles() }
     })
+    // Update virtual modules when templates are updated
+    nuxt.hook('app:templatesGenerated', writeFiles)
   }
 
   getWebpackConfig (name) {
