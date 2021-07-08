@@ -1,4 +1,4 @@
-import { resolve } from 'upath'
+import { normalize } from 'upath'
 import { getQuery } from 'ufo'
 
 export default class NuxtSetupTransformerPlugin {
@@ -11,7 +11,7 @@ export default class NuxtSetupTransformerPlugin {
       enforce: 'post',
       use: [{
         ident: 'NuxtSetupTransformerPlugin',
-        loader: resolve(require.resolve('@nuxt/webpack-builder/dist/nuxt-setup-loader'))
+        loader: normalize(require.resolve('@nuxt/webpack-builder/dist/nuxt-setup-loader'))
       }]
     })
   }

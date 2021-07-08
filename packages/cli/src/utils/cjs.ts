@@ -1,7 +1,7 @@
-import { resolve } from 'upath'
+import { normalize } from 'upath'
 
 export function resolveModule (id, paths?) {
-  return resolve(require.resolve(id, {
+  return normalize(require.resolve(id, {
     paths: [].concat(
       // @ts-ignore
       global.__NUXT_PREPATHS__,

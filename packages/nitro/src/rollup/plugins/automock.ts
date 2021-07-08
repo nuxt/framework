@@ -1,5 +1,5 @@
 import consola from 'consola'
-import { resolve } from 'upath'
+import { normalize } from 'upath'
 
 const internalRegex = /^\.|\?|\.[mc]?js$|.ts$|.json$/
 
@@ -10,7 +10,7 @@ export function autoMock () {
       if (src && !internalRegex.test(src)) {
         consola.warn('Auto mock external ', src)
         return {
-          id: resolve(require.resolve('unenv/runtime/mock/proxy'))
+          id: normalize(require.resolve('unenv/runtime/mock/proxy'))
         }
       }
       return null
