@@ -1,4 +1,4 @@
-import { join } from 'path'
+import { join } from 'upath'
 import jiti from 'jiti'
 
 // TODO: use create-require for jest environment
