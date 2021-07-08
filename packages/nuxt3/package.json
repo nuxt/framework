@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "prepack": "unbuild"
+    "prepack": "unbuild || true"
   },
   "bin": {
     "nu": "./bin/nuxt.js",
@@ -35,14 +35,14 @@
     "lodash": "^4.17.21",
     "nuxt-cli": "^0.3.8",
     "scule": "^0.2.1",
-    "ufo": "^0.7.5",
+    "ufo": "^0.7.7",
     "upath": "^2.0.1",
-    "vue": "3.1.2"
+    "vue": "3.1.4"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.11",
+    "@types/fs-extra": "^9.0.12",
     "@types/hash-sum": "^1.0.0",
-    "@types/lodash": "^4.14.170",
+    "@types/lodash": "^4.14.171",
     "unbuild": "^0.3.1"
   }
 }
