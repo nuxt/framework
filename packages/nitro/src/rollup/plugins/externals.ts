@@ -42,7 +42,7 @@ export function externals (opts: NodeExternalsOptions): Plugin {
       // Try to resolve for nft
       if (opts.trace !== false) {
         let _resolvedId = _id
-        try { _resolvedId = require.resolve(_resolvedId, { paths: opts.moduleDirectories }) } catch (_err) {}
+        try { _resolvedId = resolve(require.resolve(_resolvedId, { paths: opts.moduleDirectories })) } catch (_err) { }
         resolvedExternals.add(_resolvedId)
       }
 
