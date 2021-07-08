@@ -1,4 +1,4 @@
-import { normalize, resolve, dirname } from 'upath'
+import { sep, resolve, dirname } from 'upath'
 import { copyFile, mkdirp } from 'fs-extra'
 import { nodeFileTrace, NodeFileTraceOptions } from '@vercel/nft'
 import type { Plugin } from 'rollup'
@@ -21,6 +21,11 @@ export function externals (opts: NodeExternalsOptions): Plugin {
       // Internals
       if (!id || id.startsWith('\x00') || id.includes('?') || id.startsWith('#')) {
         return null
+      }
+
+      // Normalize path on windows
+      if (process.platform === 'win32') {
+        id = id.replace(/\\/g, '/')
       }
 
       // Normalize from node_modules
