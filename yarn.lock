@@ -1660,6 +1660,7 @@ __metadata:
     hookable: ^4.4.1
     ohmyfetch: ^0.2.0
     unbuild: ^0.3.1
+    upath: ^2.0.1
     vue: ^3.1.4
     vue-router: ^4.0.10
     vuex5: ^0.5.0-testing.3
@@ -1863,6 +1864,7 @@ __metadata:
     time-fix-plugin: ^2.0.7
     ufo: ^0.7.7
     unbuild: ^0.3.1
+    upath: ^2.0.1
     url-loader: ^4.1.1
     vue: 3.1.4
     vue-loader: ^16.3.0
@@ -6215,6 +6217,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-with-vue-content-loader@workspace:examples/with-vue-content-loader":
+  version: 0.0.0-use.local
+  resolution: "example-with-vue-content-loader@workspace:examples/with-vue-content-loader"
+  dependencies:
+    nuxt3: latest
+    vue-content-loader: ^2.0.0
+  languageName: unknown
+  linkType: soft
+
 "execa@npm:^1.0.0":
   version: 1.0.0
   resolution: "execa@npm:1.0.0"
@@ -9970,6 +9981,7 @@ __metadata:
     listhen: ^0.2.4
     mri: ^1.1.6
     unbuild: ^0.3.1
+    upath: ^2.0.1
     v8-compile-cache: ^2.3.0
   dependenciesMeta:
     fsevents:
@@ -10000,6 +10012,15 @@ __metadata:
     object-hash: ^2.2.0
     typescript: ^4.3.5
     unbuild: ^0.3.1
+    upath: ^2.0.1
+  languageName: unknown
+  linkType: soft
+
+"nuxt-playground@workspace:playground":
+  version: 0.0.0-use.local
+  resolution: "nuxt-playground@workspace:playground"
+  dependencies:
+    nuxt3: latest
   languageName: unknown
   linkType: soft
 
@@ -13600,6 +13621,15 @@ typescript@^4.3.5:
   dependencies:
     bundle-runner: ^0.0.1
   checksum: 2bb3f05ff4f7f2b84f19c4ffd29d1326be364a05f87eec400991e8d94d83018d7ed130e8db935b5383fc2ec479d9fd2b5a7ef4c84ae7720b60a391c1e0a8a53c
+  languageName: node
+  linkType: hard
+
+"vue-content-loader@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "vue-content-loader@npm:2.0.0"
+  peerDependencies:
+    vue: ^3
+  checksum: 2d82352f1c1c456267bd479577d89f1bcf9bf317d6e41f313923a5ab3788ff0e7aefb7e7f31158d8121f2bbe865224c86696cd97ac36be3a2c5f3bfe5e7d30de
   languageName: node
   linkType: hard
 

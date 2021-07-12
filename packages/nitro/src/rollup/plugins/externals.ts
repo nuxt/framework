@@ -23,6 +23,11 @@ export function externals (opts: NodeExternalsOptions): Plugin {
         return null
       }
 
+      // Normalize path on windows
+      if (process.platform === 'win32') {
+        id = id.replace(/\\/g, '/')
+      }
+
       // Normalize from node_modules
       const _id = id.split('node_modules/').pop()
 
