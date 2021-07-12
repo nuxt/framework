@@ -1,10 +1,10 @@
 import { defineNuxtModule, extendBuild, useNuxt } from '@nuxt/kit'
-import { defineUnplugin, UnpluginOptions } from 'unplugin'
+import { createUnplugin, UnpluginFactory } from 'unplugin'
 
 // could go `@nuxt/kit`
-function addUnplugin<UserOptions = {}> (pluginOptions: UnpluginOptions<UserOptions>) {
+function addUnplugin<UserOptions = {}> (factory: UnpluginFactory<UserOptions>) {
   const nuxt = useNuxt()
-  const plugin = defineUnplugin(pluginOptions)
+  const plugin = createUnplugin(factory)
 
   if (nuxt.options.vite) {
     // vite
@@ -23,17 +23,15 @@ function addUnplugin<UserOptions = {}> (pluginOptions: UnpluginOptions<UserOptio
 export default defineNuxtModule({
   setup () {
     let i = 0
-    addUnplugin({
-      name: 'unplugin-test',
-      enforce: 'pre',
-      setup () {
-        return {
-          transformInclude (id) {
-            return id.endsWith('.vue')
-          },
-          transform (code) {
-            return code.replace(/<template>/, `<template><div>Injected ${i++}</div>`)
-          }
+
+    addUnplugin(() => {
+      return {
+        name: 'unplugin-test',
+        transformInclude (id) {
+          return id.endsWith('.vue')
+        },
+        transform (code) {
+          return code.replace(/<template>/, `<template><div>Injected ${i++}</div>`)
         }
       }
     })
