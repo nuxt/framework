@@ -1,5 +1,4 @@
 import consola from 'consola'
-import { normalize } from 'upath'
 
 const internalRegex = /^\.|\?|\.[mc]?js$|.ts$|.json$/
 
