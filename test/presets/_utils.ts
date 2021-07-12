@@ -96,7 +96,7 @@ export function testNitroBehavior (_ctx: TestContext, getHandler: () => Promise<
     handler = await getHandler()
   })
 
-  test('SSR Works', async () => {
+  test.skip('SSR Works', async () => {
     const { data } = await handler({ url: '/' })
     expect(data).toMatch('Hello Vue')
   }, 10000)
