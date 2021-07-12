@@ -66,7 +66,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     let start = Date.now()
     // debounce
     if (start - lastBuild < 300) {
-      await sleep(300 - (start - lastBuild))
+      await sleep(300 - (start - lastBuild) + 1)
       start = Date.now()
       if (start - lastBuild < 300) {
         return
