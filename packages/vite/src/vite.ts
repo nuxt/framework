@@ -55,6 +55,18 @@ export async function bundle (nuxt: Nuxt) {
         build: {
           emptyOutDir: false
         },
+        server: {
+          fs: {
+            strict: true,
+            allow: [
+              nuxt.options.buildDir,
+              nuxt.options.appDir,
+              nuxt.options.srcDir,
+              '/__webpack_hmr',
+              '/_nuxt'
+            ]
+          }
+        },
         plugins: []
       } as ViteOptions
     )
