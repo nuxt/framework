@@ -22,7 +22,8 @@
   "dependencies": {
     "hookable": "^4.4.1",
     "ohmyfetch": "^0.2.0",
-    "vue": "^3.1.3",
+    "upath": "^2.0.1",
+    "vue": "^3.1.4",
     "vue-router": "^4.0.10",
     "vuex5": "^0.5.0-testing.3"
   },
