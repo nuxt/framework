@@ -63,10 +63,14 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   let lastBuild = 0
   const build = async () => {
-    const start = Date.now()
+    let start = Date.now()
     // debounce
     if (start - lastBuild < 300) {
-      return
+      await sleep(300 - (start - lastBuild))
+      start = Date.now()
+      if (start - lastBuild < 300) {
+        return
+      }
     }
     lastBuild = start
     await vite.build(serverConfig)
@@ -78,4 +82,10 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   ctx.nuxt.hook('builder:watch', () => build())
   ctx.nuxt.hook('app:templatesGenerated', () => build())
+}
+
+function sleep (ms:number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
 }
