@@ -10014,6 +10014,7 @@ __metadata:
     object-hash: ^2.2.0
     typescript: ^4.3.5
     unbuild: ^0.3.1
+    unplugin: "link:../unplugin"
     upath: ^2.0.1
   languageName: unknown
   linkType: soft
@@ -13439,6 +13440,12 @@ typescript@^4.3.5:
   checksum: ba244e8bf640475b2143af95be5d71353cd4d238d63abf5dfe700c67841f066eb0819fc60dee7f2348ef647a5644a06ba024b9a0ab6d399fc07a05eb72a30ac7
   languageName: node
   linkType: hard
+
+"unplugin@link:../unplugin::locator=nuxt-framework%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "unplugin@link:../unplugin::locator=nuxt-framework%40workspace%3A."
+  languageName: node
+  linkType: soft
 
 "unstorage@npm:^0.2.3":
   version: 0.2.3
