@@ -1,10 +1,29 @@
-import { defineNuxtModule, extendBuild } from '@nuxt/kit'
-import { defineUnplugin } from 'unplugin'
+import { defineNuxtModule, extendBuild, useNuxt } from '@nuxt/kit'
+import { defineUnplugin, UnpluginOptions } from 'unplugin'
+
+// could go `@nuxt/kit`
+function addUnplugin<UserOptions = {}> (pluginOptions: UnpluginOptions<UserOptions>) {
+  const nuxt = useNuxt()
+  const plugin = defineUnplugin(pluginOptions)
+
+  if (nuxt.options.vite) {
+    // vite
+    nuxt.hook('vite:extend', (vite: any) => {
+      vite.config.plugins.push(plugin.rollup())
+    })
+  } else {
+    // webpack
+    extendBuild((config: any) => {
+      config.plugins = config.plugins || []
+      config.plugins.push(plugin.webpack())
+    })
+  }
+}
 
 export default defineNuxtModule({
-  setup (_, nuxt) {
+  setup () {
     let i = 0
-    const plugin = defineUnplugin({
+    addUnplugin({
       name: 'unplugin-test',
       enforce: 'pre',
       setup () {
@@ -17,17 +36,6 @@ export default defineNuxtModule({
           }
         }
       }
-    })
-
-    // webpack
-    extendBuild((config: any) => {
-      config.plugins = config.plugins || []
-      config.plugins.push(plugin.webpack())
-    })
-
-    // vite
-    nuxt.hook('vite:extend', (vite: any) => {
-      vite.config.plugins.push(plugin.rollup())
     })
   }
 })
