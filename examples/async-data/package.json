@@ -2,7 +2,8 @@
   "name": "example-async-data",
   "private": true,
   "devDependencies": {
-    "nuxt3": "latest"
+    "nuxt3": "latest",
+    "vue-content-loader": "^2.0.0"
   },
   "scripts": {
     "dev": "nu dev",
