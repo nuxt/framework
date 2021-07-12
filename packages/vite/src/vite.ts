@@ -35,7 +35,7 @@ export async function bundle (nuxt: Nuxt) {
             ...nuxt.options.alias,
             '#build': nuxt.options.buildDir,
             '#app': nuxt.options.appDir,
-            '/build': nuxt.options.buildDir,
+            '/__build': nuxt.options.buildDir,
             '~': nuxt.options.srcDir,
             '@': nuxt.options.srcDir,
             'web-streams-polyfill/ponyfill/es2018': 'unenv/runtime/mock/empty',
