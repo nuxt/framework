@@ -2,7 +2,6 @@ import { resolve } from 'upath'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import { mkdirp, writeFile } from 'fs-extra'
-import debounce from 'debounce'
 import consola from 'consola'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
@@ -52,7 +51,6 @@ export async function buildServer (ctx: ViteBuildContext) {
   const serverDist = resolve(ctx.nuxt.options.buildDir, 'dist/server')
   await mkdirp(serverDist)
 
-  await vite.build(serverConfig)
   await writeFile(resolve(serverDist, 'server.js'), 'module.exports = require("./entry")', 'utf8')
   await writeFile(resolve(serverDist, 'client.manifest.json'), 'false', 'utf8')
 
@@ -63,11 +61,18 @@ export async function buildServer (ctx: ViteBuildContext) {
     return
   }
 
-  const build = debounce(async () => {
+  let lastBuild = 0
+  const build = async () => {
     const start = Date.now()
+    // debounce
+    if (start - lastBuild < 300) {
+      return
+    }
+    lastBuild = start
+    await vite.build(serverConfig)
     await onBuild()
     consola.info(`Server built in ${Date.now() - start}ms`)
-  }, 300)
+  }
 
   await build()
 
