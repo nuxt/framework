@@ -6218,6 +6218,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-with-vue-content-loader@workspace:examples/with-vue-content-loader":
+  version: 0.0.0-use.local
+  resolution: "example-with-vue-content-loader@workspace:examples/with-vue-content-loader"
+  dependencies:
+    nuxt3: latest
+    vue-content-loader: ^2.0.0
+  languageName: unknown
+  linkType: soft
+
 "execa@npm:^1.0.0":
   version: 1.0.0
   resolution: "execa@npm:1.0.0"

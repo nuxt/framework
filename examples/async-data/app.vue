@@ -3,22 +3,11 @@
     <div>
       <nuxt-page />
     </div>
-    <ul>
-      <li>
-        <nuxt-link to="/">
-          Home
-        </nuxt-link>
-      </li>
-      <li>
-        <nuxt-link to="/options">
-          Options
-        </nuxt-link>
-      </li>
-      <li>
-        <nuxt-link to="/defer">
-          Defer
-        </nuxt-link>
-      </li>
-    </ul>
+    <nuxt-link to="/">
+      Home
+    </nuxt-link>
+    <nuxt-link to="/options">
+      Options
+    </nuxt-link>
   </div>
 </template>
