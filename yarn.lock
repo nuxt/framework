@@ -6174,7 +6174,6 @@ __metadata:
   resolution: "example-async-data@workspace:examples/async-data"
   dependencies:
     nuxt3: latest
-    vue-content-loader: ^2.0.0
   languageName: unknown
   linkType: soft
 
