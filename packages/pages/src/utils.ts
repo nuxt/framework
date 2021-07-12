@@ -1,6 +1,7 @@
-import { extname, relative, resolve } from 'upath'
+import { basename, extname, relative, resolve } from 'upath'
 import { encodePath } from 'ufo'
 import { Nuxt, resolveFiles } from '@nuxt/kit'
+import { kebabCase } from 'scule'
 
 export interface NuxtRoute {
   name?: string
@@ -13,11 +14,13 @@ enum SegmentParserState {
   initial,
   static,
   dynamic,
+  catchall,
 }
 
 enum SegmentTokenType {
   static,
   dynamic,
+  catchall,
 }
 
 interface SegmentToken {
@@ -93,15 +96,17 @@ function getRoutePath (tokens: SegmentToken[]): string {
       path +
       (token.type === SegmentTokenType.dynamic
         ? `:${token.value}`
-        : encodePath(token.value))
+        : token.type === SegmentTokenType.catchall
+          ? `:${token.value}(.*)*`
+          : encodePath(token.value))
     )
   }, '/')
 }
 
-const PARAM_CHAR_RE = /[\w\d_]/
+const PARAM_CHAR_RE = /[\w\d_.]/
 
 function parseSegment (segment: string) {
-  let state = SegmentParserState.initial
+  let state: SegmentParserState = SegmentParserState.initial
   let i = 0
 
   let buffer = ''
@@ -119,7 +124,9 @@ function parseSegment (segment: string) {
       type:
         state === SegmentParserState.static
           ? SegmentTokenType.static
-          : SegmentTokenType.dynamic,
+          : state === SegmentParserState.dynamic
+            ? SegmentTokenType.dynamic
+            : SegmentTokenType.catchall,
       value: buffer
     })
 
@@ -149,7 +156,12 @@ function parseSegment (segment: string) {
         }
         break
 
+      case SegmentParserState.catchall:
       case SegmentParserState.dynamic:
+        if (buffer === '...') {
+          buffer = ''
+          state = SegmentParserState.catchall
+        }
         if (c === ']') {
           consumeBuffer()
           state = SegmentParserState.initial
@@ -203,4 +215,14 @@ function prepareRoutes (routes: NuxtRoute[], parent?: NuxtRoute) {
   }
 
   return routes
+}
+
+export async function resolveLayouts (nuxt: Nuxt) {
+  const layoutDir = resolve(nuxt.options.srcDir, nuxt.options.dir.layouts)
+  const files = await resolveFiles(layoutDir, `*{${nuxt.options.extensions.join(',')}}`)
+
+  return files.map((file) => {
+    const name = kebabCase(basename(file).replace(extname(file), '')).replace(/["']/g, '')
+    return { name, file }
+  })
 }
