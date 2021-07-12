@@ -37,7 +37,22 @@ import { defineNuxtComponent, asyncData } from '@nuxt/app'
 export default defineNuxtComponent({
   components: { ContentLoader },
   setup () {
-    const { data, pending } = asyncData('time', () => new Promise(resolve => setTimeout(() => resolve({ text: 'finally done', avatar: 'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&h=256&q=80' }), 2500)), { defer: true, server: false })
+    const { data, pending } = asyncData(
+      'time',
+      () =>
+        new Promise(resolve =>
+          setTimeout(
+            () =>
+              resolve({
+                text: 'finally done',
+                avatar:
+                  'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&h=256&q=80'
+              }),
+            2500
+          )
+        ),
+      { defer: true, server: false }
+    )
 
     return {
       data,
@@ -48,16 +63,16 @@ export default defineNuxtComponent({
 </script>
 
 <style>
-  .profile {
-    width: 400px;
-    height: 60px;
-  }
-  .profile img {
-    border-radius: 50%;
-  }
-  .profile > div {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
+.profile {
+  width: 400px;
+  height: 60px;
+}
+.profile img {
+  border-radius: 50%;
+}
+.profile > div {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
 </style>
