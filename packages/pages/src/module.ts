@@ -42,7 +42,7 @@ export default defineNuxtModule({
         routes.push({
           name: '404',
           path: '/:catchAll(.*)*',
-          file: resolve(runtimeDir, '404.vue'),
+          file: resolve(runtimeDir, '404.mjs'),
           children: []
         })
       }
