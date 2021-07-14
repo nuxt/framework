@@ -62,8 +62,8 @@ export async function bundle (nuxt: Nuxt) {
               nuxt.options.buildDir,
               nuxt.options.appDir,
               nuxt.options.srcDir,
-              '/__webpack_hmr',
-              '/_nuxt'
+              nuxt.options.rootDir,
+              ...nuxt.options.modulesDir
             ]
           }
         },
