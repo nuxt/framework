@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { ref } from 'vue'
-import { useMeta } from '@nuxt/meta'
+import { useMeta } from '@nuxt/app'
 
 export default {
   setup () {
