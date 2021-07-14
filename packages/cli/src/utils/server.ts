@@ -2,7 +2,7 @@ import type { RequestListener } from 'http'
 import { template as loadingTemplate } from '@nuxt/design/dist/templates/loading'
 
 export function createServer () {
-  const listener = createDynamicFunction(createLoadingHandler('Loading...', 1))
+  const listener = createDynamicFunction(createLoadingHandler('Loading...'))
 
   async function listen (opts) {
     const { listen } = await import('listhen')
@@ -15,13 +15,11 @@ export function createServer () {
   }
 }
 
-export function createLoadingHandler (message: string, retryAfter = 60): RequestListener {
+export function createLoadingHandler (message: string): RequestListener {
   return (_req, res) => {
     res.setHeader('Content-Type', 'text/html; charset=UTF-8')
     res.statusCode = 503 /* Service Unavailable */
-    res.setHeader('Retry-After', retryAfter)
     res.end(loadingTemplate({
-      retryAfter,
       loading: 'Loading',
       loading_message: message
     }))

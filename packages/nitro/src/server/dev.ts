@@ -76,7 +76,6 @@ export function createDevServer (nitroContext: NitroContext) {
     } else {
       res.setHeader('Content-Type', 'text/html; charset=UTF-8')
       res.end(loadingTemplate({
-        retryAfter: 1,
         loading: 'Loading',
         loading_message: 'Loading ...'
       }))
