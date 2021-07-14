@@ -4,7 +4,8 @@ import destr from 'destr'
 import consola from 'consola'
 import { Listener, listen } from 'listhen'
 import { $fetch } from 'ohmyfetch/node'
-import { fixtureDir, execNuxtCLI } from '../utils'
+import execa from 'execa'
+import { fixtureDir, resolveWorkspace } from '../utils'
 
 const isCompat = Boolean(process.env.TEST_COMPAT)
 
@@ -48,7 +49,11 @@ export function setupTest (preset: string): TestContext {
   })
 
   test('nitro build', async () => {
-    await execNuxtCLI(['build', ctx.rootDir], {
+    const nuxtCLI = isCompat
+      ? resolve(ctx.rootDir, 'node_modules/nuxt/bin/nuxt.js')
+      : resolveWorkspace('packages/cli/bin/nuxt.js')
+
+    await execa('node', [nuxtCLI, 'build', ctx.rootDir], {
       env: {
         NITRO_PRESET: preset,
         NITRO_OUTPUT_DIR: ctx.outDir,
