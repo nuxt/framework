@@ -106,13 +106,17 @@ function TMPL_LAZY ({ chunks }: TemplateContext) {
 function dynamicWebpackModule(id, getChunk) {
   return function (module, exports, require) {
     const r = getChunk()
-    if (r instanceof Promise) {
+    if (typeof r.then === 'function') {
       module.exports = r.then(r => {
         const realModule = { exports: {}, require };
         r.modules[id](realModule, realModule.exports, realModule.require);
         return realModule.exports;
       });
     } else {
+      if (!r.modules) {
+        console.log('Err', id, r);
+        return
+      }
       r.modules[id](module, exports, require);
     }
   };
