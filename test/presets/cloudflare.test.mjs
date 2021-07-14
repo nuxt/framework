@@ -5,7 +5,7 @@ import { JSDOM } from 'jsdom'
 import { setupTest, testNitroBehavior } from './_tests.mjs'
 
 // TODO: fix SyntaxError: Unexpected end of input on script executation
-describe.skip('nitro:preset:cloudflare', () => {
+describe('nitro:preset:cloudflare', () => {
   const ctx = setupTest('cloudflare')
   testNitroBehavior(ctx, async () => {
     const script = await fsp.readFile(resolve(ctx.outDir, 'server/index.mjs'), 'utf-8')
