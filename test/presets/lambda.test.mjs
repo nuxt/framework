@@ -1,5 +1,5 @@
-import { resolve } from 'upath'
-import { setupTest, testNitroBehavior, importModule } from './_tests'
+import { resolve } from 'path'
+import { setupTest, testNitroBehavior, importModule } from './_tests.mjs'
 
 describe('nitro:preset:lambda', () => {
   const ctx = setupTest('lambda')

@@ -1,14 +1,14 @@
-import { resolve } from 'upath'
-import { readFile } from 'fs-extra'
+import { resolve } from 'path'
+import { promises as fsp } from 'fs'
 import { JSDOM } from 'jsdom'
 
-import { setupTest, testNitroBehavior } from './_tests'
+import { setupTest, testNitroBehavior } from './_tests.mjs'
 
 // TODO: fix SyntaxError: Unexpected end of input on script executation
 describe.skip('nitro:preset:cloudflare', () => {
   const ctx = setupTest('cloudflare')
   testNitroBehavior(ctx, async () => {
-    const script = await readFile(resolve(ctx.outDir, 'server/index.mjs'), 'utf-8')
+    const script = await fsp.readFile(resolve(ctx.outDir, 'server/index.mjs'), 'utf-8')
     const dom = new JSDOM(
       `<!DOCTYPE html>
       <html>
