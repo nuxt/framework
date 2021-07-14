@@ -36,10 +36,11 @@ export type AbstractHandler = (req: AbstractRequest) => Promise<AbstractResponse
 export function setupTest (preset: string): TestContext {
   const fixture = isCompat ? 'compat' : 'basic'
   const rootDir = fixtureDir(fixture)
+  const buildDir = resolve(rootDir, '.nuxt-' + preset)
 
   const ctx: TestContext = {
     rootDir,
-    outDir: resolve(rootDir, '.output/preset/', preset),
+    outDir: resolve(buildDir, 'output'),
     fetch: url => $fetch<any>(url, { baseURL: ctx.server.url })
   }
 
@@ -56,6 +57,7 @@ export function setupTest (preset: string): TestContext {
     await execa('node', [nuxtCLI, 'build', ctx.rootDir], {
       env: {
         NITRO_PRESET: preset,
+        NITRO_BUILD_DIR: buildDir,
         NITRO_OUTPUT_DIR: ctx.outDir,
         NODE_ENV: 'production'
       }
