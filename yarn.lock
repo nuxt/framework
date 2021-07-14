@@ -1670,6 +1670,8 @@ __metadata:
     vue: ^3.1.4
     vue-router: ^4.0.10
     vuex5: ^0.5.0-testing.3
+  peerDependencies:
+    "@nuxt/meta": ^0.1.0
   languageName: unknown
   linkType: soft
 
@@ -1731,7 +1733,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/meta@workspace:packages/meta":
+"@nuxt/meta@^0.1.0, @nuxt/meta@workspace:packages/meta":
   version: 0.0.0-use.local
   resolution: "@nuxt/meta@workspace:packages/meta"
   dependencies:
@@ -9761,6 +9763,7 @@ __metadata:
     "@nuxt/app": ^0.5.0
     "@nuxt/component-discovery": ^0.2.0
     "@nuxt/kit": ^0.6.4
+    "@nuxt/meta": ^0.1.0
     "@nuxt/nitro": ^0.9.1
     "@nuxt/pages": ^0.3.0
     "@nuxt/vite-builder": ^0.5.0
