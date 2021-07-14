@@ -112,11 +112,7 @@ function dynamicWebpackModule(id, getChunk) {
         r.modules[id](realModule, realModule.exports, realModule.require);
         return realModule.exports;
       });
-    } else {
-      if (!r.modules) {
-        console.log('Err', id, r);
-        return
-      }
+    } else if (r && typeof r.modules[id] === 'function') {
       r.modules[id](module, exports, require);
     }
   };
