@@ -1,7 +1,6 @@
 <template>
   <div>
     Hello World
-    <FakeComponentToThrowError />
   </div>
 </template>
 

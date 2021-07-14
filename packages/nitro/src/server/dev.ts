@@ -1,6 +1,6 @@
 import { Worker } from 'worker_threads'
 
-import { template as loadingTemplate } from '@nuxt/design/dist/templates/loading'
+import { loading as loadingTemplate } from '@nuxt/design'
 import chokidar, { FSWatcher } from 'chokidar'
 import debounce from 'debounce'
 import { stat } from 'fs-extra'
@@ -75,10 +75,7 @@ export function createDevServer (nitroContext: NitroContext) {
       })
     } else {
       res.setHeader('Content-Type', 'text/html; charset=UTF-8')
-      res.end(loadingTemplate({
-        loading: 'Loading',
-        loading_message: 'Loading ...'
-      }))
+      res.end(loadingTemplate({}))
     }
   })
 

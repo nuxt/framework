@@ -1,5 +1,5 @@
 import type { RequestListener } from 'http'
-import { template as loadingTemplate } from '@nuxt/design/dist/templates/loading'
+import { loading } from '@nuxt/design'
 
 export function createServer () {
   const listener = createDynamicFunction(createLoadingHandler('Loading...'))
@@ -19,10 +19,7 @@ export function createLoadingHandler (message: string): RequestListener {
   return (_req, res) => {
     res.setHeader('Content-Type', 'text/html; charset=UTF-8')
     res.statusCode = 503 /* Service Unavailable */
-    res.end(loadingTemplate({
-      loading: 'Loading',
-      loading_message: message
-    }))
+    res.end(loading({ loading: message }))
   }
 }
 
