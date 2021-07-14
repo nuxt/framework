@@ -1,5 +1,5 @@
-import { useMeta } from '@nuxt/meta'
 import { defineComponent, SetupContext } from 'vue'
+import { useMeta } from './index'
 
 type Props = Readonly<Record<string, any>>
 

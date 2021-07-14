@@ -1,8 +1,7 @@
 import { getCurrentInstance } from 'vue'
 import { defineNuxtPlugin } from '@nuxt/app'
-import { useMeta } from '@nuxt/meta'
-
 import * as Components from './components'
+import { useMeta } from './index'
 
 export default defineNuxtPlugin((nuxt) => {
   nuxt.app.mixin({

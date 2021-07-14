@@ -10,7 +10,7 @@ import { useHead } from '@vueuse/head'
  * Alternatively, for reactive meta state, you can pass in a function
  * that returns a meta object.
  */
-export const useMeta = (meta: Record<string, any> | ComputedGetter<any>) => {
+export function useMeta (meta: Record<string, any> | ComputedGetter<any>) {
   // TODO: refine @nuxt/meta API
 
   // At the moment we force all interaction to happen through passing in

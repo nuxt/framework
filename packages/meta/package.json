@@ -3,12 +3,18 @@
   "version": "0.1.0",
   "repository": "nuxt/framework",
   "license": "MIT",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/module.d.ts",
+  "exports": {
+    ".": {
+      "default": "./dist/runtime/index.mjs"
+    },
+    "./module": {
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.js"
+    }
+  },
+  "types": "./dist/runtime/index.d.ts",
   "files": [
-    "dist",
-    "module.js"
+    "dist"
   ],
   "scripts": {
     "prepack": "unbuild"
