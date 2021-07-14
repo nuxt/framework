@@ -16,8 +16,9 @@
     "example": "yarn workspace example-$0 dev",
     "example:build": "yarn workspace example-$0 build",
     "lint": "eslint --ext .vue,.ts,.js .",
-    "test": "yarn lint && mocha test/presets/*.mjs",
-    "test:compat": "TEST_COMPAT=1 mocha",
+    "test": "yarn lint && yarn test:presets",
+    "test:presets": "mocha test/presets/*.mjs",
+    "test:compat": "TEST_COMPAT=1 yarn test:presets",
     "version": "yarn && git add yarn.lock"
   },
   "resolutions": {
