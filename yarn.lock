@@ -5991,6 +5991,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-meta@workspace:examples/meta":
+  version: 0.0.0-use.local
+  resolution: "example-meta@workspace:examples/meta"
+  dependencies:
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-pages@workspace:examples/pages":
   version: 0.0.0-use.local
   resolution: "example-pages@workspace:examples/pages"

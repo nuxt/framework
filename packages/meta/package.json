@@ -4,9 +4,7 @@
   "repository": "nuxt/framework",
   "license": "MIT",
   "exports": {
-    ".": {
-      "default": "./dist/runtime/index.mjs"
-    },
+    ".": "./dist/runtime/index.mjs",
     "./module": {
       "import": "./dist/module.mjs",
       "require": "./dist/module.js"
