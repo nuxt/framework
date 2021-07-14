@@ -10,25 +10,6 @@ export default {
       loader: path.endsWith('.ts') ? 'ts' : 'default'
     })
     r.code = r.code.replace(/import ['"]([^'"]*)['"]/g, (_, id) => `require('${id}')`)
-    r.code = r.code.replace(/import(\(.*\))/g, (_, id) => {
-      let openBrackets = 0
-
-      for (let pos = 0; pos < id.length; pos++) {
-        const char = id[pos]
-        switch (char) {
-          case '(':
-            openBrackets++
-            break
-          case ')':
-            openBrackets--
-            if (!openBrackets) {
-              return 'Promise.resolve(require' + id.slice(0, pos) + ')' + id.slice(pos)
-            }
-            break
-        }
-      }
-      return 'Promise.resolve(require' + id + ')'
-    })
     return r
   }
 }

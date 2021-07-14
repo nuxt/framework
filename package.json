@@ -16,6 +16,7 @@
     "example": "yarn workspace example-$0 dev",
     "example:build": "yarn workspace example-$0 build",
     "lint": "eslint --ext .vue,.ts,.js .",
+    "jest": "NODE_OPTIONS=--experimental-vm-modules jest -i",
     "test": "yarn lint && jest",
     "test:compat": "TEST_COMPAT=1 jest",
     "version": "yarn && git add yarn.lock"

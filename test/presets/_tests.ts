@@ -4,14 +4,12 @@ import destr from 'destr'
 import consola from 'consola'
 import { Listener, listen } from 'listhen'
 import { $fetch } from 'ohmyfetch/node'
-import createRequire from 'create-require'
-import jiti from 'jiti'
 import { fixtureDir, execNuxtCLI } from '../utils'
 
 const isCompat = Boolean(process.env.TEST_COMPAT)
 
 export function importModule (path: string) {
-  return Promise.resolve(jiti(__dirname)(path))
+  return import(path)
 }
 
 export interface TestContext {
@@ -45,7 +43,6 @@ export function setupTest (preset: string): TestContext {
   }
 
   beforeAll(() => {
-    jest.mock('jiti', () => createRequire)
     consola.wrapAll()
     consola.mock(() => jest.fn())
   })
@@ -80,7 +77,7 @@ export function testNitroBehavior (_ctx: TestContext, getHandler: () => Promise<
     handler = await getHandler()
   })
 
-  test.skip('SSR Works', async () => {
+  test('SSR Works', async () => {
     const { data } = await handler({ url: '/' })
     expect(data).toMatch('Hello Vue')
   }, 10000)
