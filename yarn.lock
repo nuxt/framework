@@ -6032,7 +6032,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"execa@npm:^5.0.0":
+"execa@npm:^5.0.0, execa@npm:^5.1.1":
   version: 5.1.1
   resolution: "execa@npm:5.1.1"
   dependencies:
@@ -9712,6 +9712,7 @@ __metadata:
     esbuild: ^0.12.15
     eslint: ^7.30.0
     eslint-plugin-jsdoc: ^35.4.3
+    execa: ^5.1.1
     globby: ^11.0.4
     jest: ^27.0.6
     jiti: ^1.10.1

@@ -1,9 +1,8 @@
 import { resolve } from 'upath'
-import { testNitroBuild, setupTest, testNitroBehavior, importModule } from './_utils'
+import { setupTest, testNitroBehavior, importModule } from './_tests'
 
 describe('nitro:preset:lambda', () => {
-  const ctx = setupTest()
-  testNitroBuild(ctx, 'lambda')
+  const ctx = setupTest('lambda')
   testNitroBehavior(ctx, async () => {
     const { handler } = await importModule(resolve(ctx.outDir, 'server/index.mjs'))
     return async ({ url: rawRelativeUrl, headers, method, body }) => {

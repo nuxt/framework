@@ -5,9 +5,8 @@ import consola from 'consola'
 import { Listener, listen } from 'listhen'
 import { $fetch } from 'ohmyfetch/node'
 import createRequire from 'create-require'
-import type { LoadNuxtOptions } from '@nuxt/kit'
 import jiti from 'jiti'
-import { fixtureDir, buildFixture, loadFixture } from '../utils'
+import { fixtureDir, execNuxtCLI } from '../utils'
 
 const isCompat = Boolean(process.env.TEST_COMPAT)
 
@@ -18,7 +17,6 @@ export function importModule (path: string) {
 export interface TestContext {
   rootDir: string
   outDir: string
-  nuxt?: any
   fetch: (url: string) => Promise<any>
   server?: Listener
 }
@@ -36,14 +34,13 @@ export interface AbstractResponse {
 
 export type AbstractHandler = (req: AbstractRequest) => Promise<AbstractResponse>
 
-export function setupTest (): TestContext {
+export function setupTest (preset: string): TestContext {
   const fixture = isCompat ? 'compat' : 'basic'
   const rootDir = fixtureDir(fixture)
-  const outDir = resolve(__dirname, '.output', fixture)
 
   const ctx: TestContext = {
     rootDir,
-    outDir,
+    outDir: resolve(rootDir, '.output/preset/', preset),
     fetch: url => $fetch<any>(url, { baseURL: ctx.server.url })
   }
 
@@ -53,36 +50,23 @@ export function setupTest (): TestContext {
     consola.mock(() => jest.fn())
   })
 
+  test('nitro build', async () => {
+    await execNuxtCLI(['build', ctx.rootDir], {
+      env: {
+        NITRO_PRESET: preset,
+        NITRO_OUTPUT_DIR: ctx.outDir,
+        NODE_ENV: 'production'
+      }
+    })
+  }, 60000)
+
   afterAll(async () => {
-    if (ctx.nuxt) {
-      await ctx.nuxt.close()
-    }
     if (ctx.server) {
       await ctx.server.close()
     }
   })
 
   return ctx
-}
-
-export function testNitroBuild (ctx: TestContext, preset: string) {
-  test('nitro build', async () => {
-    ctx.outDir = resolve(ctx.outDir, preset)
-
-    const loadOpts: LoadNuxtOptions = { rootDir: ctx.rootDir, dev: false, version: isCompat ? 2 : 3 }
-    await buildFixture(loadOpts)
-    const nuxt = await loadFixture(loadOpts, {
-      nitro: {
-        preset,
-        minify: false,
-        serveStatic: false,
-        externals: preset === 'cloudflare' ? false : { trace: false },
-        output: { dir: ctx.outDir }
-      }
-    })
-    await nuxt.callHook('build:done', {})
-    ctx.nuxt = nuxt
-  }, 60000)
 }
 
 export async function startServer (ctx: TestContext, handle: RequestListener) {

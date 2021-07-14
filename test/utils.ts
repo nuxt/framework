@@ -3,10 +3,20 @@ import { execSync } from 'child_process'
 import { resolve, dirname } from 'upath'
 import defu from 'defu'
 import hash from 'object-hash'
+import execa from 'execa'
 import type { LoadNuxtOptions, NuxtConfig } from '@nuxt/kit'
+
+export function resolveWorkspace (name: string) {
+  return resolve(__dirname, '../', name)
+}
 
 export function fixtureDir (name: string) {
   return resolve(__dirname, 'fixtures', name)
+}
+
+export async function execNuxtCLI (args: string[], opts: any) {
+  const nuxtCLI = resolveWorkspace('packages/cli/bin/nuxt.js')
+  await execa('node', [nuxtCLI, ...args], opts)
 }
 
 export async function loadFixture (opts: LoadNuxtOptions, unhashedConfig?: NuxtConfig) {
