@@ -1,10 +1,12 @@
 import * as vite from 'vite'
+import { resolve } from 'upath'
 import consola from 'consola'
 import type { Nuxt } from '@nuxt/kit'
 import type { InlineConfig, SSROptions } from 'vite'
 import type { Options } from '@vitejs/plugin-vue'
 import { buildClient } from './client'
 import { buildServer } from './server'
+import virtual from './plugins/virtual'
 import { warmupViteServer } from './utils/warmup'
 
 export interface ViteOptions extends InlineConfig {
@@ -23,7 +25,7 @@ export async function bundle (nuxt: Nuxt) {
     config: vite.mergeConfig(
       nuxt.options.vite as any || {},
       {
-        root: nuxt.options.buildDir,
+        root: nuxt.options.rootDir,
         mode: nuxt.options.dev ? 'development' : 'production',
         logLevel: 'warn',
         define: {
@@ -33,8 +35,9 @@ export async function bundle (nuxt: Nuxt) {
           extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
           alias: {
             ...nuxt.options.alias,
-            '#build': nuxt.options.buildDir,
             '#app': nuxt.options.appDir,
+            '/__app': nuxt.options.appDir,
+            '/__build': nuxt.options.buildDir,
             '~': nuxt.options.srcDir,
             '@': nuxt.options.srcDir,
             'web-streams-polyfill/ponyfill/es2018': 'unenv/runtime/mock/empty',
@@ -53,9 +56,26 @@ export async function bundle (nuxt: Nuxt) {
         },
         clearScreen: false,
         build: {
-          emptyOutDir: false
+          emptyOutDir: false,
+          rollupOptions: {
+            input: resolve(nuxt.options.appDir, 'entry')
+          }
         },
-        plugins: []
+        plugins: [
+          virtual(nuxt.vfs)
+        ],
+        server: {
+          fs: {
+            strict: true,
+            allow: [
+              nuxt.options.buildDir,
+              nuxt.options.appDir,
+              nuxt.options.srcDir,
+              nuxt.options.rootDir,
+              ...nuxt.options.modulesDir
+            ]
+          }
+        }
       } as ViteOptions
     )
   }
@@ -64,7 +84,7 @@ export async function bundle (nuxt: Nuxt) {
 
   nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer) => {
     const start = Date.now()
-    warmupViteServer(server, ['/entry.mjs']).then(() => {
+    warmupViteServer(server, ['/__app/entry']).then(() => {
       consola.info(`Vite warmed up in ${Date.now() - start}ms`)
     }).catch(consola.error)
   })
