@@ -1,11 +1,10 @@
 import { resolve } from 'path'
-import { testNitroBuild, startServer, setupTest, testNitroBehavior } from './_utils'
+import { startServer, setupTest, testNitroBehavior, importModule } from './_tests.mjs'
 
 describe('nitro:preset:node', () => {
-  const ctx = setupTest()
-  testNitroBuild(ctx, 'node')
+  const ctx = setupTest('node')
   testNitroBehavior(ctx, async () => {
-    const { handle } = await import(resolve(ctx.outDir, 'server/index.js'))
+    const { handle } = await importModule(resolve(ctx.outDir, 'server/index.mjs'))
     await startServer(ctx, handle)
     return async ({ url }) => {
       const data = await ctx.fetch(url)

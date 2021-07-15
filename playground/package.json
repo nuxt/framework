@@ -1,5 +1,5 @@
 {
-  "name": "example-pages",
+  "name": "nuxt-playground",
   "private": true,
   "devDependencies": {
     "nuxt3": "latest"

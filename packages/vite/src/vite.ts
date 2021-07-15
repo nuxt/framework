@@ -25,7 +25,7 @@ export async function bundle (nuxt: Nuxt) {
     config: vite.mergeConfig(
       nuxt.options.vite as any || {},
       {
-        root: nuxt.options.buildDir,
+        root: nuxt.options.rootDir,
         mode: nuxt.options.dev ? 'development' : 'production',
         logLevel: 'warn',
         define: {
@@ -36,8 +36,8 @@ export async function bundle (nuxt: Nuxt) {
           alias: {
             ...nuxt.options.alias,
             '#app': nuxt.options.appDir,
-            '#build': nuxt.options.buildDir,
-            '/app': nuxt.options.appDir, // Served by client
+            '/__app': nuxt.options.appDir,
+            '/__build': nuxt.options.buildDir,
             '~': nuxt.options.srcDir,
             '@': nuxt.options.srcDir,
             'web-streams-polyfill/ponyfill/es2018': 'unenv/runtime/mock/empty',
@@ -63,7 +63,19 @@ export async function bundle (nuxt: Nuxt) {
         },
         plugins: [
           virtual(nuxt.vfs)
-        ]
+        ],
+        server: {
+          fs: {
+            strict: true,
+            allow: [
+              nuxt.options.buildDir,
+              nuxt.options.appDir,
+              nuxt.options.srcDir,
+              nuxt.options.rootDir,
+              ...nuxt.options.modulesDir
+            ]
+          }
+        }
       } as ViteOptions
     )
   }
@@ -72,7 +84,7 @@ export async function bundle (nuxt: Nuxt) {
 
   nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer) => {
     const start = Date.now()
-    warmupViteServer(server, ['/app/entry']).then(() => {
+    warmupViteServer(server, ['/__app/entry']).then(() => {
       consola.info(`Vite warmed up in ${Date.now() - start}ms`)
     }).catch(consola.error)
   })
