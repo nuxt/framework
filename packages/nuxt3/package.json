@@ -14,7 +14,7 @@
     "dist"
   ],
   "scripts": {
-    "prepack": "unbuild || true"
+    "prepack": "unbuild $@ || true"
   },
   "dependencies": {
     "@nuxt/app": "^0.5.0",
