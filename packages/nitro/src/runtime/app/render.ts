@@ -2,7 +2,7 @@ import { createRenderer } from 'vue-bundle-renderer'
 import devalue from '@nuxt/devalue'
 import { runtimeConfig } from './config'
 // @ts-ignore
-import htmlTemplate from '#build/views/document.template.js'
+import htmlTemplate from '#build/views/document.template.mjs'
 
 function _interopDefault (e) { return e && typeof e === 'object' && 'default' in e ? e.default : e }
 
@@ -17,9 +17,9 @@ async function loadRenderer () {
   // @ts-ignore
   const { renderToString } = await import('#nitro-renderer')
   // @ts-ignore
-  const createApp = await import('#build/dist/server/server')
+  const createApp = await import('#build/dist/server/server.mjs')
   // @ts-ignore
-  const clientManifest = await import('#build/dist/server/client.manifest.json')
+  const clientManifest = await import('#build/dist/server/client.manifest.mjs')
   _renderer = createRenderer(_interopDefault(createApp), {
     clientManifest: _interopDefault(clientManifest),
     renderToString
@@ -47,8 +47,13 @@ export async function renderMiddleware (req, res) {
   const renderer = await loadRenderer()
   const rendered = await renderer.renderToString(ssrContext)
 
-  if ('renderMeta' in ssrContext) {
+  if ('renderMeta' in ssrContext) { {
     rendered.meta = await ssrContext.renderMeta()
+  }
+
+  // Handle errors
+  if (ssrContext.error) {
+    throw ssrContext.error
   }
 
   if (ssrContext.nuxt.hooks) {

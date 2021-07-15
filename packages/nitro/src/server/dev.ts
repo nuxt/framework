@@ -1,5 +1,6 @@
 import { Worker } from 'worker_threads'
 
+import { loading as loadingTemplate } from '@nuxt/design'
 import chokidar, { FSWatcher } from 'chokidar'
 import debounce from 'debounce'
 import { stat } from 'fs-extra'
@@ -14,7 +15,7 @@ import type { NitroContext } from '../context'
 
 export function createDevServer (nitroContext: NitroContext) {
   // Worker
-  const workerEntry = resolve(nitroContext.output.dir, nitroContext.output.serverDir, 'index.js')
+  const workerEntry = resolve(nitroContext.output.dir, nitroContext.output.serverDir, 'index.mjs')
   let pendingWorker: Worker | null
   let activeWorker: Worker
   let workerAddress: string | null
@@ -74,7 +75,7 @@ export function createDevServer (nitroContext: NitroContext) {
       })
     } else {
       res.setHeader('Content-Type', 'text/html; charset=UTF-8')
-      res.end('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="1"><head><body>...')
+      res.end(loadingTemplate({}))
     }
   })
 
