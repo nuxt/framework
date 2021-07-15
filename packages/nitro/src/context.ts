@@ -29,6 +29,7 @@ export interface NitroContext {
   nuxtHooks: configHooksT
   ignore: string[]
   env: Preset
+  vfs: Record<string, string>
   output: {
     dir: string
     serverDir: string
@@ -43,7 +44,7 @@ export interface NitroContext {
     srcDir: string
     buildDir: string
     generateDir: string
-    staticDir: string
+    publicDir: string
     serverDir: string
     routerBase: string
     publicPath: string
@@ -82,6 +83,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
     scannedMiddleware: [],
     ignore: [],
     env: {},
+    vfs: {},
     hooks: {},
     nuxtHooks: {},
     output: {
@@ -101,7 +103,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
       srcDir: nuxtOptions.srcDir,
       buildDir: nuxtOptions.buildDir,
       generateDir: nuxtOptions.generate.dir,
-      staticDir: nuxtOptions.dir.static,
+      publicDir: resolve(nuxtOptions.srcDir, nuxtOptions.dir.public || nuxtOptions.dir.static),
       serverDir: resolve(nuxtOptions.srcDir, (nuxtOptions.dir as any).server || 'server'),
       routerBase: nuxtOptions.router.base,
       publicPath: nuxtOptions.build.publicPath,
@@ -154,7 +156,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
 
   // Assets
   nitroContext.assets.dirs.server = {
-    dir: resolve(nitroContext._nuxt.rootDir, 'server/assets'), meta: true
+    dir: resolve(nitroContext._nuxt.srcDir, 'server/assets'), meta: true
   }
 
   // console.log(nitroContext)

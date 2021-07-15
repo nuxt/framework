@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import { resolve } from 'upath'
-import { resolveModule } from '@nuxt/kit'
+import { readFile, writeFile } from 'fs-extra'
 import { build, generate, prepare } from './build'
 import { getNitroContext, NitroContext } from './context'
 import { createDevServer } from './server/dev'
@@ -53,26 +53,27 @@ export default function nuxt2CompatModule () {
     serverConfig.devtool = false
   })
 
-  // Add missing template variables (which normally renderer would create)
-  nitroContext._internal.hooks.hook('nitro:document', (htmlTemplate) => {
-    if (!htmlTemplate.contents.includes('BODY_SCRIPTS_PREPEND')) {
-      const fullTemplate = ['{{ BODY_SCRIPTS_PREPEND }}', '{{ APP }}', '{{ BODY_SCRIPTS }}'].join('\n    ')
-      htmlTemplate.contents = htmlTemplate.contents.replace('{{ APP }}', fullTemplate)
-    }
-  })
-
   // Nitro client plugin
   this.addPlugin({
-    fileName: 'nitro.client.js',
-    src: resolve(nitroContext._internal.runtimeDir, 'app/nitro.client.js')
+    fileName: 'nitro.client.mjs',
+    src: resolve(nitroContext._internal.runtimeDir, 'app/nitro.client.mjs')
   })
 
   // Fix module resolution
   nuxt.hook('webpack:config', (configs) => {
     for (const config of configs) {
-      if (config.name === 'client') {
-        config.resolve.alias.ufo = resolveModule('ufo/dist/index.mjs')
-      }
+      config.resolve.alias.ufo = 'ufo/dist/index.mjs'
+      config.resolve.alias.ohmyfetch = 'ohmyfetch/dist/index.mjs'
+    }
+  })
+
+  // Generate mjs resources
+  nuxt.hook('build:compiled', async ({ name }) => {
+    if (name === 'server') {
+      await writeFile(resolve(nuxt.options.buildDir, 'dist/server/server.mjs'), 'export { default } from "./server.js"', 'utf8')
+    } else if (name === 'client') {
+      const manifest = await readFile(resolve(nuxt.options.buildDir, 'dist/server/client.manifest.json'), 'utf8')
+      await writeFile(resolve(nuxt.options.buildDir, 'dist/server/client.manifest.mjs'), 'export default ' + manifest, 'utf8')
     }
   })
 

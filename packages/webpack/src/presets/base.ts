@@ -1,4 +1,4 @@
-import { resolve, normalize } from 'path'
+import { resolve, normalize } from 'upath'
 import TimeFixPlugin from 'time-fix-plugin'
 import WebpackBar from 'webpackbar'
 import consola from 'consola'
@@ -23,7 +23,7 @@ function baseConfig (ctx: WebpackConfigContext) {
 
   ctx.config = {
     name: ctx.name,
-    entry: { app: [resolve(options.buildDir, 'entry')] },
+    entry: { app: [resolve(options.appDir, 'entry')] },
     module: { rules: [] },
     plugins: [],
     externals: [],

@@ -1,6 +1,6 @@
 {
   "name": "nuxt-cli",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "repository": "nuxt/framework",
   "license": "MIT",
   "main": "./dist/index.js",
@@ -20,10 +20,11 @@
     "fsevents": "~2.3.2"
   },
   "devDependencies": {
-    "@nuxt/kit": "^0.6.3",
+    "@nuxt/design": "0.0.4",
+    "@nuxt/kit": "^0.6.4",
     "@types/clear": "^0",
     "@types/debounce-promise": "^3",
-    "@types/mri": "^1.1.0",
+    "@types/mri": "^1.1.1",
     "chokidar": "^3.5.2",
     "clear": "^0.1.0",
     "colorette": "^1.2.2",
@@ -32,7 +33,8 @@
     "flat": "^5.0.2",
     "listhen": "^0.2.4",
     "mri": "^1.1.6",
-    "unbuild": "^0.3.1",
+    "unbuild": "^0.3.2",
+    "upath": "^2.0.1",
     "v8-compile-cache": "^2.3.0"
   }
 }

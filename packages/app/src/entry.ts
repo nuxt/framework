@@ -1,11 +1,13 @@
 import { createSSRApp, createApp, nextTick } from 'vue'
-import { createNuxt, applyPlugins } from '@nuxt/app'
+import { createNuxt, applyPlugins, normalizePlugins } from '@nuxt/app'
 // @ts-ignore
-import plugins from '#build/plugins'
+import _plugins from '#build/plugins'
 // @ts-ignore
 import App from '#build/app'
 
 let entry: Function
+
+const plugins = normalizePlugins(_plugins)
 
 if (process.server) {
   entry = async function createNuxtAppServer (ssrContext = {}) {
@@ -22,6 +24,13 @@ if (process.server) {
 }
 
 if (process.client) {
+  // TODO: temporary webpack 5 HMR fix
+  // https://github.com/webpack-contrib/webpack-hot-middleware/issues/390
+  // @ts-ignore
+  if (process.dev && import.meta.webpackHot) {
+    import.meta.webpackHot.accept()
+  }
+
   entry = async function initApp () {
     const app = createSSRApp(App)
 

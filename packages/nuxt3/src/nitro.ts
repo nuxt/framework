@@ -1,3 +1,4 @@
+import { normalize } from 'upath'
 import { wpfs, getNitroContext, createDevServer, resolveMiddleware, build, prepare, generate } from '@nuxt/nitro'
 import type { Nuxt } from '@nuxt/kit'
 
@@ -8,6 +9,11 @@ export function initNitro (nuxt: Nuxt) {
   const nitroDevContext = getNitroContext(nuxt.options, { ...nitroOptions, preset: 'dev' })
 
   nuxt.server = createDevServer(nitroDevContext)
+
+  if (nuxt.vfs) {
+    nitroContext.vfs = nuxt.vfs
+    nitroDevContext.vfs = nuxt.vfs
+  }
 
   // Connect hooks
   // @ts-ignore
@@ -22,7 +28,7 @@ export function initNitro (nuxt: Nuxt) {
 
   // Add nitro client plugin (to inject $fetch helper)
   nuxt.hook('app:resolve', (app) => {
-    app.plugins.push({ src: '@nuxt/nitro/dist/runtime/app/nitro.client' })
+    app.plugins.push({ src: normalize(require.resolve('@nuxt/nitro/dist/runtime/app/nitro.client.mjs')) })
   })
 
   // Expose process.env.NITRO_PRESET
