@@ -47,10 +47,6 @@ export async function renderMiddleware (req, res) {
   const renderer = await loadRenderer()
   const rendered = await renderer.renderToString(ssrContext)
 
-  if ('renderMeta' in ssrContext) { {
-    rendered.meta = await ssrContext.renderMeta()
-  }
-
   // Handle errors
   if (ssrContext.error) {
     throw ssrContext.error
@@ -72,7 +68,7 @@ export async function renderMiddleware (req, res) {
     data = renderPayload(payload, url)
     res.setHeader('Content-Type', 'text/javascript;charset=UTF-8')
   } else {
-    data = renderHTML(payload, rendered, ssrContext)
+    data = await renderHTML(payload, rendered, ssrContext)
     res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   }
 
@@ -81,9 +77,13 @@ export async function renderMiddleware (req, res) {
   res.end(data, 'utf-8')
 }
 
-function renderHTML (payload, rendered, ssrContext) {
+async function renderHTML (payload, rendered, ssrContext) {
   const state = `<script>window.__NUXT__=${devalue(payload)}</script>`
   const html = rendered.html
+
+  if ('renderMeta' in ssrContext) {
+    rendered.meta = await ssrContext.renderMeta()
+  }
 
   const {
     htmlAttrs = '',
