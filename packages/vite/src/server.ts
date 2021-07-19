@@ -60,11 +60,6 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   const onBuild = () => ctx.nuxt.callHook('build:resources', wpfs)
 
-  if (!ctx.nuxt.options.ssr) {
-    await onBuild()
-    return
-  }
-
   let lastBuild = 0
   const build = async () => {
     let start = Date.now()

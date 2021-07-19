@@ -20,6 +20,7 @@ export interface ViteBuildContext {
 }
 
 export async function bundle (nuxt: Nuxt) {
+  const entry = nuxt.options.ssr ? 'entry' : 'entry.spa'
   const ctx: ViteBuildContext = {
     nuxt,
     config: vite.mergeConfig(
@@ -37,6 +38,7 @@ export async function bundle (nuxt: Nuxt) {
             ...nuxt.options.alias,
             '#app': nuxt.options.appDir,
             '#build': nuxt.options.buildDir,
+            '/__app/entry': resolve(nuxt.options.appDir, entry),
             '/__app': nuxt.options.appDir,
             '/__build': nuxt.options.buildDir,
             '~': nuxt.options.srcDir,
@@ -59,7 +61,7 @@ export async function bundle (nuxt: Nuxt) {
         build: {
           emptyOutDir: false,
           rollupOptions: {
-            input: resolve(nuxt.options.appDir, 'entry')
+            input: resolve(nuxt.options.appDir, entry)
           }
         },
         plugins: [

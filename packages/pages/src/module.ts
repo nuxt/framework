@@ -22,7 +22,7 @@ export default defineNuxtModule({
       if (!existsSync(pagesDir)) {
         return
       }
-      app.plugins.push({ src: routerPlugin })
+      app.plugins.push({ src: routerPlugin, mode: nuxt.options.ssr ? 'all' : 'client' })
       if (app.main.includes('app.tutorial')) {
         app.main = resolve(runtimeDir, 'app.vue')
       }

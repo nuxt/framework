@@ -21,9 +21,11 @@ export function base (ctx: WebpackConfigContext) {
 function baseConfig (ctx: WebpackConfigContext) {
   const { options } = ctx
 
+  const entry = options.ssr ? 'entry' : 'entry.spa'
+
   ctx.config = {
     name: ctx.name,
-    entry: { app: [resolve(options.appDir, 'entry')] },
+    entry: { app: [resolve(options.appDir, entry)] },
     module: { rules: [] },
     plugins: [],
     externals: [],

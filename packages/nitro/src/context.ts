@@ -77,7 +77,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
     node: undefined,
     preset: undefined,
     rollupConfig: undefined,
-    renderer: undefined,
+    renderer: !nuxtOptions.ssr ? 'vue-none' : undefined,
     serveStatic: undefined,
     middleware: [],
     scannedMiddleware: [],
