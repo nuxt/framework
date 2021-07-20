@@ -46,7 +46,9 @@ if (process.client) {
 
     await nuxt.hooks.callHook('app:mounted', app)
     await nextTick()
-    nuxt.isHydrating = false
+    nuxt.hooks.hookOnce('page:finished', () => {
+      nuxt.isHydrating = false
+    })
   }
 
   entry().catch((error) => {
