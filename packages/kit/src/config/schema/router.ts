@@ -62,12 +62,17 @@ export default {
    *
    * @example
    * ```js
-   * extendRoutes(routes, resolve) {
-   *   routes.push({
-   *   name: 'custom',
-   *   path: '*',
-   *   component: resolve(__dirname, 'pages/404.vue')
-   * })
+   * export default {
+   *   router: {
+   *     extendRoutes(routes, resolve) {
+   *       routes.push({
+   *         name: 'custom',
+   *         path: '*',
+   *         component: resolve(__dirname, 'pages/404.vue')
+   *       })
+   *     }
+   *   }
+   * }
    * ```
    */
   extendRoutes: null,
@@ -124,7 +129,7 @@ export default {
    * If this option is set to true, trailing slashes will be appended to every
    * route. If set to false, they'll be removed.
    *
-   * **Attention**: This option should not be set without preparation and has to
+   * @warning This option should not be set without preparation and has to
    * be tested thoroughly. When setting `trailingSlash` to something else than
    * undefined, the opposite route will stop working. Thus 301 redirects should
    * be in place and your internal linking has to be adapted correctly. If you set

@@ -92,12 +92,12 @@ export default {
    * throughout your app (server- and client-side). They can be assigned using
    * server side environment variables.
    *
-   * **Note**: Nuxt uses webpack's `definePlugin` to define these environment variables.
+   * @note Nuxt uses webpack's `definePlugin` to define these environment variables.
    * This means that the actual `process` or `process.env` from Node.js is neither
    * available nor defined. Each of the `env` properties defined here is individually
    * mapped to `process.env.xxxx` and converted during compilation.
    *
-   * **Note**: Environment variables starting with `NUXT_ENV_` are automatically injected
+   * @note Environment variables starting with `NUXT_ENV_` are automatically injected
    * into the process environment.
    */
   env: {
@@ -187,7 +187,7 @@ export default {
    * Nuxt tries to resolve each item in the modules array using node require path
    * (in `node_modules`) and then will be resolved from project `srcDir` if `~` alias is used.
    *
-   * **Note**: Modules are executed sequentially so the order is important.
+   * @note Modules are executed sequentially so the order is important.
    *
    * @example
    * ```js
@@ -216,7 +216,7 @@ export default {
    * Nuxt tries to resolve each item in the modules array using node require path
    * (in `node_modules`) and then will be resolved from project `srcDir` if `~` alias is used.
    *
-   * **Note**: Modules are executed sequentially so the order is important.
+   * @note Modules are executed sequentially so the order is important.
    *
    * @example
    * ```js
@@ -232,7 +232,7 @@ export default {
    * ]
    * ```
    *
-   * **Note**: Using `buildModules` helps to make production startup faster and also significantly
+   * @note Using `buildModules` helps to make production startup faster and also significantly
    * decreases the size of `node_modules` in production deployments. Please refer to each
    * module's documentation to see if it is recommended to use `modules` or `buildModules`.
    */
@@ -288,7 +288,7 @@ export default {
    * ]
    * ```
    *
-   * **Note**: If you don't want middleware to run on all routes you should use the object
+   * @note If you don't want middleware to run on all routes you should use the object
    * form with a specific path.
    *
    * If you pass a string handler, Nuxt will expect that file to export a default function
@@ -322,10 +322,12 @@ export default {
    * whose keys are the paths and whose values are the handlers (string or function).
    * @example
    * ```js
-   * serverMiddleware: {
-   *   '/a': '~/server-middleware/a.js',
-   *   '/b': '~/server-middleware/b.js',
-   *   '/c': '~/server-middleware/c.js'
+   * export default {
+   *   serverMiddleware: {
+   *     '/a': '~/server-middleware/a.js',
+   *     '/b': '~/server-middleware/b.js',
+   *     '/c': '~/server-middleware/c.js'
+   *   }
    * }
    * ```
    */
@@ -410,10 +412,10 @@ export default {
    * You can improve your DX by defining additional aliases to access custom directories
    * within your JavaScript and CSS.
    *
-   * **Note**: Within a webpack context (image sources, CSS - but not JavaScript) you _must_ access
+   * @note Within a webpack context (image sources, CSS - but not JavaScript) you _must_ access
    * your alias by prefixing it with `~`.
    *
-   * **Note**: If you are using TypeScript and want to use the alias you define within
+   * @note If you are using TypeScript and want to use the alias you define within
    * your TypeScript files, you will need to add the aliases to your `paths` object within `tsconfig.json` .
    *
    * @example

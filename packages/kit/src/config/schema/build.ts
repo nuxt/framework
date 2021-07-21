@@ -46,10 +46,14 @@ export default {
    *
    * @example
    * ```js
-   * extractCSS: true,
-   * // or
-   * extractCSS: {
-   *   ignoreOrder: true
+   * export default {
+   *   build: {
+   *     extractCSS: true,
+   *     // or
+   *     extractCSS: {
+   *       ignoreOrder: true
+   *     }
+   *   }
    * }
    * ```
    *
@@ -61,15 +65,19 @@ export default {
    *
    * @example
    * ```js
-   * extractCSS: true,
-   * optimization: {
-   *   splitChunks: {
-   *     cacheGroups: {
-   *       styles: {
-   *         name: 'styles',
-   *         test: /\.(css|vue)$/,
-   *         chunks: 'all',
-   *         enforce: true
+   * export default {
+   *   build: {
+   *     extractCSS: true,
+   *     optimization: {
+   *       splitChunks: {
+   *         cacheGroups: {
+   *           styles: {
+   *             name: 'styles',
+   *             test: /\.(css|vue)$/,
+   *             chunks: 'all',
+   *             enforce: true
+   *           }
+   *         }
    *       }
    *     }
    *   }
@@ -340,7 +348,7 @@ export default {
     /**
      * The Babel presets to be applied.
      *
-     * **Note**: The presets configured here will be applied to both the client and the server
+     * @note The presets configured here will be applied to both the client and the server
      * build. The target will be set by Nuxt accordingly (client/server). If you want to configure
      * the preset differently for the client or the server build, please use presets as a function.
      *
@@ -348,29 +356,41 @@ export default {
      *
      * @example
      * ```js
-     * presets({ isServer }, [ preset, options ]) {
-     *   // change options directly
-     *   options.targets = isServer ? ... :  ...
-     *   options.corejs = ...
-     *   // return nothing
+     * export default {
+     *   build: {
+     *     babel: {
+     *       presets({ isServer }, [ preset, options ]) {
+     *         // change options directly
+     *         options.targets = isServer ? '...' :  '...'
+     *         options.corejs = '...'
+     *         // return nothing
+     *       }
+     *     }
+     *   }
      * }
      * ```
      *
      * @example
      * ```js
-     * presets({ isServer }, [preset, options]) {
-     *   return [
-     *     [
-     *       preset,
-     *       {
-     *         targets: isServer ? ... :  ...,
-     *         ...options
+     * export default {
+     *   build: {
+     *     babel: {
+     *       presets({ isServer }, [preset, options]) {
+     *         return [
+     *           [
+     *             preset,
+     *             {
+     *               targets: isServer ? '...' :  '...',
+     *               ...options
+     *             }
+     *           ],
+     *           [
+     *             // Other presets
+     *           ]
+     *         ]
      *       }
-     *     ],
-     *     [
-     *       // Other presets
-     *     ]
-     *   ]
+     *     }
+     *   }
      * }
      * ```
      */
@@ -411,20 +431,24 @@ export default {
      * Configuration for the html-minifier plugin used to minify HTML files created
      * during the build process (will be applied for all modes).
      *
-     * **Attention**: If you make changes, they won't be merged with the defaults!
+     * @warning If you make changes, they won't be merged with the defaults!
      *
      * @example
      * ```js
-     * minify: {
-     *   collapseBooleanAttributes: true,
-     *   decodeEntities: true,
-     *   minifyCSS: true,
-     *   minifyJS: true,
-     *   processConditionalComments: true,
-     *   removeEmptyAttributes: true,
-     *   removeRedundantAttributes: true,
-     *   trimCustomFragments: true,
-     *   useShortDoctype: true
+     * export default {
+     *   html: {
+     *     minify: {
+     *       collapseBooleanAttributes: true,
+     *       decodeEntities: true,
+     *       minifyCSS: true,
+     *       minifyJS: true,
+     *       processConditionalComments: true,
+     *       removeEmptyAttributes: true,
+     *       removeRedundantAttributes: true,
+     *       trimCustomFragments: true,
+     *       useShortDoctype: true
+     *     }
+     *   }
      * }
      * ```
      */
