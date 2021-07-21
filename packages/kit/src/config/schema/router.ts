@@ -116,7 +116,7 @@ export default {
    * payload.js for each page.
    *
    * With this option enabled, Nuxt will automatically prefetch the payload of the
-   * linked page when the <nuxt-link> is visible in the viewport, making instant navigation.
+   * linked page when the `<nuxt-link>` is visible in the viewport, making instant navigation.
    */
   prefetchPayloads: true,
 

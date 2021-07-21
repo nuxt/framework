@@ -86,13 +86,13 @@ export default {
    * @see [documentation](https://vue-meta.nuxtjs.org/api/#metainfo-properties) for specifics.
    */
   head: {
-    /** Each item in the array maps to a newly-created <meta> element, where object properties map to attributes. */
+    /** Each item in the array maps to a newly-created `<meta>` element, where object properties map to attributes. */
     meta: [],
-    /** Each item in the array maps to a newly-created <link> element, where object properties map to attributes. */
+    /** Each item in the array maps to a newly-created `<link>` element, where object properties map to attributes. */
     link: [],
-    /** Each item in the array maps to a newly-created <style> element, where object properties map to attributes. */
+    /** Each item in the array maps to a newly-created `<style>` element, where object properties map to attributes. */
     style: [],
-    /** Each item in the array maps to a newly-created <script> element, where object properties map to attributes. */
+    /** Each item in the array maps to a newly-created `<script>` element, where object properties map to attributes. */
     script: []
   },
 
