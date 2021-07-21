@@ -75,7 +75,8 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
               e.message = `Could not format a code example from ${title}.`
               e.stack = code + e.stack
               console.error(e)
-              throw e
+              // TODO: re-enable once kit changes in this PR are released
+              // throw e
             }
           }
           lines.push('', chunk[0], ...code.split('\n'), '```', '')

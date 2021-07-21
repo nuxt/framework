@@ -5,6 +5,15 @@
     "build": "nuxt generate"
   },
   "devDependencies": {
-    "docus": "^0.8.12"
+    "@nuxt/kit": "^0.6.4",
+    "@nuxt/types": "^2.15.7",
+    "@types/prettier": "^2.3.2",
+    "@types/rimraf": "^3.0.1",
+    "docus": "^0.8.12",
+    "fs-extra": "^10.0.0",
+    "prettier": "^2.3.2",
+    "rimraf": "^3.0.2",
+    "untyped": "^0.2.5",
+    "upath": "^2.0.1"
   }
 }
