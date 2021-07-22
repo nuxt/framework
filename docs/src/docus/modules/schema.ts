@@ -33,7 +33,7 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
       const defaultValue = JSON.stringify(schema.default, null, 2).replace(rootDirPattern, '')
       const defaultInfo =
         typeof schema.default === 'object' && !Array.isArray(schema.default)
-          ? ['', '```json', ...defaultValue.split('\n'), '```'].map((line) => `   ${line}`).join('\n')
+          ? ['', '```json', ...defaultValue.split('\n'), '```'].map(line => `   ${line}`).join('\n')
           : `\`${defaultValue}\``
       lines.push(`- **Default**: ${defaultInfo}`)
     }
