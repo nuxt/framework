@@ -5,7 +5,7 @@
     "build": "nuxt generate"
   },
   "devDependencies": {
-    "@nuxt/kit": "^0.6.4",
+    "@nuxt/kit": "file:../../../packages/kit",
     "@nuxt/types": "^2.15.7",
     "@types/prettier": "^2.3.2",
     "@types/rimraf": "^3.0.1",

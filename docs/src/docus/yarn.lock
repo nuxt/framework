@@ -1324,10 +1324,8 @@
     ufo "^0.7.7"
     upath "^2.0.1"
 
-"@nuxt/kit@^0.6.4":
+"@nuxt/kit@file:../../../packages/kit":
   version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-0.6.4.tgz#76a81e135bfeb91c0b5eb58435c8e5640046c912"
-  integrity sha512-NsV8TEVN+oTOgJvrsaIuyMaq/mFW+O7Rnz+sGUMlJlUskBC0KyqkrLkclNFyXsrnf4MEudAV+1WwtOyFVODltw==
   dependencies:
     consola "^2.15.3"
     create-require "^1.1.1"
@@ -1339,8 +1337,8 @@
     rc9 "^1.2.0"
     scule "^0.2.1"
     std-env "^2.3.0"
-    ufo "^0.7.5"
-    unctx "^0.0.3"
+    ufo "^0.7.7"
+    unctx "^1.0.1"
     untyped "^0.2.5"
     upath "^2.0.1"
 
@@ -2176,17 +2174,10 @@
   optionalDependencies:
     prettier "^1.18.2"
 
-"@vue/composition-api@1.0.0-rc.13":
+"@vue/composition-api@1.0.0-rc.13", "@vue/composition-api@^1.0.0-rc.13":
   version "1.0.0-rc.13"
   resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.0.0-rc.13.tgz#6cb768d0575b3c031ba15e05b09ecbd9780d941c"
   integrity sha512-jUobqfMYC4gJJIMI3SfANiDMa7cNlfIQQTZFCVagKefnfzCDMtfHGuq0D/K2+yAyHYP2gHLyLHb9E6dQmPN2pQ==
-  dependencies:
-    tslib "^2.3.0"
-
-"@vue/composition-api@^1.0.0-rc.13":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-1.0.3.tgz#d82afe5c19e85ea8c8db25d8f1d8ce881ac817ec"
-  integrity sha512-t9nBQSm1i1yB1UCCAuZlwbDfu+87X4FVj2keRYcj76YabwRmwcwkwX4A+nbg6TBLzJLoZ3Cf58lniPmIeQklkg==
   dependencies:
     tslib "^2.3.0"
 
@@ -10989,10 +10980,10 @@ unbzip2-stream@1.3.3:
     buffer "^5.2.1"
     through "^2.3.8"
 
-unctx@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/unctx/-/unctx-0.0.3.tgz#e06f67d5bebe2babe5a57c1dc13d77255e3458c0"
-  integrity sha512-x+NCoXiYn93laQNnoJGZx2UZj7vv8ViFKadUCDx9S4QoPIkGRCYT0OLUDEMlg/B+Q6bnqdSkPLmiy/kjNIwVyQ==
+unctx@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/unctx/-/unctx-1.0.1.tgz#e976394f22ab00ac4088d86ebfc639861ed3ec24"
+  integrity sha512-LTxBg2tHfEFwpiIGIM7MOODR1hPiO0njHRIbb6fpxL6czd/rkaSeWoaLAVUDP8qDF1Xvq/wO3Eyp4B8yogiObA==
 
 unfetch@^4.2.0:
   version "4.2.0"
