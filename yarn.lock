@@ -11653,8 +11653,8 @@ fsevents@~2.3.2:
   linkType: hard
 
 "unbuild@npm:^0.3.2":
-  version: 0.3.2
-  resolution: "unbuild@npm:0.3.2"
+  version: 0.4.0
+  resolution: "unbuild@npm:0.4.0"
   dependencies:
     "@rollup/plugin-alias": ^3.1.2
     "@rollup/plugin-commonjs": ^19.0.0
@@ -11679,7 +11679,7 @@ fsevents@~2.3.2:
     upath: ^2.0.1
   bin:
     unbuild: bin/unbuild.js
-  checksum: 8e11ea63dd60b1fcbe3b963b4a4c850e024d39dafba7283b2b1975a9920fd48ba370f5a5ca83e7c22b5ef907650d177bd6c462f926e0f59a8bb4307171f35968
+  checksum: f01f05ddb8fd6ca69bb71ed44506da08c11719fd27c37419598687de111956866616dda82f769c7e6d15ae75164a8c77a8d86ba94ed671128621d182e11dd8eb
   languageName: node
   linkType: hard
 
