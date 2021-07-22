@@ -51,63 +51,71 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
 
   // Description
   if (schema.description) {
-    lines.push('', schema.description, '')
+    lines.push(schema.description, '')
   }
 
   // Add tags, like examples, warnings, links, etc.
   if (schema.tags) {
-    const chunk = []
-    for (const line of schema.tags) {
+    for (const tag of schema.tags) {
       switch (true) {
-        // Closing tag of a code example
-        case line.startsWith('```') && !!chunk.length: {
-          // Format example and push to lines
-          const language = chunk[0].slice(3)
-          let code = chunk.slice(1).join('\n')
-          if (language in formatters) {
-            try {
-              code = format(code, {
-                parser: formatters[language],
-                semi: false,
-                singleQuote: true
-              }).replace(/\n$/g, '')
-            } catch (e) {
-              e.message = `Could not format a code example from ${title}.`
-              e.stack = code + e.stack
-              console.error(e)
-              // TODO: re-enable once kit changes in this PR are released
-              // throw e
+        case tag.startsWith('@example'): {
+          // A code example
+          const [intro, ...tagLines] = tag.split('\n').filter(Boolean)
+          lines.push(intro.replace('@example', `${level}# Example`))
+
+          const chunk = []
+          for (const line of tagLines) {
+            // A line that ends a code block
+            if (line.startsWith('```') && chunk.length) {
+              // Format code and push to lines
+              const language = chunk[0].slice(3)
+              let code = chunk.slice(1).join('\n')
+              if (language in formatters) {
+                try {
+                  code = format(code, {
+                    parser: formatters[language],
+                    semi: false,
+                    singleQuote: true
+                  }).replace(/\n$/g, '')
+                } catch (e) {
+                  e.message = `Could not format a code example from ${title}.`
+                  e.stack = code + e.stack
+                  console.error(e)
+                  // TODO: re-enable once kit changes in this PR are released
+                  if (process.env.NODE_ENV === 'development') {
+                    throw e
+                  }
+                }
+              }
+              lines.push(chunk[0], ...code.split('\n'), '```', '')
+              chunk.length = 0
+            } else if (!line.startsWith('```') && !chunk.length) {
+              // Introductory text or explanation
+              lines.push(line)
+            } else {
+              // A line in the middle of a code block
+              chunk.push(line)
             }
           }
-          lines.push('', chunk[0], ...code.split('\n'), '```', '')
-          chunk.length = 0
+
           break
         }
 
-        // An opening or subsequent line of a code example
-        case line.startsWith('```') || !!chunk.length:
-          chunk.push(line)
+        case tag.startsWith('@note'):
+          lines.push('::alert{type="info"}', tag.replace('@note', '**Note**. '), '::', '')
           break
 
-        case line.startsWith('@example'):
-          lines.push(line.replace('@example', `${level}# Example`))
+        case tag.startsWith('@warning'):
+          lines.push('::alert{type="warning"}', tag.replace('@warning', '**Warning**. '), '::', '')
           break
 
-        case line.startsWith('@note'):
-          lines.push('::alert{type="info"}', line.replace('@note', '**Note**. '), '::')
-          break
-
-        case line.startsWith('@warning'):
-          lines.push('::alert{type="warning"}', line.replace('@warning', '**Warning**. '), '::')
-          break
-
-        case line.startsWith('@deprecated'):
-          lines.push('::alert{type="danger"}', line.replace('@deprecated', '**Deprecated**. '), '::')
+        case tag.startsWith('@deprecated'):
+          lines.push('::alert{type="danger"}', tag.replace('@deprecated', '**Deprecated**. '), '::', '')
           break
 
         // Fall back to bold line
         default:
-          lines.push(line.replace(/^@.*$/, r => `**${r[1].toUpperCase() + r.slice(2)}**`))
+          lines.push(tag.replace(/^@.*$/, r => `**${r[1].toUpperCase() + r.slice(2)}**`), '')
       }
     }
   }
