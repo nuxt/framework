@@ -101,6 +101,7 @@ export default {
    * into the process environment.
    */
   env: {
+    $default: {},
     $resolve: (val) => {
       val = { ...val }
       for (const key in process.env) {
