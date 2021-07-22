@@ -1,3 +1,4 @@
+/** @version 2 */
 export default {
   /**
    * Whether to enable HTTPS.

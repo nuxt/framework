@@ -1,6 +1,10 @@
 import { resolve } from 'upath'
 import { joinURL } from 'ufo'
 
+/**
+ * @version 2
+ * @todo nuxt3 coming soon
+ */
 export default {
   /**
    * Directory name that holds all the assets and generated pages for a `static` build.
