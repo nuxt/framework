@@ -23,6 +23,14 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
     return lines
   }
 
+  // Skip displaying properties that are not compatible with nuxt3
+  if (
+    schema.tags?.some(tag => tag.startsWith('@version') &&
+      !schema.tags?.some(tag => tag.startsWith('@version 3')))
+  ) {
+    return lines
+  }
+
   lines.push(`${level} ${title}`)
 
   if (schema.type !== 'object' || !schema.properties) {
@@ -110,6 +118,11 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
           lines.push('::alert{type="danger"}', tag.replace('@deprecated', '**Deprecated**. '), '::', '')
           break
 
+        // Skip displaying these tags for now
+        case tag.startsWith('@version'):
+        case tag.startsWith('@todo'):
+          break
+
         // Fall back to bold line
         default:
           lines.push(tag.replace(/^@.*$/, r => `**${r[1].toUpperCase() + r.slice(2)}**`), '')
@@ -155,6 +168,14 @@ export default defineNuxtModule({
           schema.tags?.includes('@private') ||
           'deprecated' in schema ||
           schema.tags?.some(tag => tag.startsWith('@deprecated'))
+        ) {
+          continue
+        }
+
+        // Skip displaying top-level properties that are not compatible with nuxt3
+        if (
+          schema.tags?.some(tag => tag.startsWith('@version') &&
+            !schema.tags?.some(tag => tag.startsWith('@version 3')))
         ) {
           continue
         }
