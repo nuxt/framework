@@ -14,6 +14,8 @@ const formatters = {
   vue: 'vue'
 }
 
+const rootDirPattern = new RegExp(join(__dirname, '..') + '/', 'g')
+
 function generateMarkdown (schema: Schema, title: string, level: string) {
   const lines: string[] = []
 
@@ -28,12 +30,12 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
     lines.push(`- **Type**: \`${schema.type}\``)
     if ('default' in schema) {
       // TODO: https://github.com/unjs/untyped/issues/8
-      lines.push(
-        `- **Default**: \`${JSON.stringify(schema.default).replace(
-          new RegExp(join(require.resolve('@nuxt/kit'), '../..') + '/', 'g'),
-          ''
-        )}\``
-      )
+      const defaultValue = JSON.stringify(schema.default, null, 2).replace(rootDirPattern, '')
+      const defaultInfo =
+        typeof schema.default === 'object'
+          ? ['', '```json', ...defaultValue.split('\n'), '```'].map((line) => `   ${line}`).join('\n')
+          : `\`${defaultValue}\``
+      lines.push(`- **Default**: ${defaultInfo}`)
     }
     lines.push('')
 
@@ -80,11 +82,7 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
                 } catch (e) {
                   e.message = `Could not format a code example from ${title}.`
                   e.stack = code + e.stack
-                  console.error(e)
-                  // TODO: re-enable once kit changes in this PR are released
-                  if (process.env.NODE_ENV === 'development') {
-                    throw e
-                  }
+                  throw e
                 }
               }
               lines.push(chunk[0], ...code.split('\n'), '```', '')
@@ -134,9 +132,12 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
 
 export default defineNuxtModule({
   name: 'schema-to-markdown',
-  setup (_options, nuxt) {
+  defaults: {
+    dir: '5.config'
+  },
+  setup (options, nuxt) {
     nuxt.hook('ready', async () => {
-      const apiDocsPath = resolve(nuxt.options.rootDir, 'content/9.api')
+      const apiDocsPath = resolve(nuxt.options.rootDir, 'content', options.dir)
 
       // Prepare content directory
       rimraf.sync(apiDocsPath)
@@ -172,14 +173,7 @@ export default defineNuxtModule({
         await writeFile(join(apiDocsPath, `${index}.${key}.md`), lines.join('\n'))
       }
 
-      const frontmatter = [
-        '---',
-        'navigation:',
-        '  title: API (config)',
-        '  collapse: true',
-        '---'
-      ]
-
+      const frontmatter = ['---', 'navigation:', '  collapse: true', '---']
       await writeFile(join(apiDocsPath, 'index.md'), frontmatter.join('\n'))
     })
   }
