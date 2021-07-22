@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "nuxt dev",
-    "build": "nuxt generate",
+    "build": "yarn build:kit && nuxt generate",
     "build:kit": "mv node_modules/@nuxt/kit kit && unbuild kit && mv kit node_modules/@nuxt/kit"
   },
   "devDependencies": {
