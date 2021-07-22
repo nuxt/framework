@@ -35,7 +35,9 @@ export default {
    *     }
    *   }
    * }
-   * // or
+   * ```
+   * Or instead:
+   * ```js
    * export default {
    *   generate: {
    *     routes(callback) {

@@ -352,7 +352,7 @@ export default {
      * build. The target will be set by Nuxt accordingly (client/server). If you want to configure
      * the preset differently for the client or the server build, please use presets as a function.
      *
-     * **Warning**: It is highly recommended to use the default preset instead customizing.
+     * @warning It is highly recommended to use the default preset instead customizing.
      *
      * @example
      * ```js
