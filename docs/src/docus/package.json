@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "nuxt dev",
-    "build": "nuxt generate"
+    "build": "yarn unbuild ../../../packages/kit && yarn install --force && nuxt generate"
   },
   "devDependencies": {
     "@nuxt/kit": "file:../../../packages/kit",
@@ -13,6 +13,7 @@
     "fs-extra": "^10.0.0",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
+    "unbuild": "^0.3.2",
     "untyped": "^0.2.5",
     "upath": "^2.0.1"
   }
