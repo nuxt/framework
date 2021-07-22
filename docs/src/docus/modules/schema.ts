@@ -31,10 +31,9 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
     if ('default' in schema) {
       // TODO: https://github.com/unjs/untyped/issues/8
       const defaultValue = JSON.stringify(schema.default, null, 2).replace(rootDirPattern, '')
-      const defaultInfo =
-        typeof schema.default === 'object' && !Array.isArray(schema.default) && defaultValue !== '{}'
-          ? ['', '```json', ...defaultValue.split('\n'), '```'].join('\n')
-          : `\`${defaultValue}\``
+      const defaultInfo = defaultValue[0] === '{' && defaultValue !== '{}'
+        ? ['', '```json', ...defaultValue.split('\n'), '```'].join('\n')
+        : `\`${defaultValue}\``
       lines.push(`- **Default**: ${defaultInfo}`)
     }
     lines.push('')
