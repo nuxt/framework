@@ -202,6 +202,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       '#nitro-renderer': normalize(require.resolve(resolve(nitroContext._internal.runtimeDir, 'app', renderer))),
       '#config': normalize(require.resolve(resolve(nitroContext._internal.runtimeDir, 'app/config'))),
       '#nitro-vue-renderer': vue2ServerRenderer,
+      '#build/plugins': resolve(nitroContext._nuxt.buildDir, 'plugins/server'),
       '#build': nitroContext._nuxt.buildDir,
       '~': nitroContext._nuxt.srcDir,
       '@/': nitroContext._nuxt.srcDir,
