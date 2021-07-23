@@ -3,3 +3,5 @@ export const commands = {
   build: () => import('./build'),
   usage: () => import('./usage')
 }
+
+export type Command = keyof typeof commands

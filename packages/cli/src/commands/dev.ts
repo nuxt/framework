@@ -1,12 +1,14 @@
 import { resolve } from 'upath'
 import chokidar from 'chokidar'
 import debounce from 'debounce-promise'
+import type { Nuxt } from '@nuxt/kit'
+import type { Argv } from 'mri'
 import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
 import { requireModule } from '../utils/cjs'
 import { error } from '../utils/log'
 
-export async function invoke (args) {
+export async function invoke (args: Argv) {
   process.env.NODE_ENV = process.env.NODE_ENV || 'development'
   const server = createServer()
   const listener = await server.listen({
@@ -16,10 +18,10 @@ export async function invoke (args) {
 
   const rootDir = resolve(args._[0] || '.')
 
-  const { loadNuxt, buildNuxt } = requireModule('@nuxt/kit', rootDir)
+  const { loadNuxt, buildNuxt } = requireModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
 
-  let currentNuxt
-  const load = async (isRestart) => {
+  let currentNuxt: Nuxt
+  const load = async (isRestart: boolean) => {
     try {
       const message = `${isRestart ? 'Restarting' : 'Starting'} nuxt...`
       server.setApp(createLoadingHandler(message))

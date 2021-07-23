@@ -1,13 +1,13 @@
-
+import type { Argv } from 'mri'
 import { resolve } from 'upath'
 import { requireModule } from '../utils/cjs'
 import { error } from '../utils/log'
 
-export async function invoke (args) {
+export async function invoke (args: Argv) {
   process.env.NODE_ENV = process.env.NODE_ENV || 'production'
   const rootDir = resolve(args._[0] || '.')
 
-  const { loadNuxt, buildNuxt } = requireModule('@nuxt/kit', rootDir)
+  const { loadNuxt, buildNuxt } = requireModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
 
   const nuxt = await loadNuxt({ rootDir })
 
