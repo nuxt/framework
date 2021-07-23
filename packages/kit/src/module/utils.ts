@@ -2,6 +2,9 @@ import fs from 'fs'
 import path, { basename, parse } from 'upath'
 import hash from 'hash-sum'
 import consola from 'consola'
+import type { WebpackPluginInstance } from 'webpack'
+import type { Plugin as VitePlugin } from 'vite'
+import { createUnplugin, UnpluginFactory } from 'unplugin'
 import { useNuxt } from '../nuxt'
 import { chainFn } from '../utils/task'
 import type { TemplateOpts, PluginTemplateOpts } from '../types/module'
@@ -118,7 +121,9 @@ export function addServerMiddleware (middleware) {
   nuxt.options.serverMiddleware.push(middleware)
 }
 
-/** Allows extending webpack build config by chaining `options.build.extend` function. */
+/**
+ * Allows extending webpack build config by chaining `options.build.extend` function.
+ */
 export function extendBuild (fn) {
   const nuxt = useNuxt()
 
@@ -126,9 +131,48 @@ export function extendBuild (fn) {
   nuxt.options.build.extend = chainFn(nuxt.options.build.extend, fn)
 }
 
-/** Allows extending routes by chaining `options.build.extendRoutes` function. */
+/**
+ * Allows extending routes by chaining `options.build.extendRoutes` function.
+ */
 export function extendRoutes (fn) {
   const nuxt = useNuxt()
 
   nuxt.options.router.extendRoutes = chainFn(nuxt.options.router.extendRoutes, fn)
+}
+
+/**
+ * Append Webpack plugins to the config.
+ */
+export function addWebpackPlugin (...plugins: WebpackPluginInstance[]) {
+  extendBuild((config: any) => {
+    config.plugins = config.plugins || []
+    config.plugins.push(...plugins)
+  })
+}
+
+/**
+ * Append Vite plugins to the config.
+ */
+export function addVitePlugin (...plugins: VitePlugin[]) {
+  const nuxt = useNuxt()
+
+  nuxt.hook('vite:extend', (vite: any) => {
+    vite.config.plugins.push(...plugins)
+  })
+}
+
+/**
+ * Append universal plugin for Webpack or Vite based on the user config.
+ *
+ * @see https://github.com/unjs/unplugin
+ */
+export function addUnplugin<UserOptions = {}> (factory: UnpluginFactory<UserOptions>) {
+  const nuxt = useNuxt()
+  const plugin = createUnplugin(factory)
+
+  if (nuxt.options.vite) {
+    addVitePlugin(plugin.rollup())
+  } else {
+    addWebpackPlugin(plugin.webpack())
+  }
 }
