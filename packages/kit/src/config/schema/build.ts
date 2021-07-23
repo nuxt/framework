@@ -8,6 +8,7 @@ export default {
    * It is enabled by default when a CI or test environment is detected.
    *
    * @see [std-env](https://github.com/unjs/std-env)
+  * @version 2
    */
   quiet: Boolean(env.ci || env.test),
 
@@ -24,6 +25,7 @@ export default {
    *   analyzerMode: 'static'
    * }
    * ```
+   * @version 2
    */
   analyze: false,
 
@@ -33,6 +35,7 @@ export default {
    * It is normally enabled by CLI argument `--profile`.
    *
    * @see [webpackbar](https://github.com/unjs/webpackbar#profile)
+   * @version 2
    */
   profile: process.argv.includes('--profile'),
 
@@ -83,11 +86,15 @@ export default {
    *   }
    * }
    * ```
+   * @version 2
+   * @version 3 webpack only
    */
   extractCSS: false,
 
   /**
    * Enables CSS source map support (defaults to true in development)
+   * @version 2
+   * @version 3 webpack only
    */
   cssSourceMap: {
     $resolve: (val, get) => val ?? get('dev')
@@ -95,6 +102,7 @@ export default {
 
   /**
    * Creates special webpack bundle for SSR renderer. It is normally not necessary to change this value.
+   * @version 2
    */
   ssr: undefined,
 
@@ -102,6 +110,7 @@ export default {
    * Enable [thread-loader](https://github.com/webpack-contrib/thread-loader#thread-loader) when building app with webpack.
    *
    * @warning This is an unstable feature.
+   * @version 2
    */
   parallel: {
     $resolve: (val, get) => get('build.extractCSS') ? false : Boolean(val)
@@ -112,6 +121,7 @@ export default {
    * and [`cache-loader`](https://github.com/webpack-contrib/cache-loader#cache-loader)
    *
    * @warning This is an unstable feature.
+   * @version 2
    */
   cache: false,
 
@@ -126,6 +136,7 @@ export default {
    * @note You can enable standalone bundling by passing `--standalone` via the command line.
    *
    * @see [context](https://github.com/nuxt/nuxt.js/pull/4661)
+   * @version 2
    */
   standalone: false,
 
@@ -143,7 +154,9 @@ export default {
    *   publicPath: process.env.PUBLIC_PATH || 'https://cdn.nuxtjs.org'
    * }
    * ```
-   * */
+   * @version 2
+   * @version 3
+   */
   publicPath: {
     $resolve: (val, get) => {
       if (hasProtocol(val, true) && get('dev')) { val = null }
@@ -155,6 +168,8 @@ export default {
    * The polyfill library to load to provide URL and URLSearchParams.
    *
    * Defaults to `'url'` ([see package](https://www.npmjs.com/package/url)).
+   * @version 2
+   * @version 3 webpack only
    */
   serverURLPolyfill: 'url',
 
@@ -174,6 +189,8 @@ export default {
    *   chunk: ({ isDev }) => (isDev ? '[name].js' : '[id].[contenthash].js')
    * }
    * ```
+   * @version 2
+   * @version 3 webpack only
    */
   filenames: {
     app: ({ isDev, isModern }) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
@@ -186,6 +203,8 @@ export default {
 
   /**
    * Customize the options of Nuxt's integrated webpack loaders.
+   * @version 2
+   * @version 3 webpack only
    */
   loaders: {
     $resolve: (val, get) => {
@@ -238,6 +257,7 @@ export default {
 
   /**
    * @deprecated  Use [style-resources-module](https://github.com/nuxt-community/style-resources-module/)
+   * @version 2
    */
   styleResources: {},
 
@@ -255,6 +275,8 @@ export default {
    *   })
    * ]
    * ```
+   * @version 2
+   * @version 3 webpack only
    */
   plugins: [],
 
@@ -267,6 +289,8 @@ export default {
    *
    * @note Enabling sourceMap will leave `//# sourceMappingURL` linking comment at
    * the end of each output file if webpack `config.devtool` is set to `source-map`.
+   * @version 2
+   * @version 3 webpack only
    */
   terser: {},
 
@@ -274,11 +298,14 @@ export default {
    * Enables the [HardSourceWebpackPlugin](https://github.com/mzgoddard/hard-source-webpack-plugin) for improved caching.
    *
    * @warning unstable
+   * @version 2
    */
   hardSource: false,
 
   /**
    * Hard-replaces `typeof process`, `typeof window` and `typeof document` to tree-shake bundle.
+   * @version 2
+   * @version 3 webpack only
    */
   aggressiveCodeRemoval: false,
 
@@ -288,6 +315,8 @@ export default {
    * Defaults to true when `extractCSS` is enabled.
    *
    * @see [optimize-css-assets-webpack-plugin documentation](https://github.com/NMFR/optimize-css-assets-webpack-plugin).
+   * @version 2
+   * @version 3 webpack only
    */
   optimizeCSS: {
     $resolve: (val, get) => val ?? (get('build.extractCSS') ? {} : false)
@@ -295,6 +324,8 @@ export default {
 
   /**
    * Configure [webpack optimization](https://webpack.js.org/configuration/optimization/).
+   * @version 2
+   * @version 3 webpack only
    */
   optimization: {
     runtimeChunk: 'single',
@@ -313,6 +344,7 @@ export default {
    * Whether to split code for `layout`, `pages` and `commons` chunks.
    *
    * Commons libs include `vue`, `vue-loader`, `vue-router`, `vuex`, etc.
+   * @version 2
    */
   splitChunks: {
     layouts: false,
@@ -323,6 +355,8 @@ export default {
   /**
    * Nuxt will automatically detect the current version of `core-js` in your project (`'auto'`),
    * or you can specify which version you want to use (`2` or `3`).
+   * @version 2
+   * @version 3 webpack only
    */
   corejs: 'auto',
 
@@ -333,6 +367,8 @@ export default {
    * [babel options](https://babeljs.io/docs/en/options).
    *
    * @note `.babelrc` is ignored by default.
+   * @version 2
+   * @version 3 webpack only
    */
   babel: {
     configFile: false,
@@ -411,6 +447,8 @@ export default {
    * ```js
     transpile: [({ isLegacy }) => isLegacy && 'ky']
    * ```
+   * @version 2
+   * @version 3 webpack only
    */
   transpile: {
     $resolve: val => [].concat(val).filter(Boolean)
@@ -418,6 +456,8 @@ export default {
 
   /**
    * Customize PostCSS Loader plugins.
+   * @version 2
+   * @version 3 webpack only
    */
   postcss: {
     preset: {
@@ -426,6 +466,7 @@ export default {
     }
   },
 
+  /** @version 2 */
   html: {
     /**
      * Configuration for the html-minifier plugin used to minify HTML files created
@@ -465,7 +506,10 @@ export default {
     }
   },
 
-  /** Allows setting a different app template (other than `@nuxt/vue-app`) */
+  /**
+   * Allows setting a different app template (other than `@nuxt/vue-app`)
+   * @version 2
+   */
   template: undefined,
   /**
    * You can provide your own templates which will be rendered based
@@ -486,6 +530,8 @@ export default {
    *   }
    * ]
    * ```
+   * @version 2
+   * @version 3
    */
   templates: [],
 
@@ -498,22 +544,35 @@ export default {
    * ```js
     watch: ['~/.nuxt/support.js']
    * ```
+   * @version 2
    */
   watch: [],
-  /** See [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware) for available options. */
+  /**
+   * See [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware) for available options.
+   * @version 2
+   * @version 3 webpack only
+   */
   devMiddleware: {
     stats: 'none'
   },
-  /** See [webpack-hot-middleware](https://github.com/webpack-contrib/webpack-hot-middleware) for available options. */
+  /**
+   * See [webpack-hot-middleware](https://github.com/webpack-contrib/webpack-hot-middleware) for available options.
+   * @version 2
+   * @version 3 webpack only
+   */
   hotMiddleware: {},
 
+  /** @version 2 */
   vendor: {
     $meta: {
       deprecated: 'vendor has been deprecated since nuxt 2'
     }
   },
 
-  /** Set to `'none'` or `false` to disable stats printing out after a build. */
+  /**
+   * Set to `'none'` or `false` to disable stats printing out after a build.
+   * @version 2
+   */
   stats: {
     $resolve: (val, get) => (val === 'none' || get('build.quiet')) ? false : val,
     excludeAssets: [
@@ -522,13 +581,27 @@ export default {
       /vue-ssr-(client|modern)-manifest.json/
     ]
   },
-  /** Set to `false` to disable the overlay provided by [FriendlyErrorsWebpackPlugin](https://github.com/nuxt/friendly-errors-webpack-plugin) */
+  /**
+   * Set to `false` to disable the overlay provided by [FriendlyErrorsWebpackPlugin](https://github.com/nuxt/friendly-errors-webpack-plugin)
+   * @version 2
+   * @version 3 webpack only
+   */
   friendlyErrors: true,
-  /** Additional extensions (beyond `['vue', 'js']` to support in `pages/`, `layouts/`, `middleware/`, etc.) */
+  /**
+   * Additional extensions (beyond `['vue', 'js']` to support in `pages/`, `layouts/`, `middleware/`, etc.)
+   * @version 2
+   */
   additionalExtensions: [],
-  /** Filters to hide build warnings. */
+  /**
+   * Filters to hide build warnings.
+   * @version 2
+   * @version 3 webpack only
+   */
   warningIgnoreFilters: [],
 
-  /** Set to true to scan files within symlinks in the build (such as within `pages/`). */
+  /**
+   * Set to true to scan files within symlinks in the build (such as within `pages/`).
+   * @version 2
+   */
   followSymlinks: false
 }

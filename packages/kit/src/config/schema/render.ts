@@ -1,3 +1,6 @@
+/**
+ * @version 2
+ */
 export default {
   /**
    * Use this option to customize the Vue SSR bundle renderer.

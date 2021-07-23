@@ -1,6 +1,9 @@
 import { resolve } from 'upath'
 import { joinURL } from 'ufo'
 
+/**
+ * @version 2
+ */
 export default {
   /**
    * Directory name that holds all the assets and generated pages for a `static` build.
