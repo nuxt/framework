@@ -1,5 +1,6 @@
 import { Worker } from 'worker_threads'
 
+import { loading as loadingTemplate } from '@nuxt/design'
 import chokidar, { FSWatcher } from 'chokidar'
 import debounce from 'debounce'
 import { stat } from 'fs-extra'
@@ -14,7 +15,7 @@ import type { NitroContext } from '../context'
 
 export function createDevServer (nitroContext: NitroContext) {
   // Worker
-  const workerEntry = resolve(nitroContext.output.dir, nitroContext.output.serverDir, 'index.js')
+  const workerEntry = resolve(nitroContext.output.dir, nitroContext.output.serverDir, 'index.mjs')
   let pendingWorker: Worker | null
   let activeWorker: Worker
   let workerAddress: string | null
@@ -69,12 +70,17 @@ export function createDevServer (nitroContext: NitroContext) {
   const proxy = createProxy()
   app.use((req, res) => {
     if (workerAddress) {
+      // Workaround to pass legacy req.spa to proxy
+      // @ts-ignore
+      if (req.spa) {
+        req.headers['x-nuxt-no-ssr'] = 'true'
+      }
       proxy.web(req, res, { target: workerAddress }, (_err: unknown) => {
         // console.error('[proxy]', err)
       })
     } else {
       res.setHeader('Content-Type', 'text/html; charset=UTF-8')
-      res.end('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="1"><head><body>...')
+      res.end(loadingTemplate({}))
     }
   })
 
@@ -87,7 +93,7 @@ export function createDevServer (nitroContext: NitroContext) {
   }
 
   // Watch for dist and reload worker
-  const pattern = '**/*.{js,json}'
+  const pattern = '**/*.{js,json,cjs,mjs}'
   const events = ['add', 'change']
   let watcher: FSWatcher
   function watch () {

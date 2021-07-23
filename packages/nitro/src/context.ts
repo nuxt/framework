@@ -29,6 +29,7 @@ export interface NitroContext {
   nuxtHooks: configHooksT
   ignore: string[]
   env: Preset
+  vfs: Record<string, string>
   output: {
     dir: string
     serverDir: string
@@ -39,6 +40,7 @@ export interface NitroContext {
   _nuxt: {
     majorVersion: number
     dev: boolean
+    ssr: boolean
     rootDir: string
     srcDir: string
     buildDir: string
@@ -82,6 +84,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
     scannedMiddleware: [],
     ignore: [],
     env: {},
+    vfs: {},
     hooks: {},
     nuxtHooks: {},
     output: {
@@ -97,6 +100,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
     _nuxt: {
       majorVersion: nuxtOptions._majorVersion || 2,
       dev: nuxtOptions.dev,
+      ssr: nuxtOptions.ssr,
       rootDir: nuxtOptions.rootDir,
       srcDir: nuxtOptions.srcDir,
       buildDir: nuxtOptions.buildDir,

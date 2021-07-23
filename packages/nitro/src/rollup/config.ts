@@ -60,7 +60,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   delete env.alias['node-fetch'] // FIX ME
 
   if (nitroContext.sourceMap) {
-    env.polyfill.push('source-map-support/register')
+    env.polyfill.push('source-map-support/register.js')
   }
 
   const buildServerDir = join(nitroContext._nuxt.buildDir, 'dist/server')
@@ -70,7 +70,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     input: resolvePath(nitroContext, nitroContext.entry),
     output: {
       dir: nitroContext.output.serverDir,
-      entryFileNames: 'index.js',
+      entryFileNames: 'index.mjs',
       chunkFileNames (chunkInfo) {
         let prefix = ''
         const modules = Object.keys(chunkInfo.modules)
@@ -88,10 +88,10 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
         } else if (lastModule.includes('assets')) {
           prefix = 'assets'
         }
-        return join('chunks', prefix, '[name].js')
+        return join('chunks', prefix, '[name].mjs')
       },
       inlineDynamicImports: nitroContext.inlineDynamicImports,
-      format: 'cjs',
+      format: 'esm',
       exports: 'auto',
       intro: '',
       outro: '',
@@ -134,6 +134,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       'global.': 'globalThis.',
       'process.server': 'true',
       'process.client': 'false',
+      'process.env.NUXT_NO_SSR': JSON.stringify(!nitroContext._nuxt.ssr),
       'process.env.ROUTER_BASE': JSON.stringify(nitroContext._nuxt.routerBase),
       'process.env.PUBLIC_PATH': JSON.stringify(nitroContext._nuxt.publicPath),
       'process.env.NUXT_STATIC_BASE': JSON.stringify(nitroContext._nuxt.staticAssets.base),
@@ -232,6 +233,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
         '~~',
         '@@/',
         'virtual:',
+        'ohmyfetch', // TODO: Webpack externals forces default import!
         nitroContext._internal.runtimeDir,
         nitroContext._nuxt.srcDir,
         nitroContext._nuxt.rootDir,
@@ -241,7 +243,8 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       ],
       traceOptions: {
         base: '/',
-        processCwd: nitroContext._nuxt.rootDir
+        processCwd: nitroContext._nuxt.rootDir,
+        exportsOnly: true
       }
     })))
   }
@@ -252,7 +255,13 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     preferBuiltins: true,
     rootDir: nitroContext._nuxt.rootDir,
     moduleDirectories,
-    mainFields: ['main'] // Force resolve CJS (@vue/runtime-core ssrUtils)
+    // 'module' is intentionally not supported because of externals
+    mainFields: ['main'],
+    exportConditions: [
+      'default',
+      'module',
+      'import'
+    ]
   }))
 
   // Automatically mock unresolved externals

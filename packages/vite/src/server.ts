@@ -1,8 +1,6 @@
 import { resolve } from 'upath'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
-import { mkdirp, writeFile } from 'fs-extra'
-import debounce from 'debounce'
 import consola from 'consola'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
@@ -29,10 +27,14 @@ export async function buildServer (ctx: ViteBuildContext) {
       ]
     },
     build: {
-      outDir: 'dist/server',
+      outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: true,
       rollupOptions: {
-        input: resolve(ctx.nuxt.options.buildDir, 'entry.mjs'),
+        output: {
+          entryFileNames: 'server.mjs',
+          preferConst: true,
+          format: 'module'
+        },
         onwarn (warning, rollupWarn) {
           if (!['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
             rollupWarn(warning)
@@ -49,12 +51,6 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
 
-  const serverDist = resolve(ctx.nuxt.options.buildDir, 'dist/server')
-  await mkdirp(serverDist)
-
-  await writeFile(resolve(serverDist, 'server.js'), 'module.exports = require("./entry")', 'utf8')
-  await writeFile(resolve(serverDist, 'client.manifest.json'), 'false', 'utf8')
-
   const onBuild = () => ctx.nuxt.callHook('build:resources', wpfs)
 
   if (!ctx.nuxt.options.ssr) {
@@ -62,15 +58,31 @@ export async function buildServer (ctx: ViteBuildContext) {
     return
   }
 
-  const build = debounce(async () => {
-    const start = Date.now()
+  let lastBuild = 0
+  const build = async () => {
+    let start = Date.now()
+    // debounce
+    if (start - lastBuild < 300) {
+      await sleep(300 - (start - lastBuild) + 1)
+      start = Date.now()
+      if (start - lastBuild < 300) {
+        return
+      }
+    }
+    lastBuild = start
     await vite.build(serverConfig)
     await onBuild()
     consola.info(`Server built in ${Date.now() - start}ms`)
-  }, 300)
+  }
 
   await build()
 
   ctx.nuxt.hook('builder:watch', () => build())
   ctx.nuxt.hook('app:templatesGenerated', () => build())
+}
+
+function sleep (ms:number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
 }
