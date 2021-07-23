@@ -197,10 +197,10 @@ export function addWebpackPlugin (
     build = true
   } = options
 
-  if (dev && !nuxt.options.dev) {
+  if (!dev && nuxt.options.dev) {
     return
   }
-  if (build && !nuxt.options.build) {
+  if (!build && nuxt.options.build) {
     return
   }
 
@@ -236,10 +236,10 @@ export function addVitePlugin (
     build = true
   } = options
 
-  if (dev && !nuxt.options.dev) {
+  if (!dev && nuxt.options.dev) {
     return
   }
-  if (build && !nuxt.options.build) {
+  if (!build && nuxt.options.build) {
     return
   }
 
