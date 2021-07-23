@@ -140,22 +140,25 @@ export function extendRoutes (fn) {
 }
 
 /**
- * Append Webpack plugins to the config.
+ * Append Webpack plugin to the config.
  */
-export function addWebpackPlugin (...plugins: WebpackPluginInstance[]) {
-  extendBuild((config: any) => {
+export function addWebpackPlugin (plugin: WebpackPluginInstance) {
+  const nuxt = useNuxt()
+
+  nuxt.hook('webpack:config', (config: any) => {
     config.plugins = config.plugins || []
-    config.plugins.push(...plugins)
+    config.plugins.push(plugin)
   })
 }
 
 /**
- * Append Vite plugins to the config.
+ * Append Vite plugin to the config.
  */
-export function addVitePlugin (...plugins: VitePlugin[]) {
+export function addVitePlugin (plugin: VitePlugin) {
   const nuxt = useNuxt()
 
   nuxt.hook('vite:extend', (vite: any) => {
-    vite.config.plugins.push(...plugins)
+    vite.config.plugins = vite.config.plugins || []
+    vite.config.plugins.push(plugin)
   })
 }
