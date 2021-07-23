@@ -5569,6 +5569,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-with-unplugin@workspace:examples/with-unplugin":
+  version: 0.0.0-use.local
+  resolution: "example-with-unplugin@workspace:examples/with-unplugin"
+  dependencies:
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-with-vite@workspace:examples/with-vite":
   version: 0.0.0-use.local
   resolution: "example-with-vite@workspace:examples/with-vite"
