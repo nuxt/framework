@@ -3,7 +3,6 @@ import { joinURL } from 'ufo'
 
 /**
  * @version 2
- * @todo nuxt3 coming soon
  */
 export default {
   /**

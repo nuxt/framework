@@ -12,7 +12,6 @@ export default {
      * @see [vue@2 Documentation](https://vuejs.org/v2/api/#Global-Config)
      * @see [vue@3 Documentation](https://v3.vuejs.org/api/application-config.html)
     * @version 2
-    * @todo nuxt3 support
      */
     config: {
       silent: { $resolve: (val, get) => val ?? get('dev') },
@@ -23,7 +22,6 @@ export default {
   /**
    * Nuxt App configuration.
    * @version 2
-   * @todo nuxt3 support
    */
   app: {
     $resolve: (val, get) => {
@@ -256,7 +254,6 @@ export default {
    * @see [vue@2 documentation](https://vuejs.org/v2/guide/transitions.html)
    * @see [vue@3 documentation](https://v3.vuejs.org/guide/transitions-enterleave.html)
    * @version 2
-   * @todo nuxt3 support
    */
   pageTransition: {
     $resolve: val => typeof val === 'string' ? { name: val } : val,
@@ -277,7 +274,6 @@ export default {
    * @see [vue@2 documentation](https://vuejs.org/v2/guide/transitions.html)
    * @see [vue@3 documentation](https://v3.vuejs.org/guide/transitions-enterleave.html)
    * @version 2
-   * @todo nuxt3 support
    */
   layoutTransition: {
     $resolve: val => typeof val === 'string' ? { name: val } : val,

@@ -1,6 +1,5 @@
 /**
  * @version 2
- * @todo nuxt3 support coming soon
  */
 export default {
   /** The text that displays on the Nuxt loading indicator when `ssr: false`. */

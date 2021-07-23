@@ -118,9 +118,8 @@ function generateMarkdown (schema: Schema, title: string, level: string) {
           lines.push('::alert{type="danger"}', tag.replace('@deprecated', '**Deprecated**. '), '::', '')
           break
 
-        // Skip displaying these tags for now
+        // Skip displaying version tags for now
         case tag.startsWith('@version'):
-        case tag.startsWith('@todo'):
           break
 
         // Fall back to bold line
