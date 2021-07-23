@@ -22,7 +22,10 @@ export async function build (nuxt: Nuxt) {
 
   await bundle(nuxt)
   await nuxt.callHook('build:done', { nuxt })
-  await nuxt.callHook('close', nuxt)
+
+  if (!nuxt.options.dev) {
+    await nuxt.callHook('close', nuxt)
+  }
 }
 
 function watch (nuxt: Nuxt) {
