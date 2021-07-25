@@ -8732,7 +8732,7 @@ fsevents@~2.3.2:
     object-hash: ^2.2.0
     typescript: ^4.3.5
     unbuild: ^0.3.2
-    unplugin: "link:../unplugin"
+    unplugin: ^0.0.4
     upath: ^2.0.1
   languageName: unknown
   linkType: soft
@@ -11899,11 +11899,25 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"unplugin@link:../unplugin::locator=nuxt-framework%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "unplugin@link:../unplugin::locator=nuxt-framework%40workspace%3A."
+"unplugin@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "unplugin@npm:0.0.4"
+  dependencies:
+    webpack-virtual-modules: ^0.4.3
+  peerDependencies:
+    rollup: ^2.50.0
+    vite: ^2.3.0
+    webpack: ^5.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+    vite:
+      optional: true
+    webpack:
+      optional: true
+  checksum: b08497c666553df9ec80a8633a86990b412852e2eda5eeac0dc7330d4e8b09f210a4ee2fc6ebc214c8af93f34920e96d5f7db434fd57e7b1a85f3e3f894348c9
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "unstorage@npm:^0.2.3":
   version: 0.2.3

@@ -16,14 +16,13 @@ export default defineNuxtModule({
         },
         resolveId (id) {
           if (id === 'virtual-build-time') {
-            return '/node_modules/' + id
+            return `/node_modules/${id}.js`
           }
           return null
         },
         load (id) {
-          console.log('load', id)
-          if (id === '/node_modules/virtual-build-time') {
-            return 'export default ' + JSON.stringify(date)
+          if (id === '/node_modules/virtual-build-time.js') {
+            return `export default ${JSON.stringify(date)}`
           }
         }
       }
