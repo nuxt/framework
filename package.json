@@ -45,7 +45,7 @@
     "object-hash": "^2.2.0",
     "typescript": "^4.3.5",
     "unbuild": "^0.3.2",
-    "unplugin": "^0.0.3",
+    "unplugin": "link:../unplugin",
     "upath": "^2.0.1"
   }
 }
