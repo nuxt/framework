@@ -2,9 +2,8 @@ import fs from 'fs'
 import path, { basename, parse } from 'upath'
 import hash from 'hash-sum'
 import consola from 'consola'
-import type { WebpackPluginInstance } from 'webpack'
+import type { WebpackPluginInstance, Configuration as WebpackConfig } from 'webpack'
 import type { Plugin as VitePlugin } from 'vite'
-import { createUnplugin, UnpluginFactory } from 'unplugin'
 import { useNuxt } from '../nuxt'
 import { chainFn } from '../utils/task'
 import type { TemplateOpts, PluginTemplateOpts } from '../types/module'
@@ -140,39 +139,112 @@ export function extendRoutes (fn) {
   nuxt.options.router.extendRoutes = chainFn(nuxt.options.router.extendRoutes, fn)
 }
 
-/**
- * Append Webpack plugins to the config.
- */
-export function addWebpackPlugin (...plugins: WebpackPluginInstance[]) {
-  extendBuild((config: any) => {
-    config.plugins = config.plugins || []
-    config.plugins.push(...plugins)
-  })
+export interface AddWebpackPluginHookOptions {
+  /**
+   * Install plugin on server side
+   *
+   * @default true
+   */
+  server?: boolean
+  /**
+   * Install plugin on client side
+   *
+   * @default true
+   */
+  client?: boolean
+  /**
+   * Install plugin on dev
+   *
+   * @default true
+   */
+  dev?: boolean
+  /**
+   * Install plugin on build
+   *
+   * @default true
+   */
+  build?: boolean
+}
+
+export interface AddVitePluginHookOptions {
+  /**
+   * Install plugin on dev
+   *
+   * @default true
+   */
+  dev?: boolean
+  /**
+   * Install plugin on build
+   *
+   * @default true
+   */
+  build?: boolean
 }
 
 /**
- * Append Vite plugins to the config.
+ * Append Webpack plugin to the config.
  */
-export function addVitePlugin (...plugins: VitePlugin[]) {
+export function addWebpackPlugin (
+  plugin: WebpackPluginInstance,
+  options: AddWebpackPluginHookOptions = {}
+) {
   const nuxt = useNuxt()
 
-  nuxt.hook('vite:extend', (vite: any) => {
-    vite.config.plugins.push(...plugins)
-  })
-}
+  const {
+    server = true,
+    client = true,
+    dev = true,
+    build = true
+  } = options
 
-/**
- * Append universal plugin for Webpack or Vite based on the user config.
- *
- * @see https://github.com/unjs/unplugin
- */
-export function addUnplugin<UserOptions = {}> (factory: UnpluginFactory<UserOptions>) {
-  const nuxt = useNuxt()
-  const plugin = createUnplugin(factory)
-
-  if (nuxt.options.vite) {
-    addVitePlugin(plugin.rollup())
-  } else {
-    addWebpackPlugin(plugin.webpack())
+  if (!dev && nuxt.options.dev) {
+    return
   }
+  if (!build && nuxt.options.build) {
+    return
+  }
+
+  nuxt.hook('webpack:config', (configs: WebpackConfig[]) => {
+    if (server) {
+      const config = configs.find(i => i.name === 'server')
+      if (config) {
+        config.plugins = config.plugins || []
+        config.plugins.push(plugin)
+      }
+    }
+    if (client) {
+      const config = configs.find(i => i.name === 'client')
+      if (config) {
+        config.plugins = config.plugins || []
+        config.plugins.push(plugin)
+      }
+    }
+  })
+}
+
+/**
+ * Append Vite plugin to the config.
+ */
+export function addVitePlugin (
+  plugin: VitePlugin,
+  options: AddVitePluginHookOptions = {}
+) {
+  const nuxt = useNuxt()
+
+  const {
+    dev = true,
+    build = true
+  } = options
+
+  if (!dev && nuxt.options.dev) {
+    return
+  }
+  if (!build && nuxt.options.build) {
+    return
+  }
+
+  nuxt.hook('vite:extend', ({ config }) => {
+    config.plugins = config.plugins || []
+    config.plugins.push(plugin)
+  })
 }
