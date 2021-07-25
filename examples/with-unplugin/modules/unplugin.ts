@@ -1,4 +1,16 @@
-import { defineNuxtModule, addUnplugin } from '@nuxt/kit'
+import { addVitePlugin, addWebpackPlugin, defineNuxtModule, useNuxt } from '@nuxt/kit'
+import { createUnplugin, UnpluginFactory } from 'unplugin'
+
+export function addUnplugin<UserOptions = {}> (factory: UnpluginFactory<UserOptions>) {
+  const nuxt = useNuxt()
+  const plugin = createUnplugin(factory)
+
+  if (nuxt.options.vite) {
+    addVitePlugin(plugin.rollup())
+  } else {
+    addWebpackPlugin(plugin.webpack())
+  }
+}
 
 export default defineNuxtModule({
   setup () {
