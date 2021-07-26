@@ -175,35 +175,25 @@ export interface AddVitePluginHookOptions extends AddPluginHookOptions {
 /**
  * Append Webpack plugin to the config.
  */
-export function addWebpackPlugin (
-  plugin: WebpackPluginInstance,
-  options: AddWebpackPluginHookOptions = {}
-) {
+export function addWebpackPlugin (plugin: WebpackPluginInstance, options: AddWebpackPluginHookOptions = {}) {
   const nuxt = useNuxt()
 
-  const {
-    server = true,
-    client = true,
-    dev = true,
-    build = true
-  } = options
-
-  if (!dev && nuxt.options.dev) {
+  if (options.dev === false && nuxt.options.dev) {
     return
   }
-  if (!build && nuxt.options.build) {
+  if (options.build === false && nuxt.options.build) {
     return
   }
 
   nuxt.hook('webpack:config', (configs: WebpackConfig[]) => {
-    if (server) {
+    if (options.server !== false) {
       const config = configs.find(i => i.name === 'server')
       if (config) {
         config.plugins = config.plugins || []
         config.plugins.push(plugin)
       }
     }
-    if (client) {
+    if (options.client !== false) {
       const config = configs.find(i => i.name === 'client')
       if (config) {
         config.plugins = config.plugins || []
@@ -216,21 +206,13 @@ export function addWebpackPlugin (
 /**
  * Append Vite plugin to the config.
  */
-export function addVitePlugin (
-  plugin: VitePlugin,
-  options: AddVitePluginHookOptions = {}
-) {
+export function addVitePlugin (plugin: VitePlugin, options: AddVitePluginHookOptions = {}) {
   const nuxt = useNuxt()
 
-  const {
-    dev = true,
-    build = true
-  } = options
-
-  if (!dev && nuxt.options.dev) {
+  if (options.dev === false && nuxt.options.dev) {
     return
   }
-  if (!build && nuxt.options.build) {
+  if (options.build === false && nuxt.options.build) {
     return
   }
 
