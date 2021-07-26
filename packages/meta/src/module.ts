@@ -1,4 +1,4 @@
-import { normalize, resolve } from 'upath'
+import { resolve } from 'upath'
 import { addTemplate, defineNuxtModule } from '@nuxt/kit'
 
 export default defineNuxtModule({
@@ -14,7 +14,7 @@ export default defineNuxtModule({
     nuxt.options.alias['@nuxt/meta'] = resolve(runtimeDir, 'index')
 
     const { dst: implementation } = addTemplate({
-      src: normalize(require.resolve(resolve(runtimeDir, 'vueuse-head'))),
+      src: resolve(runtimeDir, 'vueuse-head.mjs'),
       options
     })
 
