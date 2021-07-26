@@ -1,10 +1,11 @@
 import { promises as fsp } from 'fs'
 import { relative, resolve } from 'upath'
 import type { Argv } from 'mri'
-import { cyan, green } from 'colorette'
+import { cyan } from 'colorette'
 
 import { requireModule, getModulePaths, getNearestPackage } from '../utils/cjs'
 import { exists } from '../utils/fs'
+import { success } from '../utils/log'
 
 export async function invoke (args: Argv) {
   process.env.NODE_ENV = process.env.NODE_ENV || 'production'
@@ -45,5 +46,5 @@ export async function invoke (args: Argv) {
 
   await fsp.writeFile(declarationPath, declaration)
 
-  console.log(green('✔'), 'Generated', cyan(relative(process.cwd(), declarationPath)))
+  success('Generated', cyan(relative(process.cwd(), declarationPath)))
 }
