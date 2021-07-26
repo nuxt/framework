@@ -4,7 +4,7 @@ import { loading as loadingTemplate } from '@nuxt/design'
 import chokidar, { FSWatcher } from 'chokidar'
 import debounce from 'debounce'
 import { stat } from 'fs-extra'
-import { createApp, Middleware } from 'h3'
+import { createApp, Middleware, useBase } from 'h3'
 import { createProxy } from 'http-proxy'
 import { listen, Listener, ListenOptions } from 'listhen'
 import servePlaceholder from 'serve-placeholder'
@@ -12,6 +12,7 @@ import serveStatic from 'serve-static'
 import { resolve } from 'upath'
 import type { Server } from 'connect'
 import type { NitroContext } from '../context'
+import { handleVfs } from './vfs'
 
 export function createDevServer (nitroContext: NitroContext) {
   // Worker
@@ -57,6 +58,9 @@ export function createDevServer (nitroContext: NitroContext) {
   app.use(nitroContext._nuxt.publicPath, serveStatic(resolve(nitroContext._nuxt.buildDir, 'dist/client')))
   app.use(nitroContext._nuxt.routerBase, serveStatic(resolve(nitroContext._nuxt.publicDir)))
 
+  // debugging endpoint to view vfs
+  app.use('/_vfs', useBase('/_vfs', handleVfs(nitroContext)))
+
   // Dynamic Middlwware
   const legacyMiddleware = createDynamicMiddleware()
   const devMiddleware = createDynamicMiddleware()
@@ -93,7 +97,7 @@ export function createDevServer (nitroContext: NitroContext) {
   }
 
   // Watch for dist and reload worker
-  const pattern = '**/*.{js,json}'
+  const pattern = '**/*.{js,json,cjs,mjs}'
   const events = ['add', 'change']
   let watcher: FSWatcher
   function watch () {

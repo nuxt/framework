@@ -18,11 +18,17 @@ export async function buildServer (ctx: ViteBuildContext) {
       'typeof location': '"undefined"',
       'typeof XMLHttpRequest': '"undefined"'
     },
+    resolve: {
+      alias: {
+        '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/server')
+      }
+    },
     ssr: {
       external: [
         'axios'
       ],
       noExternal: [
+        ...ctx.nuxt.options.build.transpile.filter(i => typeof i === 'string'),
         '@nuxt/app'
       ]
     },
