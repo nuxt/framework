@@ -5,7 +5,6 @@ import { useMeta } from './composables'
 // @ts-ignore
 import metaConfig from '#build/meta.config.mjs'
 
-console.log({ metaConfig })
 export default defineNuxtPlugin((nuxt) => {
   useMeta(metaConfig.globalMeta)
 
