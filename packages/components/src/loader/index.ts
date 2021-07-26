@@ -13,7 +13,9 @@ export const LoaderPlugin = createUnplugin((options: LoaderOptions) => ({
   transformInclude (id) {
     const { pathname, search } = parseURL(id)
     const query = parseQuery(search)
-    return pathname.endsWith('.vue') && query.type !== 'style'
+    // we only transform render functions
+    // from `type=template` (in Webpack) and bare `.vue` file (in Vite)
+    return pathname.endsWith('.vue') && (query.type === 'template' || !search)
   },
   transform (code) {
     return transform(code, options.getComponents())
