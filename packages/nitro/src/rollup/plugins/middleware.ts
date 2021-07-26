@@ -3,11 +3,12 @@ import { relative } from 'upath'
 import { table, getBorderCharacters } from 'table'
 import isPrimitive from 'is-primitive'
 import stdenv from 'std-env'
+import type { Middleware } from 'h3'
 import type { ServerMiddleware } from '../../server/middleware'
 import virtual from './virtual'
 
 export function middleware (getMiddleware: () => ServerMiddleware[]) {
-  const getImportId = p => '_' + hasha(p).substr(0, 6)
+  const getImportId = (p: string | Middleware) => '_' + hasha(p.toString()).substr(0, 6)
 
   let lastDump = ''
 
@@ -26,10 +27,19 @@ export function middleware (getMiddleware: () => ServerMiddleware[]) {
           }
         }
 
-        return `
-  ${middleware.filter(m => m.lazy === false).map(m => `import ${getImportId(m.handle)} from '${m.handle}';`).join('\n')}
+        // Imports take priority
+        const imports = middleware.filter(m => m.lazy === false).map(m => m.handle)
 
-  ${middleware.filter(m => m.lazy !== false).map(m => `const ${getImportId(m.handle)} = () => import('${m.handle}');`).join('\n')}
+        // Lazy imports should fill in the gaps
+        const lazyImports = middleware.filter((m, index) =>
+          // Skip prior lazy imports and non-lazy imports of the same handle
+          !middleware.some((mw, i) => (i < index || m.lazy === false) && mw.handle === m.handle)
+        ).map(m => m.handle)
+
+        return `
+  ${imports.map(handle => `import ${getImportId(handle)} from '${handle}';`).join('\n')}
+
+  ${lazyImports.map(handle => `const ${getImportId(handle)} = () => import('${handle}');`).join('\n')}
 
   const middleware = [
     ${middleware.map(m => `{ route: '${m.route}', handle: ${getImportId(m.handle)}, lazy: ${m.lazy || true}, promisify: ${m.promisify !== undefined ? m.promisify : true} }`).join(',\n')}
