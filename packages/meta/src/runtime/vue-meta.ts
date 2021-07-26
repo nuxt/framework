@@ -7,6 +7,13 @@ export default defineNuxtPlugin((nuxt) => {
 
   nuxt.app.use(manager)
 
+  manager.addMeta({
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+    ]
+  })
+
   if (process.client) {
     const teleportTarget = document.createElement('div')
     teleportTarget.id = 'head-target'
