@@ -9,8 +9,8 @@ export default defineNuxtPlugin((nuxt) => {
 
   manager.addMeta({
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+      { charset: '<%= options.charset %>' },
+      { name: 'viewport', content: '<%= options.viewport %>' }
     ]
   })
 
