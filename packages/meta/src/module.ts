@@ -1,5 +1,5 @@
 import { resolve } from 'upath'
-import { defineNuxtModule, addTemplate } from '@nuxt/kit'
+import { defineNuxtModule } from '@nuxt/kit'
 import type { MetaObject } from '@nuxt/meta'
 
 export default defineNuxtModule({
