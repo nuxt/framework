@@ -29,7 +29,7 @@ export function middleware (getMiddleware: () => ServerMiddleware[]) {
         }
 
         // Imports take priority
-        const imports = middleware.filter(m => m.lazy === false).map(m => m.handle)
+        const imports = unique(middleware.filter(m => m.lazy === false).map(m => m.handle))
 
         // Lazy imports should fill in the gaps
         const lazyImports = unique(middleware.filter(m => m.lazy !== false && !imports.includes(m.handle)).map(m => m.handle))
