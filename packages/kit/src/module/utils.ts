@@ -139,7 +139,22 @@ export function extendRoutes (fn) {
   nuxt.options.router.extendRoutes = chainFn(nuxt.options.router.extendRoutes, fn)
 }
 
-export interface AddWebpackPluginHookOptions {
+export interface AddPluginHookOptions {
+  /**
+   * Install plugin on dev
+   *
+   * @default true
+   */
+   dev?: boolean
+   /**
+    * Install plugin on build
+    *
+    * @default true
+    */
+   build?: boolean
+}
+
+export interface AddWebpackPluginHookOptions extends AddPluginHookOptions {
   /**
    * Install plugin on server side
    *
@@ -152,33 +167,9 @@ export interface AddWebpackPluginHookOptions {
    * @default true
    */
   client?: boolean
-  /**
-   * Install plugin on dev
-   *
-   * @default true
-   */
-  dev?: boolean
-  /**
-   * Install plugin on build
-   *
-   * @default true
-   */
-  build?: boolean
 }
 
-export interface AddVitePluginHookOptions {
-  /**
-   * Install plugin on dev
-   *
-   * @default true
-   */
-  dev?: boolean
-  /**
-   * Install plugin on build
-   *
-   * @default true
-   */
-  build?: boolean
+export interface AddVitePluginHookOptions extends AddPluginHookOptions {
 }
 
 /**
