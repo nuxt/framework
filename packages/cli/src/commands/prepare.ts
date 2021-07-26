@@ -13,11 +13,12 @@ export async function invoke (args: Argv) {
   const { loadNuxt } = requireModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
   const nuxt = await loadNuxt({ rootDir })
 
+  const defaults = nuxt.options._majorVersion === 3
+    ? ['@nuxt/app', '@nuxt/nitro', '@nuxt/kit']
+    : ['@nuxt/kit']
+
   const types = [
-    // Built-ins
-    '@nuxt/kit',
-    '@nuxt/app',
-    '@nuxt/nitro',
+    ...defaults,
     // Modules
     ...nuxt.options.buildModules,
     ...nuxt.options.modules,
