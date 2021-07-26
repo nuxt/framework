@@ -27,6 +27,7 @@ export default defineNuxtModule({
         path: 'meta.config.mjs',
         compile: () => 'export default ' + JSON.stringify({ globalMeta })
       })
+
       // Add library specific plugin
       app.plugins.push({ src: resolve(runtimeDir, 'lib/vueuse-head.plugin') })
 
