@@ -50,7 +50,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
 
   // Nuxt 3
   if (opts.version !== 2) {
-    const { loadNuxt } = requireModule('nuxt3', resolveOpts) as typeof import('nuxt3')
+    const { loadNuxt } = requireModule('nuxt3', resolveOpts)
     const nuxt = await loadNuxt(opts)
     return nuxt
   }
@@ -72,7 +72,7 @@ export function buildNuxt (nuxt: Nuxt): Promise<any> {
 
   // Nuxt 3
   if (nuxt.options._majorVersion === 3) {
-    const { build } = requireModule('nuxt3', resolveOpts) as typeof import('nuxt3')
+    const { build } = requireModule('nuxt3', resolveOpts)
     return build(nuxt)
   }
 
