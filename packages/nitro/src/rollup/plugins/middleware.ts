@@ -6,6 +6,8 @@ import stdenv from 'std-env'
 import type { ServerMiddleware } from '../../server/middleware'
 import virtual from './virtual'
 
+const unique = (arr: any[]) => Array.from(new Set(arr))
+
 export function middleware (getMiddleware: () => ServerMiddleware[]) {
   const getImportId = p => '_' + hasha(p).substr(0, 6)
 
@@ -30,10 +32,7 @@ export function middleware (getMiddleware: () => ServerMiddleware[]) {
         const imports = middleware.filter(m => m.lazy === false).map(m => m.handle)
 
         // Lazy imports should fill in the gaps
-        const lazyImports = middleware.filter((m, index) =>
-          // Skip prior lazy imports and non-lazy imports of the same handle
-          !middleware.some((mw, i) => (i < index || m.lazy === false) && mw.handle === m.handle)
-        ).map(m => m.handle)
+        const lazyImports = unique(middleware.filter(m => m.lazy !== false && !imports.includes(m.handle)).map(m => m.handle))
 
         return `
   ${imports.map(handle => `import ${getImportId(handle)} from '${handle}';`).join('\n')}
