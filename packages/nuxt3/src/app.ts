@@ -11,7 +11,7 @@ export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp 
     dir: nuxt.options.srcDir,
     extensions: nuxt.options.extensions,
     plugins: [],
-    templates: {}
+    templates: []
   } as NuxtApp)
 }
 

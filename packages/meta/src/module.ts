@@ -1,5 +1,6 @@
 import { resolve } from 'upath'
-import { addTemplate, defineNuxtModule } from '@nuxt/kit'
+import { defineNuxtModule, addTemplate } from '@nuxt/kit'
+import type { MetaObject } from '@nuxt/meta'
 
 export default defineNuxtModule({
   name: 'meta',
@@ -13,20 +14,27 @@ export default defineNuxtModule({
     nuxt.options.build.transpile.push('@nuxt/meta', runtimeDir)
     nuxt.options.alias['@nuxt/meta'] = resolve(runtimeDir, 'index')
 
-    nuxt.hook('app:resolve', (app) => {
-      const { dst: implementation } = addTemplate({
-        src: resolve(runtimeDir, 'vueuse-head.mjs'),
-        options: {
-          defaults: JSON.stringify({
-            meta: [
-              { charset: options.charset },
-              { name: 'viewport', content: options.viewport }
-            ]
-          })
-        }
+    const globalMeta: MetaObject = {
+      meta: [
+        { charset: options.charset },
+        { name: 'viewport', content: options.viewport }
+      ]
+    }
+
+    nuxt.hook('app:templates', (app) => {
+      // Add global meta configuration
+      app.templates.push({
+        path: 'meta.config.mjs',
+        compile: () => 'export default ' + JSON.stringify({ globalMeta })
       })
-      app.plugins.push({ src: resolve(nuxt.options.buildDir, implementation) })
-      app.plugins.push({ src: resolve(runtimeDir, 'meta') })
+      // Add library specific plugin
+      app.plugins.push({ src: resolve(runtimeDir, 'lib/vueuse-head.plugin') })
+
+      // Add generic plugin
+      app.plugins.push({
+        src: resolve(runtimeDir, 'plugin'),
+        options: { globalMeta }
+      })
     })
   }
 })
