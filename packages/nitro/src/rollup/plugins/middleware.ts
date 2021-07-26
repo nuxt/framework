@@ -3,12 +3,11 @@ import { relative } from 'upath'
 import { table, getBorderCharacters } from 'table'
 import isPrimitive from 'is-primitive'
 import stdenv from 'std-env'
-import type { Middleware } from 'h3'
 import type { ServerMiddleware } from '../../server/middleware'
 import virtual from './virtual'
 
 export function middleware (getMiddleware: () => ServerMiddleware[]) {
-  const getImportId = (p: string | Middleware) => '_' + hasha(p.toString()).substr(0, 6)
+  const getImportId = p => '_' + hasha(p).substr(0, 6)
 
   let lastDump = ''
 
