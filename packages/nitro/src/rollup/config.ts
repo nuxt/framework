@@ -70,7 +70,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     input: resolvePath(nitroContext, nitroContext.entry),
     output: {
       dir: nitroContext.output.serverDir,
-      entryFileNames: 'index.mjs',
+      entryFileNames: nitroContext.output.entry,
       chunkFileNames (chunkInfo) {
         let prefix = ''
         const modules = Object.keys(chunkInfo.modules)

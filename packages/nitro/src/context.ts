@@ -34,6 +34,7 @@ export interface NitroContext {
     dir: string
     serverDir: string
     publicDir: string
+    entry: string
   }
   storage: StorageOptions,
   assets: AssetOptions,
@@ -90,7 +91,8 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
     output: {
       dir: '{{ _nuxt.rootDir }}/.output',
       serverDir: '{{ output.dir }}/server',
-      publicDir: '{{ output.dir }}/public'
+      publicDir: '{{ output.dir }}/public',
+      entry: 'index.mjs'
     },
     storage: { mounts: { } },
     assets: {
