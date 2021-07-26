@@ -13,10 +13,7 @@ export const LoaderPlugin = createUnplugin((options: LoaderOptions) => ({
   transformInclude (id) {
     const { pathname, search } = parseURL(id)
     const query = parseQuery(search)
-    if (!pathname.endsWith('.vue')) {
-      return false
-    }
-    return query.type !== 'style'
+    return pathname.endsWith('.vue') && query.type !== 'style'
   },
   transform (code) {
     return transform(code, options.getComponents())
