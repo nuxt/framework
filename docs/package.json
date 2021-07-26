@@ -1,8 +1,9 @@
 {
   "private": true,
   "scripts": {
-    "dev": "nuxt dev",
-    "build": "nuxt generate --force-build"
+    "dev": "yarn gendocs && nuxt dev",
+    "build": "yarn gendocs && nuxt generate --force-build",
+    "gendocs": "jiti ./scripts/gen-docs.ts"
   },
   "devDependencies": {
     "@docus/app": "^1.0.30",
@@ -10,6 +11,13 @@
     "@docus/social-image": "^1.0.2",
     "@docus/theme": "^1.0.7",
     "@docus/twitter": "^1.0.3",
-    "@nuxt/typescript-build": "^2.1.0"
+    "@nuxt/typescript-build": "^2.1.0",
+    "fs-extra": "^10.0.0",
+    "jiti": "^1.11.0",
+    "mkdirp": "^1.0.4",
+    "rimraf": "^3.0.2",
+    "scule": "^0.2.1",
+    "untyped": "^0.2.7",
+    "upath": "^2.0.1"
   }
 }

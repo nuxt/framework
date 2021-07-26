@@ -10892,7 +10892,7 @@ unstorage@^0.2.3:
     ufo "^0.7.5"
     ws "^7.4.5"
 
-untyped@^0.2.5:
+untyped@^0.2.5, untyped@^0.2.7:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/untyped/-/untyped-0.2.7.tgz#7e9badb916388a5bb0f97aa2b643ee5b0033d241"
   integrity sha512-5/1MN1Am+W0d7hbg3bPY1N6sfc7HygsGRtdrcp6UnoDxfz6R99kA1liHSp/qiX/lCUbTsLWKGTr1Kojtka/fmA==
