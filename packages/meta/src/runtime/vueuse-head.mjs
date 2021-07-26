@@ -7,12 +7,7 @@ export default defineNuxtPlugin((nuxt) => {
 
   nuxt.app.use(head)
 
-  head.addHeadObjs(ref({
-    meta: [
-      { charset: '<%= options.charset %>' },
-      { name: 'viewport', content: '<%= options.viewport %>' }
-    ]
-  }))
+  head.addHeadObjs(ref(<%= options.defaults %>))
 
   if (process.server) {
     nuxt.ssrContext.renderMeta = () => renderHeadToString(head)

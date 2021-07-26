@@ -7,12 +7,7 @@ export default defineNuxtPlugin((nuxt) => {
 
   nuxt.app.use(manager)
 
-  manager.addMeta({
-    meta: [
-      { charset: '<%= options.charset %>' },
-      { name: 'viewport', content: '<%= options.viewport %>' }
-    ]
-  })
+  manager.addMeta(<%= options.defaults %>)
 
   if (process.client) {
     const teleportTarget = document.createElement('div')
