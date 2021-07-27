@@ -1,6 +1,15 @@
 import { withDocus } from '@docus/app'
 
 export default withDocus({
+  // TODO: Fix that from @docus/core
+  // Follow: https://github.com/docusgen/core/issues/22
+  generate: {
+    routes () {
+      return [
+        '/get-started/installation'
+      ]
+    }
+  },
   // TODO: Remove that temporary fix
   // Seem to be related to latest {Vite/nuxt-vite} version
   vite: {
