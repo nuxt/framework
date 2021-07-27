@@ -1156,10 +1156,10 @@
     node-fetch "^2.6.1"
     puppeteer-core "^10.1.0"
 
-"@docus/theme@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@docus/theme/-/theme-1.0.5.tgz#7c409728b2b9d111b086cf9673352588d8d010bc"
-  integrity sha512-Jyn9txeoovHQyb6bTRNQbOBBJBMck3kqla87B4B64pWQ91pQb9WXU74R7/Mg5YBOnRSfeL5CZv50OpMhsgaMHw==
+"@docus/theme@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@docus/theme/-/theme-1.0.7.tgz#b3e2ae9e824ed988f0038e48024d8045383c0db6"
+  integrity sha512-M3D2srTt0ZHZCwzuxB45n5FSch+NyBC/hzWCtNqWGGwwCatCOFBgcdFSIoPAgmzEPC2tt2GZq+5eNNHH1WDBbA==
   dependencies:
     "@docsearch/css" "^1.0.0-alpha.28"
     "@docsearch/js" "^1.0.0-alpha.28"
@@ -1170,8 +1170,8 @@
     fs-extra "^10.0.0"
     glob "^7.1.7"
     graceful-fs "^4.2.6"
-    jiti "^1.10.1"
-    nuxt-windicss "^1.1.3"
+    jiti "^1.11.0"
+    nuxt-windicss "^1.2.1"
     ohmyfetch "^0.1.8"
     prism-theme-vars "^0.2.2"
     scule "^0.2.1"
@@ -7559,7 +7559,7 @@ nuxt-vite@^0.1.1:
     vite "^2.3.4"
     vite-plugin-vue2 "^1.5.1"
 
-nuxt-windicss@^1.1.3:
+nuxt-windicss@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/nuxt-windicss/-/nuxt-windicss-1.2.1.tgz#28160279be3cff08066c8d48f8f88ccfd84d9a88"
   integrity sha512-Jiml991/VCnKnopoilbmGrOC6Ax+Tumbmaf8Lr2LSMrEi4HLG0C99uDdznVbHNWQRK0axvqndWUHGkzFp2aCLg==
