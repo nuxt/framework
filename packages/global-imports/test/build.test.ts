@@ -3,7 +3,7 @@ import { BuildPlugin } from '../src/build'
 
 describe('module:global-imports:build', () => {
   const transform = BuildPlugin.raw({
-    ref: { name: 'ref', module: 'vue' }
+    ref: 'vue'
   }).transform
 
   it('should correct inject', () => {

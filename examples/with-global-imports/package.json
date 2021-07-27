@@ -1,0 +1,13 @@
+{
+  "name": "example-with-global-imports",
+  "private": true,
+  "devDependencies": {
+    "@nuxt/global-imports": "*",
+    "nuxt3": "latest"
+  },
+  "scripts": {
+    "dev": "nu dev",
+    "build": "nu build",
+    "start": "node .output/server/index.mjs"
+  }
+}

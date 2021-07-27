@@ -4,13 +4,12 @@
   "repository": "nuxt/framework",
   "license": "MIT",
   "exports": {
-    ".": "./dist/runtime/index.mjs",
-    "./module": {
+    ".": {
       "import": "./dist/module.mjs",
       "require": "./dist/module.js"
     }
   },
-  "types": "./dist/runtime/index.d.ts",
+  "types": "./dist/module.d.ts",
   "files": [
     "dist"
   ],

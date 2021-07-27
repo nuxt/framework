@@ -27,14 +27,14 @@ export const BuildPlugin = createUnplugin((map: IdentifierMap) => {
       const matched = new Set(Array.from(code.matchAll(regex)).map(i => i[1]))
 
       // remove those already imported
-      Array.from(code.matchAll(/\bimport\s*\{(.*?)\}\s*from\b/g))
+      Array.from(code.matchAll(/\bimport\s*\{([\s\S]*?)\}\s*from\b/g))
         .flatMap(i => i[1]?.split(',') || [])
         .forEach(i => matched.delete(i.trim()))
 
       // TODO: group by module name
       const imports = Array.from(matched).map((name) => {
-        const identifier = map[name]!
-        return `import { ${identifier.name} } from '${identifier.module}';`
+        const moduleName = map[name]!
+        return `import { ${name} } from '${moduleName}';`
       }).join('')
 
       return imports + code

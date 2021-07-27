@@ -1,17 +1,21 @@
-import { resolve } from 'upath'
-import { defineNuxtModule } from '@nuxt/kit'
+import { addVitePlugin, addWebpackPlugin, defineNuxtModule } from '@nuxt/kit'
+import { generateTemplate } from './dev'
+import { BuildPlugin } from './build'
 
 export default defineNuxtModule({
   name: 'global-imports',
   setup (_options, nuxt) {
-    const runtimeDir = resolve(__dirname, 'runtime')
+    // TODO: provide full list preset for composition API
+    const identifiers = {
+      ref: 'vue',
+      computed: 'vue'
+    }
 
-    nuxt.options.build.transpile.push('@nuxt/meta', runtimeDir)
-    nuxt.options.alias['@nuxt/meta'] = resolve(runtimeDir, 'index')
-
-    nuxt.hook('app:resolve', (app) => {
-      app.plugins.push({ src: resolve(runtimeDir, 'vueuse-head') })
-      app.plugins.push({ src: resolve(runtimeDir, 'meta') })
-    })
+    if (nuxt.options.dev) {
+      generateTemplate(nuxt, identifiers)
+    } else {
+      addVitePlugin(BuildPlugin.vite(identifiers))
+      addWebpackPlugin(BuildPlugin.webpack(identifiers))
+    }
   }
 })
