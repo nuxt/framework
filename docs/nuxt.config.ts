@@ -2,6 +2,7 @@ import { withDocus } from '@docus/app'
 
 export default withDocus({
   // TODO: Remove that temporary fix
+  // Seem to be related to latest {Vite/nuxt-vite} version
   vite: {
     server: {
       fs: {
