@@ -94,15 +94,16 @@ export function normalizePlugin (plugin: NuxtPlugin | string): NuxtPlugin {
  * })
  * ```
  */
-export function addPlugin (plugin: NuxtPlugin, append?: Boolean) {
+export function addPlugin (plugin: NuxtPlugin | string, append?: Boolean) {
   plugin = normalizePlugin(plugin)
-  useNuxt().options.plugins[append ? 'push' : 'prepend'](normalizePlugin(plugin))
+  useNuxt().options.plugins[append ? 'push' : 'unshift'](plugin)
+  return plugin
 }
 
 /**
  * Adds a template and registers as a nuxt plugin.
  */
-export function addPluginTemplate (plugin: NuxtPluginTemplate, append?: Boolean): NuxtPluginTemplate {
+export function addPluginTemplate (plugin: NuxtPluginTemplate | string, append?: Boolean): NuxtPluginTemplate {
   const template = addTemplate(plugin)
   // @ts-ignore
   return addPlugin(template, append)
