@@ -97,23 +97,24 @@ export function normalizePlugin (plugin: NuxtPlugin | string): NuxtPlugin {
  * })
  * ```
  */
-export function addPlugin (plugin: NuxtPlugin | string, append?: Boolean) {
+export interface AddPluginOptions { append?: Boolean }
+export function addPlugin (plugin: NuxtPlugin | string, opts: AddPluginOptions = {}) {
   plugin = normalizePlugin(plugin)
-  useNuxt().options.plugins[append ? 'push' : 'unshift'](plugin)
+  useNuxt().options.plugins[opts.append ? 'push' : 'unshift'](plugin)
   return plugin
 }
 
 /**
  * Adds a template and registers as a nuxt plugin.
  */
-export function addPluginTemplate (plugin: NuxtPluginTemplate | string, append?: Boolean): NuxtPluginTemplate {
+export function addPluginTemplate (plugin: NuxtPluginTemplate | string, opts: AddPluginOptions = {}): NuxtPluginTemplate {
   if (typeof plugin === 'string') {
     plugin = { src: plugin }
   }
   if (!plugin.src) {
     plugin.src = addTemplate(plugin).dst
   }
-  return addPlugin(plugin, append)
+  return addPlugin(plugin, opts)
 }
 
 /** Adds a new server middleware to the end of the server middleware array. */
