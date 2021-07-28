@@ -163,7 +163,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     inline: nitroContext.node === false || nitroContext.inlineDynamicImports,
     globbyOptions: {
       ignore: [
-        'server.js'
+        'server.cjs'
       ]
     }
   }))
