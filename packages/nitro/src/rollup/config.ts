@@ -163,7 +163,10 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     inline: nitroContext.node === false || nitroContext.inlineDynamicImports,
     globbyOptions: {
       ignore: [
-        'server.js'
+        'client.manifest.mjs',
+        'server.cjs',
+        'server.mjs',
+        'server.manifest.mjs'
       ]
     }
   }))
@@ -274,6 +277,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // https://github.com/rollup/plugins/tree/master/packages/commonjs
   rollupConfig.plugins.push(commonjs({
+    esmExternals: id => !id.startsWith('unenv/'),
     requireReturnsDefault: 'auto'
   }))
 
