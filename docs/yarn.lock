@@ -1708,14 +1708,14 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.15.tgz#6a9d143f7f4f49db2d782f9e1c8839a29b43ae23"
   integrity sha512-15spi3V28QdevleWBNXE4pIls3nFZmBbUGrW9IVPwiQczuSb9n76TCB4bsk8TSel+I1OkHEdPhu5QKMfY6rQHA==
 
-"@rollup/plugin-alias@^3.1.2":
+"@rollup/plugin-alias@^3.1.2", "@rollup/plugin-alias@^3.1.4":
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-alias/-/plugin-alias-3.1.4.tgz#47774f4ff0eab5937f7acb392cf2b89921f03b7d"
   integrity sha512-9YN5h0bWlYFV0zpXwwAWGPUWh/A+kkoCqwrMb43LnuGfhnQqOjsGR+5uh4LGpAZbBBj8qR1Hno6CZadZs7hyCQ==
   dependencies:
     slash "^3.0.0"
 
-"@rollup/plugin-commonjs@^19.0.0":
+"@rollup/plugin-commonjs@^19.0.0", "@rollup/plugin-commonjs@^19.0.1":
   version "19.0.2"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-commonjs/-/plugin-commonjs-19.0.2.tgz#1ccc3d63878d1bc9846f8969f09dd3b3e4ecc244"
   integrity sha512-gBjarfqlC7qs0AutpRW/hrFNm+cd2/QKxhwyFa+srbg1oX7rDsEU3l+W7LAUhsAp9mPJMAkXDhLbQaVwEaE8bA==
@@ -1735,7 +1735,7 @@
   dependencies:
     "@rollup/pluginutils" "^3.0.8"
 
-"@rollup/plugin-node-resolve@^13.0.0":
+"@rollup/plugin-node-resolve@^13.0.0", "@rollup/plugin-node-resolve@^13.0.2":
   version "13.0.4"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-node-resolve/-/plugin-node-resolve-13.0.4.tgz#b10222f4145a019740acb7738402130d848660c0"
   integrity sha512-eYq4TFy40O8hjeDs+sIxEH/jc9lyuI2k9DM557WN6rO5OpnC2qXMBNj4IKH1oHrnAazL49C5p0tgP0/VpqJ+/w==
@@ -4652,7 +4652,7 @@ es-to-primitive@^1.2.1:
     is-date-object "^1.0.1"
     is-symbol "^1.0.2"
 
-esbuild@^0.12.8, esbuild@^0.12.9:
+esbuild@^0.12.15, esbuild@^0.12.8, esbuild@^0.12.9:
   version "0.12.16"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.12.16.tgz#c397144ce13b445a6ead9c1f747da11f79ec5e67"
   integrity sha512-XqI9cXP2bmQ6MREIqrYBb13KfYFSERsV1+e5jSVWps8dNlLZK+hln7d0mznzDIpfISsg/AgQW0DW3kSInXWhrg==
@@ -7151,7 +7151,7 @@ mkdirp@^1.0.3, mkdirp@^1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-mkdist@^0.3.1:
+mkdist@^0.3.1, mkdist@^0.3.3:
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/mkdist/-/mkdist-0.3.3.tgz#d36f5e068d711dee6d3ac8993bf82672abc1321b"
   integrity sha512-PDKLTflQHifHwbyDQxSqtT9jUThT2jgeRUnRdIF9tsFLLyoie+nYX12aLg2bKUKoBdluPVRL9kzv8h/nliH/kg==
@@ -9516,7 +9516,7 @@ rollup-plugin-esbuild@^4.5.0:
     joycon "^3.0.1"
     jsonc-parser "^3.0.0"
 
-rollup@^2.35.1, rollup@^2.38.5, rollup@^2.52.0:
+rollup@^2.35.1, rollup@^2.38.5, rollup@^2.52.0, rollup@^2.53.2:
   version "2.55.0"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.55.0.tgz#e23bb51194d9706b4661515a14feeefaaa1830c2"
   integrity sha512-Atc3QqelKzrKwRkqnSdq0d2Mi8e0iGuL+kZebKMZ4ysyWHD5hw9VfVCAuODIW5837RENV8LXcbAEHurYf+ArvA==
@@ -10577,7 +10577,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^4.3.2:
+typescript@^4.3.2, typescript@^4.3.5:
   version "4.3.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.3.5.tgz#4d1c37cc16e893973c45a06886b7113234f119f4"
   integrity sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
@@ -10642,6 +10642,33 @@ unbuild@^0.3.2:
     scule "^0.2.1"
     typescript "^4.3.2"
     untyped "^0.2.5"
+    upath "^2.0.1"
+
+unbuild@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/unbuild/-/unbuild-0.4.0.tgz#df273bfd45b1be731dcd710bed857ed0cfb3eaee"
+  integrity sha512-kz/WfKevqF8VSGEnD2x327Rzile0BBd1XY7AdJpRSm8jvCYQaH8J/7O+doEk9yuewMgVupJ8xSQPZKzu8FN2xw==
+  dependencies:
+    "@rollup/plugin-alias" "^3.1.4"
+    "@rollup/plugin-commonjs" "^19.0.1"
+    "@rollup/plugin-json" "^4.1.0"
+    "@rollup/plugin-node-resolve" "^13.0.2"
+    chalk "^4.1.1"
+    consola "^2.15.3"
+    defu "^5.0.0"
+    esbuild "^0.12.15"
+    jiti "^1.10.1"
+    mkdirp "^1.0.4"
+    mkdist "^0.3.3"
+    mri "^1.1.6"
+    pretty-bytes "^5.6.0"
+    rimraf "^3.0.2"
+    rollup "^2.53.2"
+    rollup-plugin-dts "^3.0.2"
+    rollup-plugin-esbuild "^4.5.0"
+    scule "^0.2.1"
+    typescript "^4.3.5"
+    untyped "^0.2.6"
     upath "^2.0.1"
 
 unbzip2-stream@1.3.3:
@@ -10885,7 +10912,7 @@ unstorage@^0.2.3:
     ufo "^0.7.5"
     ws "^7.4.5"
 
-untyped@^0.2.5, untyped@^0.2.7:
+untyped@^0.2.5, untyped@^0.2.6, untyped@^0.2.7:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/untyped/-/untyped-0.2.7.tgz#7e9badb916388a5bb0f97aa2b643ee5b0033d241"
   integrity sha512-5/1MN1Am+W0d7hbg3bPY1N6sfc7HygsGRtdrcp6UnoDxfz6R99kA1liHSp/qiX/lCUbTsLWKGTr1Kojtka/fmA==
