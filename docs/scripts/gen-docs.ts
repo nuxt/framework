@@ -145,7 +145,7 @@ async function generateDocs ({ outDir }) {
   console.log(`Generate done in ${(Date.now() - start) / 1000} seconds!`)
 }
 
-// main().catch((err) => {
-//   console.error(err)
-//   process.exit(1)
-// })
+main().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})
