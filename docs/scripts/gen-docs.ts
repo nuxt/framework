@@ -108,7 +108,7 @@ async function generateDocs ({ outDir }) {
   // Prepare content directory
   const start = Date.now()
   console.log('Generating docs to ' + outDir)
-  await rm(outDir, { recursive: true })
+  await rm(outDir, { recursive: true }).catch(() => {})
   await mkdirp(outDir)
 
   const rootSchema = require('../../packages/kit/schema/config.schema.json') as Schema
