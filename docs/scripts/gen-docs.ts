@@ -10,7 +10,7 @@ export async function main () {
   await generateDocs({ outDir: configDir })
 }
 
-function generateMarkdown (schema: Schema, title: string, level: string, parentVersions: string[] = ['3']) {
+function generateMarkdown (schema: Schema, title: string, level: string, parentVersions: string[] = []) {
   const lines: string[] = []
 
   // Skip private
