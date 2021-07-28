@@ -1439,8 +1439,10 @@
     ufo "^0.7.7"
     upath "^2.0.1"
 
-"@nuxt/kit@../packages/kit", "@nuxt/kit@^0.6.4":
+"@nuxt/kit@^0.6.4":
   version "0.6.4"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-0.6.4.tgz#76a81e135bfeb91c0b5eb58435c8e5640046c912"
+  integrity sha512-NsV8TEVN+oTOgJvrsaIuyMaq/mFW+O7Rnz+sGUMlJlUskBC0KyqkrLkclNFyXsrnf4MEudAV+1WwtOyFVODltw==
   dependencies:
     consola "^2.15.3"
     create-require "^1.1.1"
@@ -1448,13 +1450,13 @@
     dotenv "^10.0.0"
     globby "^11.0.4"
     hash-sum "^2.0.0"
-    jiti "^1.11.0"
+    jiti "^1.10.1"
     rc9 "^1.2.0"
     scule "^0.2.1"
     std-env "^2.3.0"
-    ufo "^0.7.7"
-    unctx "^1.0.1"
-    untyped "^0.2.7"
+    ufo "^0.7.5"
+    unctx "^0.0.3"
+    untyped "^0.2.5"
     upath "^2.0.1"
 
 "@nuxt/loading-screen@^2.0.4":
@@ -10678,6 +10680,11 @@ unbzip2-stream@1.3.3:
   dependencies:
     buffer "^5.2.1"
     through "^2.3.8"
+
+unctx@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/unctx/-/unctx-0.0.3.tgz#e06f67d5bebe2babe5a57c1dc13d77255e3458c0"
+  integrity sha512-x+NCoXiYn93laQNnoJGZx2UZj7vv8ViFKadUCDx9S4QoPIkGRCYT0OLUDEMlg/B+Q6bnqdSkPLmiy/kjNIwVyQ==
 
 unctx@^1.0.1:
   version "1.0.1"
