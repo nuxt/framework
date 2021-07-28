@@ -29,6 +29,8 @@ export default withDocus({
   buildModules: [
     '@nuxt/typescript-build',
     '@docus/github',
-    '@docus/twitter'
-  ]
+    '@docus/twitter',
+    require.resolve('./modules/schema.ts')
+  ],
+  watch: [require.resolve('./modules/schema.ts')]
 })
