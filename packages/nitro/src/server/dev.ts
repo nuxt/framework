@@ -4,7 +4,7 @@ import { loading as loadingTemplate } from '@nuxt/design'
 import chokidar, { FSWatcher } from 'chokidar'
 import debounce from 'debounce'
 import { stat } from 'fs-extra'
-import { createApp, Middleware, useBase } from 'h3'
+import { callHandle, createApp, createError, Handle, Middleware, useBase } from 'h3'
 import { createProxy } from 'http-proxy'
 import { listen, Listener, ListenOptions } from 'listhen'
 import servePlaceholder from 'serve-placeholder'
@@ -72,6 +72,9 @@ export function createDevServer (nitroContext: NitroContext) {
 
   // SSR Proxy
   const proxy = createProxy()
+  const proxyHandle: Handle = (req, res) => proxy.web(req, res, { target: workerAddress }, (_err: unknown) => {
+    // console.error('[proxy]', err)
+  })
   app.use((req, res) => {
     if (workerAddress) {
       // Workaround to pass legacy req.spa to proxy
@@ -79,14 +82,12 @@ export function createDevServer (nitroContext: NitroContext) {
       if (req.spa) {
         req.headers['x-nuxt-no-ssr'] = 'true'
       }
-      proxy.web(req, res, { target: workerAddress }, (_err: unknown) => {
-        // console.error('[proxy]', err)
-      })
+      return callHandle(proxyHandle, req, res)
     } else {
       res.setHeader('Content-Type', 'text/html; charset=UTF-8')
       res.end(loadingTemplate({}))
     }
-  }, { promisify: true })
+  })
 
   // Listen
   let listeners: Listener[] = []
