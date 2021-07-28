@@ -90,7 +90,7 @@ export default defineNuxtModule({
       }
     })
 
-    if (nuxt.options.build) {
+    if (!nuxt.options.dev) {
       const options = { getComponents: () => components }
       addWebpackPlugin(loaderPlugin.webpack(options))
       addVitePlugin(loaderPlugin.vite(options))
