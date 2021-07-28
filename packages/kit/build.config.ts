@@ -9,7 +9,7 @@ export default defineBuildConfig({
       name: 'config',
       builder: 'untyped',
       defaults: {
-        rootDir: '<rootDir>'
+        rootDir: '/project/'
       }
     },
     'src/index'
