@@ -9,9 +9,18 @@ import type { NuxtTemplate, NuxtPlugin, NuxtPluginTemplate } from '../types/nuxt
 /**
  * Renders given template using lodash template during build into the project buildDir
  */
-export function addTemplate (template: NuxtTemplate | string) {
-  template = normalizeTemplate(template)
-  useNuxt().options.build.templates.push(template)
+export function addTemplate (_template: NuxtTemplate | string) {
+  const nuxt = useNuxt()
+
+  // Noprmalize template
+  const template = normalizeTemplate(_template)
+
+  // Remove any existing template with the same filename
+  nuxt.options.plugins = nuxt.options.plugins.filter(p => normalizeTemplate(p).filename !== template.filename)
+
+  // Add to templates array
+  nuxt.options.build.templates.push(template)
+
   return template
 }
 
@@ -98,9 +107,18 @@ export function normalizePlugin (plugin: NuxtPlugin | string): NuxtPlugin {
  * ```
  */
 export interface AddPluginOptions { append?: Boolean }
-export function addPlugin (plugin: NuxtPlugin | string, opts: AddPluginOptions = {}) {
-  plugin = normalizePlugin(plugin)
-  useNuxt().options.plugins[opts.append ? 'push' : 'unshift'](plugin)
+export function addPlugin (_plugin: NuxtPlugin | string, opts: AddPluginOptions = {}) {
+  const nuxt = useNuxt()
+
+  // Normalize plugin
+  const plugin = normalizePlugin(_plugin)
+
+  // Remove any existing plugin with the same src
+  nuxt.options.plugins = nuxt.options.plugins.filter(p => normalizePlugin(p).src !== plugin.src)
+
+  // Prepend to array by default to be before user provided plugins since is usually used by modules
+  nuxt.options.plugins[opts.append ? 'push' : 'unshift'](plugin)
+
   return plugin
 }
 
