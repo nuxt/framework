@@ -16,7 +16,8 @@ export function addTemplate (_template: NuxtTemplate | string) {
   const template = normalizeTemplate(_template)
 
   // Remove any existing template with the same filename
-  nuxt.options.plugins = nuxt.options.plugins.filter(p => normalizeTemplate(p).filename !== template.filename)
+  nuxt.options.build.templates = nuxt.options.build.templates
+    .filter(p => normalizeTemplate(p).filename !== template.filename)
 
   // Add to templates array
   nuxt.options.build.templates.push(template)
