@@ -6,6 +6,7 @@
     "gendocs": "jiti ./scripts/gen-docs.ts"
   },
   "devDependencies": {
+    "@nuxt/kit": "../packages/kit",
     "@docus/app": "^1.0.30",
     "@docus/github": "^1.0.3",
     "@docus/social-image": "^1.0.2",
