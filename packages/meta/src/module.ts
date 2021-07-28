@@ -6,7 +6,7 @@ export default defineNuxtModule({
   setup (_options, nuxt) {
     const runtimeDir = resolve(__dirname, 'runtime')
 
-    nuxt.options.build.transpile.push('@nuxt/meta', runtimeDir)
+    nuxt.options.build.transpile.push('@nuxt/meta', runtimeDir, '@vueuse/head')
     nuxt.options.alias['@nuxt/meta'] = resolve(runtimeDir, 'index')
 
     nuxt.hook('app:resolve', (app) => {
