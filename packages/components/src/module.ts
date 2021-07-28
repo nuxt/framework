@@ -3,7 +3,7 @@ import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin } from 
 import { resolve } from 'upath'
 import { scanComponents } from './scan'
 import type { Component, ComponentsDir } from './types'
-import { LoaderPlugin } from './loader'
+import { loaderPlugin } from './loader'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
 const isDirectory = (p: string) => { try { return fs.statSync(p).isDirectory() } catch (_e) { return false } }
@@ -92,8 +92,8 @@ export default defineNuxtModule({
 
     if (nuxt.options.build) {
       const options = { getComponents: () => components }
-      addWebpackPlugin(LoaderPlugin.webpack(options))
-      addVitePlugin(LoaderPlugin.vite(options))
+      addWebpackPlugin(loaderPlugin.webpack(options))
+      addVitePlugin(loaderPlugin.vite(options))
     }
   }
 })
