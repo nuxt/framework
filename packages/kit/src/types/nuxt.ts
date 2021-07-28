@@ -28,13 +28,13 @@ export interface Nuxt {
 export interface NuxtTemplate {
   /** @deprecated filename */
   fileName?: string
-  /** @deprecated use filename */
+  /** resolved output file path (generated) */
   dst?: string
   /** The target filename once the template is copied into the Nuxt buildDir */
   filename?: string
   /** An options object that will be accessible within the template via `<% options %>` */
   options?: Record<string, any>
-  /** The resolved path to the source file to be templated */
+  /** The resolved path to the source file to be template */
   src?: string
   /** Provided compile option intead of src */
   getContents?: (data: Record<string, any>) => string | Promise<string>

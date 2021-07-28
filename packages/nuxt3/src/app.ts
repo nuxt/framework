@@ -40,7 +40,7 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
   await Promise.all(app.templates.map(async (template) => {
     const contents = await compileTemplate(template, templateContext)
 
-    const fullPath = resolve(nuxt.options.buildDir, template.filename)
+    const fullPath = template.dst || resolve(nuxt.options.buildDir, template.filename)
     nuxt.vfs[fullPath] = contents
 
     const aliasPath = '#build/' + template.filename.replace(/\.\w+$/, '')

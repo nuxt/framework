@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { basename, parse } from 'upath'
+import { basename, parse, resolve } from 'upath'
 import hash from 'hash-sum'
 import type { WebpackPluginInstance, Configuration as WebpackConfig } from 'webpack'
 import type { Plugin as VitePlugin, UserConfig as ViteConfig } from 'vite'
@@ -40,15 +40,18 @@ export function normalizeTemplate (template: NuxtTemplate | string): NuxtTemplat
     }
   }
 
-  // Legacy props polyfill
-  // template.dst  template.fileName = template.filename
-
   if (!template.src && !template.getContents) {
     throw new Error('Invalid template. Either getContents or src options should be provided: ' + JSON.stringify(template))
   }
 
   if (!template.filename) {
     throw new Error('Invalid template. Either filename should be provided: ' + JSON.stringify(template))
+  }
+
+  // Resolve dst
+  if (!template.dst) {
+    const nuxt = useNuxt()
+    template.dst = resolve(nuxt.options.buildDir, template.filename)
   }
 
   return template
@@ -104,9 +107,13 @@ export function addPlugin (plugin: NuxtPlugin | string, append?: Boolean) {
  * Adds a template and registers as a nuxt plugin.
  */
 export function addPluginTemplate (plugin: NuxtPluginTemplate | string, append?: Boolean): NuxtPluginTemplate {
-  const template = addTemplate(plugin)
-  // @ts-ignore
-  return addPlugin(template, append)
+  if (typeof plugin === 'string') {
+    plugin = { src: plugin }
+  }
+  if (!plugin.src) {
+    plugin.src = addTemplate(plugin).dst
+  }
+  return addPlugin(plugin, append)
 }
 
 /** Adds a new server middleware to the end of the server middleware array. */
