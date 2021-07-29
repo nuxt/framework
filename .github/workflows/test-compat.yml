@@ -43,4 +43,4 @@ jobs:
         run: yarn build
 
       - name: Test
-        run: TEST_COMPAT=1 yarn test:presets
+        run: yarn test:compat
