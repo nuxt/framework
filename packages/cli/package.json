@@ -20,7 +20,7 @@
     "fsevents": "~2.3.2"
   },
   "devDependencies": {
-    "@nuxt/design": "0.0.4",
+    "@nuxt/design": "0.0.5",
     "@nuxt/kit": "^0.6.4",
     "@types/clear": "^0",
     "@types/debounce-promise": "^3",
@@ -33,7 +33,7 @@
     "flat": "^5.0.2",
     "listhen": "^0.2.4",
     "mri": "^1.1.6",
-    "unbuild": "^0.3.2",
+    "unbuild": "^0.4.0",
     "upath": "^2.0.1",
     "v8-compile-cache": "^2.3.0"
   }

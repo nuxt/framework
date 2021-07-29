@@ -9,6 +9,7 @@ import type { NodeExternalsOptions } from './rollup/plugins/externals'
 import type { StorageOptions } from './rollup/plugins/storage'
 import type { AssetOptions } from './rollup/plugins/assets'
 import type { ServerMiddleware } from './server/middleware'
+import type { RollupConfig } from './rollup/config'
 
 export interface NitroContext {
   timing: boolean
@@ -20,7 +21,8 @@ export interface NitroContext {
   entry: string
   node: boolean
   preset: string
-  rollupConfig?: any
+  rollupConfig?: RollupConfig
+  moduleSideEffects: string[]
   renderer: string
   serveStatic: boolean
   middleware: ServerMiddleware[]
@@ -40,6 +42,7 @@ export interface NitroContext {
   _nuxt: {
     majorVersion: number
     dev: boolean
+    ssr: boolean
     rootDir: string
     srcDir: string
     buildDir: string
@@ -77,6 +80,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
     node: undefined,
     preset: undefined,
     rollupConfig: undefined,
+    moduleSideEffects: ['unenv/runtime/polyfill/'],
     renderer: undefined,
     serveStatic: undefined,
     middleware: [],
@@ -99,6 +103,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
     _nuxt: {
       majorVersion: nuxtOptions._majorVersion || 2,
       dev: nuxtOptions.dev,
+      ssr: nuxtOptions.ssr,
       rootDir: nuxtOptions.rootDir,
       srcDir: nuxtOptions.srcDir,
       buildDir: nuxtOptions.buildDir,

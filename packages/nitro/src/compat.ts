@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import { resolve } from 'upath'
-import { readFile, writeFile } from 'fs-extra'
+import { move, readFile, writeFile } from 'fs-extra'
 import { build, generate, prepare } from './build'
 import { getNitroContext, NitroContext } from './context'
 import { createDevServer } from './server/dev'
@@ -50,13 +50,21 @@ export default function nuxt2CompatModule () {
   // Disable server sourceMap, esbuild will generate for it.
   nuxt.hook('webpack:config', (webpackConfigs) => {
     const serverConfig = webpackConfigs.find(config => config.name === 'server')
-    serverConfig.devtool = false
+    if (serverConfig) {
+      serverConfig.devtool = false
+    }
   })
 
   // Nitro client plugin
   this.addPlugin({
     fileName: 'nitro.client.mjs',
     src: resolve(nitroContext._internal.runtimeDir, 'app/nitro.client.mjs')
+  })
+
+  // Nitro server plugin (for vue-meta)
+  this.addPlugin({
+    fileName: 'nitro-compat.server.js',
+    src: resolve(nitroContext._internal.runtimeDir, 'app/nitro-compat.server.js')
   })
 
   // Fix module resolution
@@ -70,7 +78,9 @@ export default function nuxt2CompatModule () {
   // Generate mjs resources
   nuxt.hook('build:compiled', async ({ name }) => {
     if (name === 'server') {
-      await writeFile(resolve(nuxt.options.buildDir, 'dist/server/server.mjs'), 'export { default } from "./server.js"', 'utf8')
+      const jsServerEntry = resolve(nuxt.options.buildDir, 'dist/server/server.js')
+      await move(jsServerEntry, jsServerEntry.replace(/.js$/, '.cjs'))
+      await writeFile(jsServerEntry.replace(/.js$/, '.mjs'), 'export { default } from "./server.cjs"', 'utf8')
     } else if (name === 'client') {
       const manifest = await readFile(resolve(nuxt.options.buildDir, 'dist/server/client.manifest.json'), 'utf8')
       await writeFile(resolve(nuxt.options.buildDir, 'dist/server/client.manifest.mjs'), 'export default ' + manifest, 'utf8')

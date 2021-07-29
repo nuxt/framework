@@ -114,6 +114,11 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       ) {
         rollupWarn(warning)
       }
+    },
+    treeshake: {
+      moduleSideEffects (id) {
+        return nitroContext.moduleSideEffects.some(match => id.startsWith(match))
+      }
     }
   }
 
@@ -134,6 +139,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       'global.': 'globalThis.',
       'process.server': 'true',
       'process.client': 'false',
+      'process.env.NUXT_NO_SSR': JSON.stringify(!nitroContext._nuxt.ssr),
       'process.env.ROUTER_BASE': JSON.stringify(nitroContext._nuxt.routerBase),
       'process.env.PUBLIC_PATH': JSON.stringify(nitroContext._nuxt.publicPath),
       'process.env.NUXT_STATIC_BASE': JSON.stringify(nitroContext._nuxt.staticAssets.base),
@@ -157,7 +163,10 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     inline: nitroContext.node === false || nitroContext.inlineDynamicImports,
     globbyOptions: {
       ignore: [
-        'server.js'
+        'client.manifest.mjs',
+        'server.cjs',
+        'server.mjs',
+        'server.manifest.mjs'
       ]
     }
   }))
@@ -268,6 +277,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // https://github.com/rollup/plugins/tree/master/packages/commonjs
   rollupConfig.plugins.push(commonjs({
+    esmExternals: id => !id.startsWith('unenv/'),
     requireReturnsDefault: 'auto'
   }))
 
