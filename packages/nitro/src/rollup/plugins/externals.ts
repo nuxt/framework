@@ -25,6 +25,10 @@ export function externals (opts: NodeExternalsOptions): Plugin {
 
       // Normalize path on windows
       if (process.platform === 'win32') {
+        if (id.startsWith('/')) {
+          // Add back C: prefix on Windows
+          id = resolve(id)
+        }
         id = id.replace(/\\/g, '/')
       }
 
