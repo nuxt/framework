@@ -8,6 +8,7 @@ export interface Component {
   level: number
   prefetch: boolean
   preload: boolean
+  mode?: 'server' | 'client'
 
   /** @deprecated */
   import?: string

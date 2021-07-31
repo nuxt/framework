@@ -40,6 +40,17 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
       if (fileName.toLowerCase() === 'index') {
         fileName = pathPrefix === false ? basename(dirname(filePath)) : '' /* inherits from path */
       }
+
+      // Resolve `.client` / `.server` suffix
+      let mode: Component['mode']
+      if (fileName.endsWith('.client')) {
+        mode = 'client'
+        fileName = fileName.slice(0, -7)
+      } else if (fileName.endsWith('.server')) {
+        mode = 'server'
+        fileName = fileName.slice(0, -7)
+      }
+
       const fileNameParts = splitByCase(fileName)
 
       const componentNameParts: string[] = []
@@ -77,7 +88,8 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
         global: Boolean(global),
         level: Number(level),
         prefetch: Boolean(prefetch),
-        preload: Boolean(preload)
+        preload: Boolean(preload),
+        mode
       }
 
       if (typeof extendComponent === 'function') {
