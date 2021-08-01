@@ -18,6 +18,7 @@
     "//test": "ts-mocha -p tsconfig.mocha.json test/*.ts"
   },
   "dependencies": {
+    "@nuxt/kit": "^0.6.4",
     "ufo": "^0.7.7",
     "unplugin": "^0.0.5",
     "upath": "^2.0.1"
