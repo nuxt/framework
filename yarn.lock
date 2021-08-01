@@ -1452,6 +1452,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nuxt/global-imports@workspace:packages/global-imports"
   dependencies:
+    "@nuxt/kit": ^0.6.4
     "@types/chai": ^4.2.21
     "@types/mocha": ^9.0.0
     chai: ^4.3.4
