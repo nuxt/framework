@@ -39,18 +39,28 @@ export const BuildPlugin = createUnplugin((map: IdentifierMap) => {
       // find all possible injection
       const matched = new Set(Array.from(code.matchAll(regex)).map(i => i[1]))
 
-      // remove those already imported
+      // remove those already defined
       for (const regex of excludeRegex) {
         Array.from(code.matchAll(regex))
           .flatMap(i => i[1]?.split(',') || [])
           .forEach(i => matched.delete(i.trim()))
       }
 
-      // TODO: group by module name
-      const imports = Array.from(matched).map((name) => {
+      const modules: Record<string, string[]> = {}
+
+      // group by module name
+      Array.from(matched).forEach((name) => {
         const moduleName = map[name]!
-        return `import { ${name} } from '${moduleName}';`
-      }).join('')
+        if (!modules[moduleName]) {
+          modules[moduleName] = []
+        }
+        modules[moduleName].push(name)
+      })
+
+      // stringify import
+      const imports = Object.entries(modules)
+        .map(([moduleName, names]) => `import { ${names.join(',')} } from '${moduleName}';`)
+        .join('')
 
       return imports + code
     }
