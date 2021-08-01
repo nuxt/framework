@@ -13,7 +13,7 @@ function hyphenate (str: string):string {
   return str.replace(/\B([A-Z])/g, '-$1').toLowerCase()
 }
 
-export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<Component[]> {
+export async function scanComponents (dirs: ScanDir[], srcDir: string) {
   const components: Component[] = []
   const filePaths = new Set<string>()
   const scannedPaths: string[] = []
@@ -108,5 +108,13 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
     scannedPaths.push(path)
   }
 
-  return components
+  const generalComponents = components.filter(i => !i.mode)
+  const clientComponents = components.filter(i => i.mode === 'client')
+  const serverComponents = components.filter(i => i.mode === 'server')
+
+  return {
+    components: generalComponents,
+    clientComponents,
+    serverComponents
+  }
 }

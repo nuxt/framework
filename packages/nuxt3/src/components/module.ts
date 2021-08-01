@@ -59,7 +59,7 @@ export default defineNuxtModule({
 
     // Scan components and add to plugin
     nuxt.hook('app:templates', async (app) => {
-      components = await scanComponents(componentDirs, nuxt.options.srcDir!)
+      ({ components } = await scanComponents(componentDirs, nuxt.options.srcDir!))
       await nuxt.callHook('components:extend', components)
       if (!components.length) {
         return
