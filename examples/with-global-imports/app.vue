@@ -6,10 +6,10 @@
 </template>
 
 <script setup>
-const counter = ref(0)
+const counter = ref(1)
 const doubled = computed(() => counter.value * 2)
 
-function incCounter () {
+function inc () {
   counter.value += 1
 }
 </script>

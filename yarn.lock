@@ -1448,7 +1448,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/global-imports@workspace:*, @nuxt/global-imports@workspace:packages/global-imports":
+"@nuxt/global-imports@*, @nuxt/global-imports@workspace:packages/global-imports":
   version: 0.0.0-use.local
   resolution: "@nuxt/global-imports@workspace:packages/global-imports"
   dependencies:
@@ -5633,7 +5633,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-with-global-imports@workspace:examples/with-global-imports"
   dependencies:
-    "@nuxt/global-imports": "workspace:*"
+    "@nuxt/global-imports": "*"
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -12032,27 +12032,7 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"unplugin@npm:^0.0.5":
-  version: 0.0.5
-  resolution: "unplugin@npm:0.0.5"
-  dependencies:
-    webpack-virtual-modules: ^0.4.3
-  peerDependencies:
-    rollup: ^2.50.0
-    vite: ^2.3.0
-    webpack: ^5.0.0
-  peerDependenciesMeta:
-    rollup:
-      optional: true
-    vite:
-      optional: true
-    webpack:
-      optional: true
-  checksum: 37f66f585365a9d7c26c03cc971329391839b13505942548be48ad834d7d5c68576e4defce92f9845bddd154c93340f8a1773337fce797f1cac1a1a34d6aac26
-  languageName: node
-  linkType: hard
-
-"unplugin@npm:~0.0.5":
+"unplugin@npm:^0.0.5, unplugin@npm:~0.0.5":
   version: 0.0.5
   resolution: "unplugin@npm:0.0.5"
   dependencies:

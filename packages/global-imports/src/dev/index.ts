@@ -1,5 +1,4 @@
 import { Nuxt } from '@nuxt/kit'
-import { resolve } from 'upath'
 import { IdentifierMap } from '../types'
 import { toImports } from '../utils'
 
@@ -9,17 +8,14 @@ export function generateTemplate (nuxt: Nuxt, identifiers: IdentifierMap) {
     const globals = Object.keys(identifiers).map(name => `globalThis.${name} = ${name};`).join('')
 
     app.templates.push({
-      path: 'global-imports.mjs',
-      src: resolve(__dirname, '../runtime/template.txt'),
-      data: { content: imports + globals + 'export default () => {};' }
+      filename: 'global-imports.mjs',
+      getContents: () => `${imports}\n${globals}\nexport default () => {};`
     })
     app.templates.push({
-      path: 'global-imports.d.ts',
-      src: resolve(__dirname, '../runtime/template.txt'),
-      data: { content: '' }
+      filename: 'global-imports.d.ts',
+      getContents: () => '' // TODO:
     })
 
-    // TODO: inject before app mount
-    app.plugins.unshift({ src: '#build/global-imports', mode: 'all' })
+    app.plugins.unshift({ src: '#build/global-imports' })
   })
 }
