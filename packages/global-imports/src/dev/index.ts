@@ -13,7 +13,10 @@ export function generateTemplate (nuxt: Nuxt, identifiers: IdentifierMap) {
     })
     app.templates.push({
       filename: 'global-imports.d.ts',
-      getContents: () => '' // TODO:
+      getContents: () => `declare global {
+        ${Object.entries(identifiers).map(([api, moduleName]) => `  const ${api}: typeof import('${moduleName}')['${api}']`).join('\n')}
+      }
+      export {}`
     })
 
     app.plugins.unshift({ src: '#build/global-imports' })
