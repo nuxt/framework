@@ -1455,14 +1455,10 @@ __metadata:
     "@types/chai": ^4.2.21
     "@types/mocha": ^9.0.0
     chai: ^4.3.4
-    mocha: ^9.0.3
-    ts-mocha: ^8.0.0
     ufo: ^0.7.7
     unbuild: ^0.4.0
-    unplugin: ~0.0.5
+    unplugin: ^0.0.5
     upath: ^2.0.1
-  peerDependencies:
-    vue: 3.1.5
   languageName: unknown
   linkType: soft
 
@@ -3275,7 +3271,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"arrify@npm:^1.0.0, arrify@npm:^1.0.1":
+"arrify@npm:^1.0.1":
   version: 1.0.1
   resolution: "arrify@npm:1.0.1"
   checksum: 745075dd4a4624ff0225c331dacb99be501a515d39bcb7c84d24660314a6ec28e68131b137e6f7e16318170842ce97538cd298fc4cd6b2cc798e0b957f2747e7
@@ -3516,7 +3512,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"buffer-from@npm:^1.0.0, buffer-from@npm:^1.1.0":
+"buffer-from@npm:^1.0.0":
   version: 1.1.1
   resolution: "buffer-from@npm:1.1.1"
   checksum: ccc53b69736008bff764497367c4d24879ba7122bc619ee499ff47eef3a5b885ca496e87272e7ebffa0bec3804c83f84041c616f6e3318f40624e27c1d80f045
@@ -4784,13 +4780,6 @@ __metadata:
   version: 5.0.0
   resolution: "diff@npm:5.0.0"
   checksum: f19fe29284b633afdb2725c2a8bb7d25761ea54d321d8e67987ac851c5294be4afeab532bd84531e02583a3fe7f4014aa314a3eda84f5590e7a9e6b371ef3b46
-  languageName: node
-  linkType: hard
-
-"diff@npm:^3.1.0":
-  version: 3.5.0
-  resolution: "diff@npm:3.5.0"
-  checksum: b975b73d7e8fa867cc9e68c293c664e14f11391203603e3f4518689c19fe8e391b4d9e4df3df5b3e51adc6cd81bcb414c80c1666e2f6cf66067f60177eec01d1
   languageName: node
   linkType: hard
 
@@ -7835,13 +7824,6 @@ fsevents@~2.3.2:
   dependencies:
     semver: ^6.0.0
   checksum: 484200020ab5a1fdf12f393fe5f385fc8e4378824c940fba1729dcd198ae4ff24867bc7a5646331e50cead8abff5d9270c456314386e629acec6dff4b8016b78
-  languageName: node
-  linkType: hard
-
-"make-error@npm:^1.1.1":
-  version: 1.3.6
-  resolution: "make-error@npm:1.3.6"
-  checksum: 2c780bab8409b865e8ee86697c599a2bf2765ec64d21eb67ccda27050e039f983feacad05a0d43aba3c966ea03d305d2612e94fec45474bcbc61181f57c5bb88
   languageName: node
   linkType: hard
 
@@ -10977,7 +10959,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:^0.5.6, source-map-support@npm:~0.5.19":
+"source-map-support@npm:~0.5.19":
   version: 0.5.19
   resolution: "source-map-support@npm:0.5.19"
   dependencies:
@@ -11678,42 +11660,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"ts-mocha@npm:^8.0.0":
-  version: 8.0.0
-  resolution: "ts-mocha@npm:8.0.0"
-  dependencies:
-    ts-node: 7.0.1
-    tsconfig-paths: ^3.5.0
-  peerDependencies:
-    mocha: ^3.X.X || ^4.X.X || ^5.X.X || ^6.X.X || ^7.X.X || ^8.X.X
-  dependenciesMeta:
-    tsconfig-paths:
-      optional: true
-  bin:
-    ts-mocha: bin/ts-mocha
-  checksum: 32841be86aea230fa35ee1dfcade8ea3069d3a670722c2b6b2237de69653388ceb5bbbd1014046dab4225af51f25d542035170aa02fd9c46e532743609123772
-  languageName: node
-  linkType: hard
-
-"ts-node@npm:7.0.1":
-  version: 7.0.1
-  resolution: "ts-node@npm:7.0.1"
-  dependencies:
-    arrify: ^1.0.0
-    buffer-from: ^1.1.0
-    diff: ^3.1.0
-    make-error: ^1.1.1
-    minimist: ^1.2.0
-    mkdirp: ^0.5.1
-    source-map-support: ^0.5.6
-    yn: ^2.0.0
-  bin:
-    ts-node: dist/bin.js
-  checksum: a18a31d2cb16115fbea1afca35931e536f7d4eb894b9b40b0c2ff550da81cc55e89218d8cc23277fb2545201597447e67f093aecded1bc6bebc073a8dcb86ac6
-  languageName: node
-  linkType: hard
-
-"tsconfig-paths@npm:^3.5.0, tsconfig-paths@npm:^3.9.0":
+"tsconfig-paths@npm:^3.9.0":
   version: 3.10.1
   resolution: "tsconfig-paths@npm:3.10.1"
   dependencies:
@@ -12032,7 +11979,7 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"unplugin@npm:^0.0.5, unplugin@npm:~0.0.5":
+"unplugin@npm:^0.0.5":
   version: 0.0.5
   resolution: "unplugin@npm:0.0.5"
   dependencies:
@@ -12048,7 +11995,7 @@ typescript@^4.3.5:
       optional: true
     webpack:
       optional: true
-  checksum: 89ac025ee3b404aa3d527f5e775d0764903d85e6c593da9df215e4e07bfc074ae2d2051ec64cce3af4c642b37229fc219069f076770d6ec6a0c13bdcefb10f90
+  checksum: 37f66f585365a9d7c26c03cc971329391839b13505942548be48ad834d7d5c68576e4defce92f9845bddd154c93340f8a1773337fce797f1cac1a1a34d6aac26
   languageName: node
   linkType: hard
 
@@ -12855,13 +12802,6 @@ typescript@^4.3.5:
     y18n: ^5.0.5
     yargs-parser: ^20.2.2
   checksum: b14afbb51e3251a204d81937c86a7e9d4bdbf9a2bcee38226c900d00f522969ab675703bee2a6f99f8e20103f608382936034e64d921b74df82b63c07c5e8f59
-  languageName: node
-  linkType: hard
-
-"yn@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "yn@npm:2.0.0"
-  checksum: 62ac4f229e11099ca72a1531a409056bcab027c2be0be2fea2507dd121f24bb65e6b7beddc9244edc0e328c0b41d155baab1040f559825c12afa9ad2a8c17496
   languageName: node
   linkType: hard
 

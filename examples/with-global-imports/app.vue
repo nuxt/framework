@@ -1,7 +1,9 @@
 <template>
   <div>
-    {{counter}}x2={{doubled}}
-    <button @click="inc">Inc</button>
+    {{ counter }}x2={{ doubled }}
+    <button @click="inc">
+      Inc
+    </button>
   </div>
 </template>
 
@@ -12,4 +14,8 @@ const doubled = computed(() => counter.value * 2)
 function inc () {
   counter.value += 1
 }
+
+onMounted(() => {
+  console.log('App.vue mounted')
+})
 </script>

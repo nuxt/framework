@@ -15,22 +15,17 @@
   ],
   "scripts": {
     "prepack": "unbuild",
-    "test": "ts-mocha -p tsconfig.mocha.json test/*.ts"
+    "//test": "ts-mocha -p tsconfig.mocha.json test/*.ts"
   },
   "dependencies": {
     "ufo": "^0.7.7",
-    "unplugin": "~0.0.5",
+    "unplugin": "^0.0.5",
     "upath": "^2.0.1"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0",
     "chai": "^4.3.4",
-    "mocha": "^9.0.3",
-    "ts-mocha": "^8.0.0",
     "unbuild": "^0.4.0"
-  },
-  "peerDependencies": {
-    "vue": "3.1.5"
   }
 }
