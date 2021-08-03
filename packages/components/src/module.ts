@@ -1,9 +1,10 @@
 import fs from 'fs'
+import { join, relative, resolve } from 'upath'
 import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
-import { resolve } from 'upath'
 import { scanComponents } from './scan'
 import type { Component, ComponentsDir } from './types'
 import { loaderPlugin } from './loader'
+import { generateTypes } from './perpare'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
 const isDirectory = (p: string) => { try { return fs.statSync(p).isDirectory() } catch (_e) { return false } }
@@ -70,13 +71,14 @@ export default defineNuxtModule({
         options: { components }
       })
 
-      app.templates.push({
-        filename: 'components.d.ts',
-        src: resolve(__dirname, 'runtime/components.tmpl.d.ts'),
-        options: { components }
-      })
+      await generateTypes(nuxt, components)
 
       app.plugins.push({ src: '#build/components' })
+    })
+
+    nuxt.hook('prepare:types', ({ references }) => {
+      const path = join(relative(nuxt.options.rootDir, nuxt.options.buildDir), 'components.d.ts')
+      references.push(`/// <reference types="${path}" />`)
     })
 
     // Watch for changes
