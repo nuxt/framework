@@ -4,7 +4,7 @@ import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin } from 
 import { scanComponents } from './scan'
 import type { Component, ComponentsDir } from './types'
 import { loaderPlugin } from './loader'
-import { generateTypes } from './perpare'
+import { generateTypes } from './prepare'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
 const isDirectory = (p: string) => { try { return fs.statSync(p).isDirectory() } catch (_e) { return false } }
