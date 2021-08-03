@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs'
-import { join, relative } from 'path'
+import { join, relative } from 'upath'
 import { Nuxt } from '@nuxt/kit'
 import { IdentifierMap } from './types'
 
