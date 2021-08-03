@@ -1,6 +1,6 @@
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL } from 'ufo'
-import { IdentifierMap } from '../types'
+import { IdentifierMap } from './types'
 
 const excludeRegex = [
   // imported from other module

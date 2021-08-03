@@ -2,7 +2,7 @@ import { defineNuxtConfig } from '@nuxt/kit'
 
 export default defineNuxtConfig({
   vite: false,
-  modules: [
+  buildModules: [
     '@nuxt/global-imports'
   ]
 })
