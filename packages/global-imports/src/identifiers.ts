@@ -43,5 +43,4 @@ const VueAPIs = [
   'useCssModule'
 ]
 
-// TODO: make it extendable via module options
-export const identifiers = Object.fromEntries(VueAPIs.map(name => [name, 'vue']))
+export const defaultIdentifiers = Object.fromEntries(VueAPIs.map(name => [name, 'vue']))
