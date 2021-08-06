@@ -63,7 +63,7 @@ export default defineNuxtCommand({
       if (file.includes(currentNuxt.options.buildDir)) {
         return
       }
-      if (['nuxt.config', 'modules', 'pages'].some(pattern => file.includes(pattern))) {
+      if (file.includes('nuxt.config') || file.includes('modules') || file.includes('pages')) {
         dLoad(true)
       }
     })
