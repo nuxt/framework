@@ -1,4 +1,4 @@
-import { join, resolve } from 'upath'
+import { resolve } from 'upath'
 import chokidar from 'chokidar'
 import debounce from 'debounce-promise'
 import type { Nuxt } from '@nuxt/kit'
@@ -58,13 +58,12 @@ export default defineNuxtCommand({
     // TODO: Watcher service, modules, and requireTree
     const dLoad = debounce(load, 250)
     const watcher = chokidar.watch([rootDir], { ignoreInitial: true, depth: 1 })
-    const pathsToTriggerRestart = [
-      join(rootDir, 'nuxt.config'),
-      join(rootDir, 'modules'),
-      join(rootDir, 'pages')
-    ]
     watcher.on('all', (_event, file) => {
-      if (pathsToTriggerRestart.some(pattern => file.includes(pattern))) {
+      // Ignore any changes to files within the Nuxt build directory
+      if (file.includes(currentNuxt.options.buildDir)) {
+        return
+      }
+      if (['nuxt.config', 'modules', 'pages'].some(pattern => file.includes(pattern))) {
         dLoad(true)
       }
     })
