@@ -53,6 +53,7 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
 
     if (template.write) {
       await writeFile(fullPath, contents, 'utf8')
+    }
   }))
 
   await nuxt.callHook('app:templatesGenerated', app)
