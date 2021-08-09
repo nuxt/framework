@@ -1,6 +1,5 @@
 import { dirname, isAbsolute, join, resolve } from 'upath'
-
-import { Plugin } from 'rollup'
+import type { Plugin } from 'rollup'
 
 const PREFIX = '\0virtual:'
 
