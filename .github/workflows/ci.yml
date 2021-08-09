@@ -48,8 +48,8 @@ jobs:
       - name: Install dependencies
         run: yarn --immutable
 
-      - name: Build
-        run: yarn build
+      - name: Stub
+        run: yarn stub
 
       - name: Test (presets)
         run: yarn test:presets
@@ -78,13 +78,13 @@ jobs:
       - name: Install dependencies (compat fixture)
         run: yarn --immutable && cd test/fixtures/compat && yarn --immutable
 
-      - name: Build
-        run: yarn build
+      - name: Stub
+        run: yarn stub
 
       - name: Test (presets compat)
         run: yarn test:compat
 
-  release:
+  build-release:
     needs:
       - test
       - test-compat
@@ -105,6 +105,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn --immutable
+
+      - name: Build
+        run: yarn build
 
       - name: Release Edge
         if: github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip-release]')
