@@ -1335,7 +1335,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/global-imports@*, @nuxt/global-imports@^0.1.0, @nuxt/global-imports@workspace:packages/global-imports":
+"@nuxt/global-imports@^0.1.0, @nuxt/global-imports@workspace:packages/global-imports":
   version: 0.0.0-use.local
   resolution: "@nuxt/global-imports@workspace:packages/global-imports"
   dependencies:
@@ -5530,7 +5530,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-with-global-imports@workspace:examples/with-global-imports"
   dependencies:
-    "@nuxt/global-imports": "*"
     nuxt3: latest
   languageName: unknown
   linkType: soft
