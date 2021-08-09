@@ -7,5 +7,5 @@
 /// <reference types="@nuxt/pages" />
 /// <reference types="@nuxt/meta" />
 /// <reference types="@nuxt/component-discovery" />
-/// <reference path="/home/pooya/Code/framework/examples/with-components/.nuxt/components.d.ts" />
+/// <reference path=".nuxt/components.d.ts" />
 export {}
