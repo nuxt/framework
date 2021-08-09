@@ -1346,7 +1346,7 @@ __metadata:
     jiti: ^1.11.0
     mocha: ^9.0.3
     ufo: ^0.7.7
-    unbuild: ^0.4.0
+    unbuild: ^0.4.2
     unplugin: ^0.0.5
     upath: ^2.0.1
   languageName: unknown

@@ -1,10 +1,8 @@
 import { expect } from 'chai'
-import { BuildPlugin } from '../src/build'
+import { TrsnsformPlugin } from '../src/transform'
 
 describe('module:global-imports:build', () => {
-  const transform = BuildPlugin.raw({
-    ref: 'vue'
-  }).transform
+  const { transform } = TrsnsformPlugin.raw({ ref: 'vue' })
 
   it('should correct inject', () => {
     expect(transform('const a = ref(0)', ''))

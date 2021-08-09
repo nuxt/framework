@@ -11,11 +11,11 @@ const excludeRegex = [
   /\b(?:const|let|var)\s*([\w\d_$]+?)\b/g
 ]
 
-export const BuildPlugin = createUnplugin((map: IdentifierMap) => {
+export const TrsnsformPlugin = createUnplugin((map: IdentifierMap) => {
   const regex = new RegExp('\\b(' + (Object.keys(map).join('|')) + ')\\b', 'g')
 
   return {
-    name: 'nuxt-global-imports-build',
+    name: 'nuxt-global-imports-transform',
     enforce: 'post',
     transformInclude (id) {
       const { pathname, search } = parseURL(id)
