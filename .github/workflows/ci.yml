@@ -1,4 +1,4 @@
-name: test
+name: CI
 
 on:
   push:
@@ -71,12 +71,47 @@ jobs:
       - name: Build
         run: yarn build
 
-      - name: Test
+      - name: Test (presets)
         run: yarn test:presets
+
+  test-compat:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [14]
+
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: checkout
+        uses: actions/checkout@master
+
+      - uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: .yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn --immutable
+
+      - name: Build
+        run: yarn build
+
+      - name: Test (presets compat)
+        run: yarn test:compat
 
   release:
     needs:
       - test
+      - test-compat
       - lint
     runs-on: ${{ matrix.os }}
 
