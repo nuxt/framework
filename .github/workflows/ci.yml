@@ -18,14 +18,14 @@ jobs:
         node: [14]
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Node ${{ matrix.node }} on ${{ matrix.os }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
-
-      - name: checkout
-        uses: actions/checkout@v2
 
       - name: Install dependencies
         run: yarn --immutable
@@ -42,14 +42,14 @@ jobs:
         node: [14]
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Node ${{ matrix.node }} on ${{ matrix.os }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
-
-      - name: Checkout
-        uses: actions/checkout@v2
 
       - name: Install dependencies
         run: yarn --immutable
@@ -69,14 +69,14 @@ jobs:
         node: [14]
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Node ${{ matrix.node }} on ${{ matrix.os }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
-
-      - name: Checkout
-        uses: actions/checkout@v2
 
       - name: Install dependencies
         run: yarn --immutable
@@ -103,14 +103,14 @@ jobs:
         node: [14]
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Node ${{ matrix.node }} on ${{ matrix.os }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
-
-      - name: Checkout
-        uses: actions/checkout@v2
 
       - name: Install dependencies
         run: yarn --immutable
