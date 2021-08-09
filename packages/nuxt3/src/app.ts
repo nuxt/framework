@@ -46,9 +46,13 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
     const aliasPath = '#build/' + template.filename.replace(/\.\w+$/, '')
     nuxt.vfs[aliasPath] = contents
 
+    // In case a non-normalized absolute path is called for on Windows
+    if (process.platform === 'win32') {
+      nuxt.vfs[fullPath.replace(/\//g, '\\')] = contents
+    }
+
     if (template.write) {
       await writeFile(fullPath, contents, 'utf8')
-    }
   }))
 
   await nuxt.callHook('app:templatesGenerated', app)
