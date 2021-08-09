@@ -42,4 +42,15 @@ const VueAPIs = [
   'useCssModule'
 ]
 
-export const defaultIdentifiers = Object.fromEntries(VueAPIs.map(name => [name, 'vue']))
+const nuxtComposition = [
+  'useAsyncData',
+  'asyncData',
+  'defineNuxtComponent',
+  'useNuxt',
+  'defineNuxtPlugin'
+]
+
+export const defaultIdentifiers = Object.fromEntries([
+  ...VueAPIs.map(name => [name, 'vue']),
+  ...nuxtComposition.map(name => [name, '@nuxt/app'])
+])
