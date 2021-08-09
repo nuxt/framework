@@ -88,7 +88,7 @@ export function externals (opts: NodeExternalsOptions): Plugin {
           await copyFile(src, dst)
         }
         if (process.platform === 'win32') {
-          // https://github.com/nuxt/framework/issues/424
+          // Workaround for EBUSY on windows (#424)
           for (const file of tracedFiles) {
             await writeFile(file)
           }
