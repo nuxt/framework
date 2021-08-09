@@ -47,7 +47,8 @@ const nuxtComposition = [
   'asyncData',
   'defineNuxtComponent',
   'useNuxt',
-  'defineNuxtPlugin'
+  'defineNuxtPlugin',
+  'useMeta'
 ]
 
 export const defaultIdentifiers = Object.fromEntries([
