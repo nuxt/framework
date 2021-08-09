@@ -17,12 +17,12 @@
     "scule": "^0.2.1",
     "ufo": "^0.7.7",
     "upath": "^2.0.1",
-    "vue-router": "^4.0.10"
+    "vue-router": "^4.0.11"
   },
   "devDependencies": {
-    "unbuild": "^0.4.0"
+    "unbuild": "^0.4.2"
   },
   "peerDependencies": {
-    "vue": "3.1.5"
+    "vue": "3.2.1"
   }
 }

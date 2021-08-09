@@ -3,7 +3,7 @@ import globby from 'globby'
 import lodashTemplate from 'lodash/template'
 import defu from 'defu'
 import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, NuxtTemplate, normalizePlugin, normalizeTemplate } from '@nuxt/kit'
-import { readFile } from 'fs-extra'
+import { readFile, writeFile } from 'fs-extra'
 import * as templateUtils from './template.utils'
 
 export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp {
@@ -45,6 +45,15 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
 
     const aliasPath = '#build/' + template.filename.replace(/\.\w+$/, '')
     nuxt.vfs[aliasPath] = contents
+
+    // In case a non-normalized absolute path is called for on Windows
+    if (process.platform === 'win32') {
+      nuxt.vfs[fullPath.replace(/\//g, '\\')] = contents
+    }
+
+    if (template.write) {
+      await writeFile(fullPath, contents, 'utf8')
+    }
   }))
 
   await nuxt.callHook('app:templatesGenerated', app)
