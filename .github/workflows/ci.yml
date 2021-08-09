@@ -77,6 +77,9 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
+          cache-dependency-path: |
+            yarn.lock
+            test/fixtures/compat/yarn.lock
 
       - name: Install dependencies
         run: yarn --immutable
