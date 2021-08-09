@@ -94,13 +94,17 @@ jobs:
         id: yarn-cache
         with:
           path: .yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          key: ${{ runner.os }}-yarn-compat-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
-            ${{ runner.os }}-yarn-
+            ${{ runner.os }}-yarn-compat-
 
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: yarn --immutable
+
+      - name: Install dependencies (compat)
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn --immutable && cd test/fixtures/compat && yarn --immutable
 
       - name: Build
         run: yarn build
