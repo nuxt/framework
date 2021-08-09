@@ -198,7 +198,7 @@ export default {
     imgUrl: { esModule: false, limit: 1000 },
     pugPlain: {},
     vue: {
-      productionMode: { $resolve: (val, get) => val ?? get('dev') },
+      productionMode: { $resolve: (val, get) => val ?? !get('dev') },
       transformAssetUrls: {
         video: 'src',
         source: 'src',
@@ -291,7 +291,7 @@ export default {
   optimization: {
     runtimeChunk: 'single',
     /** Set minimize to false to disable all minimizers. (It is disabled in development by default) */
-    minimize: { $resolve: (val, get) => val ?? get('dev') },
+    minimize: { $resolve: (val, get) => val ?? !get('dev') },
     /** You can set minimizer to a customized array of plugins. */
     minimizer: undefined,
     splitChunks: {
