@@ -5526,14 +5526,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"example-with-global-imports@workspace:examples/with-global-imports":
-  version: 0.0.0-use.local
-  resolution: "example-with-global-imports@workspace:examples/with-global-imports"
-  dependencies:
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
 "example-with-layouts@workspace:examples/with-layouts":
   version: 0.0.0-use.local
   resolution: "example-with-layouts@workspace:examples/with-layouts"
