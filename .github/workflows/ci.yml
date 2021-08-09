@@ -18,23 +18,16 @@ jobs:
         node: [14]
 
     steps:
-      - uses: actions/setup-node@v2
+      - name: Node ${{ matrix.node }} on ${{ matrix.os }}
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
+          cache: 'yarn'
 
       - name: checkout
-        uses: actions/checkout@master
-
-      - uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: .yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+        uses: actions/checkout@v2
 
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn --immutable
 
       - name: Lint
@@ -49,23 +42,16 @@ jobs:
         node: [14]
 
     steps:
-      - uses: actions/setup-node@v2
+      - name: Node ${{ matrix.node }} on ${{ matrix.os }}
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
+          cache: 'yarn'
 
-      - name: checkout
-        uses: actions/checkout@master
-
-      - uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: .yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn --immutable
 
       - name: Build
@@ -83,27 +69,19 @@ jobs:
         node: [14]
 
     steps:
-      - uses: actions/setup-node@v2
+      - name: Node ${{ matrix.node }} on ${{ matrix.os }}
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
+          cache: 'yarn'
 
-      - name: checkout
-        uses: actions/checkout@master
-
-      - uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: .yarn
-          key: ${{ runner.os }}-yarn-compat-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-compat-
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn --immutable
 
       - name: Install dependencies (compat)
-        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn --immutable && cd test/fixtures/compat && yarn --immutable
 
       - name: Build
@@ -125,23 +103,16 @@ jobs:
         node: [14]
 
     steps:
-      - uses: actions/setup-node@v2
+      - name: Node ${{ matrix.node }} on ${{ matrix.os }}
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
+          cache: 'yarn'
 
-      - name: checkout
-        uses: actions/checkout@master
-
-      - uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: .yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn --immutable
 
       - name: Release Edge
