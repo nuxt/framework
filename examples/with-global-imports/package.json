@@ -2,7 +2,6 @@
   "name": "example-with-global-imports",
   "private": true,
   "devDependencies": {
-    "@nuxt/global-imports": "*",
     "nuxt3": "latest"
   },
   "scripts": {

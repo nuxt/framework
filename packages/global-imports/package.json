@@ -4,7 +4,7 @@
   "repository": "nuxt/framework",
   "license": "MIT",
   "exports": {
-    ".": {
+    "./module": {
       "import": "./dist/module.mjs",
       "require": "./dist/module.js"
     }
