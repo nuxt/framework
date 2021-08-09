@@ -16,7 +16,8 @@ export default defineNuxtModule<GlobalImportsOptions>({
         src: '',
         getContents: () => {
           const imports = toImports(Object.entries(identifiers))
-          return `${imports}\n${Object.keys(identifiers).map(name => `globalThis.${name} = ${name};`).join('')}\nexport default () => {};`
+          const globalThisSet = Object.keys(identifiers).map(name => `globalThis.${name} = ${name};`).join('\n')
+          return `${imports}\n\n${globalThisSet}\n\nexport default () => {};`
         }
       })
     } else {
@@ -52,5 +53,5 @@ function toImports (identifiers: Identifiers) {
 
   return Object.entries(map)
     .map(([name, imports]) => `import { ${Array.from(imports).join(', ')} } from '${name}';`)
-    .join('')
+    .join('\n')
 }
