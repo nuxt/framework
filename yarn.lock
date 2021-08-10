@@ -8716,9 +8716,9 @@ fsevents@~2.3.2:
     fsevents:
       optional: true
   bin:
-    nu: ./bin/nuxt.js
-    nuxi: ./bin/nuxt.js
-    nuxt: ./bin/nuxt.js
+    nu: ./bin/nuxi.js
+    nuxi: ./bin/nuxi.js
+    nuxt: ./bin/nuxi.js
   languageName: unknown
   linkType: soft
 
