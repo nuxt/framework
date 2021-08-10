@@ -21,7 +21,7 @@ export const TrsnsformPlugin = createUnplugin((map: IdentifierMap) => {
       const { pathname, search } = parseURL(id)
       const query = parseQuery(search)
 
-      if (id.includes('/node_modules/')) {
+      if (id.includes('node_modules')) {
         return false
       }
 
