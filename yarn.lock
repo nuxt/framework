@@ -1303,7 +1303,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/kit@^0.6.4, @nuxt/kit@workspace:packages/kit":
+"@nuxt/kit@^0.10.0, @nuxt/kit@workspace:packages/kit":
   version: 0.0.0-use.local
   resolution: "@nuxt/kit@workspace:packages/kit"
   dependencies:
@@ -1325,7 +1325,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/nitro@^0.9.1, @nuxt/nitro@workspace:packages/nitro":
+"@nuxt/nitro@^0.10.0, @nuxt/nitro@workspace:packages/nitro":
   version: 0.0.0-use.local
   resolution: "@nuxt/nitro@workspace:packages/nitro"
   dependencies:
@@ -1333,7 +1333,7 @@ __metadata:
     "@netlify/functions": ^0.7.2
     "@nuxt/design": 0.0.5
     "@nuxt/devalue": ^2.0.0
-    "@nuxt/kit": ^0.6.4
+    "@nuxt/kit": ^0.10.0
     "@rollup/plugin-alias": ^3.1.5
     "@rollup/plugin-commonjs": ^20.0.0
     "@rollup/plugin-inject": ^4.0.2
@@ -1394,11 +1394,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/vite-builder@^0.5.0, @nuxt/vite-builder@workspace:packages/vite":
+"@nuxt/vite-builder@^0.10.0, @nuxt/vite-builder@workspace:packages/vite":
   version: 0.0.0-use.local
   resolution: "@nuxt/vite-builder@workspace:packages/vite"
   dependencies:
-    "@nuxt/kit": ^0.6.4
+    "@nuxt/kit": ^0.10.0
     "@types/debounce": ^1.2.0
     "@vitejs/plugin-vue": ^1.4.0
     "@vue/compiler-sfc": ^3.2.1
@@ -1415,13 +1415,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/webpack-builder@^0.5.0, @nuxt/webpack-builder@workspace:packages/webpack":
+"@nuxt/webpack-builder@^0.10.0, @nuxt/webpack-builder@workspace:packages/webpack":
   version: 0.0.0-use.local
   resolution: "@nuxt/webpack-builder@workspace:packages/webpack"
   dependencies:
     "@babel/core": ^7.15.0
     "@nuxt/friendly-errors-webpack-plugin": ^2.5.1
-    "@nuxt/kit": ^0.6.4
+    "@nuxt/kit": ^0.10.0
     "@types/pify": ^5.0.1
     "@types/terser-webpack-plugin": ^5.0.4
     "@types/webpack-bundle-analyzer": ^4.4.1
@@ -8655,12 +8655,12 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"nuxi@^0.3.8, nuxi@workspace:packages/nuxi":
+"nuxi@^0.10.0, nuxi@workspace:packages/nuxi":
   version: 0.0.0-use.local
   resolution: "nuxi@workspace:packages/nuxi"
   dependencies:
     "@nuxt/design": 0.0.5
-    "@nuxt/kit": ^0.6.4
+    "@nuxt/kit": ^0.10.0
     "@types/clear": ^0
     "@types/debounce-promise": ^3
     "@types/mri": ^1.1.1
@@ -8727,10 +8727,10 @@ fsevents@~2.3.2:
   version: 0.0.0-use.local
   resolution: "nuxt3@workspace:packages/nuxt3"
   dependencies:
-    "@nuxt/kit": ^0.6.4
-    "@nuxt/nitro": ^0.9.1
-    "@nuxt/vite-builder": ^0.5.0
-    "@nuxt/webpack-builder": ^0.5.0
+    "@nuxt/kit": ^0.10.0
+    "@nuxt/nitro": ^0.10.0
+    "@nuxt/vite-builder": ^0.10.0
+    "@nuxt/webpack-builder": ^0.10.0
     "@types/fs-extra": ^9.0.12
     "@types/hash-sum": ^1.0.0
     "@types/lodash": ^4.14.172
@@ -8747,7 +8747,7 @@ fsevents@~2.3.2:
     hookable: ^4.4.1
     ignore: ^5.1.8
     lodash: ^4.17.21
-    nuxi: ^0.3.8
+    nuxi: ^0.10.0
     ohmyfetch: ^0.2.0
     scule: ^0.2.1
     ufo: ^0.7.7
