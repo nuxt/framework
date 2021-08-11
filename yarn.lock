@@ -1275,38 +1275,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/app@^0.5.0, @nuxt/app@workspace:packages/app":
-  version: 0.0.0-use.local
-  resolution: "@nuxt/app@workspace:packages/app"
-  dependencies:
-    hookable: ^4.4.1
-    ohmyfetch: ^0.2.0
-    unbuild: ^0.4.2
-    upath: ^2.0.1
-    vue: ^3.2.1
-    vue-router: ^4.0.11
-    vuex5: ^0.5.0-testing.3
-  peerDependencies:
-    "@nuxt/meta": ^0.1.0
-  languageName: unknown
-  linkType: soft
-
-"@nuxt/component-discovery@^0.2.0, @nuxt/component-discovery@workspace:modules/components":
-  version: 0.0.0-use.local
-  resolution: "@nuxt/component-discovery@workspace:modules/components"
-  dependencies:
-    "@nuxt/kit": ^0.6.4
-    globby: ^11.0.4
-    scule: ^0.2.1
-    ufo: ^0.7.7
-    unbuild: ^0.4.2
-    unplugin: ^0.0.5
-    upath: ^2.0.1
-  peerDependencies:
-    vue: 3.2.1
-  languageName: unknown
-  linkType: soft
-
 "@nuxt/design@npm:0.0.5":
   version: 0.0.5
   resolution: "@nuxt/design@npm:0.0.5"
@@ -1335,18 +1303,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/global-imports@^0.1.0, @nuxt/global-imports@workspace:modules/global-imports":
-  version: 0.0.0-use.local
-  resolution: "@nuxt/global-imports@workspace:modules/global-imports"
-  dependencies:
-    "@nuxt/kit": ^0.6.4
-    ufo: ^0.7.7
-    unbuild: ^0.4.2
-    unplugin: ^0.0.5
-    upath: ^2.0.1
-  languageName: unknown
-  linkType: soft
-
 "@nuxt/kit@^0.6.4, @nuxt/kit@workspace:packages/kit":
   version: 0.0.0-use.local
   resolution: "@nuxt/kit@workspace:packages/kit"
@@ -1366,22 +1322,6 @@ __metadata:
     unctx: ^1.0.1
     untyped: ^0.2.8
     upath: ^2.0.1
-  languageName: unknown
-  linkType: soft
-
-"@nuxt/meta@^0.1.0, @nuxt/meta@workspace:modules/meta":
-  version: 0.0.0-use.local
-  resolution: "@nuxt/meta@workspace:modules/meta"
-  dependencies:
-    "@nuxt/kit": ^0.6.4
-    "@vueuse/head": ^0.6.0
-    unbuild: ^0.4.2
-    upath: ^2.0.1
-    vue-meta: 3.0.0-alpha.9
-  peerDependencies:
-    "@vue/reactivity": 3.2.1
-    "@vue/shared": 3.2.1
-    vue: 3.2.1
   languageName: unknown
   linkType: soft
 
@@ -1409,7 +1349,7 @@ __metadata:
     "@types/node-fetch": ^2.5.12
     "@types/serve-static": ^1.13.10
     "@vercel/nft": ^0.13.1
-    "@vue/server-renderer": ^3.2.1
+    "@vue/server-renderer": ^3.2.2
     archiver: ^5.3.0
     chalk: ^4.1.2
     chokidar: ^3.5.2
@@ -1451,22 +1391,6 @@ __metadata:
     vue: 3.2.1
     vue-bundle-renderer: ^0.2.10
     vue-server-renderer: ^2.6.14
-  languageName: unknown
-  linkType: soft
-
-"@nuxt/pages@^0.3.0, @nuxt/pages@workspace:modules/pages":
-  version: 0.0.0-use.local
-  resolution: "@nuxt/pages@workspace:modules/pages"
-  dependencies:
-    "@nuxt/kit": ^0.6.4
-    globby: ^11.0.4
-    scule: ^0.2.1
-    ufo: ^0.7.7
-    unbuild: ^0.4.2
-    upath: ^2.0.1
-    vue-router: ^4.0.11
-  peerDependencies:
-    vue: 3.2.1
   languageName: unknown
   linkType: soft
 
@@ -2485,6 +2409,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vue/compiler-core@npm:3.2.2":
+  version: 3.2.2
+  resolution: "@vue/compiler-core@npm:3.2.2"
+  dependencies:
+    "@babel/parser": ^7.12.0
+    "@babel/types": ^7.12.0
+    "@vue/shared": 3.2.2
+    estree-walker: ^2.0.1
+    source-map: ^0.6.1
+  checksum: 799c6707d2531dcda59d24bf5fdcd581966718b9d3bb97f6c483a50ab4409c5a1b42bdb15f63695ed1aae51d860fa79ddba8d982a84b9cf30708a7c3afed31fd
+  languageName: node
+  linkType: hard
+
 "@vue/compiler-dom@npm:3.1.5":
   version: 3.1.5
   resolution: "@vue/compiler-dom@npm:3.1.5"
@@ -2502,6 +2439,16 @@ __metadata:
     "@vue/compiler-core": 3.2.1
     "@vue/shared": 3.2.1
   checksum: 19298b3e8d9741aa6def8265e078fd23ccf4bc8c91c44c45c262be7daf19b86c31dcd3f4606e06052ded2d2e7b17babf485adb4073aceaf1348cc35227b837fb
+  languageName: node
+  linkType: hard
+
+"@vue/compiler-dom@npm:3.2.2":
+  version: 3.2.2
+  resolution: "@vue/compiler-dom@npm:3.2.2"
+  dependencies:
+    "@vue/compiler-core": 3.2.2
+    "@vue/shared": 3.2.2
+  checksum: 79a0e36abff82488dc43f361c5f7ccb244a3b4bd9a171255fca94d4f9de7106c922802115aeb0df7db541fa56c8bfebb322129ecef5e9e8d3b57c5395ac7a9c4
   languageName: node
   linkType: hard
 
@@ -2537,6 +2484,16 @@ __metadata:
     "@vue/compiler-dom": 3.2.1
     "@vue/shared": 3.2.1
   checksum: b1030bedc373fbdd59429fe868befc13a489c7812c32da6c5c006033e19007d37fe36f2143c9141d97e7071336f14e4ea4b39aa6b23f53bc81c50b80e8cb6b5f
+  languageName: node
+  linkType: hard
+
+"@vue/compiler-ssr@npm:3.2.2":
+  version: 3.2.2
+  resolution: "@vue/compiler-ssr@npm:3.2.2"
+  dependencies:
+    "@vue/compiler-dom": 3.2.2
+    "@vue/shared": 3.2.2
+  checksum: 6a9be3f0c7a404c2fa30c1ebb5cf31f289a84fac3db3061079f56bf68909d87a9cf842c5e70a224d8e61874d994d47a95a781a95e7dc4a3af9d1de8b1c166146
   languageName: node
   linkType: hard
 
@@ -2607,15 +2564,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/server-renderer@npm:^3.2.1":
-  version: 3.2.1
-  resolution: "@vue/server-renderer@npm:3.2.1"
+"@vue/server-renderer@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "@vue/server-renderer@npm:3.2.2"
   dependencies:
-    "@vue/compiler-ssr": 3.2.1
-    "@vue/shared": 3.2.1
+    "@vue/compiler-ssr": 3.2.2
+    "@vue/shared": 3.2.2
   peerDependencies:
-    vue: 3.2.1
-  checksum: d95fc5edeb502b7afe44bbc3bcf8497f472d755fc36a71691f80553fa7eb630fea414c62cf88627f0c29a8fb500bcb07c0b51f39c4e3a99261e3d38c28409023
+    vue: 3.2.2
+  checksum: dc933109bc91483157c391ac71d7d68f6d581c85dcea4bb62f794261396b9345bffef5e4422d145984c364185e7ba7612c8f0aab63c5c71a994a0e530f91b3a1
   languageName: node
   linkType: hard
 
@@ -2630,6 +2587,13 @@ __metadata:
   version: 3.2.1
   resolution: "@vue/shared@npm:3.2.1"
   checksum: 8bcd8f0b1cd48c4cdf9aeca407252d7d7caa5fefba88c46bcb5417b4492e3a8a409bc6e2af7a043292bb5d044c08e9bcab8aeb06ccac4e50986fa5d14d451feb
+  languageName: node
+  linkType: hard
+
+"@vue/shared@npm:3.2.2":
+  version: 3.2.2
+  resolution: "@vue/shared@npm:3.2.2"
+  checksum: 1cebea160e76fbe72418b7d44bc9cd1fc210bd4c6c1cb2b41836737a016b692e2666745f2662182edd53c8b9b88769318ae120dd6ef62bfbabed30848e30c5b5
   languageName: node
   linkType: hard
 
@@ -8733,6 +8697,7 @@ fsevents@~2.3.2:
     "@types/mocha": ^9.0.0
     "@types/node": ^14.17.9
     "@types/object-hash": ^2
+    "@vue/server-renderer": ^3.2.2
     chai: ^4.3.4
     esbuild: ^0.12.19
     eslint: ^7.32.0
@@ -8762,20 +8727,17 @@ fsevents@~2.3.2:
   version: 0.0.0-use.local
   resolution: "nuxt3@workspace:packages/nuxt3"
   dependencies:
-    "@nuxt/app": ^0.5.0
-    "@nuxt/component-discovery": ^0.2.0
-    "@nuxt/global-imports": ^0.1.0
     "@nuxt/kit": ^0.6.4
-    "@nuxt/meta": ^0.1.0
     "@nuxt/nitro": ^0.9.1
-    "@nuxt/pages": ^0.3.0
     "@nuxt/vite-builder": ^0.5.0
     "@nuxt/webpack-builder": ^0.5.0
     "@types/fs-extra": ^9.0.12
     "@types/hash-sum": ^1.0.0
     "@types/lodash": ^4.14.172
     "@vue/reactivity": 3.2.1
+    "@vue/server-renderer": ^3.2.2
     "@vue/shared": 3.2.1
+    "@vueuse/head": ^0.6.0
     chokidar: ^3.5.2
     consola: ^2.15.3
     defu: ^5.0.0
@@ -8786,10 +8748,19 @@ fsevents@~2.3.2:
     ignore: ^5.1.8
     lodash: ^4.17.21
     nuxi: ^0.3.8
+    ohmyfetch: ^0.2.0
     scule: ^0.2.1
     ufo: ^0.7.7
     unbuild: ^0.4.2
+    unplugin: ^0.0.5
     upath: ^2.0.1
+    vue: ^3.2.1
+    vue-meta: next
+    vue-router: ^4.0.11
+    vuex5: ^0.5.0-testing.3
+  peerDependencies:
+    "@vue/reactivity": 3.2.1
+    "@vue/shared": 3.2.1
     vue: 3.2.1
   bin:
     nu: ./bin/nuxi.js
@@ -12126,12 +12097,13 @@ typescript@^4.3.5:
   languageName: node
   linkType: hard
 
-"vue-meta@npm:3.0.0-alpha.9":
-  version: 3.0.0-alpha.9
-  resolution: "vue-meta@npm:3.0.0-alpha.9"
+"vue-meta@npm:next":
+  version: 3.0.0-alpha.2
+  resolution: "vue-meta@npm:3.0.0-alpha.2"
   peerDependencies:
+    "@vue/server-renderer": ^3.0.6
     vue: ^3.0.0
-  checksum: 78a3a64ed0a7f4025c93332ffe5cf9f64b7c03ebd5b2ab8f7c31b2b1eefc7ebe9304f7155b60560b3dac16d4723877d2e359968bc38c906d336209c6247227ad
+  checksum: 436ee6d8d102eb665b8bf0b3749229e456f66b9e30f5b842d9f48298be551d28b86d6bf034afc09820e0451a2c6d891614db4e4df1ea357106a52267ace071e8
   languageName: node
   linkType: hard
 

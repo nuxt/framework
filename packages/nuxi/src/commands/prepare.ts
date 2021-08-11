@@ -20,7 +20,7 @@ export default defineNuxtCommand({
     const nuxt = await loadNuxt({ rootDir })
 
     const adHocModules = nuxt.options._majorVersion === 3
-      ? ['@nuxt/kit', '@nuxt/app', '@nuxt/nitro']
+      ? ['@nuxt/kit', '@nuxt/nitro']
       : ['@nuxt/kit']
 
     const modulePaths = getModulePaths(nuxt.options.modulesDir)
