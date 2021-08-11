@@ -1,12 +1,12 @@
 const identifiers = {
-  '#app': [
+  'nuxt3/dist/app': [
     'useAsyncData',
     'asyncData',
     'defineNuxtComponent',
     'useNuxt',
     'defineNuxtPlugin'
   ],
-  '#meta': [
+  'nuxt3/dist/meta': [
     'useMeta'
   ],
   vue: [
