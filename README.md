@@ -12,6 +12,8 @@ We are currently in private beta in order to stabilize the framework before onbo
 
 Our focus is currently on new projects made with Nuxt3 (not transitioning from Nuxt2 at the moment) as well as migrating modules to Nuxt3.
 
+Read more in the [announcement post](https://github.com/nuxt/framework/discussions/434).
+
 
 ## 📖 Documentation
 
