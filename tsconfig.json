@@ -15,6 +15,7 @@
       "chai"
     ],
     "paths": {
+      "#app": ["./packages/nuxt3/src/app/index"],
       "#app/*": ["./packages/nuxt3/src/app/*"]
     }
   },
