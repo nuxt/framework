@@ -26,6 +26,7 @@ export default defineNuxtCommand({
     const modulePaths = getModulePaths(nuxt.options.modulesDir)
 
     const references: TSReference[] = [
+      'nuxt3',
       ...adHocModules,
       ...nuxt.options.buildModules,
       ...nuxt.options.modules,
