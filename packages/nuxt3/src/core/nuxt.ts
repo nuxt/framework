@@ -55,9 +55,13 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   const options = loadNuxtConfig(opts)
 
   // Temp
-  options.appDir = resolve(__dirname, '../app')
+  const distDir = resolve(__dirname, '..')
+  options.appDir = resolve(distDir, 'app')
   options._majorVersion = 3
   options.buildModules.push(pagesModule, metaModule, componentsModule, globalImportsModule)
+  options.modulesDir.push(resolve(distDir, '../node_modules'))
+
+  console.log(options.modulesDir)
 
   const nuxt = createNuxt(options)
 
