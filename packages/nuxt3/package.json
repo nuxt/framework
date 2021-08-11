@@ -4,7 +4,7 @@
   "repository": "nuxt/framework",
   "license": "MIT",
   "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./types.d.ts",
   "bin": {
     "nu": "./bin/nuxi.js",
     "nuxi": "./bin/nuxi.js",
@@ -12,6 +12,7 @@
   },
   "files": [
     "bin",
+    "types.d.ts",
     "dist"
   ],
   "scripts": {
