@@ -1454,9 +1454,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/pages@^0.3.0, @nuxt/pages@workspace:packages/pages":
+"@nuxt/pages@^0.3.0, @nuxt/pages@workspace:modules/pages":
   version: 0.0.0-use.local
-  resolution: "@nuxt/pages@workspace:packages/pages"
+  resolution: "@nuxt/pages@workspace:modules/pages"
   dependencies:
     "@nuxt/kit": ^0.6.4
     globby: ^11.0.4
