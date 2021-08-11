@@ -1,3 +1,4 @@
+import { isAbsolute } from 'upath'
 import { ProvidePlugin } from 'webpack'
 import { WebpackConfigContext, applyPresets, getWebpackConfig } from '../utils/config'
 import { nuxt } from '../presets/nuxt'
@@ -34,7 +35,7 @@ function serverStandalone (ctx: WebpackConfigContext) {
   // TODO: Refactor this out of webpack
   const inline = [
     'src/',
-    '@nuxt/app',
+    '#app',
     'vuex5',
     '!',
     '-!',
@@ -48,7 +49,7 @@ function serverStandalone (ctx: WebpackConfigContext) {
   ctx.config.externals.push(({ request }, cb) => {
     if (
       request[0] === '.' ||
-      request[0] === '/' ||
+      isAbsolute(request) ||
       inline.find(prefix => request.startsWith(prefix))
     ) {
       // console.log('Inline', request)
