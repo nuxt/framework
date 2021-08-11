@@ -19,7 +19,6 @@
     }
   },
   "exclude": [
-    "./packages/*/dist/*",
-    "./modules/*/dist/*"
+    "**/*/dist/*"
   ]
 }
