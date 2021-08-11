@@ -19,7 +19,7 @@ You can read documentation online [here](https://nuxt3-docs.vercel.app/get-start
 
 ## 🐞 Reporting bugs
 
-In order to report a bug, please use the [New issue](https://github.com/nuxt/framework/issues/new) form and follow the template to provide a bug reproduction.
+In order to report a bug, please use the [new issue](https://github.com/nuxt/framework/issues/new?assignees=&labels=bug&template=bug-report---.md&title=) form and follow the template to provide a bug reproduction.
 
 ## 💡 Suggestions
 
