@@ -61,8 +61,6 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   options.buildModules.push(pagesModule, metaModule, componentsModule, globalImportsModule)
   options.modulesDir.push(resolve(distDir, '../node_modules'))
 
-  console.log(options.modulesDir)
-
   const nuxt = createNuxt(options)
 
   if (opts.ready !== false) {
