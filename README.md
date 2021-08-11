@@ -15,7 +15,8 @@ Our focus is currently on new projects made with Nuxt3 (not transitioning from N
 
 ## 📖 Documentation
 
-You can read documentation online [here](https://nuxt3-docs.vercel.app/get-started/installation)
+You can read documentation online on [v3.nuxtjs.org](https://v3.nuxtjs.org/get-started/installation).
+Username: `nuxt` - Password: `3`
 
 ## 🐞 Reporting bugs
 
