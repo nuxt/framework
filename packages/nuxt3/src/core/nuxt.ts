@@ -6,12 +6,15 @@ import metaModule from '../meta/module'
 import componentsModule from '../components/module'
 import globalImportsModule from '../global-imports/module'
 import { distDir, pkgDir } from '../dirs'
+import { version } from '../../package.json'
 import { initNitro } from './nitro'
 
 export function createNuxt (options: NuxtOptions): Nuxt {
   const hooks = createHooks<NuxtHooks>()
 
   const nuxt: Nuxt = {
+    // TODO: remove prefix when we bumpped to stable
+    version: '3.0.0-' + version,
     options,
     hooks,
     callHook: hooks.callHook,

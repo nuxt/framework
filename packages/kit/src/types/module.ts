@@ -10,6 +10,11 @@ export interface ModuleMeta {
    * For example, `@nuxtjs/axios` uses `axios`.
    */
   configKey?: string
+  /**
+   * Semver range of the Nuxt version supported.
+   * For example, `^2.14.0 || ^3.0.0-0` or `>=2.10`
+   */
+  nuxtVersion?: string
   [key: string]: any
 }
 

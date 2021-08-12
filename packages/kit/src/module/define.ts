@@ -1,8 +1,11 @@
 import defu from 'defu'
 import { applyDefaults } from 'untyped'
+import consola from 'consola'
+import { satisfies } from 'semver'
 import { useNuxt, nuxtCtx } from '../nuxt'
 import type { Nuxt } from '../types/nuxt'
 import type { NuxtModule, LegacyNuxtModule, ModuleOptions } from '../types/module'
+import { getNuxtVersion } from './utils'
 
 /**
  * Define a Nuxt module, automatically merging defaults with user provided options, installing
@@ -30,6 +33,15 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
     // Stop if no install provided
     if (typeof mod.setup !== 'function') {
       return
+    }
+
+    // check nuxt version range
+    if (mod.nuxtVersion) {
+      const version = getNuxtVersion()
+      if (!satisfies(version, mod.nuxtVersion)) {
+        consola.warn(`module "${mod.name}" requires nuxt "${mod.nuxtVersion}" but got "${version}", module disabled`)
+        return
+      }
     }
 
     // Resolve options

@@ -5,7 +5,7 @@ import type { NuxtOptions } from './config'
 export interface Nuxt {
   /** The resolved Nuxt configuration. */
   options: NuxtOptions
-
+  version: string
   hooks: Hookable<NuxtHooks>
   hook: Nuxt['hooks']['hook']
   callHook: Nuxt['hooks']['callHook']
