@@ -15,6 +15,9 @@ export * from './module/utils'
 export * from './utils/cjs'
 export * from './utils/resolve'
 
+// Lib redirection
+export * from './lib'
+
 // Types
 export * from './types/config'
 export * from './types/hooks'
