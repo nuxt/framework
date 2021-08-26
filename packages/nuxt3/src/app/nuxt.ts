@@ -22,7 +22,7 @@ export interface RuntimeNuxtHooks {
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
 }
-type RuntimeNuxtHookName = keyof RuntimeNuxtHooks
+type NuxtAppHookName = keyof RuntimeNuxtHooks
 
 export interface Nuxt {
   app: App
@@ -30,10 +30,10 @@ export interface Nuxt {
 
   hooks: {
     /** Register a function to be run when the named Nuxt hook is called. */
-    hook<Hook extends RuntimeNuxtHookName> (hookName: Hook, callback: RuntimeNuxtHooks[Hook]): HookResult
-    hookOnce<Hook extends RuntimeNuxtHookName> (hookName: Hook, callback: RuntimeNuxtHooks[Hook]): HookResult
+    hook<Hook extends NuxtAppHookName> (hookName: Hook, callback: RuntimeNuxtHooks[Hook]): HookResult
+    hookOnce<Hook extends NuxtAppHookName> (hookName: Hook, callback: RuntimeNuxtHooks[Hook]): HookResult
     /** Run all Nuxt hooks that have been registered against the hook name. */
-    callHook<Hook extends RuntimeNuxtHookName> (hookName: Hook, ...args: Parameters<RuntimeNuxtHooks[Hook]>): ReturnType<RuntimeNuxtHooks[Hook]>
+    callHook<Hook extends NuxtAppHookName> (hookName: Hook, ...args: Parameters<RuntimeNuxtHooks[Hook]>): ReturnType<RuntimeNuxtHooks[Hook]>
     /** Add all hooks in the object passed in. */
     addHooks (hooks: Partial<RuntimeNuxtHooks>): void
   }
