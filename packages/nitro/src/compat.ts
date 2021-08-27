@@ -79,12 +79,10 @@ export default function nuxt2CompatModule () {
   // Fix module resolution
   nuxt.hook('webpack:config', (configs) => {
     for (const config of configs) {
-      if (Array.isArray(config.resolve.alias)) {
-        config.resolve.alias.push({ name: 'ufo', alias: 'ufo/dist/index.mjs' }, { name: 'ohmyfetch', alias: 'ohmyfetch/dist/index.mjs' })
-      } else {
-        config.resolve.alias.ufo = 'ufo/dist/index.mjs'
-        config.resolve.alias.ohmyfetch = 'ohmyfetch/dist/index.mjs'
-      }
+      // We use only object form of alias in base config
+      if (Array.isArray(config.resolve.alias)) { return }
+      config.resolve.alias.ufo = 'ufo/dist/index.mjs'
+      config.resolve.alias.ohmyfetch = 'ohmyfetch/dist/index.mjs'
     }
   })
 
