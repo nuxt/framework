@@ -1366,7 +1366,7 @@ __metadata:
     gzip-size: ^6.0.0
     h3: ^0.3.0
     hasha: ^5.2.2
-    hookable: ^4.4.1
+    hookable: ^5.0.0-2
     http-proxy: ^1.18.1
     is-primitive: ^3.0.1
     jiti: ^1.11.0
@@ -6248,12 +6248,17 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"hookable@npm:^4.4.1":
-  version: 4.4.1
-  resolution: "hookable@npm:4.4.1"
-  checksum: 6f1cdd047c18a07f59d851186e993c7e15f9a59ae2223ddc8efa02dbe9cfbbf921cab026cf9910beb485512ad293a6693ef60e45eccaf1b0f5902baf521985c4
+"hookable@portal:/Users/daniel/code/unjs/hookable::locator=%40nuxt%2Fnitro%40workspace%3Apackages%2Fnitro":
+  version: 0.0.0-use.local
+  resolution: "hookable@portal:/Users/daniel/code/unjs/hookable::locator=%40nuxt%2Fnitro%40workspace%3Apackages%2Fnitro"
   languageName: node
-  linkType: hard
+  linkType: soft
+
+"hookable@portal:/Users/daniel/code/unjs/hookable::locator=nuxt3%40workspace%3Apackages%2Fnuxt3":
+  version: 0.0.0-use.local
+  resolution: "hookable@portal:/Users/daniel/code/unjs/hookable::locator=nuxt3%40workspace%3Apackages%2Fnuxt3"
+  languageName: node
+  linkType: soft
 
 "hosted-git-info@npm:^2.1.4":
   version: 2.8.9
@@ -8644,7 +8649,7 @@ fsevents@~2.3.2:
     fs-extra: ^10.0.0
     globby: ^11.0.4
     hash-sum: ^2.0.0
-    hookable: ^4.4.1
+    hookable: ^5.0.0-2
     ignore: ^5.1.8
     lodash: ^4.17.21
     nuxi: ^0.10.0
