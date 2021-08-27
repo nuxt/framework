@@ -3,6 +3,7 @@ import { setupNitroBridge } from './nitro'
 
 export default defineNuxtModule({
   name: 'nuxt-bridge',
+  configKey: 'bridge',
   defaults: {
     nitro: true,
     vite: false
