@@ -8,8 +8,8 @@ import { createDevServer } from './server/dev'
 import { wpfs } from './utils/wpfs'
 import { resolveMiddleware } from './server/middleware'
 
-export default function nuxt2CompatModule () {
-  const nuxt: Nuxt = this.nuxt
+export default function nuxt2CompatModule (this: { nuxt: Nuxt }) {
+  const { nuxt } = this
 
   // Ensure we're not just building with 'static' target
   if (!nuxt.options.dev && nuxt.options.target === 'static' && !nuxt.options._export && !nuxt.options._legacyGenerate) {
