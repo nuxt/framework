@@ -1,14 +1,14 @@
 import fetch from 'node-fetch'
 import { resolve } from 'upath'
 import { move, readFile, writeFile } from 'fs-extra'
-import type { Nuxt } from '@nuxt/kit'
+import type { ModuleContainer } from '@nuxt/kit'
 import { build, generate, prepare } from './build'
 import { getNitroContext, NitroContext } from './context'
 import { createDevServer } from './server/dev'
 import { wpfs } from './utils/wpfs'
 import { resolveMiddleware } from './server/middleware'
 
-export default function nuxt2CompatModule (this: { nuxt: Nuxt }) {
+export default function nuxt2CompatModule (this: ModuleContainer) {
   const { nuxt } = this
 
   // Ensure we're not just building with 'static' target
