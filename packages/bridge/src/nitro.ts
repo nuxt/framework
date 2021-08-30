@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 import { addPluginTemplate, useNuxt } from '@nuxt/kit'
 import { stringifyQuery } from 'ufo'
 import { resolve } from 'upath'
-import { move, readFile, writeFile } from 'fs-extra'
+import { copy, readFile, writeFile } from 'fs-extra'
 import { wpfs, build, generate, prepare, getNitroContext, NitroContext, createDevServer, resolveMiddleware } from '@nuxt/nitro'
 import { distDir } from './dirs'
 
@@ -88,7 +88,7 @@ export function setupNitroBridge () {
   nuxt.hook('build:compiled', async ({ name }) => {
     if (name === 'server') {
       const jsServerEntry = resolve(nuxt.options.buildDir, 'dist/server/server.js')
-      await move(jsServerEntry, jsServerEntry.replace(/.js$/, '.cjs'))
+      await writeFile(jsServerEntry.replace(/.js$/, '.cjs'), 'module.exports = require("./server.js")', 'utf8')
       await writeFile(jsServerEntry.replace(/.js$/, '.mjs'), 'export { default } from "./server.cjs"', 'utf8')
     } else if (name === 'client') {
       const manifest = await readFile(resolve(nuxt.options.buildDir, 'dist/server/client.manifest.json'), 'utf8')
