@@ -14,8 +14,12 @@ export default defineNuxtModule({
     swc: true
   },
   async setup (opts, nuxt) {
+    console.log('Booo')
     if (opts.nitro) {
       await setupNitroBridge()
+    }
+    if (opts.app) {
+      await setupAppBridge()
     }
     if (opts.vite) {
       await installModule(nuxt, require.resolve('nuxt-vite'))
@@ -25,9 +29,6 @@ export default defineNuxtModule({
     }
     if (opts.swc) {
       await installModule(nuxt, require.resolve('nuxt-swc'))
-    }
-    if (opts.app) {
-      await setupAppBridge()
     }
   }
 })

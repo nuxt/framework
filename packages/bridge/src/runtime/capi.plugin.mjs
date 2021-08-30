@@ -3,5 +3,4 @@ import VueCompositionAPI from '@vue/composition-api'
 
 Vue.use(VueCompositionAPI)
 
-export default function () {
-}
+export default function () {}
