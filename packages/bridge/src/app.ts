@@ -20,4 +20,17 @@ export function setupAppBridge () {
     // @ts-ignore
     configs.forEach(config => config.entry.app.unshift(capiPluginPath))
   })
+
+  // Fix wp4 esm
+  nuxt.hook('webpack:config', (configs) => {
+    for (const config of configs.filter(c => c.module)) {
+      for (const rule of config.module.rules) {
+        // @ts-ignore
+        if (rule.test instanceof RegExp && rule.test.test('index.mjs')) {
+          // @ts-ignore
+          rule.type = 'javascript/auto'
+        }
+      }
+    }
+  })
 }
