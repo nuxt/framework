@@ -1,3 +1,14 @@
 <template>
-  <div>Hello Vue</div>
+  <div>Hello Vue {{ ctr }}</div>
 </template>
+
+<script>
+import { defineComponent, ref } from '@vue/composition-api'
+
+export default defineComponent({
+  setup () {
+    const ctr = ref(1)
+    return { ctr }
+  }
+})
+</script>

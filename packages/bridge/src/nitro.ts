@@ -70,8 +70,8 @@ export function setupNitroBridge () {
 
   // Nitro server plugin (for vue-meta)
   addPluginTemplate({
-    filename: 'nitro-bridge.server.js',
-    src: resolve(distDir, 'runtime/nitro-bridge.server.js')
+    filename: 'nitro-bridge.mjs',
+    src: resolve(distDir, 'runtime/nitro-bridge.mjs')
   })
 
   // Fix module resolution
