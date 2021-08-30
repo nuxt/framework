@@ -83,7 +83,7 @@ export function dynamicRequire ({ dir, globbyOptions, inline }: Options): Plugin
 function getWebpackChunkMeta (src: string) {
   const chunk = require(src) || {}
   const { id, ids, modules } = chunk
-  if (!id) {
+  if (!id && !ids) {
     return null // Not a webpack chunk
   }
   return {
