@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 import { addPluginTemplate, useNuxt } from '@nuxt/kit'
 import { stringifyQuery } from 'ufo'
 import { resolve } from 'upath'
-import { copy, readFile, writeFile } from 'fs-extra'
+import { readFile, writeFile } from 'fs-extra'
 import { wpfs, build, generate, prepare, getNitroContext, NitroContext, createDevServer, resolveMiddleware } from '@nuxt/nitro'
 import { distDir } from './dirs'
 
