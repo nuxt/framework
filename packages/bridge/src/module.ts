@@ -14,7 +14,6 @@ export default defineNuxtModule({
     swc: true
   },
   async setup (opts, nuxt) {
-    console.log('Booo')
     if (opts.nitro) {
       await setupNitroBridge()
     }
