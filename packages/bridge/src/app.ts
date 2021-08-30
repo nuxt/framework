@@ -12,6 +12,9 @@ export function setupAppBridge () {
   // Resolve to same vue2 path
   nuxt.options.alias.vue = nuxt.options.alias.vue || resolveModule('vue/dist/vue.runtime.esm.js', { paths: nuxt.options.modulesDir })
 
+  // Transpile runtime/
+  nuxt.options.build.transpile.push(resolve(distDir, 'runtime'))
+
   // Add composition-api support
   nuxt.options.alias['@vue/composition-api'] = require.resolve('@vue/composition-api/dist/vue-composition-api.mjs')
   const capiPluginPath = resolve(distDir, 'runtime/capi.plugin.mjs')
