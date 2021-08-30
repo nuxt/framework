@@ -21,7 +21,7 @@ function stripeComments (code: string) {
 }
 
 export const TransformPlugin = createUnplugin((map: IdentifierMap) => {
-  const matchRE = new RegExp('\\b(' + (Object.keys(map).join('|')) + ')\\b', 'g')
+  const matchRE = new RegExp(`\\b(${Object.keys(map).join('|')})\\b`, 'g')
 
   return {
     name: 'nuxt-global-imports-transform',
@@ -54,7 +54,7 @@ export const TransformPlugin = createUnplugin((map: IdentifierMap) => {
       // remove those already defined
       for (const regex of excludeRE) {
         Array.from(withoutComment.matchAll(regex))
-          .flatMap(i => i[1]?.split(',') || [])
+          .flatMap(i => [...(i[1]?.split(',') || []), ...(i[2]?.split(',') || [])])
           .forEach(i => matched.delete(i.trim()))
       }
 
