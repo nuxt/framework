@@ -4,8 +4,9 @@ import { stringifyQuery } from 'ufo'
 import { resolve } from 'upath'
 import { move, readFile, writeFile } from 'fs-extra'
 import { wpfs, build, generate, prepare, getNitroContext, NitroContext, createDevServer, resolveMiddleware } from '@nuxt/nitro'
+import { distDir } from './dirs'
 
-export default function nuxt2CompatModule () {
+export function setupNitroBridge () {
   const nuxt = useNuxt()
 
   // Ensure we're not just building with 'static' target
@@ -70,7 +71,7 @@ export default function nuxt2CompatModule () {
   // Nitro server plugin (for vue-meta)
   addPluginTemplate({
     filename: 'nitro-bridge.server.js',
-    src: resolve(nitroContext._internal.runtimeDir, 'app/nitro-bridge.server.js')
+    src: resolve(distDir, 'runtime/nitro-bridge.server.js')
   })
 
   // Fix module resolution
