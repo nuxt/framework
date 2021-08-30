@@ -16,7 +16,7 @@ Please take a look at the [main discussion](https://github.com/nuxt/framework/di
 
 ## 📖 Documentation
 
-You can read documentation online [here](https://v3.nuxtjs.org/) with the credentials nuxt:3
+You can read the documentation online [here](https://v3.nuxtjs.org/).
 
 ## 🐞 Reporting bugs
 
