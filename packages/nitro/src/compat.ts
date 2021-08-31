@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import { resolve } from 'upath'
-import { move, readFile, writeFile } from 'fs-extra'
+import { exists, existsSync, move, pathExists, readFile, writeFile } from 'fs-extra'
 import type { ModuleContainer } from '@nuxt/kit'
 import { build, generate, prepare } from './build'
 import { getNitroContext, NitroContext } from './context'
@@ -90,8 +90,10 @@ export default function nuxt2CompatModule (this: ModuleContainer) {
   nuxt.hook('build:compiled', async ({ name }) => {
     if (name === 'server') {
       const jsServerEntry = resolve(nuxt.options.buildDir, 'dist/server/server.js')
-      await move(jsServerEntry, jsServerEntry.replace(/.js$/, '.cjs'))
-      await writeFile(jsServerEntry.replace(/.js$/, '.mjs'), 'export { default } from "./server.cjs"', 'utf8')
+      if (await pathExists(jsServerEntry)) {
+        await move(jsServerEntry, jsServerEntry.replace(/.js$/, '.cjs'))
+        await writeFile(jsServerEntry.replace(/.js$/, '.mjs'), 'export { default } from "./server.cjs"', 'utf8')
+      }
     } else if (name === 'client') {
       const manifest = await readFile(resolve(nuxt.options.buildDir, 'dist/server/client.manifest.json'), 'utf8')
       await writeFile(resolve(nuxt.options.buildDir, 'dist/server/client.manifest.mjs'), 'export default ' + manifest, 'utf8')
