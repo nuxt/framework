@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import { resolve } from 'upath'
-import { exists, existsSync, move, pathExists, readFile, writeFile } from 'fs-extra'
+import { move, pathExists, readFile, writeFile } from 'fs-extra'
 import type { ModuleContainer } from '@nuxt/kit'
 import { build, generate, prepare } from './build'
 import { getNitroContext, NitroContext } from './context'
