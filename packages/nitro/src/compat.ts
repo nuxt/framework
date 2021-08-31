@@ -91,7 +91,9 @@ export default function nuxt2CompatModule (this: ModuleContainer) {
     if (name === 'server') {
       const jsServerEntry = resolve(nuxt.options.buildDir, 'dist/server/server.js')
       if (await pathExists(jsServerEntry)) {
-        await move(jsServerEntry, jsServerEntry.replace(/.js$/, '.cjs'))
+        await move(jsServerEntry, jsServerEntry.replace(/.js$/, '.cjs'), {
+          overwrite: true
+        })
         await writeFile(jsServerEntry.replace(/.js$/, '.mjs'), 'export { default } from "./server.cjs"', 'utf8')
       }
     } else if (name === 'client') {
