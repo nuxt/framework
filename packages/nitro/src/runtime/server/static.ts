@@ -6,6 +6,8 @@ import { getAsset, readAsset } from '#static'
 const METHODS = ['HEAD', 'GET']
 const PUBLIC_PATH = process.env.PUBLIC_PATH // Default: /_nuxt/
 const TWO_DAYS = 2 * 60 * 60 * 24
+const STATIC_ASSETS_BASE = process.env.NUXT_STATIC_BASE + '/' + process.env.NUXT_STATIC_VERSION
+const PAYLOAD_JS = '/payload.js'
 
 // eslint-disable-next-line
 export default async function serveStatic(req, res) {
@@ -27,7 +29,7 @@ export default async function serveStatic(req, res) {
   }
 
   if (!asset) {
-    if (id.startsWith(PUBLIC_PATH)) {
+    if (id.startsWith(PUBLIC_PATH) && !id.startsWith(STATIC_ASSETS_BASE) && !id.endsWith(PAYLOAD_JS)) {
       throw createError({
         statusMessage: 'Cannot find static asset ' + id,
         statusCode: 404
