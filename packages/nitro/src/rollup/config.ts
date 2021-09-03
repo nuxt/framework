@@ -162,7 +162,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     // Dynamic import support with webpack esm output
     rollupConfig.plugins.push(wp5Esm({
       serverDir: resolve(nitroContext._nuxt.buildDir, 'dist/server'),
-      outDir: resolve(nitroContext.output.serverDir, 'chunks/app')
+      outDir: resolve(nitroContext.output.serverDir, nitroContext.inlineDynamicImports ? '' : 'chunks/app')
     }))
   } else {
     // Dynamic require support for wp4
