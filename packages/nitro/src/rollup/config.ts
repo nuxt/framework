@@ -17,6 +17,7 @@ import { NitroContext } from '../context'
 import { resolvePath, MODULE_DIR } from '../utils'
 
 import { dynamicRequire } from './plugins/dynamic-require'
+import { wp5Esm } from './plugins/wp5-esm'
 import { externals } from './plugins/externals'
 import { timing } from './plugins/timing'
 // import { autoMock } from './plugins/automock'
@@ -157,19 +158,27 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     sourceMap: true
   }))
 
-  // Dynamic Require Support
-  rollupConfig.plugins.push(dynamicRequire({
-    dir: resolve(nitroContext._nuxt.buildDir, 'dist/server'),
-    inline: nitroContext.node === false || nitroContext.inlineDynamicImports,
-    globbyOptions: {
-      ignore: [
-        'client.manifest.mjs',
-        'server.cjs',
-        'server.mjs',
-        'server.manifest.mjs'
-      ]
-    }
-  }))
+  if (nitroContext._nuxt.majorVersion === 3) {
+    // Dynamic import support with webpack esm output
+    rollupConfig.plugins.push(wp5Esm({
+      serverDir: resolve(nitroContext._nuxt.buildDir, 'dist/server'),
+      outDir: resolve(nitroContext.output.serverDir, 'chunks/app')
+    }))
+  } else {
+    // Dynamic require support for wp4
+    rollupConfig.plugins.push(dynamicRequire({
+      dir: resolve(nitroContext._nuxt.buildDir, 'dist/server'),
+      inline: nitroContext.node === false || nitroContext.inlineDynamicImports,
+      globbyOptions: {
+        ignore: [
+          'client.manifest.mjs',
+          'server.cjs',
+          'server.mjs',
+          'server.manifest.mjs'
+        ]
+      }
+    }))
+  }
 
   // Assets
   rollupConfig.plugins.push(assets(nitroContext.assets))
