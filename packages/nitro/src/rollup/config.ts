@@ -158,7 +158,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     sourceMap: true
   }))
 
-  if (nitroContext._nuxt.majorVersion === 3) {
+  if (nitroContext._nuxt.majorVersion === 3 && !nitroContext._nuxt.dev) {
     // Dynamic import support with webpack esm output
     rollupConfig.plugins.push(wp5Esm({
       serverDir: resolve(nitroContext._nuxt.buildDir, 'dist/server'),
