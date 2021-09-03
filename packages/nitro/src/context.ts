@@ -81,7 +81,8 @@ export type NitroPreset = NitroInput | ((input: NitroInput) => NitroInput)
 export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): NitroContext {
   const defaults: NitroContext = {
     timing: undefined,
-    inlineDynamicImports: undefined,
+    // TODO: fix dynamic imports incompatibility with webpack4
+    inlineDynamicImports: nuxtOptions._majorVersion !== 3 || undefined,
     minify: undefined,
     sourceMap: undefined,
     externals: undefined,
