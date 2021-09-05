@@ -83,7 +83,7 @@ function getWebpackChunkMeta (src: string) {
 }
 
 function TMPL_INLINE ({ chunks }: TemplateContext) {
-  return `${chunks.map(i => `import ${i.name} from '${i.src}'`).join('\n')}
+  return `${chunks.map(i => `import * as ${i.name} from '${i.src}'`).join('\n')}
 const dynamicChunks = {
   ${chunks.map(i => ` ['${i.id}']: ${i.name}`).join(',\n')}
 };
