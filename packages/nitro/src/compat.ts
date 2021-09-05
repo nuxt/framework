@@ -7,6 +7,7 @@ import { getNitroContext, NitroContext } from './context'
 import { createDevServer } from './server/dev'
 import { wpfs } from './utils/wpfs'
 import { resolveMiddleware } from './server/middleware'
+import AsyncLoadingPlugin from './webpack/wp4'
 
 export default function nuxt2CompatModule (this: ModuleContainer) {
   const { nuxt } = this
@@ -62,6 +63,14 @@ export default function nuxt2CompatModule (this: ModuleContainer) {
     if (serverConfig) {
       serverConfig.devtool = false
     }
+  })
+
+  // Set up webpack plugin for node async loading
+  nuxt.hook('webpack:config', (webpackConfigs) => {
+    if (nitroContext.inlineDynamicImports || nitroContext.node === false) { return }
+    const serverConfig = webpackConfigs.find(config => config.name === 'server')
+    serverConfig.plugins = serverConfig.plugins || []
+    serverConfig.plugins.push(new AsyncLoadingPlugin())
   })
 
   // Nitro client plugin
