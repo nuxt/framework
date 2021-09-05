@@ -211,7 +211,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       '#nitro-renderer': normalize(require.resolve(resolve(nitroContext._internal.runtimeDir, 'app', renderer))),
       '#config': normalize(require.resolve(resolve(nitroContext._internal.runtimeDir, 'app/config'))),
       '#nitro-vue-renderer': vue2ServerRenderer,
-      // Only file and data URLs are supported by the default ESM loader on Windows
+      // Only file and data URLs are supported by the default ESM loader on Windows (#427)
       '#build': nitroContext._nuxt.dev && process.platform === 'win32'
         ? pathToFileURL(nitroContext._nuxt.buildDir).href
         : nitroContext._nuxt.buildDir,
