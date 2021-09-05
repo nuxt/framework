@@ -3,7 +3,8 @@ import { addPluginTemplate, useNuxt } from '@nuxt/kit'
 import { stringifyQuery } from 'ufo'
 import { resolve } from 'upath'
 import { readFile, writeFile } from 'fs-extra'
-import { wpfs, build, generate, prepare, getNitroContext, NitroContext, createDevServer, resolveMiddleware } from '@nuxt/nitro'
+import { build, generate, prepare, getNitroContext, NitroContext, createDevServer, wpfs, resolveMiddleware } from '@nuxt/nitro'
+import { AsyncLoadingPlugin } from './async-loading'
 import { distDir } from './dirs'
 
 export function setupNitroBridge () {
@@ -60,6 +61,13 @@ export function setupNitroBridge () {
     if (serverConfig) {
       serverConfig.devtool = false
     }
+  })
+
+  // Set up webpack plugin for node async loading
+  nuxt.hook('webpack:config', (webpackConfigs) => {
+    const serverConfig = webpackConfigs.find(config => config.name === 'server')
+    serverConfig.plugins = serverConfig.plugins || []
+    serverConfig.plugins.push(new AsyncLoadingPlugin())
   })
 
   // Nitro client plugin
