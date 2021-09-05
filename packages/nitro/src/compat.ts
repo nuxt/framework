@@ -67,7 +67,6 @@ export default function nuxt2CompatModule (this: ModuleContainer) {
 
   // Set up webpack plugin for node async loading
   nuxt.hook('webpack:config', (webpackConfigs) => {
-    if (nitroContext.inlineDynamicImports || nitroContext.node === false) { return }
     const serverConfig = webpackConfigs.find(config => config.name === 'server')
     serverConfig.plugins = serverConfig.plugins || []
     serverConfig.plugins.push(new AsyncLoadingPlugin())
