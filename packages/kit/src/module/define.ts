@@ -38,8 +38,8 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
     const resolvedOptions = applyDefaults(mod.defaults as any, userOptions) as OptionsT
 
     // Ensure nuxt instance exists (nuxt2 compatibility)
-    if (!nuxtCtx.use()) {
-      nuxtCtx.set(nuxt)
+    if (nuxt.options._majorVersion !== 3 || !nuxtCtx.use()) {
+      nuxtCtx.set(nuxt, true)
       // @ts-ignore
       if (!nuxt.__nuxtkit_close__) {
         nuxt.hook('close', () => nuxtCtx.unset())
