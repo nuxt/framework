@@ -2,10 +2,17 @@
 name: "Bug report \U0001F41E"
 about: Create a report to help us improve Nuxt3
 title: ''
-labels: bug
+labels: bug, nuxt3
 assignees: ''
-
 ---
+
+<!--
+
+Please read carefully https://v3.nuxtjs.org/community/reporting-bugs/ before creating a bug report here.
+
+You need to provide a reproduction (repository or sandbox) based on https://codesandbox.io/s/github/nuxt/starter/tree/v3-sandbox
+
+-->
 
 **Describe the bug**
 A clear and concise description of what the bug is.
