@@ -11,7 +11,7 @@ export default defineNuxtModule({
     app: true,
     // TODO: Remove from 2.16
     postcss8: true,
-    swc: true
+    swc: false
   },
   async setup (opts, nuxt) {
     if (opts.nitro) {
