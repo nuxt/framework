@@ -4,6 +4,7 @@ import { resolve, dirname } from 'upath'
 import jiti from 'jiti'
 import destr from 'destr'
 import { splitByCase } from 'scule'
+import clipboardy from 'clipboardy'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -12,7 +13,7 @@ export default defineNuxtCommand({
     usage: 'npx nuxi info [rootDir]',
     description: 'Get information about nuxt project'
   },
-  invoke (args) {
+  async invoke (args) {
     // Resolve rootDir
     const rootDir = resolve(args._[0] || '.')
 
@@ -29,8 +30,9 @@ export default defineNuxtCommand({
       .map(normalizeConfigModule)
       .filter(Boolean)
       .map((name) => {
-        const v = getDepVersion(name)
-        return v ? `${name}@${v}` : name
+        const npmName = name.split('/').splice(0, 2).join('/') // @foo/bar/baz => @foo/bar
+        const v = getDepVersion(npmName)
+        return '`' + (v ? `${name}@${v}` : name) + '`'
       })
       .join(', ')
 
@@ -54,9 +56,12 @@ export default defineNuxtCommand({
     })
     let infoStr = ''
     for (const [label, value] of entries) {
-      infoStr += '- ' + (label + ': ').padEnd(maxLength + 2) + value + '\n'
+      infoStr += '- ' + (label + ': ').padEnd(maxLength + 2) + (value.includes('`') ? value : '`' + value + '`') + '\n'
     }
-    console.log(`Nuxt project info:\n\n${infoStr}\n`)
+
+    const copied = await clipboardy.write(infoStr).then(() => true).catch(() => false)
+    const splitter = '------------------------------'
+    console.log(`Nuxt project info: ${copied ? '(copied to clipboard)' : ''}\n\n${splitter}\n${infoStr}${splitter}\n`)
 
     const isNuxt3 = infoObj.NuxtVersion.startsWith('3') || infoObj.BuildModules.includes('bridge')
     const repo = isNuxt3 ? 'nuxt/framework' : 'nuxt/nuxt.js'
