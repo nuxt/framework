@@ -1,6 +1,6 @@
 import os from 'os'
 import { existsSync, readFileSync } from 'fs'
-import { resolve, dirname, relative } from 'upath'
+import { resolve, dirname } from 'upath'
 import jiti from 'jiti'
 import destr from 'destr'
 import { splitByCase } from 'scule'
