@@ -1,6 +1,6 @@
 import os from 'os'
 import { existsSync, readFileSync } from 'fs'
-import { resolve, dirname } from 'upath'
+import { resolve, dirname, relative } from 'upath'
 import jiti from 'jiti'
 import destr from 'destr'
 import { splitByCase } from 'scule'
@@ -42,6 +42,7 @@ export default defineNuxtCommand({
       NuxtVersion: getDepVersion('nuxt') || getDepVersion('nuxt-edge') || (getDepVersion('nuxt3') ? '3-' + getDepVersion('nuxt3') : null),
       PackageManager: getPackageManager(rootDir),
       Bundler: (nuxtConfig.vite || nuxtConfig?.buildModules?.find(m => m === 'nuxt-vite')) ? 'Vite' : 'Webpack',
+      UserConfig: Object.keys(nuxtConfig).map(key => '`' + key + '`').join(', '),
       RuntimeModules: listModules(nuxtConfig.modules),
       BuildModules: listModules(nuxtConfig.buildModules)
     }
