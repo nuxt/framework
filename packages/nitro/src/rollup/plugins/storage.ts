@@ -32,26 +32,13 @@ export function storage (opts: StorageOptions) {
   return virtual({
     '#storage': `
 import { createStorage } from 'unstorage'
-import { getAsset, statAsset, getKeys } from '#assets'
+import { assets } from '#assets'
 
 ${driverImports.map(i => `import ${getImportName(i)} from '${i}'`).join('\n')}
 
 export const storage = createStorage({})
 
-storage.mount('/assets', {
-  getItem (key) {
-    return getAsset(key)
-  },
-  hasItem (key) {
-    return !!statAsset(key)
-  },
-  getMeta (key) {
-    return statAsset(key)
-  },
-  getKeys () {
-    return getKeys(key)
-  }
-})
+storage.mount('/assets', assets)
 
 ${mounts.map(m => `storage.mount('${m.path}', ${getImportName(m.driver)}(${JSON.stringify(m.opts)}))`).join('\n')}
 `

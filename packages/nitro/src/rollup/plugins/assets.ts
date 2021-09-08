@@ -62,28 +62,15 @@ export function assets (opts: AssetOptions): Plugin {
 
 function getAssetsDev (dirs) {
   return `
-  import mime from 'mime'
   import { createStorage } from 'unstorage'
   import fsDriver from 'unstorage/drivers/fs'
 
   const dirs = ${JSON.stringify(dirs)}
 
-  const storage = createStorage()
+  export const assets = createStorage()
 
   for (const [dirname, dirOpts] of Object.entries(dirs)) {
-    storage.mount(dirname, fsDriver({ base: dirOpts.dir }))
-  }
-
-  export function getKeys() {
-    return storage.getKeys()
-  }
-
-  export function getAsset (id) {
-    return storage.getItem(id)
-  }
-
-  export function statAsset (id) {
-    return storage.getMeta(id)
+    assets.mount(dirname, fsDriver({ base: dirOpts.dir }))
   }
   `
 }
@@ -94,24 +81,28 @@ function normalizeKey (key) {
 
 function getAssetProd (assets: Record<string, Asset>) {
   return `
-const assets = {\n${Object.entries(assets).map(([id, asset]) =>
+const _assets = {\n${Object.entries(assets).map(([id, asset]) =>
   `  ['${normalizeKey(id)}']: {\n    import: () => import('${asset.fsPath}').then(r => r.default || r),\n    meta: ${JSON.stringify(asset.meta)}\n  }`
 ).join(',\n')}\n}
 
 ${normalizeKey.toString()}
 
-export function getKeys() {
-  return Object.keys(assets)
-}
-
-export function getAsset (id) {
-  id = normalizeKey(id)
-  return assets[id] ? assets[id].import() : null
-}
-
-export function statAsset (id) {
-  id = normalizeKey(id)
-  return assets[id] ? assets[id].meta : null
+export const assets = {
+  getKeys() {
+    return Object.keys(_assets)
+  },
+  hasItem (id) {
+    id = normalizeKey(id)
+    return id in _assets
+  },
+  getItem (id) {
+    id = normalizeKey(id)
+    return _assets[id] ? _assets[id].import() : null
+  },
+  getMeta (id) {
+    id = normalizeKey(id)
+    return _assets[id] ? _assets[id].meta : {}
+  }
 }
 `
 }
