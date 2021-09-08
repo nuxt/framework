@@ -62,16 +62,16 @@ export function assets (opts: AssetOptions): Plugin {
 
 function getAssetsDev (dirs) {
   return `
-  import { createStorage } from 'unstorage'
-  import fsDriver from 'unstorage/drivers/fs'
+import { createStorage } from 'unstorage'
+import fsDriver from 'unstorage/drivers/fs'
 
-  const dirs = ${JSON.stringify(dirs)}
+const dirs = ${JSON.stringify(dirs)}
 
-  export const assets = createStorage()
+export const assets = createStorage()
 
-  for (const [dirname, dirOpts] of Object.entries(dirs)) {
-    assets.mount(dirname, fsDriver({ base: dirOpts.dir }))
-  }
+for (const [dirname, dirOpts] of Object.entries(dirs)) {
+  assets.mount(dirname, fsDriver({ base: dirOpts.dir }))
+}
   `
 }
 
