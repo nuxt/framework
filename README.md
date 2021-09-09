@@ -15,6 +15,7 @@
 Welcome to Nuxt3 repository ✨
 
 <table>
+<tbody>
 <tr>
   <td>
     <h2>📖 Documentation</h2>
@@ -42,6 +43,7 @@ Welcome to Nuxt3 repository ✨
     </p>
   </td>
 </tr>
+</tbody>
 </table>
 
 
