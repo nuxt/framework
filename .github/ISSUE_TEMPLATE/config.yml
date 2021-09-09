@@ -1,0 +1,11 @@
+contact_links:
+  - name: 📚 Documentation
+    url: https://v3.nuxtjs.org/
+    about: Check documentation for usage
+  - name: 💬 Discussions
+    url: https://github.com/nuxt/framework/discussions
+    about: Use discussions if you have an idea for improvement
+  - name: 🐛 Known Bugs
+    url: https://github.com/nuxt/framework/issues?q=is%3Aopen+is%3Aissue+label%3Abug
+    about: Check for open bugs
+
