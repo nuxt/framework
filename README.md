@@ -54,7 +54,7 @@ Please take a look at the [beta discussion](https://github.com/nuxt/framework/di
 ## 💻 Development
 
 - Clone repository
-- Ensure having latest LTS version of NodeJS installed
+- Ensure you have the latest LTS version of Node.js installed
 - Install dependencies with `yarn install`
 - Run `yarn stub` to activate passive development
 - Open playground with `yarn play`

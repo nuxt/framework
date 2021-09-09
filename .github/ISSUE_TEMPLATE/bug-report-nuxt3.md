@@ -7,14 +7,14 @@ assignees: ''
 ---
 
 <!--
-Please carefully read contribution docs before creating a bug report
+Please carefully read the contribution docs before creating a bug report
  👉 https://v3.nuxtjs.org/community/reporting-bugs
 
-Please use the codesandbox template below in order to create a minimal reprodution
-  👉 https://codesandbox.io/s/github/nuxt/starter/tree/v3-sandbox
+Please use the codesandbox template below to create a minimal reproduction
+ 👉 https://codesandbox.io/s/github/nuxt/starter/tree/v3-sandbox
 
-If not sure about the issue, please use a github discussion first
-  👉 https://github.com/nuxt/framework/discussions/categories/issues
+If you're unsure about the issue, please open a github discussion first
+ 👉 https://github.com/nuxt/framework/discussions/categories/issues
 -->
 
 **🪟 Environment**
@@ -37,5 +37,5 @@ Steps to reproduce the behavior:
 
 ** ➕ Additional context**
 
-<!-- If applicable, Add any other context about the problem here. -->
+<!-- If applicable, add any other context about the problem here. -->
 <!-- If applicable, add screenshots to help explain your problem. -->
