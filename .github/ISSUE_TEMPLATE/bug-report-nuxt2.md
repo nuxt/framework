@@ -17,15 +17,15 @@ If not sure about the issue, please use a github discussion first
   👉 https://github.com/nuxt/framework/discussions/categories/issues
 -->
 
-**Environment**
+**🪟 Environment**
 
 <!-- You can use `npx nuxi info` to fill this section -->
 
-**Describe the bug**
+**🖊️ Describe the bug and expected behavior**
 
 <!-- A clear and concise description of what the bug is. -->
 
-**To Reproduce**
+**📝 Steps to reproduce**
 
 <!--
 Steps to reproduce the behavior:
@@ -35,11 +35,7 @@ Steps to reproduce the behavior:
 4. See error
 -->
 
-**Expected behavior**
-
-<!-- A clear and concise description of what you expected to happen. -->
-
-**Additional context**
+** ➕ Additional context**
 
 <!-- If applicable, Add any other context about the problem here. -->
 <!-- If applicable, add screenshots to help explain your problem. -->

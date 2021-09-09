@@ -11,10 +11,11 @@ Example: fix(nitro): fix assets dir handling
 ## 🖊️ Types of changes
 
 <!--- What types of changes does your code introduce? Put an `x` in all the boxes that apply: -->
+- [ ] Documentation (updates to the documentation or readme)
 - [ ] Bug fix (a non-breaking change which fixes an issue)
+- [ ] Enhancenment (improving an exisiting functionality like performance)
 - [ ] New feature (a non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to change)
-
 
 ## 📚 Description
 
@@ -22,7 +23,7 @@ Example: fix(nitro): fix assets dir handling
 <!--- Why is this change required? What problem does it solve? -->
 <!--- If it resolves an open issue, please link to the issue here. For example "Resolves: #1337" -->
 
-## Checklist
+## 📝 Checklist
 
 <!--- Put an `x` in all the boxes that apply. -->
 <!--- If your change requires a documentation PR, please link it appropriately -->
