@@ -51,34 +51,7 @@ Welcome to Nuxt3 repository ✨
 
 We are currently in private beta in order to stabilize the framework before opening to the whole community.
 
-Please take a look at the [main discussion](https://github.com/nuxt/framework/discussions/434) for further information.
-
-
-## 📖 Documentation
-
-You can read the [documentation online](https://v3.nuxtjs.org/)
-
-## 🐞 Reporting bugs
-
-> Check out [Reporting Bugs](https://v3.nuxtjs.org/community/reporting-bugs) section from docuementation!
-
-In order to report a bug, please use the [new issue](https://github.com/nuxt/framework/issues/new?assignees=&labels=bug&template=bug-report---.md&title=) form and follow the template to provide a minimal reproduction.
-
-## 💡 Suggestions
-
-> Check out [Contribution](https://v3.nuxtjs.org/community/contribution) section from docuementation!
-
-Please create a [discussion](https://github.com/nuxt/framework/discussions/new) for improvements or feature requests.
-
-## ❔ Questions
-
-> Check out [Getting Help](https://v3.nuxtjs.org/community/getting-help) section from docuementation!
-
-Please create a [discussion](https://github.com/nuxt/framework/discussions/new) for questions about usage.
-
-## 📈 Contribution
-
-> Check out [Contribution](https://v3.nuxtjs.org/community/contribution) section from docuementation!
+Please take a look at the [beta discussion](https://github.com/nuxt/framework/discussions/434) for further information.
 
 ## 💻 Development
 
