@@ -135,9 +135,10 @@ export function addPluginTemplate (plugin: NuxtPluginTemplate | string, opts: Ad
   if (typeof plugin === 'string') {
     plugin = { src: plugin }
   }
-  if (!plugin.src) {
-    plugin.src = addTemplate(plugin).dst
-  }
+
+  // Update plugin src to template destination
+  plugin.src = addTemplate(plugin).dst
+
   return addPlugin(plugin, opts)
 }
 
@@ -250,4 +251,11 @@ export function addVitePlugin (plugin: VitePlugin, options?: ExtendViteConfigOpt
     config.plugins = config.plugins || []
     config.plugins.push(plugin)
   }, options)
+}
+
+/**
+ * Check if current nuxt instance is version 2 legacy
+ */
+export function isNuxt2 (nuxt?: any) {
+  return (nuxt || useNuxt()).version?.startsWith('v2')
 }

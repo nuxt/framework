@@ -4,6 +4,8 @@ import { WebpackConfigContext, applyPresets, getWebpackConfig } from '../utils/c
 import { nuxt } from '../presets/nuxt'
 import { node } from '../presets/node'
 
+const assetPattern = /\.(png|jpe?g|gif|svg|woff2?|eot|ttf|otf|webp|webm|mp4|ogv)(\?.*)?$/i
+
 export function server (ctx: WebpackConfigContext) {
   ctx.name = 'server'
   ctx.isServer = true
@@ -22,7 +24,7 @@ export function server (ctx: WebpackConfigContext) {
 function serverPreset (ctx: WebpackConfigContext) {
   const { config } = ctx
 
-  config.output.filename = 'server.cjs'
+  config.output.filename = 'server.mjs'
   config.devtool = 'cheap-module-source-map'
 
   config.optimization = {
@@ -35,7 +37,7 @@ function serverStandalone (ctx: WebpackConfigContext) {
   // TODO: Refactor this out of webpack
   const inline = [
     'src/',
-    '@nuxt/app',
+    '#app',
     'vuex5',
     '!',
     '-!',
@@ -50,7 +52,8 @@ function serverStandalone (ctx: WebpackConfigContext) {
     if (
       request[0] === '.' ||
       isAbsolute(request) ||
-      inline.find(prefix => request.startsWith(prefix))
+      inline.find(prefix => request.startsWith(prefix)) ||
+      assetPattern.test(request)
     ) {
       // console.log('Inline', request)
       return cb(null, false)

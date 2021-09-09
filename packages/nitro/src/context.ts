@@ -1,8 +1,10 @@
+/* eslint-disable no-use-before-define */
+
 import { resolve, dirname } from 'upath'
 import defu from 'defu'
-import Hookable, { configHooksT } from 'hookable'
+import { createHooks, Hookable, NestedHooks } from 'hookable'
 import type { Preset } from 'unenv'
-import type { NuxtOptions } from '@nuxt/kit'
+import type { NuxtHooks, NuxtOptions } from '@nuxt/kit'
 import { tryImport, resolvePath, detectTarget, extendPreset } from './utils'
 import * as PRESETS from './presets'
 import type { NodeExternalsOptions } from './rollup/plugins/externals'
@@ -10,6 +12,13 @@ import type { StorageOptions } from './rollup/plugins/storage'
 import type { AssetOptions } from './rollup/plugins/assets'
 import type { ServerMiddleware } from './server/middleware'
 import type { RollupConfig } from './rollup/config'
+
+export interface NitroHooks {
+  'nitro:document': (htmlTemplate: { src: string, contents: string, dst: string, compiled: string }) => void
+  'nitro:rollup:before': (context: NitroContext) => void | Promise<void>
+  'nitro:compiled': (context: NitroContext) => void
+  'close': () => void
+}
 
 export interface NitroContext {
   timing: boolean
@@ -27,8 +36,8 @@ export interface NitroContext {
   serveStatic: boolean
   middleware: ServerMiddleware[]
   scannedMiddleware: ServerMiddleware[]
-  hooks: configHooksT
-  nuxtHooks: configHooksT
+  hooks: NestedHooks<NitroHooks>
+  nuxtHooks: NestedHooks<NuxtHooks>
   ignore: string[]
   env: Preset
   vfs: Record<string, string>
@@ -54,11 +63,12 @@ export interface NitroContext {
     isStatic: boolean
     fullStatic: boolean
     staticAssets: any
+    modulesDir: string[]
     runtimeConfig: { public: any, private: any }
   }
   _internal: {
     runtimeDir: string
-    hooks: Hookable
+    hooks: Hookable<NitroHooks>
   }
 }
 
@@ -115,6 +125,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
       isStatic: nuxtOptions.target === 'static' && !nuxtOptions.dev,
       fullStatic: nuxtOptions.target === 'static' && !nuxtOptions._legacyGenerate,
       staticAssets: nuxtOptions.generate.staticAssets,
+      modulesDir: nuxtOptions.modulesDir,
       runtimeConfig: {
         public: nuxtOptions.publicRuntimeConfig,
         private: nuxtOptions.privateRuntimeConfig
@@ -122,7 +133,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
     },
     _internal: {
       runtimeDir: resolve(dirname(require.resolve('@nuxt/nitro')), 'runtime'),
-      hooks: new Hookable()
+      hooks: createHooks<NitroHooks>()
     }
   }
 

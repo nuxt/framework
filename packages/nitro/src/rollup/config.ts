@@ -1,3 +1,4 @@
+import { pathToFileURL } from 'url'
 import { dirname, join, normalize, relative, resolve } from 'upath'
 import type { InputOptions, OutputOptions } from 'rollup'
 import defu from 'defu'
@@ -88,6 +89,9 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
         } else if (lastModule.includes('assets')) {
           prefix = 'assets'
         }
+        if (chunkInfo.name.includes('#')) {
+          return join('chunks', prefix, chunkInfo.name.replace(/#/g, '-') + '.mjs')
+        }
         return join('chunks', prefix, '[name].mjs')
       },
       inlineDynamicImports: nitroContext.inlineDynamicImports,
@@ -161,14 +165,13 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   rollupConfig.plugins.push(dynamicRequire({
     dir: resolve(nitroContext._nuxt.buildDir, 'dist/server'),
     inline: nitroContext.node === false || nitroContext.inlineDynamicImports,
-    globbyOptions: {
-      ignore: [
-        'client.manifest.mjs',
-        'server.cjs',
-        'server.mjs',
-        'server.manifest.mjs'
-      ]
-    }
+    ignore: [
+      'client.manifest.mjs',
+      'server.js',
+      'server.cjs',
+      'server.mjs',
+      'server.manifest.mjs'
+    ]
   }))
 
   // Assets
@@ -210,7 +213,10 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       '#nitro-renderer': normalize(require.resolve(resolve(nitroContext._internal.runtimeDir, 'app', renderer))),
       '#config': normalize(require.resolve(resolve(nitroContext._internal.runtimeDir, 'app/config'))),
       '#nitro-vue-renderer': vue2ServerRenderer,
-      '#build': nitroContext._nuxt.buildDir,
+      // Only file and data URLs are supported by the default ESM loader on Windows (#427)
+      '#build': nitroContext._nuxt.dev && process.platform === 'win32'
+        ? pathToFileURL(nitroContext._nuxt.buildDir).href
+        : nitroContext._nuxt.buildDir,
       '~': nitroContext._nuxt.srcDir,
       '@/': nitroContext._nuxt.srcDir,
       '~~': nitroContext._nuxt.rootDir,
@@ -221,7 +227,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   const moduleDirectories = [
     resolve(nitroContext._nuxt.rootDir, 'node_modules'),
-    resolve(MODULE_DIR, 'node_modules'),
+    ...nitroContext._nuxt.modulesDir,
     resolve(MODULE_DIR, '../node_modules'),
     'node_modules'
   ]
@@ -267,6 +273,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     exportConditions: [
       'default',
       'module',
+      'node',
       'import'
     ]
   }))

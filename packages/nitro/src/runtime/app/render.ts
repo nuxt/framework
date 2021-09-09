@@ -21,7 +21,7 @@ const getSSRRenderer = cachedResult(async () => {
   if (!createSSRApp) { throw new Error('Server bundle is missing') }
   // Create renderer
   const { renderToString } = await import('#nitro-renderer')
-  return createRenderer((createSSRApp), { clientManifest, renderToString }).renderToString
+  return createRenderer((createSSRApp), { clientManifest, renderToString, publicPath: clientManifest.publicPath || '/_nuxt' }).renderToString
 })
 
 const getSPARenderer = cachedResult(async () => {
@@ -55,7 +55,7 @@ export async function renderMiddleware (req, res: ServerResponse) {
   let isPayloadReq = false
   if (url.startsWith(STATIC_ASSETS_BASE) && url.endsWith(PAYLOAD_JS)) {
     isPayloadReq = true
-    url = url.substr(STATIC_ASSETS_BASE.length, url.length - STATIC_ASSETS_BASE.length - PAYLOAD_JS.length)
+    url = url.substr(STATIC_ASSETS_BASE.length, url.length - STATIC_ASSETS_BASE.length - PAYLOAD_JS.length) || '/'
   }
 
   // Initialize ssr context
@@ -110,7 +110,7 @@ async function renderHTML (payload, rendered, ssrContext) {
   const html = rendered.html
 
   if ('renderMeta' in ssrContext) {
-    rendered.meta = await ssrContext.renderMeta?.()
+    rendered.meta = await ssrContext.renderMeta()
   }
 
   const {
