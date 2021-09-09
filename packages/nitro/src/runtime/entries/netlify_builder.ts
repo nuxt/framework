@@ -1,6 +1,5 @@
+import { builder } from '@netlify/functions'
 // @ts-ignore
-import { builderFunction } from '@netlify/functions'
-// @ts-ignore
-import { handler as _handler } from '~runtime/entries/lambda'
+import { handler as _handler } from '#nitro/entries/lambda'
 
-export const handler = builderFunction(_handler)
+export const handler = builder(_handler)

@@ -1,20 +1,23 @@
 import { Worker } from 'worker_threads'
 
+import { IncomingMessage, ServerResponse } from 'http'
+import { loading as loadingTemplate } from '@nuxt/design'
 import chokidar, { FSWatcher } from 'chokidar'
-import type { Server } from 'connect'
 import debounce from 'debounce'
 import { stat } from 'fs-extra'
-import { createApp, Middleware } from 'h3'
+import { promisifyHandle, createApp, Middleware, useBase } from 'h3'
 import { createProxy } from 'http-proxy'
 import { listen, Listener, ListenOptions } from 'listhen'
 import servePlaceholder from 'serve-placeholder'
 import serveStatic from 'serve-static'
 import { resolve } from 'upath'
+import type { Server } from 'connect'
 import type { NitroContext } from '../context'
+import { handleVfs } from './vfs'
 
 export function createDevServer (nitroContext: NitroContext) {
   // Worker
-  const workerEntry = resolve(nitroContext.output.dir, nitroContext.output.serverDir, 'index.js')
+  const workerEntry = resolve(nitroContext.output.dir, nitroContext.output.serverDir, 'index.mjs')
   let pendingWorker: Worker | null
   let activeWorker: Worker
   let workerAddress: string | null
@@ -54,7 +57,10 @@ export function createDevServer (nitroContext: NitroContext) {
 
   // _nuxt and static
   app.use(nitroContext._nuxt.publicPath, serveStatic(resolve(nitroContext._nuxt.buildDir, 'dist/client')))
-  app.use(nitroContext._nuxt.routerBase, serveStatic(resolve(nitroContext._nuxt.staticDir)))
+  app.use(nitroContext._nuxt.routerBase, serveStatic(resolve(nitroContext._nuxt.publicDir)))
+
+  // debugging endpoint to view vfs
+  app.use('/_vfs', useBase('/_vfs', handleVfs(nitroContext)))
 
   // Dynamic Middlwware
   const legacyMiddleware = createDynamicMiddleware()
@@ -64,18 +70,23 @@ export function createDevServer (nitroContext: NitroContext) {
 
   // serve placeholder 404 assets instead of hitting SSR
   app.use(nitroContext._nuxt.publicPath, servePlaceholder())
-  app.use(nitroContext._nuxt.routerBase, servePlaceholder({ skipUnknown: true }))
 
   // SSR Proxy
   const proxy = createProxy()
+  const proxyHandle = promisifyHandle((req: IncomingMessage, res: ServerResponse) => proxy.web(req, res, { target: workerAddress }, (_err: unknown) => {
+    // console.error('[proxy]', err)
+  }))
   app.use((req, res) => {
     if (workerAddress) {
-      proxy.web(req, res, { target: workerAddress }, (_err: unknown) => {
-        // console.error('[proxy]', err)
-      })
+      // Workaround to pass legacy req.spa to proxy
+      // @ts-ignore
+      if (req.spa) {
+        req.headers['x-nuxt-no-ssr'] = 'true'
+      }
+      return proxyHandle(req, res)
     } else {
       res.setHeader('Content-Type', 'text/html; charset=UTF-8')
-      res.end('<!DOCTYPE html><html><head><meta http-equiv="refresh" content="1"><head><body>...')
+      res.end(loadingTemplate({}))
     }
   })
 
@@ -88,7 +99,7 @@ export function createDevServer (nitroContext: NitroContext) {
   }
 
   // Watch for dist and reload worker
-  const pattern = '**/*.{js,json}'
+  const pattern = '**/*.{js,json,cjs,mjs}'
   const events = ['add', 'change']
   let watcher: FSWatcher
   function watch () {

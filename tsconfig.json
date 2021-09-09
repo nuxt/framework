@@ -7,11 +7,19 @@
     "moduleResolution": "Node",
     "strict": false,
     "allowJs": true,
+    "noUnusedLocals": true,
     "resolveJsonModule": true,
     "types": [
       "node",
-      "jest"
-    ]
+      "mocha",
+      "chai"
+    ],
+    "paths": {
+      "#app": ["./packages/nuxt3/src/app/index"],
+      "#app/*": ["./packages/nuxt3/src/app/*"]
+    }
   },
-  "exclude": ["./packages/*/dist/*"]
+  "exclude": [
+    "**/*/dist/*"
+  ]
 }

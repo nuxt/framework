@@ -6,17 +6,19 @@ import stdenv from 'std-env'
 import type { ServerMiddleware } from '../../server/middleware'
 import virtual from './virtual'
 
+const unique = (arr: any[]) => Array.from(new Set(arr))
+
 export function middleware (getMiddleware: () => ServerMiddleware[]) {
   const getImportId = p => '_' + hasha(p).substr(0, 6)
 
   let lastDump = ''
 
   return virtual({
-    '~serverMiddleware': {
+    '#server-middleware': {
       load: () => {
         const middleware = getMiddleware()
 
-        if (!stdenv.test) {
+        if (stdenv.debug) {
           const dumped = dumpMiddleware(middleware)
           if (dumped !== lastDump) {
             lastDump = dumped
@@ -26,10 +28,16 @@ export function middleware (getMiddleware: () => ServerMiddleware[]) {
           }
         }
 
-        return `
-  ${middleware.filter(m => m.lazy === false).map(m => `import ${getImportId(m.handle)} from '${m.handle}';`).join('\n')}
+        // Imports take priority
+        const imports = unique(middleware.filter(m => m.lazy === false).map(m => m.handle))
 
-  ${middleware.filter(m => m.lazy !== false).map(m => `const ${getImportId(m.handle)} = () => import('${m.handle}');`).join('\n')}
+        // Lazy imports should fill in the gaps
+        const lazyImports = unique(middleware.filter(m => m.lazy !== false && !imports.includes(m.handle)).map(m => m.handle))
+
+        return `
+  ${imports.map(handle => `import ${getImportId(handle)} from '${handle}';`).join('\n')}
+
+  ${lazyImports.map(handle => `const ${getImportId(handle)} = () => import('${handle}');`).join('\n')}
 
   const middleware = [
     ${middleware.map(m => `{ route: '${m.route}', handle: ${getImportId(m.handle)}, lazy: ${m.lazy || true}, promisify: ${m.promisify !== undefined ? m.promisify : true} }`).join(',\n')}
@@ -46,7 +54,7 @@ function dumpMiddleware (middleware: ServerMiddleware[]) {
   const data = middleware.map(({ route, handle, ...props }) => {
     return [
       (route && route !== '/') ? route : '*',
-      relative(process.cwd(), handle),
+      relative(process.cwd(), handle as string),
       dumpObject(props)
     ]
   })

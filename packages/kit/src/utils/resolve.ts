@@ -1,5 +1,6 @@
-import { existsSync, lstatSync } from 'fs'
-import { resolve, join } from 'upath'
+import { existsSync, lstatSync, readdirSync } from 'fs'
+import { basename, dirname, resolve, join } from 'upath'
+import globby from 'globby'
 
 export interface ResolveOptions {
   /**
@@ -19,7 +20,7 @@ export interface ResolveOptions {
 
 function resolvePath (path: string, opts: ResolveOptions = {}) {
   // Fast return if the path exists
-  if (existsSync(path)) {
+  if (existsSyncSensitive(path)) {
     return path
   }
 
@@ -33,9 +34,11 @@ function resolvePath (path: string, opts: ResolveOptions = {}) {
   // Resolve relative to base or cwd
   resolvedPath = resolve(opts.base || '.', resolvedPath)
 
+  const resolvedPathFiles = readdirSync(dirname(resolvedPath))
+
   // Check if resolvedPath is a file
   let isDirectory = false
-  if (existsSync(resolvedPath)) {
+  if (existsSyncSensitive(resolvedPath, resolvedPathFiles)) {
     isDirectory = lstatSync(resolvedPath).isDirectory()
     if (!isDirectory) {
       return resolvedPath
@@ -46,12 +49,12 @@ function resolvePath (path: string, opts: ResolveOptions = {}) {
   for (const ext of opts.extensions) {
     // resolvedPath.[ext]
     const resolvedPathwithExt = resolvedPath + ext
-    if (!isDirectory && existsSync(resolvedPathwithExt)) {
+    if (!isDirectory && existsSyncSensitive(resolvedPathwithExt, resolvedPathFiles)) {
       return resolvedPathwithExt
     }
     // resolvedPath/index.[ext]
     const resolvedPathwithIndex = join(resolvedPath, 'index' + ext)
-    if (isDirectory && existsSync(resolvedPathwithIndex)) {
+    if (isDirectory && existsSyncSensitive(resolvedPathwithIndex)) {
       return resolvedPathwithIndex
     }
   }
@@ -65,6 +68,12 @@ function resolvePath (path: string, opts: ResolveOptions = {}) {
   throw new Error(`Cannot resolve "${path}" from "${resolvedPath}"`)
 }
 
+function existsSyncSensitive (path: string, files?: string[]) {
+  if (!existsSync(path)) { return false }
+  const _files = files || readdirSync(dirname(path))
+  return _files.includes(basename(path))
+}
+
 /**
  * Return a path with any relevant aliases resolved.
  *
@@ -76,6 +85,7 @@ function resolvePath (path: string, opts: ResolveOptions = {}) {
  */
 export function resolveAlias (path: string, alias: ResolveOptions['alias']) {
   for (const key in alias) {
+    if (key === '@') { continue } // Don't resolve @foo/bar
     if (path.startsWith(key)) {
       path = alias[key] + path.substr(key.length)
     }
@@ -92,4 +102,12 @@ export function tryResolvePath (path: string, opts: ResolveOptions = {}) {
     return resolvePath(path, opts)
   } catch (e) {
   }
+}
+
+export async function resolveFiles (path: string, pattern: string) {
+  const files = await globby(pattern, {
+    cwd: path,
+    followSymbolicLinks: true
+  })
+  return files.map(p => resolve(path, p))
 }

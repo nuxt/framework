@@ -2,8 +2,8 @@ import { resolve, join, extname } from 'upath'
 import { joinURL } from 'ufo'
 import globby from 'globby'
 import { watch } from 'chokidar'
-import type { Middleware } from 'h3'
 import { tryResolvePath, Nuxt } from '@nuxt/kit'
+import type { Middleware } from 'h3'
 
 export interface ServerMiddleware {
   route: string
@@ -31,12 +31,12 @@ function filesToMiddleware (files: string[], baseDir: string, basePath: string, 
       handle
     }
   })
-    .sort((a, b) => a.route.localeCompare(b.route))
+    .sort((a, b) => b.route.localeCompare(a.route))
     .map(m => ({ ...m, ...overrides }))
 }
 
 export function scanMiddleware (serverDir: string, onChange?: (results: ServerMiddleware[], event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir', file: string) => void): Promise<ServerMiddleware[]> {
-  const pattern = '**/*.{js,ts}'
+  const pattern = '**/*.{ts,mjs,js,cjs}'
   const globalDir = resolve(serverDir, 'middleware')
   const apiDir = resolve(serverDir, 'api')
 
@@ -78,7 +78,7 @@ export function resolveMiddleware (nuxt: Nuxt) {
       middleware.push({
         ...m,
         handle: tryResolvePath(handle, {
-          extensions: ['.ts', '.js'],
+          extensions: ['.ts', '.mjs', '.js', '.cjs'],
           alias: nuxt.options.alias,
           base: nuxt.options.srcDir
         }),

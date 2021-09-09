@@ -1,4 +1,4 @@
-name: ci
+name: CI
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  ci:
+  lint:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -18,33 +18,106 @@ jobs:
         node: [14]
 
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-
-      - name: checkout
-        uses: actions/checkout@master
-
-      - uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: .yarn
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
+          cache: 'yarn'
 
       - name: Install dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
         run: yarn --immutable
 
       - name: Lint
         run: yarn lint
 
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [14]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      - name: Stub
+        run: yarn stub
+
+      - name: Test (unit)
+        run: yarn test:unit
+
+      - name: Test (presets)
+        run: yarn test:presets
+
+  test-bridge:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: [14]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'yarn'
+          cache-dependency-path: |
+            yarn.lock
+            test/fixtures/bridge/yarn.lock
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      - name: Install dependencies (bridge fixture)
+        run: yarn --immutable && cd test/fixtures/bridge && yarn --immutable
+
+      - name: Stub
+        run: yarn stub
+
+      - name: Test (presets bridge)
+        run: yarn test:bridge
+
+  build-release:
+    needs:
+      - test
+      - test-bridge
+      - lint
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [14]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn --immutable
+
       - name: Build
         run: yarn build
 
-      # - name: Test
-      #   run: yarn jest
-
-      # - name: Coverage
-      #   uses: codecov/codecov-action@v1
+      - name: Release Edge
+        if: |
+          github.event_name == 'push' &&
+          !contains(github.event.head_commit.message, '[skip-release]') &&
+          !contains(github.event.head_commit.message, 'chore') &&
+          !contains(github.event.head_commit.message, 'docs')
+        run: ./scripts/release-edge.sh
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NODE_AUTH_TOKEN}}

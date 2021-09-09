@@ -1,9 +1,9 @@
-import { readFile, stat } from 'fs/promises'
-import type { Plugin } from 'rollup'
+import { promises as fsp } from 'fs'
 import createEtag from 'etag'
 import mime from 'mime'
 import { resolve } from 'upath'
 import globby from 'globby'
+import type { Plugin } from 'rollup'
 import virtual from './virtual'
 
 export interface AssetOptions {
@@ -38,7 +38,7 @@ export function statAsset (id) {
 
   if (!opts.inline) {
     return virtual({
-      '~nitro/assets': `
+      '#assets': `
 import { statSync, promises as fsp } from 'fs'
 import { resolve } from 'path'
 
@@ -68,7 +68,7 @@ export function getAsset (id) {
   }
 
   return virtual({
-    '~nitro/assets': {
+    '#assets': {
       async load () {
         const assets: Record<string, Asset> = {}
         for (const assetdir in opts.dirs) {
@@ -79,16 +79,17 @@ export function getAsset (id) {
             const id = assetdir + '/' + _id
             assets[id] = { fsPath, meta: {} }
             if (dirOpts.meta) {
+              // @ts-ignore TODO: Use mime@2 types
               let type = mime.getType(id) || 'text/plain'
               if (type.startsWith('text')) { type += '; charset=utf-8' }
-              const etag = createEtag(await readFile(fsPath))
-              const mtime = await stat(fsPath).then(s => s.mtime.toJSON())
+              const etag = createEtag(await fsp.readFile(fsPath))
+              const mtime = await fsp.stat(fsPath).then(s => s.mtime.toJSON())
               assets[id].meta = { type, etag, mtime }
             }
           }
         }
         const inlineAssets = `const assets = {\n${Object.keys(assets).map(id =>
-          `  ['${id}']: {\n    read: () => import('${assets[id].fsPath}'),\n    meta: ${JSON.stringify(assets[id].meta)}\n  }`
+          `  ['${id}']: {\n    read: () => import('${assets[id].fsPath}').then(r => r.default || r),\n    meta: ${JSON.stringify(assets[id].meta)}\n  }`
         ).join(',\n')}\n}`
         return `${inlineAssets}\n${assetUtils}
 export function getAsset (id) {

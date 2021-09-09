@@ -28,11 +28,15 @@ export function staticAssets (context: NitroContext) {
   }
 
   return virtual({
-    '~static-assets': `export default ${JSON.stringify(assets, null, 2)};`,
-    '~static': `
+    '#static-assets': `export default ${JSON.stringify(assets, null, 2)};`,
+    '#static': `
 import { promises } from 'fs'
 import { resolve } from 'path'
-import assets from '~static-assets'
+import { dirname } from 'path'
+import { fileURLToPath } from 'url'
+import assets from '#static-assets'
+
+const mainDir = dirname(fileURLToPath(globalThis.entryURL))
 
 export function readAsset (id) {
   return promises.readFile(resolve(mainDir, getAsset(id).path))
@@ -50,7 +54,7 @@ export function dirnames (): Plugin {
     name: 'dirnames',
     renderChunk (code, chunk) {
       return {
-        code: code + (chunk.isEntry ? 'globalThis.mainDir="undefined"!=typeof __dirname?__dirname:require.main.filename;' : ''),
+        code: (chunk.isEntry ? 'globalThis.entryURL = import.meta.url;' : '') + code,
         map: null
       }
     }

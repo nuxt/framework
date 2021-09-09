@@ -2,32 +2,52 @@
   "name": "nuxt-framework",
   "license": "MIT",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "examples/*",
+    "playground"
   ],
   "scripts": {
     "build": "FORCE_COLOR=1 lerna run prepack --stream --no-prefix",
     "stub": "lerna run prepack -- --stub",
     "release": "yarn && yarn lint && FORCE_COLOR=1 lerna publish -m \"chore: release\" && yarn stub",
-    "nu": "./node_modules/.bin/nu",
-    "play": "yarn run nu dev playground",
+    "nuxi": "./node_modules/.bin/nuxi",
+    "nu": "./node_modules/.bin/nuxi",
+    "nuxt": "./node_modules/.bin/nuxi",
+    "play": "yarn run nuxt dev playground",
+    "example": "yarn workspace example-$0 dev",
+    "example:build": "yarn workspace example-$0 build",
     "lint": "eslint --ext .vue,.ts,.js .",
+    "test": "yarn lint && yarn test:presets",
+    "test:presets": "mocha test/presets/*.mjs",
+    "test:bridge": "TEST_BRIDGE=1 yarn test:presets",
+    "test:unit": "mocha -r jiti/register packages/**/test/*.test.*",
     "version": "yarn && git add yarn.lock"
   },
   "resolutions": {
-    "esbuild": "0.10.2"
+    "nuxt3": "workspace:./packages/nuxt3"
   },
   "devDependencies": {
-    "@nuxtjs/eslint-config": "^6.0.0",
-    "@nuxtjs/eslint-config-typescript": "^6.0.0",
-    "@types/jest": "^26.0.22",
-    "@types/node": "^14.14.41",
-    "eslint": "^7.24.0",
-    "eslint-plugin-jsdoc": "^32.3.0",
-    "jest": "^26.6.3",
-    "jiti": "^1.9.1",
+    "@nuxtjs/eslint-config": "^6.0.1",
+    "@nuxtjs/eslint-config-typescript": "^6.0.1",
+    "@types/chai": "^4.2.21",
+    "@types/jsdom": "^16",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^14.17.15",
+    "@types/object-hash": "^2",
+    "@vue/server-renderer": "^3.2.10",
+    "chai": "^4.3.4",
+    "esbuild": "^0.12.25",
+    "eslint": "^7.32.0",
+    "eslint-plugin-jsdoc": "^36.1.0",
+    "execa": "^5.1.1",
+    "globby": "^11.0.4",
+    "jiti": "^1.11.0",
+    "jsdom": "^16.7.0",
     "lerna": "^4.0.0",
-    "ts-jest": "^26.5.5",
-    "typescript": "^4.2.4",
-    "unbuild": "^0.1.13"
+    "mocha": "^9.1.1",
+    "object-hash": "^2.2.0",
+    "typescript": "^4.4.2",
+    "unbuild": "^0.4.2",
+    "upath": "^2.0.1"
   }
 }

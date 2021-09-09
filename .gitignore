@@ -2,9 +2,8 @@
 node_modules
 jspm_packages
 
-# Only keep yarn.lock in the root
 package-lock.json
-*/**/yarn.lock
+# */**/yarn.lock
 
 # Logs
 *.log
@@ -15,7 +14,8 @@ package-lock.json
 .cache
 
 # Yarn
-.yarn
+**/.yarn/cache
+**/.yarn/*state*
 
 # Generated dirs
 dist
@@ -58,3 +58,8 @@ coverage
 Network Trash Folder
 Temporary Items
 .apdisk
+
+.vercel_build_output
+.build-*
+.env
+.netlify

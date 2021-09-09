@@ -7,13 +7,13 @@ export function esbuild (ctx: WebpackConfigContext) {
   // https://esbuild.github.io/getting-started/#bundling-for-the-browser
   // https://gs.statcounter.com/browser-version-market-share
   // https://nodejs.org/en/
-  const target = ctx.isServer ? 'node14' : 'chrome85'
+  const target = ctx.isServer ? 'es2019' : 'chrome85'
 
   config.optimization.minimizer.push(new ESBuildMinifyPlugin())
 
   config.module.rules.push(
     {
-      test: /\.[jt]sx?$/,
+      test: /\.m?[jt]sx?$/i,
       loader: 'esbuild-loader',
       exclude: (file) => {
         file = file.split('node_modules', 2)[1]
@@ -25,6 +25,9 @@ export function esbuild (ctx: WebpackConfigContext) {
 
         // Item in transpile can be string or regex object
         return !ctx.transpile.some(module => module.test(file))
+      },
+      resolve: {
+        fullySpecified: false
       },
       options: {
         loader: 'ts',

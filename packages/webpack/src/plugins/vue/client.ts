@@ -3,7 +3,7 @@
  * https://github.com/vuejs/vue/blob/dev/src/server/webpack-plugin/client.js
  */
 
-import { dirname } from 'path'
+import { dirname } from 'upath'
 import hash from 'hash-sum'
 import { uniq } from 'lodash'
 import { writeFile, mkdirp } from 'fs-extra'
@@ -102,7 +102,7 @@ export default class VueSSRClientPlugin {
 
           // Find all asset modules associated with the same chunk
           assetModules.forEach((m) => {
-            if (m.chunks.incudes(cid)) {
+            if (m.chunks.includes(cid)) {
               files.push.apply(files, m.assets.map(fileToIndex))
             }
           })
@@ -113,6 +113,10 @@ export default class VueSSRClientPlugin {
 
       await mkdirp(dirname(this.options.filename))
       await writeFile(this.options.filename, src)
+
+      const mjsSrc = 'export default ' + src
+      await writeFile(this.options.filename.replace('.json', '.mjs'), mjsSrc)
+
       // assets[this.options.filename] = {
       //   source: () => src,
       //   size: () => src.length

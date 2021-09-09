@@ -35,9 +35,9 @@ export async function generate (nitroContext: NitroContext) {
     await copy(clientDist, join(nitroContext.output.publicDir, nitroContext._nuxt.publicPath))
   }
 
-  const staticDir = resolve(nitroContext._nuxt.srcDir, nitroContext._nuxt.staticDir)
-  if (await isDirectory(staticDir)) {
-    await copy(staticDir, nitroContext.output.publicDir)
+  const publicDir = nitroContext._nuxt.publicDir
+  if (await isDirectory(publicDir)) {
+    await copy(publicDir, nitroContext.output.publicDir)
   }
 
   consola.success('Generated public ' + prettyPath(nitroContext.output.publicDir))
@@ -47,10 +47,10 @@ export async function build (nitroContext: NitroContext) {
   // Compile html template
   const htmlSrc = resolve(nitroContext._nuxt.buildDir, `views/${{ 2: 'app', 3: 'document' }[2]}.template.html`)
   const htmlTemplate = { src: htmlSrc, contents: '', dst: '', compiled: '' }
-  htmlTemplate.dst = htmlTemplate.src.replace(/.html$/, '.js').replace('app.', 'document.')
-  htmlTemplate.contents = await readFile(htmlTemplate.src, 'utf-8')
-  htmlTemplate.compiled = 'module.exports = ' + serializeTemplate(htmlTemplate.contents)
-  await nitroContext._internal.hooks.callHook('nitro:template:document', htmlTemplate)
+  htmlTemplate.dst = htmlTemplate.src.replace(/.html$/, '.mjs').replace('app.', 'document.')
+  htmlTemplate.contents = nitroContext.vfs[htmlTemplate.src] || await readFile(htmlTemplate.src, 'utf-8')
+  await nitroContext._internal.hooks.callHook('nitro:document', htmlTemplate)
+  htmlTemplate.compiled = 'export default ' + serializeTemplate(htmlTemplate.contents)
   await writeFile(htmlTemplate.dst, htmlTemplate.compiled)
 
   nitroContext.rollupConfig = getRollupConfig(nitroContext)

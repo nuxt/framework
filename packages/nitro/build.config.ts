@@ -1,11 +1,11 @@
-import type { BuildConfig } from 'unbuild'
+import { defineBuildConfig } from 'unbuild'
 
-export default <BuildConfig>{
+export default defineBuildConfig({
   declaration: true,
   entries: [
     'src/index',
-    'src/compat',
-    { input: 'src/runtime/', format: 'esm' }
+    { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm' },
+    { input: 'src/runtime/', outDir: 'dist/runtime', format: 'cjs', declaration: false }
   ],
   dependencies: [
     '@cloudflare/kv-asset-handler',
@@ -20,4 +20,4 @@ export default <BuildConfig>{
     '@vue/server-renderer',
     'vue'
   ]
-}
+})

@@ -1,4 +1,4 @@
-import { resolve, normalize } from 'path'
+import { resolve, normalize } from 'upath'
 import TimeFixPlugin from 'time-fix-plugin'
 import WebpackBar from 'webpackbar'
 import consola from 'consola'
@@ -23,7 +23,7 @@ function baseConfig (ctx: WebpackConfigContext) {
 
   ctx.config = {
     name: ctx.name,
-    entry: { app: [resolve(options.buildDir, `entry.${ctx.name}`)] },
+    entry: { app: [resolve(options.appDir, 'entry')] },
     module: { rules: [] },
     plugins: [],
     externals: [],
@@ -115,8 +115,9 @@ function baseAlias (ctx: WebpackConfigContext) {
   const { options } = ctx
 
   ctx.alias = {
-    'nuxt/app': options.appDir,
-    'nuxt/build': options.buildDir,
+    '#app': options.appDir,
+    '#build/plugins': resolve(options.buildDir, 'plugins', ctx.isClient ? 'client' : 'server'),
+    '#build': options.buildDir,
     ...options.alias,
     ...ctx.alias
   }
@@ -133,6 +134,7 @@ function baseResolve (ctx: WebpackConfigContext) {
     extensions: ['.wasm', '.mjs', '.js', '.ts', '.json', '.vue', '.jsx', '.tsx'],
     alias: ctx.alias,
     modules: webpackModulesDir,
+    fullySpecified: false,
     ...config.resolve
   }
 
@@ -174,19 +176,20 @@ function getCache (ctx: WebpackConfigContext): Configuration['cache'] {
     return false
   }
 
-  return {
-    name: ctx.name,
-    type: 'filesystem',
-    cacheDirectory: resolve(ctx.options.rootDir, 'node_modules/.cache/webpack'),
-    managedPaths: [
-      ...ctx.options.modulesDir
-    ],
-    buildDependencies: {
-      config: [
-        ...ctx.options._nuxtConfigFiles
-      ]
-    }
-  }
+  // TODO: Disable for nuxt internal dev due to inconsistencies
+  // return {
+  //   name: ctx.name,
+  //   type: 'filesystem',
+  //   cacheDirectory: resolve(ctx.options.rootDir, 'node_modules/.cache/webpack'),
+  //   managedPaths: [
+  //     ...ctx.options.modulesDir
+  //   ],
+  //   buildDependencies: {
+  //     config: [
+  //       ...ctx.options._nuxtConfigFiles
+  //     ]
+  //   }
+  // }
 }
 
 function getOutput (ctx: WebpackConfigContext): Configuration['output'] {

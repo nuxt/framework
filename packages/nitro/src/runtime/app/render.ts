@@ -1,46 +1,84 @@
+import type { ServerResponse } from 'http'
 import { createRenderer } from 'vue-bundle-renderer'
 import devalue from '@nuxt/devalue'
-import config from './config'
+import { runtimeConfig } from './config'
 // @ts-ignore
-import { renderToString } from '~renderer'
-// @ts-ignore
-import createApp from '~build/dist/server/server'
-// @ts-ignore
-import clientManifest from '~build/dist/server/client.manifest.json'
-// @ts-ignore
-import htmlTemplate from '~build/views/document.template.js'
-
-function _interopDefault (e) { return e && typeof e === 'object' && 'default' in e ? e.default : e }
-
-const renderer = createRenderer(_interopDefault(createApp), {
-  clientManifest: _interopDefault(clientManifest),
-  renderToString
-})
+import htmlTemplate from '#build/views/document.template.mjs'
 
 const STATIC_ASSETS_BASE = process.env.NUXT_STATIC_BASE + '/' + process.env.NUXT_STATIC_VERSION
+const NUXT_NO_SSR = process.env.NUXT_NO_SSR
 const PAYLOAD_JS = '/payload.js'
 
-export async function renderMiddleware (req, res) {
+const getClientManifest = cachedImport(() => import('#build/dist/server/client.manifest.mjs'))
+const getSSRApp = cachedImport(() => import('#build/dist/server/server.mjs'))
+
+const getSSRRenderer = cachedResult(async () => {
+  // Load client manifest
+  const clientManifest = await getClientManifest()
+  if (!clientManifest) { throw new Error('client.manifest is missing') }
+  // Load server bundle
+  const createSSRApp = await getSSRApp()
+  if (!createSSRApp) { throw new Error('Server bundle is missing') }
+  // Create renderer
+  const { renderToString } = await import('#nitro-renderer')
+  return createRenderer((createSSRApp), { clientManifest, renderToString, publicPath: clientManifest.publicPath || '/_nuxt' }).renderToString
+})
+
+const getSPARenderer = cachedResult(async () => {
+  const clientManifest = await getClientManifest()
+  return (ssrContext) => {
+    ssrContext.nuxt = {}
+    return {
+      html: '<div id="__nuxt"></div>',
+      renderResourceHints: () => '',
+      renderStyles: () => '',
+      renderScripts: () => clientManifest.initial.map((s) => {
+        const isMJS = !s.endsWith('.js')
+        return `<script ${isMJS ? 'type="module"' : ''} src="${clientManifest.publicPath}${s}"></script>`
+      }).join('')
+    }
+  }
+})
+
+function renderToString (ssrContext) {
+  const getRenderer = (NUXT_NO_SSR || ssrContext.noSSR) ? getSPARenderer : getSSRRenderer
+  return getRenderer().then(renderToString => renderToString(ssrContext)).catch((err) => {
+    console.warn('Server Side Rendering Error:', err)
+    return getSPARenderer().then(renderToString => renderToString(ssrContext))
+  })
+}
+
+export async function renderMiddleware (req, res: ServerResponse) {
   let url = req.url
 
   // payload.json request detection
   let isPayloadReq = false
   if (url.startsWith(STATIC_ASSETS_BASE) && url.endsWith(PAYLOAD_JS)) {
     isPayloadReq = true
-    url = url.substr(STATIC_ASSETS_BASE.length, url.length - STATIC_ASSETS_BASE.length - PAYLOAD_JS.length)
+    url = url.substr(STATIC_ASSETS_BASE.length, url.length - STATIC_ASSETS_BASE.length - PAYLOAD_JS.length) || '/'
   }
 
+  // Initialize ssr context
   const ssrContext = {
     url,
     req,
     res,
-    runtimeConfig: {
-      public: config.public,
-      private: config.private
-    },
+    runtimeConfig,
+    noSSR: req.spa || req.headers['x-nuxt-no-ssr'],
     ...(req.context || {})
   }
-  const rendered = await renderer.renderToString(ssrContext)
+
+  // Render app
+  const rendered = await renderToString(ssrContext)
+
+  // Handle errors
+  if (ssrContext.error) {
+    throw ssrContext.error
+  }
+
+  if (ssrContext.redirected || res.writableEnded) {
+    return
+  }
 
   if (ssrContext.nuxt.hooks) {
     await ssrContext.nuxt.hooks.callHook('app:rendered')
@@ -58,7 +96,7 @@ export async function renderMiddleware (req, res) {
     data = renderPayload(payload, url)
     res.setHeader('Content-Type', 'text/javascript;charset=UTF-8')
   } else {
-    data = renderHTML(payload, rendered, ssrContext)
+    data = await renderHTML(payload, rendered, ssrContext)
     res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   }
 
@@ -67,49 +105,54 @@ export async function renderMiddleware (req, res) {
   res.end(data, 'utf-8')
 }
 
-function renderHTML (payload, rendered, ssrContext) {
+async function renderHTML (payload, rendered, ssrContext) {
   const state = `<script>window.__NUXT__=${devalue(payload)}</script>`
-  const _html = rendered.html
+  const html = rendered.html
 
-  const meta = {
-    htmlAttrs: '',
-    bodyAttrs: '',
-    headAttrs: '',
-    headTags: '',
-    bodyTags: ''
+  if ('renderMeta' in ssrContext) {
+    rendered.meta = await ssrContext.renderMeta()
   }
 
-  // @vueuse/head
-  if (typeof ssrContext.head === 'function') {
-    Object.assign(meta, ssrContext.head())
-  }
-
-  // vue-meta
-  if (ssrContext.meta && typeof ssrContext.meta.inject === 'function') {
-    const _meta = ssrContext.meta.inject({
-      isSSR: ssrContext.nuxt.serverRendered,
-      ln: process.env.NODE_ENV === 'development'
-    })
-    meta.htmlAttrs += _meta.htmlAttrs.text()
-    meta.headAttrs += _meta.headAttrs.text()
-    meta.bodyAttrs += _meta.bodyAttrs.text()
-    meta.headTags +=
-      _meta.title.text() + _meta.meta.text() +
-      _meta.link.text() + _meta.style.text() +
-      _meta.script.text() + _meta.noscript.text()
-    // TODO: Body prepend/append tags
-  }
+  const {
+    htmlAttrs = '',
+    bodyAttrs = '',
+    headAttrs = '',
+    headTags = '',
+    bodyScriptsPrepend = '',
+    bodyScripts = ''
+  } = rendered.meta || {}
 
   return htmlTemplate({
-    HTML_ATTRS: meta.htmlAttrs,
-    HEAD_ATTRS: meta.headAttrs,
-    BODY_ATTRS: meta.bodyAttrs,
-    HEAD: meta.headTags +
+    HTML_ATTRS: htmlAttrs,
+    HEAD_ATTRS: headAttrs,
+    HEAD: headTags +
       rendered.renderResourceHints() + rendered.renderStyles() + (ssrContext.styles || ''),
-    APP: _html + state + rendered.renderScripts()
+    BODY_ATTRS: bodyAttrs,
+    APP: bodyScriptsPrepend + html + state + rendered.renderScripts() + bodyScripts
   })
 }
 
 function renderPayload (payload, url) {
   return `__NUXT_JSONP__("${url}", ${devalue(payload)})`
+}
+
+function _interopDefault (e) {
+  return e && typeof e === 'object' && 'default' in e ? e.default : e
+}
+
+function cachedImport <M> (importer: () => Promise<M>) {
+  return cachedResult(() => importer().then(_interopDefault).catch((err) => {
+    if (err.code === 'ERR_MODULE_NOT_FOUND') { return null }
+    throw err
+  }))
+}
+
+function cachedResult <T> (fn: () => Promise<T>): () => Promise<T> {
+  let res = null
+  return () => {
+    if (res === null) {
+      res = fn().catch((err) => { res = null; throw err })
+    }
+    return res
+  }
 }

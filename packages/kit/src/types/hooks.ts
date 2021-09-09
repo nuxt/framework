@@ -1,9 +1,9 @@
 import type { IncomingMessage, ServerResponse } from 'http'
+import type { HookCallback } from 'hookable'
 import type { Compiler, Configuration, Stats } from 'webpack'
 import type { NuxtConfig, NuxtOptions } from '..'
 import type { ModuleContainer } from '../module/container'
-
-import { Nuxt } from './nuxt'
+import { Nuxt, NuxtApp } from './nuxt'
 
 type HookResult = Promise<void> | void
 
@@ -19,10 +19,28 @@ type TemplateFile = string | {
 }
 
 type WatchEvent = 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir'
+interface PreloadFile {
+  asType: 'script' | 'style' | 'font'
+  extension: string
+  file: string
+  fileWithoutQuery: string
+}
+type RenderResult = {
+  html: string
+  cspScriptSrcHashes: string[]
+  error: any
+  redirected: boolean
+  preloadFiles: PreloadFile[]
+}
 
-export interface NuxtHooks {
-  // Don't break usage of untyped hooks
-  [key: string]: (...args: any[]) => HookResult
+// https://www.typescriptlang.org/docs/handbook/triple-slash-directives.html
+export type TSReference = { types: string } | { path: string }
+
+export interface NuxtHooks extends Record<string, HookCallback> {
+  // nuxt3
+  'app:resolve': (app: NuxtApp) => HookResult
+  'app:templates': (app: NuxtApp) => HookResult
+  'builder:generateApp': () => HookResult
 
   // @nuxt/builder
   'build:before':
@@ -40,11 +58,17 @@ export interface NuxtHooks {
   // 'watch:fileChanged': (builder: Builder, fileName: string) => HookResult
   'builder:watch': (event: WatchEvent, path: string) => HookResult
 
+  // @nuxt/nitro
+  'nitro:document': (template: { src: string, contents: string }) => HookResult
+
   // @nuxt/cli
   'cli:buildError': (error: unknown) => HookResult
   'generate:cache:ignore': (ignore: string[]) => HookResult
   'config': (options: NuxtConfig) => HookResult
   'run:before': (options: { argv: string[], cmd: { name: string, usage: string, description: string, options: Record<string, any> }, rootDir: string }) => HookResult
+
+  // nuxi
+  'prepare:types': (options: { references: TSReference[], declarations: string[] }) => HookResult
 
   // @nuxt/core
   'ready': (nuxt: Nuxt) => HookResult
@@ -60,9 +84,9 @@ export interface NuxtHooks {
   'render:done': (server: Server) => HookResult
   'listen': (listenerServer: any, listener: any) => HookResult
   'server:nuxt:renderLoading': (req: IncomingMessage, res: ServerResponse) => HookResult
-  'render:route': (url: string, result: string, context: any) => HookResult
-  'render:routeDone': (url: string, result: string, context: any) => HookResult
-  'render:beforeResponse': (url: string, result: string, context: any) => HookResult
+  'render:route': (url: string, result: RenderResult, context: any) => HookResult
+  'render:routeDone': (url: string, result: RenderResult, context: any) => HookResult
+  'render:beforeResponse': (url: string, result: RenderResult, context: any) => HookResult
 
   // @nuxt/vue-renderer
   'render:resourcesLoaded': (resources: any) => HookResult

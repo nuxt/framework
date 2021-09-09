@@ -10,11 +10,6 @@ export const validate = (compiler) => {
     consola.warn('webpack config `target` should be "node".')
   }
 
-  const libraryType = compiler.options.output.library.type
-  if (libraryType !== 'commonjs2') {
-    consola.warn('webpack config `output.libraryTarget` should be "commonjs2".')
-  }
-
   if (!compiler.options.externals) {
     consola.info(
       'It is recommended to externalize dependencies in the server build for ' +
@@ -23,7 +18,7 @@ export const validate = (compiler) => {
   }
 }
 
-const isJSRegExp = /\.js(\?[^.]+)?$/
+const isJSRegExp = /\.[cm]?js(\?[^.]+)?$/
 
 export const isJS = file => isJSRegExp.test(file)
 
