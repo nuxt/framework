@@ -36,9 +36,9 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
     }
 
     // check nuxt version range
-    if (mod.nuxtVersion) {
+    if (mod.requires?.nuxt) {
       const version = getNuxtVersion()
-      if (!satisfies(version, mod.nuxtVersion)) {
+      if (!satisfies(version, mod.requires?.nuxt)) {
         consola.warn(`module "${mod.name}" requires nuxt "${mod.nuxtVersion}" but got "${version}", module disabled`)
         return
       }

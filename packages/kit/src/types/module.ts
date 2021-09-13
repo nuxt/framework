@@ -2,6 +2,10 @@ import type { ModuleContainer } from '../module/container'
 import { Nuxt } from './nuxt'
 import { NuxtHooks } from './hooks'
 
+export interface NuxtVersionConstraints {
+  nuxt?: string
+}
+
 export interface ModuleMeta {
   /** The module name. */
   name?: string
@@ -11,10 +15,10 @@ export interface ModuleMeta {
    */
   configKey?: string
   /**
-   * Semver range of the Nuxt version supported.
+   * Semver constraints for the versions of Nuxt or features this module are supported.
    * For example, `^2.14.0 || ^3.0.0-0` or `>=2.10`
    */
-  nuxtVersion?: string
+  requires?: NuxtVersionConstraints
   [key: string]: any
 }
 

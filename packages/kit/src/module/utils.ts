@@ -259,3 +259,7 @@ export function addVitePlugin (plugin: VitePlugin, options?: ExtendViteConfigOpt
 export function isNuxt2 (nuxt?: any) {
   return (nuxt || useNuxt()).version?.startsWith('v2')
 }
+
+export function getNuxtVersion (nuxt?: any) {
+  return (nuxt || useNuxt()).version?.slice(1) || '0.0.0'
+}
