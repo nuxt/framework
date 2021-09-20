@@ -1,9 +1,9 @@
 // @ts-nocheck
 import '#polyfill'
 import { localCall } from '../server'
+import { useRequestBody } from '../server/request'
 
 const STATIC_ASSETS_BASE = process.env.NUXT_STATIC_BASE + '/' + process.env.NUXT_STATIC_VERSION
-const METHODS_WITH_BODY = ['POST', 'PUT', 'PATCH']
 
 addEventListener('fetch', (event: any) => {
   const url = new URL(event.request.url)
@@ -16,9 +16,8 @@ addEventListener('fetch', (event: any) => {
 })
 
 async function handleEvent (url, event) {
-  if (METHODS_WITH_BODY.includes(event.request.method.toUpperCase()) && !event.request.body) {
-    event.request.body = await event.request.text()
-  }
+  const body = await useRequestBody(event.request)
+
   const r = await localCall({
     event,
     url: url.pathname + url.search,
@@ -27,7 +26,7 @@ async function handleEvent (url, event) {
     headers: event.request.headers,
     method: event.request.method,
     redirect: event.request.redirect,
-    body: event.request.body
+    body
   })
 
   return new Response(r.body, {
