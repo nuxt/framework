@@ -1,5 +1,5 @@
 export function requestHasBody (request: Request) : boolean {
-  return !!request.method.match(/post|put|patch/i)
+  return /post|put|patch/i.test(request.method)
 }
 
 export async function useRequestBody (request: Request): Promise<string> {
