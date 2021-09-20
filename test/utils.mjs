@@ -1,12 +1,12 @@
 import { existsSync, readFileSync, writeFileSync, rmSync, mkdirSync } from 'fs'
 import { execSync } from 'child_process'
 import { resolve, dirname } from 'path'
-import { fileURLToPath } from 'url'
 import defu from 'defu'
 import hash from 'object-hash'
 import execa from 'execa'
+import { createCommonJS } from 'mlly'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
+const { __dirname } = createCommonJS(import.meta.url)
 
 export function resolveWorkspace (name) {
   return resolve(__dirname, '../', name)

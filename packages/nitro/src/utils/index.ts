@@ -6,8 +6,10 @@ import { mergeHooks } from 'hookable'
 import consola from 'consola'
 import chalk from 'chalk'
 import { get } from 'dot-prop'
+import { createCommonJS } from 'mlly'
 import type { NitroPreset, NitroInput } from '../context'
 
+const { __dirname } = createCommonJS(import.meta.url)
 export const MODULE_DIR = resolve(__dirname, '..')
 
 export function hl (str: string) {
