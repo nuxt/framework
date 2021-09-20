@@ -1538,7 +1538,7 @@ __metadata:
     table: ^6.7.1
     ufo: ^0.7.9
     unbuild: ^0.4.2
-    unenv: ^0.3.8
+    unenv: ^0.3.7
     unstorage: ^0.2.8
     upath: ^2.0.1
     vue: 3.2.12
@@ -13469,7 +13469,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"unenv@npm:^0.3.8":
+"unenv@npm:^0.3.7":
   version: 0.3.8
   resolution: "unenv@npm:0.3.8"
   dependencies:
