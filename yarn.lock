@@ -4737,6 +4737,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"colorette@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "colorette@npm:2.0.2"
+  checksum: f2ec4e0c4c612737bc852cf3376e5d4261f8b6acefc9a52974c97473eeac855f8751dfcbb3cf3490bc4b644477ed9688aa4cade96d09742d0eafc8ec36fdab2b
+  languageName: node
+  linkType: hard
+
 "columnify@npm:^1.5.4":
   version: 1.5.4
   resolution: "columnify@npm:1.5.4"
@@ -9727,7 +9734,7 @@ fsevents@~2.3.2:
     chokidar: ^3.5.2
     clear: ^0.1.0
     clipboardy: ^2.3.0
-    colorette: ^1.4.0
+    colorette: ^2.0.2
     debounce-promise: ^3.1.2
     deep-object-diff: ^1.1.0
     destr: ^1.1.0
