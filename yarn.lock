@@ -1417,7 +1417,7 @@ __metadata:
     "@types/node-fetch": ^3.0.2
     "@vue/composition-api": ^1.1.5
     fs-extra: ^10.0.0
-    mlly: ^0.2.0
+    mlly: ^0.2.2
     node-fetch: ^3.0.0
     nuxi: ^0.10.0
     nuxt-swc: ^0.1.0
@@ -1526,7 +1526,7 @@ __metadata:
     jiti: ^1.12.0
     listhen: ^0.2.4
     mime: ^2.5.2
-    mlly: ^0.2.0
+    mlly: ^0.2.2
     node-fetch: ^3.0.0
     ohmyfetch: ^0.3.1
     ora: ^6.0.1
@@ -9212,12 +9212,12 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"mlly@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "mlly@npm:0.2.0"
+"mlly@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "mlly@npm:0.2.2"
   dependencies:
     import-meta-resolve: ^1.1.1
-  checksum: ab7f5455f81e0f34fe0892068e4233d441854b8b6da70368f6eac19ec4a2647743a57c422ee5d758ad0280dc0f72d2e84b9dde087beaafbed3a1da052aed9fa6
+  checksum: 2e1385bc13eb01c88434cc5fe382b90ad496f616887a012ba6758e3db7964f3caa92a2b4a3db7bedf18fbc066b1b57e4e986c2b58a2c806c658c112fd09b1720
   languageName: node
   linkType: hard
 
@@ -9768,6 +9768,7 @@ fsevents@~2.3.2:
     fsevents: ~2.3.2
     jiti: ^1.12.0
     listhen: ^0.2.4
+    mlly: ^0.2.2
     mri: ^1.2.0
     scule: ^0.2.1
     unbuild: latest
@@ -9803,7 +9804,7 @@ fsevents@~2.3.2:
     jiti: ^1.12.0
     jsdom: ^17.0.0
     lerna: ^4.0.0
-    mlly: ^0.2.0
+    mlly: ^0.2.2
     mocha: ^9.1.1
     object-hash: ^2.2.0
     typescript: ^4.4.3
@@ -9875,7 +9876,7 @@ fsevents@~2.3.2:
     hookable: ^5.0.0
     ignore: ^5.1.8
     lodash: ^4.17.21
-    mlly: ^0.2.0
+    mlly: ^0.2.2
     nuxi: ^0.10.0
     ohmyfetch: ^0.3.1
     scule: ^0.2.1

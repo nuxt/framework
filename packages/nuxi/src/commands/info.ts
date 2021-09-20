@@ -5,6 +5,7 @@ import jiti from 'jiti'
 import destr from 'destr'
 import { splitByCase } from 'scule'
 import clipboardy from 'clipboardy'
+import { createCommonJS } from 'mlly'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -129,7 +130,8 @@ function getPkg (name, rootDir) {
   let pkgPath = resolve(rootDir, 'node_modules', name, 'package.json')
 
   // Try to resolve for more accuracy
-  try { pkgPath = require.resolve(name + '/package.json', { paths: [rootDir] }) } catch (_err) {
+  const cjs = createCommonJS(rootDir)
+  try { pkgPath = cjs.require.resolve(name + '/package.json') } catch (_err) {
     // console.log('not found:', name)
   }
 
