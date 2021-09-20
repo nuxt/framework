@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "repository": "nuxt/framework",
   "license": "MIT",
-  "main": "./dist/module.js",
+  "type": "module",
+  "exports": "./dist/module.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"

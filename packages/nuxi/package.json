@@ -3,10 +3,11 @@
   "version": "0.10.0",
   "repository": "nuxt/framework",
   "license": "MIT",
-  "main": "./dist/index.js",
+  "type": "module",
+  "exports": "./dist/index.mjs",
   "bin": {
-    "nu": "./bin/nuxi.js",
-    "nuxi": "./bin/nuxi.js"
+    "nu": "./bin/nuxi.mjs",
+    "nuxi": "./bin/nuxi.mjs"
   },
   "scripts": {
     "prepack": "unbuild"
