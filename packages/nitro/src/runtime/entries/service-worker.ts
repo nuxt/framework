@@ -1,7 +1,7 @@
 // @ts-nocheck
 import '#polyfill'
 import { localCall } from '../server'
-import { useRequestBody } from '../server/request'
+import { requestHasBody, useRequestBody } from '../server/utils'
 
 const STATIC_ASSETS_BASE = process.env.NUXT_STATIC_BASE + '/' + process.env.NUXT_STATIC_VERSION
 
@@ -16,7 +16,9 @@ addEventListener('fetch', (event: any) => {
 })
 
 async function handleEvent (url, event) {
-  const body = await useRequestBody(event.request)
+  if (requestHasBody(event.request)) {
+    event.request.body = await useRequestBody(event.request)
+  }
 
   const r = await localCall({
     event,
@@ -26,7 +28,7 @@ async function handleEvent (url, event) {
     headers: event.request.headers,
     method: event.request.method,
     redirect: event.request.redirect,
-    body
+    body: event.request.body
   })
 
   return new Response(r.body, {

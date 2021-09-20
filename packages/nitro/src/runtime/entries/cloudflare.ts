@@ -1,7 +1,7 @@
 import '#polyfill'
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
 import { localCall } from '../server'
-import { useRequestBody } from '../server/request'
+import { requestHasBody, useRequestBody } from '../server/utils'
 
 const PUBLIC_PATH = process.env.PUBLIC_PATH // Default: /_nuxt/
 
@@ -17,7 +17,10 @@ async function handleEvent (event) {
   }
 
   const url = new URL(event.request.url)
-  const body = await useRequestBody(event.request)
+
+  if (requestHasBody(event.request)) {
+    event.request.body = await useRequestBody(event.request)
+  }
 
   const r = await localCall({
     event,
@@ -27,7 +30,7 @@ async function handleEvent (event) {
     headers: event.request.headers,
     method: event.request.method,
     redirect: event.request.redirect,
-    body
+    body: event.request.body
   })
 
   return new Response(r.body, {
