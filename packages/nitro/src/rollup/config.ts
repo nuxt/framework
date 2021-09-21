@@ -15,7 +15,8 @@ import * as unenv from 'unenv'
 
 import type { Preset } from 'unenv'
 import { NitroContext } from '../context'
-import { resolvePath, MODULE_DIR } from '../utils'
+import { resolvePath } from '../utils'
+import { pkgDir } from '../dirs'
 
 import { dynamicRequire } from './plugins/dynamic-require'
 import { externals } from './plugins/externals'
@@ -228,7 +229,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   const moduleDirectories = [
     resolve(nitroContext._nuxt.rootDir, 'node_modules'),
     ...nitroContext._nuxt.modulesDir,
-    resolve(MODULE_DIR, '../node_modules'),
+    resolve(pkgDir, '../node_modules'),
     'node_modules'
   ]
 
