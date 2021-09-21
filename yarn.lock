@@ -1612,7 +1612,7 @@ __metadata:
     fs-extra: ^10.0.0
     glob: ^7.1.7
     hash-sum: ^2.0.0
-    lodash: ^4.17.21
+    lodash-es: ^4.17.21
     memfs: ^3.3.0
     mini-css-extract-plugin: ^2.3.0
     pify: ^5.0.0
@@ -8626,6 +8626,13 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"lodash-es@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash-es@npm:4.17.21"
+  checksum: 05cbffad6e2adbb331a4e16fbd826e7faee403a1a04873b82b42c0f22090f280839f85b95393f487c1303c8a3d2a010048bf06151a6cbe03eee4d388fb0a12d2
+  languageName: node
+  linkType: hard
+
 "lodash._reinterpolate@npm:^3.0.0":
   version: 3.0.0
   resolution: "lodash._reinterpolate@npm:3.0.0"
@@ -9818,7 +9825,7 @@ fsevents@~2.3.2:
     mocha: ^9.1.1
     object-hash: ^2.2.0
     typescript: ^4.4.3
-    unbuild: ^0.5.3
+    unbuild: ^0.5.4
     upath: ^2.0.1
   languageName: unknown
   linkType: soft
@@ -9885,7 +9892,7 @@ fsevents@~2.3.2:
     hash-sum: ^2.0.0
     hookable: ^5.0.0
     ignore: ^5.1.8
-    lodash: ^4.17.21
+    lodash-es: ^4.17.21
     mlly: ^0.2.2
     nuxi: ^0.10.0
     ohmyfetch: ^0.3.1
@@ -13456,9 +13463,9 @@ typescript@^4.4.3:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.5.3":
-  version: 0.5.3
-  resolution: "unbuild@npm:0.5.3"
+"unbuild@npm:^0.5.4":
+  version: 0.5.4
+  resolution: "unbuild@npm:0.5.4"
   dependencies:
     "@rollup/plugin-alias": ^3.1.4
     "@rollup/plugin-commonjs": ^20.0.0
@@ -13483,7 +13490,7 @@ typescript@^4.4.3:
     upath: ^2.0.1
   bin:
     unbuild: bin/unbuild.cjs
-  checksum: dcb0bb7cef9346a1f0f0b4c61425b678a96ee75f457eb0e267b0d8a8fc414326d39d7fb63126fccaefd3302723a1f793b85980b5fff9df15e55d39e41653b3c5
+  checksum: a8c167794c1327205cb50a30fea6cb61ecd2c5486cbf18104dadc1dc9f2c0890b880a62a519d6a8f733f947090243830adf2613978dd583911cf18e71d26f718
   languageName: node
   linkType: hard
 
