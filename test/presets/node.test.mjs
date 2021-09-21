@@ -13,4 +13,4 @@ describe('nitro:preset:node', () => {
       }
     }
   })
-}).timeout(60000)
+})

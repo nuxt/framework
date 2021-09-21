@@ -24,7 +24,8 @@ export function setupTest (preset) {
     fetch: url => $fetch(url, { baseURL: ctx.server.url })
   }
 
-  before('nitro build', async () => {
+  before('nitro build', async function () {
+    this.timeout(60000)
     const nuxtCLI = isBridge
       ? resolve(ctx.rootDir, 'node_modules/nuxt/bin/nuxt.js')
       : resolveWorkspace('packages/nuxi/bin/nuxi.mjs')
@@ -52,7 +53,7 @@ export async function startServer (ctx, handle) {
   ctx.server = await listen(handle)
 }
 
-export function testNitroBehavior (ctx, getHandler) {
+export function testNitroBehavior (_ctx, getHandler) {
   let handler
 
   it('setup handler', async () => {
