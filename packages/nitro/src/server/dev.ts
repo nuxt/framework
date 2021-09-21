@@ -7,7 +7,7 @@ import { loading as loadingTemplate } from '@nuxt/design'
 import chokidar, { FSWatcher } from 'chokidar'
 import debounce from 'debounce'
 import { promisifyHandle, createApp, Middleware, useBase } from 'h3'
-import { createProxy } from 'http-proxy'
+import httpProxy from 'http-proxy'
 import { listen, Listener, ListenOptions } from 'listhen'
 import servePlaceholder from 'serve-placeholder'
 import serveStatic from 'serve-static'
@@ -72,7 +72,7 @@ export function createDevServer (nitroContext: NitroContext) {
   app.use(nitroContext._nuxt.publicPath, servePlaceholder())
 
   // SSR Proxy
-  const proxy = createProxy()
+  const proxy = httpProxy.createProxy()
   const proxyHandle = promisifyHandle((req: IncomingMessage, res: ServerResponse) => proxy.web(req, res, { target: workerAddress }, (_err: unknown) => {
     // console.error('[proxy]', err)
   }))
