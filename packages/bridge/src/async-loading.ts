@@ -1,10 +1,13 @@
 // Based on https://github.com/webpack/webpack/blob/v4.46.0/lib/node/NodeMainTemplatePlugin.js#L81-L191
 
+import { createRequire } from 'module'
 import type { Compiler } from 'webpack'
-import Template from 'webpack/lib/Template'
 
 export class AsyncLoadingPlugin {
   apply (compiler: Compiler) {
+    // TODO: Avoid implicit dependency
+    const Template = createRequire(import.meta.url)('webpack/lib/Template')
+
     compiler.hooks.compilation.tap('AsyncLoading', (compilation) => {
       const mainTemplate = compilation.mainTemplate
       mainTemplate.hooks.requireEnsure.tap(
