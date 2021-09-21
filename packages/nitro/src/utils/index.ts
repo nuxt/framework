@@ -120,3 +120,7 @@ export function getDependencies (dir: string, mode: keyof typeof _getDependencie
   }
   return dependencies
 }
+
+export function serializeImportName (id: string) {
+  return '_' + id.replace(/[^\w$]/g, '_')
+}
