@@ -1570,7 +1570,7 @@ __metadata:
   resolution: "@nuxt/vite-builder@workspace:packages/vite"
   dependencies:
     "@nuxt/kit": ^0.10.0
-    "@types/debounce": ^1.2.0
+    "@types/debounce": ^1.2.1
     "@vitejs/plugin-vue": ^1.8.1
     "@vue/compiler-sfc": ^3.2.12
     chokidar: ^3.5.2
@@ -2101,7 +2101,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/debounce@npm:^1.2.0, @types/debounce@npm:^1.2.1":
+"@types/debounce@npm:^1.2.1":
   version: 1.2.1
   resolution: "@types/debounce@npm:1.2.1"
   checksum: bea6d414acefbee50adfe87cee10f8a855d033e4778567ab03bdc3cb2648b6bf9237ca53f4ee76fe4be75f77f86d4688411499626fe409bc870f53631d24231f
@@ -9818,7 +9818,7 @@ fsevents@~2.3.2:
     mocha: ^9.1.1
     object-hash: ^2.2.0
     typescript: ^4.4.3
-    unbuild: latest
+    unbuild: ^0.5.2
     upath: ^2.0.1
   languageName: unknown
   linkType: soft

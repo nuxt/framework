@@ -13,6 +13,9 @@
   "scripts": {
     "prepack": "unbuild"
   },
+  "devDependencies": {
+    "unbuild": "latest"
+  },
   "dependencies": {
     "consola": "^2.15.3",
     "create-require": "^1.1.1",
@@ -29,8 +32,5 @@
     "unctx": "^1.0.2",
     "untyped": "^0.2.9",
     "upath": "^2.0.1"
-  },
-  "devDependencies": {
-    "unbuild": "latest"
   }
 }
