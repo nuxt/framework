@@ -1,5 +1,5 @@
 import { join, relative, resolve } from 'path'
-import { existsSync, readJSONSync } from 'fs-extra'
+import fse from 'fs-extra'
 import consola from 'consola'
 import globby from 'globby'
 
@@ -16,7 +16,7 @@ export const firebase: NitroPreset = {
 }
 
 async function writeRoutes ({ output: { publicDir, serverDir }, _nuxt: { rootDir } }: NitroContext) {
-  if (!existsSync(join(rootDir, 'firebase.json'))) {
+  if (!fse.existsSync(join(rootDir, 'firebase.json'))) {
     const firebase = {
       functions: {
         source: relative(rootDir, serverDir)
@@ -51,7 +51,7 @@ async function writeRoutes ({ output: { publicDir, serverDir }, _nuxt: { rootDir
 
   let nodeVersion = '12'
   try {
-    const currentNodeVersion = readJSONSync(join(rootDir, 'package.json')).engines.node
+    const currentNodeVersion = fse.readJSONSync(join(rootDir, 'package.json')).engines.node
     if (['12', '10'].includes(currentNodeVersion)) {
       nodeVersion = currentNodeVersion
     }

@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 import * as vite from 'vite'
-import { mkdirp, readJSON, writeFile } from 'fs-extra'
+import fse from 'fs-extra'
 import consola from 'consola'
 import vitePlugin from '@vitejs/plugin-vue'
 
@@ -86,9 +86,9 @@ export async function buildClient (ctx: ViteBuildContext) {
 
   const clientManifest = ctx.nuxt.options.dev
     ? devClientManifest
-    : await readJSON(resolve(clientDist, 'manifest.json'))
+    : await fse.readJSON(resolve(clientDist, 'manifest.json'))
 
-  await mkdirp(serverDist)
-  await writeFile(resolve(serverDist, 'client.manifest.json'), JSON.stringify(clientManifest, null, 2), 'utf8')
-  await writeFile(resolve(serverDist, 'client.manifest.mjs'), 'export default ' + JSON.stringify(clientManifest, null, 2), 'utf8')
+  await fse.mkdirp(serverDist)
+  await fse.writeFile(resolve(serverDist, 'client.manifest.json'), JSON.stringify(clientManifest, null, 2), 'utf8')
+  await fse.writeFile(resolve(serverDist, 'client.manifest.mjs'), 'export default ' + JSON.stringify(clientManifest, null, 2), 'utf8')
 }

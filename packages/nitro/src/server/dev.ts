@@ -2,10 +2,10 @@ import { Worker } from 'worker_threads'
 
 import { IncomingMessage, ServerResponse } from 'http'
 import { resolve } from 'path'
+import { promises as fsp } from 'fs'
 import { loading as loadingTemplate } from '@nuxt/design'
 import chokidar, { FSWatcher } from 'chokidar'
 import debounce from 'debounce'
-import { stat } from 'fs-extra'
 import { promisifyHandle, createApp, Middleware, useBase } from 'h3'
 import { createProxy } from 'http-proxy'
 import { listen, Listener, ListenOptions } from 'listhen'
@@ -27,7 +27,7 @@ export function createDevServer (nitroContext: NitroContext) {
       workerAddress = null
       pendingWorker = null
     }
-    if (!(await stat(workerEntry)).isFile) {
+    if (!(await fsp.stat(workerEntry)).isFile) {
       throw new Error('Entry not found: ' + workerEntry)
     }
     return new Promise((resolve, reject) => {

@@ -1,8 +1,8 @@
 import { resolve } from 'path'
+import { promises as fsp } from 'fs'
 import { template as lodashTemplate } from 'lodash'
 import defu from 'defu'
 import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, NuxtTemplate, normalizePlugin, normalizeTemplate } from '@nuxt/kit'
-import { readFile, writeFile } from 'fs-extra'
 
 import * as defaultTemplates from '../app/templates'
 import * as templateUtils from './template.utils'
@@ -46,7 +46,7 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
     }
 
     if (template.write) {
-      await writeFile(fullPath, contents, 'utf8')
+      await fsp.writeFile(fullPath, contents, 'utf8')
     }
   }))
 
@@ -82,7 +82,7 @@ async function compileTemplate (template: NuxtTemplate, ctx: any) {
   const data = { ...ctx, ...template.options }
   if (template.src) {
     try {
-      const srcContents = await readFile(template.src, 'utf-8')
+      const srcContents = await fsp.readFile(template.src, 'utf-8')
       return lodashTemplate(srcContents, {})(data)
     } catch (err) {
       console.error('Error compiling template: ', template)
