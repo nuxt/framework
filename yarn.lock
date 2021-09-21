@@ -1467,7 +1467,7 @@ __metadata:
     globby: ^11.0.4
     hash-sum: ^2.0.0
     hookable: ^5.0.0
-    jiti: ^1.12.1
+    jiti: ^1.12.2
     rc9: ^1.2.0
     scule: ^0.2.1
     std-env: ^2.3.0
@@ -1523,7 +1523,7 @@ __metadata:
     hookable: ^5.0.0
     http-proxy: ^1.18.1
     is-primitive: ^3.0.1
-    jiti: ^1.12.1
+    jiti: ^1.12.2
     listhen: ^0.2.4
     mime: ^2.5.2
     mlly: ^0.2.2
@@ -8177,21 +8177,12 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.10.1, jiti@npm:^1.12.0":
-  version: 1.12.0
-  resolution: "jiti@npm:1.12.0"
+"jiti@npm:^1.10.1, jiti@npm:^1.12.2":
+  version: 1.12.2
+  resolution: "jiti@npm:1.12.2"
   bin:
     jiti: bin/jiti.js
-  checksum: 7490f80be8504f107c0983f9e6dd38ff55764f295a334075580468d01d63a2c7057be1847e389ae3c86e09cfcd60e653b51a2c00ca4d175a26e392eb3471f96a
-  languageName: node
-  linkType: hard
-
-"jiti@npm:^1.12.1":
-  version: 1.12.1
-  resolution: "jiti@npm:1.12.1"
-  bin:
-    jiti: bin/jiti.js
-  checksum: 173a018877ee43aba95aa7bc026ebed8dbef8a832206de30a35a1c6397cc75446ba42252b2ebfce05a88a5fbbe50ef8af60c399087b1a97ef85c87380e7b761b
+  checksum: 95318bf117504c0d72e6ec933ea2b980893c05f4bd70bf716e2cdb2c4fbae378eeb4ee1124d2f312773a9ea9aa6eec57f2f766b07cbf1be92098d0aaede53966
   languageName: node
   linkType: hard
 
@@ -9776,7 +9767,7 @@ fsevents@~2.3.2:
     destr: ^1.1.0
     flat: ^5.0.2
     fsevents: ~2.3.2
-    jiti: ^1.12.1
+    jiti: ^1.12.2
     listhen: ^0.2.4
     mlly: ^0.2.2
     mri: ^1.2.0
@@ -9811,14 +9802,14 @@ fsevents@~2.3.2:
     eslint-plugin-jsdoc: ^36.1.0
     execa: ^5.1.1
     globby: ^11.0.4
-    jiti: ^1.12.1
+    jiti: ^1.12.2
     jsdom: ^17.0.0
     lerna: ^4.0.0
     mlly: ^0.2.2
     mocha: ^9.1.1
     object-hash: ^2.2.0
     typescript: ^4.4.3
-    unbuild: ^0.5.2
+    unbuild: ^0.5.3
     upath: ^2.0.1
   languageName: unknown
   linkType: soft
@@ -13456,9 +13447,9 @@ typescript@^4.4.3:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.5.2":
-  version: 0.5.2
-  resolution: "unbuild@npm:0.5.2"
+"unbuild@npm:^0.5.3":
+  version: 0.5.3
+  resolution: "unbuild@npm:0.5.3"
   dependencies:
     "@rollup/plugin-alias": ^3.1.4
     "@rollup/plugin-commonjs": ^20.0.0
@@ -13468,7 +13459,7 @@ typescript@^4.4.3:
     consola: ^2.15.3
     defu: ^5.0.0
     esbuild: ^0.12.28
-    jiti: ^1.12.0
+    jiti: ^1.12.2
     mkdirp: ^1.0.4
     mkdist: ^0.3.3
     mri: ^1.2.0
@@ -13483,7 +13474,7 @@ typescript@^4.4.3:
     upath: ^2.0.1
   bin:
     unbuild: bin/unbuild.cjs
-  checksum: f1fca31861c44c24bea1d6626842980550d94c34c2cf3c3e827ac5f8c2bde5227e1e68d4aaed6af11815ec04be44b5343f22a6581f33bb4fb139f9f86454ed41
+  checksum: dcb0bb7cef9346a1f0f0b4c61425b678a96ee75f457eb0e267b0d8a8fc414326d39d7fb63126fccaefd3302723a1f793b85980b5fff9df15e55d39e41653b3c5
   languageName: node
   linkType: hard
 

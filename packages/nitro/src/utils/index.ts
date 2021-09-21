@@ -37,7 +37,7 @@ export function serializeTemplate (contents: string) {
 }
 
 export function jitiImport (dir: string, path: string) {
-  return jiti(dir)(path)
+  return jiti(dir, { interopDefault: true })(path)
 }
 
 export function tryImport (dir: string, path: string) {

@@ -2,7 +2,7 @@ import { join, normalize } from 'upath'
 import jiti from 'jiti'
 
 // TODO: use create-require for jest environment
-const _require = jiti(process.cwd())
+const _require = jiti(process.cwd(), { interopDefault: true })
 
 export interface ResolveModuleOptions {
   paths?: string | string[]
