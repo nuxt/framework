@@ -1,4 +1,4 @@
-import 'v8-compile-cache'
+// import 'v8-compile-cache'
 import mri from 'mri'
 import { red, cyan } from 'colorette'
 import { commands, Command, NuxtCommand } from './commands'
