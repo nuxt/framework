@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-import lodashTemplate from 'lodash/template'
+import { template as lodashTemplate } from 'lodash'
 import defu from 'defu'
 import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, NuxtTemplate, normalizePlugin, normalizeTemplate } from '@nuxt/kit'
 import { readFile, writeFile } from 'fs-extra'
