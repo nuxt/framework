@@ -1,4 +1,4 @@
-import { resolve } from 'upath'
+import { resolve } from 'path'
 import consola from 'consola'
 import { extendPreset, writeFile, prettyPath } from '../utils'
 import { NitroContext, NitroPreset } from '../context'

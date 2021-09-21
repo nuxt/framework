@@ -1,4 +1,4 @@
-import { resolve } from 'upath'
+import { resolve } from 'path'
 import { importModule } from '../utils/cjs'
 import { error } from '../utils/log'
 

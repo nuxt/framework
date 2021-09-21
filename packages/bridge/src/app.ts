@@ -1,5 +1,5 @@
+import { resolve } from 'path'
 import { useNuxt, resolveModule } from '@nuxt/kit'
-import { resolve } from 'upath'
 import { distDir } from './dirs'
 
 export function setupAppBridge () {

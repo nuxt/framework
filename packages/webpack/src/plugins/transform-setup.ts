@@ -1,4 +1,4 @@
-import { normalize } from 'upath'
+import { normalize } from 'path'
 import { getQuery } from 'ufo'
 
 export default class NuxtSetupTransformerPlugin {

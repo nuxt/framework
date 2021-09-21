@@ -1,4 +1,4 @@
-import { extname } from 'upath'
+import { extname } from 'path'
 import type { Plugin } from 'rollup'
 
 export interface RawOptions {

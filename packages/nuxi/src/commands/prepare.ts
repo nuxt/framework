@@ -1,5 +1,5 @@
 import { promises as fsp } from 'fs'
-import { relative, resolve } from 'upath'
+import { relative, resolve } from 'path'
 import { cyan } from 'colorette'
 import type { TSReference } from '@nuxt/kit'
 import { importModule, getModulePaths, getNearestPackage } from '../utils/cjs'

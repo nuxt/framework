@@ -1,4 +1,4 @@
-import { resolve, join } from 'upath'
+import { resolve, join } from 'path'
 import consola from 'consola'
 import { rollup, watch as rollupWatch } from 'rollup'
 import { readFile, emptyDir, copy } from 'fs-extra'

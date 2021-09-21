@@ -1,4 +1,4 @@
-import { resolve, dirname } from 'upath'
+import { resolve, dirname } from 'path'
 import { copyFile, mkdirp } from 'fs-extra'
 import { nodeFileTrace, NodeFileTraceOptions } from '@vercel/nft'
 import type { Plugin } from 'rollup'

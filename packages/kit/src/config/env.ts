@@ -1,5 +1,5 @@
 import { existsSync, promises as fsp } from 'fs'
-import { resolve } from 'upath'
+import { resolve } from 'path'
 import dotenv from 'dotenv'
 
 export interface LoadDotEnvOptions {

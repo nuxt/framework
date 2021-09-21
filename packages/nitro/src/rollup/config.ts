@@ -1,5 +1,5 @@
 import { pathToFileURL } from 'url'
-import { dirname, join, relative, resolve } from 'upath'
+import { dirname, join, relative, resolve } from 'path'
 import type { InputOptions, OutputOptions } from 'rollup'
 import defu from 'defu'
 import { terser } from 'rollup-plugin-terser'

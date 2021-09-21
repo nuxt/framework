@@ -1,4 +1,4 @@
-import { join, relative, resolve } from 'upath'
+import { join, relative, resolve } from 'path'
 import { existsSync, readJSONSync } from 'fs-extra'
 import consola from 'consola'
 import globby from 'globby'

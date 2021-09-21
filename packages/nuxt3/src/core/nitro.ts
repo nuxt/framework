@@ -1,4 +1,4 @@
-import { normalize, resolve } from 'upath'
+import { normalize, resolve } from 'path'
 import { wpfs, getNitroContext, createDevServer, resolveMiddleware, build, prepare, generate } from '@nuxt/nitro'
 import type { Nuxt } from '@nuxt/kit'
 

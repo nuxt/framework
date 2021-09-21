@@ -1,4 +1,4 @@
-import { normalize, dirname } from 'upath'
+import { normalize, dirname } from 'path'
 
 export function getModulePaths (paths?: string | string[]): string[] {
   return [].concat(

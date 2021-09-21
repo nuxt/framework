@@ -1,7 +1,7 @@
+import { join, resolve } from 'path'
 import archiver from 'archiver'
 import consola from 'consola'
 import { createWriteStream } from 'fs-extra'
-import { join, resolve } from 'upath'
 import { prettyPath, writeFile } from '../utils'
 import { NitroPreset, NitroContext } from '../context'
 

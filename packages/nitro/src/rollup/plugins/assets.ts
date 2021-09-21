@@ -1,8 +1,8 @@
 import { promises as fsp } from 'fs'
+import { resolve } from 'path'
 import type { Plugin } from 'rollup'
 import createEtag from 'etag'
 import mime from 'mime'
-import { resolve } from 'upath'
 import globby from 'globby'
 import virtual from './virtual'
 

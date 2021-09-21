@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { basename, parse, resolve } from 'upath'
+import { basename, parse, resolve } from 'path'
 import hash from 'hash-sum'
 import type { WebpackPluginInstance, Configuration as WebpackConfig } from 'webpack'
 import type { Plugin as VitePlugin, UserConfig as ViteConfig } from 'vite'

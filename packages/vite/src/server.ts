@@ -1,4 +1,4 @@
-import { resolve } from 'upath'
+import { resolve } from 'path'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import consola from 'consola'

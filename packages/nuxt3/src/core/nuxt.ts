@@ -1,4 +1,4 @@
-import { resolve } from 'upath'
+import { resolve } from 'path'
 import { createHooks } from 'hookable'
 import { loadNuxtConfig, LoadNuxtOptions, Nuxt, NuxtOptions, nuxtCtx, installModule, ModuleContainer, NuxtHooks } from '@nuxt/kit'
 import pagesModule from '../pages/module'

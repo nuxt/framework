@@ -1,4 +1,4 @@
-import path from 'upath'
+import path from 'path'
 import consola from 'consola'
 import type { Nuxt, NuxtPluginTemplate, NuxtTemplate } from '../types/nuxt'
 import { chainFn } from '../utils/task'

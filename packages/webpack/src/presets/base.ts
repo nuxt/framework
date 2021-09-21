@@ -1,4 +1,4 @@
-import { resolve, normalize } from 'upath'
+import { resolve, normalize } from 'path'
 import TimeFixPlugin from 'time-fix-plugin'
 import WebpackBar from 'webpackbar'
 import consola from 'consola'

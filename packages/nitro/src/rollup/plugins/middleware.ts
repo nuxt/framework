@@ -1,5 +1,5 @@
+import { relative } from 'path'
 import hasha from 'hasha'
-import { relative } from 'upath'
 import { table, getBorderCharacters } from 'table'
 import isPrimitive from 'is-primitive'
 import stdenv from 'std-env'

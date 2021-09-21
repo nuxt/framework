@@ -1,5 +1,5 @@
+import { resolve } from 'path'
 import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, addPluginTemplate } from '@nuxt/kit'
-import { resolve } from 'upath'
 import type { Identifiers, GlobalImportsOptions } from './types'
 import { TransformPlugin } from './transform'
 import { defaultIdentifiers } from './identifiers'
