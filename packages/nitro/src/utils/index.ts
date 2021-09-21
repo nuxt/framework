@@ -122,5 +122,5 @@ export function getDependencies (dir: string, mode: keyof typeof _getDependencie
 }
 
 export function serializeImportName (id: string) {
-  return '_' + id.replace(/[^\w$]/g, '_')
+  return '_' + id.replace(/[^a-zA-Z0-9_$]/g, '_')
 }
