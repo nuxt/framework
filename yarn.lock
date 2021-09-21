@@ -13423,9 +13423,9 @@ typescript@^4.4.3:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.5.1":
-  version: 0.5.1
-  resolution: "unbuild@npm:0.5.1"
+"unbuild@npm:^0.5.2":
+  version: 0.5.2
+  resolution: "unbuild@npm:0.5.2"
   dependencies:
     "@rollup/plugin-alias": ^3.1.4
     "@rollup/plugin-commonjs": ^20.0.0
@@ -13450,7 +13450,7 @@ typescript@^4.4.3:
     upath: ^2.0.1
   bin:
     unbuild: bin/unbuild.cjs
-  checksum: 3cd92321fd481b56fc6ea7d615ed5ef52e049d4865e38e4eab8f099c33f1979779b88d94cbf7e9ebd0f0be7e61cae65a0b37f0b617ec7da2fca49f7bc53a520c
+  checksum: f1fca31861c44c24bea1d6626842980550d94c34c2cf3c3e827ac5f8c2bde5227e1e68d4aaed6af11815ec04be44b5343f22a6581f33bb4fb139f9f86454ed41
   languageName: node
   linkType: hard
 
