@@ -75,7 +75,7 @@ async function _build (nitroContext: NitroContext) {
   await nitroContext._internal.hooks.callHook('nitro:compiled', nitroContext)
 
   return {
-    entry: resolve(nitroContext.rollupConfig.output.dir, nitroContext.rollupConfig.output.entryFileNames)
+    entry: resolve(nitroContext.rollupConfig.output.dir, nitroContext.rollupConfig.output.entryFileNames as string)
   }
 }
 
