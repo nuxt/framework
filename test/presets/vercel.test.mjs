@@ -14,4 +14,4 @@ describe('nitro:preset:vercel', () => {
       }
     }
   })
-})
+}).timeout(60000)

@@ -24,7 +24,7 @@ export function setupTest (preset) {
     fetch: url => $fetch(url, { baseURL: ctx.server.url })
   }
 
-  it('nitro build', async () => {
+  before('nitro build', async () => {
     const nuxtCLI = isBridge
       ? resolve(ctx.rootDir, 'node_modules/nuxt/bin/nuxt.js')
       : resolveWorkspace('packages/nuxi/bin/nuxi.mjs')
@@ -37,7 +37,7 @@ export function setupTest (preset) {
         NODE_ENV: 'production'
       }
     })
-  }).timeout(60000)
+  })
 
   after('Cleanup', async () => {
     if (ctx.server) {

@@ -22,4 +22,4 @@ describe('nitro:preset:lambda', () => {
       }
     }
   })
-})
+}).timeout(60000)

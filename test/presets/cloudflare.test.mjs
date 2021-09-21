@@ -62,4 +62,4 @@ describe('nitro:preset:cloudflare', () => {
       return { data }
     }
   })
-})
+}).timeout(60000)
