@@ -125,6 +125,15 @@ export function requireModule (id: string, opts: RequireModuleOptions = {}) {
   return requiredModule
 }
 
+export function importModule (id: string, opts: RequireModuleOptions = {}) {
+  const resolvedPath = resolveModule(id, opts)
+  return import(resolvedPath)
+}
+
+export function tryImportModule (id: string, opts: RequireModuleOptions = {}) {
+  return importModule(id, opts).catch(() => undefined)
+}
+
 /** Try to require a module, but don't emit an error if the module can't be required. */
 export function tryRequireModule (id: string, opts: RequireModuleOptions = {}) {
   try {
