@@ -5,7 +5,7 @@
 
 import { dirname } from 'path'
 import hash from 'hash-sum'
-import { uniq } from 'lodash'
+import { uniq } from 'lodash-es'
 import fse from 'fs-extra'
 
 import { isJS, isCSS, isHotUpdate } from './util'

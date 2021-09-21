@@ -34,7 +34,7 @@
     "hash-sum": "^2.0.0",
     "hookable": "^5.0.0",
     "ignore": "^5.1.8",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "mlly": "^0.2.2",
     "nuxi": "^0.10.0",
     "ohmyfetch": "^0.3.1",

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import consola from 'consola'
-import { defaults, merge, cloneDeep } from 'lodash'
+import { defaults, merge, cloneDeep } from 'lodash-es'
 import createResolver from 'postcss-import-resolver'
 import { Nuxt, requireModule } from '@nuxt/kit'
 

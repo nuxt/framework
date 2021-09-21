@@ -1,6 +1,6 @@
 import { resolve } from 'path'
 import { promises as fsp } from 'fs'
-import { template as lodashTemplate } from 'lodash'
+import { template as lodashTemplate } from 'lodash-es'
 import defu from 'defu'
 import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, NuxtTemplate, normalizePlugin, normalizeTemplate } from '@nuxt/kit'
 
