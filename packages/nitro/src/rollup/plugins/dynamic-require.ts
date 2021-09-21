@@ -1,5 +1,4 @@
 import { resolve } from 'path'
-import { createRequire } from 'module'
 import globby from 'globby'
 import type { Plugin } from 'rollup'
 import { serializeImportName } from '../../utils'
