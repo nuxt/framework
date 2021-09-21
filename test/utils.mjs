@@ -17,7 +17,7 @@ export function fixtureDir (name) {
 }
 
 export async function execNuxtCLI (args, opts) {
-  const nuxtCLI = resolveWorkspace('packages/nuxi/bin/nuxi.cjs')
+  const nuxtCLI = resolveWorkspace('packages/nuxi/bin/nuxi.mjs')
   await execa('node', [nuxtCLI, ...args], opts)
 }
 
