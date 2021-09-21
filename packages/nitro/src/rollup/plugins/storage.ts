@@ -46,5 +46,5 @@ ${mounts.map(m => `storage.mount('${m.path}', ${getImportName(m.driver)}(${JSON.
 }
 
 function getImportName (id: string) {
-  return '_' + id.replace(/[\\/.]/g, '_')
+  return '_' + id.replace(/[^\w$]/g, '_')
 }
