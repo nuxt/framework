@@ -1,4 +1,4 @@
-import fs from 'fs'
+import { existsSync } from 'fs'
 import { basename, parse, resolve } from 'path'
 import hash from 'hash-sum'
 import type { WebpackPluginInstance, Configuration as WebpackConfig } from 'webpack'
@@ -42,7 +42,7 @@ export function normalizeTemplate (template: NuxtTemplate | string): NuxtTemplat
 
   // Use src if provided
   if (template.src) {
-    if (!fs.existsSync(template.src)) {
+    if (!existsSync(template.src)) {
       throw new Error('Template not found: ' + template.src)
     }
     if (!template.filename) {
