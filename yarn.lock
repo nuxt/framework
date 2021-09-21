@@ -1467,14 +1467,14 @@ __metadata:
     globby: ^11.0.4
     hash-sum: ^2.0.0
     hookable: ^5.0.0
-    jiti: ^1.12.0
+    jiti: ^1.12.1
     rc9: ^1.2.0
     scule: ^0.2.1
     std-env: ^2.3.0
     ufo: ^0.7.9
     unbuild: latest
     unctx: ^1.0.2
-    untyped: ^0.2.8
+    untyped: ^0.2.9
     upath: ^2.0.1
   languageName: unknown
   linkType: soft
@@ -1496,7 +1496,7 @@ __metadata:
     "@rollup/plugin-replace": ^3.0.0
     "@rollup/plugin-virtual": ^2.0.3
     "@rollup/pluginutils": ^4.1.1
-    "@types/debounce": ^1.2.0
+    "@types/debounce": ^1.2.1
     "@types/fs-extra": ^9.0.12
     "@types/http-proxy": ^1.17.7
     "@types/jsdom": ^16.2.13
@@ -1523,7 +1523,7 @@ __metadata:
     hookable: ^5.0.0
     http-proxy: ^1.18.1
     is-primitive: ^3.0.1
-    jiti: ^1.12.0
+    jiti: ^1.12.1
     listhen: ^0.2.4
     mime: ^2.5.2
     mlly: ^0.2.2
@@ -2071,10 +2071,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chai@npm:^4.2.21":
-  version: 4.2.21
-  resolution: "@types/chai@npm:4.2.21"
-  checksum: dbd852dfea5065c2e86059bdc011c42a380c43bbcf80d427da228dc2a9e1efae27e7baf16570a3158571d92c206782e07fab3b703c28452a75a74380b33d1443
+"@types/chai@npm:^4.2.22":
+  version: 4.2.22
+  resolution: "@types/chai@npm:4.2.22"
+  checksum: dca66a263b25c26112c0a8c6df20316412fa54b557443a108836c07cee961aa56cc5b1763273f69eb450c83ca9f28069ff78b617bffc01806cdd83afc1c20c2a
   languageName: node
   linkType: hard
 
@@ -2101,10 +2101,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/debounce@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@types/debounce@npm:1.2.0"
-  checksum: 640fd8c5e608ffa4aeaa4a88a08e4275db76ee67e35484bf9d425a52103ce5a0ca8f89ecb7051848a66f192f12c084cbccefd4647584c4f153b36122c284c062
+"@types/debounce@npm:^1.2.0, @types/debounce@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@types/debounce@npm:1.2.1"
+  checksum: bea6d414acefbee50adfe87cee10f8a855d033e4778567ab03bdc3cb2648b6bf9237ca53f4ee76fe4be75f77f86d4688411499626fe409bc870f53631d24231f
   languageName: node
   linkType: hard
 
@@ -4731,10 +4731,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colorette@npm:^2.0.2":
-  version: 2.0.2
-  resolution: "colorette@npm:2.0.2"
-  checksum: f2ec4e0c4c612737bc852cf3376e5d4261f8b6acefc9a52974c97473eeac855f8751dfcbb3cf3490bc4b644477ed9688aa4cade96d09742d0eafc8ec36fdab2b
+"colorette@npm:^2.0.3":
+  version: 2.0.4
+  resolution: "colorette@npm:2.0.4"
+  checksum: 935dddd24df4abdc45e86793780617ff5e9804dcbc5bcc891019daf5f762f7aeb3c267c25f38a5762dbc88715c6b957cc09f09836c37fe2507a817123a4a1f23
   languageName: node
   linkType: hard
 
@@ -8186,6 +8186,15 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"jiti@npm:^1.12.1":
+  version: 1.12.1
+  resolution: "jiti@npm:1.12.1"
+  bin:
+    jiti: bin/jiti.js
+  checksum: 173a018877ee43aba95aa7bc026ebed8dbef8a832206de30a35a1c6397cc75446ba42252b2ebfce05a88a5fbbe50ef8af60c399087b1a97ef85c87380e7b761b
+  languageName: node
+  linkType: hard
+
 "joycon@npm:^3.0.1":
   version: 3.0.1
   resolution: "joycon@npm:3.0.1"
@@ -9761,13 +9770,13 @@ fsevents@~2.3.2:
     chokidar: ^3.5.2
     clear: ^0.1.0
     clipboardy: ^2.3.0
-    colorette: ^2.0.2
+    colorette: ^2.0.3
     debounce-promise: ^3.1.2
     deep-object-diff: ^1.1.0
     destr: ^1.1.0
     flat: ^5.0.2
     fsevents: ~2.3.2
-    jiti: ^1.12.0
+    jiti: ^1.12.1
     listhen: ^0.2.4
     mlly: ^0.2.2
     mri: ^1.2.0
@@ -9790,7 +9799,7 @@ fsevents@~2.3.2:
   dependencies:
     "@nuxtjs/eslint-config": ^6.0.1
     "@nuxtjs/eslint-config-typescript": ^6.0.1
-    "@types/chai": ^4.2.21
+    "@types/chai": ^4.2.22
     "@types/jsdom": ^16
     "@types/mocha": ^9.0.0
     "@types/node": ^14.17.17
@@ -9802,7 +9811,7 @@ fsevents@~2.3.2:
     eslint-plugin-jsdoc: ^36.1.0
     execa: ^5.1.1
     globby: ^11.0.4
-    jiti: ^1.12.0
+    jiti: ^1.12.1
     jsdom: ^17.0.0
     lerna: ^4.0.0
     mlly: ^0.2.2
@@ -13447,9 +13456,9 @@ typescript@^4.4.3:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.5.0":
-  version: 0.5.0
-  resolution: "unbuild@npm:0.5.0"
+"unbuild@npm:^0.5.2":
+  version: 0.5.2
+  resolution: "unbuild@npm:0.5.2"
   dependencies:
     "@rollup/plugin-alias": ^3.1.4
     "@rollup/plugin-commonjs": ^20.0.0
@@ -13470,11 +13479,11 @@ typescript@^4.4.3:
     rollup-plugin-esbuild: ^4.5.0
     scule: ^0.2.1
     typescript: ^4.4.3
-    untyped: ^0.2.8
+    untyped: ^0.2.9
     upath: ^2.0.1
   bin:
     unbuild: bin/unbuild.cjs
-  checksum: 4f7cec91db606fab9cb18cef422152e2da5773808e1b967a5792a29b2f8a378e311b61da9cf15a96dd6309c424fb8d11511bf802680b1f79f9027910e974a9d3
+  checksum: f1fca31861c44c24bea1d6626842980550d94c34c2cf3c3e827ac5f8c2bde5227e1e68d4aaed6af11815ec04be44b5343f22a6581f33bb4fb139f9f86454ed41
   languageName: node
   linkType: hard
 
@@ -13601,10 +13610,10 @@ typescript@^4.4.3:
   languageName: node
   linkType: hard
 
-"untyped@npm:^0.2.8":
-  version: 0.2.8
-  resolution: "untyped@npm:0.2.8"
-  checksum: 1674162edede0a6b11a1bbe1405fb9ea2aab6a5d3e0b2d29c1e490e6a0006055772762f13126c0853ebc6c755b424ab3c1a34d2022953702dd7da15e567cf7f8
+"untyped@npm:^0.2.9":
+  version: 0.2.9
+  resolution: "untyped@npm:0.2.9"
+  checksum: 43a0312451644240bc4f1f4b7c8edd66edb62b34cec121017f33f1f27b8b088a43171d9d66563b74fa627feac9952862385d76a4cc15d6dad81ccec09d56f448
   languageName: node
   linkType: hard
 
