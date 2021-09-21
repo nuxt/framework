@@ -13423,7 +13423,7 @@ typescript@^4.4.3:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.5.2":
+"unbuild@npm:^0.5.1":
   version: 0.5.2
   resolution: "unbuild@npm:0.5.2"
   dependencies:
