@@ -4,7 +4,10 @@
   "repository": "nuxt/framework",
   "license": "MIT",
   "type": "module",
-  "exports": "./dist/index.mjs",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./dist/*": "./dist/*"
+  },
   "files": [
     "dist"
   ],
