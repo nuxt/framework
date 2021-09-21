@@ -25,6 +25,10 @@ export function requireModule (id: string, paths?: string | string[]) {
   return require(resolveModule(id, paths))
 }
 
+export function importModule (id: string, paths?: string | string[]) {
+  return import(resolveModule(id, paths))
+}
+
 export function getNearestPackage (id: string, paths?: string | string[]) {
   while (dirname(id) !== id) {
     try { return requireModule(id + '/package.json', paths) } catch { }
