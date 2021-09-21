@@ -1,4 +1,5 @@
 import { resolve } from 'path'
+import { createRequire } from 'module'
 import globby from 'globby'
 import type { Plugin } from 'rollup'
 import { serializeImportName } from '../../utils'
@@ -61,20 +62,21 @@ export function dynamicRequire ({ dir, ignore, inline }: Options): Plugin {
       } catch {
         files = await globby('**/*.{cjs,mjs,js}', { cwd: dir, absolute: false, ignore })
       }
-      const chunks = files.map(id => ({
+
+      const chunks = (await Promise.all(files.map(async id => ({
         id,
         src: resolve(dir, id).replace(/\\/g, '/'),
         name: serializeImportName(id),
-        meta: getWebpackChunkMeta(resolve(dir, id))
-      })).filter(chunk => chunk.meta)
+        meta: await getWebpackChunkMeta(resolve(dir, id))
+      })))).filter(chunk => chunk.meta)
 
       return inline ? TMPL_INLINE({ chunks }) : TMPL_LAZY({ chunks })
     }
   }
 }
 
-function getWebpackChunkMeta (src: string) {
-  const chunk = require(src) || {}
+async function getWebpackChunkMeta (src: string) {
+  const chunk = await import(src).then(r => r.default || r || {})
   const { id, ids, modules } = chunk
   if (!id && !ids) {
     return null // Not a webpack chunk
