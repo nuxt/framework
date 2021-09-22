@@ -156,15 +156,11 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   }))
 
   // ESBuild
-  const esbuildOptions = {
+  rollupConfig.plugins.push(esbuild({
     target: 'es2019',
-    sourceMap: true
-  }
-  const getEsbuildOptions = nitroContext.esbuild?.options
-  if (typeof getEsbuildOptions === 'function') {
-    Object.assign(esbuildOptions, getEsbuildOptions())
-  }
-  rollupConfig.plugins.push(esbuild(esbuildOptions))
+    sourceMap: true,
+    ...nitroContext.esbuild?.options
+  }))
 
   // Dynamic Require Support
   rollupConfig.plugins.push(dynamicRequire({

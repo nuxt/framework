@@ -33,7 +33,7 @@ export interface NitroContext {
   preset: string
   rollupConfig?: RollupConfig
   esbuild?: {
-    options?: () => EsbuildOptions
+    options?: EsbuildOptions
   }
   moduleSideEffects: string[]
   renderer: string
