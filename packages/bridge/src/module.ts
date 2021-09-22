@@ -23,6 +23,9 @@ export default defineNuxtModule({
       await setupAppBridge(opts.app)
     }
     if (opts.capi) {
+      if (!opts.app) {
+        throw new Error('[bridge] Cannot enable composition-api with app disabled!')
+      }
       await setupCAPIBridge(opts.capi)
     }
     if (opts.vite) {
