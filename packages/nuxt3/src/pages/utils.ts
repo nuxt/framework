@@ -1,4 +1,4 @@
-import { basename, extname, relative, resolve } from 'path'
+import { basename, extname, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
 import { Nuxt, resolveFiles } from '@nuxt/kit'
 import { kebabCase } from 'scule'

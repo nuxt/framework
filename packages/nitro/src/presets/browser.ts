@@ -1,5 +1,5 @@
-import { resolve } from 'path'
 import { existsSync, promises as fsp } from 'fs'
+import { resolve } from 'pathe'
 import consola from 'consola'
 import { extendPreset, prettyPath } from '../utils'
 import { NitroPreset, NitroContext, NitroInput } from '../context'

@@ -1,8 +1,8 @@
 import { Worker } from 'worker_threads'
 
 import { IncomingMessage, ServerResponse } from 'http'
-import { resolve } from 'path'
 import { promises as fsp } from 'fs'
+import { resolve } from 'pathe'
 import { loading as loadingTemplate } from '@nuxt/design'
 import chokidar, { FSWatcher } from 'chokidar'
 import debounce from 'debounce'

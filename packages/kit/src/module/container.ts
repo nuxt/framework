@@ -1,4 +1,4 @@
-import { parse, relative } from 'path'
+import { parse, relative } from 'pathe'
 import consola from 'consola'
 import type { Nuxt, NuxtPluginTemplate, NuxtTemplate } from '../types/nuxt'
 import { chainFn } from '../utils/task'

@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'pathe'
 import type { Plugin } from 'vite'
 
 export function cacheDirPlugin (rootDir, name: string) {

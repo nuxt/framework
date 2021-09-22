@@ -1,4 +1,4 @@
-import { relative } from 'path'
+import { relative } from 'pathe'
 import hasha from 'hasha'
 import { table, getBorderCharacters } from 'table'
 import isPrimitive from 'is-primitive'

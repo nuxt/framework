@@ -37,9 +37,9 @@
     "listhen": "^0.2.4",
     "mlly": "^0.2.2",
     "mri": "^1.2.0",
+    "pathe": "^0.0.1",
     "scule": "^0.2.1",
     "unbuild": "latest",
-    "upath": "^2.0.1",
     "v8-compile-cache": "^2.3.0"
   }
 }

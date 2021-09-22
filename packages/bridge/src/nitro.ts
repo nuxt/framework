@@ -1,5 +1,5 @@
-import { resolve } from 'path'
 import { promises as fsp } from 'fs'
+import { resolve } from 'pathe'
 import fetch from 'node-fetch'
 import { addPluginTemplate, useNuxt } from '@nuxt/kit'
 import { stringifyQuery } from 'ufo'

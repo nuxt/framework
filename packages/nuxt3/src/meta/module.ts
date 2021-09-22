@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'pathe'
 import { addPlugin, addTemplate, defineNuxtModule } from '@nuxt/kit'
 import { distDir } from '../dirs'
 import type { MetaObject } from './types'

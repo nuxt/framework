@@ -1,4 +1,4 @@
-import { join, normalize } from 'path'
+import { join, normalize } from 'pathe'
 import jiti from 'jiti'
 
 // TODO: use create-require for jest environment

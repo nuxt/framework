@@ -1,4 +1,4 @@
-import { join } from 'path'
+import { join } from 'pathe'
 import fsExtra from 'fs-extra'
 
 export const wpfs = {

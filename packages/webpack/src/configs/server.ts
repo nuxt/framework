@@ -1,4 +1,4 @@
-import { isAbsolute } from 'path'
+import { isAbsolute } from 'pathe'
 import webpack from 'webpack'
 import { WebpackConfigContext, applyPresets, getWebpackConfig } from '../utils/config'
 import { nuxt } from '../presets/nuxt'

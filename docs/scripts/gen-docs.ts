@@ -1,5 +1,5 @@
 import { rm, writeFile } from 'fs/promises'
-import { join, resolve } from 'path'
+import { join, resolve } from 'pathe'
 import mkdirp from 'mkdirp'
 import type { Schema } from 'untyped'
 import { kebabCase, upperFirst } from 'scule'

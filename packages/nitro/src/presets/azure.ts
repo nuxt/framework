@@ -1,4 +1,4 @@
-import { join, resolve } from 'path'
+import { join, resolve } from 'pathe'
 import consola from 'consola'
 import fse from 'fs-extra'
 import globby from 'globby'

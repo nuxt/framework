@@ -1,5 +1,5 @@
-import { join, resolve } from 'path'
 import { createWriteStream } from 'fs'
+import { join, resolve } from 'pathe'
 import archiver from 'archiver'
 import consola from 'consola'
 import { prettyPath, writeFile } from '../utils'

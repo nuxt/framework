@@ -55,6 +55,7 @@
     "node-fetch": "^3.0.0",
     "ohmyfetch": "^0.3.1",
     "ora": "^6.0.1",
+    "pathe": "^0.0.1",
     "pretty-bytes": "^5.6.0",
     "rollup": "^2.57.0",
     "rollup-plugin-analyzer": "^4.0.0",
@@ -66,7 +67,6 @@
     "ufo": "^0.7.9",
     "unenv": "^0.3.8",
     "unstorage": "^0.2.8",
-    "upath": "^2.0.1",
     "vue": "3.2.13",
     "vue-bundle-renderer": "^0.3.1",
     "vue-server-renderer": "^2.6.14"

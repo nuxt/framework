@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'pathe'
 import { useNuxt, resolveModule } from '@nuxt/kit'
 import { distDir } from './dirs'
 

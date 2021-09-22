@@ -1,4 +1,4 @@
-import { resolve, join } from 'path'
+import { resolve, join } from 'pathe'
 import consola from 'consola'
 import { rollup, watch as rollupWatch } from 'rollup'
 import fse from 'fs-extra'

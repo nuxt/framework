@@ -1,5 +1,5 @@
 import { promises as fsp } from 'fs'
-import { resolve } from 'path'
+import { resolve } from 'pathe'
 import type { Plugin } from 'rollup'
 import createEtag from 'etag'
 import mime from 'mime'

@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'pathe'
 import * as vite from 'vite'
 import consola from 'consola'
 import type { Nuxt } from '@nuxt/kit'

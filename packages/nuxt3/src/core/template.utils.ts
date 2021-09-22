@@ -1,4 +1,4 @@
-import { basename, extname } from 'path'
+import { basename, extname } from 'pathe'
 import hash from 'hash-sum'
 import { camelCase } from 'scule'
 

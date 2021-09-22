@@ -1,5 +1,5 @@
-import { join } from 'path'
 import { existsSync, promises as fsp } from 'fs'
+import { join } from 'pathe'
 import consola from 'consola'
 import { extendPreset } from '../utils'
 import { NitroContext, NitroPreset } from '../context'

@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'pathe'
 import * as vite from 'vite'
 import fse from 'fs-extra'
 import consola from 'consola'

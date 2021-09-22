@@ -1,5 +1,5 @@
-import { relative, resolve } from 'path'
 import { readFileSync, statSync } from 'fs'
+import { relative, resolve } from 'pathe'
 import createEtag from 'etag'
 import mime from 'mime'
 import virtual from '@rollup/plugin-virtual'
@@ -31,8 +31,8 @@ export function staticAssets (context: NitroContext) {
     '#static-assets': `export default ${JSON.stringify(assets, null, 2)};`,
     '#static': `
 import { promises } from 'fs'
-import { resolve } from 'path'
-import { dirname } from 'path'
+import { resolve } from 'pathe'
+import { dirname } from 'pathe'
 import { fileURLToPath } from 'url'
 import assets from '#static-assets'
 

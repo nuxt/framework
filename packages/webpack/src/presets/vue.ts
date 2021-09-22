@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'pathe'
 import VueLoaderPlugin from 'vue-loader/dist/pluginWebpack5.js'
 import webpack from 'webpack'
 import NuxtSetupTransformerPlugin from '../plugins/transform-setup'

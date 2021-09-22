@@ -1,4 +1,4 @@
-import { normalize } from 'path'
+import { normalize } from 'pathe'
 import TerserWebpackPlugin from 'terser-webpack-plugin'
 import { reservedVueTags } from '../utils/reserved-tags'
 import { WebpackConfigContext } from '../utils/config'

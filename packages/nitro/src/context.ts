@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 
-import { resolve } from 'path'
+import { resolve } from 'pathe'
 import defu from 'defu'
 import { createHooks, Hookable, NestedHooks } from 'hookable'
 import type { Preset } from 'unenv'
