@@ -49,7 +49,7 @@
     "mlly": "^0.2.2",
     "mocha": "^9.1.1",
     "object-hash": "^2.2.0",
-    "pathe": "^0.0.1",
+    "pathe": "^0.0.2",
     "typescript": "^4.4.3",
     "unbuild": "^0.5.4"
   },
