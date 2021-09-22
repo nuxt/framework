@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'pathe'
 import { pathToFileURL } from 'url'
 import destr from 'destr'
 import { listen } from 'listhen'

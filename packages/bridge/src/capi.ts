@@ -1,5 +1,5 @@
 import { useNuxt, addPluginTemplate } from '@nuxt/kit'
-import { resolve } from 'upath'
+import { resolve } from 'pathe'
 import { distDir } from './dirs'
 
 export function setupCAPIBridge (_options: any) {
