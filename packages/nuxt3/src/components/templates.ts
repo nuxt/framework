@@ -1,11 +1,17 @@
 
 import { relative } from 'upath'
 
-import type { Component } from '../../components/types'
+import type { Component } from './types'
 
-type ComponentsTemplateOptions = {
+export type ComponentsTemplateOptions = {
   buildDir?: string
   components: Component[]
+}
+
+export type ImportMagicCommentsOptions = {
+  chunkName:string
+  prefetch?: boolean | number
+  preload?: boolean | number
 }
 
 const createImportMagicComments = (options: ImportMagicCommentsOptions) => {

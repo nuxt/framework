@@ -2,12 +2,6 @@ import { basename, extname } from 'upath'
 import hash from 'hash-sum'
 import { camelCase } from 'scule'
 
-export type ImportMagicCommentsOptions = {
-  chunkName:string
-  prefetch?: boolean | number
-  preload?: boolean | number
-}
-
 export const serialize = data => JSON.stringify(data, null, 2).replace(/"{(.+)}"/g, '$1')
 
 export const importName = (src: string) => `${camelCase(basename(src, extname(src))).replace(/[^a-zA-Z?\d\s:]/g, '')}_${hash(src)}`
