@@ -1,4 +1,4 @@
-import { useNuxt, addPluginTemplate, addPlugin } from '@nuxt/kit'
+import { useNuxt, addPlugin, addPluginTemplate, installModule } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { distDir } from './dirs'
 
@@ -23,6 +23,9 @@ export function setupCAPIBridge (_options: any) {
     // @ts-ignore
     configs.forEach(config => config.entry.app.unshift(capiPluginPath))
   })
+
+  // Add support for <script setup>
+  installModule(nuxt, require.resolve('unplugin-vue2-script-setup/nuxt'))
 
   // TODO: Add @nuxtjs/composition-api shims
 }
