@@ -31,6 +31,24 @@
       "rules": {
         "@typescript-eslint/no-unused-vars": "off"
       }
+    },
+    {
+      "files": [
+        "packages/nuxt3/src/**/*"
+      ],
+      "excludedFiles": [
+        "packages/nuxt3/src/*",
+        "packages/nuxt3/src/app/**/*",
+        "packages/nuxt3/src/core/**/*"
+      ],
+      "rules": {
+        "no-restricted-imports": [ "error", {
+          "patterns": [{
+            "group": ["**/core", "**/app"],
+            "message": " Modules should not directly import from app and core."
+          }]
+        }]
+      }
     }
   ]
 }
