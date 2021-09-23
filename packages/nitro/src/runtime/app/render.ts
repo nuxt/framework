@@ -142,7 +142,10 @@ function _interopDefault (e) {
 
 function cachedImport <M> (importer: () => Promise<M>) {
   return cachedResult(() => importer().then(_interopDefault).catch((err) => {
-    if (err.code === 'ERR_MODULE_NOT_FOUND') { return null }
+    if (err.code === 'ERR_MODULE_NOT_FOUND') {
+      console.warn(err)
+      return null
+    }
     throw err
   }))
 }
