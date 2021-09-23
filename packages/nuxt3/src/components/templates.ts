@@ -1,13 +1,20 @@
 
 import { relative } from 'upath'
 
-import { createImportMagicComments } from '../../core/template.utils'
-
 import type { Component } from '../../components/types'
 
 type ComponentsTemplateOptions = {
   buildDir?: string
   components: Component[]
+}
+
+const createImportMagicComments = (options: ImportMagicCommentsOptions) => {
+  const { chunkName, prefetch, preload } = options
+  return [
+    `webpackChunkName: "${chunkName}"`,
+    prefetch === true || typeof prefetch === 'number' ? `webpackPrefetch: ${prefetch}` : false,
+    preload === true || typeof preload === 'number' ? `webpackPreload: ${preload}` : false
+  ].filter(Boolean).join(', ')
 }
 
 export const componentsTemplate = {
