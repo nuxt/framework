@@ -45,7 +45,7 @@
         "no-restricted-imports": [ "error", {
           "patterns": [{
             "group": ["**/core", "**/app"],
-            "message": " Modules should not directly import from app and core."
+            "message": "Modules should not directly import from app and core."
           }]
         }]
       }
