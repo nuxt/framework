@@ -9,6 +9,7 @@ import { replace } from './plugins/replace'
 import { transformNuxtSetup } from './plugins/transformSetup'
 import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
+import { ssrAssetsServe } from './plugins/ssr-assets'
 
 export async function buildClient (ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -38,6 +39,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       replace({ 'process.env': 'import.meta.env' }),
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'client'),
       vitePlugin(ctx.config.vue),
+      ssrAssetsServe(ctx.nuxt),
       transformNuxtSetup()
     ],
     server: {
