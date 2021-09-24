@@ -1502,7 +1502,6 @@ __metadata:
     "@types/node-fetch": ^3.0.2
     "@types/serve-static": ^1.13.10
     "@vercel/nft": ^0.15.0
-    "@vue/server-renderer": ^3.2.16
     archiver: ^5.3.0
     chalk: ^4.1.2
     chokidar: ^3.5.2
@@ -1570,7 +1569,6 @@ __metadata:
     "@nuxt/kit": ^0.10.0
     "@types/debounce": ^1.2.1
     "@vitejs/plugin-vue": ^1.9.1
-    "@vue/compiler-sfc": ^3.2.16
     chokidar: ^3.5.2
     consola: ^2.15.3
     debounce: ^1.2.1
@@ -1598,7 +1596,6 @@ __metadata:
     "@types/webpack-hot-middleware": ^2.25.5
     "@types/webpack-virtual-modules": ^0
     "@vue/babel-preset-jsx": ^1.2.4
-    "@vue/compiler-sfc": ^3.2.16
     autoprefixer: ^10.3.5
     babel-loader: ^8.2.2
     consola: ^2.15.3
@@ -2706,7 +2703,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/compiler-sfc@npm:3.2.16, @vue/compiler-sfc@npm:^3.2.16":
+"@vue/compiler-sfc@npm:3.2.16":
   version: 3.2.16
   resolution: "@vue/compiler-sfc@npm:3.2.16"
   dependencies:
@@ -2815,7 +2812,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/server-renderer@npm:3.2.16, @vue/server-renderer@npm:^3.2.16":
+"@vue/server-renderer@npm:3.2.16":
   version: 3.2.16
   resolution: "@vue/server-renderer@npm:3.2.16"
   dependencies:
@@ -9910,7 +9907,6 @@ fsevents@~2.3.2:
     "@types/mocha": ^9.0.0
     "@types/node": ^14.17.18
     "@types/object-hash": ^2
-    "@vue/server-renderer": ^3.2.16
     chai: ^4.3.4
     esbuild: ^0.13.2
     eslint: ^7.32.0
@@ -9979,7 +9975,6 @@ fsevents@~2.3.2:
     "@types/hash-sum": ^1.0.0
     "@types/lodash": ^4.14.173
     "@vue/reactivity": 3.2.16
-    "@vue/server-renderer": ^3.2.16
     "@vue/shared": 3.2.16
     "@vueuse/head": ^0.6.0
     chokidar: ^3.5.2
