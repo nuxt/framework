@@ -2,12 +2,10 @@ import { createHooks } from 'hookable/dist/index.mjs'
 import { setNuxtInstance } from '#app'
 
 export default (ctx, inject) => {
-  const payload = process.client ? ctx.nuxtState : ctx.ssrContext.nuxt
   const nuxt = {
     provide: inject,
     globalName: 'nuxt',
-    state: payload.state,
-    payload,
+    payload: process.client ? ctx.nuxtState : ctx.ssrContext.nuxt,
     isHydrating: ctx.isHMR
   }
   nuxt.hooks = createHooks()
