@@ -1421,7 +1421,7 @@ __metadata:
     nuxi: ^0.10.0
     nuxt-swc: ^0.1.0
     nuxt-vite: ^0.2.4
-    pathe: ^0.0.2
+    pathe: ^0.1.0
     ufo: ^0.7.9
     unbuild: latest
   languageName: unknown
@@ -1467,7 +1467,7 @@ __metadata:
     hash-sum: ^2.0.0
     hookable: ^5.0.0
     jiti: ^1.12.3
-    pathe: ^0.0.2
+    pathe: ^0.1.0
     rc9: ^1.2.0
     scule: ^0.2.1
     std-env: ^2.3.0
@@ -1528,7 +1528,7 @@ __metadata:
     node-fetch: ^3.0.0
     ohmyfetch: ^0.3.1
     ora: ^6.0.1
-    pathe: ^0.0.2
+    pathe: ^0.1.0
     pretty-bytes: ^5.6.0
     rollup: ^2.57.0
     rollup-plugin-analyzer: ^4.0.0
@@ -1576,7 +1576,7 @@ __metadata:
     debounce: ^1.2.1
     fs-extra: ^10.0.0
     magic-string: ^0.25.7
-    pathe: ^0.0.2
+    pathe: ^0.1.0
     ufo: ^0.7.9
     unbuild: latest
     vite: ^2.5.10
@@ -1613,7 +1613,7 @@ __metadata:
     lodash: ^4.17.21
     memfs: ^3.3.0
     mini-css-extract-plugin: ^2.3.0
-    pathe: ^0.0.2
+    pathe: ^0.1.0
     pify: ^5.0.0
     postcss: ^8.3.7
     postcss-import: ^14.0.2
@@ -9872,7 +9872,7 @@ fsevents@~2.3.2:
     jiti: ^1.12.3
     listhen: ^0.2.4
     mri: ^1.2.0
-    pathe: ^0.0.2
+    pathe: ^0.1.0
     scule: ^0.2.1
     unbuild: latest
     v8-compile-cache: ^2.3.0
@@ -9908,7 +9908,7 @@ fsevents@~2.3.2:
     lerna: ^4.0.0
     mocha: ^9.1.1
     object-hash: ^2.2.0
-    pathe: ^0.0.2
+    pathe: ^0.1.0
     typescript: ^4.4.3
     unbuild: ^0.5.4
   languageName: unknown
@@ -9979,7 +9979,7 @@ fsevents@~2.3.2:
     lodash: ^4.17.21
     nuxi: ^0.10.0
     ohmyfetch: ^0.3.1
-    pathe: ^0.0.2
+    pathe: ^0.1.0
     scule: ^0.2.1
     ufo: ^0.7.9
     unbuild: latest
@@ -10496,10 +10496,10 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"pathe@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "pathe@npm:0.0.2"
-  checksum: 218ac53135c50ee6061d89095862a6d160e897888b26ea8fdda795455ce616ef2c2de0b6ed440c101d19d4f8c57e87fdce29ca96180e32c6fee95f10773bb7f8
+"pathe@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "pathe@npm:0.1.0"
+  checksum: 2bab0b34a8c3df3883b623e0b6e65887156e8d98aa92d838bafb15d529aa71c738de7eceff8d8343e5966b3ed07e4200ed23a877dce371ce55da9b18a2d68ac4
   languageName: node
   linkType: hard
 

@@ -21,7 +21,7 @@
     "nuxi": "^0.10.0",
     "nuxt-swc": "^0.1.0",
     "nuxt-vite": "^0.2.4",
-    "pathe": "^0.0.2",
+    "pathe": "^0.1.0",
     "ufo": "^0.7.9"
   },
   "devDependencies": {
