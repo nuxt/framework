@@ -1,14 +1,27 @@
-import { getCurrentInstance } from './composables.mjs'
+import { defineComponent, getCurrentInstance } from './composables.mjs'
 
-const mock = () => () => { throw new Error('not implemented') }
+export const defineNuxtComponent = defineComponent
 
-export const defineNuxtPlugin = mock()
-export const defineNuxtComponent = mock()
+let currentNuxtInstance
+
+export const setNuxtInstance = (nuxt) => {
+  currentNuxtInstance = nuxt
+}
+
+export const defineNuxtPlugin = plugin => (ctx) => {
+  setNuxtInstance(ctx.$_nuxtApp)
+  plugin(ctx.$_nuxtApp)
+  setNuxtInstance(null)
+}
+
 export const useNuxtApp = () => {
   const vm = getCurrentInstance()
 
   if (!vm) {
-    throw new Error('nuxt instance unavailable')
+    if (!currentNuxtInstance) {
+      throw new Error('nuxt instance unavailable')
+    }
+    return currentNuxtInstance
   }
 
   return vm?.proxy.$_nuxtApp

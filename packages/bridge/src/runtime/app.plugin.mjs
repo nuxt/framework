@@ -1,4 +1,5 @@
 import { createHooks } from 'hookable/dist/index.mjs'
+import { setNuxtInstance } from '#app'
 
 export default (ctx, inject) => {
   const payload = process.client ? ctx.nuxtState : ctx.ssrContext.nuxt
@@ -20,6 +21,8 @@ export default (ctx, inject) => {
   ctx.app.created.push(function () {
     nuxt.app = this
   })
+
+  setNuxtInstance(nuxt)
 
   inject('_nuxtApp', nuxt)
 }
