@@ -7,7 +7,7 @@ export default (ctx, inject) => {
     globalName: 'nuxt',
     payload: process.client ? ctx.nuxtState : ctx.ssrContext.nuxt,
     isHydrating: ctx.isHMR,
-    legacyNuxt: app
+    legacyNuxt: ctx.app
   }
   nuxt.hooks = createHooks()
   nuxt.hook = nuxt.hooks.hook
