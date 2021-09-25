@@ -1,5 +1,4 @@
-<script nuxt setup lang="ts">
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+<script setup lang="ts">
 const { data } = asyncData('time', () => $fetch('/api/count'))
 </script>
 
