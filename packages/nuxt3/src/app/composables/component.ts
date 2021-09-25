@@ -13,11 +13,11 @@ export interface NuxtComponentInternalInstance extends ComponentInternalInstance
   [NuxtComponentPendingPromises]: Array<Promise<void>>
 }
 
-export function getCurrentNuxtComponentInstance (): NuxtComponentInternalInstance {
+export function getCurrentNuxtComponentInstance (functionName?: string): NuxtComponentInternalInstance {
   const vm = getCurrentInstance() as NuxtComponentInternalInstance
 
   if (!vm || !vm.proxy.$options[NuxtComponentIndicator]) {
-    throw new Error('This method can only be used within a component defined with `defineNuxtComponent()`.')
+    throw new Error(`${functionName ? `\`${functionName}()\`` : 'This method'} can only be used within a component defined with \`defineNuxtComponent()\` or \`<script setup nuxt>\`.`)
   }
 
   return vm
