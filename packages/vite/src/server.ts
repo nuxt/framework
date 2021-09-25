@@ -1,11 +1,12 @@
 import { resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
-import consola from 'consola'
+import { writeFile } from 'fs-extra'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { transformNuxtSetup } from './plugins/transformSetup'
+import { bundleRequest } from './dev-bundler'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -64,31 +65,21 @@ export async function buildServer (ctx: ViteBuildContext) {
     return
   }
 
-  let lastBuild = 0
-  const build = async () => {
-    let start = Date.now()
-    // debounce
-    if (start - lastBuild < 300) {
-      await sleep(300 - (start - lastBuild) + 1)
-      start = Date.now()
-      if (start - lastBuild < 300) {
-        return
-      }
-    }
-    lastBuild = start
-    await vite.build(serverConfig)
+  // Start development server
+  const viteServer = await vite.createServer(serverConfig)
+  // Initialize plugins
+  await viteServer.pluginContainer.buildStart({})
+
+  async function generate () {
+    const { code } = await bundleRequest(viteServer, resolve(ctx.nuxt.options.appDir, 'entry'))
+
+    await writeFile(resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'), code, 'utf-8')
     await onBuild()
-    consola.info(`Server built in ${Date.now() - start}ms`)
   }
 
-  await build()
+  ctx.nuxt.hook('builder:watch', () => generate())
+  ctx.nuxt.hook('app:templatesGenerated', () => generate())
+  ctx.nuxt.hook('close', () => viteServer.close())
 
-  ctx.nuxt.hook('builder:watch', () => build())
-  ctx.nuxt.hook('app:templatesGenerated', () => build())
-}
-
-function sleep (ms:number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
+  await generate()
 }
