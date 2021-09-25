@@ -108,13 +108,5 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string) {
     scannedPaths.push(path)
   }
 
-  const generalComponents = components.filter(i => !i.mode)
-  const clientComponents = components.filter(i => i.mode === 'client')
-  const serverComponents = components.filter(i => i.mode === 'server')
-
-  return {
-    components: generalComponents,
-    clientComponents,
-    serverComponents
-  }
+  return components
 }

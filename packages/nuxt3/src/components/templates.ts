@@ -6,6 +6,7 @@ import type { Component } from './types'
 export type ComponentsTemplateOptions = {
   buildDir?: string
   components: Component[]
+  mode: 'server' | 'client'
 }
 
 export type ImportMagicCommentsOptions = {
@@ -23,8 +24,21 @@ const createImportMagicComments = (options: ImportMagicCommentsOptions) => {
   ].filter(Boolean).join(', ')
 }
 
-export const componentsTemplate = {
+export const componentsEntryTemplate = {
   filename: 'components.mjs',
+  getContents () {
+    return `export default function (nuxt) {
+  const components = process.server
+    ? import('./components-server.mjs')
+    : import('./components-client.mjs')
+  
+  return components.then(r => r.default(nuxt))
+}
+`
+  }
+}
+
+export const componentsTemplate = {
   getContents (options: ComponentsTemplateOptions) {
     return `import { defineAsyncComponent } from 'vue'
 
@@ -32,6 +46,11 @@ const components = {
 ${options.components.map((c) => {
   const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
   const magicComments = createImportMagicComments(c)
+
+  if (c.mode && c.mode !== options.mode) {
+    // stub environment only component
+    return `  '${c.pascalName}': () => null`
+  }
 
   return `  '${c.pascalName}': defineAsyncComponent(() => import('${c.filePath}' /* ${magicComments} */).then(c => ${exp}))`
 }).join(',\n')}

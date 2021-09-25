@@ -1,7 +1,7 @@
 import { statSync } from 'fs'
 import { resolve } from 'upath'
 import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
-import { componentsTemplate, componentsTypeTemplate } from './templates'
+import { componentsEntryTemplate, componentsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
 import type { Component, ComponentsDir } from './types'
 import { loaderPlugin } from './loader'
@@ -59,16 +59,31 @@ export default defineNuxtModule({
 
     // Scan components and add to plugin
     nuxt.hook('app:templates', async (app) => {
-      ({ components } = await scanComponents(componentDirs, nuxt.options.srcDir!))
+      components = await scanComponents(componentDirs, nuxt.options.srcDir!)
       await nuxt.callHook('components:extend', components)
       if (!components.length) {
         return
       }
 
       app.templates.push({
+        filename: 'components-client.mjs',
         ...componentsTemplate,
-        options: { components }
+        options: {
+          mode: 'client',
+          components
+        }
       })
+
+      app.templates.push({
+        filename: 'components-server.mjs',
+        ...componentsTemplate,
+        options: {
+          mode: 'server',
+          components
+        }
+      })
+
+      app.templates.push(componentsEntryTemplate)
 
       app.templates.push({
         ...componentsTypeTemplate,
@@ -94,9 +109,12 @@ export default defineNuxtModule({
     })
 
     if (!nuxt.options.dev) {
-      const options = { getComponents: () => components }
-      addWebpackPlugin(loaderPlugin.webpack(options))
-      addVitePlugin(loaderPlugin.vite(options))
+      const clientOptions = { getComponents: () => components.filter(i => i.mode !== 'server') }
+      const serverOptions = { getComponents: () => components.filter(i => i.mode !== 'client') }
+      addWebpackPlugin(loaderPlugin.webpack(clientOptions), { client: true })
+      addWebpackPlugin(loaderPlugin.webpack(serverOptions), { client: false })
+      addVitePlugin(loaderPlugin.vite(clientOptions), { client: true })
+      addVitePlugin(loaderPlugin.vite(serverOptions), { client: false })
     }
   }
 })
