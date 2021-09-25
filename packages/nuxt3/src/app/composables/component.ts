@@ -23,11 +23,6 @@ export function getCurrentNuxtComponentInstance (functionName?: string): NuxtCom
   return vm
 }
 
-export function enqueueNuxtComponent (p: Promise<void>) {
-  const vm = getCurrentNuxtComponentInstance()
-  vm[NuxtComponentPendingPromises].push(p)
-}
-
 async function runLegacyAsyncData (res: Record<string, any> | Promise<Record<string, any>>, fn: (context: LegacyContext) => Promise<Record<string, any>>) {
   const nuxt = useNuxtApp()
   const route = useRoute()
@@ -53,17 +48,21 @@ export const defineNuxtComponent: typeof defineComponent =
       [NuxtComponentIndicator]: true,
       ...options,
       setup (props, ctx) {
-        const vm = getCurrentNuxtComponentInstance()
-        let promises = vm[NuxtComponentPendingPromises] = vm[NuxtComponentPendingPromises] || []
+        const vm = getCurrentInstance()
 
-        const res = setup?.(props, ctx) || {}
+        let res = setup?.(props, ctx)
+        let promises: unknown[] | undefined = vm[NuxtComponentPendingPromises]
+
+        // skip if no asyncData is used in this component
+        if (!promises?.length && !(res instanceof Promise) && !options.asyncData) {
+          return res
+        }
+
+        promises = promises || []
+        res = res || {}
 
         if (options.asyncData) {
           promises.push(runLegacyAsyncData(res, options.asyncData))
-        }
-
-        if (!promises.length && !(res instanceof Promise)) {
-          return res
         }
 
         return Promise.resolve(res)

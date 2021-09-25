@@ -107,7 +107,10 @@ export function useAsyncData (defaults?: AsyncDataOptions) {
     }
 
     // Auto enqueue if within nuxt component instance
-    if (nuxt._asyncDataPromises[key] && vm[NuxtComponentPendingPromises]) {
+    if (nuxt._asyncDataPromises[key]) {
+      if (!vm[NuxtComponentPendingPromises]) {
+        vm[NuxtComponentPendingPromises] = []
+      }
       vm[NuxtComponentPendingPromises].push(nuxt._asyncDataPromises[key])
     }
 
