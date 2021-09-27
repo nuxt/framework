@@ -34,11 +34,6 @@ export function setupCAPIBridge (_options: any) {
   nuxt.options.build.transpile.push('@nuxtjs/composition-api', '@vue/composition-api')
   addPlugin(resolve(distDir, 'runtime/capi.legacy.plugin.mjs'))
 
-  // Deprecate various Nuxt options
-  if (nuxt.options.globalName !== 'nuxt') {
-    console.warn('Custom global name is not supported by @nuxt/bridge.')
-  }
-
   // Enable automatic ssrRef key generation
   addVitePlugin(KeyPlugin.vite())
   addWebpackPlugin(KeyPlugin.webpack())
