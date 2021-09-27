@@ -1,4 +1,4 @@
-import { useNuxt, addPlugin, addPluginTemplate, addVitePlugin, addWebpackPlugin, installModule } from '@nuxt/kit'
+import { useNuxt, addPlugin, addPluginTemplate, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
 
 import { distDir } from './dirs'
@@ -42,9 +42,6 @@ export function setupCAPIBridge (_options: any) {
   // Enable automatic ssrRef key generation
   addVitePlugin(KeyPlugin.vite())
   addWebpackPlugin(KeyPlugin.webpack())
-
-  // Add support for <script setup>
-  installModule(nuxt, require.resolve('unplugin-vue2-script-setup/nuxt'))
 
   // TODO: Add @nuxtjs/composition-api shims
 }
