@@ -22,8 +22,7 @@
     "nuxt-swc": "^0.1.0",
     "nuxt-vite": "^0.2.4",
     "pathe": "^0.2.0",
-    "ufo": "^0.7.9",
-    "unplugin-vue2-script-setup": "^0.6.4"
+    "ufo": "^0.7.9"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
