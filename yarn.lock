@@ -6618,14 +6618,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"example-async-data@workspace:examples/async-data":
-  version: 0.0.0-use.local
-  resolution: "example-async-data@workspace:examples/async-data"
-  dependencies:
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
 "example-hello-world@workspace:examples/hello-world":
   version: 0.0.0-use.local
   resolution: "example-hello-world@workspace:examples/hello-world"
