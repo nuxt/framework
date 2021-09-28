@@ -70,7 +70,10 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
             dir: nuxt.options.srcDir,
             extensions: nuxt.options.extensions,
             plugins: nuxt.options.plugins,
-            templates: templates.templatesFiles
+            templates: [
+              ...templates.templatesFiles,
+              ...virtualTemplates
+            ]
           }
         }
         for await (const template of virtualTemplates) {
