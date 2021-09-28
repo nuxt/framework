@@ -62,17 +62,18 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
         })
       })
       nuxt.hook('build:templates', async (templates) => {
+        const context = {
+          nuxt,
+          utils: templateUtils,
+          app: {
+            dir: nuxt.options.srcDir,
+            extensions: nuxt.options.extensions,
+            plugins: nuxt.options.plugins,
+            templates: templates.templatesFiles
+          }
+        }
         for await (const template of virtualTemplates) {
-          const contents = await compileTemplate({ ...template, src: '' }, {
-            nuxt,
-            utils: templateUtils,
-            app: {
-              dir: nuxt.options.srcDir,
-              extensions: nuxt.options.extensions,
-              plugins: nuxt.options.plugins,
-              templates: templates.templatesFiles
-            }
-          })
+          const contents = await compileTemplate({ ...template, src: '' }, context)
           await writeFile(template.dst, contents)
         }
       })
