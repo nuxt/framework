@@ -32,7 +32,7 @@ You can install [miniflare](https://miniflare.dev/), a local Cloudflare Workers 
 ```bash
 yarn add --dev miniflare
 NITRO_PRESET=cloudflare yarn build
-yarn miniflare .output/server/index.mjs --site .output/public
+npx miniflare .output/server/index.mjs --site .output/public
 ```
 
 ## Deploy from your local machine using wrangler
