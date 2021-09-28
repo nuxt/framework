@@ -30,7 +30,6 @@ entry-point = ".output"
 You can install [miniflare](https://miniflare.dev/), a local Cloudflare Workers development server, to test your app locally:
 
 ```bash
-yarn add --dev miniflare
 NITRO_PRESET=cloudflare yarn build
 npx miniflare .output/server/index.mjs --site .output/public
 ```
