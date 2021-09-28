@@ -17,7 +17,7 @@ export const cloudflare: NitroPreset = extendPreset(worker, {
       if (inDir) {
         inDir = 'in ' + inDir
       }
-      consola.success('Ready to run', hl('wrangler publish ' + inDir), 'or', hl('miniflare ' + prettyPath(output.serverDir) + '/index.mjs --site ' + prettyPath(output.publicDir)), 'for local testing')
+      consola.success('Ready to run', hl('npx wrangler publish ' + inDir), 'or', hl('npx miniflare ' + prettyPath(output.serverDir) + '/index.mjs --site ' + prettyPath(output.publicDir)), 'for local testing')
     }
   }
 })
