@@ -1,11 +1,10 @@
-import { mkdir, writeFile } from 'fs/promises'
+import { writeFile } from 'fs/promises'
 import defu from 'defu'
 import { applyDefaults } from 'untyped'
-import { join } from 'pathe'
 import { useNuxt, nuxtCtx } from '../nuxt'
-import type { Nuxt, NuxtTemplate } from '../types/nuxt'
+import type { Nuxt } from '../types/nuxt'
 import type { NuxtModule, LegacyNuxtModule, ModuleOptions } from '../types/module'
-import { compileTemplate, isNuxt2 } from './utils'
+import { compileTemplate, isNuxt2, templateUtils } from './utils'
 
 /**
  * Define a Nuxt module, automatically merging defaults with user provided options, installing
@@ -52,35 +51,30 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
     }
 
     if (isNuxt2()) {
-      // Support virtual templates with getContents() by writing dummy output file
-      const templateDir = join(nuxt.options.buildDir, 'templates')
-      async function writeTemplateFiles (templates: NuxtTemplate[], context?: Record<string, any>) {
-        await mkdir(templateDir, { recursive: true })
-        await Promise.all(templates.map(async (template) => {
-          const getContents = template.getContents || template.options?.getContents
-          if (!getContents) { return }
-
-          // Create a dummy output file to hold compiled template contents
-          template.src = template.src || join(templateDir, template.filename)
-
-          // Write an empty output file if this is at the builder:prepared stage
-          // as Nuxt relies on the file existing.
-          const contents = context ? await compileTemplate({ ...template, src: '', getContents }, context) : ''
-          await writeFile(template.src, contents)
-
-          // Inject getContents in options for later re-compiling
-          template.options = {
-            getContents,
-            ...template.options
-          }
-        }))
-      }
-      nuxt.hook('builder:prepared', async (_builder, buildOptions) => {
-        await mkdir(templateDir, { recursive: true })
-        await writeTemplateFiles(buildOptions.templates)
+      // Support virtual templates with getContents() by writing them to .nuxt directory
+      const virtualTemplates = []
+      nuxt.hook('builder:prepared', (_builder, buildOptions) => {
+        buildOptions.templates.forEach((template, index, arr) => {
+          if (!template.getContents) { return }
+          // Remove template from template array to handle it ourselves
+          arr.splice(index, 1)
+          virtualTemplates.push(template)
+        })
       })
       nuxt.hook('build:templates', async (templates) => {
-        await writeTemplateFiles(templates.templatesFiles, templates.templateVars)
+        for await (const template of virtualTemplates) {
+          const contents = await compileTemplate({ ...template, src: '' }, {
+            nuxt,
+            utils: templateUtils,
+            app: {
+              dir: nuxt.options.srcDir,
+              extensions: nuxt.options.extensions,
+              plugins: nuxt.options.plugins,
+              templates: templates.templatesFiles
+            }
+          })
+          await writeFile(template.dst, contents)
+        }
       })
     }
 
