@@ -27,7 +27,7 @@ entry-point = ".output"
 
 ## Testing locally
 
-You can install [miniflare](https://miniflare.dev/), a local Cloudflare Workers development server, to test your app locally:
+You can use [miniflare](https://miniflare.dev/), a local Cloudflare Workers development server, to test your app locally:
 
 ```bash
 NITRO_PRESET=cloudflare yarn build
