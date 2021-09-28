@@ -1,10 +1,9 @@
 import { resolve } from 'pathe'
 import defu from 'defu'
-import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, normalizePlugin, normalizeTemplate, compileTemplate } from '@nuxt/kit'
+import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils } from '@nuxt/kit'
 import { writeFile } from 'fs-extra'
 
 import * as defaultTemplates from '../app/templates'
-import * as templateUtils from './template.utils'
 
 export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp {
   return defu(options, {
