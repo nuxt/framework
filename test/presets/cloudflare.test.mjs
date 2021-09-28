@@ -9,9 +9,7 @@ describe('nitro:preset:cloudflare', () => {
   const ctx = setupTest('cloudflare')
   testNitroBehavior(ctx, async () => {
     const script = await fsp.readFile(resolve(ctx.outDir, 'server/index.mjs'), 'utf-8')
-    const mf = new Miniflare(
-      { script }
-    )
+    const mf = new Miniflare({ script })
 
     return async ({ url, headers, method, body }) => {
       const data = await mf.dispatchFetch('http://localhost' + url, {
