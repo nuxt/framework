@@ -2894,7 +2894,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/server-renderer@npm:3.2.19, @vue/server-renderer@npm:^3.2.19":
+"@vue/server-renderer@npm:3.2.19":
   version: 3.2.19
   resolution: "@vue/server-renderer@npm:3.2.19"
   dependencies:
@@ -10017,7 +10017,6 @@ fsevents@~2.3.2:
     "@types/mocha": ^9.0.0
     "@types/node": ^14.17.18
     "@types/object-hash": ^2
-    "@vue/server-renderer": ^3.2.19
     chai: ^4.3.4
     esbuild: ^0.13.2
     eslint: ^7.32.0
