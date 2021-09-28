@@ -305,8 +305,6 @@ export const useStore = () => getCurrentInstance().$store
 const fetches = new WeakMap()
 const fetchPromises = new Map()
 
-const isFullStatic = false
-
 const mergeDataOnMount = (data) => {
   const vm = getCurrentInstance()
   if (!vm) { throw new Error('This must be called within a setup function.') }
@@ -561,7 +559,7 @@ export const useFetch = (callback) => {
   onBeforeMount(() => !vm._hydrated && callFetches.call(vm))
 
   if (process.server || !isSsrHydration(vm)) {
-    if (process.client && isFullStatic) { loadFullStatic(vm) }
+    if (process.client && !process.dev && process.static) { loadFullStatic(vm) }
     return result()
   }
 
