@@ -2,7 +2,7 @@ import { writeFile } from 'fs/promises'
 import defu from 'defu'
 import { applyDefaults } from 'untyped'
 import { useNuxt, nuxtCtx } from '../nuxt'
-import type { Nuxt } from '../types/nuxt'
+import type { Nuxt, NuxtTemplate } from '../types/nuxt'
 import type { NuxtModule, LegacyNuxtModule, ModuleOptions } from '../types/module'
 import { compileTemplate, isNuxt2, templateUtils } from './utils'
 
@@ -52,8 +52,9 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
 
     if (isNuxt2()) {
       // Support virtual templates with getContents() by writing them to .nuxt directory
-      const virtualTemplates = []
+      let virtualTemplates: NuxtTemplate[]
       nuxt.hook('builder:prepared', (_builder, buildOptions) => {
+        virtualTemplates = []
         buildOptions.templates.forEach((template, index, arr) => {
           if (!template.getContents) { return }
           // Remove template from template array to handle it ourselves
