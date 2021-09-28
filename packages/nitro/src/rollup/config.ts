@@ -56,6 +56,12 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     }
   }
 
+  if (nitroContext._nuxt.majorVersion === 3) {
+    builtinPreset.alias['vue/server-renderer'] = 'vue/server-renderer'
+    builtinPreset.alias['vue/compiler-sfc'] = 'vue/compiler-sfc'
+    builtinPreset.alias.vue = 'vue/dist/vue.cjs.js'
+  }
+
   const env = unenv.env(nodePreset, builtinPreset, nitroContext.env)
 
   delete env.alias['node-fetch'] // FIX ME
