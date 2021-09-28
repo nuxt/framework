@@ -1,5 +1,7 @@
 import fs from 'fs'
+import fsp from 'fs/promises'
 import { basename, parse, resolve } from 'pathe'
+import lodashTemplate from 'lodash/template'
 import hash from 'hash-sum'
 import type { WebpackPluginInstance, Configuration as WebpackConfig } from 'webpack'
 import type { Plugin as VitePlugin, UserConfig as ViteConfig } from 'vite'
@@ -258,4 +260,21 @@ export function addVitePlugin (plugin: VitePlugin, options?: ExtendViteConfigOpt
  */
 export function isNuxt2 (nuxt?: any) {
   return (nuxt || useNuxt()).version?.startsWith('v2')
+}
+
+export async function compileTemplate (template: NuxtTemplate, ctx: any) {
+  const data = { ...ctx, ...template.options }
+  if (template.src) {
+    try {
+      const srcContents = await fsp.readFile(template.src, 'utf-8')
+      return lodashTemplate(srcContents, {})(data)
+    } catch (err) {
+      console.error('Error compiling template: ', template)
+      throw err
+    }
+  }
+  if (template.getContents) {
+    return template.getContents(data)
+  }
+  throw new Error('Invalid template: ' + JSON.stringify(template))
 }
