@@ -5,9 +5,7 @@ import type { Compiler } from 'webpack'
 
 export class AsyncLoadingPlugin {
   apply (compiler: Compiler) {
-    // TODO: Avoid implicit dependency
     const Template = createRequire(import.meta.url)('webpack/lib/Template')
-
     compiler.hooks.compilation.tap('AsyncLoading', (compilation) => {
       const mainTemplate = compilation.mainTemplate
       mainTemplate.hooks.requireEnsure.tap(
