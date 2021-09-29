@@ -1,7 +1,7 @@
 import { rm, writeFile } from 'fs/promises'
-import { join, resolve } from 'pathe'
 import mkdirp from 'mkdirp'
 import type { Schema } from 'untyped'
+import { join, resolve } from 'pathe'
 import { kebabCase, upperFirst } from 'scule'
 
 export async function main () {

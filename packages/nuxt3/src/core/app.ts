@@ -1,11 +1,9 @@
-import { promises as fsp } from 'fs'
 import { resolve } from 'pathe'
-import { template as lodashTemplate } from 'lodash-es'
 import defu from 'defu'
-import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, NuxtTemplate, normalizePlugin, normalizeTemplate } from '@nuxt/kit'
+import { promises as fsp } from 'fs'
+import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils } from '@nuxt/kit'
 
 import * as defaultTemplates from '../app/templates'
-import * as templateUtils from './template.utils'
 
 export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp {
   return defu(options, {
@@ -76,21 +74,4 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Extend app
   await nuxt.callHook('app:resolve', app)
-}
-
-async function compileTemplate (template: NuxtTemplate, ctx: any) {
-  const data = { ...ctx, ...template.options }
-  if (template.src) {
-    try {
-      const srcContents = await fsp.readFile(template.src, 'utf-8')
-      return lodashTemplate(srcContents, {})(data)
-    } catch (err) {
-      console.error('Error compiling template: ', template)
-      throw err
-    }
-  }
-  if (template.getContents) {
-    return template.getContents(data)
-  }
-  throw new Error('Invalid template: ' + JSON.stringify(template))
 }
