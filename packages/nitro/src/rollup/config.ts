@@ -279,7 +279,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     exportConditions: [
       'default',
       'module',
-      'node',
+      nitroContext.node !== false ? 'node' : 'browser',
       'import'
     ]
   }))
