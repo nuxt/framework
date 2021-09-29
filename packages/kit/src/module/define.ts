@@ -1,4 +1,4 @@
-import { writeFile } from 'fs/promises'
+import { promises as fsp } from 'fs'
 import defu from 'defu'
 import { applyDefaults } from 'untyped'
 import { useNuxt, nuxtCtx } from '../nuxt'
@@ -78,7 +78,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
         }
         for await (const template of virtualTemplates) {
           const contents = await compileTemplate({ ...template, src: '' }, context)
-          await writeFile(template.dst, contents)
+          await fsp.writeFile(template.dst, contents)
         }
       })
     }
