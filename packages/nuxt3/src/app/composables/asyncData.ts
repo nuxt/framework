@@ -1,7 +1,7 @@
 import { onBeforeMount, onUnmounted, ref, unref } from 'vue'
 import type { UnwrapRef, Ref } from 'vue'
 
-import { getCurrentNuxtComponentInstance, NuxtComponentPendingPromises } from './component'
+import { NuxtComponentPendingPromises } from './component'
 import { ensureReactive, useGlobalData } from './data'
 import { NuxtApp, useNuxtApp } from '#app'
 
@@ -23,7 +23,7 @@ export type AsyncDataResult<T> = AsyncDataState<T> & Promise<AsyncDataState<T>>
 
 export function useAsyncData (defaults?: AsyncDataOptions) {
   const nuxt = useNuxtApp()
-  const vm = getCurrentNuxtComponentInstance('asyncData')
+  const vm = getCurrentInstance()
   const onBeforeMountCbs: Array<() => void> = []
 
   if (process.client) {
