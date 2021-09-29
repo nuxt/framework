@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^0.10.0",
-    "@vitejs/plugin-vue": "^1.9.1",
+    "@vitejs/plugin-vue": "^1.9.2",
     "chokidar": "^3.5.2",
     "consola": "^2.15.3",
     "debounce": "^1.2.1",
