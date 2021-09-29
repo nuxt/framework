@@ -1,5 +1,5 @@
 import { pathToFileURL } from 'url'
-import { dirname, join, normalize, relative, resolve } from 'upath'
+import { dirname, join, normalize, relative, resolve } from 'pathe'
 import type { InputOptions, OutputOptions } from 'rollup'
 import defu from 'defu'
 import { terser } from 'rollup-plugin-terser'
@@ -62,6 +62,13 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   if (nitroContext.sourceMap) {
     env.polyfill.push('source-map-support/register.js')
+  }
+
+  // TODO: #590
+  if (nitroContext._nuxt.majorVersion === 3) {
+    env.alias['vue/server-renderer'] = 'vue/server-renderer'
+    env.alias['vue/compiler-sfc'] = 'vue/compiler-sfc'
+    env.alias.vue = require.resolve(`vue/dist/vue.cjs${nitroContext._nuxt.dev ? '' : '.prod'}.js`)
   }
 
   const buildServerDir = join(nitroContext._nuxt.buildDir, 'dist/server')

@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http'
-import path from 'upath'
+import path from 'pathe'
 import pify from 'pify'
 import webpack from 'webpack'
 import Glob from 'glob'
@@ -206,7 +206,9 @@ class WebpackBundler {
 
     // Create webpack dev middleware
     this.devMiddleware[name] = pify(
+      // @ts-ignore
       webpackDevMiddleware(
+        // @ts-ignore
         compiler,
         {
           publicPath: buildOptions.publicPath,
@@ -219,6 +221,7 @@ class WebpackBundler {
 
     this.devMiddleware[name].close = pify(this.devMiddleware[name].close)
 
+    // @ts-ignore
     this.compilersWatching.push(this.devMiddleware[name].context.watching)
 
     this.hotMiddleware[name] = pify(
