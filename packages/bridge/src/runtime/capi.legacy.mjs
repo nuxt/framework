@@ -2,9 +2,6 @@ import defu from 'defu'
 import { computed, customRef, getCurrentInstance as getVM, isReactive, isRef, onBeforeMount, onServerPrefetch, reactive, ref, set, shallowRef, toRaw, toRefs, watch } from '@vue/composition-api'
 import { useNuxtApp } from './app'
 
-const mock = deprecation => () => { console.warn(deprecation) }
-const error = message => () => { throw new Error(message) }
-
 // Vue composition API export
 export {
   computed,
@@ -62,23 +59,36 @@ export {
 
 export { ref }
 
+// Common deprecation utils
+// TODO: Add migration guide docs to @nuxtjs/composition-api
+const checkDocsMsg = 'Please see https://v3.nuxtjs.org for more information.'
+const msgPrefix = '[bridge] [legacy capi]'
+const unsupported = message => () => { throw new Error(`${msgPrefix} ${message} ${checkDocsMsg}`) }
+const _warned = {}
+const warnOnce = (id, message) => {
+  if (!_warned[id]) {
+    console.warn(msgPrefix, message)
+    _warned[id] = true
+  }
+}
+
+// Warn in case of having any imports from `@nuxtjs/composition-api`
+warnOnce('import', `\`@nuxtjs/composition-api\` is deprecated. ${checkDocsMsg}`)
+
 // Stub functions that provided type support
-export const defineNuxtMiddleware = mock('You are using defineNuxtMiddleware, which can be replaced with `defineNuxtMiddleware` from `@nuxt/bridge`. See https://v3.nuxtjs.org/ for more information.')
-export const defineNuxtPlugin = mock('You are using defineNuxtPlugin, which can be replaced with `defineNuxtPlugin` from `@nuxt/bridge`. See https://v3.nuxtjs.org/ for more information.')
+export const defineNuxtMiddleware = unsupported('You are using `defineNuxtMiddleware`, which can be replaced with `defineNuxtMiddleware` from `@nuxt/bridge`.')
+export const defineNuxtPlugin = unsupported('You are using `defineNuxtPlugin`, which can be replaced with `defineNuxtPlugin` from `@nuxt/bridge`.')
 
 // Internal exports
-export const setMetaPlugin = error('setMetaPlugin is an internal function that is no longer used.')
-export const setSSRContext = error('setSSRContext is an internal function that is no longer used.')
-export const globalPlugin = error('globalPlugin is an internal function that is no longer used.')
+export const setMetaPlugin = unsupported('`setMetaPlugin` is an internal function that is no longer used.')
+export const setSSRContext = unsupported('`setSSRContext` is an internal function that is no longer used.')
+export const globalPlugin = unsupported('`globalPlugin` is an internal function that is no longer used.')
 
 // Deprecated functions
-export const withContext = error('withContext is a deprecated method that is no longer provided.')
-export const useStatic = error('useStatic is a deprecated method that is no longer provided.')
-export const reqRef = error('reqRef is a deprecated method that is no longer provided.')
-export const reqSsrRef = error('reqSsrRef is no longer provided (ssrRef can be used instead).')
-
-// TODO: defineComponent
-// export const defineComponent = () => {}
+export const withContext = unsupported('`withContext` is a deprecated method that is no longer provided.')
+export const useStatic = unsupported('`useStatic` is a deprecated method that is no longer provided.')
+export const reqRef = unsupported('`reqRef` is a deprecated method that is no longer provided.')
+export const reqSsrRef = unsupported('`reqSsrRef` is no longer provided (`ssrRef` can be used instead).')
 
 // ssrRef helpers
 const isProxyable = val => !!val && typeof val === 'object'
@@ -161,7 +171,7 @@ export const shallowSsrRef = (value, key) => {
 }
 
 export const ssrPromise = (value, key) => {
-  console.warn('ssrPromise is deprecated. Please use an alternative implementation.')
+  warnOnce('ssrPromise', 'ssrPromise is deprecated. Please use an alternative implementation.')
 
   const ssrRefs = useSSRRefs()
   const promise = Promise.resolve(isHMR() ? getValue(value) : ssrRefs[key] ?? getValue(value))
@@ -172,13 +182,13 @@ export const ssrPromise = (value, key) => {
 
 // Composition API functions
 export const onGlobalSetup = (fn) => {
-  console.warn('onGlobalSetup can likely be replaced with defineNuxtPlugin and `nuxt.provide`')
+  warnOnce('onGlobalSetup', '`onGlobalSetup` is deprecated and can be replaced with `defineNuxtPlugin` and `nuxt.provide`.')
   const app = useNuxtApp()
   app._setupFns.push(fn)
 }
 
 export const useAsync = (cb, key) => {
-  console.warn('You are using `useAsync`, which can be replaced with `useAsyncData` from `@nuxt/bridge`. See https://v3.nuxtjs.org/ for more information.')
+  warnOnce('useAsync', 'You are using `useAsync`, which can be replaced with `useAsyncData` from `@nuxt/bridge`.')
 
   const _ref = isRef(key) ? key : ssrRef(null, key)
 
@@ -191,7 +201,7 @@ export const useAsync = (cb, key) => {
 }
 
 export const useContext = () => {
-  console.warn('You are using `useContext`, which can be replaced with `useNuxtApp` from `@nuxt/bridge`. See https://v3.nuxtjs.org/ for more information.')
+  warnOnce('useContext', 'You are using `useContext`, which can be replaced with `useNuxtApp` from `@nuxt/bridge`.')
 
   const route = useRoute()
   const nuxt = useNuxtApp()
@@ -579,7 +589,8 @@ export const useFetch = (callback) => {
   return result()
 }
 
-// Private shared utils (across composables)
+// -- Private shared utils (across composables) --
+
 function getCurrentInstance () {
   const vm = getVM()
   if (!vm) { throw new Error('This must be called within a setup function.') }
