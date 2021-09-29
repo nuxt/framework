@@ -1930,7 +1930,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-node-resolve@npm:^13.0.2, @rollup/plugin-node-resolve@npm:^13.0.5":
+"@rollup/plugin-node-resolve@npm:^13.0.5":
   version: 13.0.5
   resolution: "@rollup/plugin-node-resolve@npm:13.0.5"
   dependencies:
@@ -6206,7 +6206,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.12.17, esbuild@npm:^0.12.21, esbuild@npm:^0.12.28, esbuild@npm:^0.12.9":
+"esbuild@npm:^0.12.17, esbuild@npm:^0.12.21, esbuild@npm:^0.12.9":
   version: 0.12.29
   resolution: "esbuild@npm:0.12.29"
   bin:
@@ -8417,7 +8417,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.10.1, jiti@npm:^1.12.2":
+"jiti@npm:^1.10.1":
   version: 1.12.3
   resolution: "jiti@npm:1.12.3"
   bin:
@@ -12353,7 +12353,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.35.1, rollup@npm:^2.38.5, rollup@npm:^2.55.0, rollup@npm:^2.57.0":
+"rollup@npm:^2.35.1, rollup@npm:^2.38.5, rollup@npm:^2.57.0":
   version: 2.57.0
   resolution: "rollup@npm:2.57.0"
   dependencies:
@@ -13723,25 +13723,25 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.5.4":
-  version: 0.5.4
-  resolution: "unbuild@npm:0.5.4"
+"unbuild@npm:^0.5.5":
+  version: 0.5.5
+  resolution: "unbuild@npm:0.5.5"
   dependencies:
     "@rollup/plugin-alias": ^3.1.4
     "@rollup/plugin-commonjs": ^20.0.0
     "@rollup/plugin-json": ^4.1.0
-    "@rollup/plugin-node-resolve": ^13.0.2
+    "@rollup/plugin-node-resolve": ^13.0.5
     chalk: ^4.1.1
     consola: ^2.15.3
     defu: ^5.0.0
-    esbuild: ^0.12.28
-    jiti: ^1.12.2
+    esbuild: ^0.13.3
+    jiti: ^1.12.5
     mkdirp: ^1.0.4
     mkdist: ^0.3.3
     mri: ^1.2.0
     pretty-bytes: ^5.6.0
     rimraf: ^3.0.2
-    rollup: ^2.55.0
+    rollup: ^2.57.0
     rollup-plugin-dts: ^4.0.0
     rollup-plugin-esbuild: ^4.5.0
     scule: ^0.2.1
@@ -13750,7 +13750,7 @@ fsevents@~2.3.2:
     upath: ^2.0.1
   bin:
     unbuild: bin/unbuild.cjs
-  checksum: a8c167794c1327205cb50a30fea6cb61ecd2c5486cbf18104dadc1dc9f2c0890b880a62a519d6a8f733f947090243830adf2613978dd583911cf18e71d26f718
+  checksum: 90616760d18236e608fa058538abaeb45e5f160976773e1313be24ef3ea42f4d2fff100076e75da8a0a3cf36f5272c70c9398ae7f87277f93744c9026b743bbd
   languageName: node
   linkType: hard
 
