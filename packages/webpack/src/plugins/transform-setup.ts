@@ -2,7 +2,7 @@ import { createRequire } from 'module'
 import { normalize } from 'pathe'
 import { getQuery } from 'ufo'
 
-const _require = createRequire(process.cwd())
+const _require = createRequire(import.meta.url)
 
 export default class NuxtSetupTransformerPlugin {
   apply (compiler) {
