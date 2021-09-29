@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { resolve } from 'pathe'
 import defu from 'defu'
 import { createHooks, Hookable, NestedHooks } from 'hookable'
