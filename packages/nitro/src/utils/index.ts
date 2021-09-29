@@ -1,3 +1,4 @@
+import { createRequire } from 'module'
 import { relative, dirname, resolve } from 'pathe'
 import fse from 'fs-extra'
 import jiti from 'jiti'
@@ -105,9 +106,10 @@ const _getDependenciesMode = {
   prod: ['dependencies'],
   all: ['devDependencies', 'dependencies']
 }
+const _require = createRequire(import.meta.url)
 export function getDependencies (dir: string, mode: keyof typeof _getDependenciesMode = 'all') {
   const fields = _getDependenciesMode[mode]
-  const pkg = require(resolve(dir, 'package.json'))
+  const pkg = _require(resolve(dir, 'package.json'))
   const dependencies = []
   for (const field of fields) {
     if (pkg[field]) {

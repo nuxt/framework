@@ -25,7 +25,7 @@ export function tryResolveModule (id: string, paths?: string | string[]) {
 }
 
 export function requireModule (id: string, paths?: string | string[]) {
-  return require(resolveModule(id, paths))
+  return _require(resolveModule(id, paths))
 }
 
 export function importModule (id: string, paths?: string | string[]) {

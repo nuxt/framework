@@ -11,7 +11,7 @@ import { listen, Listener, ListenOptions } from 'listhen'
 import servePlaceholder from 'serve-placeholder'
 import serveStatic from 'serve-static'
 import { resolve } from 'pathe'
-import type { Server } from 'connect'
+import connect from 'connect'
 import type { NitroContext } from '../context'
 import { handleVfs } from './vfs'
 
@@ -151,7 +151,7 @@ function createDynamicMiddleware (): DynamicMiddleware {
         middleware = input
         return
       }
-      const app: Server = require('connect')()
+      const app = connect()
       for (const m of input) {
         app.use(m.path || m.route || '/', m.handler || m.handle!)
       }
