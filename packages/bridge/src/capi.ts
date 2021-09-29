@@ -1,6 +1,6 @@
+import { createRequire } from 'module'
 import { useNuxt, addPlugin, addPluginTemplate, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
-
 import { distDir } from './dirs'
 import { KeyPlugin } from './capi-legacy-key-plugin'
 
@@ -13,7 +13,8 @@ export function setupCAPIBridge (_options: any) {
   }
 
   // Add composition-api support
-  nuxt.options.alias['@vue/composition-api'] = require.resolve('@vue/composition-api/dist/vue-composition-api.mjs')
+  const _require = createRequire(import.meta.url)
+  nuxt.options.alias['@vue/composition-api'] = _require.resolve('@vue/composition-api/dist/vue-composition-api.mjs')
   const capiPluginPath = resolve(distDir, 'runtime/capi.plugin.mjs')
   addPluginTemplate({ filename: 'capi.plugin.mjs', src: capiPluginPath })
 

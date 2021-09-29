@@ -1,5 +1,5 @@
+import { createRequire } from 'module'
 import { defineNuxtModule, installModule } from '@nuxt/kit'
-import { createResolve } from 'mlly'
 import { setupNitroBridge } from './nitro'
 import { setupAppBridge } from './app'
 import { setupCAPIBridge } from './capi'
@@ -29,15 +29,15 @@ export default defineNuxtModule({
       }
       await setupCAPIBridge(opts.capi)
     }
-    const r = createResolve({ from: import.meta.url })
+    const _require = createRequire(import.meta.url)
     if (opts.vite) {
-      await installModule(nuxt, await r('nuxt-vite'))
+      await installModule(nuxt, _require.resolve('nuxt-vite'))
     }
     if (opts.postcss8) {
-      await installModule(nuxt, await r('@nuxt/postcss8'))
+      await installModule(nuxt, _require.resolve('@nuxt/postcss8'))
     }
     if (opts.swc) {
-      await installModule(nuxt, await r('nuxt-swc'))
+      await installModule(nuxt, _require.resolve('nuxt-swc'))
     }
   }
 })
