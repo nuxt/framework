@@ -1,5 +1,5 @@
 import fs from 'fs'
-import path from 'pathe'
+import { resolve } from 'pathe'
 import consola from 'consola'
 import { defaults, merge, cloneDeep } from 'lodash-es'
 import createResolver from 'postcss-import-resolver'
@@ -111,7 +111,7 @@ export class PostcssConfig {
         '.postcssrc.json',
         '.postcssrc.yaml'
       ]) {
-        const configFile = path.resolve(dir, file)
+        const configFile = resolve(dir, file)
         if (fs.existsSync(configFile)) {
           postcssConfigFileWarning()
           return configFile
