@@ -1,11 +1,11 @@
 import os from 'os'
 import { existsSync, readFileSync } from 'fs'
+import { createRequire } from 'module'
 import { resolve, dirname } from 'pathe'
 import jiti from 'jiti'
 import destr from 'destr'
 import { splitByCase } from 'scule'
 import clipboardy from 'clipboardy'
-import { createCommonJS } from 'mlly'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -130,8 +130,8 @@ function getPkg (name, rootDir) {
   let pkgPath = resolve(rootDir, 'node_modules', name, 'package.json')
 
   // Try to resolve for more accuracy
-  const cjs = createCommonJS(rootDir)
-  try { pkgPath = cjs.require.resolve(name + '/package.json') } catch (_err) {
+  const _require = createRequire(rootDir)
+  try { pkgPath = _require.resolve(name + '/package.json') } catch (_err) {
     // console.log('not found:', name)
   }
 

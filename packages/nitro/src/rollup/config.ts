@@ -1,4 +1,5 @@
 import { pathToFileURL } from 'url'
+import { createRequire } from 'module'
 import { dirname, join, relative, resolve } from 'pathe'
 import type { InputOptions, OutputOptions } from 'rollup'
 import defu from 'defu'
@@ -66,10 +67,11 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   }
 
   // TODO: #590
+  const _require = createRequire(import.meta.url)
   if (nitroContext._nuxt.majorVersion === 3) {
     env.alias['vue/server-renderer'] = 'vue/server-renderer'
     env.alias['vue/compiler-sfc'] = 'vue/compiler-sfc'
-    env.alias.vue = require.resolve(`vue/dist/vue.cjs${nitroContext._nuxt.dev ? '' : '.prod'}.js`)
+    env.alias.vue = _require.resolve(`vue/dist/vue.cjs${nitroContext._nuxt.dev ? '' : '.prod'}.js`)
   }
 
   const buildServerDir = join(nitroContext._nuxt.buildDir, 'dist/server')

@@ -1,5 +1,8 @@
+import { createRequire } from 'module'
 import { normalize } from 'pathe'
 import { getQuery } from 'ufo'
+
+const _require = createRequire(process.cwd())
 
 export default class NuxtSetupTransformerPlugin {
   apply (compiler) {
@@ -11,7 +14,7 @@ export default class NuxtSetupTransformerPlugin {
       enforce: 'post',
       use: [{
         ident: 'NuxtSetupTransformerPlugin',
-        loader: normalize(require.resolve('@nuxt/webpack-builder/dist/nuxt-setup-loader.cjs'))
+        loader: normalize(_require.resolve('@nuxt/webpack-builder/dist/nuxt-setup-loader.cjs'))
       }]
     })
   }

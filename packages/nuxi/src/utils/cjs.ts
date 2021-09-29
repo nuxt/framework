@@ -1,3 +1,4 @@
+import { createRequire } from 'module'
 import { normalize, dirname } from 'pathe'
 
 export function getModulePaths (paths?: string | string[]): string[] {
@@ -11,8 +12,10 @@ export function getModulePaths (paths?: string | string[]): string[] {
   ).filter(Boolean)
 }
 
+const _require = createRequire(process.cwd())
+
 export function resolveModule (id: string, paths?: string | string[]) {
-  return normalize(require.resolve(id, { paths: getModulePaths(paths) }))
+  return normalize(_require.resolve(id, { paths: getModulePaths(paths) }))
 }
 
 export function tryResolveModule (id: string, paths?: string | string[]) {
