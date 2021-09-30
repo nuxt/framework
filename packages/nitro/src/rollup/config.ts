@@ -60,8 +60,6 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   const env = unenv.env(nodePreset, builtinPreset, nitroContext.env)
 
-  delete env.alias['node-fetch'] // FIX ME
-
   if (nitroContext.sourceMap) {
     env.polyfill.push('source-map-support/register.js')
   }

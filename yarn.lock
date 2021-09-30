@@ -1443,7 +1443,7 @@ __metadata:
     "@types/node-fetch": ^3.0.2
     "@vue/composition-api": ^1.2.2
     acorn: ^8.5.0
-    estree-walker: ^3.0.0
+    estree-walker: ^2.0.2
     fs-extra: ^10.0.0
     magic-string: ^0.25.7
     mlly: ^0.2.2
@@ -1503,7 +1503,7 @@ __metadata:
     pathe: ^0.2.0
     rc9: ^1.2.0
     scule: ^0.2.1
-    std-env: ^2.3.0
+    std-env: ^2.3.1
     ufo: ^0.7.9
     unbuild: latest
     unctx: ^1.0.2
@@ -1568,11 +1568,11 @@ __metadata:
     rollup-plugin-terser: ^7.0.2
     serve-placeholder: ^1.2.4
     serve-static: ^1.14.1
-    std-env: ^2.3.0
+    std-env: ^2.3.1
     table: ^6.7.1
     ufo: ^0.7.9
     unbuild: latest
-    unenv: ^0.3.8
+    unenv: ^0.3.10
     unstorage: ^0.2.8
     vue: 3.2.19
     vue-bundle-renderer: ^0.3.1
@@ -1611,7 +1611,7 @@ __metadata:
     pathe: ^0.2.0
     ufo: ^0.7.9
     unbuild: latest
-    vite: ^2.5.10
+    vite: ^2.6.0
     vue: 3.2.19
   languageName: unknown
   linkType: soft
@@ -2330,10 +2330,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^14.17.19":
-  version: 14.17.19
-  resolution: "@types/node@npm:14.17.19"
-  checksum: 3365ee4fe7878b0f1d36dc4372146322c7f4db3b0574401753084144b04356e02d15cd55db79e77dda071a06cbcc37f57c8888441fd4c8b1c24f9765c7441b2a
+"@types/node@npm:^14.17.20":
+  version: 14.17.20
+  resolution: "@types/node@npm:14.17.20"
+  checksum: c704d95c4e4377b0b4c72206068e99bbc635e27b42100a51f56e46ec0917a73f64069bcb50c07b30d34e22694735f607a1da61314acdf717a55a3ca020e12bb9
   languageName: node
   linkType: hard
 
@@ -6216,7 +6216,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.13.3":
+"esbuild@npm:^0.13.2, esbuild@npm:^0.13.3":
   version: 0.13.3
   resolution: "esbuild@npm:0.13.3"
   dependencies:
@@ -6671,13 +6671,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"estree-walker@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "estree-walker@npm:3.0.0"
-  checksum: 3b6b5fd5e37df9e2f472fe6b39eecee9f6ae395676c1535a9bca70ed6bf4a7233747c2f56b8cfa47bdb47411589b87e4ef108875d18415d7e3d2b2225b752e75
-  languageName: node
-  linkType: hard
-
 "esutils@npm:^2.0.2":
   version: 2.0.3
   resolution: "esutils@npm:2.0.3"
@@ -6712,14 +6705,6 @@ __metadata:
   checksum: f6f487ad2198aa41d878fa31452f1a3c00958f46e9019286ff4787c84aac329332ab45c9cdc8c445928fc6d7ded294b9e005a7fce9426488518017831b272780
   languageName: node
   linkType: hard
-
-"example-async-data-setup@workspace:examples/async-data-setup":
-  version: 0.0.0-use.local
-  resolution: "example-async-data-setup@workspace:examples/async-data-setup"
-  dependencies:
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
 
 "example-async-data@workspace:examples/async-data":
   version: 0.0.0-use.local
@@ -10069,7 +10054,7 @@ fsevents@~2.3.2:
     "@types/chai": ^4.2.22
     "@types/jsdom": ^16
     "@types/mocha": ^9.0.0
-    "@types/node": ^14.17.19
+    "@types/node": ^14.17.20
     "@types/object-hash": ^2
     chai: ^4.3.4
     esbuild: ^0.13.3
@@ -10084,7 +10069,7 @@ fsevents@~2.3.2:
     object-hash: ^2.2.0
     pathe: ^0.2.0
     typescript: ^4.4.3
-    unbuild: ^0.5.4
+    unbuild: ^0.5.5
   languageName: unknown
   linkType: soft
 
@@ -12929,7 +12914,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"std-env@npm:^2.2.1, std-env@npm:^2.3.0":
+"std-env@npm:^2.2.1, std-env@npm:^2.3.1":
   version: 2.3.1
   resolution: "std-env@npm:2.3.1"
   dependencies:
@@ -13715,9 +13700,9 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"unbuild@portal:../unbuild::locator=nuxt-framework%40workspace%3A.":
+"unbuild@npm:^0.5.5":
   version: 0.0.0-use.local
-  resolution: "unbuild@portal:../unbuild::locator=nuxt-framework%40workspace%3A."
+  resolution: "unbuild@npm:0.5.5"
   dependencies:
     "@rollup/plugin-alias": ^3.1.4
     "@rollup/plugin-commonjs": ^20.0.0
@@ -13741,7 +13726,8 @@ fsevents@~2.3.2:
     untyped: ^0.2.9
     upath: ^2.0.1
   bin:
-    unbuild: ./bin/unbuild.cjs
+    unbuild: bin/unbuild.cjs
+  checksum: 90616760d18236e608fa058538abaeb45e5f160976773e1313be24ef3ea42f4d2fff100076e75da8a0a3cf36f5272c70c9398ae7f87277f93744c9026b743bbd
   languageName: node
   linkType: soft
 
@@ -13752,9 +13738,9 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"unenv@npm:^0.3.8":
-  version: 0.3.8
-  resolution: "unenv@npm:0.3.8"
+"unenv@npm:^0.3.10":
+  version: 0.3.10
+  resolution: "unenv@npm:0.3.10"
   dependencies:
     buffer: ^6.0.2
     defu: ^5.0.0
@@ -13765,7 +13751,7 @@ fsevents@~2.3.2:
     process: ^0.11.10
     upath: ^2.0.1
     util: ^0.12.4
-  checksum: 4215422f908a9083a651e6256ca02ef257c7df26d5ed1edec4749f4a93781b3e1eb38f07c8b276da2e3b26105701694a081f7e787e1af2293f427d381dcff992
+  checksum: 502a699d88bbe45e26920d74dd756b63e78e748f73963a0c62b58584f974b856367d1c3c3d697f52b889b9cc1e750d3157caa5bb0d86c51cf32d482d5c383ec8
   languageName: node
   linkType: hard
 
@@ -14029,7 +14015,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.5.10, vite@npm:^2.5.4":
+"vite@npm:^2.5.4":
   version: 2.5.10
   resolution: "vite@npm:2.5.10"
   dependencies:
@@ -14044,6 +14030,35 @@ fsevents@~2.3.2:
   bin:
     vite: bin/vite.js
   checksum: 08b7cb50bd7ba2f35b9df235a993a38ce8f2f737324f00d75439c120e28d9d7b92a98bb6db8d103745c905f85eb784a3188527a906793c667689e545ecbe77ad
+  languageName: node
+  linkType: hard
+
+"vite@npm:^2.6.0":
+  version: 2.6.0
+  resolution: "vite@npm:2.6.0"
+  dependencies:
+    esbuild: ^0.13.2
+    fsevents: ~2.3.2
+    postcss: ^8.3.8
+    resolve: ^1.20.0
+    rollup: ^2.57.0
+  peerDependencies:
+    less: "*"
+    sass: "*"
+    stylus: "*"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    less:
+      optional: true
+    sass:
+      optional: true
+    stylus:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 21b19a52e273b5b3fda89d56049992f36c44a7c8ea40cc224b72f1d9d7f8d47a33ac16248c121a0e4143a5cff14bed577b865c7da21e99f53536835db68d2465
   languageName: node
   linkType: hard
 
