@@ -1,7 +1,7 @@
 import { resolve } from 'pathe'
 import { createCommonJS } from 'mlly'
 
-const { __dirname } = createCommonJS(import.meta.url)
+const cjs = createCommonJS(import.meta.url)
 
-export const distDir = __dirname
+export const distDir = cjs.__dirname
 export const pkgDir = resolve(distDir, '..')

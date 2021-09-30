@@ -6,22 +6,22 @@ import hash from 'object-hash'
 import execa from 'execa'
 import { createCommonJS } from 'mlly'
 
-const { __dirname } = createCommonJS(import.meta.url)
+const cjs = createCommonJS(import.meta.url)
 
-export function resolveWorkspace(name) {
+export function resolveWorkspace (name) {
   return resolve(__dirname, '../', name)
 }
 
-export function fixtureDir(name) {
+export function fixtureDir (name) {
   return resolve(__dirname, 'fixtures', name)
 }
 
-export async function execNuxtCLI(args, opts) {
+export async function execNuxtCLI (args, opts) {
   const nuxtCLI = resolveWorkspace('packages/nuxi/bin/nuxi.mjs')
   await execa('node', [nuxtCLI, ...args], opts)
 }
 
-export async function loadFixture(opts, unhashedConfig) {
+export async function loadFixture (opts, unhashedConfig) {
   const buildId = hash(opts)
   const buildDir = resolve(opts.rootDir, '.nuxt', buildId)
   const { loadNuxt } = await import('@nuxt/kit')
@@ -29,7 +29,7 @@ export async function loadFixture(opts, unhashedConfig) {
   return nuxt
 }
 
-export async function buildFixture(opts) {
+export async function buildFixture (opts) {
   const buildId = hash(opts)
   const buildDir = resolve(opts.rootDir, '.nuxt', buildId)
 
@@ -54,18 +54,18 @@ export async function buildFixture(opts) {
   }
 }
 
-function mkdirpSync(dir) {
+function mkdirpSync (dir) {
   if (!existsSync(dir)) {
     mkdirpSync(dirname(dir))
     mkdirSync(dir)
   }
 }
 
-function readSync(file) {
+function readSync (file) {
   return existsSync(file) ? readFileSync(file, 'utf8') : null
 }
 
-function isAlive(pid) {
+function isAlive (pid) {
   try {
     process.kill(pid, 0)
     return true
@@ -74,7 +74,7 @@ function isAlive(pid) {
   }
 }
 
-function waitWhile(check, interval = 100, timeout = 30000) {
+function waitWhile (check, interval = 100, timeout = 30000) {
   return new Promise((resolve, reject) => {
     const t = setTimeout(() => reject(new Error('Timeout')), timeout)
     const i = setInterval(() => {
@@ -87,6 +87,6 @@ function waitWhile(check, interval = 100, timeout = 30000) {
   })
 }
 
-function gitHead() {
+function gitHead () {
   return execSync('git rev-parse HEAD').toString('utf8').trim()
 }

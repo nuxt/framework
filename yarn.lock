@@ -1644,6 +1644,7 @@ __metadata:
     lodash-es: ^4.17.21
     memfs: ^3.3.0
     mini-css-extract-plugin: ^2.3.0
+    mlly: ^0.2.2
     pathe: ^0.2.0
     pify: ^5.0.0
     postcss: ^8.3.8
@@ -8417,16 +8418,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.10.1":
-  version: 1.12.3
-  resolution: "jiti@npm:1.12.3"
-  bin:
-    jiti: bin/jiti.js
-  checksum: bd3e51dcb1f6332978e171532d20df94be97a00c89884b3076b13dfa9b0ccc8dcaf8e514a4cc5cc7ba57c7c5a9b1b270888fe8c8348528a8fa259765d210bc87
-  languageName: node
-  linkType: hard
-
-"jiti@npm:^1.12.5":
+"jiti@npm:^1.10.1, jiti@npm:^1.12.5":
   version: 1.12.5
   resolution: "jiti@npm:1.12.5"
   bin:
@@ -13723,9 +13715,9 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.5.5":
-  version: 0.5.5
-  resolution: "unbuild@npm:0.5.5"
+"unbuild@portal:../unbuild::locator=nuxt-framework%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "unbuild@portal:../unbuild::locator=nuxt-framework%40workspace%3A."
   dependencies:
     "@rollup/plugin-alias": ^3.1.4
     "@rollup/plugin-commonjs": ^20.0.0
@@ -13749,10 +13741,9 @@ fsevents@~2.3.2:
     untyped: ^0.2.9
     upath: ^2.0.1
   bin:
-    unbuild: bin/unbuild.cjs
-  checksum: 90616760d18236e608fa058538abaeb45e5f160976773e1313be24ef3ea42f4d2fff100076e75da8a0a3cf36f5272c70c9398ae7f87277f93744c9026b743bbd
+    unbuild: ./bin/unbuild.cjs
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "unctx@npm:^1.0.2":
   version: 1.0.2

@@ -1,10 +1,10 @@
 import { defineNuxtConfig } from '@nuxt/kit'
 import { createCommonJS } from 'mlly'
 
-const { __dirname } = createCommonJS(import.meta.url)
+const cjs = createCommonJS(import.meta.url)
 
 // @ts-ignore
-global.__NUXT_PREPATHS__ = (global.__NUXT_PREPATHS__ || []).concat(__dirname)
+global.__NUXT_PREPATHS__ = (global.__NUXT_PREPATHS__ || []).concat(cjs.__dirname)
 
 export default defineNuxtConfig({
   components: true,
