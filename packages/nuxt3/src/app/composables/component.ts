@@ -5,9 +5,7 @@ import { useRoute } from 'vue-router'
 import type { LegacyContext } from '../legacy'
 import { useNuxtApp } from '../nuxt'
 import { asyncData } from './asyncData'
-
-export const NuxtComponentIndicator = '__nuxt_component'
-export const NuxtComponentPendingPromises = '_pendingPromises'
+import { NuxtComponentPendingPromises, NuxtComponentIndicator } from './constants'
 
 export interface NuxtComponentInternalInstance extends ComponentInternalInstance {
   [NuxtComponentPendingPromises]: Array<Promise<void>>

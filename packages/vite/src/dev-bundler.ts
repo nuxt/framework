@@ -21,6 +21,9 @@ async function transformRequest (viteServer: vite.ViteDevServer, id) {
   if (id && id.startsWith('/@id/__x00__')) {
     id = '\0' + id.slice('/@id/__x00__'.length)
   }
+  if (id && id.startsWith('/@id/')) {
+    id = id.slice('/@id/'.length)
+  }
 
   // Externals
   if (builtinModules.includes(id)) {
@@ -85,16 +88,28 @@ const ${hashId(chunk.id)} = ${chunk.code}
    chunks.map(chunk => ` '${chunk.id}': ${hashId(chunk.id)}`).join(',\n') + '\n}'
 
   const dynamicImportCode = `
+const $cache = {}
+const $importing = new Set()
 function __vite_ssr_import__ (id) {
-  return Promise.resolve($chunks[id]()).then(mod => {
-    // if (mod && !('default' in mod))
-    //   mod.default = mod
-    return mod
-  })
+  if (!$cache[id]) {
+    $importing.add(id)
+    $cache[id] = Promise.resolve($chunks[id]()).then(mod => {
+      // if (mod && !('default' in mod))
+      //   mod.default = mod
+      $importing.delete(id)
+      return mod
+    })
+  }
+  return $cache[id]
 }
 function __vite_ssr_dynamic_import__(id) {
   return __vite_ssr_import__(id)
 }
+
+// TODO: remove debug code
+setTimeout(()=>{
+  console.log('hanging importing (circlar)', $importing)
+}, 2000)
 `
 
   // https://github.com/vitejs/vite/blob/fb406ce4c0fe6da3333c9d1c00477b2880d46352/packages/vite/src/node/ssr/ssrModuleLoader.ts#L121-L133

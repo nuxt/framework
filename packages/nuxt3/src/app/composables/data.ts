@@ -1,6 +1,6 @@
 import { getCurrentInstance, isReactive, reactive } from 'vue'
 import type { UnwrapRef } from 'vue'
-import { useNuxtApp } from '#app'
+import { useNuxtApp } from '../nuxt'
 
 export function ensureReactive<
   T extends Record<string, any>,
