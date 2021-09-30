@@ -103,7 +103,7 @@ function __createViteSSRExportAll__(ssrModule) {
   return (sourceModule) => {
     for (const key in sourceModule) {
       if (key !== 'default') {
-        Object.defineProperty(sourceModule, key, {
+        Object.defineProperty(ssrModule, key, {
           enumerable: true,
           configurable: true,
           get() {
