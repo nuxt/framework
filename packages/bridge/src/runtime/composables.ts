@@ -23,5 +23,16 @@ export const useRoute = () => {
     vm._route = reactive(vm.$route)
     watch(() => vm.$route, route => Object.assign(vm._route, route))
   }
-  return vm._route
+
+  return vm._route as {
+    path: string
+    name?: string | null
+    hash: string
+    query: Record<string, string | (string | null)[]>
+    params: Record<string, string>
+    fullPath: string
+    matched: any[]
+    redirectedFrom?: string
+    meta?: any
+  }
 }
