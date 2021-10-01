@@ -22,7 +22,7 @@ const createResolver = (resolveOptions: ResolverOptions) => {
   const root = options.roots?.[0] || '.'
 
   const resolve = (id: string, importer?: string) => {
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<string>((resolve, reject) =>
       resolver.resolve({}, importer || root, id, {}, (err, result) => {
         if (err || !result) {
           return reject(err)
@@ -30,7 +30,7 @@ const createResolver = (resolveOptions: ResolverOptions) => {
 
         resolve(result)
       })
-    })
+    )
   }
 
   return { resolve, resolver }
@@ -47,21 +47,21 @@ class EnhancedResolverPlugin {
   apply (defaultResolver: any) {
     const enhancedResolver = this.resolver
 
-    defaultResolver.getHook('resolve').tapAsync('EnhancedResolverPlugin', function (request, _resolveContext, callback) {
+    defaultResolver.getHook('resolve').tapPromise('EnhancedResolverPlugin', async (request) => {
       const id = request.request
       // Fall back to default webpack4 resolver if not a node_modules import
-      if (!id || !defaultResolver.isModule(id)) {
-        return callback()
-      }
+      if (!id || !defaultResolver.isModule(id)) { return }
 
       const importer = request.context?.issuer
-      return enhancedResolver.resolve(id, importer)
-        .then((result) => {
-          if (!result) { return callback() }
-          request.path = result
-          callback(null, request)
-        })
-        .catch(() => callback())
+      try {
+        const result = await enhancedResolver.resolve(id, importer)
+        // Fall back to default webpack4 resolver if we can't resolve id
+        if (!result) { return }
+        request.path = result
+        return request
+      } catch {
+        // Fall back to default webpack4 resolver in the event of error
+      }
     })
   }
 }
