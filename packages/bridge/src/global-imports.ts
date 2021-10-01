@@ -1,6 +1,5 @@
 import { installModule, useNuxt } from '@nuxt/kit'
 import globalImports from 'nuxt3/src/global-imports/module'
-import defu from 'defu'
 
 // TODO: implement these: https://github.com/nuxt/framework/issues/549
 const disabled = [
@@ -69,6 +68,8 @@ for (const pkg in identifiers) {
 
 export async function setupGlobalImports () {
   const nuxt = useNuxt()
-  nuxt.options.globalImports = defu(nuxt.options.globalImports, { disabled, identifiers: defaultIdentifiers })
+  nuxt.options.globalImports = nuxt.options.globalImports || {}
+  nuxt.options.globalImports.disabled = nuxt.options.globalImports.disabled || disabled
+  nuxt.options.globalImports.identifiers = Object.assign({}, defaultIdentifiers, nuxt.options.globalImports.identifiers)
   await installModule(nuxt, globalImports)
 }
