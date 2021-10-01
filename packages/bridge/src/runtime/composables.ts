@@ -1,4 +1,5 @@
-import { getCurrentInstance } from '@vue/composition-api'
+import { getCurrentInstance, reactive, watch } from '@vue/composition-api'
+import { useNuxtApp } from './app'
 export * from '@vue/composition-api'
 
 const mock = () => () => { throw new Error('not implemented') }
@@ -12,7 +13,7 @@ export const useHydration = mock()
 
 // Auto-import equivalents for `vue-router`
 export const useRouter = () => {
-  return getCurrentInstance()?.proxy.$router
+  return useNuxtApp()?.legacyNuxt.router
 }
 
 // This provides an equivalent interface to `vue-router` (unlike legacy implementation)
