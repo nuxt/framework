@@ -9440,12 +9440,12 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"mlly@npm:^0.2.2":
-  version: 0.2.2
-  resolution: "mlly@npm:0.2.2"
+"mlly@npm:^0.2.2, mlly@npm:^0.2.4":
+  version: 0.2.4
+  resolution: "mlly@npm:0.2.4"
   dependencies:
     import-meta-resolve: ^1.1.1
-  checksum: 2e1385bc13eb01c88434cc5fe382b90ad496f616887a012ba6758e3db7964f3caa92a2b4a3db7bedf18fbc066b1b57e4e986c2b58a2c806c658c112fd09b1720
+  checksum: aecd0ea550f00642658574249443ee81619d60f00ad21dd69d4656d3896f8ba0fe8bb5b9a6c42074fdd89b9055052e8fa148fbe51ebcd8bbdd0b58dcbb514a8b
   languageName: node
   linkType: hard
 
@@ -13700,22 +13700,26 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.5.5":
-  version: 0.0.0-use.local
-  resolution: "unbuild@npm:0.5.5"
+"unbuild@npm:^0.5.6":
+  version: 0.5.6
+  resolution: "unbuild@npm:0.5.6"
   dependencies:
     "@rollup/plugin-alias": ^3.1.4
     "@rollup/plugin-commonjs": ^20.0.0
     "@rollup/plugin-json": ^4.1.0
     "@rollup/plugin-node-resolve": ^13.0.5
+    "@rollup/plugin-replace": ^3.0.0
     chalk: ^4.1.1
     consola: ^2.15.3
     defu: ^5.0.0
     esbuild: ^0.13.3
     jiti: ^1.12.5
+    magic-string: ^0.25.7
     mkdirp: ^1.0.4
     mkdist: ^0.3.3
+    mlly: ^0.2.4
     mri: ^1.2.0
+    pathe: ^0.2.0
     pretty-bytes: ^5.6.0
     rimraf: ^3.0.2
     rollup: ^2.57.0
@@ -13724,12 +13728,11 @@ fsevents@~2.3.2:
     scule: ^0.2.1
     typescript: ^4.4.3
     untyped: ^0.2.9
-    upath: ^2.0.1
   bin:
-    unbuild: bin/unbuild.cjs
-  checksum: 90616760d18236e608fa058538abaeb45e5f160976773e1313be24ef3ea42f4d2fff100076e75da8a0a3cf36f5272c70c9398ae7f87277f93744c9026b743bbd
+    unbuild: bin/unbuild.mjs
+  checksum: 7ba763f070ecd65ebff08f3fdff9ab22e39aa9ae1c64448d654e085a405ad4d9592fd1a109d314344580dece9acfaea569983a6f3b7ac1787119f113a2520d81
   languageName: node
-  linkType: soft
+  linkType: hard
 
 "unctx@npm:^1.0.2":
   version: 1.0.2
