@@ -18,14 +18,16 @@ export const useRouter = () => {
 
 // This provides an equivalent interface to `vue-router` (unlike legacy implementation)
 export const useRoute = () => {
-  const vm = getCurrentInstance()?.root.proxy
-  if (!vm) { throw new Error('useRoute must be called from within a Vue component') }
-  if (!vm._route) {
-    vm._route = reactive(vm.$route)
-    watch(() => vm.$route, route => Object.assign(vm._route, route))
+  const nuxt = useNuxtApp()
+  if (!nuxt) { throw new Error('useRoute must be called from within a Vue component') }
+
+  if (!nuxt._route) {
+    nuxt._route = reactive(nuxt.legacyNuxt.context.route)
+    const router = useRouter()
+    router.afterEach(route => Object.assign(nuxt._route, route))
   }
 
-  return vm._route as {
+  return nuxt._route as {
     path: string
     name?: string | null
     hash: string
