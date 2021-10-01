@@ -25,7 +25,7 @@ const createResolver = (resolveOptions: ResolverOptions) => {
     return new Promise<string>((resolve, reject) =>
       resolver.resolve({}, importer || root, id, {}, (err, result) => {
         if (err || !result) {
-          return reject(err)
+          return reject(err || new Error(`Could not import '${id}'.`))
         }
 
         resolve(result)
