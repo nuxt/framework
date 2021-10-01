@@ -21,17 +21,15 @@ const createResolver = (resolveOptions: ResolverOptions) => {
 
   const root = options.roots?.[0] || '.'
 
-  const resolve = (id: string, importer?: string) => {
-    return new Promise<string>((resolve, reject) =>
-      resolver.resolve({}, importer || root, id, {}, (err, result) => {
-        if (err || !result) {
-          return reject(err || new Error(`Could not import '${id}'.`))
-        }
+  const resolve = (id: string, importer?: string) => new Promise<string>((resolve, reject) =>
+    resolver.resolve({}, importer || root, id, {}, (err, result) => {
+      if (err || !result) {
+        return reject(err || new Error(`Could not import '${id}'.`))
+      }
 
-        resolve(result)
-      })
-    )
-  }
+      resolve(result)
+    })
+  )
 
   return { resolve, resolver }
 }
