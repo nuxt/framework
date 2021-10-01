@@ -3,6 +3,7 @@ import { setupNitroBridge } from './nitro'
 import { setupAppBridge } from './app'
 import { setupCAPIBridge } from './capi'
 import { setupBetterResolve } from './resolve'
+import { setupGlobalImports } from './global-imports'
 
 export default defineNuxtModule({
   name: 'nuxt-bridge',
@@ -12,6 +13,7 @@ export default defineNuxtModule({
     vite: false,
     app: {},
     capi: {},
+    globalImports: true,
     // TODO: Remove from 2.16
     postcss8: true,
     swc: true,
@@ -29,6 +31,9 @@ export default defineNuxtModule({
         throw new Error('[bridge] Cannot enable composition-api with app disabled!')
       }
       await setupCAPIBridge(opts.capi)
+    }
+    if (opts.globalImports) {
+      await setupGlobalImports()
     }
     if (opts.vite) {
       await installModule(nuxt, require.resolve('nuxt-vite'))
