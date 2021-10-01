@@ -1,7 +1,8 @@
 import fs from 'fs'
+import { promisify } from 'util'
 import defu from 'defu'
 
-import { CachedInputFileSystem, ResolverFactory } from 'enhanced-resolve'
+import { CachedInputFileSystem, ResolveContext, ResolverFactory } from 'enhanced-resolve'
 import { ResolveOptions } from 'webpack/types'
 import { extendWebpackConfig, useNuxt } from '@nuxt/kit'
 
@@ -21,15 +22,9 @@ const createResolver = (resolveOptions: ResolverOptions) => {
 
   const root = options.roots?.[0] || '.'
 
-  const resolve = (id: string, importer?: string) => new Promise<string>((resolve, reject) =>
-    resolver.resolve({}, importer || root, id, {}, (err, result) => {
-      if (err || !result) {
-        return reject(err || new Error(`Could not import '${id}'.`))
-      }
+  const promisifiedResolve = promisify(resolver.resolve.bind(resolver)) as (context: object, path: string, request: string, resolveContext: ResolveContext) => Promise<string | false>
 
-      resolve(result)
-    })
-  )
+  const resolve = (id: string, importer?: string) => promisifiedResolve({}, importer || root, id, {})
 
   return { resolve, resolver }
 }
