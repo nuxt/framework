@@ -1,4 +1,4 @@
-import { getCurrentInstance, reactive, watch } from '@vue/composition-api'
+import { reactive } from '@vue/composition-api'
 import { useNuxtApp } from './app'
 export * from '@vue/composition-api'
 
