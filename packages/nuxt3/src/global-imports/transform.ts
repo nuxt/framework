@@ -12,7 +12,7 @@ const excludeRE = [
 ]
 
 const multilineCommentsRE = /\/\*(.|[\r\n])*?\*\//gm
-const singlelineCommentsRE = /^\s*\/\/.*$/g
+const singlelineCommentsRE = /^\s*\/\/.*$/gm
 
 function stripeComments (code: string) {
   return code
