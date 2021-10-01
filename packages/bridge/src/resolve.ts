@@ -3,7 +3,7 @@ import defu from 'defu'
 
 import { CachedInputFileSystem, ResolverFactory } from 'enhanced-resolve'
 import { ResolveOptions } from 'webpack/types'
-import { useNuxt } from '@nuxt/kit'
+import { extendWebpackConfig, useNuxt } from '@nuxt/kit'
 
 type UserResolveOptions = Parameters<typeof ResolverFactory['createResolver']>[0]
 type ResolverOptions = Omit<UserResolveOptions, 'fileSystem'> & { fileSystem?: CachedInputFileSystem }
@@ -69,20 +69,18 @@ class EnhancedResolverPlugin {
 export function setupBetterResolve () {
   const nuxt = useNuxt()
 
-  nuxt.hook('webpack:config', (configs) => {
-    for (const config of configs) {
-      const isServer = config.name === 'server'
+  extendWebpackConfig((config) => {
+    const isServer = config.name === 'server'
 
-      config.resolve = config.resolve || {}
-      config.resolve.plugins = config.resolve.plugins || []
+    config.resolve = config.resolve || {}
+    config.resolve.plugins = config.resolve.plugins || []
 
-      config.resolve.plugins.push(new EnhancedResolverPlugin({
-        conditionNames: ['import', ...isServer ? ['node'] : []],
-        alias: config.resolve.alias,
-        modules: config.resolve.modules,
-        plugins: config.resolve.plugins as Array<Exclude<ResolveOptions['plugins'][number], string>>,
-        roots: config.resolve.roots || [nuxt.options.rootDir]
-      }))
-    }
+    config.resolve.plugins.push(new EnhancedResolverPlugin({
+      conditionNames: ['import', ...isServer ? ['node'] : []],
+      alias: config.resolve.alias,
+      modules: config.resolve.modules,
+      plugins: config.resolve.plugins as Array<Exclude<ResolveOptions['plugins'][number], string>>,
+      roots: config.resolve.roots || [nuxt.options.rootDir]
+    }))
   })
 }
