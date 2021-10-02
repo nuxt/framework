@@ -2,6 +2,7 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   declaration: true,
+  emitCJS: false,
   entries: [
     'src/index',
     { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm' },
@@ -17,7 +18,6 @@ export default defineBuildConfig({
     'ora',
     'vue-bundle-renderer',
     'vue-server-renderer',
-    '@vue/server-renderer',
     'vue'
   ]
 })

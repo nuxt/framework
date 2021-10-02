@@ -3,9 +3,11 @@ import type { NuxtHooks } from './hooks'
 import type { NuxtOptions } from './config'
 
 export interface Nuxt {
+  // Private fields
+  _version: string
+
   /** The resolved Nuxt configuration. */
   options: NuxtOptions
-
   hooks: Hookable<NuxtHooks>
   hook: Nuxt['hooks']['hook']
   callHook: Nuxt['hooks']['callHook']
@@ -23,6 +25,8 @@ export interface Nuxt {
 export interface NuxtTemplate {
   /** @deprecated filename */
   fileName?: string
+  /** @deprecated whether template is custom or a nuxt core template */
+  custom?: boolean
   /** resolved output file path (generated) */
   dst?: string
   /** The target filename once the template is copied into the Nuxt buildDir */

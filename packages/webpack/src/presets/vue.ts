@@ -1,7 +1,6 @@
-import { resolve } from 'upath'
-import VueLoaderPlugin from 'vue-loader/dist/pluginWebpack5'
-import { DefinePlugin } from 'webpack'
-import NuxtSetupTransformerPlugin from '../plugins/transform-setup'
+import { resolve } from 'pathe'
+import VueLoaderPlugin from 'vue-loader/dist/pluginWebpack5.js'
+import webpack from 'webpack'
 import VueSSRClientPlugin from '../plugins/vue/client'
 import VueSSRServerPlugin from '../plugins/vue/server'
 import { WebpackConfigContext } from '../utils/config'
@@ -9,18 +8,13 @@ import { WebpackConfigContext } from '../utils/config'
 export function vue (ctx: WebpackConfigContext) {
   const { options, config } = ctx
 
-  config.plugins.push(new VueLoaderPlugin())
+  // @ts-ignore
+  config.plugins.push(new (VueLoaderPlugin.default || VueLoaderPlugin)())
 
   config.module.rules.push({
     test: /\.vue$/i,
     loader: 'vue-loader',
-    options: {
-      // workaround for https://github.com/vuejs/vue-next/issues/4666
-      compilerOptions: {
-        ssrRuntimeModuleName: 'vue/server-renderer/index.mjs'
-      },
-      ...options.build.loaders.vue
-    }
+    options: options.build.loaders.vue
   })
 
   if (ctx.isClient) {
@@ -33,12 +27,10 @@ export function vue (ctx: WebpackConfigContext) {
     }))
   }
 
-  config.plugins.push(new NuxtSetupTransformerPlugin())
-
   // Feature flags
   // https://github.com/vuejs/vue-next/tree/master/packages/vue#bundler-build-feature-flags
   // TODO: Provide options to toggle
-  config.plugins.push(new DefinePlugin({
+  config.plugins.push(new webpack.DefinePlugin({
     __VUE_OPTIONS_API__: 'true',
     __VUE_PROD_DEVTOOLS__: 'false'
   }))

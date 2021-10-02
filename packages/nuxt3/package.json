@@ -1,12 +1,13 @@
 {
   "name": "nuxt3",
-  "version": "0.10.0",
+  "version": "3.0.0",
   "repository": "nuxt/framework",
   "license": "MIT",
-  "main": "./dist/index.cjs",
+  "type": "module",
+  "exports": "./dist/index.mjs",
   "types": "./types.d.ts",
   "bin": {
-    "nuxt": "./bin/nuxt.cjs"
+    "nuxt": "./bin/nuxt.mjs"
   },
   "files": [
     "bin",
@@ -21,9 +22,8 @@
     "@nuxt/nitro": "^0.10.0",
     "@nuxt/vite-builder": "^0.10.0",
     "@nuxt/webpack-builder": "^0.10.0",
-    "@vue/reactivity": "3.2.16",
-    "@vue/server-renderer": "^3.2.16",
-    "@vue/shared": "3.2.16",
+    "@vue/reactivity": "3.2.19",
+    "@vue/shared": "3.2.19",
     "@vueuse/head": "^0.6.0",
     "chokidar": "^3.5.2",
     "consola": "^2.15.3",
@@ -33,27 +33,26 @@
     "hash-sum": "^2.0.0",
     "hookable": "^5.0.0",
     "ignore": "^5.1.8",
-    "lodash": "^4.17.21",
+    "mlly": "^0.2.4",
     "nuxi": "^0.10.0",
     "ohmyfetch": "^0.3.1",
+    "pathe": "^0.2.0",
     "scule": "^0.2.1",
     "ufo": "^0.7.9",
-    "unplugin": "^0.2.13",
-    "upath": "^2.0.1",
-    "vue": "^3.2.16",
+    "unplugin": "^0.2.16",
+    "vue": "^3.2.19",
     "vue-router": "^4.0.11",
     "vuex5": "^0.5.0-testing.3"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
     "@types/hash-sum": "^1.0.0",
-    "@types/lodash": "^4.14.173",
     "unbuild": "latest",
     "vue-meta": "next"
   },
   "peerDependencies": {
-    "@vue/reactivity": "3.2.16",
-    "@vue/shared": "3.2.16",
-    "vue": "3.2.16"
+    "@vue/reactivity": "3.2.19",
+    "@vue/shared": "3.2.19",
+    "vue": "3.2.19"
   }
 }

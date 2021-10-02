@@ -1,10 +1,10 @@
-import { resolve, relative } from 'upath'
+import { resolve, relative } from 'pathe'
 import chokidar from 'chokidar'
 import debounce from 'debounce-promise'
 import type { Nuxt } from '@nuxt/kit'
 import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
-import { requireModule } from '../utils/cjs'
+import { importModule } from '../utils/cjs'
 import { error } from '../utils/log'
 import { defineNuxtCommand } from './index'
 
@@ -24,7 +24,7 @@ export default defineNuxtCommand({
 
     const rootDir = resolve(args._[0] || '.')
 
-    const { loadNuxt, buildNuxt } = requireModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
+    const { loadNuxt, buildNuxt } = await importModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
 
     let currentNuxt: Nuxt
     const load = async (isRestart: boolean, reason?: string) => {
@@ -59,8 +59,15 @@ export default defineNuxtCommand({
     const dLoad = debounce(load, 250)
     const watcher = chokidar.watch([rootDir], { ignoreInitial: true, depth: 1 })
     watcher.on('all', (_event, file) => {
-      if (file.match(/nuxt\.config\.(js|ts|mjs|cjs)$|pages$/)) {
+      if (file.startsWith(currentNuxt.options.buildDir)) { return }
+      if (file.match(/nuxt\.config\.(js|ts|mjs|cjs)$/)) {
         dLoad(true, `${relative(rootDir, file)} updated`)
+      }
+      if (['addDir', 'unlinkDir'].includes(_event) && file.match(/pages$/)) {
+        dLoad(true, `pages/ ${_event === 'addDir' ? 'created' : 'removed'}`)
+      }
+      if (['add', 'unlink'].includes(_event) && file.match(/app\.(js|ts|mjs|jsx|tsx|vue)$/)) {
+        dLoad(true, `${relative(rootDir, file)}/ ${_event === 'add' ? 'created' : 'removed'}`)
       }
     })
 
