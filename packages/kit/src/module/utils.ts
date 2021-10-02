@@ -255,15 +255,6 @@ export function addVitePlugin (plugin: VitePlugin, options?: ExtendViteConfigOpt
   }, options)
 }
 
-/**
- * Check if current nuxt instance is version 2 legacy
- */
-export function isNuxt2 (nuxt?: any) {
-  nuxt = nuxt || useNuxt()
-  const version = (nuxt?.version || nuxt?.constructor?.version || '').replace(/^v|-.*$/g, '')
-  return version.startsWith('2.')
-}
-
 export async function compileTemplate (template: NuxtTemplate, ctx: any) {
   const data = { ...ctx, ...template.options }
   if (template.src) {
@@ -303,6 +294,26 @@ export const templateUtils = {
   importSources
 }
 
+/**
+ * Check if current nuxt instance is version 2 legacy
+ */
+export function isNuxt2 (nuxt?: any) {
+  nuxt = nuxt || useNuxt()
+  const version = (nuxt?.version || nuxt?.constructor?.version || '').replace(/^v|-.*$/g, '')
+  return version.startsWith('2.')
+}
+
+/**
+ * Get nuxt version
+ */
 export function getNuxtVersion (nuxt?: any) {
-  return (nuxt || useNuxt()).version?.slice(1) || '0.0.0'
+  nuxt = nuxt || useNuxt()
+  let version = (nuxt?.version || nuxt?.constructor?.version || '').replace(/^v/g, '')
+  if (!version) {
+    throw new Error('Cannot determine nuxt version! Is currect instance passed?')
+  }
+  if (nuxt.options._majorVersion === 3) {
+    version = version.replace(/^[^-]+/, '3.0.0')
+  }
+  return version
 }
