@@ -14,8 +14,8 @@
     "prepack": "unbuild"
   },
   "devDependencies": {
-    "@types/semver": "^7",
     "@types/lodash.template": "^4",
+    "@types/semver": "^7",
     "unbuild": "latest"
   },
   "dependencies": {
