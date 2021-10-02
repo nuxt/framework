@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'http'
-import path from 'upath'
+import { resolve } from 'pathe'
 import pify from 'pify'
 import webpack from 'webpack'
 import Glob from 'glob'
@@ -100,7 +100,7 @@ class WebpackBundler {
       )
       for (const ext of Object.keys(styleResources)) {
         await Promise.all(Array.from(styleResources[ext]).map(async (p) => {
-          const styleResourceFiles = await glob(path.resolve(this.nuxt.options.rootDir, p as string))
+          const styleResourceFiles = await glob(resolve(this.nuxt.options.rootDir, p as string))
 
           if (!styleResourceFiles || styleResourceFiles.length === 0) {
             throw new Error(`Style Resource not found: ${p}`)
@@ -206,7 +206,9 @@ class WebpackBundler {
 
     // Create webpack dev middleware
     this.devMiddleware[name] = pify(
+      // @ts-ignore
       webpackDevMiddleware(
+        // @ts-ignore
         compiler,
         {
           publicPath: buildOptions.publicPath,
@@ -219,6 +221,7 @@ class WebpackBundler {
 
     this.devMiddleware[name].close = pify(this.devMiddleware[name].close)
 
+    // @ts-ignore
     this.compilersWatching.push(this.devMiddleware[name].context.watching)
 
     this.hotMiddleware[name] = pify(

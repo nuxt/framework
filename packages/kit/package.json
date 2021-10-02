@@ -3,7 +3,8 @@
   "version": "0.10.0",
   "repository": "nuxt/framework",
   "license": "MIT",
-  "main": "./dist/index.js",
+  "type": "module",
+  "exports": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
@@ -14,7 +15,8 @@
   },
   "devDependencies": {
     "@types/semver": "^7",
-    "unbuild": "^0.4.2"
+    "@types/lodash.template": "^4",
+    "unbuild": "latest"
   },
   "dependencies": {
     "consola": "^2.15.3",
@@ -24,14 +26,15 @@
     "globby": "^11.0.4",
     "hash-sum": "^2.0.0",
     "hookable": "^5.0.0",
-    "jiti": "^1.11.0",
+    "jiti": "^1.12.6",
+    "lodash.template": "^4.5.0",
+    "pathe": "^0.2.0",
     "rc9": "^1.2.0",
     "scule": "^0.2.1",
     "semver": "^7.3.5",
-    "std-env": "^2.3.0",
+    "std-env": "^2.3.1",
     "ufo": "^0.7.9",
     "unctx": "^1.0.2",
-    "untyped": "^0.2.8",
-    "upath": "^2.0.1"
+    "untyped": "^0.2.9"
   }
 }

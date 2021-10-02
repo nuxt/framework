@@ -1,10 +1,10 @@
-// @ts-nocheck
 import fs from 'fs'
-import path from 'upath'
+import { resolve } from 'pathe'
 import consola from 'consola'
-import { defaults, merge, cloneDeep } from 'lodash'
+import { createCommonJS } from 'mlly'
+import { defaults, merge, cloneDeep } from 'lodash-es'
 import createResolver from 'postcss-import-resolver'
-import { Nuxt, tryRequireModule } from '@nuxt/kit'
+import { Nuxt, requireModule } from '@nuxt/kit'
 
 const isPureObject = obj => obj !== null && !Array.isArray(obj) && typeof obj === 'object'
 
@@ -16,15 +16,15 @@ export const orderPresets = {
     }
     return names
   },
-  presetEnvLast (names) {
-    const nanoIndex = names.indexOf('postcss-preset-env')
+  autoprefixerLast (names) {
+    const nanoIndex = names.indexOf('autoprefixer')
     if (nanoIndex !== names.length - 1) {
       names.push(names.splice(nanoIndex, 1)[0])
     }
     return names
   },
-  presetEnvAndCssnanoLast (names) {
-    return orderPresets.cssnanoLast(orderPresets.presetEnvLast(names))
+  autoprefixerAndCssnanoLast (names) {
+    return orderPresets.cssnanoLast(orderPresets.autoprefixerLast(names))
   }
 }
 
@@ -37,7 +37,7 @@ function postcssConfigFileWarning () {
   _postcssConfigFileWarningShown = true
 }
 
-export default class PostcssConfig {
+export class PostcssConfig {
   nuxt: Nuxt
   options: Nuxt['options']
 
@@ -47,7 +47,7 @@ export default class PostcssConfig {
   }
 
   get postcssOptions () {
-    return this.options.build.postcss
+    return this.options.build.postcss.postcssOptions
   }
 
   get postcssImportAlias () {
@@ -82,12 +82,20 @@ export default class PostcssConfig {
         // https://github.com/postcss/postcss-url
         'postcss-url': {},
 
-        // https://github.com/csstools/postcss-preset-env
-        'postcss-preset-env': this.preset || {},
-        cssnano: dev ? false : { preset: 'default' }
+        autoprefixer: {},
+
+        cssnano: dev
+          ? false
+          : {
+              preset: ['default', {
+                // Keep quotes in font values to prevent from HEX conversion
+                // https://github.com/nuxt/nuxt.js/issues/6306
+                minifyFontValues: { removeQuotes: false }
+              }]
+            }
       },
       // Array, String or Function
-      order: 'presetEnvAndCssnanoLast'
+      order: 'autoprefixerAndCssnanoLast'
     }
   }
 
@@ -104,7 +112,7 @@ export default class PostcssConfig {
         '.postcssrc.json',
         '.postcssrc.yaml'
       ]) {
-        const configFile = path.resolve(dir, file)
+        const configFile = resolve(dir, file)
         if (fs.existsSync(configFile)) {
           postcssConfigFileWarning()
           return configFile
@@ -113,26 +121,13 @@ export default class PostcssConfig {
     }
   }
 
-  configFromFile () {
+  getConfigFile () {
     const loaderConfig = (this.postcssOptions && this.postcssOptions.config) || {}
-    loaderConfig.path = loaderConfig.path || this.searchConfigFile()
+    const postcssConfigFile = loaderConfig || this.searchConfigFile()
 
-    if (loaderConfig.path) {
-      return {
-        sourceMap: this.options.build.cssSourceMap,
-        config: loaderConfig
-      }
+    if (typeof postcssConfigFile === 'string') {
+      return postcssConfigFile
     }
-  }
-
-  normalize (config) {
-    // TODO: Remove in Nuxt 3
-    if (Array.isArray(config)) {
-      consola.warn('Using an Array as `build.postcss` will be deprecated in Nuxt 3. Please switch to the object' +
-        ' declaration')
-      config = { plugins: config }
-    }
-    return config
   }
 
   sortPlugins ({ plugins, order }) {
@@ -144,49 +139,52 @@ export default class PostcssConfig {
   }
 
   loadPlugins (config) {
-    const { plugins } = config
-    if (isPureObject(plugins)) {
-      // Map postcss plugins into instances on object mode once
-      config.plugins = this.sortPlugins(config)
-        .map((p) => {
-          const plugin = tryRequireModule(p)
-          const opts = plugins[p]
-          if (opts === false) {
-            return false // Disabled
-          }
-          return plugin(opts)
-        })
-        .filter(Boolean)
-    }
+    if (!isPureObject(config.plugins)) { return }
+    // Map postcss plugins into instances on object mode once
+    const cjs = createCommonJS(import.meta.url)
+    config.plugins = this.sortPlugins(config).map((pluginName) => {
+      const pluginFn = requireModule(pluginName, { paths: [cjs.__dirname] })
+      const pluginOptions = config.plugins[pluginName]
+      if (!pluginOptions || typeof pluginFn !== 'function') { return null }
+      return pluginFn(pluginOptions)
+    }).filter(Boolean)
   }
 
   config () {
     /* istanbul ignore if */
-    if (!this.postcssOptions) {
+    if (!this.options.build.postcss) {
       return false
     }
 
-    let config = this.configFromFile()
-    if (config) {
-      return config
+    const configFile = this.getConfigFile()
+    if (configFile) {
+      return {
+        postcssOptions: {
+          config: configFile
+        },
+        sourceMap: this.options.build.cssSourceMap
+      }
     }
 
-    config = this.normalize(cloneDeep(this.postcssOptions))
+    let postcssOptions = cloneDeep(this.postcssOptions)
 
     // Apply default plugins
-    if (isPureObject(config)) {
-      if (config.preset) {
-        this.preset = config.preset
-        delete config.preset
-      }
-      if (Array.isArray(config.plugins)) {
-        defaults(config, this.defaultConfig)
+    if (isPureObject(postcssOptions)) {
+      if (Array.isArray(postcssOptions.plugins)) {
+        defaults(postcssOptions, this.defaultConfig)
       } else {
         // Keep the order of default plugins
-        config = merge({}, this.defaultConfig, config)
-        this.loadPlugins(config)
+        postcssOptions = merge({}, this.defaultConfig, postcssOptions)
+        this.loadPlugins(postcssOptions)
       }
-      return config
+
+      delete this.options.build.postcss.order
+
+      return {
+        sourceMap: this.options.build.cssSourceMap,
+        ...this.options.build.postcss,
+        postcssOptions
+      }
     }
   }
 }

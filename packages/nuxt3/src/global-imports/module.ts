@@ -1,5 +1,5 @@
 import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, addPluginTemplate } from '@nuxt/kit'
-import { resolve } from 'upath'
+import { resolve } from 'pathe'
 import type { Identifiers, GlobalImportsOptions } from './types'
 import { TransformPlugin } from './transform'
 import { defaultIdentifiers } from './identifiers'
@@ -8,7 +8,10 @@ export default defineNuxtModule<GlobalImportsOptions>({
   name: 'global-imports',
   configKey: 'globalImports',
   defaults: { identifiers: defaultIdentifiers },
-  setup ({ identifiers }, nuxt) {
+  setup ({ disabled = [], identifiers }, nuxt) {
+    for (const key of disabled) {
+      delete identifiers[key]
+    }
     if (nuxt.options.dev) {
       // Add all imports to globalThis in development mode
       addPluginTemplate({

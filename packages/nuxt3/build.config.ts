@@ -2,6 +2,7 @@ import { defineBuildConfig, BuildEntry } from 'unbuild'
 
 export default defineBuildConfig({
   declaration: true,
+  emitCJS: false,
   entries: [
     // Core
     { input: 'src/index' },
@@ -9,7 +10,6 @@ export default defineBuildConfig({
     { input: 'src/app/', outDir: 'dist/app/' },
     // Runtime dirs
     ...[
-      'components',
       'meta',
       'pages'
     ].map(name => ({ input: `src/${name}/runtime/`, outDir: `dist/${name}/runtime`, format: 'esm' } as BuildEntry))

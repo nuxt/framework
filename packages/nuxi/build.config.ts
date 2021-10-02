@@ -1,8 +1,10 @@
 import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
-  declaration: false,
+  declaration: true,
   inlineDependencies: true,
+  emitCJS: false,
+  cjsBridge: true,
   entries: [
     'src/index'
   ],

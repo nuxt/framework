@@ -1,5 +1,5 @@
-import { resolve } from 'path'
 import { pathToFileURL } from 'url'
+import { resolve } from 'pathe'
 import destr from 'destr'
 import { listen } from 'listhen'
 import { $fetch } from 'ohmyfetch'
@@ -9,11 +9,11 @@ import { fixtureDir, resolveWorkspace } from '../utils.mjs'
 
 const isBridge = Boolean(process.env.TEST_BRIDGE)
 
-export function importModule (path) {
+export function importModule(path) {
   return import(pathToFileURL(path).href)
 }
 
-export function setupTest (preset) {
+export function setupTest(preset) {
   const fixture = isBridge ? 'bridge' : 'basic'
   const rootDir = fixtureDir(fixture)
   const buildDir = resolve(rootDir, '.nuxt-' + preset)
@@ -24,10 +24,11 @@ export function setupTest (preset) {
     fetch: url => $fetch(url, { baseURL: ctx.server.url })
   }
 
-  it('nitro build', async () => {
+  before('nitro build', async function () {
+    this.timeout(60000)
     const nuxtCLI = isBridge
       ? resolve(ctx.rootDir, 'node_modules/nuxt/bin/nuxt.js')
-      : resolveWorkspace('packages/nuxi/bin/nuxi.js')
+      : resolveWorkspace('packages/nuxi/bin/nuxi.mjs')
 
     await execa('node', [nuxtCLI, 'build', ctx.rootDir], {
       env: {
@@ -37,7 +38,7 @@ export function setupTest (preset) {
         NODE_ENV: 'production'
       }
     })
-  }).timeout(60000)
+  })
 
   after('Cleanup', async () => {
     if (ctx.server) {
@@ -48,11 +49,11 @@ export function setupTest (preset) {
   return ctx
 }
 
-export async function startServer (ctx, handle) {
+export async function startServer(ctx, handle) {
   ctx.server = await listen(handle)
 }
 
-export function testNitroBehavior (ctx, getHandler) {
+export function testNitroBehavior(_ctx, getHandler) {
   let handler
 
   it('setup handler', async () => {
