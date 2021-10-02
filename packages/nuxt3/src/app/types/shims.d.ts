@@ -29,6 +29,7 @@ declare module '*.vue' {
 }
 
 declare module 'vue' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface App<HostElement> {
     $nuxt: Nuxt
   }
