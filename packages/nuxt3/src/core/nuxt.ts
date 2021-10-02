@@ -13,8 +13,7 @@ export function createNuxt (options: NuxtOptions): Nuxt {
   const hooks = createHooks<NuxtHooks>()
 
   const nuxt: Nuxt = {
-    // TODO: remove prefix when we bumpped to stable
-    version: '3.0.0-' + version,
+    _version: version,
     options,
     hooks,
     callHook: hooks.callHook,

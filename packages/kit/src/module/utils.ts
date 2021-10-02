@@ -308,7 +308,7 @@ export function isNuxt2 (nuxt?: any) {
  */
 export function getNuxtVersion (nuxt?: any) {
   nuxt = nuxt || useNuxt()
-  let version = (nuxt?.version || nuxt?.constructor?.version || '').replace(/^v/g, '')
+  let version = (nuxt?._version || nuxt?.version || nuxt?.constructor?.version || '').replace(/^v/g, '')
   if (!version) {
     throw new Error('Cannot determine nuxt version! Is currect instance passed?')
   }
