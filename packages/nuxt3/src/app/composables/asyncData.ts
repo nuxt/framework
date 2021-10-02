@@ -1,8 +1,8 @@
 import { onBeforeMount, onUnmounted, ref, unref } from 'vue'
 import type { UnwrapRef, Ref } from 'vue'
 
-import { NuxtApp, useNuxtApp } from '../nuxt'
 import { ensureReactive, useGlobalData } from './data'
+import { NuxtApp, useNuxtApp } from '#nuxt'
 
 export type AsyncDataFn<T> = (ctx?: NuxtApp) => Promise<T>
 
