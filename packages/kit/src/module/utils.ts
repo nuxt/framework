@@ -298,9 +298,7 @@ export const templateUtils = {
  * Check if current nuxt instance is version 2 legacy
  */
 export function isNuxt2 (nuxt?: any) {
-  nuxt = nuxt || useNuxt()
-  const version = (nuxt?.version || nuxt?.constructor?.version || '').replace(/^v|-.*$/g, '')
-  return version.startsWith('2.')
+  return getNuxtVersion(nuxt).startsWith('2.')
 }
 
 /**
