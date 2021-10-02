@@ -68,7 +68,9 @@ export function setupNitroBridge () {
     const serverConfig = webpackConfigs.find(config => config.name === 'server')
     if (serverConfig) {
       serverConfig.plugins = serverConfig.plugins || []
-      serverConfig.plugins.push(new AsyncLoadingPlugin())
+      serverConfig.plugins.push(new AsyncLoadingPlugin({
+        modulesDir: nuxt.options.modulesDir
+      }))
     }
   })
 
