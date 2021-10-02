@@ -11,7 +11,14 @@ for (const type of ['private', 'public']) {
   }
 }
 
-// Deep freeze config
+// Named exports
+export const privateConfig = deepFreeze(defu(_runtimeConfig.private, _runtimeConfig.public))
+export const publicConfig = deepFreeze(_runtimeConfig.public)
+
+// Default export (usable for server)
+export default privateConfig
+
+// Utils
 function deepFreeze (object: Record<string, any>) {
   const propNames = Object.getOwnPropertyNames(object)
   for (const name of propNames) {
@@ -20,13 +27,4 @@ function deepFreeze (object: Record<string, any>) {
       deepFreeze(value)
     }
   }
-  return Object.freeze(object)
 }
-const _mergedConfig = deepFreeze(_runtimeConfig)
-
-// Named exports
-export const privateConfig = defu(_mergedConfig.private, _mergedConfig.public)
-export const publicConfig = _mergedConfig.public
-
-// Default export (usable for server)
-export default privateConfig
