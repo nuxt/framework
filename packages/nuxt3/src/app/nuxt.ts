@@ -1,4 +1,4 @@
-import { getCurrentInstance } from 'vue'
+import { getCurrentInstance, reactive } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import { defineGetter } from './utils'
@@ -112,7 +112,7 @@ export function createNuxtApp (options: CreateOptions) {
     nuxt.provide('config', options.ssrContext.runtimeConfig.private)
     nuxt.payload.config = options.ssrContext.runtimeConfig.public
   } else {
-    nuxt.provide('config', nuxt.payload.config)
+    nuxt.provide('config', reactive(nuxt.payload.config))
   }
 
   return nuxt
