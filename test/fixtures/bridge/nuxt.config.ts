@@ -1,6 +1,4 @@
-import kit from '@nuxt/kit'
-
-export default kit.defineNuxtConfig({
+export default {
   components: true,
   buildModules: [
     '@nuxt/bridge'
@@ -18,4 +16,4 @@ export default kit.defineNuxtConfig({
   nitro: {
     output: { dir: process.env.NITRO_OUTPUT_DIR }
   }
-})
+}
