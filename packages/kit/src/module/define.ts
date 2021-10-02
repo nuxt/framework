@@ -39,7 +39,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
     if (mod.requires) {
       const issues = checkNuxtCompatibilityIssues(mod.requires, nuxt)
       if (issues.length) {
-        consola.warn(`Module "${mod.name}" is disabled due to incompatibility issues:\n${issues.toString()}`)
+        consola.warn(`Module \`${mod.name}\` is disabled due to incompatibility issues:\n${issues.toString()}`)
         return
       }
     }
