@@ -19,7 +19,6 @@ export const useRouter = () => {
 // This provides an equivalent interface to `vue-router` (unlike legacy implementation)
 export const useRoute = () => {
   const nuxt = useNuxtApp()
-  if (!nuxt) { throw new Error('useRoute must be called from within a Vue component') }
 
   if (!nuxt._route) {
     nuxt._route = reactive(nuxt.legacyNuxt.context.route)
