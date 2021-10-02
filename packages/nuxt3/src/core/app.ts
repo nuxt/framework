@@ -1,11 +1,9 @@
-import { resolve } from 'upath'
-import lodashTemplate from 'lodash/template'
+import { promises as fsp } from 'fs'
+import { resolve } from 'pathe'
 import defu from 'defu'
-import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, NuxtTemplate, normalizePlugin, normalizeTemplate } from '@nuxt/kit'
-import { readFile, writeFile } from 'fs-extra'
+import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils } from '@nuxt/kit'
 
 import * as defaultTemplates from '../app/templates'
-import * as templateUtils from './template.utils'
 
 export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp {
   return defu(options, {
@@ -46,7 +44,7 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
     }
 
     if (template.write) {
-      await writeFile(fullPath, contents, 'utf8')
+      await fsp.writeFile(fullPath, contents, 'utf8')
     }
   }))
 
@@ -76,21 +74,4 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Extend app
   await nuxt.callHook('app:resolve', app)
-}
-
-async function compileTemplate (template: NuxtTemplate, ctx: any) {
-  const data = { ...ctx, ...template.options }
-  if (template.src) {
-    try {
-      const srcContents = await readFile(template.src, 'utf-8')
-      return lodashTemplate(srcContents, {})(data)
-    } catch (err) {
-      console.error('Error compiling template: ', template)
-      throw err
-    }
-  }
-  if (template.getContents) {
-    return template.getContents(data)
-  }
-  throw new Error('Invalid template: ' + JSON.stringify(template))
 }

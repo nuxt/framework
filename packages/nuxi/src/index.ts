@@ -1,4 +1,3 @@
-import 'v8-compile-cache'
 import mri from 'mri'
 import { red, cyan } from 'colorette'
 import { commands, Command, NuxtCommand } from './commands'
@@ -29,7 +28,8 @@ async function _main () {
   }
 
   try {
-    const cmd = await commands[command as Command]().then(c => c.default || c) as NuxtCommand
+    // @ts-ignore default.default is hotfix for #621
+    const cmd = await commands[command as Command]() as NuxtCommand
     if (args.h || args.help) {
       showHelp(cmd.meta)
     } else {

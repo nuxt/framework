@@ -1,8 +1,13 @@
-import fs from 'fs'
-import { basename, parse, resolve } from 'upath'
+import { existsSync, promises as fsp } from 'fs'
+import { basename, extname, parse, resolve } from 'pathe'
+import lodashTemplate from 'lodash.template'
 import hash from 'hash-sum'
 import type { WebpackPluginInstance, Configuration as WebpackConfig } from 'webpack'
 import type { Plugin as VitePlugin, UserConfig as ViteConfig } from 'vite'
+import { camelCase } from 'scule'
+import semver from 'semver'
+import { NuxtCompatibilityConstraints, NuxtCompatibilityIssues } from '../types/module'
+import { Nuxt } from '../types/nuxt'
 import { useNuxt } from '../nuxt'
 import type { NuxtTemplate, NuxtPlugin, NuxtPluginTemplate } from '../types/nuxt'
 
@@ -42,7 +47,7 @@ export function normalizeTemplate (template: NuxtTemplate | string): NuxtTemplat
 
   // Use src if provided
   if (template.src) {
-    if (!fs.existsSync(template.src)) {
+    if (!existsSync(template.src)) {
       throw new Error('Template not found: ' + template.src)
     }
     if (!template.filename) {
@@ -274,9 +279,102 @@ export function addVitePlugin (plugin: VitePlugin, options?: ExtendViteConfigOpt
   }, options)
 }
 
+export async function compileTemplate (template: NuxtTemplate, ctx: any) {
+  const data = { ...ctx, ...template.options }
+  if (template.src) {
+    try {
+      const srcContents = await fsp.readFile(template.src, 'utf-8')
+      return lodashTemplate(srcContents, {})(data)
+    } catch (err) {
+      console.error('Error compiling template: ', template)
+      throw err
+    }
+  }
+  if (template.getContents) {
+    return template.getContents(data)
+  }
+  throw new Error('Invalid template: ' + JSON.stringify(template))
+}
+
+const serialize = data => JSON.stringify(data, null, 2).replace(/"{(.+)}"/g, '$1')
+
+const importName = (src: string) => `${camelCase(basename(src, extname(src))).replace(/[^a-zA-Z?\d\s:]/g, '')}_${hash(src)}`
+
+const importSources = (sources: string | string[], { lazy = false } = {}) => {
+  if (!Array.isArray(sources)) {
+    sources = [sources]
+  }
+  return sources.map((src) => {
+    if (lazy) {
+      return `const ${importName(src)} = () => import('${src}' /* webpackChunkName: '${src}' */)`
+    }
+    return `import ${importName(src)} from '${src}'`
+  }).join('\n')
+}
+
+export const templateUtils = {
+  serialize,
+  importName,
+  importSources
+}
+
 /**
  * Check if current nuxt instance is version 2 legacy
  */
-export function isNuxt2 (nuxt?: any) {
-  return (nuxt || useNuxt()).version?.startsWith('v2')
+export function isNuxt2 (nuxt: Nuxt = useNuxt()) {
+  return getNuxtVersion(nuxt).startsWith('2.')
+}
+
+/**
+ * Check if current nuxt instance is version 2 legacy
+ */
+export function isNuxt3 (nuxt: Nuxt = useNuxt()) {
+  return getNuxtVersion(nuxt).startsWith('3.')
+}
+
+/**
+ * Get nuxt version
+ */
+export function getNuxtVersion (nuxt: Nuxt | any = useNuxt() /* TODO: LegacyNuxt */) {
+  const version = (nuxt?._version || nuxt?.version || nuxt?.constructor?.version || '').replace(/^v/g, '')
+  if (!version) {
+    throw new Error('Cannot determine nuxt version! Is currect instance passed?')
+  }
+  return version
+}
+
+/**
+ * Check version constraints and return incompatibility issues as an array
+ */
+export function checkNuxtCompatibilityIssues (constraints: NuxtCompatibilityConstraints, nuxt: Nuxt = useNuxt()): NuxtCompatibilityIssues {
+  const issues: NuxtCompatibilityIssues = []
+  if (constraints.nuxt) {
+    const nuxtVersion = getNuxtVersion(nuxt)
+    if (!semver.satisfies(nuxtVersion, constraints.nuxt)) {
+      issues.push({
+        name: 'nuxt',
+        message: `Nuxt version \`${constraints.nuxt}\` is required but currently using \`${nuxtVersion}\``
+      })
+    }
+  }
+  issues.toString = () => issues.map(issue => ` - [${issue.name}] ${issue.message}`).join('\n')
+  return issues
+}
+
+/**
+ * Check version constraints and throw a detailed error if has any, otherwise returns true
+ */
+export function ensureNuxtCompatibility (constraints: NuxtCompatibilityConstraints, nuxt: Nuxt = useNuxt()): true {
+  const issues = checkNuxtCompatibilityIssues(constraints, nuxt)
+  if (issues.length) {
+    throw new Error('Nuxt compatibility issues found:\n' + issues.toString())
+  }
+  return true
+}
+
+/**
+ * Check version constraints and return true if passed, otherwise returns false
+ */
+export function hasNuxtCompatibility (constraints: NuxtCompatibilityConstraints, nuxt: Nuxt = useNuxt()) {
+  return !checkNuxtCompatibilityIssues(constraints, nuxt).length
 }
