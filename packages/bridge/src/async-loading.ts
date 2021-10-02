@@ -9,7 +9,7 @@ export class AsyncLoadingPlugin {
     this.opts = opts
     const _require = createRequire(import.meta.url)
     const TemplatePath = _require.resolve('webpack/lib/Template', { paths: [...this.opts.modulesDir] })
-    this.Template = _require.resolve(TemplatePath)
+    this.Template = _require(TemplatePath)
   }
 
   apply (compiler: Compiler) {
