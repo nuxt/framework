@@ -24,9 +24,12 @@ export const useRoute = () => {
   const nuxt = useNuxtApp()
 
   if (!nuxt._route) {
-    Object.defineProperty(nuxt, '_route', {
+    Object.defineProperty(nuxt, '__route', {
       get: () => nuxt.legacyNuxt.context.route
     })
+    nuxt._route = reactive(nuxt.__route)
+    const router = useRouter()
+    router.afterEach(route => Object.assign(nuxt._route, route))
   }
 
   return nuxt._route as Route
