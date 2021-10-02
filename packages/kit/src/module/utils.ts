@@ -306,7 +306,7 @@ export function isNuxt2 (nuxt?: any) {
  */
 export function isNuxt3 (nuxt?: any) {
   nuxt = nuxt || useNuxt()
-  return nuxt.options._majorVersion === 3
+  return getNuxtVersion(nuxt).startsWith('3.')
 }
 
 /**
@@ -314,12 +314,9 @@ export function isNuxt3 (nuxt?: any) {
  */
 export function getNuxtVersion (nuxt?: any) {
   nuxt = nuxt || useNuxt()
-  let version = (nuxt?._version || nuxt?.version || nuxt?.constructor?.version || '').replace(/^v/g, '')
+  const version = (nuxt?._version || nuxt?.version || nuxt?.constructor?.version || '').replace(/^v/g, '')
   if (!version) {
     throw new Error('Cannot determine nuxt version! Is currect instance passed?')
-  }
-  if (nuxt.options._majorVersion === 3) {
-    version = version.replace(/^[^-]+/, '3.0.0')
   }
   return version
 }
