@@ -14,6 +14,13 @@ export interface NuxtCompatibilityIssue {
   message: string
 }
 
+export interface NuxtCompatibilityIssues extends Array<NuxtCompatibilityIssue> {
+  /**
+   * Return formatted error message
+   */
+  toString(): string
+}
+
 export interface ModuleMeta {
   /** Module name */
   name?: string

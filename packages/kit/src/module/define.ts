@@ -2,11 +2,10 @@ import { promises as fsp } from 'fs'
 import defu from 'defu'
 import { applyDefaults } from 'untyped'
 import consola from 'consola'
-import { satisfies } from 'semver'
 import { useNuxt, nuxtCtx } from '../nuxt'
 import type { Nuxt, NuxtTemplate } from '../types/nuxt'
 import type { NuxtModule, LegacyNuxtModule, ModuleOptions } from '../types/module'
-import { getNuxtVersion, compileTemplate, isNuxt2, templateUtils } from './utils'
+import { checkNuxtCompatibilityIssues, compileTemplate, isNuxt2, templateUtils } from './utils'
 
 /**
  * Define a Nuxt module, automatically merging defaults with user provided options, installing
@@ -37,10 +36,10 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
     }
 
     // check nuxt version range
-    if (mod.requires?.nuxt) {
-      const version = getNuxtVersion()
-      if (!satisfies(version, mod.requires?.nuxt)) {
-        consola.warn(`module "${mod.name}" requires nuxt "${mod.nuxtVersion}" but got "${version}", module disabled`)
+    if (mod.requires) {
+      const issues = checkNuxtCompatibilityIssues(mod.requires, nuxt)
+      if (issues.length) {
+        consola.warn(`Module "${mod.name}" is disabled due to incompatibility issues:\n${issues.toString()}`)
         return
       }
     }

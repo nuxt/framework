@@ -6,7 +6,7 @@ import type { WebpackPluginInstance, Configuration as WebpackConfig } from 'webp
 import type { Plugin as VitePlugin, UserConfig as ViteConfig } from 'vite'
 import { camelCase } from 'scule'
 import semver from 'semver'
-import { NuxtCompatibilityConstraints, NuxtCompatibilityIssue } from '../types/module'
+import { NuxtCompatibilityConstraints, NuxtCompatibilityIssues } from '../types/module'
 import { Nuxt } from '../types/nuxt'
 import { useNuxt } from '../nuxt'
 import type { NuxtTemplate, NuxtPlugin, NuxtPluginTemplate } from '../types/nuxt'
@@ -325,17 +325,18 @@ export function getNuxtVersion (nuxt: Nuxt | any = useNuxt() /* TODO: LegacyNuxt
 /**
  * Check version constraints and return incompatibility issues as an array
  */
-export function checkNuxtCompatibilityIssues (constraints: NuxtCompatibilityConstraints, nuxt: Nuxt = useNuxt()): NuxtCompatibilityIssue[] {
-  const issues: NuxtCompatibilityIssue[] = []
+export function checkNuxtCompatibilityIssues (constraints: NuxtCompatibilityConstraints, nuxt: Nuxt = useNuxt()): NuxtCompatibilityIssues {
+  const issues: NuxtCompatibilityIssues = []
   if (constraints.nuxt) {
     const nuxtVersion = getNuxtVersion(nuxt)
     if (!semver.satisfies(nuxtVersion, constraints.nuxt)) {
       issues.push({
         name: 'nuxt',
-        message: `Nuxt version "${constraints.nuxt}" is required but currently using "${nuxtVersion}"`
+        message: `Nuxt version \`${constraints.nuxt}\` is required but currently using \`${nuxtVersion}\``
       })
     }
   }
+  issues.toString = () => issues.map(issue => ` - [${issue.name}] ${issue.message}`).join('\n')
   return issues
 }
 
@@ -345,7 +346,7 @@ export function checkNuxtCompatibilityIssues (constraints: NuxtCompatibilityCons
 export function ensureNuxtCompatibility (constraints: NuxtCompatibilityConstraints, nuxt: Nuxt = useNuxt()): true {
   const issues = checkNuxtCompatibilityIssues(constraints, nuxt)
   if (issues.length) {
-    throw new Error('Nuxt compatibility issues found:\n' + issues.map(issue => ` - [${issue.name}] ${issue.message}`).join('\n'))
+    throw new Error('Nuxt compatibility issues found:\n' + issues.toString())
   }
   return true
 }
