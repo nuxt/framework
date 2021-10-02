@@ -63,7 +63,7 @@ export async function renderMiddleware (req, res: ServerResponse) {
     url,
     req,
     res,
-    config: { private: privateConfig, public: publicConfig },
+    runtimeConfig: { private: privateConfig, public: publicConfig },
     noSSR: req.spa || req.headers['x-nuxt-no-ssr'],
     ...(req.context || {})
   }

@@ -109,8 +109,8 @@ export function createNuxtApp (options: CreateOptions) {
 
   // Expose runtime config
   if (process.server) {
-    nuxt.provide('config', options.ssrContext.config.private)
-    nuxt.payload.config = options.ssrContext.config.public
+    nuxt.provide('config', options.ssrContext.runtimeConfig.private)
+    nuxt.payload.config = options.ssrContext.runtimeConfig.public
   } else {
     nuxt.provide('config', nuxt.payload.config)
   }
