@@ -14,7 +14,13 @@ export function setupCAPIBridge (_options: any) {
 
   // Add composition-api support
   const _require = createRequire(import.meta.url)
-  nuxt.options.alias['@vue/composition-api'] = _require.resolve('@vue/composition-api/dist/vue-composition-api.mjs')
+  const vueCapiEntry = _require.resolve('@vue/composition-api/dist/vue-composition-api.mjs')
+  nuxt.options.alias['@vue/composition-api/dist/vue-composition-api.common.js'] = vueCapiEntry
+  nuxt.options.alias['@vue/composition-api/dist/vue-composition-api.common.prod.js'] = vueCapiEntry
+  nuxt.options.alias['@vue/composition-api/dist/vue-composition-api.esm.js'] = vueCapiEntry
+  nuxt.options.alias['@vue/composition-api/dist/vue-composition-api.js'] = vueCapiEntry
+  nuxt.options.alias['@vue/composition-api/dist/vue-composition-api.mjs'] = vueCapiEntry
+  nuxt.options.alias['@vue/composition-api'] = vueCapiEntry
   const capiPluginPath = resolve(distDir, 'runtime/capi.plugin.mjs')
   addPluginTemplate({ filename: 'capi.plugin.mjs', src: capiPluginPath })
 
