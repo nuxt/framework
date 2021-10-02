@@ -1,3 +1,6 @@
+// @ts-ignore
+global.__NUXT_PREPATHS__ = (global.__NUXT_PREPATHS__ || []).concat(__dirname)
+
 export default {
   components: true,
   buildModules: [
