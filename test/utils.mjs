@@ -9,11 +9,11 @@ import { createCommonJS } from 'mlly'
 const cjs = createCommonJS(import.meta.url)
 
 export function resolveWorkspace (name) {
-  return resolve(__dirname, '../', name)
+  return resolve(cjs.__dirname, '../', name)
 }
 
 export function fixtureDir (name) {
-  return resolve(__dirname, 'fixtures', name)
+  return resolve(cjs.__dirname, 'fixtures', name)
 }
 
 export async function execNuxtCLI (args, opts) {
