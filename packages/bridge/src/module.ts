@@ -1,3 +1,4 @@
+import { createRequire } from 'module'
 import { defineNuxtModule, installModule } from '@nuxt/kit'
 import { setupNitroBridge } from './nitro'
 import { setupAppBridge } from './app'
@@ -20,6 +21,8 @@ export default defineNuxtModule({
     resolve: true
   },
   async setup (opts, nuxt) {
+    const _require = createRequire(import.meta.url)
+
     if (opts.nitro) {
       await setupNitroBridge()
     }
@@ -36,13 +39,13 @@ export default defineNuxtModule({
       await setupGlobalImports()
     }
     if (opts.vite) {
-      await installModule(nuxt, require.resolve('nuxt-vite'))
+      await installModule(nuxt, _require.resolve('nuxt-vite'))
     }
     if (opts.postcss8) {
-      await installModule(nuxt, require.resolve('@nuxt/postcss8'))
+      await installModule(nuxt, _require.resolve('@nuxt/postcss8'))
     }
     if (opts.swc) {
-      await installModule(nuxt, require.resolve('nuxt-swc'))
+      await installModule(nuxt, _require.resolve('nuxt-swc'))
     }
     if (opts.resolve) {
       setupBetterResolve()
