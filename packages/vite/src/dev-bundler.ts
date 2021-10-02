@@ -45,6 +45,7 @@ async function transformRequest (viteServer: vite.ViteDevServer, id) {
   const code = `async function () {
 const __vite_ssr_exports__ = {};
 const __vite_ssr_exportAll__ = __createViteSSRExportAll__(__vite_ssr_exports__)
+const __vite_ssr_import_meta__ = { hot: { accept() {} } };
 ${res.code || '/* empty */'};
 return __vite_ssr_exports__;
 }`
@@ -71,8 +72,8 @@ async function transformRequestRecursive (viteServer: vite.ViteDevServer, id, pa
   return Object.values(chunks)
 }
 
-export async function bundleRequest (viteServer: vite.ViteDevServer, id) {
-  const chunks = await transformRequestRecursive(viteServer, id)
+export async function bundleRequest (viteServer: vite.ViteDevServer, entryId) {
+  const chunks = await transformRequestRecursive(viteServer, entryId)
 
   const listIds = ids => ids.map(id => `// - ${id} (${hashId(id)})`).join('\n')
   const chunksCode = chunks.map(chunk => `
@@ -84,37 +85,38 @@ export async function bundleRequest (viteServer: vite.ViteDevServer, id) {
 const ${hashId(chunk.id)} = ${chunk.code}
 `).join('\n')
 
-  const manifestCode = 'const $chunks = {\n' +
+  const manifestCode = 'const __chunks__ = {\n' +
    chunks.map(chunk => ` '${chunk.id}': ${hashId(chunk.id)}`).join(',\n') + '\n}'
 
   const dynamicImportCode = `
-const $cache = {}
-const $importing = new Set()
-function __vite_ssr_import__ (id) {
-  if (!$cache[id]) {
-    $importing.add(id)
-    $cache[id] = Promise.resolve($chunks[id]()).then(mod => {
-      // if (mod && !('default' in mod))
-      //   mod.default = mod
-      $importing.delete(id)
-      return mod
-    })
+const __import_cache__ = {}
+
+const __importing__ = new Set() // TODO: Debug
+setTimeout(() => console.log(new Date(), __importing__), 1500)
+
+function __import__ (id) {
+  if (__import_cache__[id]) {
+    return __import_cache__[id]
   }
-  return $cache[id]
-}
-function __vite_ssr_dynamic_import__(id) {
-  return __vite_ssr_import__(id)
+  __importing__.add(id)
+  __import_cache__[id] = Promise.resolve(__chunks__[id]()).then(mod => {
+    __importing__.delete(id)
+    return mod
+  })
+  return __import_cache__[id]
 }
 
-// TODO: remove debug code
-setTimeout(()=>{
-  console.log('hanging importing (circlar)', $importing)
-}, 2000)
+function __vite_ssr_import__ (id) {
+  __import__(id)
+}
+
+function __vite_ssr_dynamic_import__(id) {
+  __import__(id)
+}
 `
 
-  // https://github.com/vitejs/vite/blob/fb406ce4c0fe6da3333c9d1c00477b2880d46352/packages/vite/src/node/ssr/ssrModuleLoader.ts#L121-L133
   const helpers = `
-function __createViteSSRExportAll__(ssrModule) {
+globalThis.__createViteSSRExportAll__ = function (ssrModule) {
   return (sourceModule) => {
     for (const key in sourceModule) {
       if (key !== 'default') {
@@ -131,22 +133,12 @@ function __createViteSSRExportAll__(ssrModule) {
 }
 `
 
-  // TODO: implement real HMR
-  const metaPolyfill = `
-const __vite_ssr_import_meta__ = {
-  hot: {
-    accept() {}
-  }
-}
-`
-
   const code = [
-    metaPolyfill,
     chunksCode,
     manifestCode,
     dynamicImportCode,
     helpers,
-    `export default ${hashId(id)}`
+    `export default await __import__('${entryId}')`
   ].join('\n\n')
 
   return { code }
