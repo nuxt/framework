@@ -1,11 +1,10 @@
 import { resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
-import fse from 'fs-extra'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
-import { bundleRequest } from './dev-bundler'
+import { bundleRequest, writeBundle } from './dev-bundler'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -69,9 +68,8 @@ export async function buildServer (ctx: ViteBuildContext) {
   await viteServer.pluginContainer.buildStart({})
 
   async function generate () {
-    const { code } = await bundleRequest(viteServer, resolve(ctx.nuxt.options.appDir, 'entry'))
-
-    await fse.writeFile(resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'), code, 'utf-8')
+    const bundle = await bundleRequest(viteServer, resolve(ctx.nuxt.options.appDir, 'entry'))
+    await writeBundle(bundle, resolve(ctx.nuxt.options.buildDir, 'dist/server'), 'server')
     await onBuild()
   }
 

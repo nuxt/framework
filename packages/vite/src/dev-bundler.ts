@@ -1,9 +1,11 @@
 import { builtinModules } from 'module'
 import { createHash } from 'crypto'
+import { promises as fsp } from 'fs'
+import { resolve } from 'path'
 import * as vite from 'vite'
 
 interface TransformChunk {
-  id: string,
+  request: string,
   code: string,
   deps: string[],
   parents: string[]
@@ -44,77 +46,50 @@ async function transformRequest (viteServer: vite.ViteDevServer, id) {
   // Wrap into a vite module
   const code = `async function () {
 const __vite_ssr_exports__ = {};
-const __vite_ssr_exportAll__ = __createViteSSRExportAll__(__vite_ssr_exports__)
+const __vite_ssr_exportAll__ = __createViteSSRExportAll__(__vite_ssr_exports__);
+const __vite_ssr_import_meta__ = { hot: { accept() {} } };
 ${res.code || '/* empty */'};
 return __vite_ssr_exports__;
 }`
   return { code, deps: res.deps || [], dynamicDeps: res.dynamicDeps || [] }
 }
 
-async function transformRequestRecursive (viteServer: vite.ViteDevServer, id, parent = '<entry>', chunks: Record<string, TransformChunk> = {}) {
-  if (chunks[id]) {
-    chunks[id].parents.push(parent)
+async function transformRequestRecursive (viteServer: vite.ViteDevServer, request, parent = '<entry>', chunks: Record<string, TransformChunk> = {}) {
+  if (chunks[request]) {
+    chunks[request].parents.push(parent)
     return
   }
-  const res = await transformRequest(viteServer, id)
+  const res = await transformRequest(viteServer, request)
   const deps = uniq([...res.deps, ...res.dynamicDeps])
 
-  chunks[id] = {
-    id,
+  chunks[request] = {
+    request,
     code: res.code,
     deps,
     parents: [parent]
   } as TransformChunk
   for (const dep of deps) {
-    await transformRequestRecursive(viteServer, dep, id, chunks)
+    await transformRequestRecursive(viteServer, dep, request, chunks)
   }
   return Object.values(chunks)
 }
 
-export async function bundleRequest (viteServer: vite.ViteDevServer, id) {
-  const chunks = await transformRequestRecursive(viteServer, id)
-
-  const listIds = ids => ids.map(id => `// - ${id} (${hashId(id)})`).join('\n')
-  const chunksCode = chunks.map(chunk => `
-// --------------------
-// Request: ${chunk.id}
-// Parents: \n${listIds(chunk.parents)}
-// Dependencies: \n${listIds(chunk.deps)}
-// --------------------
-const ${hashId(chunk.id)} = ${chunk.code}
-`).join('\n')
-
-  const manifestCode = 'const $chunks = {\n' +
-   chunks.map(chunk => ` '${chunk.id}': ${hashId(chunk.id)}`).join(',\n') + '\n}'
-
-  const dynamicImportCode = `
-const $cache = {}
-const $importing = new Set()
-function __vite_ssr_import__ (id) {
-  if (!$cache[id]) {
-    $importing.add(id)
-    $cache[id] = Promise.resolve($chunks[id]()).then(mod => {
-      // if (mod && !('default' in mod))
-      //   mod.default = mod
-      $importing.delete(id)
-      return mod
-    })
+const COMMON_UTILS = `
+const __import_cache__ = {}
+function __import__ (request) {
+  const id = __manifest__[request]
+  if (__import_cache__[id]) {
+    return __import_cache__[id]
   }
-  return $cache[id]
-}
-function __vite_ssr_dynamic_import__(id) {
-  return __vite_ssr_import__(id)
+  return __import_cache__[id] = import('./chunks/' + id + '.mjs').then(r => r.default())
 }
 
-// TODO: remove debug code
-setTimeout(()=>{
-  console.log('hanging importing (circlar)', $importing)
-}, 2000)
-`
+globalThis.__vite_ssr_import__ = __import__
+globalThis.__vite_ssr_dynamic_import__ = __import__
 
-  // https://github.com/vitejs/vite/blob/fb406ce4c0fe6da3333c9d1c00477b2880d46352/packages/vite/src/node/ssr/ssrModuleLoader.ts#L121-L133
-  const helpers = `
-function __createViteSSRExportAll__(ssrModule) {
+
+
+globalThis.__createViteSSRExportAll__ = function (ssrModule) {
   return (sourceModule) => {
     for (const key in sourceModule) {
       if (key !== 'default') {
@@ -128,32 +103,52 @@ function __createViteSSRExportAll__(ssrModule) {
       }
     }
   }
-}
+}`
+
+export async function bundleRequest (viteServer: vite.ViteDevServer, id) {
+  const transformedChunks = await transformRequestRecursive(viteServer, id)
+
+  const listIds = ids => ids.map(id => `// - ${id} (${hashId(id)})`).join('\n')
+
+  const chunks = transformedChunks.map((chunk) => {
+    const id = hashId(chunk.request)
+    return {
+      request: chunk.request,
+      id,
+      code: `
+// --------------------
+// Request: ${chunk.request}
+// Parents: \n${listIds(chunk.parents)}
+// Dependencies: \n${listIds(chunk.deps)}
+// --------------------
+export default ${chunk.code}
+`
+    }
+  })
+
+  const entry = `
+const __manifest__ = {\n${chunks.map(chunk => ` '${chunk.request}': '${chunk.id}'`).join(',\n')}\n}
+
+${COMMON_UTILS}
+
+const entry = await __import__('${id}')
+export default entry
 `
 
-  // TODO: implement real HMR
-  const metaPolyfill = `
-const __vite_ssr_import_meta__ = {
-  hot: {
-    accept() {}
-  }
+  return { chunks, entry }
 }
-`
 
-  const code = [
-    metaPolyfill,
-    chunksCode,
-    manifestCode,
-    dynamicImportCode,
-    helpers,
-    `export default ${hashId(id)}`
-  ].join('\n\n')
-
-  return { code }
+export async function writeBundle (bundle, outDir, entryName = 'index') {
+  await fsp.mkdir(resolve(outDir)).catch(() => {})
+  await fsp.mkdir(resolve(outDir, 'chunks')).catch(() => {})
+  await Promise.all(bundle.chunks.map(async (chunk) => {
+    await fsp.writeFile(resolve(outDir, 'chunks', chunk.id + '.mjs'), chunk.code, 'utf-8')
+  }))
+  await fsp.writeFile(resolve(outDir, entryName + '.mjs'), bundle.entry, 'utf-8')
 }
 
 function hashId (id: string) {
-  return '$id_' + hash(id)
+  return 'chunk_' + hash(id)
 }
 
 function hash (input: string, length = 8) {
