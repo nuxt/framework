@@ -1,10 +1,6 @@
-// import { createUnplugin } from 'unplugin'
-import { createRequire } from 'module'
+import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL } from 'ufo'
 import { IdentifierMap } from './types'
-
-// TMP
-const { createUnplugin } = createRequire(import.meta.url)('unplugin')
 
 const excludeRE = [
   // imported from other module

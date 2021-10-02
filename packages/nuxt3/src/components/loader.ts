@@ -1,10 +1,6 @@
-// import { createUnplugin } from 'unplugin'
-import { createRequire } from 'module'
+import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL } from 'ufo'
 import { Component } from './types'
-
-// TMP
-const { createUnplugin } = createRequire(import.meta.url)('unplugin')
 
 interface LoaderOptions {
   getComponents(): Component[]
