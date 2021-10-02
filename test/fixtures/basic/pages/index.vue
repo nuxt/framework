@@ -4,3 +4,7 @@
     <div>Config: {{ $config.testConfig }}</div>
   </div>
 </template>
+
+<script setup>
+const $config = useRuntimeConfig()
+</script>

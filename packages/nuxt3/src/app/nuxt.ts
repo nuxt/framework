@@ -190,3 +190,7 @@ export function useNuxtApp (): NuxtApp {
 
   return vm.appContext.app.$nuxt
 }
+
+export function useRuntimeConfig (): Record<string, any> {
+  return useNuxtApp().$config
+}
