@@ -1,4 +1,5 @@
 import { createRequire } from 'module'
+import { pathToFileURL } from 'url'
 import { normalize, dirname } from 'pathe'
 
 export function getModulePaths (paths?: string | string[]): string[] {
@@ -29,7 +30,8 @@ export function requireModule (id: string, paths?: string | string[]) {
 }
 
 export function importModule (id: string, paths?: string | string[]) {
-  return import(resolveModule(id, paths))
+  const resolvedPath = resolveModule(id, paths)
+  return import(pathToFileURL(resolvedPath).href)
 }
 
 export function getNearestPackage (id: string, paths?: string | string[]) {

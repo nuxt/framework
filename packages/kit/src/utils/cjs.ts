@@ -1,3 +1,4 @@
+import { pathToFileURL } from 'url'
 import { join, normalize } from 'pathe'
 import jiti from 'jiti'
 
@@ -127,7 +128,7 @@ export function requireModule (id: string, opts: RequireModuleOptions = {}) {
 
 export function importModule (id: string, opts: RequireModuleOptions = {}) {
   const resolvedPath = resolveModule(id, opts)
-  return import(resolvedPath)
+  return import(pathToFileURL(resolvedPath).href)
 }
 
 export function tryImportModule (id: string, opts: RequireModuleOptions = {}) {
