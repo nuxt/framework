@@ -16,7 +16,11 @@ export const useHydration = mock()
 
 // Runtime config helper
 export const useRuntimeConfig = () => {
-  return useNuxtApp().legacyApp.$config
+  const app = useNuxtApp().legacyApp
+  if (!app._$config) {
+    app._$config = reactive(app.$config)
+  }
+  return app._$config
 }
 
 // Auto-import equivalents for `vue-router`
