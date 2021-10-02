@@ -1,5 +1,8 @@
 import { reactive } from '@vue/composition-api'
+import type VueRouter from 'vue-router'
+import type { Route } from 'vue-router'
 import { useNuxtApp } from './app'
+
 export * from '@vue/composition-api'
 
 const mock = () => () => { throw new Error('not implemented') }
@@ -13,7 +16,7 @@ export const useHydration = mock()
 
 // Auto-import equivalents for `vue-router`
 export const useRouter = () => {
-  return useNuxtApp()?.legacyNuxt.router
+  return useNuxtApp()?.legacyNuxt.router as VueRouter
 }
 
 // This provides an equivalent interface to `vue-router` (unlike legacy implementation)
@@ -26,15 +29,5 @@ export const useRoute = () => {
     router.afterEach(route => Object.assign(nuxt._route, route))
   }
 
-  return nuxt._route as {
-    path: string
-    name?: string | null
-    hash: string
-    query: Record<string, string | (string | null)[]>
-    params: Record<string, string>
-    fullPath: string
-    matched: any[]
-    redirectedFrom?: string
-    meta?: any
-  }
+  return nuxt._route as Route
 }
