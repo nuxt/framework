@@ -42,12 +42,8 @@ async function transformRequest (viteServer: vite.ViteDevServer, id) {
   }) as SSRTransformResult || { code: '', map: {}, deps: [], dynamicDeps: [] }
 
   // Wrap into a vite module
-  const code = `async function () {
-const __vite_ssr_exports__ = {};
-const __vite_ssr_exportAll__ = __createViteSSRExportAll__(__vite_ssr_exports__)
-const __vite_ssr_import_meta__ = { hot: { accept() {} } };
+  const code = `async function (global, __vite_ssr_exports__, __vite_ssr_import_meta__, __vite_ssr_import__, __vite_ssr_dynamic_import__, __vite_ssr_exportAll__) {
 ${res.code || '/* empty */'};
-return __vite_ssr_exports__;
 }`
   return { code, deps: res.deps || [], dynamicDeps: res.dynamicDeps || [] }
 }
@@ -72,8 +68,8 @@ async function transformRequestRecursive (viteServer: vite.ViteDevServer, id, pa
   return Object.values(chunks)
 }
 
-export async function bundleRequest (viteServer: vite.ViteDevServer, entryId) {
-  const chunks = await transformRequestRecursive(viteServer, entryId)
+export async function bundleRequest (viteServer: vite.ViteDevServer, entryURL) {
+  const chunks = await transformRequestRecursive(viteServer, entryURL)
 
   const listIds = ids => ids.map(id => `// - ${id} (${hashId(id)})`).join('\n')
   const chunksCode = chunks.map(chunk => `
@@ -85,60 +81,81 @@ export async function bundleRequest (viteServer: vite.ViteDevServer, entryId) {
 const ${hashId(chunk.id)} = ${chunk.code}
 `).join('\n')
 
-  const manifestCode = 'const __chunks__ = {\n' +
+  const manifestCode = 'const __modules__ = {\n' +
    chunks.map(chunk => ` '${chunk.id}': ${hashId(chunk.id)}`).join(',\n') + '\n}'
 
-  const dynamicImportCode = `
-const __import_cache__ = {}
+  // https://github.com/vitejs/vite/blob/main/packages/vite/src/node/ssr/ssrModuleLoader.ts
+  const ssrModuleLoader = `
+const __pendingModules__ = new Map()
+const __pendingImports__ = new Map()
 
-const __importing__ = new Set() // TODO: Debug
-setTimeout(() => console.log(new Date(), __importing__), 1500)
+function __ssrLoadModule__(id, urlStack = []) {
+  const pendingModule = __pendingModules__.get(id)
+  if (pendingModule) { return pendingModule }
+  const promise = __instantiateModule__(id, urlStack)
+  __pendingModules__.set(id, promise)
+  promise.catch(() => { __pendingModules__.delete(id) })
+         .finally(() => { __pendingModules__.delete(id) })
+  return promise
+}
 
-function __import__ (id) {
-  if (__import_cache__[id]) {
-    return __import_cache__[id]
+async function __instantiateModule__(url, urlStack) {
+  const mod = __modules__[url]
+  if (mod.stubModule) { return mod.stubModule }
+  const stubModule = { [Symbol.toStringTag]: 'Module' }
+  Object.defineProperty(stubModule, '__esModule', { value: true })
+  mod.stubModule = stubModule
+  const importMeta = { url, hot: { accept() {} } }
+  urlStack = urlStack.concat(url)
+  const isCircular = url => urlStack.includes(url)
+  const pendingDeps = []
+  const ssrImport = async (dep) => {
+    if (!isCircular(dep) && !__pendingImports__.get(dep)?.some(isCircular)) {
+      pendingDeps.push(dep)
+      if (pendingDeps.length === 1) {
+        __pendingImports__.set(url, pendingDeps)
+      }
+      await __ssrLoadModule__(url, urlStack)
+      if (pendingDeps.length === 1) {
+        __pendingImports__.delete(url)
+      } else {
+        pendingDeps.splice(pendingDeps.indexOf(dep), 1)
+      }
+    }
+    return __modules__[dep].stubModule
   }
-  __importing__.add(id)
-  __import_cache__[id] = Promise.resolve(__chunks__[id]()).then(mod => {
-    __importing__.delete(id)
-    return mod
-  })
-  return __import_cache__[id]
-}
+  const ssrDynamicImport = ssrImport
 
-function __vite_ssr_import__ (id) {
-  __import__(id)
-}
-
-function __vite_ssr_dynamic_import__(id) {
-  __import__(id)
-}
-`
-
-  const helpers = `
-globalThis.__createViteSSRExportAll__ = function (ssrModule) {
-  return (sourceModule) => {
+  function ssrExportAll(sourceModule) {
     for (const key in sourceModule) {
       if (key !== 'default') {
         Object.defineProperty(ssrModule, key, {
           enumerable: true,
           configurable: true,
-          get() {
-            return sourceModule[key]
-          }
+          get() { return sourceModule[key] }
         })
       }
     }
   }
+
+  await mod(
+    globalThis,
+    stubModule,
+    importMeta,
+    ssrImport,
+    ssrDynamicImport,
+    ssrExportAll
+  )
+
+  return stubModule
 }
 `
 
   const code = [
     chunksCode,
     manifestCode,
-    dynamicImportCode,
-    helpers,
-    `export default await __import__('${entryId}')`
+    ssrModuleLoader,
+    `export default await __ssrLoadModule__('${entryURL}')`
   ].join('\n\n')
 
   return { code }
