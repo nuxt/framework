@@ -1,12 +1,11 @@
-import * as vite from 'vite'
 import { resolve } from 'pathe'
-import { mkdirp, readJSON, writeFile } from 'fs-extra'
+import * as vite from 'vite'
+import fse from 'fs-extra'
 import consola from 'consola'
 import vitePlugin from '@vitejs/plugin-vue'
 
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { replace } from './plugins/replace'
-import { transformNuxtSetup } from './plugins/transformSetup'
 import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 
@@ -37,8 +36,7 @@ export async function buildClient (ctx: ViteBuildContext) {
     plugins: [
       replace({ 'process.env': 'import.meta.env' }),
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'client'),
-      vitePlugin(ctx.config.vue),
-      transformNuxtSetup()
+      vitePlugin(ctx.config.vue)
     ],
     server: {
       middlewareMode: true
@@ -86,9 +84,9 @@ export async function buildClient (ctx: ViteBuildContext) {
 
   const clientManifest = ctx.nuxt.options.dev
     ? devClientManifest
-    : await readJSON(resolve(clientDist, 'manifest.json'))
+    : await fse.readJSON(resolve(clientDist, 'manifest.json'))
 
-  await mkdirp(serverDist)
-  await writeFile(resolve(serverDist, 'client.manifest.json'), JSON.stringify(clientManifest, null, 2), 'utf8')
-  await writeFile(resolve(serverDist, 'client.manifest.mjs'), 'export default ' + JSON.stringify(clientManifest, null, 2), 'utf8')
+  await fse.mkdirp(serverDist)
+  await fse.writeFile(resolve(serverDist, 'client.manifest.json'), JSON.stringify(clientManifest, null, 2), 'utf8')
+  await fse.writeFile(resolve(serverDist, 'client.manifest.mjs'), 'export default ' + JSON.stringify(clientManifest, null, 2), 'utf8')
 }

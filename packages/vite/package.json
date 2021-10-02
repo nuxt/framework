@@ -3,8 +3,9 @@
   "version": "0.10.0",
   "repository": "nuxt/framework",
   "license": "MIT",
-  "main": "./dist/index.cjs",
+  "type": "module",
   "types": "./dist/index.d.ts",
+  "exports": "./dist/index.mjs",
   "files": [
     "dist"
   ],
@@ -25,7 +26,7 @@
     "magic-string": "^0.25.7",
     "pathe": "^0.2.0",
     "ufo": "^0.7.9",
-    "vite": "^2.6.0",
+    "vite": "^2.6.2",
     "vue": "3.2.19"
   }
 }

@@ -1,4 +1,4 @@
-import { getCurrentInstance } from 'vue'
+import { getCurrentInstance, reactive } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import { defineGetter } from './utils'
@@ -64,7 +64,7 @@ export interface CreateOptions {
   globalName?: NuxtApp['globalName']
 }
 
-export function createNuxt (options: CreateOptions) {
+export function createNuxtApp (options: CreateOptions) {
   const nuxt: NuxtApp = {
     provide: undefined,
     globalName: 'nuxt',
@@ -105,6 +105,14 @@ export function createNuxt (options: CreateOptions) {
 
   if (process.client) {
     nuxt.payload = window.__NUXT__ || {}
+  }
+
+  // Expose runtime config
+  if (process.server) {
+    nuxt.provide('config', options.ssrContext.runtimeConfig.private)
+    nuxt.payload.config = options.ssrContext.runtimeConfig.public
+  } else {
+    nuxt.provide('config', reactive(nuxt.payload.config))
   }
 
   return nuxt
@@ -181,4 +189,8 @@ export function useNuxtApp (): NuxtApp {
   }
 
   return vm.appContext.app.$nuxt
+}
+
+export function useRuntimeConfig (): Record<string, any> {
+  return useNuxtApp().$config
 }

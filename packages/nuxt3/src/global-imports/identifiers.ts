@@ -4,7 +4,8 @@ const identifiers = {
     'asyncData',
     'defineNuxtComponent',
     'useNuxtApp',
-    'defineNuxtPlugin'
+    'defineNuxtPlugin',
+    'useRuntimeConfig'
   ],
   '#meta': [
     'useMeta'
@@ -51,6 +52,10 @@ const identifiers = {
     'nextTick',
     'provide',
     'useCssModule'
+  ],
+  'vue-router': [
+    'useRoute',
+    'useRouter'
   ]
 }
 

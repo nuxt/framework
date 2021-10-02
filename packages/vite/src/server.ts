@@ -5,7 +5,6 @@ import { writeFile } from 'fs-extra'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
-import { transformNuxtSetup } from './plugins/transformSetup'
 import { bundleRequest } from './dev-bundler'
 
 export async function buildServer (ctx: ViteBuildContext) {
@@ -51,8 +50,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
-      vuePlugin(),
-      transformNuxtSetup()
+      vuePlugin()
     ]
   } as ViteOptions)
 

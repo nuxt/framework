@@ -3,10 +3,14 @@
   "version": "0.10.0",
   "repository": "nuxt/framework",
   "license": "MIT",
-  "main": "./dist/index.cjs",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./cli": "./bin/nuxi.mjs"
+  },
   "bin": {
-    "nu": "./bin/nuxi.cjs",
-    "nuxi": "./bin/nuxi.cjs"
+    "nu": "./bin/nuxi.mjs",
+    "nuxi": "./bin/nuxi.mjs"
   },
   "scripts": {
     "prepack": "unbuild"
@@ -27,13 +31,14 @@
     "chokidar": "^3.5.2",
     "clear": "^0.1.0",
     "clipboardy": "^2.3.0",
-    "colorette": "^2.0.12",
+    "colorette": "^2.0.13",
     "debounce-promise": "^3.1.2",
     "deep-object-diff": "^1.1.0",
     "destr": "^1.1.0",
     "flat": "^5.0.2",
-    "jiti": "^1.12.5",
+    "jiti": "^1.12.6",
     "listhen": "^0.2.4",
+    "mlly": "^0.2.4",
     "mri": "^1.2.0",
     "pathe": "^0.2.0",
     "scule": "^0.2.1",

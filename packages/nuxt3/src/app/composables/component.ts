@@ -1,35 +1,16 @@
 import { toRefs } from '@vue/reactivity'
 import { defineComponent, getCurrentInstance } from 'vue'
-import type { ComponentInternalInstance, DefineComponent } from 'vue'
+import type { DefineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import type { LegacyContext } from '../legacy'
 import { useNuxtApp } from '../nuxt'
-import { asyncData } from './asyncData'
-import { NuxtComponentPendingPromises, NuxtComponentIndicator } from './constants'
 
-export interface NuxtComponentInternalInstance extends ComponentInternalInstance {
-  [NuxtComponentPendingPromises]: Array<Promise<void>>
-}
-
-export function getCurrentNuxtComponentInstance (): NuxtComponentInternalInstance {
-  const vm = getCurrentInstance() as NuxtComponentInternalInstance
-
-  if (!vm || !vm.proxy.$options[NuxtComponentIndicator]) {
-    throw new Error('This method can only be used within a component defined with `defineNuxtComponent()`.')
-  }
-
-  return vm
-}
-
-export function enqueueNuxtComponent (p: Promise<void>) {
-  const vm = getCurrentNuxtComponentInstance()
-  vm[NuxtComponentPendingPromises].push(p)
-}
+export const NuxtComponentIndicator = '__nuxt_component'
 
 async function runLegacyAsyncData (res: Record<string, any> | Promise<Record<string, any>>, fn: (context: LegacyContext) => Promise<Record<string, any>>) {
   const nuxt = useNuxtApp()
   const route = useRoute()
-  const vm = getCurrentNuxtComponentInstance()
+  const vm = getCurrentInstance()
   const { fetchKey } = vm.proxy.$options
   const key = typeof fetchKey === 'function' ? fetchKey(() => '') : fetchKey || route.fullPath
   const { data } = await asyncData(`options:asyncdata:${key}`, () => fn(nuxt._legacyContext))
@@ -40,6 +21,7 @@ export const defineNuxtComponent: typeof defineComponent =
   function defineNuxtComponent (options: any): any {
     const { setup } = options
 
+    // Avoid wrapping if no options api is used
     if (!setup && !options.asyncData) {
       return {
         [NuxtComponentIndicator]: true,
@@ -51,17 +33,12 @@ export const defineNuxtComponent: typeof defineComponent =
       [NuxtComponentIndicator]: true,
       ...options,
       setup (props, ctx) {
-        const vm = getCurrentNuxtComponentInstance()
-        let promises = vm[NuxtComponentPendingPromises] = vm[NuxtComponentPendingPromises] || []
-
         const res = setup?.(props, ctx) || {}
 
+        let promises: unknown[] | undefined = []
+        promises = promises || []
         if (options.asyncData) {
           promises.push(runLegacyAsyncData(res, options.asyncData))
-        }
-
-        if (!promises.length && !(res instanceof Promise)) {
-          return res
         }
 
         return Promise.resolve(res)
@@ -70,7 +47,6 @@ export const defineNuxtComponent: typeof defineComponent =
           .finally(() => {
             promises.length = 0
             promises = null
-            delete vm[NuxtComponentPendingPromises]
           })
       }
     } as DefineComponent
