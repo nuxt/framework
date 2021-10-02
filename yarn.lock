@@ -1452,7 +1452,7 @@ __metadata:
     node-fetch: ^3.0.0
     nuxi: ^0.10.0
     nuxt-swc: ^0.1.0
-    nuxt-vite: ^0.3.1
+    nuxt-vite: ^0.3.2
     pathe: ^0.2.0
     ufo: ^0.7.9
     unbuild: latest
@@ -8441,7 +8441,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.10.1, jiti@npm:^1.12.5, jiti@npm:^1.12.6":
+"jiti@npm:^1.12.6":
   version: 1.12.6
   resolution: "jiti@npm:1.12.6"
   bin:
@@ -10130,7 +10130,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"nuxt-vite@npm:^0.3.1":
+"nuxt-vite@npm:^0.3.2":
   version: 0.3.2
   resolution: "nuxt-vite@npm:0.3.2"
   dependencies:
