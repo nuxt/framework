@@ -27,4 +27,5 @@ function deepFreeze (object: Record<string, any>) {
       deepFreeze(value)
     }
   }
+  return Object.freeze(object)
 }
