@@ -14,6 +14,11 @@ export const useData = mock()
 export const useGlobalData = mock()
 export const useHydration = mock()
 
+// Runtime config helper
+export const useRuntimeConfig = () => {
+  return useNuxtApp().legacyApp.$config
+}
+
 // Auto-import equivalents for `vue-router`
 export const useRouter = () => {
   return useNuxtApp()?.legacyNuxt.router as VueRouter
