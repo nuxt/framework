@@ -28,7 +28,7 @@ async function transformRequest (viteServer: vite.ViteDevServer, id) {
   // Externals
   if (builtinModules.includes(id) || id.includes('node_modules')) {
     return {
-      code: `() => import('${id.replace(/^\/@fs/, '')}')`,
+      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${id.replace(/^\/@fs/, '')}').then(r => { ssrExportAll(r) })`,
       deps: [],
       dynamicDeps: []
     }
@@ -79,7 +79,6 @@ export async function bundleRequest (viteServer: vite.ViteDevServer, entryURL) {
 // Dependencies: \n${listIds(chunk.deps)}
 // --------------------
 const ${hashId(chunk.id)} = ${chunk.code}
-//# sourceURL=${chunk.id}
 `).join('\n')
 
   const manifestCode = 'const __modules__ = {\n' +
@@ -135,11 +134,13 @@ async function __instantiateModule__(url, urlStack) {
   function ssrExportAll(sourceModule) {
     for (const key in sourceModule) {
       if (key !== 'default') {
-        Object.defineProperty(stubModule, key, {
-          enumerable: true,
-          configurable: true,
-          get() { return sourceModule[key] }
-        })
+        try {
+          Object.defineProperty(stubModule, key, {
+            enumerable: true,
+            configurable: true,
+            get() { return sourceModule[key] }
+          })
+        } catch (_err) { }
       }
     }
   }
