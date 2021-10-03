@@ -20,7 +20,14 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     resolve: {
       alias: {
-        '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/server')
+        '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/server'),
+        // Alias vue
+        'vue/server-renderer': 'vue/server-renderer',
+        'vue/compiler-sfc': 'vue/compiler-sfc',
+        '@vue/reactivity': `@vue/reactivity/dist/reactivitiy.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
+        '@vue/shared': `@vue/shared/dist/shared.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
+        'vue-router': `vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
+        vue: `vue/dist/vue.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`
       }
     },
     ssr: {

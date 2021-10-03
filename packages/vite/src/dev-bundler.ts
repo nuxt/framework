@@ -26,9 +26,9 @@ async function transformRequest (viteServer: vite.ViteDevServer, id) {
   }
 
   // Externals
-  if (builtinModules.includes(id)) {
+  if (builtinModules.includes(id) || id.includes('node_modules')) {
     return {
-      code: `() => import('${id}')`,
+      code: `() => import('${id.replace(/^\/@fs/, '')}')`,
       deps: [],
       dynamicDeps: []
     }
@@ -79,6 +79,7 @@ export async function bundleRequest (viteServer: vite.ViteDevServer, entryURL) {
 // Dependencies: \n${listIds(chunk.deps)}
 // --------------------
 const ${hashId(chunk.id)} = ${chunk.code}
+//# sourceURL=${chunk.id}
 `).join('\n')
 
   const manifestCode = 'const __modules__ = {\n' +
