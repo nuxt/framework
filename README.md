@@ -65,7 +65,7 @@ Learn more about in our documentation on [how to contribute to Nuxt](https://v3.
 
 ## 📖 Documentation
 
-We are using [Docus](https://github.com/docusgen) to write our documentation (*we plan to open source it in the following weeks once the documentation is ready*). It is similar to Nuxt Content [Docs theme](https://content.nuxtjs.org/themes/docs) but with an advanced syntax to use Vue components without having to write HTML (support props and slots).
+We are using [Docus](https://nuxtlabs.com/docus) to write our documentation (*we plan to open source it in the following weeks once the documentation is ready*). It is similar to Nuxt Content [Docs theme](https://content.nuxtjs.org/themes/docs) but with an advanced syntax to use Vue components without having to write HTML (support props and slots).
 
 We recommend to install the [Docus extension](https://marketplace.visualstudio.com/items?itemName=NuxtLabs.docus) for VS Code.
 
@@ -74,7 +74,6 @@ We recommend to install the [Docus extension](https://marketplace.visualstudio.c
 - Run `yarn dev` to run Docus in development
 
 The pages are generated from [docs/content/](./docs/content), you can start editing them to start helping us on documenting Nuxt 3 💚
-
 
 ## License
 
