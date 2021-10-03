@@ -8,23 +8,23 @@ Please carefully read the contribution docs before creating a pull request
 ### 🔗 Linked issue
 
 <!-- ❗ Please ensure there is an open issue  -->
-#...
+Resolves #...
 
 ### ❓ Type of change
 
-<!-- What types of changes does your code introduce? Put `x's in all the boxes that apply: -->
+<!-- What types of changes does your code introduce? Put `x's in all the boxes that apply and remove the unchecked lines -->
 
-- [ ] Documentation (updates to the documentation or readme)
-- [ ] Bug fix (a non-breaking change that fixes an issue)
-- [ ] Enhancement (improving an existing functionality like performance)
-- [ ] New feature (a non-breaking change that adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to change)
+- [ ] 📖 Documentation (updates to the documentation or readme)
+- [ ] 🐞 Bug fix (a non-breaking change that fixes an issue)
+- [ ] 👌 Enhancement (improving an existing functionality like performance)
+- [ ] ✨ New feature (a non-breaking change that adds functionality)
+- [ ] ⚠️ Breaking change (fix or feature that would cause existing functionality to change)
 
 ### 📚 Description
 
 <!-- Describe your changes in detail -->
 <!-- Why is this change required? What problem does it solve? -->
-<!-- If it resolves an open issue, please link to the issue here. For example "Resolves: #1337" -->
+<!-- If it resolves an open issue, please link to the issue here. For example "Resolves #1337" -->
 
 ### 📝 Checklist
 
