@@ -88,15 +88,16 @@ const ${hashId(chunk.id)} = ${chunk.code}
   const ssrModuleLoader = `
 const __pendingModules__ = new Map()
 const __pendingImports__ = new Map()
+const __ssrContext__ = { global: {} }
 
-function __ssrLoadModule__(id, urlStack = []) {
-  const pendingModule = __pendingModules__.get(id)
+function __ssrLoadModule__(url, urlStack = []) {
+  const pendingModule = __pendingModules__.get(url)
   if (pendingModule) { return pendingModule }
-  const promise = __instantiateModule__(id, urlStack)
-  __pendingModules__.set(id, promise)
-  promise.catch(() => { __pendingModules__.delete(id) })
-         .finally(() => { __pendingModules__.delete(id) })
-  return promise
+  const modulePromise = __instantiateModule__(url, urlStack)
+  __pendingModules__.set(url, modulePromise)
+  modulePromise.catch(() => { __pendingModules__.delete(url) })
+         .finally(() => { __pendingModules__.delete(url) })
+  return modulePromise
 }
 
 async function __instantiateModule__(url, urlStack) {
@@ -110,12 +111,13 @@ async function __instantiateModule__(url, urlStack) {
   const isCircular = url => urlStack.includes(url)
   const pendingDeps = []
   const ssrImport = async (dep) => {
+    // TODO: Handle externals if dep[0] !== '.' | '/'
     if (!isCircular(dep) && !__pendingImports__.get(dep)?.some(isCircular)) {
       pendingDeps.push(dep)
       if (pendingDeps.length === 1) {
         __pendingImports__.set(url, pendingDeps)
       }
-      await __ssrLoadModule__(url, urlStack)
+      await __ssrLoadModule__(dep, urlStack)
       if (pendingDeps.length === 1) {
         __pendingImports__.delete(url)
       } else {
@@ -124,12 +126,15 @@ async function __instantiateModule__(url, urlStack) {
     }
     return __modules__[dep].stubModule
   }
-  const ssrDynamicImport = ssrImport
+  function ssrDynamicImport (dep) {
+    // TODO: Handle dynamic import starting with . relative to url
+    return ssrImport(dep)
+  }
 
   function ssrExportAll(sourceModule) {
     for (const key in sourceModule) {
       if (key !== 'default') {
-        Object.defineProperty(ssrModule, key, {
+        Object.defineProperty(stubModule, key, {
           enumerable: true,
           configurable: true,
           get() { return sourceModule[key] }
@@ -139,7 +144,7 @@ async function __instantiateModule__(url, urlStack) {
   }
 
   await mod(
-    globalThis,
+    __ssrContext__.global,
     stubModule,
     importMeta,
     ssrImport,
