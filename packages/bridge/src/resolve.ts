@@ -68,7 +68,7 @@ export function setupBetterResolve () {
 
     config.resolve.plugins.push(new EnhancedResolverPlugin({
       conditionNames: ['import', ...isServer ? ['node'] : []],
-      mainFields: ['module', ...!isServer ? ['browser'] : [], 'main'],
+      mainFields: ['module', ...isServer ? [] : ['browser'], 'main'],
       alias: config.resolve.alias,
       modules: config.resolve.modules,
       plugins: config.resolve.plugins as Array<Exclude<ResolveOptions['plugins'][number], string>>,
