@@ -1,5 +1,8 @@
 ---
-layout.aside: true
-layout.asideClass: ''
-navigation.collapse: true
+layout:
+  aside: true
+  asideClass: ''
+navigation:
+  collapse: true
+  exclusive: false
 ---
