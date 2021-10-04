@@ -137,8 +137,13 @@ async function generateDocs ({ outDir }) {
 
     await writeFile(join(outDir, `${ctor++}.${kebabCase(key)}.md`), lines.join('\n'))
   }
-
-  const frontmatter = ['---', 'navigation:', '  collapse: true', '---']
+  const frontmatter = [
+    '---',
+    'layout.aside: true',
+    'layout.asideClass: ""',
+    'navigation.collapse: true',
+    '---'
+  ]
   await writeFile(join(outDir, 'index.md'), frontmatter.join('\n'))
 
   console.log(`Generate done in ${(Date.now() - start) / 1000} seconds!`)
