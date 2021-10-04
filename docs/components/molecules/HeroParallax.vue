@@ -29,7 +29,7 @@
       data-speed="-1"
       loading="lazy"
       :src="`/img/home/hero/gem-4.svg`"
-      class="absolute right-0 bottom-0 mb-20 h-20 md:h-32 sm:mb-0 sm:bottom-1/4 mr-8 sm:mr-16 md:mr-28 lg:mr-40"
+      class="absolute right-0 bottom-0 mb-20 h-20 md:h-32 sm:mb-0 sm:bottom-1/5 mr-8 sm:mr-16 md:mr-28 lg:mr-40"
       alt="An image of a green gem from nuxt galaxy"
     >
     <img
@@ -37,7 +37,7 @@
       data-speed="1"
       loading="lazy"
       :src="`/img/home/hero/gem-5.svg`"
-      class="absolute left-0 bottom-0 sm:bottom-1/4 h-20 md:h-32 mb-20 sm:mb-0 ml-0 md:ml-12 lg:ml-40"
+      class="absolute left-0 bottom-0 sm:bottom-1/5 h-20 md:h-32 mb-20 sm:mb-0 ml-0 md:ml-12 lg:ml-40"
       alt="An image of a green gem from nuxt galaxy"
     >
     <img
