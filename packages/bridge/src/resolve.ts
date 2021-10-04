@@ -10,7 +10,7 @@ type ResolverOptions = Omit<UserResolveOptions, 'fileSystem'> & { fileSystem?: e
 
 const DEFAULTS: UserResolveOptions = {
   fileSystem: new enhancedResolve.CachedInputFileSystem(fs, 4000),
-  extensions: ['.ts', '.mjs', '.cjs', '.js', '.json']
+  extensions: ['.ts', '.tsx', '.mjs', '.cjs', '.js', '.jsx', '.json', '.vue']
 }
 
 // Abstracted resolver factory which can be used in rollup, webpack, etc.
