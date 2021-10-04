@@ -6,7 +6,7 @@ import { kebabCase, upperFirst } from 'scule'
 
 export async function main () {
   const rootDir = resolve(__dirname, '..')
-  const configDir = resolve(rootDir, 'content/en/docs/5.config')
+  const configDir = resolve(rootDir, 'content/en/5.config')
   await generateDocs({ outDir: configDir })
 }
 
