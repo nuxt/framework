@@ -25,7 +25,7 @@ export default defineNuxtCommand({
     const dstDir = resolve(process.cwd(), args._[0] || 'nuxt-app')
     const degit = createDegit(src, { cache: false /* TODO: buggy */, verbose: (args.verbose || args.v) })
     if (existsSync(dstDir) && readdirSync(dstDir).length) {
-      error(`Directory ${dstDir} is not empty. Please use another name or remove it first. Aborting.`)
+      error(`Directory ${dstDir} is not empty. Please pick another name or remove it first. Aborting.`)
       process.exit(1)
     }
     const formatArgs = msg => msg.replace('options.', '--')
