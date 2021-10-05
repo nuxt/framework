@@ -132,7 +132,9 @@ export function importModule (id: string, opts: RequireModuleOptions = {}) {
 }
 
 export function tryImportModule (id: string, opts: RequireModuleOptions = {}) {
-  return importModule(id, opts).catch(() => undefined)
+  try {
+    return importModule(id, opts).catch(() => undefined)
+  } catch { }
 }
 
 /** Try to require a module, but don't emit an error if the module can't be required. */

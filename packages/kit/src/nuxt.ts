@@ -56,8 +56,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   }
 
   // Nuxt 2
-  // @ts-ignore
-  const { loadNuxt } = await tryImportModule('nuxt-edge', resolveOpts) || await importModule('nuxt', resolveOpts)
+  const { default: { loadNuxt } } = (await tryImportModule('nuxt-edge', resolveOpts) || await importModule('nuxt', resolveOpts))
   const nuxt = await loadNuxt({
     rootDir: opts.rootDir,
     for: opts.dev ? 'dev' : 'build',
@@ -78,7 +77,6 @@ export async function buildNuxt (nuxt: Nuxt): Promise<any> {
   }
 
   // Nuxt 2
-  // @ts-ignore
-  const { build } = tryImportModule('nuxt-edge', resolveOpts) || tryImportModule('nuxt', resolveOpts)
+  const { default: { build } } = await tryImportModule('nuxt-edge', resolveOpts) || await tryImportModule('nuxt', resolveOpts)
   return build(nuxt)
 }
