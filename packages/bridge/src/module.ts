@@ -6,7 +6,7 @@ import { setupCAPIBridge } from './capi'
 import { setupBetterResolve } from './resolve'
 import { setupGlobalImports } from './global-imports'
 
-export interface BridgeConfig  {
+export interface BridgeConfig {
   nitro: boolean
   vite: boolean
   app: boolean | {}
