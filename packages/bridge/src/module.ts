@@ -6,7 +6,7 @@ import { setupCAPIBridge } from './capi'
 import { setupBetterResolve } from './resolve'
 import { setupGlobalImports } from './global-imports'
 
-export interface BridgeConfig {
+export interface BridgeConfig Partial<{
   nitro: boolean
   vite: boolean
   app: boolean | {}
@@ -17,7 +17,7 @@ export interface BridgeConfig {
   swc: boolean
   resolve: boolean,
   typescript: boolean
-}
+}>
 
 export default defineNuxtModule({
   name: 'nuxt-bridge',
