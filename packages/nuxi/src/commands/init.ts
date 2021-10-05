@@ -34,7 +34,7 @@ export default defineNuxtCommand({
     await degit.clone(dstDir)
 
     // Show neet steps
-    console.log('\n 🎉  Congratulations! Another Nuxt project just starteed! Next steps:' + [
+    console.log('\n 🎉  Congratulations! Another Nuxt project just made! Next steps:' + [
       '',
       `📁  \`cd ${rpath(dstDir)}\``,
       '💿  Install dependencies with `npm install` or `yarn install`',
