@@ -2,6 +2,7 @@ import { resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import fse from 'fs-extra'
+import pDebounce from 'p-debounce'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
@@ -72,19 +73,32 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   // Start development server
   const viteServer = await vite.createServer(serverConfig)
+
+  // Close server on exit
+  ctx.nuxt.hook('close', () => viteServer.close())
+
   // Initialize plugins
   await viteServer.pluginContainer.buildStart({})
 
-  async function generate () {
+  // Build and watch
+  const _doBuild = async () => {
+    const start = Date.now()
     const { code } = await bundleRequest(viteServer, resolve(ctx.nuxt.options.appDir, 'entry'))
-
     await fse.writeFile(resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'), code, 'utf-8')
+    const time = (Date.now() - start)
+    console.info(`Server built in ${time}ms`)
     await onBuild()
   }
+  const doBuild = pDebounce(_doBuild, 100)
 
-  ctx.nuxt.hook('builder:watch', () => generate())
-  ctx.nuxt.hook('app:templatesGenerated', () => generate())
-  ctx.nuxt.hook('close', () => viteServer.close())
+  // Initial build
+  await _doBuild()
 
-  await generate()
+  // Watch
+  viteServer.watcher.on('all', (_event, file) => {
+    if (file.indexOf(ctx.nuxt.options.buildDir) === 0) { return }
+    doBuild()
+  })
+  // ctx.nuxt.hook('builder:watch', () => doBuild())
+  ctx.nuxt.hook('app:templatesGenerated', () => doBuild())
 }
