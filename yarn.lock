@@ -1441,7 +1441,7 @@ __metadata:
     "@nuxt/postcss8": ^1.1.3
     "@types/fs-extra": ^9.0.13
     "@types/node-fetch": ^3.0.2
-    "@vue/composition-api": ^1.2.2
+    "@vue/composition-api": ^1.2.3
     acorn: ^8.5.0
     defu: ^5.0.0
     enhanced-resolve: ^5.8.3
@@ -1539,7 +1539,7 @@ __metadata:
     "@types/jsdom": ^16.2.13
     "@types/node-fetch": ^3.0.2
     "@types/serve-static": ^1.13.10
-    "@vercel/nft": ^0.15.0
+    "@vercel/nft": ^0.15.1
     archiver: ^5.3.0
     chalk: ^4.1.2
     chokidar: ^3.5.2
@@ -1635,11 +1635,11 @@ __metadata:
     "@types/webpack-hot-middleware": ^2.25.5
     "@types/webpack-virtual-modules": ^0
     "@vue/babel-preset-jsx": ^1.2.4
-    autoprefixer: ^10.3.6
+    autoprefixer: ^10.3.7
     babel-loader: ^8.2.2
     consola: ^2.15.3
     css-loader: ^6.3.0
-    css-minimizer-webpack-plugin: ^3.0.2
+    css-minimizer-webpack-plugin: ^3.1.0
     cssnano: ^5.0.8
     esbuild-loader: ^2.15.1
     file-loader: ^6.2.0
@@ -1652,7 +1652,7 @@ __metadata:
     mlly: ^0.2.4
     pathe: ^0.2.0
     pify: ^5.0.0
-    postcss: ^8.3.8
+    postcss: ^8.3.9
     postcss-import: ^14.0.2
     postcss-import-resolver: ^2.0.0
     postcss-loader: ^6.1.1
@@ -1665,7 +1665,7 @@ __metadata:
     vue: 3.2.19
     vue-loader: ^16.8.1
     vue-style-loader: ^4.1.3
-    webpack: ^5.56.0
+    webpack: ^5.56.1
     webpack-bundle-analyzer: ^4.4.2
     webpack-dev-middleware: ^5.2.1
     webpack-hot-middleware: ^2.25.1
@@ -2647,9 +2647,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vercel/nft@npm:^0.15.0":
-  version: 0.15.0
-  resolution: "@vercel/nft@npm:0.15.0"
+"@vercel/nft@npm:^0.15.1":
+  version: 0.15.1
+  resolution: "@vercel/nft@npm:0.15.1"
   dependencies:
     "@mapbox/node-pre-gyp": ^1.0.5
     acorn: ^8.3.0
@@ -2668,7 +2668,7 @@ __metadata:
     rollup-pluginutils: ^2.8.2
   bin:
     nft: out/cli.js
-  checksum: afa95adb7ef129781c7178751a53ba3ca196fb0f904ecebd62559a134e7b840e972e6f623d723491eb6916a42e9c498b8fe13af015c72a46903088b3bcd9cf50
+  checksum: f25df8d684fc7ef295fafbad9e84af042d430e74133fcb86b9ed2b40792c66a8b27cd7eb8b5469314099897df7263566f190c28efa2953a055899a860ed0fa64
   languageName: node
   linkType: hard
 
@@ -2880,14 +2880,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/composition-api@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "@vue/composition-api@npm:1.2.2"
+"@vue/composition-api@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "@vue/composition-api@npm:1.2.3"
   dependencies:
     tslib: ^2.3.0
   peerDependencies:
     vue: ">= 2.5 < 3"
-  checksum: 82f6c836201f1aecb30635bc4daec47cda033254c169719a153eb0d85167ad128e7dd16058e227269abd6fead0c9330ca5c9a10fa28a33d362c8eabfee0f32cb
+  checksum: d73eec1f2ac49936203d208a98d7bc1fd2d6144d1617a3c214a59229d0ded68e28edd52206713c0db0e45273b06c864eeaa32d6c0116929e2722a22621a5b008
   languageName: node
   linkType: hard
 
@@ -3605,7 +3605,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.2.5, autoprefixer@npm:^10.3.6":
+"autoprefixer@npm:^10.2.5":
   version: 10.3.6
   resolution: "autoprefixer@npm:10.3.6"
   dependencies:
@@ -3620,6 +3620,24 @@ __metadata:
   bin:
     autoprefixer: bin/autoprefixer
   checksum: 432fdba79e8be1c310acef3bf31e1ec02139222ce5a2134857d5ed12a659eef319cc3f206cb79f5d9b204baa2f08ccfe688b4b227294354dd0fae6976dde0876
+  languageName: node
+  linkType: hard
+
+"autoprefixer@npm:^10.3.7":
+  version: 10.3.7
+  resolution: "autoprefixer@npm:10.3.7"
+  dependencies:
+    browserslist: ^4.17.3
+    caniuse-lite: ^1.0.30001264
+    fraction.js: ^4.1.1
+    normalize-range: ^0.1.2
+    picocolors: ^0.2.1
+    postcss-value-parser: ^4.1.0
+  peerDependencies:
+    postcss: ^8.1.0
+  bin:
+    autoprefixer: bin/autoprefixer
+  checksum: e5b0a8ca75164cb1aa688dd5a4210b0e3720abb94910eed7f32790aeff352ed26adc47bed145cd22c83fe03d059d903b62baa7130ed2785990e7e42a8b952704
   languageName: node
   linkType: hard
 
@@ -4376,6 +4394,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"browserslist@npm:^4.17.3":
+  version: 4.17.3
+  resolution: "browserslist@npm:4.17.3"
+  dependencies:
+    caniuse-lite: ^1.0.30001264
+    electron-to-chromium: ^1.3.857
+    escalade: ^3.1.1
+    node-releases: ^1.1.77
+    picocolors: ^0.2.1
+  bin:
+    browserslist: cli.js
+  checksum: 9295bdff6e054fdbb131275f88d282dddda7e8d54ddc1571b24374d6ba85e6d1f7cb72280543ea44a9726bb5076ded644d943b38cdc5610249699254ca951f46
+  languageName: node
+  linkType: hard
+
 "buffer-crc32@npm:^0.2.1, buffer-crc32@npm:^0.2.13":
   version: 0.2.13
   resolution: "buffer-crc32@npm:0.2.13"
@@ -4549,6 +4582,13 @@ __metadata:
   version: 1.0.30001263
   resolution: "caniuse-lite@npm:1.0.30001263"
   checksum: 0657b995276a35aaa9ff6900b6e9d3876ef049c8d6065fe9f162cc0b9ac00d8b9c6e6740e87def73876a522dce8e9124170334c157cfbf5c383b7c6db79e520e
+  languageName: node
+  linkType: hard
+
+"caniuse-lite@npm:^1.0.30001264":
+  version: 1.0.30001264
+  resolution: "caniuse-lite@npm:1.0.30001264"
+  checksum: 6ef70711a52d1ce973b4577b172f2ce182a0f1b3f8dac84c09ac7972c7a1bb0a39f611e93bf5c59c95db913b9ece9596eb211c9bda5177d77b19ae49441ddb4f
   languageName: node
   linkType: hard
 
@@ -5334,15 +5374,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"css-minimizer-webpack-plugin@npm:^3.0.2":
-  version: 3.0.2
-  resolution: "css-minimizer-webpack-plugin@npm:3.0.2"
+"css-minimizer-webpack-plugin@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "css-minimizer-webpack-plugin@npm:3.1.0"
   dependencies:
     cssnano: ^5.0.6
     jest-worker: ^27.0.2
     p-limit: ^3.0.2
     postcss: ^8.3.5
-    schema-utils: ^3.0.0
+    schema-utils: ^3.1.0
     serialize-javascript: ^6.0.0
     source-map: ^0.6.1
   peerDependencies:
@@ -5352,7 +5392,9 @@ __metadata:
       optional: true
     csso:
       optional: true
-  checksum: f4cacd46d4157d5005c9d3b5aa6bf60cd036ab10faae20cc1bdffb7153d2802473ef9f464d30098aad98f2205aee92b956c1f92c5da5a04f772ca9f17fd72dab
+    esbuild:
+      optional: true
+  checksum: d3c5aa3f838ab19a14809c9f09dd661ca1498f93203643d5014df3c58c3839dab9837fb18ab05743a9b6638f2257e801ec80105673ed715be64f6c4d42736e95
   languageName: node
   linkType: hard
 
@@ -5939,6 +5981,13 @@ __metadata:
   version: 1.3.857
   resolution: "electron-to-chromium@npm:1.3.857"
   checksum: 59d3dcf7ec7d3c8209647cadb6cc9d2a14b9ef9cb2ae7c9837c9dbe38301838e6629bfa002121d3dc4c00e982327d6337d6d5460902f02f8a80d0d81c63f1728
+  languageName: node
+  linkType: hard
+
+"electron-to-chromium@npm:^1.3.857":
+  version: 1.3.859
+  resolution: "electron-to-chromium@npm:1.3.859"
+  checksum: 1216f29c30bc5b720d2651e44c6f25199132789f06ea31f416c68e2f09ad86e6491480c07b148668938e075cb3c3074a0606184cc13216ad627e09a70fd21226
   languageName: node
   linkType: hard
 
@@ -9639,7 +9688,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^3.1.25":
+"nanoid@npm:^3.1.25, nanoid@npm:^3.1.28":
   version: 3.1.28
   resolution: "nanoid@npm:3.1.28"
   bin:
@@ -9817,7 +9866,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"node-releases@npm:^1.1.76":
+"node-releases@npm:^1.1.76, node-releases@npm:^1.1.77":
   version: 1.1.77
   resolution: "node-releases@npm:1.1.77"
   checksum: eb2fcb45310e7d77f82bfdadeca546a698d258e011f15d88ad9a452a5e838a672ec532906581096ca19c66284a788330c3b09227ffc540e67228730f41b9c2e2
@@ -10707,6 +10756,13 @@ fsevents@~2.3.2:
   version: 2.1.0
   resolution: "performance-now@npm:2.1.0"
   checksum: 534e641aa8f7cba160f0afec0599b6cecefbb516a2e837b512be0adbe6c1da5550e89c78059c7fabc5c9ffdf6627edabe23eb7c518c4500067a898fa65c2b550
+  languageName: node
+  linkType: hard
+
+"picocolors@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "picocolors@npm:0.2.1"
+  checksum: 3b0f441f0062def0c0f39e87b898ae7461c3a16ffc9f974f320b44c799418cabff17780ee647fda42b856a1dc45897e2c62047e1b546d94d6d5c6962f45427b2
   languageName: node
   linkType: hard
 
@@ -11601,6 +11657,17 @@ fsevents@~2.3.2:
     nanoid: ^3.1.25
     source-map-js: ^0.6.2
   checksum: 20073f3f70487e9fa8d40e930d02595c4d96b7db8b2142ee4efe8e0c9a54c844c720370e178aef57c12d2d5bf65592cfdd1d020a74bf2840bc58650590713a35
+  languageName: node
+  linkType: hard
+
+"postcss@npm:^8.3.9":
+  version: 8.3.9
+  resolution: "postcss@npm:8.3.9"
+  dependencies:
+    nanoid: ^3.1.28
+    picocolors: ^0.2.1
+    source-map-js: ^0.6.2
+  checksum: b64d0e59bc027b2f09e5a84ca32b4f0620553812110e42295a79fd0e6ea664779e575c2d5e8d35a1b0804f0933ec878404c6e161e008b5bc51cba44eaef216ef
   languageName: node
   linkType: hard
 
@@ -14364,7 +14431,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5, webpack@npm:^5.1.0, webpack@npm:^5.38.1, webpack@npm:^5.56.0":
+"webpack@npm:^5, webpack@npm:^5.1.0, webpack@npm:^5.38.1":
   version: 5.56.0
   resolution: "webpack@npm:5.56.0"
   dependencies:
@@ -14398,6 +14465,43 @@ fsevents@~2.3.2:
   bin:
     webpack: bin/webpack.js
   checksum: 27eebf2ac518fe6198fe1933a1ba3a72fb34c6540319f63caed09c7d8bd9e5c3aef20805fb2122adecfbe3bc971b28ca09b1f809655cb1136e083549e09470d7
+  languageName: node
+  linkType: hard
+
+"webpack@npm:^5.56.1":
+  version: 5.56.1
+  resolution: "webpack@npm:5.56.1"
+  dependencies:
+    "@types/eslint-scope": ^3.7.0
+    "@types/estree": ^0.0.50
+    "@webassemblyjs/ast": 1.11.1
+    "@webassemblyjs/wasm-edit": 1.11.1
+    "@webassemblyjs/wasm-parser": 1.11.1
+    acorn: ^8.4.1
+    acorn-import-assertions: ^1.7.6
+    browserslist: ^4.14.5
+    chrome-trace-event: ^1.0.2
+    enhanced-resolve: ^5.8.3
+    es-module-lexer: ^0.9.0
+    eslint-scope: 5.1.1
+    events: ^3.2.0
+    glob-to-regexp: ^0.4.1
+    graceful-fs: ^4.2.4
+    json-parse-better-errors: ^1.0.2
+    loader-runner: ^4.2.0
+    mime-types: ^2.1.27
+    neo-async: ^2.6.2
+    schema-utils: ^3.1.0
+    tapable: ^2.1.1
+    terser-webpack-plugin: ^5.1.3
+    watchpack: ^2.2.0
+    webpack-sources: ^3.2.0
+  peerDependenciesMeta:
+    webpack-cli:
+      optional: true
+  bin:
+    webpack: bin/webpack.js
+  checksum: e5ead673155a5e9667c8ae5413af18739335b067e03ae4e6daefbf9bf648321267abc706d3c756b17c9224c5e31762c0de212e700cca34ab4ee1e069e7806b8a
   languageName: node
   linkType: hard
 
