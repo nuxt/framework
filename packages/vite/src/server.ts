@@ -3,6 +3,7 @@ import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import fse from 'fs-extra'
 import pDebounce from 'p-debounce'
+import consola from 'consola'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
@@ -25,7 +26,7 @@ export async function buildServer (ctx: ViteBuildContext) {
         // Alias vue
         'vue/server-renderer': 'vue/server-renderer',
         'vue/compiler-sfc': 'vue/compiler-sfc',
-        '@vue/reactivity': `@vue/reactivity/dist/reactivitiy.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
+        '@vue/reactivity': `@vue/reactivity/dist/reactivity.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
         '@vue/shared': `@vue/shared/dist/shared.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
         'vue-router': `vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
         vue: `vue/dist/vue.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`
@@ -66,6 +67,16 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   const onBuild = () => ctx.nuxt.callHook('build:resources', wpfs)
 
+  // Production build
+  if (!ctx.nuxt.options.dev) {
+    const start = Date.now()
+    consola.info('Building server...')
+    await vite.build(serverConfig)
+    await onBuild()
+    consola.success(`Server built in ${Date.now() - start}ms`)
+    return
+  }
+
   if (!ctx.nuxt.options.ssr) {
     await onBuild()
     return
@@ -86,7 +97,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     const { code } = await bundleRequest(viteServer, resolve(ctx.nuxt.options.appDir, 'entry'))
     await fse.writeFile(resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'), code, 'utf-8')
     const time = (Date.now() - start)
-    console.info(`ℹ Vite server built in ${time}ms`)
+    consola.success(`Vite server built in ${time}ms`)
     await onBuild()
   }
   const doBuild = pDebounce(_doBuild, 100)
