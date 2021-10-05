@@ -40,6 +40,6 @@ export default defineNuxtCommand({
       '💿  Install dependencies with `npm install` or `yarn install`',
       '🚀  Start development server with `npm run dev` or `yarn dev`',
       ''
-    ].join('\n\n    '))
+    ].join('\n\n     '))
   }
 })
