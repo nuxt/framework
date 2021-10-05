@@ -15,7 +15,7 @@ export interface BridgeConfig Partial<{
   constraints: boolean
   postcss8: boolean
   swc: boolean
-  resolve: boolean,
+  resolve: boolean
   typescript: boolean
 }>
 
