@@ -1,5 +1,5 @@
 ---
 layout.aside: true
-layout.asideClass: ''
+layout.asideClass: ""
 navigation.collapse: true
 ---
