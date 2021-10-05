@@ -10094,6 +10094,7 @@ fsevents@~2.3.2:
     mri: ^1.2.0
     pathe: ^0.2.0
     scule: ^0.2.1
+    superb: ^4.0.0
     unbuild: latest
   dependenciesMeta:
     fsevents:
@@ -13206,6 +13207,15 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"superb@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "superb@npm:4.0.0"
+  dependencies:
+    unique-random-array: ^2.0.0
+  checksum: b80b4d347954ac994863386f6f6ebe176b93ebe8a14258191c118d92ab78296095b8195ae23f4b21e83519ac7eec36cc553fc2672914dd5d3ee98418e93a6bdc
+  languageName: node
+  linkType: hard
+
 "supports-color@npm:8.1.1, supports-color@npm:^8.0.0":
   version: 8.1.1
   resolution: "supports-color@npm:8.1.1"
@@ -13852,6 +13862,22 @@ fsevents@~2.3.2:
   dependencies:
     unique-slug: ^2.0.0
   checksum: cf4998c9228cc7647ba7814e255dec51be43673903897b1786eff2ac2d670f54d4d733357eb08dea969aa5e6875d0e1bd391d668fbdb5a179744e7c7551a6f80
+  languageName: node
+  linkType: hard
+
+"unique-random-array@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "unique-random-array@npm:2.0.0"
+  dependencies:
+    unique-random: ^2.1.0
+  checksum: c983e511fe6f45b9ee9b78d26a78e94ba798a4afaa2ca289948e694bc6ad75efca0dd1944e94a010ab56dd574daf4ebcf72727c6d581693610d3b0a8192ef2e5
+  languageName: node
+  linkType: hard
+
+"unique-random@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "unique-random@npm:2.1.0"
+  checksum: 7bc33f364f288172a948c82c0bbb7393fd175f3a78932aa3a77f070d786d5e86db869dc72f7cb9e0a26e5d3142bfd5c3c9d134a68473a3b1f4e2300d84dbf39d
   languageName: node
   linkType: hard
 

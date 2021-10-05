@@ -1,6 +1,7 @@
 import { existsSync, readdirSync } from 'fs'
 import createDegit from 'degit'
 import { relative, resolve } from 'pathe'
+import superb from 'superb'
 import { warn, info, error } from '../utils/log'
 import { defineNuxtCommand } from './index'
 
@@ -34,7 +35,7 @@ export default defineNuxtCommand({
     await degit.clone(dstDir)
 
     // Show neet steps
-    console.log('\n 🎉  Congratulations! Another Nuxt project just made! Next steps:' + [
+    console.log(`\n 🎉  Another Nuxt project just made. ${superb.random()}! Next steps:` + [
       '',
       `📁  \`cd ${rpath(dstDir)}\``,
       '💿  Install dependencies with `npm install` or `yarn install`',
