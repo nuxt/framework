@@ -43,6 +43,6 @@
     "pathe": "^0.2.0",
     "scule": "^0.2.1",
     "unbuild": "latest",
-    "v8-compile-cache": "^2.3.0"
+    "degit": "^2.8.4"
   }
 }

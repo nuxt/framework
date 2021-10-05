@@ -5712,6 +5712,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"degit@npm:^2.8.4":
+  version: 2.8.4
+  resolution: "degit@npm:2.8.4"
+  bin:
+    degit: degit
+  checksum: bb58c48ff1ae3828825d7e614db703afd69905abc2d666009bb4affecb8d87be993511556395889dffc99a5eba7a058117402050c509a6e2c3dd56a579120236
+  languageName: node
+  linkType: hard
+
 "delayed-stream@npm:~1.0.0":
   version: 1.0.0
   resolution: "delayed-stream@npm:1.0.0"
@@ -10075,6 +10084,7 @@ fsevents@~2.3.2:
     colorette: ^2.0.14
     debounce-promise: ^3.1.2
     deep-object-diff: ^1.1.0
+    degit: ^2.8.4
     destr: ^1.1.0
     flat: ^5.0.2
     fsevents: ~2.3.2
@@ -10085,7 +10095,6 @@ fsevents@~2.3.2:
     pathe: ^0.2.0
     scule: ^0.2.1
     unbuild: latest
-    v8-compile-cache: ^2.3.0
   dependenciesMeta:
     fsevents:
       optional: true
@@ -14007,7 +14016,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"v8-compile-cache@npm:^2.0.3, v8-compile-cache@npm:^2.3.0":
+"v8-compile-cache@npm:^2.0.3":
   version: 2.3.0
   resolution: "v8-compile-cache@npm:2.3.0"
   checksum: adb0a271eaa2297f2f4c536acbfee872d0dd26ec2d76f66921aa7fc437319132773483344207bdbeee169225f4739016d8d2dbf0553913a52bb34da6d0334f8e
