@@ -75,9 +75,9 @@ function generateMarkdown (schema: Schema, title: string, level: string, parentV
 const TAG_REGEX = /^@([\d\w]+)[\s\n]/i
 
 const TagAlertType = {
-  note: 'note',
+  note: 'info',
   warning: 'warning',
-  deprecated: 'deprecated'
+  deprecated: 'danger'
 }
 
 const InternalTypes = new Set([

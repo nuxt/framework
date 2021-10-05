@@ -1,7 +1,7 @@
 ---
-title: Get Started
+title: Concepts
 layout.aside: true
 layout.asideClass: ''
 navigation.exclusive: true
-navigation.redirect: /get-started/introduction
+navigation.redirect: /concepts/hybrid-rendering
 ---
