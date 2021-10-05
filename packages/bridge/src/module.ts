@@ -5,6 +5,20 @@ import { setupAppBridge } from './app'
 import { setupCAPIBridge } from './capi'
 import { setupBetterResolve } from './resolve'
 import { setupGlobalImports } from './global-imports'
+import { setupTypescript } from './typescript'
+
+export interface BridgeConfig {
+  nitro: boolean
+  vite: boolean
+  app: boolean | {}
+  capi: boolean | {}
+  globalImports: boolean
+  constraints: boolean
+  postcss8: boolean
+  swc: boolean
+  resolve: boolean
+  typescript: boolean
+}
 
 export default defineNuxtModule({
   name: 'nuxt-bridge',
@@ -18,9 +32,9 @@ export default defineNuxtModule({
     constraints: true,
     // TODO: Remove from 2.16
     postcss8: true,
-    swc: true,
+    typescript: true,
     resolve: true
-  },
+  } as BridgeConfig,
   async setup (opts, nuxt) {
     const _require = createRequire(import.meta.url)
 
@@ -45,8 +59,8 @@ export default defineNuxtModule({
     if (opts.postcss8) {
       await installModule(nuxt, _require.resolve('@nuxt/postcss8'))
     }
-    if (opts.swc) {
-      await installModule(nuxt, _require.resolve('nuxt-swc'))
+    if (opts.typescript) {
+      await setupTypescript()
     }
     if (opts.resolve) {
       setupBetterResolve()
@@ -66,3 +80,16 @@ export default defineNuxtModule({
     }
   }
 })
+
+declare module '@nuxt/kit' {
+  interface NuxtConfig {
+    bridge?: Partial<BridgeConfig>
+  }
+}
+
+// @ts-ignore
+declare module '@nuxt/types' {
+  interface NuxtConfig {
+    bridge?: Partial<BridgeConfig>
+  }
+}
