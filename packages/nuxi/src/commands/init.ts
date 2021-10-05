@@ -15,7 +15,7 @@ const knownTemplates = {
 export default defineNuxtCommand({
   meta: {
     name: 'init',
-    usage: 'npx nuxi init [dir name] [--no-cache] [--verbose|-v] [--template,-t]',
+    usage: 'npx nuxi init [--verbose|-v] [--template,-t] <dir>',
     description: 'Initialize a fresh project'
   },
   async invoke (args) {
@@ -38,7 +38,7 @@ export default defineNuxtCommand({
       '',
       `📁  \`cd ${rpath(dstDir)}\``,
       '💿  Install dependencies with `npm install` or `yarn install`',
-      '🚀  Start development server with `yarn dev`',
+      '🚀  Start development server with `npm run dev` or `yarn dev`',
       ''
     ].join('\n\n    '))
   }
