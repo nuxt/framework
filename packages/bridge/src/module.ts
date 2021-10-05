@@ -5,6 +5,7 @@ import { setupAppBridge } from './app'
 import { setupCAPIBridge } from './capi'
 import { setupBetterResolve } from './resolve'
 import { setupGlobalImports } from './global-imports'
+import { setupTypescript } from './typescript'
 
 export interface BridgeConfig {
   nitro: boolean
@@ -31,7 +32,7 @@ export default defineNuxtModule({
     constraints: true,
     // TODO: Remove from 2.16
     postcss8: true,
-    swc: true,
+    typescript: true,
     resolve: true
   } as BridgeConfig,
   async setup (opts, nuxt) {
@@ -58,8 +59,8 @@ export default defineNuxtModule({
     if (opts.postcss8) {
       await installModule(nuxt, _require.resolve('@nuxt/postcss8'))
     }
-    if (opts.swc) {
-      await installModule(nuxt, _require.resolve('nuxt-swc'))
+    if (opts.typescript) {
+      await setupTypescript()
     }
     if (opts.resolve) {
       setupBetterResolve()
