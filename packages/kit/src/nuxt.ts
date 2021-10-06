@@ -41,7 +41,7 @@ export interface LoadNuxtOptions extends LoadNuxtConfigOptions {
 }
 
 export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
-  const resolveOpts = { paths: opts.rootDir }
+  const resolveOpts = { paths: opts.rootDir, interopDefault: true }
 
   // Detect version
   if (!opts.version) {
@@ -56,7 +56,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   }
 
   // Nuxt 2
-  const { default: { loadNuxt } } = (await tryImportModule('nuxt-edge', resolveOpts) || await importModule('nuxt', resolveOpts))
+  const { loadNuxt } = await tryImportModule('nuxt-edge', resolveOpts) || await importModule('nuxt', resolveOpts)
   const nuxt = await loadNuxt({
     rootDir: opts.rootDir,
     for: opts.dev ? 'dev' : 'build',
@@ -68,7 +68,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
 }
 
 export async function buildNuxt (nuxt: Nuxt): Promise<any> {
-  const resolveOpts = { paths: nuxt.options.rootDir }
+  const resolveOpts = { paths: nuxt.options.rootDir, interopDefault: true }
 
   // Nuxt 3
   if (nuxt.options._majorVersion === 3) {
@@ -77,6 +77,6 @@ export async function buildNuxt (nuxt: Nuxt): Promise<any> {
   }
 
   // Nuxt 2
-  const { default: { build } } = await tryImportModule('nuxt-edge', resolveOpts) || await tryImportModule('nuxt', resolveOpts)
+  const { build } = await tryImportModule('nuxt-edge', resolveOpts) || await tryImportModule('nuxt', resolveOpts)
   return build(nuxt)
 }

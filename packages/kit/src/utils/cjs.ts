@@ -1,5 +1,6 @@
 import { pathToFileURL } from 'url'
 import { join, normalize } from 'pathe'
+import { interopDefault } from 'mlly'
 import jiti from 'jiti'
 
 // TODO: use create-require for jest environment
@@ -119,8 +120,8 @@ export function requireModule (id: string, opts: RequireModuleOptions = {}) {
   let requiredModule = _require(resolvedPath)
 
   // Interop default
-  if (opts.interopDefault !== false && requiredModule && requiredModule.default) {
-    requiredModule = requiredModule.default
+  if (opts.interopDefault !== false) {
+    requiredModule = interopDefault(requiredModule)
   }
 
   return requiredModule
@@ -128,6 +129,9 @@ export function requireModule (id: string, opts: RequireModuleOptions = {}) {
 
 export function importModule (id: string, opts: RequireModuleOptions = {}) {
   const resolvedPath = resolveModule(id, opts)
+  if (opts.interopDefault !== false) {
+    return import(pathToFileURL(resolvedPath).href).then(interopDefault)
+  }
   return import(pathToFileURL(resolvedPath).href)
 }
 
