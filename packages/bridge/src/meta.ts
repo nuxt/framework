@@ -13,7 +13,7 @@ interface SetupMetaOptions {
 export const setupMeta = async (opts: SetupMetaOptions) => {
   const nuxt = useNuxt()
 
-  if (!opts.needsExplicitEnable) {
+  if (opts.needsExplicitEnable) {
     const metaPath = addTemplate({
       filename: 'meta.mjs',
       getContents: () => `export const useMeta = () => console.warn('${msgPrefix} To use \`useMeta\`, please set \`bridge.meta\` to \`true\` in your \`nuxt.config\`. ${checkDocsMsg}')`
