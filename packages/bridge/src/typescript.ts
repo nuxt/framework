@@ -14,6 +14,11 @@ export function setupTypescript () {
   const babelPlugin = _require.resolve('@babel/plugin-transform-typescript')
   nuxt.options.build.babel.plugins = nuxt.options.build.babel.plugins || []
 
+  // Error if `@nuxt/typescript-build` is added
+  if (nuxt.options.buildModules.includes('@nuxt/typescript-build')) {
+    throw new Error('Please remove `@nuxt/typescript-build` from `buildModules` to avoid conflict with bridge.')
+  }
+
   const hasBabelPlugin = nuxt.options.build.babel.plugins.some((r) => {
     if (typeof r === 'string' && r.includes('@babel/plugin-transform-typescript')) { return true }
     if (Array.isArray(r) && r.some(i => i.includes('@babel/plugin-transform-typescript'))) { return true }
