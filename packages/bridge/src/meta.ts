@@ -28,9 +28,7 @@ export const setupMeta = async (opts: { enable: true | null }) => {
   nuxt.options.build.transpile.push('vue')
 
   if (nuxt.options.head && typeof nuxt.options.head === 'function') {
-    if (typeof nuxt.options.head === 'function') {
-      throw new TypeError(`${msgPrefix} The head() function in \`nuxt.config\` has been deprecated and in nuxt3 will need to be moved to \`app.vue\`. ${checkDocsMsg}`)
-    }
+    throw new TypeError(`${msgPrefix} The head() function in \`nuxt.config\` has been deprecated and in nuxt3 will need to be moved to \`app.vue\`. ${checkDocsMsg}`)
   }
 
   const runtimeDir = resolve(distDir, 'runtime/meta')
