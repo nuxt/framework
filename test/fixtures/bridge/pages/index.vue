@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { useMeta } from '#app'
+import { useMeta } from '#meta'
 
 export default defineComponent({
   setup () {

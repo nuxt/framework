@@ -1,14 +1,12 @@
 import { createRequire } from 'module'
-import { defineNuxtModule, installModule, checkNuxtCompatibilityIssues, addPluginTemplate } from '@nuxt/kit'
-import { resolve } from 'pathe'
+import { defineNuxtModule, installModule, checkNuxtCompatibilityIssues } from '@nuxt/kit'
 import { setupNitroBridge } from './nitro'
 import { setupAppBridge } from './app'
 import { setupCAPIBridge } from './capi'
 import { setupBetterResolve } from './resolve'
 import { setupGlobalImports } from './global-imports'
 import { setupTypescript } from './typescript'
-import metaModule from './meta'
-import { distDir } from './dirs'
+import { setupMeta } from './meta'
 
 export interface BridgeConfig {
   nitro: boolean
@@ -16,7 +14,7 @@ export interface BridgeConfig {
   app: boolean | {}
   capi: boolean | {}
   globalImports: boolean
-  meta: boolean
+  meta: boolean | null
   constraints: boolean
   postcss8: boolean
   resolve: boolean
@@ -33,7 +31,7 @@ export default defineNuxtModule({
     capi: {},
     globalImports: true,
     constraints: true,
-    meta: true,
+    meta: null,
     // TODO: Remove from 2.16
     postcss8: true,
     typescript: true,
@@ -82,14 +80,8 @@ export default defineNuxtModule({
         }
       })
     }
-    if (opts.meta) {
-      await installModule(nuxt, metaModule)
-    } else if (nuxt.options.features.meta) {
-      // Nitro server plugin (for vue-meta)
-      addPluginTemplate({
-        filename: 'nitro-bridge.server.mjs',
-        src: resolve(distDir, 'runtime/nitro-bridge.server.mjs')
-      })
+    if (opts.meta !== false) {
+      await setupMeta({ enable: opts.meta })
     }
   }
 })
