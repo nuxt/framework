@@ -13,9 +13,9 @@ export interface BridgeConfig {
   typescript: boolean
 }
 
-// TODO: Alaso inherit from @nuxt/types.NuxtConfig for legacy type compat
+// TODO: Also inherit from @nuxt/types.NuxtConfig for legacy type compat
 export interface NuxtConfig extends _NuxtConfig {
-  bridge?: Partial<BridgeConfig>
+  bridge?: Partial<BridgeConfig> | false
 }
 
 declare module '@nuxt/kit' {
@@ -24,5 +24,4 @@ declare module '@nuxt/kit' {
   }
 }
 
-export interface DefineeNuxtConfigOpts { injectBridge?: Boolean }
-export declare function defineNuxtConfig(config: NuxtConfig, opts?: DefineeNuxtConfigOpts): NuxtConfig
+export declare function defineNuxtConfig(config: NuxtConfig): NuxtConfig
