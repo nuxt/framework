@@ -6,10 +6,14 @@ import { distDir } from './dirs'
 const checkDocsMsg = 'Please see https://v3.nuxtjs.org for more information.'
 const msgPrefix = '[bridge] [meta]'
 
-export const setupMeta = async (opts: { enable: true | null }) => {
+interface SetupMetaOptions {
+  needsExplicitEnable?: boolean
+}
+
+export const setupMeta = async (opts: SetupMetaOptions) => {
   const nuxt = useNuxt()
 
-  if (!opts.enable) {
+  if (!opts.needsExplicitEnable) {
     const metaPath = addTemplate({
       filename: 'meta.mjs',
       getContents: () => `export const useMeta = () => console.warn('${msgPrefix} To use \`useMeta\`, please set \`bridge.meta\` to \`true\` in your \`nuxt.config\`. ${checkDocsMsg}')`
