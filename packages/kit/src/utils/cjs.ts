@@ -117,12 +117,7 @@ export function requireModule (id: string, opts: RequireModuleOptions = {}) {
   }
 
   // Try to require
-  let requiredModule = _require(resolvedPath)
-
-  // Interop default
-  if (opts.interopDefault !== false) {
-    requiredModule = interopDefault(requiredModule)
-  }
+  const requiredModule = _require(resolvedPath)
 
   return requiredModule
 }

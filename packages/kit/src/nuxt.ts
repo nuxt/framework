@@ -1,5 +1,5 @@
 import { getContext } from 'unctx'
-import { importModule, tryImportModule, tryResolveModule } from './utils/cjs'
+import { importModule, tryImportModule, tryResolveModule, RequireModuleOptions } from './utils/cjs'
 import type { Nuxt } from './types/nuxt'
 import type { NuxtConfig } from './types/config'
 import type { LoadNuxtConfigOptions } from './config/load'
@@ -41,7 +41,7 @@ export interface LoadNuxtOptions extends LoadNuxtConfigOptions {
 }
 
 export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
-  const resolveOpts = { paths: opts.rootDir, interopDefault: true }
+  const resolveOpts: RequireModuleOptions = { paths: opts.rootDir }
 
   // Detect version
   if (!opts.version) {
@@ -68,7 +68,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
 }
 
 export async function buildNuxt (nuxt: Nuxt): Promise<any> {
-  const resolveOpts = { paths: nuxt.options.rootDir, interopDefault: true }
+  const resolveOpts: RequireModuleOptions = { paths: nuxt.options.rootDir }
 
   // Nuxt 3
   if (nuxt.options._majorVersion === 3) {
