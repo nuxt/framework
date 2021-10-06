@@ -64,12 +64,7 @@
                 <IconClose v-else class="p-3 w-12 h-12" />
               </button>
               <div class="flex items-center h-header space-x-2">
-                <LangSwitcher
-                  class="text-white"
-                  icon-class="w-6 h-6 m-auto d-secondary-text hover:d-secondary-text-hover"
-                  strategy="fixed"
-                />
-                <ColorSwitcher />
+                <ColorSwitcher padding="p-3" />
               </div>
             </div>
 

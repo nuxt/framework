@@ -20,11 +20,7 @@
       </nav>
 
       <div class="flex items-center justify-end gap-1 lg:flex-1">
-        <LangSwitcher
-          class="hidden lg:inline-flex text-white"
-          icon-class="w-6 h-6 m-auto text-gray-300 hover:text-primary-400"
-        />
-        <ColorSwitcher class="hidden lg:block" />
+        <ColorSwitcher class="hidden lg:block" padding="p-3" />
         <AlgoliaSearchBox v-if="settings && settings.algolia" :options="settings.algolia" :settings="settings" />
       </div>
     </div>
