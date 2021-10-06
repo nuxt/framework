@@ -16,7 +16,7 @@ export function setupTypescript () {
 
   // Error if `@nuxt/typescript-build` is added
   if (nuxt.options.buildModules.includes('@nuxt/typescript-build')) {
-    throw new Error('Please remove `@nuxt/typescript-build` from `buildModules` to avoid conflict with bridge.')
+    throw new Error('Please remove `@nuxt/typescript-build` from `buildModules` or set `bridge.typescript: false` to avoid conflict with bridge.')
   }
 
   nuxt.options.build.babel.plugins.unshift(babelPlugin)
