@@ -4,7 +4,7 @@
     <div class="flex flex-wrap justify-center py-0 section">
       <section class="flex flex-col justify-start w-full px-4 pt-36 pb-52 md:pt-40 lg:pb-56 lg:pt-48 text-center">
         <div>
-          <span class="nuxt-text-highlight">{{ $t('common.currently_version') }}</span>
+          <span class="nuxt-text-highlight">Currently in public beta</span>
         </div>
         <h1 class="font-normal font-serif text-display-5 xs:text-display-4 md:text-display-3 2xl:text-display-2 my-8">
           <Markdown use="title" unwrap="p" />

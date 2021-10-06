@@ -54,17 +54,6 @@ export default withDocus({
     root: resolve(__dirname),
     config: resolve(__dirname, 'windi.config.js')
   },
-  i18n: {
-    langDir: 'i18n/',
-    locales: [
-      {
-        code: 'en',
-        iso: 'en-US',
-        file: 'en-US.js',
-        name: 'English'
-      }
-    ]
-  },
   /**
    * Modules
    */

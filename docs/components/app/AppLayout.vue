@@ -25,20 +25,14 @@ export default defineComponent({
     }
   },
   async fetch () {
-    const { $docus, $i18n } = this
+    const { $docus } = this
     this.headerLinks = (await $docus
       .search('/collections/header')
-      .where({ language: $i18n.locale })
       .fetch()).links
   },
   computed: {
     layout () {
       return this.$docus.layout.value
-    }
-  },
-  watch: {
-    '$i18n.locale' () {
-      this.$fetch()
     }
   }
 })
