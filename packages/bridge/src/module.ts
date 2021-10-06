@@ -1,5 +1,6 @@
 import { createRequire } from 'module'
 import { defineNuxtModule, installModule, checkNuxtCompatibilityIssues } from '@nuxt/kit'
+import type { BridgeConfig } from '../types'
 import { setupNitroBridge } from './nitro'
 import { setupAppBridge } from './app'
 import { setupCAPIBridge } from './capi'
