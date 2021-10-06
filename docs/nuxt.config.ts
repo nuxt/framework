@@ -73,6 +73,9 @@ export default withDocus({
     '@docus/github',
     'vue-plausible'
   ],
+  plugins: [
+    '~/plugins/mq'
+  ],
   publicRuntimeConfig: {
     plausible: {
       domain: process.env.PLAUSIBLE_DOMAIN

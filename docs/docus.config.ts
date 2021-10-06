@@ -11,7 +11,7 @@ export default {
     branch: 'main'
   },
   layout: {
-    aside: true,
+    aside: false,
     asideClass: ''
   },
   theme: {

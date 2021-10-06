@@ -8457,6 +8457,15 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"json2mq@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "json2mq@npm:0.2.0"
+  dependencies:
+    string-convert: ^0.2.0
+  checksum: 5672c3abdd31e21a0e2f0c2688b4948103687dab949a1c5a1cba98667e899a96c2c7e3d71763c4f5e7cd7d7c379ea5dd5e1a9b2a2107dd1dfa740719a11aa272
+  languageName: node
+  linkType: hard
+
 "json5@npm:^1.0.1":
   version: 1.0.1
   resolution: "json5@npm:1.0.1"
@@ -9984,6 +9993,7 @@ fsevents@~2.3.2:
     pathe: ^0.2.0
     typescript: ^4.4.3
     unbuild: ^0.5.6
+    vue-mq: ^1.0.1
   languageName: unknown
   linkType: soft
 
@@ -12855,6 +12865,13 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"string-convert@npm:^0.2.0":
+  version: 0.2.1
+  resolution: "string-convert@npm:0.2.1"
+  checksum: 1098b1d8e3712c72d0a0b0b7f5c36c98af93e7660b5f0f14019e41bcefe55bfa79214d5e03e74d98a7334a0b9bf2b7f4c6889c8c24801aa2ae2f9ebe1d8a1ef9
+  languageName: node
+  linkType: hard
+
 "string-width@npm:^1.0.1":
   version: 1.0.2
   resolution: "string-width@npm:1.0.2"
@@ -14033,6 +14050,15 @@ fsevents@~2.3.2:
     "@vue/server-renderer": ^3.0.6
     vue: ^3.0.0
   checksum: 436ee6d8d102eb665b8bf0b3749229e456f66b9e30f5b842d9f48298be551d28b86d6bf034afc09820e0451a2c6d891614db4e4df1ea357106a52267ace071e8
+  languageName: node
+  linkType: hard
+
+"vue-mq@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "vue-mq@npm:1.0.1"
+  dependencies:
+    json2mq: ^0.2.0
+  checksum: aea95358b2b2e7faebbfacda21b7a0f86f62c152f2e3cb3def09feb6d4c4564160232358ca11ff8be8db068aaacced31f3520b70f091f47c2d921469832b7e3e
   languageName: node
   linkType: hard
 
