@@ -7,19 +7,6 @@ import { setupBetterResolve } from './resolve'
 import { setupGlobalImports } from './global-imports'
 import { setupTypescript } from './typescript'
 
-export interface BridgeConfig {
-  nitro: boolean
-  vite: boolean
-  app: boolean | {}
-  capi: boolean | {}
-  globalImports: boolean
-  constraints: boolean
-  postcss8: boolean
-  swc: boolean
-  resolve: boolean
-  typescript: boolean
-}
-
 export default defineNuxtModule({
   name: 'nuxt-bridge',
   configKey: 'bridge',
@@ -80,16 +67,3 @@ export default defineNuxtModule({
     }
   }
 })
-
-declare module '@nuxt/kit' {
-  interface NuxtConfig {
-    bridge?: Partial<BridgeConfig>
-  }
-}
-
-// @ts-ignore
-declare module '@nuxt/types' {
-  interface NuxtConfig {
-    bridge?: Partial<BridgeConfig>
-  }
-}
