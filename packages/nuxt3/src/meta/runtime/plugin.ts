@@ -10,7 +10,8 @@ export default defineNuxtPlugin((nuxt) => {
 
   nuxt.app.mixin({
     [metaConfig.mixinKey] () {
-      const options = getCurrentInstance()?.type
+      const instance = getCurrentInstance()
+      const options = instance?.type || /* nuxt2 */ instance?.proxy?.$options
       if (!options || !('head' in options)) { return }
 
       useMeta(options.head)
