@@ -1,6 +1,6 @@
 import { resolve } from 'pathe'
 import { createHooks } from 'hookable'
-import { loadNuxtConfig, LoadNuxtOptions, Nuxt, NuxtOptions, nuxtCtx, installModule, ModuleContainer, NuxtHooks } from '@nuxt/kit'
+import { loadNuxtConfig, LoadNuxtOptions, Nuxt, NuxtOptions, NuxtConfig, nuxtCtx, installModule, ModuleContainer, NuxtHooks } from '@nuxt/kit'
 import pagesModule from '../pages/module'
 import metaModule from '../meta/module'
 import componentsModule from '../components/module'
@@ -8,7 +8,7 @@ import globalImportsModule from '../global-imports/module'
 import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
 import { initNitro } from './nitro'
-
+s
 export function createNuxt (options: NuxtOptions): Nuxt {
   const hooks = createHooks<NuxtHooks>()
 
@@ -71,4 +71,8 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   }
 
   return nuxt
+}
+
+export function defineNuxtConfig (config: NuxtConfig): NuxtConfig {
+  return config
 }
