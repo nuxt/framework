@@ -15,6 +15,11 @@ export function setupNitroBridge () {
     throw new Error('[nitro] Please use `nuxt generate` for static target')
   }
 
+  // Add nitro types
+  nuxt.hook('prepare:types', (opts) => {
+    opts.references.push({ types: '@nuxt/nitro' })
+  })
+
   // Disable loading-screen
   // @ts-ignore
   nuxt.options.build.loadingScreen = false

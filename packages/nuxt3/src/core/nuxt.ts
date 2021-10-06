@@ -38,6 +38,12 @@ async function initNuxt (nuxt: Nuxt) {
   // Init nitro
   await initNitro(nuxt)
 
+  // Add nitro types
+  nuxt.hook('prepare:types', (opts) => {
+    opts.references.push({ types: '@nuxt/nitro' })
+    opts.references.push({ types: 'nuxt3' })
+  })
+
   // Init user modules
   await nuxt.callHook('modules:before', { nuxt } as ModuleContainer)
   const modulesToInstall = [
