@@ -8,7 +8,7 @@ import globalImportsModule from '../global-imports/module'
 import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
 import { initNitro } from './nitro'
-s
+
 export function createNuxt (options: NuxtOptions): Nuxt {
   const hooks = createHooks<NuxtHooks>()
 
