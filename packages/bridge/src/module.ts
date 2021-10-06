@@ -1,11 +1,14 @@
 import { createRequire } from 'module'
-import { defineNuxtModule, installModule, checkNuxtCompatibilityIssues } from '@nuxt/kit'
+import { defineNuxtModule, installModule, checkNuxtCompatibilityIssues, addPluginTemplate } from '@nuxt/kit'
+import { resolve } from 'pathe'
 import { setupNitroBridge } from './nitro'
 import { setupAppBridge } from './app'
 import { setupCAPIBridge } from './capi'
 import { setupBetterResolve } from './resolve'
 import { setupGlobalImports } from './global-imports'
 import { setupTypescript } from './typescript'
+import metaModule from './meta'
+import { distDir } from './dirs'
 
 export interface BridgeConfig {
   nitro: boolean
@@ -13,9 +16,9 @@ export interface BridgeConfig {
   app: boolean | {}
   capi: boolean | {}
   globalImports: boolean
+  meta: boolean
   constraints: boolean
   postcss8: boolean
-  swc: boolean
   resolve: boolean
   typescript: boolean
 }
@@ -30,6 +33,7 @@ export default defineNuxtModule({
     capi: {},
     globalImports: true,
     constraints: true,
+    meta: true,
     // TODO: Remove from 2.16
     postcss8: true,
     typescript: true,
@@ -76,6 +80,15 @@ export default defineNuxtModule({
             }
           }
         }
+      })
+    }
+    if (opts.meta) {
+      await installModule(nuxt, metaModule)
+    } else if (nuxt.options.features.meta) {
+      // Nitro server plugin (for vue-meta)
+      addPluginTemplate({
+        filename: 'nitro-bridge.server.mjs',
+        src: resolve(distDir, 'runtime/nitro-bridge.server.mjs')
       })
     }
   }

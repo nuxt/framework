@@ -80,12 +80,6 @@ export function setupNitroBridge () {
     src: resolve(nitroContext._internal.runtimeDir, 'app/nitro.client.mjs')
   })
 
-  // Nitro server plugin (for vue-meta)
-  addPluginTemplate({
-    filename: 'nitro-bridge.server.mjs',
-    src: resolve(distDir, 'runtime/nitro-bridge.server.mjs')
-  })
-
   // Fix module resolution
   nuxt.hook('webpack:config', (configs) => {
     for (const config of configs) {
