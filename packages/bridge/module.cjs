@@ -3,4 +3,14 @@ module.exports = function (...args) {
   return import('./dist/module.mjs').then(m => m.default.call(this, ...args))
 }
 
-module.exports.defineNuxtConfig = config => config
+module.exports.defineNuxtConfig = (config = {}, opts = {}) => {
+  if (opts.injectBridge !== false) {
+    if (!config.buildModules) {
+      config.buildModules = []
+    }
+    if (!config.buildModules.find(m => m === '@nuxt/bridge')) {
+      config.buildModules.push('@nuxt/bridge')
+    }
+  }
+  return config
+}

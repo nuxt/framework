@@ -24,4 +24,5 @@ declare module '@nuxt/kit' {
   }
 }
 
-export declare function defineNuxtConfig(config: NuxtConfig): NuxtConfig
+export interface DefineeNuxtConfigOpts { injectBridge?: Boolean }
+export declare function defineNuxtConfig(config: NuxtConfig, opts?: DefineeNuxtConfigOpts): NuxtConfig

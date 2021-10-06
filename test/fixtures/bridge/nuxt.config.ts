@@ -5,9 +5,6 @@ global.__NUXT_PREPATHS__ = (global.__NUXT_PREPATHS__ || []).concat(__dirname)
 
 export default defineNuxtConfig({
   components: true,
-  buildModules: [
-    '@nuxt/bridge'
-  ],
   serverMiddleware: [
     {
       handle (req, _res, next) {
