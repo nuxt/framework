@@ -81,7 +81,7 @@ export default defineNuxtModule({
       })
     }
     if (opts.meta !== false && opts.capi) {
-      await setupMeta(opts.meta === null ? { needsExplicitEnable: true } : opts.meta)
+      await setupMeta({ needsExplicitEnable: opts.meta === null })
     }
   }
 })
