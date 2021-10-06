@@ -5,4 +5,5 @@ layout:
 navigation:
   collapse: true
   exclusive: false
+  redirect: /docs/deployment/platforms
 ---
