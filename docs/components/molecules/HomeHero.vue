@@ -1,7 +1,7 @@
 <template>
   <div class="overflow-hidden relative dark:bg-sky-black dark:text-white pt-14 md:pt-18">
     <HeroParallax />
-    <div class="flex flex-wrap justify-center py-0 section">
+    <div class="flex flex-wrap justify-center py-0 section d-container-content">
       <section class="flex flex-col justify-start w-full px-4 pt-36 pb-48 md:pt-44 lg:pb-56 lg:pt-36 text-center z-20">
         <h1 class="font-normal font-serif text-display-5 xs:text-display-4 md:text-display-3 2xl:text-display-2 mb-6">
           <Markdown use="title" unwrap="p" />
