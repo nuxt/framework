@@ -7,7 +7,7 @@ links:
     title: 'Concepts'
     to: '/concepts'
   -
-    title: 'Docs'
+    title: 'Usage'
     to: '/docs'
   -
     title: 'Bridge'

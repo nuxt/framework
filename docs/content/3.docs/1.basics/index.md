@@ -1,6 +1,7 @@
 ---
-title: Docs
+title: 'Basics'
 layout.aside: true
-navigation.exclusive: true
+layout.asideClass: ''
+navigation.collapse: true
 navigation.redirect: /docs/basics/introduction
 ---
