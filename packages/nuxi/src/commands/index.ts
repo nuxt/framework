@@ -14,6 +14,11 @@ export const commands = {
 
 export type Command = keyof typeof commands
 
+export const invokeCommand = async (command: Command, options: { nuxt?: any, rootDir?: any } = {}) => {
+  const cmd = await commands[command]()
+  await cmd.invoke(options)
+}
+
 export interface NuxtCommandMeta {
   name: string;
   usage: string;

@@ -14,10 +14,10 @@ export default defineNuxtCommand({
   },
   async invoke (args) {
     process.env.NODE_ENV = process.env.NODE_ENV || 'production'
-    const rootDir = resolve(args._[0] || '.')
+    const rootDir = args.rootDir || resolve(args._[0] || '.')
 
     const { loadNuxt } = await importModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
-    const nuxt = await loadNuxt({ rootDir })
+    const nuxt = args.nuxt || await loadNuxt({ rootDir })
 
     const modulePaths = getModulePaths(nuxt.options.modulesDir)
 

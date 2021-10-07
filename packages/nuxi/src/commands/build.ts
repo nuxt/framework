@@ -2,7 +2,7 @@ import { resolve } from 'pathe'
 import consola from 'consola'
 import { importModule } from '../utils/cjs'
 
-import { defineNuxtCommand } from './index'
+import { defineNuxtCommand, invokeCommand } from './index'
 
 export default defineNuxtCommand({
   meta: {
@@ -12,11 +12,13 @@ export default defineNuxtCommand({
   },
   async invoke (args) {
     process.env.NODE_ENV = process.env.NODE_ENV || 'production'
-    const rootDir = resolve(args._[0] || '.')
+    const rootDir = args.rootDir || resolve(args._[0] || '.')
 
     const { loadNuxt, buildNuxt } = await importModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
 
-    const nuxt = await loadNuxt({ rootDir })
+    const nuxt = args.nuxt || await loadNuxt({ rootDir })
+
+    await invokeCommand('prepare', { nuxt, rootDir })
 
     nuxt.hook('error', (err) => {
       consola.error('Nuxt Build Error:', err)

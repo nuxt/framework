@@ -6,7 +6,7 @@ import consola from 'consola'
 import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
 import { importModule } from '../utils/cjs'
-import { defineNuxtCommand } from './index'
+import { invokeCommand, defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
   meta: {
@@ -22,9 +22,11 @@ export default defineNuxtCommand({
       open: args.open || args.o
     })
 
-    const rootDir = resolve(args._[0] || '.')
+    const rootDir = args.rootDir || resolve(args._[0] || '.')
 
     const { loadNuxt, buildNuxt } = await importModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
+
+    const prepare = debounce(nuxt => invokeCommand('prepare', { nuxt, rootDir }), 1000)
 
     let currentNuxt: Nuxt
     const load = async (isRestart: boolean, reason?: string) => {
@@ -38,6 +40,7 @@ export default defineNuxtCommand({
           await currentNuxt.close()
         }
         const newNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
+        prepare(newNuxt)
         currentNuxt = newNuxt
         await currentNuxt.ready()
         await buildNuxt(currentNuxt)
