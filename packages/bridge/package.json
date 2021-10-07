@@ -20,6 +20,7 @@
     "@nuxt/nitro": "3.0.0",
     "@nuxt/postcss8": "^1.1.3",
     "@vue/composition-api": "^1.2.3",
+    "@vueuse/head": "^0.6.0",
     "acorn": "^8.5.0",
     "defu": "^5.0.0",
     "enhanced-resolve": "^5.8.3",
@@ -32,7 +33,8 @@
     "nuxt-vite": "^0.3.4",
     "pathe": "^0.2.0",
     "ufo": "^0.7.9",
-    "unplugin": "^0.2.16"
+    "unplugin": "^0.2.16",
+    "unplugin-vue2-script-setup": "^0.6.4"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",

@@ -1,24 +1,15 @@
 import { createRequire } from 'module'
 import { defineNuxtModule, installModule, checkNuxtCompatibilityIssues } from '@nuxt/kit'
+import type { BridgeConfig } from '../types'
 import { setupNitroBridge } from './nitro'
 import { setupAppBridge } from './app'
 import { setupCAPIBridge } from './capi'
 import { setupBetterResolve } from './resolve'
 import { setupGlobalImports } from './global-imports'
 import { setupTypescript } from './typescript'
-
-export interface BridgeConfig {
-  nitro: boolean
-  vite: boolean
-  app: boolean | {}
-  capi: boolean | {}
-  globalImports: boolean
-  constraints: boolean
-  postcss8: boolean
-  swc: boolean
-  resolve: boolean
-  typescript: boolean
-}
+import { setupMeta } from './meta'
+import { setupTranspile } from './transpile'
+import { setupScriptSetup } from './setup'
 
 export default defineNuxtModule({
   name: 'nuxt-bridge',
@@ -28,8 +19,11 @@ export default defineNuxtModule({
     vite: false,
     app: {},
     capi: {},
+    transpile: true,
+    scriptSetup: true,
     globalImports: true,
     constraints: true,
+    meta: null,
     // TODO: Remove from 2.16
     postcss8: true,
     typescript: true,
@@ -50,6 +44,9 @@ export default defineNuxtModule({
       }
       await setupCAPIBridge(opts.capi)
     }
+    if (opts.scriptSetup) {
+      await setupScriptSetup()
+    }
     if (opts.globalImports) {
       await setupGlobalImports()
     }
@@ -65,6 +62,9 @@ export default defineNuxtModule({
     if (opts.resolve) {
       setupBetterResolve()
     }
+    if (opts.transpile) {
+      setupTranspile()
+    }
     if (opts.constraints) {
       nuxt.hook('modules:done', (moduleContainer: any) => {
         for (const [name, m] of Object.entries(moduleContainer.requiredModules || {})) {
@@ -78,18 +78,8 @@ export default defineNuxtModule({
         }
       })
     }
+    if (opts.meta !== false && opts.capi) {
+      await setupMeta({ needsExplicitEnable: opts.meta === null })
+    }
   }
 })
-
-declare module '@nuxt/kit' {
-  interface NuxtConfig {
-    bridge?: Partial<BridgeConfig>
-  }
-}
-
-// @ts-ignore
-declare module '@nuxt/types' {
-  interface NuxtConfig {
-    bridge?: Partial<BridgeConfig>
-  }
-}
