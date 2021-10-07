@@ -63,6 +63,7 @@ export default defineNuxtCommand({
     const watcher = chokidar.watch([rootDir], { ignoreInitial: true, depth: 1 })
     watcher.on('all', (_event, file) => {
       if (file.startsWith(currentNuxt.options.buildDir)) { return }
+      if (file.endsWith('.d.ts')) { return }
       if (file.match(/nuxt\.config\.(js|ts|mjs|cjs)$/)) {
         dLoad(true, `${relative(rootDir, file)} updated`)
       }
