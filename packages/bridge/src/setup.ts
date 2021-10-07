@@ -1,5 +1,8 @@
+import { createRequire } from 'module'
 import { addVitePlugin, addWebpackPlugin, useNuxt } from '@nuxt/kit'
-import scriptSetupPlugin from 'unplugin-vue2-script-setup'
+
+const _require = createRequire(import.meta.url)
+const scriptSetupPlugin = _require('unplugin-vue2-script-setup').default
 
 export const setupScriptSetup = () => {
   const nuxt = useNuxt()
