@@ -22,5 +22,8 @@
     "scule": "^0.2.1",
     "untyped": "^0.2.9",
     "vue-plausible": "^1.2.1"
+  },
+  "dependencies": {
+    "three": "^0.133.1"
   }
 }
