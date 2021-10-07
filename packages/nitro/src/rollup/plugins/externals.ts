@@ -45,7 +45,7 @@ export function externals (opts: NodeExternalsOptions): Plugin {
           return null
         }
         // Bundle ts
-        if (_id.endsWith('.ts')) {
+        if (_id.endsWith('.ts') || _id.endsWith('.wasm')) {
           return null
         }
       }
