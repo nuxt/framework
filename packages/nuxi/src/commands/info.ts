@@ -16,7 +16,7 @@ export default defineNuxtCommand({
   },
   async invoke (args) {
     // Resolve rootDir
-    const rootDir = args.rootDir || resolve(args._[0] || '.')
+    const rootDir = resolve(args._[0] || '.')
 
     // Load nuxt.config
     const nuxtConfig = getNuxtConfig(rootDir)

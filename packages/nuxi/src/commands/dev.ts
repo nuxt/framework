@@ -6,7 +6,8 @@ import consola from 'consola'
 import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
 import { importModule } from '../utils/cjs'
-import { invokeCommand, defineNuxtCommand } from './index'
+import { writeTypes } from '../utils/prepare'
+import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
   meta: {
@@ -22,11 +23,11 @@ export default defineNuxtCommand({
       open: args.open || args.o
     })
 
-    const rootDir = args.rootDir || resolve(args._[0] || '.')
+    const rootDir = resolve(args._[0] || '.')
 
     const { loadNuxt, buildNuxt } = await importModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
 
-    const prepare = debounce(nuxt => invokeCommand('prepare', { nuxt, rootDir }), 1000)
+    const prepare = debounce(nuxt => writeTypes(nuxt), 1000)
 
     let currentNuxt: Nuxt
     const load = async (isRestart: boolean, reason?: string) => {
@@ -63,7 +64,6 @@ export default defineNuxtCommand({
     const watcher = chokidar.watch([rootDir], { ignoreInitial: true, depth: 1 })
     watcher.on('all', (_event, file) => {
       if (file.startsWith(currentNuxt.options.buildDir)) { return }
-      if (file.endsWith('.d.ts')) { return }
       if (file.match(/nuxt\.config\.(js|ts|mjs|cjs)$/)) {
         dLoad(true, `${relative(rootDir, file)} updated`)
       }
