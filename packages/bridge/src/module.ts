@@ -1,3 +1,4 @@
+import type { } from '@nuxt/nitro'
 import { createRequire } from 'module'
 import { defineNuxtModule, installModule, checkNuxtCompatibilityIssues } from '@nuxt/kit'
 import { setupNitroBridge } from './nitro'
