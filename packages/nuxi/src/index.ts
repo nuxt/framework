@@ -45,6 +45,9 @@ function onFatalError (err: unknown) {
   process.exit(1)
 }
 
+// Wrap all console logs with consola for better DX
+consola.wrapConsole()
+
 process.on('unhandledRejection', err => consola.error('[unhandledRejection]', err))
 process.on('uncaughtException', err => consola.error('[uncaughtException]', err))
 
