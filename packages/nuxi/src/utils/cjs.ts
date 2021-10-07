@@ -1,6 +1,7 @@
 import { createRequire } from 'module'
 import { pathToFileURL } from 'url'
 import { normalize, dirname } from 'pathe'
+import { interopDefault } from 'mlly'
 
 export function getModulePaths (paths?: string | string[]): string[] {
   return [].concat(
@@ -26,12 +27,12 @@ export function tryResolveModule (id: string, paths?: string | string[]) {
 }
 
 export function requireModule (id: string, paths?: string | string[]) {
-  return _require(resolveModule(id, paths))
+  return interopDefault(_require(resolveModule(id, paths)))
 }
 
 export function importModule (id: string, paths?: string | string[]) {
   const resolvedPath = resolveModule(id, paths)
-  return import(pathToFileURL(resolvedPath).href)
+  return import(pathToFileURL(resolvedPath).href).then(interopDefault)
 }
 
 export function getNearestPackage (id: string, paths?: string | string[]) {
