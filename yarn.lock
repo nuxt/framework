@@ -1476,7 +1476,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/kit@3.0.0, @nuxt/kit@workspace:packages/kit":
+"@nuxt/kit@3.0.0, @nuxt/kit@workspace:*, @nuxt/kit@workspace:packages/kit":
   version: 0.0.0-use.local
   resolution: "@nuxt/kit@workspace:packages/kit"
   dependencies:
@@ -10033,12 +10033,12 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"nuxi@3.0.0, nuxi@workspace:./packages/nuxi, nuxi@workspace:packages/nuxi":
+"nuxi@3.0.0, nuxi@workspace:*, nuxi@workspace:packages/nuxi":
   version: 0.0.0-use.local
   resolution: "nuxi@workspace:packages/nuxi"
   dependencies:
     "@nuxt/design": 0.0.6
-    "@nuxt/kit": "workspace:packages/kit"
+    "@nuxt/kit": "workspace:*"
     "@types/clear": ^0
     "@types/debounce-promise": ^3
     "@types/mri": ^1.1.1
@@ -10090,7 +10090,7 @@ fsevents@~2.3.2:
     lerna: ^4.0.0
     miniflare: ^1.4.1
     mocha: ^9.1.2
-    nuxi: "workspace:./packages/nuxi"
+    nuxi: "workspace:*"
     object-hash: ^2.2.0
     pathe: ^0.2.0
     typescript: ^4.4.3
@@ -10102,7 +10102,7 @@ fsevents@~2.3.2:
   version: 0.0.0-use.local
   resolution: "nuxt-playground@workspace:playground"
   dependencies:
-    "@nuxt/kit": "workspace:packages/kit"
+    "@nuxt/kit": "workspace:*"
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -10128,7 +10128,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"nuxt3@workspace:./packages/nuxt3, nuxt3@workspace:packages/nuxt3":
+"nuxt3@workspace:*, nuxt3@workspace:packages/nuxt3":
   version: 0.0.0-use.local
   resolution: "nuxt3@workspace:packages/nuxt3"
   dependencies:

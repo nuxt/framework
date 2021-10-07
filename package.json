@@ -23,7 +23,7 @@
     "version": "yarn && git add yarn.lock"
   },
   "resolutions": {
-    "nuxt3": "workspace:./packages/nuxt3",
+    "nuxt3": "workspace:*",
     "unbuild": "^0.5.6",
     "jiti": "^1.12.6"
   },
@@ -45,7 +45,7 @@
     "lerna": "^4.0.0",
     "miniflare": "^1.4.1",
     "mocha": "^9.1.2",
-    "nuxi": "workspace:./packages/nuxi",
+    "nuxi": "workspace:*",
     "object-hash": "^2.2.0",
     "pathe": "^0.2.0",
     "typescript": "^4.4.3",

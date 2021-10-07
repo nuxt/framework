@@ -2,7 +2,7 @@
   "name": "nuxt-playground",
   "private": true,
   "devDependencies": {
-    "@nuxt/kit": "workspace:packages/kit",
+    "@nuxt/kit": "workspace:*",
     "nuxt3": "latest"
   },
   "scripts": {
