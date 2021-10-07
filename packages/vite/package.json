@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@types/debounce": "^1.2.1",
+    "jiti": "^1.12.6",
     "unbuild": "latest"
   },
   "dependencies": {

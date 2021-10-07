@@ -1433,6 +1433,7 @@ __metadata:
     enhanced-resolve: ^5.8.3
     estree-walker: ^2.0.2
     fs-extra: ^10.0.0
+    jiti: ^1.12.6
     magic-string: ^0.25.7
     mlly: ^0.2.4
     node-fetch: ^3.0.0
@@ -1600,6 +1601,7 @@ __metadata:
     consola: ^2.15.3
     debounce: ^1.2.1
     fs-extra: ^10.0.0
+    jiti: ^1.12.6
     magic-string: ^0.25.7
     pathe: ^0.2.0
     ufo: ^0.7.9
@@ -1634,6 +1636,7 @@ __metadata:
     fs-extra: ^10.0.0
     glob: ^7.2.0
     hash-sum: ^2.0.0
+    jiti: ^1.12.6
     lodash-es: ^4.17.21
     memfs: ^3.3.0
     mini-css-extract-plugin: ^2.3.0
@@ -10030,12 +10033,12 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"nuxi@3.0.0, nuxi@workspace:packages/nuxi":
+"nuxi@3.0.0, nuxi@workspace:./packages/nuxi, nuxi@workspace:packages/nuxi":
   version: 0.0.0-use.local
   resolution: "nuxi@workspace:packages/nuxi"
   dependencies:
     "@nuxt/design": 0.0.6
-    "@nuxt/kit": 3.0.0
+    "@nuxt/kit": "workspace:packages/kit"
     "@types/clear": ^0
     "@types/debounce-promise": ^3
     "@types/mri": ^1.1.1
@@ -10087,6 +10090,7 @@ fsevents@~2.3.2:
     lerna: ^4.0.0
     miniflare: ^1.4.1
     mocha: ^9.1.2
+    nuxi: "workspace:./packages/nuxi"
     object-hash: ^2.2.0
     pathe: ^0.2.0
     typescript: ^4.4.3
@@ -10098,6 +10102,7 @@ fsevents@~2.3.2:
   version: 0.0.0-use.local
   resolution: "nuxt-playground@workspace:playground"
   dependencies:
+    "@nuxt/kit": "workspace:packages/kit"
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -10144,6 +10149,7 @@ fsevents@~2.3.2:
     hash-sum: ^2.0.0
     hookable: ^5.0.0
     ignore: ^5.1.8
+    jiti: ^1.12.6
     mlly: ^0.2.4
     nuxi: 3.0.0
     ohmyfetch: ^0.3.1

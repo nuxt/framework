@@ -47,6 +47,7 @@
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
     "@types/hash-sum": "^1.0.0",
+    "jiti": "^1.12.6",
     "unbuild": "latest",
     "vue-meta": "next"
   },

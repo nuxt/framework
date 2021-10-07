@@ -63,6 +63,7 @@
     "@types/webpack-dev-middleware": "^5.0.2",
     "@types/webpack-hot-middleware": "^2.25.5",
     "@types/webpack-virtual-modules": "^0",
+    "jiti": "^1.12.6",
     "unbuild": "latest"
   }
 }
