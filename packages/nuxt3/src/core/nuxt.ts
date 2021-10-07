@@ -38,7 +38,7 @@ async function initNuxt (nuxt: Nuxt) {
   // Init nitro
   await initNitro(nuxt)
 
-  // Add nitro types
+  // Add nuxt3 types
   nuxt.hook('prepare:types', (opts) => {
     opts.references.push({ types: 'nuxt3' })
   })
