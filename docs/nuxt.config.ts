@@ -27,12 +27,12 @@ export default withDocus({
       {
         hid: 'og:image',
         property: 'og:image',
-        content: 'https://v3.nuxtjs.org/preview.png'
+        content: 'https://nuxtjs.org/preview.png'
       },
       {
         hid: 'og:image:secure_url',
         property: 'og:image:secure_url',
-        content: 'https://v3.nuxtjs.org/preview.png'
+        content: 'https://nuxtjs.org/preview.png'
       },
       {
         hid: 'og:image:alt',
@@ -42,7 +42,7 @@ export default withDocus({
       {
         hid: 'twitter:image',
         name: 'twitter:image',
-        content: 'https://v3.nuxtjs.org/preview.png'
+        content: 'https://nuxtjs.org/preview.png'
       }
     ],
     bodyAttrs: {
