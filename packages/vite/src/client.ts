@@ -42,7 +42,8 @@ export async function buildClient (ctx: ViteBuildContext) {
             filename: resolve(ctx.nuxt.options.buildDir, 'stats/client.html'),
             title: 'Client Build Visualization',
             gzipSize: true,
-            template: 'sunburst'
+            template: 'sunburst',
+            ...ctx.nuxt.options.build.analyze as any
           })]
         : []
     ],
