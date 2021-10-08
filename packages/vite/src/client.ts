@@ -4,6 +4,7 @@ import fse from 'fs-extra'
 import consola from 'consola'
 import vitePlugin from '@vitejs/plugin-vue'
 
+import { visualizer } from 'rollup-plugin-visualizer'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { replace } from './plugins/replace'
 import { wpfs } from './utils/wpfs'
@@ -35,7 +36,15 @@ export async function buildClient (ctx: ViteBuildContext) {
     plugins: [
       replace({ 'process.env': 'import.meta.env' }),
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'client'),
-      vitePlugin(ctx.config.vue)
+      vitePlugin(ctx.config.vue),
+      ...ctx.nuxt.options.build.analyze
+        ? [visualizer({
+            filename: resolve(ctx.nuxt.options.buildDir, 'stats/client.html'),
+            title: 'Client Build Visualization',
+            gzipSize: true,
+            template: 'sunburst'
+          })]
+        : []
     ],
     server: {
       middlewareMode: true

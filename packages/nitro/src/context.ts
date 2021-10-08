@@ -4,6 +4,7 @@ import defu from 'defu'
 import { createHooks, Hookable, NestedHooks } from 'hookable'
 import type { Preset } from 'unenv'
 import type { NuxtHooks, NuxtOptions } from '@nuxt/kit'
+import type { PluginVisualizerOptions } from 'rollup-plugin-visualizer'
 import { tryImport, resolvePath, detectTarget, extendPreset } from './utils'
 import * as PRESETS from './presets'
 import type { NodeExternalsOptions } from './rollup/plugins/externals'
@@ -27,7 +28,7 @@ export interface NitroContext {
   minify: boolean
   sourceMap: boolean
   externals: boolean | NodeExternalsOptions
-  analyze: boolean
+  analyze: false | PluginVisualizerOptions
   entry: string
   node: boolean
   preset: string
