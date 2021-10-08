@@ -1,5 +1,4 @@
-import { join } from 'path'
-import { resolve } from 'pathe'
+import { join, resolve } from 'pathe'
 import { cyan } from 'colorette'
 import { importModule } from '../utils/cjs'
 import { defineNuxtCommand } from './index'
