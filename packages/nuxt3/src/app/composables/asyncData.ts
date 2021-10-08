@@ -36,9 +36,7 @@ export function useAsyncData<T extends Record<string, any>> (key: string, handle
 
   // Setup hook callbacks once per instance
   const instance = getCurrentInstance()
-  // @ts-ignore
   if (!instance._nuxtOnBeforeMountCbs) {
-    // @ts-ignore
     const cbs = instance._nuxtOnBeforeMountCbs = []
     if (instance && process.client) {
       onBeforeMount(() => {
@@ -97,13 +95,11 @@ export function useAsyncData<T extends Record<string, any>> (key: string, handle
     // 2. Initial load (server: false): fetch on mounted
     if (nuxt.isHydrating && clientOnly) {
       // Fetch on mounted (initial load or deferred fetch)
-      // @ts-ignore
-      instance._nuxtOnBeforeMountCbs.push(asyncData.fetch)
+      instance._nuxtOnBeforeMountCbs.push(asyncData.refresh)
     } else if (!nuxt.isHydrating) { // Navigation
       if (options.defer) {
         // 3. Navigation (defer: true): fetch on mounted
-        // @ts-ignore
-        instance._nuxtOnBeforeMountCbs.push(asyncData.fetch)
+        instance._nuxtOnBeforeMountCbs.push(asyncData.refresh)
       } else {
         // 4. Navigation (defer: false): await fetch
         asyncData.refresh()
