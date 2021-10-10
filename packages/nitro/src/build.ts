@@ -1,4 +1,4 @@
-import { resolve, join } from 'pathe'
+import { relative, resolve, join } from 'pathe'
 import consola from 'consola'
 import { rollup, watch as rollupWatch } from 'rollup'
 import fse from 'fs-extra'
@@ -58,8 +58,37 @@ export async function build (nitroContext: NitroContext) {
   return nitroContext._nuxt.dev ? _watch(nitroContext) : _build(nitroContext)
 }
 
+async function writeTypes (nitroContext: NitroContext) {
+  const routeTypes: Record<string, string[]> = {}
+
+  const middleware = [
+    ...nitroContext.scannedMiddleware,
+    ...nitroContext.middleware
+  ]
+
+  for (const mw of middleware) {
+    if (typeof mw.handle !== 'string') { continue }
+    const relativePath = relative(nitroContext._nuxt.buildDir, mw.handle).replace(/\.[a-z]+$/, '')
+    routeTypes[mw.route] = routeTypes[mw.route] || []
+    routeTypes[mw.route].push(`ReturnType<typeof import('${relativePath}').default>`)
+  }
+
+  const lines = [
+    'declare module \'@nuxt/nitro\' {',
+    '  interface InternalApi {',
+    ...Object.entries(routeTypes).map(([path, types]) => `    '${path}': ${types.join(' | ')}`),
+    '  }',
+    '}',
+    // Makes this a module for augmentation purposes
+    'export {}'
+  ]
+
+  await writeFile(join(nitroContext._nuxt.buildDir, 'nitro-api.d.ts'), lines.join('\n'))
+}
+
 async function _build (nitroContext: NitroContext) {
   nitroContext.scannedMiddleware = await scanMiddleware(nitroContext._nuxt.serverDir)
+  await writeTypes(nitroContext)
 
   consola.start('Building server...')
   const build = await rollup(nitroContext.rollupConfig).catch((error) => {
@@ -117,8 +146,10 @@ async function _watch (nitroContext: NitroContext) {
       nitroContext.scannedMiddleware = middleware
       if (['add', 'addDir'].includes(event)) {
         watcher.close()
+        writeTypes(nitroContext)
         watcher = startRollupWatcher(nitroContext)
       }
     }
   )
+  await writeTypes(nitroContext)
 }
