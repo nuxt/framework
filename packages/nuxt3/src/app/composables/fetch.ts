@@ -1,13 +1,13 @@
 import type { FetchOptions } from 'ohmyfetch'
 import type { $Fetch } from '@nuxt/nitro'
-import type { AsyncData, AsyncDataOptions } from './asyncData'
+import type { AsyncDataOptions, SelectorsOf } from './asyncData'
 import { useAsyncData } from './asyncData'
 
-type UseFetchOptions<ResT> = AsyncDataOptions<ResT> & FetchOptions & {
-  key?: string
-}
+type UseFetchOptions<T, Transform extends (res: T) => any = (res: T) => T, Selectors extends SelectorsOf<ReturnType<Transform>> = SelectorsOf<ReturnType<Transform>>> = AsyncDataOptions<T, Transform, Selectors> & FetchOptions & { key?: string }
 
-export function useFetch<ReqT extends string = string, ResT = ReturnType<$Fetch<unknown, ReqT>>> (url: ReqT, opts: UseFetchOptions<ResT> = {}): AsyncData<ResT> {
+type Awaited<T> = T extends Promise<infer U> ? U : T
+
+export function useFetch<ReqT extends string = string, ResT = Awaited<ReturnType<$Fetch<unknown, ReqT>>>, Transform extends (res: ResT) => any = (res: ResT) => ResT, Selectors extends SelectorsOf<ReturnType<Transform>> = SelectorsOf<ReturnType<Transform>>> (url: ReqT, opts: UseFetchOptions<ResT, Transform, Selectors> = {}) {
   if (!opts.key) {
     const keys: any = { u: url }
     if (opts.baseURL) {
@@ -22,7 +22,7 @@ export function useFetch<ReqT extends string = string, ResT = ReturnType<$Fetch<
     opts.key = generateKey(keys)
   }
 
-  return useAsyncData<ResT>('$f' + opts.key, () => $fetch(url, opts) as Promise<ResT>)
+  return useAsyncData('$f' + opts.key, () => $fetch(url, opts) as Promise<ResT>, opts)
 }
 
 // TODO: More predictable universal hash

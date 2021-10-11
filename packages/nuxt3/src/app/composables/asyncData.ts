@@ -2,12 +2,15 @@ import { onBeforeMount, onUnmounted, ref } from 'vue'
 import type { Ref } from 'vue'
 import { NuxtApp, useNuxtApp } from '#app'
 
-export interface AsyncDataOptions<T> {
+export type SelectorsOf<T> = Array<keyof T extends string ? T : string>
+export type SelectFrom<T, K extends Array<string>> = T extends Record<string, any> ? Pick<T, K[number]> : T
+
+export interface AsyncDataOptions<T, Transform extends (res: T) => any = (res: T) => T, Selectors extends SelectorsOf<ReturnType<Transform>> = SelectorsOf<ReturnType<Transform>>> {
   server?: boolean
   defer?: boolean
   default?: () => T
-  transform?: (res: any) => T
-  pick?: string[]
+  transform?: Transform
+  pick?: Selectors
 }
 
 export interface _AsyncData<T> {
@@ -21,7 +24,7 @@ export type AsyncData<T> = _AsyncData<T> & Promise<_AsyncData<T>>
 
 const getDefault = () => null
 
-export function useAsyncData<T extends Record<string, any>> (key: string, handler: (ctx?: NuxtApp) => Promise<T>, options: AsyncDataOptions<T> = {}): AsyncData<T> {
+export function useAsyncData<T, Transform extends (res: T) => any = (res: T) => T, Selectors extends SelectorsOf<ReturnType<Transform>> = SelectorsOf<ReturnType<Transform>>> (key: string, handler: (ctx?: NuxtApp) => Promise<T>, options: AsyncDataOptions<T, Transform, Selectors> = {}): AsyncData<SelectFrom<ReturnType<Transform>, Selectors>> {
   // Validate arguments
   if (typeof key !== 'string') {
     throw new TypeError('asyncData key must be a string')
