@@ -6,6 +6,8 @@ export interface AsyncDataOptions<T> {
   server?: boolean
   defer?: boolean
   default?: () => T
+  transform?: (res: any) => T
+  pick?: string[]
 }
 
 export interface _AsyncData<T> {
@@ -63,6 +65,12 @@ export function useAsyncData<T extends Record<string, any>> (key: string, handle
     // TODO: Handle immediate errors
     nuxt._asyncDataPromises[key] = Promise.resolve(handler(nuxt))
       .then((result) => {
+        if (options.transform) {
+          result = options.transform(result)
+        }
+        if (options.pick) {
+          result = pick(result, options.pick) as T
+        }
         asyncData.data.value = result
         asyncData.error.value = null
       })
@@ -112,4 +120,12 @@ export function useAsyncData<T extends Record<string, any>> (key: string, handle
   Object.assign(asyncDataPromise, asyncData)
 
   return asyncDataPromise as AsyncData<T>
+}
+
+function pick (obj: Record<string, any>, keys: string[]) {
+  const newObj = {}
+  for (const key of keys) {
+    newObj[key] = obj[key]
+  }
+  return newObj
 }
