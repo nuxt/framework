@@ -10,9 +10,6 @@ links:
     title: 'Usage'
     to: '/docs'
   -
-    title: 'Bridge'
-    to: '/bridge'
-  -
     title: 'Community'
     to: '/community'
 ---
