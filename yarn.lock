@@ -2411,7 +2411,7 @@ __metadata:
     ufo: ^0.7.9
     unbuild: latest
     unplugin: ^0.2.16
-    unplugin-vue2-script-setup: ^0.6.10
+    unplugin-vue2-script-setup: 0.6.10
     vue-router: 3
   languageName: unknown
   linkType: soft
@@ -18830,7 +18830,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"unplugin-vue2-script-setup@npm:^0.6.10":
+"unplugin-vue2-script-setup@npm:0.6.10":
   version: 0.6.10
   resolution: "unplugin-vue2-script-setup@npm:0.6.10"
   dependencies:
