@@ -104,6 +104,22 @@ export default {
   },
 
   /**
+   * Set default configuration for `<head>` on every page.
+   *
+   * @version 3
+   */
+  meta: {
+    /** Each item in the array maps to a newly-created `<meta>` element, where object properties map to attributes. */
+    meta: [],
+    /** Each item in the array maps to a newly-created `<link>` element, where object properties map to attributes. */
+    link: [],
+    /** Each item in the array maps to a newly-created `<style>` element, where object properties map to attributes. */
+    style: [],
+    /** Each item in the array maps to a newly-created `<script>` element, where object properties map to attributes. */
+    script: []
+  },
+
+  /**
    * Configuration for the Nuxt `fetch()` hook.
    * @version 2
    */
@@ -301,7 +317,7 @@ export default {
     /** Set to false to disable the Nuxt `validate()` hook */
     validate: true,
     /** Set to false to disable the Nuxt `asyncData()` hook */
-    asyncData: true,
+    useAsyncData: true,
     /** Set to false to disable the Nuxt `fetch()` hook */
     fetch: true,
     /** Set to false to disable `$nuxt.isOnline` */

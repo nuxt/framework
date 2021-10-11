@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { getCurrentInstance, reactive } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
@@ -21,6 +22,7 @@ export interface RuntimeNuxtHooks {
   'app:rendered': () => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
+  'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
 }
 
 export interface NuxtApp {
@@ -68,8 +70,9 @@ export function createNuxtApp (options: CreateOptions) {
   const nuxt: NuxtApp = {
     provide: undefined,
     globalName: 'nuxt',
-    payload: {},
+    payload: reactive(process.server ? { serverRendered: true, data: {} } : (window.__NUXT__ || { data: {} })),
     isHydrating: process.client,
+    _asyncDataPromises: {},
     ...options
   } as any as NuxtApp
 
@@ -93,18 +96,9 @@ export function createNuxtApp (options: CreateOptions) {
   }
 
   if (process.server) {
-    nuxt.payload = {
-      serverRendered: true
-    }
-
-    nuxt.ssrContext = nuxt.ssrContext || {}
-
     // Expose to server renderer to create window.__NUXT__
+    nuxt.ssrContext = nuxt.ssrContext || {}
     nuxt.ssrContext.payload = nuxt.payload
-  }
-
-  if (process.client) {
-    nuxt.payload = window.__NUXT__ || {}
   }
 
   // Expose runtime config

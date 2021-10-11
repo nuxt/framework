@@ -2,10 +2,11 @@ import { resolve, relative } from 'pathe'
 import chokidar from 'chokidar'
 import debounce from 'debounce-promise'
 import type { Nuxt } from '@nuxt/kit'
+import consola from 'consola'
 import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
 import { importModule } from '../utils/cjs'
-import { error } from '../utils/log'
+import { writeTypes } from '../utils/prepare'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -26,6 +27,8 @@ export default defineNuxtCommand({
 
     const { loadNuxt, buildNuxt } = await importModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
 
+    const prepare = debounce(nuxt => writeTypes(nuxt), 1000)
+
     let currentNuxt: Nuxt
     const load = async (isRestart: boolean, reason?: string) => {
       try {
@@ -38,6 +41,7 @@ export default defineNuxtCommand({
           await currentNuxt.close()
         }
         const newNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
+        prepare(newNuxt)
         currentNuxt = newNuxt
         await currentNuxt.ready()
         await buildNuxt(currentNuxt)
@@ -47,7 +51,7 @@ export default defineNuxtCommand({
           listener.showURL()
         }
       } catch (err) {
-        error(`Cannot ${isRestart ? 'restart' : 'start'} nuxt: `, err)
+        consola.error(`Cannot ${isRestart ? 'restart' : 'start'} nuxt: `, err)
         server.setApp(createLoadingHandler(
           'Error while loading nuxt. Please check console and fix errors.'
         ))

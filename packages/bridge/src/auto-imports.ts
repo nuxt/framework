@@ -1,16 +1,25 @@
+import { installModule, useNuxt } from '@nuxt/kit'
+import autoImports from '../../nuxt3/src/auto-imports/module'
+
+// TODO: implement these: https://github.com/nuxt/framework/issues/549
+const disabled = [
+  'useAsyncData',
+  'asyncData'
+]
+
 const identifiers = {
   '#app': [
-    'useAsyncData',
-    'asyncData',
     'defineNuxtComponent',
     'useNuxtApp',
     'defineNuxtPlugin',
+    'useRoute',
+    'useRouter',
     'useRuntimeConfig'
   ],
   '#meta': [
     'useMeta'
   ],
-  vue: [
+  '@vue/composition-api': [
     // lifecycle
     'onActivated',
     'onBeforeMount',
@@ -52,16 +61,20 @@ const identifiers = {
     'nextTick',
     'provide',
     'useCssModule'
-  ],
-  'vue-router': [
-    'useRoute',
-    'useRouter'
   ]
 }
 
-export const defaultIdentifiers = {}
+const defaultIdentifiers = {}
 for (const pkg in identifiers) {
   for (const id of identifiers[pkg]) {
     defaultIdentifiers[id] = pkg
   }
+}
+
+export async function setupAutoImports () {
+  const nuxt = useNuxt()
+  nuxt.options.autoImports = nuxt.options.autoImports || {}
+  nuxt.options.autoImports.disabled = nuxt.options.autoImports.disabled || disabled
+  nuxt.options.autoImports.identifiers = Object.assign({}, defaultIdentifiers, nuxt.options.autoImports.identifiers)
+  await installModule(nuxt, autoImports)
 }
