@@ -3,5 +3,5 @@ title: Concepts
 layout.aside: true
 layout.asideClass: ''
 navigation.exclusive: true
-navigation.redirect: /concepts/hybrid-rendering
+navigation.redirect: /concepts/intro
 ---

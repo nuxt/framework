@@ -1,13 +1,13 @@
 ---
 links:
   -
-    title: 'Get Started'
-    to: '/get-started'
+    title: 'Getting Started'
+    to: '/getting-started'
   -
     title: 'Concepts'
     to: '/concepts'
   -
-    title: 'Usage'
+    title: 'Docs'
     to: '/docs'
   -
     title: 'Community'

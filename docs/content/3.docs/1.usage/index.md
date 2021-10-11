@@ -1,5 +1,5 @@
 ---
-title: 'Basics'
+title: 'Usage'
 layout.aside: true
 layout.asideClass: ''
 navigation.collapse: true
