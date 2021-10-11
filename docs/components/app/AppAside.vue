@@ -63,7 +63,9 @@
                 <IconArrowLeft v-if="!mobileMainNav && layout.aside" class="p-3 w-12 h-12" />
                 <IconClose v-else class="p-3 w-12 h-12" />
               </button>
-              <div class="flex items-center h-header space-x-2">
+              <div class="flex items-center h-header space-x-1">
+                <GitHubButton />
+                <TwitterButton />
                 <ColorSwitcher padding="p-3" />
               </div>
             </div>
