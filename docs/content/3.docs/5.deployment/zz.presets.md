@@ -1,4 +1,4 @@
-# Presets (advanced)
+# [Presets]
 
 There are four provided generic presets for Nuxt Nitro that you can use out-of-the-box.
 
