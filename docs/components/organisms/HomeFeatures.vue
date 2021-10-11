@@ -12,10 +12,10 @@
           <p class="font-normal text-center text-body-base md:text-body-lg 2xl:text-body-xl mb-12">
             <Markdown use="description" unwrap="p" />
           </p>
-
           <div class="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             <slot />
           </div>
+          <Markdown use="bottom" />
         </div>
       </NuxtContainer>
     </section>
