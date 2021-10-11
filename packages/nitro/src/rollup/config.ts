@@ -324,7 +324,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     // https://github.com/btd/rollup-plugin-visualizer
     rollupConfig.plugins.push(visualizer({
       filename: join(nitroContext.output.dir, 'stats.html'),
-      title: 'Server Build Visualization',
+      title: 'Nitro Server Build Visualization',
       template: 'sunburst',
       gzipSize: true,
       ...nitroContext.analyze

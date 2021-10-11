@@ -22,7 +22,7 @@ export default defineNuxtCommand({
       config: {
         nitro: {
           analyze: {
-            filename: join(buildDir, 'stats/server.html')
+            filename: join(buildDir, 'stats/nitro.html')
           },
           output: {
             dir: outputDir
@@ -37,7 +37,7 @@ export default defineNuxtCommand({
 
     await buildNuxt(nuxt)
 
-    console.log(`Server analysis available at ${cyan(join(buildDir, 'stats/server.html'))}`)
+    console.log(`Nitro server analysis available at ${cyan(join(buildDir, 'stats/nitro.html'))}`)
     console.log(`Client analysis available at ${cyan(join(buildDir, 'stats/client.html'))}`)
   }
 })
