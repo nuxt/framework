@@ -146,7 +146,7 @@ async function _watch (nitroContext: NitroContext) {
       nitroContext.scannedMiddleware = middleware
       if (['add', 'addDir'].includes(event)) {
         watcher.close()
-        writeTypes(nitroContext)
+        writeTypes(nitroContext).catch(console.error)
         watcher = startRollupWatcher(nitroContext)
       }
     }
