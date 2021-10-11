@@ -125,7 +125,7 @@ export function setupNitroBridge () {
 
   // Add typed route responses
   nuxt.hook('prepare:types', (opts) => {
-    opts.references.push({ path: resolve(nuxt.options.buildDir, 'nitro-api.d.ts') })
+    opts.references.push({ path: resolve(nuxt.options.buildDir, 'nitro.d.ts') })
   })
 
   // nuxt build/dev
