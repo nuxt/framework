@@ -6,6 +6,4 @@
 
 <script setup>
 const { data } = await useFetch('/api/hello', { params: { foo: 'bar' } })
-
-console.log(data.value.query)
 </script>
