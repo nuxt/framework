@@ -1,13 +1,26 @@
 import type { FetchOptions } from 'ohmyfetch'
 import type { $Fetch } from '@nuxt/nitro'
-import type { AsyncDataOptions, SelectorsOf } from './asyncData'
+import type { AsyncDataOptions, _Transform, KeyOfRes } from './asyncData'
 import { useAsyncData } from './asyncData'
 
-type UseFetchOptions<T, Transform extends (res: T) => any = (res: T) => T, Selectors extends SelectorsOf<ReturnType<Transform>> = SelectorsOf<ReturnType<Transform>>> = AsyncDataOptions<T, Transform, Selectors> & FetchOptions & { key?: string }
+export type Awaited<T> = T extends Promise<infer U> ? U : T
+export type FetchResult<ReqT extends string> = Awaited<ReturnType<$Fetch<unknown, ReqT>>>
 
-type Awaited<T> = T extends Promise<infer U> ? U : T
+export type UseFetchOptions<
+  DataT,
+  Transform extends _Transform<DataT, any> = _Transform<DataT, DataT>,
+  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
+> = AsyncDataOptions<DataT, Transform, PickKeys> & FetchOptions & { key?: string }
 
-export function useFetch<ReqT extends string = string, ResT = Awaited<ReturnType<$Fetch<unknown, ReqT>>>, Transform extends (res: ResT) => any = (res: ResT) => ResT, Selectors extends SelectorsOf<ReturnType<Transform>> = SelectorsOf<ReturnType<Transform>>> (url: ReqT, opts: UseFetchOptions<ResT, Transform, Selectors> = {}) {
+export function useFetch<
+    ReqT extends string = string,
+    ResT = FetchResult<ReqT>,
+    Transform extends (res: ResT) => any = (res: ResT) => ResT,
+    PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
+  > (
+  url: ReqT,
+  opts: UseFetchOptions<ResT, Transform, PickKeys> = {}
+) {
   if (!opts.key) {
     const keys: any = { u: url }
     if (opts.baseURL) {
