@@ -1,5 +1,5 @@
 import { installModule, useNuxt } from '@nuxt/kit'
-import autoImports from 'nuxt3/src/auto-imports/module'
+import autoImports from '../../nuxt3/src/auto-imports/module'
 
 // TODO: implement these: https://github.com/nuxt/framework/issues/549
 const disabled = [
