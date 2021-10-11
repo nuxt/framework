@@ -12,7 +12,7 @@ Nitro will auto-detect that you are in a Netlify environment and build the corre
 
 ## Deployment
 
-Just push to your git repository [as you would normally for Netlify](https://docs.netlify.com/configure-builds/get-started/).
+Just push to your git repository [as you would normally for Netlify](https://docs.netlify.com/configure-builds/getting-started/).
 
 ## More information
 

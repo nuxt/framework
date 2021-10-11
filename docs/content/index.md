@@ -21,7 +21,7 @@ Build you next application with Vue 3 and experience hybrid rendering, powerful 
 Nuxt 3 is an open source framework making web development simple and powerful.
 
 #secondary-button
-:button-link[Get started]{ href="/get-started" size="medium" aria-label="Get started" }
+:button-link[Get started]{ href="/getting-started" size="medium" aria-label="Get started" }
 ::
 
 ::home-features{.dark:bg-secondary-darkest .bg-gray-50}
@@ -132,7 +132,7 @@ Nuxt 3 has been re-architected with a smaller core and optimized for faster perf
   ---
   ::
 #bottom
-  :button-link[Get started]{ href="/get-started" size="medium" aria-label="Get started" }
+  :button-link[Get started]{ href="/getting-started" size="medium" aria-label="Get started" }
 ::
 
 ::section{.py-20 .text-lg}
@@ -180,6 +180,6 @@ Nuxt 3 has been re-architected with a smaller core and optimized for faster perf
     - Compatibility with Nuxt 2 module ecosystem
     - Upgrade piece by piece (Nitro, Composition API, Nuxt Kit)
 
-    :button-link[Get started with Nuxt Bridge]{ href="/get-started/bridge" size="medium" aria-label="Get started" }
+    :button-link[Get started with Nuxt Bridge]{ href="/getting-started/bridge" size="medium" aria-label="Get started" }
   ::
 ::
