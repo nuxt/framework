@@ -1,4 +1,5 @@
 import { promises as fsp } from 'fs'
+import { createRequire } from 'module'
 import { relative, resolve } from 'pathe'
 import { cyan } from 'colorette'
 import { Nuxt, TSReference } from '@nuxt/kit'
@@ -42,6 +43,52 @@ export const writeTypes = async (nuxt: Nuxt) => {
   await fsp.writeFile(declarationPath, declaration)
 
   consola.success('Generated', cyan(relative(process.cwd(), declarationPath)))
+
+  await writeTSConfig(nuxt)
+}
+
+export const writeTSConfig = async (nuxt: Nuxt) => {
+  const rootDir = nuxt.options.rootDir
+  const tsconfigPath = resolve(`${rootDir}/tsconfig.json`)
+  const _require = createRequire(rootDir)
+  const currentTsConfig: any = {}
+
+  try {
+    Object.assign(currentTsConfig, _require(tsconfigPath))
+  } catch (error) {
+    // ignore error
+  }
+
+  const includeTypes : string[] = currentTsConfig.include ?? []
+  if (!includeTypes.includes('nuxt.d.ts')) {
+    includeTypes.push('nuxt.d.ts')
+  }
+
+  const aliasConfig = {
+    ...nuxt.options.alias,
+    '#build': nuxt.options.buildDir
+  }
+  for (const aliasKey of Object.keys(aliasConfig)) {
+    aliasConfig[aliasKey] = [aliasConfig[aliasKey]]
+  }
+
+  const tsConfig = {
+    ...currentTsConfig,
+    compilerOptions: {
+      ...currentTsConfig?.compilerOptions,
+      paths: {
+        ...currentTsConfig?.compilerOptions?.paths,
+        ...aliasConfig
+      }
+    },
+    include: includeTypes
+  }
+
+  await nuxt.callHook('prepare:tsconfig', { tsConfig })
+
+  await fsp.writeFile(tsconfigPath, JSON.stringify(tsConfig, null, 2))
+
+  consola.success('Generated', cyan(relative(process.cwd(), tsconfigPath)))
 }
 
 function renderAttrs (obj: Record<string, string>) {
