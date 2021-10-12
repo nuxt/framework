@@ -1,5 +1,4 @@
 import { existsSync, promises as fsp } from 'fs'
-import { createRequire } from 'module'
 import { relative, resolve } from 'pathe'
 import { cyan } from 'colorette'
 import { Nuxt, TSReference } from '@nuxt/kit'
