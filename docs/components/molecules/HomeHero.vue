@@ -3,7 +3,7 @@
     <div class="flex flex-wrap justify-center py-0 section d-container-content">
       <section class="flex flex-col justify-start w-full px-4 pb-24 sm:pt-12 sm:pb-36 lg:pt-24 lg:pb-56 text-center z-20">
         <div class="highlight-box mx-auto my-2 rounded-md">
-          <Link to="https://nuxtjs.org/announcements/nuxt3-beta" class="inline-flex items-center space-x-0.5 px-4 py-1.5 font-medium">
+          <Link to="https://nuxtjs.org/announcements/nuxt3-beta" class="inline-flex items-center space-x-0.5 px-4 md:px-5 py-1 md:py-2 font-medium">
             <span>Read the announcement</span><IconArrowRight />
           </Link>
         </div>
@@ -81,10 +81,10 @@ export default {
 .highlight-box {
   @apply transition-shadow duration-300;
 
-  box-shadow: #00DC82AA 0px 0px 16px;
+  box-shadow: #00DC82AA 0px 0px 8px;
 
   &:hover {
-    box-shadow: #00DC82 0px 0px 20px;
+    box-shadow: #00DC82 0px 0px 16px;
   }
 }
 </style>
