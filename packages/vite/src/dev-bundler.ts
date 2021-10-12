@@ -20,6 +20,13 @@ export interface TransformOptions {
   viteServer: vite.ViteDevServer
 }
 
+function isExternal (_opts: TransformOptions, id: string) {
+  if (builtinModules.includes(id)) {
+    return true
+  }
+  return false
+}
+
 async function transformRequest (opts: TransformOptions, id: string) {
   // Virtual modules start with `\0`
   if (id && id.startsWith('/@id/__x00__')) {
@@ -28,11 +35,12 @@ async function transformRequest (opts: TransformOptions, id: string) {
   if (id && id.startsWith('/@id/')) {
     id = id.slice('/@id/'.length)
   }
+  id = id.replace(/^\/@fs/, '')
 
   // Externals
-  if (builtinModules.includes(id) || id.includes('node_modules')) {
+  if (isExternal(opts, id)) {
     return {
-      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${id.replace(/^\/@fs/, '')}').then(r => { ssrExportAll(r) })`,
+      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${id}').then(r => { ssrExportAll(r) })`,
       deps: [],
       dynamicDeps: []
     }
