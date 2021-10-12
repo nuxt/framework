@@ -61,7 +61,7 @@ export default {
     primary: {
       type: Object,
       default: () => ({
-        text: 'Start on GitHub',
+        text: 'Star on GitHub',
         url: 'https://github.com',
         icon: 'IconGitHub'
       })
