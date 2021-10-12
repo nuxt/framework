@@ -2671,6 +2671,7 @@ __metadata:
     unbuild: latest
     unenv: ^0.3.10
     unstorage: ^0.2.9
+    vue-bundle-renderer: ^0.3.1
   languageName: unknown
   linkType: soft
 
@@ -6142,6 +6143,15 @@ __metadata:
   dependencies:
     semver: ^7.0.0
   checksum: 3c8b3b96ed88dd8e21286a3590292862ad62a59085bbcd77a4470848fed0f59fcd67f366afdf9ca8d7e77abce7ccf336bf662c12ead949294aa03bc563a57a1c
+  languageName: node
+  linkType: hard
+
+"bundle-runner@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "bundle-runner@npm:0.0.1"
+  dependencies:
+    source-map: ^0.7.3
+  checksum: 26a2f681a82e57b27e788fbce71096d9417af078c09b06d0038fade878417809732ea5a785b0e4dfbe69f2b4980f8523710fae9a59e883e2680fc92e90bfc2d3
   languageName: node
   linkType: hard
 
@@ -19210,6 +19220,15 @@ fsevents@~2.3.2:
   version: 1.1.2
   resolution: "vm-browserify@npm:1.1.2"
   checksum: 10a1c50aab54ff8b4c9042c15fc64aefccce8d2fb90c0640403242db0ee7fb269f9b102bdb69cfb435d7ef3180d61fd4fb004a043a12709abaf9056cfd7e039d
+  languageName: node
+  linkType: hard
+
+"vue-bundle-renderer@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "vue-bundle-renderer@npm:0.3.1"
+  dependencies:
+    bundle-runner: ^0.0.1
+  checksum: 66e345c85940c3bd41352f419c930b3e5ca9fc3f7d32860d4502c92db352d21bbdd81c234675a536144001f610108eaca86e17acc057c3cc1ce03316ef20e1ff
   languageName: node
   linkType: hard
 
