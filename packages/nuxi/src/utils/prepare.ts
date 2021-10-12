@@ -55,7 +55,7 @@ export const writeTSConfig = async (nuxt: Nuxt) => {
     '#build': buildDir
   }
   for (const aliasKey of Object.keys(aliasConfig)) {
-    aliasConfig[aliasKey] = [relative(buildDir ,aliasConfig[aliasKey]) || '.']
+    aliasConfig[aliasKey] = [relative(buildDir, aliasConfig[aliasKey]) || '.']
   }
 
   const tsConfig = {
