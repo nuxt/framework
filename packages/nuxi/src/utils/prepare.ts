@@ -1,4 +1,4 @@
-import { promises as fsp } from 'fs'
+import { existsSync, promises as fsp } from 'fs'
 import { createRequire } from 'module'
 import { relative, resolve } from 'pathe'
 import { cyan } from 'colorette'
@@ -50,14 +50,9 @@ export const writeTypes = async (nuxt: Nuxt) => {
 export const writeTSConfig = async (nuxt: Nuxt) => {
   const rootDir = nuxt.options.rootDir
   const tsconfigPath = resolve(`${rootDir}/tsconfig.json`)
-  const _require = createRequire(rootDir)
-  const currentTsConfig: any = {}
 
-  try {
-    Object.assign(currentTsConfig, _require(tsconfigPath))
+  if (existsSync(tsconfigPath)) {
     return
-  } catch (error) {
-    // return
   }
 
   const aliasConfig = {
