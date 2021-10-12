@@ -22,6 +22,7 @@
     "chokidar": "^3.5.2",
     "consola": "^2.15.3",
     "debounce": "^1.2.1",
+    "defu": "^5.0.0",
     "fs-extra": "^10.0.0",
     "magic-string": "^0.25.7",
     "p-debounce": "^4.0.0",
