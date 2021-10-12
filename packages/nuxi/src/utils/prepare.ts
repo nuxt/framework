@@ -47,33 +47,36 @@ export const writeTypes = async (nuxt: Nuxt) => {
 }
 
 export const writeTSConfig = async (nuxt: Nuxt) => {
-  const rootDir = nuxt.options.rootDir
-  const tsconfigPath = resolve(`${rootDir}/tsconfig.json`)
-
-  if (existsSync(tsconfigPath)) {
-    return
-  }
+  const { buildDir, rootDir } = nuxt.options
+  const tsConfigPath = resolve(`${buildDir}/tsconfig.json`)
 
   const aliasConfig = {
     ...nuxt.options.alias,
-    '#build': nuxt.options.buildDir
+    '#build': buildDir
   }
   for (const aliasKey of Object.keys(aliasConfig)) {
-    aliasConfig[aliasKey] = [aliasConfig[aliasKey]]
+    aliasConfig[aliasKey] = [relative(buildDir ,aliasConfig[aliasKey]) || '.']
   }
 
   const tsConfig = {
     compilerOptions: {
+      baseUrl: './',
       paths: aliasConfig
     },
-    include: ['nuxt.d.ts']
+    include: [relative(buildDir, resolve(`${rootDir}/nuxt.d.ts`))]
   }
 
   await nuxt.callHook('prepare:tsconfig', { tsConfig })
 
-  await fsp.writeFile(tsconfigPath, JSON.stringify(tsConfig, null, 2))
+  await fsp.writeFile(tsConfigPath, JSON.stringify(tsConfig, null, 2))
 
-  consola.success('Generated', cyan(relative(process.cwd(), tsconfigPath)))
+  const rootTSConfigPath = resolve(`${rootDir}/tsconfig.json`)
+  if (!existsSync(rootTSConfigPath)) {
+    const rootTSConfig = {
+      extends: relative(rootDir, tsConfigPath)
+    }
+    await fsp.writeFile(rootTSConfigPath, JSON.stringify(rootTSConfig, null, 2))
+  }
 }
 
 function renderAttrs (obj: Record<string, string>) {
