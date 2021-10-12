@@ -4,6 +4,7 @@ import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import { defineGetter } from './utils'
 import { legacyPlugin, LegacyContext } from './legacy'
+import type { NuxtError } from './composables/errors'
 
 type NuxtMeta = {
   htmlAttrs?: string
@@ -20,6 +21,7 @@ export interface RuntimeNuxtHooks {
   'app:beforeMount': (app: App<Element>) => HookResult
   'app:mounted': (app: App<Element>) => HookResult
   'app:rendered': () => HookResult
+  'error:captured': (errors: NuxtApp['payload']['errors']) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
   'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
@@ -40,11 +42,13 @@ export interface NuxtApp {
 
   ssrContext?: Record<string, any> & {
     renderMeta?: () => Promise<NuxtMeta> | NuxtMeta
+    errors?: NuxtApp['payload']['errors']
   }
   payload: {
     serverRendered?: true
     data?: Record<string, any>
     state?: Record<string, any>
+    errors?: Array<null | NuxtError>
     rendered?: Function
     [key: string]: any
   }
@@ -74,6 +78,7 @@ export function createNuxtApp (options: CreateOptions) {
     payload: reactive({
       data: {},
       state: {},
+      errors: process.server ? options.ssrContext.errors || [] : [],
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
     isHydrating: process.client,
@@ -104,6 +109,7 @@ export function createNuxtApp (options: CreateOptions) {
     // Expose to server renderer to create window.__NUXT__
     nuxt.ssrContext = nuxt.ssrContext || {}
     nuxt.ssrContext.payload = nuxt.payload
+    nuxt.ssrContext.errors = nuxt.payload.errors
   }
 
   // Expose runtime config

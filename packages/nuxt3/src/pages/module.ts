@@ -57,5 +57,18 @@ export default defineNuxtModule({
         ].join('\n')
       }
     })
+
+    // Add error page template
+    addTemplate({
+      filename: 'error.js',
+      getContents: () => {
+        const errorPage = resolve(nuxt.options.srcDir, nuxt.options.dir.pages, '_error.vue')
+        if (existsSync(errorPage)) {
+          return `export { default } from '${errorPage}'`
+        } else {
+          return `export { default } from '${resolve(runtimeDir, 'error.js')}'`
+        }
+      }
+    })
   }
 })

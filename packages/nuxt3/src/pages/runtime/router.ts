@@ -8,7 +8,7 @@ import {
 // @ts-ignore
 import NuxtPage from './page.vue'
 import NuxtLayout from './layout'
-import { defineNuxtPlugin } from '#app'
+import { defineNuxtPlugin, useNuxtErrors } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 
@@ -39,6 +39,25 @@ export default defineNuxtPlugin((nuxt) => {
     get: () => previousRoute.value
   })
 
+  const { addError, resetErrors } = useNuxtErrors()
+
+  function handle404 (url: string) {
+    const error = new Error(`Page not found: ${url}`)
+    // @ts-ignore
+    error.statusCode = 404
+    addError(error)
+  }
+
+  nuxt.hook('app:mounted', () => {
+    router.beforeEach((to) => {
+      // Clear error on navigation
+      resetErrors()
+      if (to.matched.length === 0) {
+        handle404(to.fullPath)
+      }
+    })
+  })
+
   nuxt.hook('app:created', async () => {
     if (process.server) {
       router.push(nuxt.ssrContext.url)
@@ -47,11 +66,8 @@ export default defineNuxtPlugin((nuxt) => {
     await router.isReady()
 
     const is404 = router.currentRoute.value.matched.length === 0
-    if (process.server && is404) {
-      const error = new Error(`Page not found: ${nuxt.ssrContext.url}`)
-      // @ts-ignore
-      error.statusCode = 404
-      nuxt.ssrContext.error = error
+    if (process.server && is404 && !nuxt.ssrContext.errors.length) {
+      handle404(nuxt.ssrContext.url)
     }
   })
 })

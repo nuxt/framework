@@ -69,9 +69,17 @@ export async function renderMiddleware (req, res: ServerResponse) {
   }
 
   // Render app
-  const rendered = await renderToString(ssrContext)
+  let rendered = await renderToString(ssrContext)
 
   // Handle errors
+
+  // nuxt3
+  if (ssrContext.errors?.filter(Boolean).length) {
+    // An unhandled error occurred but could not be rendered
+    rendered = await renderToString(ssrContext)
+  }
+
+  // nuxt2
   if (ssrContext.error) {
     throw ssrContext.error
   }
@@ -100,8 +108,8 @@ export async function renderMiddleware (req, res: ServerResponse) {
     res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   }
 
-  const error = ssrContext.nuxt && ssrContext.nuxt.error
-  res.statusCode = error ? error.statusCode : 200
+  const error = ssrContext.nuxt?.error || ssrContext.errors?.[0]
+  res.statusCode = error ? error.statusCode || 500 : 200
   res.end(data, 'utf-8')
 }
 

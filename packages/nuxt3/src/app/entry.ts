@@ -1,5 +1,5 @@
 import { createSSRApp, createApp, nextTick } from 'vue'
-import { createNuxtApp, applyPlugins, normalizePlugins, CreateOptions } from '#app'
+import { createNuxtApp, applyPlugins, normalizePlugins, CreateOptions, normalizeError } from '#app'
 import '#build/css'
 // @ts-ignore
 import _plugins from '#build/plugins'
@@ -15,10 +15,14 @@ if (process.server) {
     const app = createApp(App)
 
     const nuxt = createNuxtApp({ app, ssrContext })
+    try {
+      await applyPlugins(nuxt, plugins)
 
-    await applyPlugins(nuxt, plugins)
-
-    await nuxt.hooks.callHook('app:created', app)
+      await nuxt.hooks.callHook('app:created', app)
+    } catch (e) {
+      nuxt.payload.errors.push(normalizeError(e))
+      nuxt.callHook('error:captured', nuxt.payload.errors)
+    }
 
     return app
   }
@@ -39,19 +43,24 @@ if (process.client) {
 
     const nuxt = createNuxtApp({ app })
 
-    await applyPlugins(nuxt, plugins)
+    try {
+      await applyPlugins(nuxt, plugins)
 
-    await nuxt.hooks.callHook('app:created', app)
-    await nuxt.hooks.callHook('app:beforeMount', app)
+      await nuxt.hooks.callHook('app:created', app)
+      await nuxt.hooks.callHook('app:beforeMount', app)
 
-    nuxt.hooks.hookOnce('page:finish', () => {
-      nuxt.isHydrating = false
-    })
+      nuxt.hooks.hookOnce('page:finish', () => {
+        nuxt.isHydrating = false
+      })
 
-    app.mount('#__nuxt')
+      app.mount('#__nuxt')
 
-    await nuxt.hooks.callHook('app:mounted', app)
-    await nextTick()
+      await nuxt.hooks.callHook('app:mounted', app)
+      await nextTick()
+    } catch (e) {
+      nuxt.payload.errors.push(normalizeError(e))
+      nuxt.callHook('error:captured', nuxt.payload.errors)
+    }
   }
 
   entry().catch((error) => {

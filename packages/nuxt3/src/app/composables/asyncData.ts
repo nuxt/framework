@@ -1,6 +1,6 @@
-import { onBeforeMount, onUnmounted, ref } from 'vue'
-import type { Ref } from 'vue'
-import { NuxtApp, useNuxtApp } from '#app'
+import { computed, getCurrentInstance, onBeforeMount, onBeforeUnmount, onUnmounted, ref } from 'vue'
+import type { Ref, WritableComputedRef } from 'vue'
+import { normalizeError, NuxtApp, useNuxtApp, useError } from '#app'
 
 export type _Transform<Input=any, Output=any> = (input: Input) => Output
 
@@ -24,7 +24,7 @@ export interface _AsyncData<DataT> {
   data: Ref<DataT>
   pending: Ref<boolean>
   refresh: (force?: boolean) => Promise<void>
-  error?: any
+  error: WritableComputedRef<any>
 }
 
 export type AsyncData<Data> = _AsyncData<Data> & Promise<_AsyncData<Data>>
@@ -67,11 +67,42 @@ export function useAsyncData<
     }
   }
 
+  const nuxtError = useError()
+  const errorKey = `${key}_err`
+
+  let handled = false
+  let mounted = false
+
   const asyncData = {
     data: ref(nuxt.payload.data[key] ?? options.default()),
     pending: ref(true),
-    error: ref(null)
+    error: computed({
+      get () {
+        // Error is handled, so we won't throw.
+        handled = true
+        nuxtError.unset()
+
+        return nuxt.payload.data[errorKey]
+      },
+      set (err: any) {
+        if (process.server || (mounted && !handled)) {
+          nuxtError.set(err)
+        }
+        nuxt.payload.data[errorKey] = normalizeError(err)
+      }
+    })
   } as AsyncData<DataT>
+
+  onBeforeMount(() => {
+    if (nuxt.payload.data[errorKey] && !handled && !nuxt.isHydrating) {
+      nuxtError.set(nuxt.payload.data[errorKey])
+    }
+    mounted = true
+  })
+
+  onBeforeUnmount(() => {
+    mounted = false
+  })
 
   asyncData.refresh = (force?: boolean) => {
     // Avoid fetching same key more than once at a time
