@@ -1,7 +1,9 @@
 import { existsSync, promises as fsp } from 'fs'
 import { resolve } from 'pathe'
-import { parse as parseDotEnv } from 'dotenv'
+import dotenv from 'dotenv'
 import { LoadNuxtConfigOptions } from './load'
+
+const { parse: parseDotEnv } = dotenv
 
 export interface LoadDotEnvOptions {
   /** The project root directory (either absolute or relative to the current working directory). */
