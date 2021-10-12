@@ -1,3 +1,3 @@
 <template>
-  <svg width="1em" height="1em" viewBox="0 0 24 24"><path d="M13.293 7.293a.999.999 0 0 0 0 1.414L15.586 11H8a1 1 0 0 0 0 2h7.586l-2.293 2.293a.999.999 0 1 0 1.414 1.414L19.414 12l-4.707-4.707a.999.999 0 0 0-1.414 0z" fill="currentColor" /></svg>
+  <svg width="1em" height="1em" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5l1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5L16 11H4z" fill="currentColor" /></svg>
 </template>
