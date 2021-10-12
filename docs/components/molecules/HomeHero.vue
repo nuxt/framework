@@ -81,10 +81,10 @@ export default {
 .highlight-box {
   @apply transition-shadow duration-300;
 
-  box-shadow: #00DC82AA 0px 0px 24px;
+  box-shadow: #00DC82AA 0px 0px 16px;
 
   &:hover {
-    box-shadow: #00DC82 0px 0px 24px;
+    box-shadow: #00DC82 0px 0px 20px;
   }
 }
 </style>
