@@ -1,4 +1,4 @@
-import { resolve } from 'pathe'
+import { resolve, normalize } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import fse from 'fs-extra'
@@ -9,6 +9,8 @@ import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { bundleRequest } from './dev-bundler'
+import { writeManifest } from './manifest'
+import { isCSS } from './utils'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
@@ -100,8 +102,10 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Build and watch
   const _doBuild = async () => {
     const start = Date.now()
-    const { code } = await bundleRequest({ viteServer }, resolve(ctx.nuxt.options.appDir, 'entry'))
+    const { code, ids } = await bundleRequest({ viteServer }, resolve(ctx.nuxt.options.appDir, 'entry'))
     await fse.writeFile(resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'), code, 'utf-8')
+    // Have CSS in the manifest to prevent FOUC on dev SSR
+    await writeManifest(ctx, ids.filter(isCSS).map(i => i.slice(1)))
     const time = (Date.now() - start)
     consola.success(`Vite server built in ${time}ms`)
     await onBuild()
@@ -113,6 +117,7 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   // Watch
   viteServer.watcher.on('all', (_event, file) => {
+    file = normalize(file) // Fix windows paths
     if (file.indexOf(ctx.nuxt.options.buildDir) === 0) { return }
     doBuild()
   })

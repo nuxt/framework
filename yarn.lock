@@ -2390,7 +2390,7 @@ __metadata:
     estree-walker: ^2.0.2
     fs-extra: ^10.0.0
     magic-string: ^0.25.7
-    mlly: ^0.2.5
+    mlly: ^0.2.6
     node-fetch: ^3.0.0
     nuxi: 3.0.0
     nuxt-vite: ^0.3.5
@@ -2578,9 +2578,9 @@ __metadata:
     globby: ^11.0.4
     hash-sum: ^2.0.0
     hookable: ^5.0.0
-    jiti: ^1.12.6
+    jiti: ^1.12.7
     lodash.template: ^4.5.0
-    mlly: ^0.2.5
+    mlly: ^0.2.6
     pathe: ^0.2.0
     rc9: ^1.2.0
     scule: ^0.2.1
@@ -2650,10 +2650,10 @@ __metadata:
     hookable: ^5.0.0
     http-proxy: ^1.18.1
     is-primitive: ^3.0.1
-    jiti: ^1.12.6
+    jiti: ^1.12.7
     listhen: ^0.2.4
     mime: ^2.5.2
-    mlly: ^0.2.5
+    mlly: ^0.2.6
     node-fetch: ^3.0.0
     ohmyfetch: ^0.3.1
     ora: ^6.0.1
@@ -2865,7 +2865,7 @@ __metadata:
     lodash-es: ^4.17.21
     memfs: ^3.3.0
     mini-css-extract-plugin: ^2.4.2
-    mlly: ^0.2.5
+    mlly: ^0.2.6
     pathe: ^0.2.0
     pify: ^5.0.0
     postcss: ^8.3.9
@@ -2882,7 +2882,7 @@ __metadata:
     vue-loader: ^16.8.1
     vue-style-loader: ^4.1.3
     webpack: ^5.58.1
-    webpack-bundle-analyzer: ^4.4.2
+    webpack-bundle-analyzer: ^4.5.0
     webpack-dev-middleware: ^5.2.1
     webpack-hot-middleware: ^2.25.1
     webpack-virtual-modules: ^0.4.3
@@ -9199,14 +9199,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"example-async-data@workspace:examples/async-data":
-  version: 0.0.0-use.local
-  resolution: "example-async-data@workspace:examples/async-data"
-  dependencies:
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
 "example-hello-world@workspace:examples/hello-world":
   version: 0.0.0-use.local
   resolution: "example-hello-world@workspace:examples/hello-world"
@@ -9215,17 +9207,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"example-meta@workspace:examples/meta":
+"example-use-async-data@workspace:examples/use-async-data":
   version: 0.0.0-use.local
-  resolution: "example-meta@workspace:examples/meta"
-  dependencies:
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
-"example-pages@workspace:examples/pages":
-  version: 0.0.0-use.local
-  resolution: "example-pages@workspace:examples/pages"
+  resolution: "example-use-async-data@workspace:examples/use-async-data"
   dependencies:
     nuxt3: latest
   languageName: unknown
@@ -9239,17 +9223,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"example-use-state@workspace:examples/use-state":
+"example-use-meta@workspace:examples/use-meta":
   version: 0.0.0-use.local
-  resolution: "example-use-state@workspace:examples/use-state"
+  resolution: "example-use-meta@workspace:examples/use-meta"
   dependencies:
     nuxt3: latest
   languageName: unknown
   linkType: soft
 
-"example-wasm@workspace:examples/wasm":
+"example-use-state@workspace:examples/use-state":
   version: 0.0.0-use.local
-  resolution: "example-wasm@workspace:examples/wasm"
+  resolution: "example-use-state@workspace:examples/use-state"
   dependencies:
     nuxt3: latest
   languageName: unknown
@@ -9271,21 +9255,19 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"example-with-vite@workspace:examples/with-vite":
+"example-with-pages@workspace:examples/with-pages":
   version: 0.0.0-use.local
-  resolution: "example-with-vite@workspace:examples/with-vite"
+  resolution: "example-with-pages@workspace:examples/with-pages"
   dependencies:
     nuxt3: latest
   languageName: unknown
   linkType: soft
 
-"example-with-vue-content-loader@workspace:examples/with-vue-content-loader":
+"example-with-wasm@workspace:examples/with-wasm":
   version: 0.0.0-use.local
-  resolution: "example-with-vue-content-loader@workspace:examples/with-vue-content-loader"
+  resolution: "example-with-wasm@workspace:examples/with-wasm"
   dependencies:
     nuxt3: latest
-    vue: ^3
-    vue-content-loader: ^2.0.0
   languageName: unknown
   linkType: soft
 
@@ -11595,12 +11577,12 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.12.6":
-  version: 1.12.6
-  resolution: "jiti@npm:1.12.6"
+"jiti@npm:^1.12.7":
+  version: 1.12.7
+  resolution: "jiti@npm:1.12.7"
   bin:
     jiti: bin/jiti.js
-  checksum: 6d5c0be3566ea0695b8c66c1a4453cf062739181ab3cd7a6fa440e54c6b9bcf63f08b7cbfc86b7ccf25ff445e75174b76177b4f31792cfe3bbbc8ddf3a38a4f6
+  checksum: e5a16f0245db6e12912b2aa16b739d699630005e376345311a745253ce74cf4f7ac0b19dfe88edd42e93b7322355921fa7460aaa5c32348ed69e3428557e2a52
   languageName: node
   linkType: hard
 
@@ -12908,12 +12890,21 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"mlly@npm:^0.2.4, mlly@npm:^0.2.5":
+"mlly@npm:^0.2.4":
   version: 0.2.5
   resolution: "mlly@npm:0.2.5"
   dependencies:
     import-meta-resolve: ^1.1.1
   checksum: bd111db12fc09c13ca6897b1dfb78501268f7d166cead7e806bafab905ca05134bd0b4eb7a5a5b1b05e9ecbbe2d9e8819dc95ffb62ba7e76e618a4d032236d3f
+  languageName: node
+  linkType: hard
+
+"mlly@npm:^0.2.6":
+  version: 0.2.6
+  resolution: "mlly@npm:0.2.6"
+  dependencies:
+    import-meta-resolve: ^1.1.1
+  checksum: 200b3bb43f4b1f166d90f200465626143cc8d73efb12bad5752ae31e0c7432d39b064250c4d5aa0f3a63cc8d92f26c0d8f7b8dae54746067ed88990aeffe0bc8
   languageName: node
   linkType: hard
 
@@ -13659,9 +13650,9 @@ fsevents@~2.3.2:
     destr: ^1.1.0
     flat: ^5.0.2
     fsevents: ~2.3.2
-    jiti: ^1.12.6
+    jiti: ^1.12.7
     listhen: ^0.2.4
-    mlly: ^0.2.5
+    mlly: ^0.2.6
     mri: ^1.2.0
     pathe: ^0.2.0
     scule: ^0.2.1
@@ -13693,7 +13684,7 @@ fsevents@~2.3.2:
     eslint-plugin-jsdoc: ^36.1.1
     execa: ^5.1.1
     globby: ^11.0.4
-    jiti: ^1.12.6
+    jiti: ^1.12.7
     lerna: ^4.0.0
     miniflare: ^1.4.1
     mocha: ^9.1.2
@@ -13756,7 +13747,7 @@ fsevents@~2.3.2:
     hash-sum: ^2.0.0
     hookable: ^5.0.0
     ignore: ^5.1.8
-    mlly: ^0.2.5
+    mlly: ^0.2.6
     nuxi: 3.0.0
     ohmyfetch: ^0.3.1
     pathe: ^0.2.0
@@ -19251,15 +19242,6 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"vue-content-loader@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "vue-content-loader@npm:2.0.0"
-  peerDependencies:
-    vue: ^3
-  checksum: 92efefe9e2aa4760a1e60ecfa2358bbc9a613f89a0e90a52cecef5a315ac247cb439d0cff58cab6891ef9fec900a9e232b96ed8d7e7dc051b00eb5f0ee0bd407
-  languageName: node
-  linkType: hard
-
 "vue-eslint-parser@npm:^7.10.0":
   version: 7.11.0
   resolution: "vue-eslint-parser@npm:7.11.0"
@@ -19405,7 +19387,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"vue@npm:3.2.20, vue@npm:^3, vue@npm:^3.2.20":
+"vue@npm:3.2.20, vue@npm:^3.2.20":
   version: 3.2.20
   resolution: "vue@npm:3.2.20"
   dependencies:
@@ -19513,7 +19495,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"webpack-bundle-analyzer@npm:^4.4.1, webpack-bundle-analyzer@npm:^4.4.2":
+"webpack-bundle-analyzer@npm:^4.4.1":
   version: 4.4.2
   resolution: "webpack-bundle-analyzer@npm:4.4.2"
   dependencies:
@@ -19529,6 +19511,25 @@ fsevents@~2.3.2:
   bin:
     webpack-bundle-analyzer: lib/bin/analyzer.js
   checksum: 6d7957a87ee16f6b87e65f85e8b9a40998aefcddf3e15215fd4bc1ddf8c332ab4706f2f4deb0b3a0483eb27d0dae381db1b82b2ec34136e2ad0e651714b260fb
+  languageName: node
+  linkType: hard
+
+"webpack-bundle-analyzer@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "webpack-bundle-analyzer@npm:4.5.0"
+  dependencies:
+    acorn: ^8.0.4
+    acorn-walk: ^8.0.0
+    chalk: ^4.1.0
+    commander: ^7.2.0
+    gzip-size: ^6.0.0
+    lodash: ^4.17.20
+    opener: ^1.5.2
+    sirv: ^1.0.7
+    ws: ^7.3.1
+  bin:
+    webpack-bundle-analyzer: lib/bin/analyzer.js
+  checksum: 158e96810ec213d5665ca1c0b257097db44e1f11c4befefab8352b9e5b10890fcb3e3fc1f7bb400dd58762a8edce5621c92afeca86eb4687d2eb64e93186bfcb
   languageName: node
   linkType: hard
 

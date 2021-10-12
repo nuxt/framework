@@ -1,4 +1,5 @@
 import { builtinModules } from 'module'
+import { pathToFileURL } from 'url'
 import { join } from 'pathe'
 import * as vite from 'vite'
 import { hashId, uniq } from './utils'
@@ -57,7 +58,7 @@ async function transformRequest (opts: TransformOptions, id: string) {
   // Externals
   if (isExternal(opts, id)) {
     return {
-      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${id}').then(r => { ssrExportAll(r) })`,
+      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${(pathToFileURL(id))}').then(r => { ssrExportAll(r) })`,
       deps: [],
       dynamicDeps: []
     }
@@ -194,5 +195,8 @@ async function __instantiateModule__(url, urlStack) {
     `export default await __ssrLoadModule__('${entryURL}')`
   ].join('\n\n')
 
-  return { code }
+  return {
+    code,
+    ids: chunks.map(i => i.id)
+  }
 }
