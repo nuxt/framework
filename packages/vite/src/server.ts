@@ -26,10 +26,10 @@ export async function buildServer (ctx: ViteBuildContext) {
         // Alias vue
         'vue/server-renderer': 'vue/server-renderer',
         'vue/compiler-sfc': 'vue/compiler-sfc',
-        '@vue/reactivity': `@vue/reactivity/dist/reactivity.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
-        '@vue/shared': `@vue/shared/dist/shared.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
-        'vue-router': `vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
-        vue: `vue/dist/vue.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`
+        '@vue/reactivity': '@vue/reactivity/dist/reactivity.esm-bundler.js',
+        '@vue/shared': '@vue/shared/dist/shared.esm-bundler.js',
+        'vue-router': 'vue-router/dist/vue-router.esm-bundler.js',
+        vue: 'vue/dist/vue.esm-bundler.js'
       }
     },
     ssr: {
