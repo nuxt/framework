@@ -1,4 +1,5 @@
 import { builtinModules } from 'module'
+import { join } from 'pathe'
 import * as vite from 'vite'
 import { hashId, uniq } from './utils'
 
@@ -20,6 +21,24 @@ export interface TransformOptions {
   viteServer: vite.ViteDevServer
 }
 
+function isExternal (opts: TransformOptions, id: string) {
+  if (builtinModules.includes(id)) {
+    return true
+  }
+
+  const ssrConfig = (opts.viteServer.config as any).ssr
+
+  if (ssrConfig.noExternal.find(ext => id.includes(ext))) {
+    return false
+  }
+
+  if (ssrConfig.external.find(ext => id.includes(ext))) {
+    return true
+  }
+
+  return id.includes('node_modules')
+}
+
 async function transformRequest (opts: TransformOptions, id: string) {
   // Virtual modules start with `\0`
   if (id && id.startsWith('/@id/__x00__')) {
@@ -28,11 +47,17 @@ async function transformRequest (opts: TransformOptions, id: string) {
   if (id && id.startsWith('/@id/')) {
     id = id.slice('/@id/'.length)
   }
+  if (id && id.startsWith('/@fs/')) {
+    id = id.slice('/@fs'.length)
+  }
+  if (id.startsWith('/node_modules')) {
+    id = join(opts.viteServer.config.root, id)
+  }
 
   // Externals
-  if (builtinModules.includes(id) || id.includes('node_modules')) {
+  if (isExternal(opts, id)) {
     return {
-      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${id.replace(/^\/@fs/, '')}').then(r => { ssrExportAll(r) })`,
+      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${id}').then(r => { ssrExportAll(r) })`,
       deps: [],
       dynamicDeps: []
     }
