@@ -136,13 +136,15 @@ export async function applyPlugins (nuxt: NuxtApp, plugins: Plugin[]) {
 export function normalizePlugins (_plugins: Array<Plugin | LegacyPlugin>) {
   let needsLegacyContext = false
 
-  const plugins = _plugins.map((plugin) => {
-    if (isLegacyPlugin(plugin)) {
-      needsLegacyContext = true
-      return (nuxt: NuxtApp) => plugin(nuxt._legacyContext!, nuxt.provide)
-    }
-    return plugin
-  })
+  const plugins = _plugins
+    .filter(Boolean)
+    .map((plugin) => {
+      if (isLegacyPlugin(plugin)) {
+        needsLegacyContext = true
+        return (nuxt: NuxtApp) => plugin(nuxt._legacyContext!, nuxt.provide)
+      }
+      return plugin
+    })
 
   if (needsLegacyContext) {
     plugins.unshift(legacyPlugin)
