@@ -6,21 +6,29 @@ import _plugins from '#build/plugins'
 // @ts-ignore
 import App from '#build/app'
 
-let entry: Function
-
 const plugins = normalizePlugins(_plugins)
 
-if (process.server) {
-  entry = async function createNuxtAppServer (ssrContext: CreateOptions['ssrContext'] = {}) {
+export async function entry (ssrContext?: CreateOptions['ssrContext']) {
+  if (process.server) {
     const app = createApp(App)
-
     const nuxt = createNuxtApp({ app, ssrContext })
-
     await applyPlugins(nuxt, plugins)
-
     await nuxt.hooks.callHook('app:created', app)
-
     return app
+  }
+  if (process.client) {
+    const isSSR = Boolean(window.__NUXT__?.serverRendered)
+    const app = isSSR ? createSSRApp(App) : createApp(App)
+    const nuxt = createNuxtApp({ app })
+    await applyPlugins(nuxt, plugins)
+    await nuxt.hooks.callHook('app:created', app)
+    await nuxt.hooks.callHook('app:beforeMount', app)
+    nuxt.hooks.hookOnce('page:finish', () => {
+      nuxt.isHydrating = false
+    })
+    app.mount('#__nuxt')
+    await nuxt.hooks.callHook('app:mounted', app)
+    await nextTick()
   }
 }
 
@@ -33,30 +41,17 @@ if (process.client) {
     import.meta.webpackHot.accept()
   }
 
-  entry = async function initApp () {
-    const isSSR = Boolean(window.__NUXT__?.serverRendered)
-    const app = isSSR ? createSSRApp(App) : createApp(App)
-
-    const nuxt = createNuxtApp({ app })
-
-    await applyPlugins(nuxt, plugins)
-
-    await nuxt.hooks.callHook('app:created', app)
-    await nuxt.hooks.callHook('app:beforeMount', app)
-
-    nuxt.hooks.hookOnce('page:finish', () => {
-      nuxt.isHydrating = false
-    })
-
-    app.mount('#__nuxt')
-
-    await nuxt.hooks.callHook('app:mounted', app)
-    await nextTick()
-  }
-
   entry().catch((error) => {
     console.error('Error while mounting app:', error) // eslint-disable-line no-console
   })
 }
 
-export default (ctx?: CreateOptions['ssrContext']) => entry(ctx)
+if (process.server) {
+  // Bundle server-renderer and provide to nitro renderer
+  entry.getRenderToString = async () => {
+    const { renderToString } = await import('vue/server-renderer')
+    // @ts-ignore
+    return (...args) => renderToString(...args)
+      .then(result => `<div id="__nuxt">${result}</div>`)
+  }
+}
