@@ -125,3 +125,18 @@ export function getDependencies (dir: string, mode: keyof typeof _getDependencie
 export function serializeImportName (id: string) {
   return '_' + id.replace(/[^a-zA-Z0-9_$]/g, '_')
 }
+
+export function readPackageJson (packageName: string, _require?: NodeRequire) {
+  try {
+    return _require(`${packageName}/package.json`)
+  } catch (error) {
+    if (error.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED') {
+      const packagePathStr = error.message.split('"exports" in ')[1]
+      if (packagePathStr) {
+        const pkgPath = packagePathStr.split('/package.json')[0]
+        return fse.readJSONSync(resolve(pkgPath, 'package.json'))
+      }
+    }
+    throw error
+  }
+}
