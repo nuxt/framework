@@ -66,6 +66,14 @@ We recommend to install the [Docus extension](https://marketplace.visualstudio.c
 
 The pages are generated from [docs/content/](./docs/content), you can start editing them to start helping us on documenting Nuxt 3 💚
 
+## Gitpod
+
+This repository is setup for use with Gitpod, a cloud based IDE.
+
+To get started, click the following button and log in with GitHub:
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/nuxt/framework)
+
 ## License
 
 [MIT](https://github.com/nuxt/nuxt.js/blob/dev/LICENSE)
