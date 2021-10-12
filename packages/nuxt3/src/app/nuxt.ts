@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import { getCurrentInstance, reactive } from 'vue'
+import { getCurrentInstance, reactive, defineAsyncComponent } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import { defineGetter } from './utils'
