@@ -17,11 +17,11 @@ const getSSRRenderer = cachedResult(async () => {
   const clientManifest = await getClientManifest()
   if (!clientManifest) { throw new Error('client.manifest is not available') }
   // Load server bundle
-  const createSSRApp = await getSSRApp()
-  if (!createSSRApp) { throw new Error('Server bundle is not available') }
+  const ssrAppEnty = await getSSRApp().then(r => r.entry || r.default || r)
+  if (!ssrAppEnty) { throw new Error('Server bundle is not available') }
   // Create renderer
-  const { renderToString } = await import('#nitro-renderer')
-  return createRenderer((createSSRApp), { clientManifest, renderToString, publicPath: clientManifest.publicPath || '/_nuxt' }).renderToString
+  const renderToString = await ssrAppEnty.getRenderToString()
+  return createRenderer((ssrAppEnty), { clientManifest, renderToString, publicPath: clientManifest.publicPath || '/_nuxt' }).renderToString
 })
 
 const getSPARenderer = cachedResult(async () => {
