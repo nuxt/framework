@@ -2,8 +2,11 @@
   <div class="overflow-hidden relative dark:bg-sky-black dark:text-white pt-12">
     <div class="flex flex-wrap justify-center py-0 section d-container-content">
       <section class="flex flex-col justify-start w-full px-4 pb-24 sm:pt-12 sm:pb-36 lg:pt-24 lg:pb-56 text-center z-20">
+        <div class="my-2">
+          <a href="https://nuxtjs.org/announcements/nuxt3-beta" class="inline-flex px-4 py-1.5 items-center space-x-0.5 shadow-primary transition-shadow shadow-md font-medium"><span>Read the announcement</span><IconArrowRight /></a>
+        </div>
         <Gem class="block m-x-auto" />
-        <h1 class="font-normal font-serif text-display-5 xs:text-display-4 md:text-display-3 2xl:text-display-2 mb-6 pt-8">
+        <h1 class="font-normal font-serif text-display-5 xs:text-display-4 md:text-display-3 2xl:text-display-2 mb-6 pt-2">
           <Markdown use="title" unwrap="p" />
         </h1>
         <h2
@@ -56,8 +59,8 @@ export default {
     primary: {
       type: Object,
       default: () => ({
-        text: '38K+ GitHub stars',
-        url: '/https://github.com',
+        text: 'Start on GitHub',
+        url: 'https://github.com',
         icon: 'IconGitHub'
       })
     },
