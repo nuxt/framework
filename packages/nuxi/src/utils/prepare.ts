@@ -55,13 +55,9 @@ export const writeTSConfig = async (nuxt: Nuxt) => {
 
   try {
     Object.assign(currentTsConfig, _require(tsconfigPath))
+    return
   } catch (error) {
-    // ignore error
-  }
-
-  const includeTypes : string[] = currentTsConfig.include ?? []
-  if (!includeTypes.includes('nuxt.d.ts')) {
-    includeTypes.push('nuxt.d.ts')
+    // return
   }
 
   const aliasConfig = {
@@ -73,15 +69,10 @@ export const writeTSConfig = async (nuxt: Nuxt) => {
   }
 
   const tsConfig = {
-    ...currentTsConfig,
     compilerOptions: {
-      ...currentTsConfig?.compilerOptions,
-      paths: {
-        ...currentTsConfig?.compilerOptions?.paths,
-        ...aliasConfig
-      }
+      paths: aliasConfig
     },
-    include: includeTypes
+    include: ['nuxt.d.ts']
   }
 
   await nuxt.callHook('prepare:tsconfig', { tsConfig })
