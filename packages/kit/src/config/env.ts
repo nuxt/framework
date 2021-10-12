@@ -3,8 +3,6 @@ import { resolve } from 'pathe'
 import dotenv from 'dotenv'
 import { LoadNuxtConfigOptions } from './load'
 
-const { parse: parseDotEnv } = dotenv
-
 export interface LoadDotEnvOptions {
   /** The project root directory (either absolute or relative to the current working directory). */
   rootDir: string
@@ -64,7 +62,7 @@ export async function loadDotenv (opts: LoadDotEnvOptions) {
   const dotenvFile = resolve(opts.rootDir, opts.dotenvFile)
 
   if (existsSync(dotenvFile)) {
-    const parsed = parseDotEnv(await fsp.readFile(dotenvFile, 'utf-8'))
+    const parsed = dotenv.parse(await fsp.readFile(dotenvFile, 'utf-8'))
     Object.assign(env, parsed)
   }
 
