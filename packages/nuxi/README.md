@@ -1,3 +1,5 @@
-## Nuxt CLI
+## Nuxi
 
-`nuxi`, the Nuxt CLI.
+> Nuxt Command Line Interface
+
+Learn more about this package: https://v3.nuxtjs.org

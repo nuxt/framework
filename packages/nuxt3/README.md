@@ -1,5 +1,5 @@
-## Nuxt Engine
+## Nuxt 3
 
-The core of Nuxt.
+> The core of Nuxt 3
 
-Don't forget to checkout the [documentation](https://v3.nuxtjs.org).
+Learn more about this package: https://v3.nuxtjs.org

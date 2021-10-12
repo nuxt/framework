@@ -1,3 +1,5 @@
 ## Nuxt Kit
 
-The Nuxt toolkit.
+> Toolkit for authoring Nuxt Modules
+
+Learn more about this package: https://v3.nuxtjs.org
