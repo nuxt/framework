@@ -1,6 +1,6 @@
 import { promises as fsp } from 'fs'
 import fetch from 'node-fetch'
-import { addPluginTemplate, useNuxt } from '@nuxt/kit'
+import { addPluginTemplate, addTemplate, useNuxt } from '@nuxt/kit'
 import { stringifyQuery } from 'ufo'
 import { resolve } from 'pathe'
 import { build, generate, prepare, getNitroContext, NitroContext, createDevServer, wpfs, resolveMiddleware } from '@nuxt/nitro'
@@ -71,6 +71,25 @@ export function setupNitroBridge () {
       serverConfig.plugins.push(new AsyncLoadingPlugin({
         modulesDir: nuxt.options.modulesDir
       }))
+    }
+  })
+
+  // Update server entry
+  addTemplate({
+    filename: 'server.nitro.mjs',
+    src: resolve(distDir, 'runtime/server.nitro.mjs')
+  })
+  nuxt.hook('webpack:config', (configs) => {
+    for (const config of configs) {
+      if (config.name === 'server') {
+        // @ts-ignore
+        config.entry.app = config.entry.app.map(e => e.replace('server.js', 'server.nitro.mjs'))
+        // @ts-ignore
+        config.externals.unshift(
+          'vue-server-renderer/build.dev.js',
+          'vue-server-renderer/build.prod.js'
+        )
+      }
     }
   })
 
