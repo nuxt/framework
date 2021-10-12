@@ -126,7 +126,10 @@ export function serializeImportName (id: string) {
   return '_' + id.replace(/[^a-zA-Z0-9_$]/g, '_')
 }
 
-export function readPackageJson (packageName: string, _require?: NodeRequire) {
+export function readPackageJson (
+  packageName: string,
+  _require: NodeRequire = createRequire(import.meta.url)
+) {
   try {
     return _require(`${packageName}/package.json`)
   } catch (error) {

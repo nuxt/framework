@@ -69,8 +69,8 @@ async function writeRoutes ({ output: { publicDir, serverDir }, _nuxt: { rootDir
         dependencies,
         devDependencies: {
           'firebase-functions-test': 'latest',
-          'firebase-admin': readPackageJson('firebase-admin').version,
-          'firebase-functions': readPackageJson('firebase-functions').version
+          'firebase-admin': readPackageJson('firebase-admin', _require).version,
+          'firebase-functions': readPackageJson('firebase-functions', _require).version
         },
         engines: { node: nodeVersion }
       },
