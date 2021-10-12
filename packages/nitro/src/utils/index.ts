@@ -134,11 +134,8 @@ export function readPackageJson (
     return _require(`${packageName}/package.json`)
   } catch (error) {
     if (error.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED') {
-      const packagePathStr = error.message.split('"exports" in ')[1]
-      if (packagePathStr) {
-        const pkgPath = packagePathStr.split('/package.json')[0]
-        return fse.readJSONSync(resolve(pkgPath, 'package.json'))
-      }
+      const [pkgModulePath] = /^(.*\/node_modules\/).*$/.exec(_require.resolve(packageName))
+      return fse.readJSONSync(resolve(pkgModulePath, packageName, 'package.json'))
     }
     throw error
   }
