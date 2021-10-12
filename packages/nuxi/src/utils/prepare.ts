@@ -68,6 +68,7 @@ export const writeTSConfig = async (nuxt: Nuxt) => {
 
   await nuxt.callHook('prepare:tsconfig', { tsConfig })
 
+  await fsp.mkdir(buildDir, { recursive: true })
   await fsp.writeFile(tsConfigPath, JSON.stringify(tsConfig, null, 2))
 
   const rootTSConfigPath = resolve(`${rootDir}/tsconfig.json`)
