@@ -26,8 +26,8 @@ export function resolveCSSOptions (nuxt: Nuxt): ViteOptions['css'] {
     // https://github.com/postcss/postcss-url
     'postcss-url': {},
 
-    // https://github.com/csstools/postcss-preset-env
-    'postcss-preset-env': {}
+    // https://github.com/postcss/autoprefixer
+    autoprefixer: {}
   })
 
   for (const name in plugins) {
