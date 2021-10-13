@@ -61,8 +61,7 @@ export interface NuxtHooks extends Record<string, HookCallback> {
   'run:before': (options: { argv: string[], cmd: { name: string, usage: string, description: string, options: Record<string, any> }, rootDir: string }) => HookResult
 
   // nuxi
-  'prepare:types': (options: { references: TSReference[], declarations: string[] }) => HookResult
-  'prepare:tsconfig': (tsConfig: { compilerOptions: { paths: Record<string, string[]> } }) => HookResult
+  'prepare:types': (options: { references: TSReference[], declarations: string[], tsConfig: { compilerOptions: { paths: Record<string, string[]> } } }) => HookResult
 
   // @nuxt/core
   'ready': (nuxt: Nuxt) => HookResult
