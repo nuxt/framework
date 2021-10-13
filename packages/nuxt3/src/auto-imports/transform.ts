@@ -1,6 +1,7 @@
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL } from 'ufo'
 import { IdentifierMap } from './types'
+import { toImports } from './utils'
 
 const excludeRE = [
   // imported from other module
@@ -22,8 +23,8 @@ function stripeComments (code: string) {
     .replace(singlelineCommentsRE, '')
 }
 
-export const TransformPlugin = createUnplugin((map: IdentifierMap) => {
-  const matchRE = new RegExp(`\\b(${Object.keys(map).join('|')})\\b`, 'g')
+export const TransformPlugin = createUnplugin((identifiers: IdentifierMap) => {
+  const matchRE = new RegExp(`\\b(${Object.keys(identifiers).join('|')})\\b`, 'g')
 
   return {
     name: 'nuxt-auto-imports-transform',
@@ -72,28 +73,9 @@ export const TransformPlugin = createUnplugin((map: IdentifierMap) => {
         return null
       }
 
-      const modules: Record<string, string[]> = {}
-
-      // group by module name
-      Array.from(matched).forEach((name) => {
-        const moduleName = map[name]!
-        if (!modules[moduleName]) {
-          modules[moduleName] = []
-        }
-        modules[moduleName].push(name)
-      })
-
       // Needed for webpack4/bridge support
       const isCJSContext = code.includes('require(')
-
-      // stringify import
-      const imports = !isCJSContext
-        ? Object.entries(modules)
-          .map(([moduleName, names]) => `import { ${names.join(',')} } from '${moduleName}';`)
-          .join('')
-        : Object.entries(modules)
-          .map(([moduleName, names]) => `const { ${names.join(',')} } = require('${moduleName}');`)
-          .join('')
+      const imports = toImports(identifiers, Array.from(matched), isCJSContext)
 
       return imports + code
     }

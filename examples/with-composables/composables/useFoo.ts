@@ -15,3 +15,7 @@ export const useD = () => {
 }
 
 export { useB, _useC as useC }
+
+export default function () {
+  return 'foo'
+}

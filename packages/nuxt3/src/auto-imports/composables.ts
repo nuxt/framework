@@ -1,10 +1,10 @@
 import { promises as fs, existsSync } from 'fs'
+import { parse as parsePath, join } from 'pathe'
 import { Nuxt } from '@nuxt/kit'
 import globby from 'globby'
-import { join } from 'pathe'
 import { IdentifierMap } from './types'
 
-export async function scanForCompoables (nuxt: Nuxt, identifiers: IdentifierMap) {
+export async function scanForComposables (nuxt: Nuxt, identifiers: IdentifierMap) {
   const dir = join(nuxt.options.rootDir, 'composables')
   if (!existsSync(dir)) { return }
 
@@ -17,9 +17,13 @@ export async function scanForCompoables (nuxt: Nuxt, identifiers: IdentifierMap)
     files.map(async (file) => {
       const code = await fs.readFile(join(dir, file), 'utf-8')
       const exports = extractNamedExports(code)
+      const importPath = '~/composables/' + file
+      if (/\bexport default\b/.test(code)) {
+        identifiers[parsePath(file).name] = { from: importPath, name: 'default' }
+      }
       for (const name of exports) {
         // TODO: warn if identifier already exists?
-        identifiers[name] = '~/composables/' + file
+        identifiers[name] = importPath
       }
     })
   )

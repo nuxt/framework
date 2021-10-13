@@ -4,6 +4,7 @@
     {{ b }}
     {{ c }}
     {{ d }}
+    {{ foo }}
   </div>
 </template>
 
@@ -12,4 +13,5 @@ const a = useA()
 const b = useB()
 const c = useC()
 const d = useD()
+const foo = useFoo()
 </script>
