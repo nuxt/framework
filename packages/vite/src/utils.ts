@@ -28,8 +28,10 @@ export function isDevCSS (file: string) {
   return IS_DEV_CSS_RE.test(file)
 }
 
-export function rewriteDevCSS (file:string) {
-  if (file.endsWith('.css')) { return file }
+export function rewriteDevCSS (file: string) {
+  if (file.endsWith('.css')) {
+    return file
+  }
   if (file.includes('?')) {
     return file + '&' + MOCK_CSS_SUFFIX
   }
