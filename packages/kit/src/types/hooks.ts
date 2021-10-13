@@ -33,7 +33,10 @@ export interface NuxtHooks extends Record<string, HookCallback> {
   // nuxt3
   'app:resolve': (app: NuxtApp) => HookResult
   'app:templates': (app: NuxtApp) => HookResult
+  'app:templatesGenerated': (app: NuxtApp) => HookResult
   'builder:generateApp': () => HookResult
+  'components:dirs': (dirs: string[]) => HookResult
+  'components:extend': (components: any[]) => HookResult
 
   // @nuxt/builder
   'build:before':
@@ -53,6 +56,7 @@ export interface NuxtHooks extends Record<string, HookCallback> {
 
   // @nuxt/nitro
   'nitro:document': (template: { src: string, contents: string }) => HookResult
+  'nitro:context': (context: any) => HookResult
 
   // @nuxt/cli
   'cli:buildError': (error: unknown) => HookResult
@@ -130,6 +134,11 @@ export interface NuxtHooks extends Record<string, HookCallback> {
   'export:extendRoutes': ({ routes }: { routes: any[] }) => HookResult
   'export:routeFailed': ({ route, errors }: { route: any, errors: any[] }) => HookResult
   'export:done': (generator: Generator, { errors }: { errors: any[] }) => HookResult
+
+  // vite
+  'vite:extend': (viteBuildContext: { nuxt: Nuxt, config: any }) => HookResult
+  'vite:extendConfig': (viteInlineConfig: any, env: { isClient: boolean, isServer: boolean }) => HookResult
+  'vite:serverCreated': (viteServer: any) => HookResult
 }
 
 export type NuxtHookName = keyof NuxtHooks
