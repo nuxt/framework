@@ -8,10 +8,17 @@ export default defineNuxtModule<AutoImportsOptions>({
   name: 'auto-imports',
   configKey: 'autoImports',
   defaults: { identifiers: defaultIdentifiers },
-  setup ({ disabled = [], identifiers }, nuxt) {
+  async setup (options, nuxt) {
+    if (options === false) {
+      return
+    }
+
+    const { disabled = [], identifiers } = options
     for (const key of disabled) {
       delete identifiers[key]
     }
+
+    await nuxt.callHook('auto-imports:identifiers', identifiers)
 
     // temporary disable #746
     // eslint-disable-next-line no-constant-condition
