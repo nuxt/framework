@@ -1,5 +1,5 @@
-import { existsSync, promises as fsp } from 'fs'
-import { relative, resolve } from 'pathe'
+import { promises as fsp } from 'fs'
+import { join, relative, resolve } from 'pathe'
 import { cyan } from 'colorette'
 import { Nuxt, TSReference } from '@nuxt/kit'
 import consola from 'consola'
@@ -47,37 +47,34 @@ export const writeTypes = async (nuxt: Nuxt) => {
 }
 
 export const writeTSConfig = async (nuxt: Nuxt) => {
-  const { buildDir, rootDir } = nuxt.options
-  const tsConfigPath = resolve(`${buildDir}/tsconfig.json`)
-
-  const aliasConfig = {
-    ...nuxt.options.alias,
-    '#build': buildDir
-  }
-  for (const aliasKey of Object.keys(aliasConfig)) {
-    aliasConfig[aliasKey] = [relative(buildDir, aliasConfig[aliasKey]) || '.']
-  }
-
   const tsConfig = {
     compilerOptions: {
-      baseUrl: './',
-      paths: aliasConfig
-    },
-    include: [relative(buildDir, resolve(`${rootDir}/nuxt.d.ts`))]
-  }
-
-  await nuxt.callHook('prepare:tsconfig', { tsConfig })
-
-  await fsp.mkdir(buildDir, { recursive: true })
-  await fsp.writeFile(tsConfigPath, JSON.stringify(tsConfig, null, 2))
-
-  const rootTSConfigPath = resolve(`${rootDir}/tsconfig.json`)
-  if (!existsSync(rootTSConfigPath)) {
-    const rootTSConfig = {
-      extends: relative(rootDir, tsConfigPath)
+      baseUrl: relative(nuxt.options.buildDir, nuxt.options.rootDir),
+      paths: {}
     }
-    await fsp.writeFile(rootTSConfigPath, JSON.stringify(rootTSConfig, null, 2))
   }
+
+  const aliases = {
+    ...nuxt.options.alias,
+    '#build': nuxt.options.buildDir
+  }
+
+  for (const alias in aliases) {
+    const relativePath = relative(nuxt.options.rootDir, aliases[alias]).replace(/\.\w+$/g, '') || '.'
+    tsConfig.compilerOptions.paths[alias] = [relativePath]
+
+    try {
+      const { isDirectory } = await fsp.stat(resolve(nuxt.options.rootDir, relativePath))
+      if (isDirectory) {
+        tsConfig.compilerOptions.paths[join(alias, '*')] = [relativePath + '/*']
+      }
+    } catch { }
+  }
+
+  await nuxt.callHook('prepare:tsconfig', tsConfig)
+
+  const tsConfigPath = resolve(`${nuxt.options.buildDir}/tsconfig.json`)
+  await fsp.writeFile(tsConfigPath, JSON.stringify(tsConfig, null, 2))
 }
 
 function renderAttrs (obj: Record<string, string>) {
