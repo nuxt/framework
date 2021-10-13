@@ -22,7 +22,7 @@ export const writeTypes = async (nuxt: Nuxt) => {
   }
 
   for (const alias in aliases) {
-    const relativePath = relative(nuxt.options.rootDir, aliases[alias]).replace(/(?<=\w)\.\w+$/g, '') || '.'
+    const relativePath = relative(nuxt.options.rootDir, aliases[alias]).replace(/(?<=\w)\.\w+$/g, '') /* remove extension */ || '.'
     tsConfig.compilerOptions.paths[alias] = [relativePath]
 
     try {
