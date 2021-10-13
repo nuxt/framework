@@ -24,8 +24,6 @@ function stripeComments (code: string) {
 }
 
 export const TransformPlugin = createUnplugin((identifiers: IdentifierMap) => {
-  const matchRE = new RegExp(`\\b(${Object.keys(identifiers).join('|')})\\b`, 'g')
-
   return {
     name: 'nuxt-auto-imports-transform',
     enforce: 'post',
@@ -51,6 +49,8 @@ export const TransformPlugin = createUnplugin((identifiers: IdentifierMap) => {
       }
     },
     transform (code) {
+      const matchRE = new RegExp(`\\b(${Object.keys(identifiers).join('|')})\\b`, 'g')
+
       // strip comments so we don't match on them
       const withoutComment = stripeComments(code)
 
