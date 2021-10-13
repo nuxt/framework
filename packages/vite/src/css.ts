@@ -2,6 +2,7 @@ import createResolver from 'postcss-import-resolver'
 import defu from 'defu'
 import { Nuxt, requireModule } from '@nuxt/kit'
 import { ViteOptions } from './vite'
+import { distDir } from './dirs'
 
 export function resolveCSSOptions (nuxt: Nuxt): ViteOptions['css'] {
   const css: ViteOptions['css'] = {
@@ -35,7 +36,12 @@ export function resolveCSSOptions (nuxt: Nuxt): ViteOptions['css'] {
     if (!opts) {
       continue
     }
-    const plugin = requireModule(name)
+    const plugin = requireModule(name, {
+      paths: [
+        ...nuxt.options.modulesDir,
+        distDir
+      ]
+    })
     // @ts-ignore
     css.postcss.plugins.push(plugin(opts))
   }
