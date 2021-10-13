@@ -1,3 +1,5 @@
+import { IdentifierMap } from './types'
+
 const identifiers = {
   '#app': [
     'useAsyncData',
@@ -60,9 +62,9 @@ const identifiers = {
   ]
 }
 
-export const defaultIdentifiers = {}
+export const defaultIdentifiers: IdentifierMap = {}
 for (const pkg in identifiers) {
   for (const id of identifiers[pkg]) {
-    defaultIdentifiers[id] = pkg
+    defaultIdentifiers[id] = { from: pkg }
   }
 }

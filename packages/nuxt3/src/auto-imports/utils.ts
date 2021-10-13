@@ -1,24 +1,25 @@
-import { IdentifierMap, IdentifierMeta } from './types'
+import consola from 'consola'
+import { IdentifierMap, IdentifierInfo } from './types'
 
 export function toImports (identifiers: IdentifierMap, names: string[], cjs = false) {
-  const fromMap: Record<string, [string, IdentifierMeta][]> = {}
+  const fromMap: Record<string, [string, IdentifierInfo][]> = {}
 
   // group by module name
   names.forEach((name) => {
-    const meta = identifiers[name]
-    const from = typeof meta === 'string' ? meta : meta.from
+    const info = identifiers[name]
+    const from = info.from
     if (!fromMap[from]) {
       fromMap[from] = []
     }
-    fromMap[from].push([name, meta])
+    fromMap[from].push([name, info])
   })
 
   if (cjs) {
     return Object.entries(fromMap)
       .map(([moduleName, names]) => {
-        const imports = names.map(([name, meta]) => {
-          if (typeof meta !== 'string' && meta.name) {
-            return meta.name + ' : ' + name
+        const imports = names.map(([name, info]) => {
+          if (info.name && info.name !== name) {
+            return info.name + ' : ' + name
           }
           return name
         })
@@ -28,9 +29,9 @@ export function toImports (identifiers: IdentifierMap, names: string[], cjs = fa
   } else {
     return Object.entries(fromMap)
       .map(([from, names]) => {
-        const imports = names.map(([name, meta]) => {
-          if (typeof meta !== 'string' && meta.name) {
-            return meta.name + ' as ' + name
+        const imports = names.map(([name, info]) => {
+          if (info.name && info.name !== name) {
+            return info.name + ' as ' + name
           }
           return name
         })
@@ -38,4 +39,11 @@ export function toImports (identifiers: IdentifierMap, names: string[], cjs = fa
       })
       .join('')
   }
+}
+
+export function updateIdentifier (identifier: IdentifierMap, name: string, info: IdentifierInfo) {
+  if (identifier[name] && identifier[name].from !== info.from) {
+    consola.warn('[auto-imports] import name `' + name + '` from `' + identifier[name].from + '` conflicted with `' + info.from + '`')
+  }
+  identifier[name] = info
 }

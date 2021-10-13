@@ -2,6 +2,7 @@ import { promises as fs, existsSync } from 'fs'
 import { parse as parsePath, join } from 'pathe'
 import globby from 'globby'
 import { IdentifierMap } from './types'
+import { updateIdentifier } from './utils'
 
 export async function scanForComposables (dir: string, identifiers: IdentifierMap) {
   if (!existsSync(dir)) { return }
@@ -17,11 +18,10 @@ export async function scanForComposables (dir: string, identifiers: IdentifierMa
       const exports = extractNamedExports(code)
       const importPath = '~/composables/' + file
       if (/\bexport default\b/.test(code)) {
-        identifiers[parsePath(file).name] = { from: importPath, name: 'default' }
+        updateIdentifier(identifiers, parsePath(file).name, { from: importPath, name: 'default' })
       }
       for (const name of exports) {
-        // TODO: warn if identifier already exists?
-        identifiers[name] = importPath
+        updateIdentifier(identifiers, name, { from: importPath })
       }
     })
   )
