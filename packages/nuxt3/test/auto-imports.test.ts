@@ -3,7 +3,11 @@ import { extractNamedExports } from '../src/auto-imports/composables'
 import { TransformPlugin } from '../src/auto-imports/transform'
 
 describe('module:auto-imports:build', () => {
-  const { transform: _transform } = TransformPlugin.raw({ ref: 'vue', computed: 'bar' }, {} as any)
+  const { transform: _transform } = TransformPlugin.raw({
+    ref: { from: 'vue' },
+    computed: { from: 'bar' }
+  }, {} as any)
+
   const transform = (code: string) => _transform.call({} as any, code, '')
 
   it('should correct inject', async () => {
