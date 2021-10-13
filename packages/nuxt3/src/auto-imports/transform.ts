@@ -15,7 +15,6 @@ const importAsRE = /^.*\sas\s+/
 const seperatorRE = /[,[\]{}\n]/g
 const multilineCommentsRE = /\/\*(.|[\r\n])*?\*\//gm
 const singlelineCommentsRE = /^\s*\/\/.*$/gm
-const vueScriptLangRe = /(\?|&)type=script&(.*&)?lang\.((c|m)?j|t)sx?(&|$)/
 
 function stripeComments (code: string) {
   return code
@@ -31,7 +30,7 @@ export const TransformPlugin = createUnplugin((map: IdentifierMap) => {
     enforce: 'post',
     transformInclude (id) {
       const { pathname, search } = parseURL(id)
-      const query = parseQuery(search)
+      const { type } = parseQuery(search)
 
       if (id.includes('node_modules')) {
         return false
@@ -40,7 +39,7 @@ export const TransformPlugin = createUnplugin((map: IdentifierMap) => {
       // vue files
       if (
         pathname.endsWith('.vue') &&
-        (query.type === 'template' || !search || vueScriptLangRe.test(search))
+        (type === 'template' || type === 'script' || !search)
       ) {
         return true
       }
