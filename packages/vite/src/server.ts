@@ -10,7 +10,7 @@ import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { bundleRequest } from './dev-bundler'
 import { writeManifest } from './manifest'
-import { isCSS } from './utils'
+import { isDevCSS, rewriteDevCSS } from './utils'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
@@ -105,7 +105,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     const { code, ids } = await bundleRequest({ viteServer }, resolve(ctx.nuxt.options.appDir, 'entry'))
     await fse.writeFile(resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'), code, 'utf-8')
     // Have CSS in the manifest to prevent FOUC on dev SSR
-    await writeManifest(ctx, ids.filter(isCSS).map(i => i.slice(1)))
+    await writeManifest(ctx, ids.filter(isDevCSS).map(i => rewriteDevCSS(i.slice(1))))
     const time = (Date.now() - start)
     consola.success(`Vite server built in ${time}ms`)
     await onBuild()

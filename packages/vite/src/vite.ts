@@ -8,6 +8,7 @@ import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
 import { warmupViteServer } from './utils/warmup'
+import { mockCSSRewritePlugin } from './plugins/mock-css-rewrite'
 
 export interface ViteOptions extends InlineConfig {
   vue?: Options
@@ -71,6 +72,7 @@ export async function bundle (nuxt: Nuxt) {
           }
         },
         plugins: [
+          mockCSSRewritePlugin(),
           virtual(nuxt.vfs)
         ],
         server: {
