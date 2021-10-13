@@ -60,7 +60,7 @@ export const writeTSConfig = async (nuxt: Nuxt) => {
   }
 
   for (const alias in aliases) {
-    const relativePath = relative(nuxt.options.rootDir, aliases[alias]).replace(/[\\/]\.\w+$/g, '') || '.'
+    const relativePath = relative(nuxt.options.rootDir, aliases[alias]).replace(/(?<=\w)\.\w+$/g, '') || '.'
     tsConfig.compilerOptions.paths[alias] = [relativePath]
 
     try {
