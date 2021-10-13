@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { extractNamedExports } from '../src/auto-imports/composables'
 import { TransformPlugin } from '../src/auto-imports/transform'
 
 describe('module:auto-imports:build', () => {
@@ -22,5 +23,26 @@ describe('module:auto-imports:build', () => {
   it('should ignore comments', async () => {
     const result = await transform('// import { computed } from "foo"\n;const a = computed(0)')
     expect(result).to.equal('import { computed } from \'bar\';// import { computed } from "foo"\n;const a = computed(0)')
+  })
+})
+
+describe('module:auto-imports:composable-extract', () => {
+  const fixture = `
+export function useA () {
+  return 'a'
+}
+function useB () {
+  return 'b'
+}
+function _useC () {
+  return 'c'
+}
+export const useD = () => {
+  return 'd'
+}
+export { useB, _useC as useC }
+`
+  it('should extract name exports', () => {
+    expect(Array.from(extractNamedExports(fixture)).sort()).to.eql(['useA', 'useB', 'useC', 'useD'])
   })
 })

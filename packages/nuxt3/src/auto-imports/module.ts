@@ -3,15 +3,18 @@ import { isAbsolute, relative, resolve } from 'pathe'
 import type { Identifiers, AutoImportsOptions } from './types'
 import { TransformPlugin } from './transform'
 import { defaultIdentifiers } from './identifiers'
+import { scanForCompoables } from './composables'
 
 export default defineNuxtModule<AutoImportsOptions>({
   name: 'auto-imports',
   configKey: 'autoImports',
   defaults: { identifiers: defaultIdentifiers },
-  setup ({ disabled = [], identifiers }, nuxt) {
+  async setup ({ disabled = [], identifiers }, nuxt) {
     for (const key of disabled) {
       delete identifiers[key]
     }
+
+    await scanForCompoables(nuxt, identifiers)
 
     // temporary disable #746
     // eslint-disable-next-line no-constant-condition
