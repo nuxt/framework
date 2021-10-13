@@ -5,7 +5,7 @@ export const loadKit = async (rootDir: string): Promise<typeof import('@nuxt/kit
     return await importModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
   } catch (e) {
     if (e.toString().includes("Cannot find module '@nuxt/kit'")) {
-      throw new Error('nuxi requires `@nuxt/kit` to be installed in your project. You ca which is provided by `nuxt3` or `@nuxt/bridge`.')
+      throw new Error('nuxi requires `@nuxt/kit` to be installed in your project. Try installing `nuxt3` or `@nuxt/bridge` first.')
     }
     throw e
   }
