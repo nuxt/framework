@@ -2593,6 +2593,7 @@ __metadata:
     lodash.template: ^4.5.0
     mlly: ^0.2.6
     pathe: ^0.2.0
+    pkg-types: ^0.1.2
     rc9: ^1.2.0
     scule: ^0.2.1
     semver: ^7.3.5
@@ -14598,6 +14599,13 @@ fsevents@~2.3.2:
   dependencies:
     find-up: ^4.0.0
   checksum: 9863e3f35132bf99ae1636d31ff1e1e3501251d480336edb1c211133c8d58906bed80f154a1d723652df1fda91e01c7442c2eeaf9dc83157c7ae89087e43c8d6
+  languageName: node
+  linkType: hard
+
+"pkg-types@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "pkg-types@npm:0.1.2"
+  checksum: f22ec704903d5fef8cf34c245afa5292789603081a049d8a79cceadb09af6b46327e4b41cb5a4fa47470947b0af4ba0b11af00ab4eeec2f51163c788681f530d
   languageName: node
   linkType: hard
 
