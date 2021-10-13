@@ -30,7 +30,7 @@ body:
     id: reproduction
     attributes:
       label: Reproduction
-      description: Please provide a link to a repo that can reproduce the problem you ran into. A [minimal reproduction](https://v3.nuxtjs.org/community/reporting-bugs#create-a-minimal-reproduction) is required unless you are absolutely sure that the issue is obvious and the provided information is enough to understand the problem. If a report is vague (e.g. just a generic error message) and has no reproduction, it will receive a "need reproduction" label. If no reproduction is provided after we might close it.
+      description: Please provide a link to a repo that can reproduce the problem you ran into. A [minimal reproduction](https://v3.nuxtjs.org/community/reporting-bugs#create-a-minimal-reproduction) is required unless you are absolutely sure that the issue is obvious and the provided information is enough to understand the problem. If a report is vague (e.g. just a generic error message) and has no reproduction, it will receive a "need reproduction" label. If no reproduction is provided we might close it.
       placeholder: Reproduction
     validations:
       required: true
@@ -39,26 +39,12 @@ body:
     attributes:
       label: Additional context
       description: If applicable, add any other context about the problem here`
-  - type: dropdown
-    id: package-manager
-    attributes:
-      label: Used Package Manager
-      description: Select the used package manager
-      options:
-        - npm
-        - yarn
-        - pnpm
-    validations:
-      required: true
   - type: textarea
     id: logs
     attributes:
       label: Logs
       description: |
         Optional if provided reproduction. Please try not to insert an image but copy paste the log text.
-
-        1. Run `vite` or `vite build` with the `--debug` flag.
-        2. Provide the error log here.
       render: shell
   # - type: checkboxes
   #   id: checkboxes

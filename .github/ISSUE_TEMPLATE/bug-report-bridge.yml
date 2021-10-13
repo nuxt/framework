@@ -39,26 +39,12 @@ body:
     attributes:
       label: Additional context
       description: If applicable, add any other context about the problem here`
-  - type: dropdown
-    id: package-manager
-    attributes:
-      label: Used Package Manager
-      description: Select the used package manager
-      options:
-        - npm
-        - yarn
-        - pnpm
-    validations:
-      required: true
   - type: textarea
     id: logs
     attributes:
       label: Logs
       description: |
         Optional if provided reproduction. Please try not to insert an image but copy paste the log text.
-
-        1. Run `vite` or `vite build` with the `--debug` flag.
-        2. Provide the error log here.
       render: shell
   # - type: checkboxes
   #   id: checkboxes
