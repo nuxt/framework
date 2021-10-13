@@ -4,6 +4,7 @@ import { cyan } from 'colorette'
 import { Nuxt, TSReference } from '@nuxt/kit'
 import consola from 'consola'
 import { getModulePaths, getNearestPackage } from './cjs'
+import { exists } from './fs'
 
 export const writeTypes = async (nuxt: Nuxt) => {
   const modulePaths = getModulePaths(nuxt.options.modulesDir)
@@ -74,6 +75,9 @@ export const writeTSConfig = async (nuxt: Nuxt) => {
   await nuxt.callHook('prepare:tsconfig', tsConfig)
 
   const tsConfigPath = resolve(`${nuxt.options.buildDir}/tsconfig.json`)
+  if (!exists(nuxt.options.buildDir)) {
+    await fsp.mkdir(nuxt.options.buildDir, { recursive: true })
+  }
   await fsp.writeFile(tsConfigPath, JSON.stringify(tsConfig, null, 2))
 }
 
