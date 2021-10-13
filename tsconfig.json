@@ -21,6 +21,9 @@
       ],
       "#app/*": [
         "./packages/nuxt3/src/app/*"
+      ],
+      "@nuxt/kit": [
+        "./packages/kit/src/index"
       ]
     }
   },
