@@ -12,6 +12,6 @@
 const a = useA()
 const b = useB()
 const c = useC()
-const d = useD()
+const d = useZ()
 const foo = useFoo()
 </script>

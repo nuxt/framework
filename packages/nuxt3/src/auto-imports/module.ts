@@ -1,5 +1,5 @@
 import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, addPluginTemplate } from '@nuxt/kit'
-import { isAbsolute, relative, resolve } from 'pathe'
+import { normalize, isAbsolute, join, relative, resolve } from 'pathe'
 import type { AutoImportsOptions } from './types'
 import { TransformPlugin } from './transform'
 import { defaultIdentifiers } from './identifiers'
@@ -15,11 +15,14 @@ export default defineNuxtModule<AutoImportsOptions>({
       delete identifiers[key]
     }
 
-    await scanForComposables(nuxt, identifiers)
+    const composablesDir = join(nuxt.options.rootDir, 'composables')
+    await scanForComposables(composablesDir, identifiers)
 
-    nuxt.hook('builder:watch', async () => {
-      await scanForComposables(nuxt, identifiers)
-      updateDTS()
+    nuxt.hook('builder:watch', async (_, path) => {
+      if (resolve(nuxt.options.rootDir, path).startsWith(composablesDir)) {
+        await scanForComposables(composablesDir, identifiers)
+        updateDTS()
+      }
     })
 
     // temporary disable #746

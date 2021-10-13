@@ -1,11 +1,9 @@
 import { promises as fs, existsSync } from 'fs'
 import { parse as parsePath, join } from 'pathe'
-import { Nuxt } from '@nuxt/kit'
 import globby from 'globby'
 import { IdentifierMap } from './types'
 
-export async function scanForComposables (nuxt: Nuxt, identifiers: IdentifierMap) {
-  const dir = join(nuxt.options.rootDir, 'composables')
+export async function scanForComposables (dir: string, identifiers: IdentifierMap) {
   if (!existsSync(dir)) { return }
 
   const files = await globby(
