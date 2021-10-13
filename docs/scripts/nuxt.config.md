@@ -1,6 +1,6 @@
 ---
 icon: IconFile
-title: nuxt.config.js
+title: nuxt.config.ts
 head.title: Nuxt configuration file
 ---
 
@@ -14,6 +14,6 @@ export default {
 }
 ```
 
-Learn more about all the different [config properties](/docs/config)
+Learn more about all the different config properties
 
 <!-- GENERATED_CONFIG_DOCS -->
