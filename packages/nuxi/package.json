@@ -43,6 +43,7 @@
     "mlly": "^0.2.6",
     "mri": "^1.2.0",
     "pathe": "^0.2.0",
+    "pkg-types": "^0.1.3",
     "scule": "^0.2.1",
     "superb": "^4.0.0",
     "unbuild": "latest"

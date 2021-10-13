@@ -2,6 +2,7 @@ import { promises as fsp } from 'fs'
 import { relative, resolve } from 'pathe'
 import { cyan } from 'colorette'
 import { Nuxt, TSReference } from '@nuxt/kit'
+import type { TSConfig } from 'pkg-types'
 import consola from 'consola'
 import { getModulePaths, getNearestPackage } from './cjs'
 
@@ -9,8 +10,16 @@ export const writeTypes = async (nuxt: Nuxt) => {
   const modulePaths = getModulePaths(nuxt.options.modulesDir)
   const rootDir = nuxt.options.rootDir
 
-  const tsConfig = {
+  const tsConfig: TSConfig = {
     compilerOptions: {
+      target: 'ESNext',
+      module: 'ESNext',
+      moduleResolution: 'Node',
+      strict: true,
+      allowJs: true,
+      noEmit: true,
+      resolveJsonModule: true,
+      types: ['node'],
       baseUrl: relative(nuxt.options.buildDir, nuxt.options.rootDir),
       paths: {}
     }
