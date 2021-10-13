@@ -28,7 +28,7 @@ export const writeTypes = async (nuxt: Nuxt) => {
     try {
       const { isDirectory } = await fsp.stat(resolve(nuxt.options.rootDir, relativePath))
       if (isDirectory) {
-        tsConfig.compilerOptions.paths[`${alias}/*`)] = [`${relativePath}/*`]
+        tsConfig.compilerOptions.paths[`${alias}/*`] = [`${relativePath}/*`]
       }
     } catch { }
   }
