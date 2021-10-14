@@ -3,6 +3,7 @@ import chokidar from 'chokidar'
 import debounce from 'p-debounce'
 import type { Nuxt } from '@nuxt/kit'
 import consola from 'consola'
+import { ListenOptions } from 'listhen'
 import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
 import { writeTypes } from '../utils/prepare'
@@ -17,21 +18,25 @@ export default defineNuxtCommand({
   },
   async invoke (args) {
     process.env.NODE_ENV = process.env.NODE_ENV || 'development'
-    const https = !!(args['ssl-cert'] && args['ssl-key'])
     const server = createServer()
-    const listener = await server.listen({
+    const listenOptions: Partial<ListenOptions> = {
       clipboard: args.clipboard,
-      open: args.open || args.o,
-      port: args.port || args.p,
-      hostname: args.host || args.h,
-      ...(https && {
-        https,
-        certificate: {
-          cert: args['ssl-cert'],
-          key: args['ssl-key']
-        }
-      })
-    })
+      open: args.open || args.o
+    }
+    if (args.port || args.p) {
+      listenOptions.port = args.port || args.p
+    }
+    if (args.host || args.h) {
+      listenOptions.hostname = args.host || args.h
+    }
+    if (args['ssl-cert'] && args['ssl-key']) {
+      listenOptions.https = true
+      listenOptions.certificate = {
+        cert: args['ssl-cert'],
+        key: args['ssl-key']
+      }
+    }
+    const listener = await server.listen(listenOptions)
 
     const rootDir = resolve(args._[0] || '.')
 
