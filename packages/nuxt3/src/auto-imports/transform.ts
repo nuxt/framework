@@ -30,19 +30,22 @@ export const TransformPlugin = createUnplugin((map: IdentifierMap) => {
     enforce: 'post',
     transformInclude (id) {
       const { pathname, search } = parseURL(id)
-      const query = parseQuery(search)
+      const { type } = parseQuery(search)
 
       if (id.includes('node_modules')) {
         return false
       }
 
       // vue files
-      if (pathname.endsWith('.vue') && (query.type === 'template' || !search)) {
+      if (
+        pathname.endsWith('.vue') &&
+        (type === 'template' || type === 'script' || !search)
+      ) {
         return true
       }
 
       // js files
-      if (pathname.match(/\.((c|m)?j|t)sx?/g)) {
+      if (pathname.match(/\.((c|m)?j|t)sx?$/g)) {
         return true
       }
     },
