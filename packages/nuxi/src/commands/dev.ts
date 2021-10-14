@@ -1,12 +1,12 @@
 import { resolve, relative } from 'pathe'
 import chokidar from 'chokidar'
-import debounce from 'debounce-promise'
+import debounce from 'p-debounce'
 import type { Nuxt } from '@nuxt/kit'
 import consola from 'consola'
 import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
-import { importModule } from '../utils/cjs'
 import { writeTypes } from '../utils/prepare'
+import { loadKit } from '../utils/kit'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -20,12 +20,13 @@ export default defineNuxtCommand({
     const server = createServer()
     const listener = await server.listen({
       clipboard: args.clipboard,
-      open: args.open || args.o
+      open: args.open || args.o,
+      port: args.port || args.p
     })
 
     const rootDir = resolve(args._[0] || '.')
 
-    const { loadNuxt, buildNuxt } = await importModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
+    const { loadNuxt, buildNuxt } = await loadKit(rootDir)
 
     const prepare = debounce(nuxt => writeTypes(nuxt), 1000)
 
