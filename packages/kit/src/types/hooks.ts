@@ -1,5 +1,4 @@
 import type { IncomingMessage, ServerResponse } from 'http'
-import type { HookCallback } from 'hookable'
 import type { Compiler, Configuration, Stats } from 'webpack'
 import type { NuxtConfig, NuxtOptions } from '..'
 import type { ModuleContainer } from '../module/container'
@@ -29,14 +28,12 @@ type RenderResult = {
 // https://www.typescriptlang.org/docs/handbook/triple-slash-directives.html
 export type TSReference = { types: string } | { path: string }
 
-export interface NuxtHooks extends Record<string, HookCallback> {
+export interface NuxtHooks {
   // nuxt3
   'app:resolve': (app: NuxtApp) => HookResult
   'app:templates': (app: NuxtApp) => HookResult
   'app:templatesGenerated': (app: NuxtApp) => HookResult
   'builder:generateApp': () => HookResult
-  'components:dirs': (dirs: string[]) => HookResult
-  'components:extend': (components: any[]) => HookResult
 
   // @nuxt/builder
   'build:before':
