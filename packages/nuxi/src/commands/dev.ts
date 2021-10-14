@@ -12,7 +12,7 @@ import { defineNuxtCommand } from './index'
 export default defineNuxtCommand({
   meta: {
     name: 'dev',
-    usage: 'npx nuxi dev [rootDir] [--clipboard] [--open, -o]',
+    usage: 'npx nuxi dev [rootDir] [--clipboard] [--open, -o] [--port, -p] [--host, -h]',
     description: 'Run nuxt development server'
   },
   async invoke (args) {
@@ -21,7 +21,8 @@ export default defineNuxtCommand({
     const listener = await server.listen({
       clipboard: args.clipboard,
       open: args.open || args.o,
-      port: args.port || args.p
+      port: args.port || args.p,
+      hostname: args.host || args.h
     })
 
     const rootDir = resolve(args._[0] || '.')
