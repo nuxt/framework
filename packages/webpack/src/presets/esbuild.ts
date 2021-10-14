@@ -35,7 +35,7 @@ export function esbuild (ctx: WebpackConfigContext) {
       }
     },
     {
-      test: /\.[jt]sx$/,
+      test: /\.m?[jt]sx$/,
       loader: 'esbuild-loader',
       options: {
         loader: 'tsx',
