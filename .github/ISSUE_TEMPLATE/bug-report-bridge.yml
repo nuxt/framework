@@ -10,6 +10,14 @@ body:
 
         Please use the code sandbox template below to create a minimal reproduction
         👉 https://codesandbox.io/s/github/nuxt/starter/tree/bridge-codesandbox
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Node Version
+      description: If you already have Node.js installed, check with node --version that you are using v14 or v16. [Docs](https://v3.nuxtjs.org/getting-started/introduction#prerequisites)
+      options:
+        - label: I am using Node.js v14 or v16
+          required: true
   - type: textarea
     id: bug-env
     attributes:
@@ -46,4 +54,3 @@ body:
       description: |
         Optional if provided reproduction. Please try not to insert an image but copy paste the log text.
       render: shell
-  
