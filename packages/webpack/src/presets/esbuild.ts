@@ -13,7 +13,7 @@ export function esbuild (ctx: WebpackConfigContext) {
 
   config.module.rules.push(
     {
-      test: /\.m?[jt]s?$/i,
+      test: /\.m?[jt]s$/i,
       loader: 'esbuild-loader',
       exclude: (file) => {
         file = file.split('node_modules', 2)[1]
