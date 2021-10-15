@@ -2401,7 +2401,7 @@ __metadata:
     estree-walker: ^2.0.2
     fs-extra: ^10.0.0
     magic-string: ^0.25.7
-    mlly: ^0.2.7
+    mlly: ^0.2.8
     node-fetch: ^3.0.0
     nuxi: 3.0.0
     nuxt-vite: ^0.3.5
@@ -2591,7 +2591,7 @@ __metadata:
     hookable: ^5.0.0
     jiti: ^1.12.7
     lodash.template: ^4.5.0
-    mlly: ^0.2.7
+    mlly: ^0.2.8
     pathe: ^0.2.0
     pkg-types: ^0.1.3
     rc9: ^1.2.0
@@ -2663,7 +2663,7 @@ __metadata:
     jiti: ^1.12.7
     listhen: ^0.2.4
     mime: ^2.5.2
-    mlly: ^0.2.7
+    mlly: ^0.2.8
     node-fetch: ^3.0.0
     ohmyfetch: ^0.3.1
     ora: ^6.0.1
@@ -2879,7 +2879,7 @@ __metadata:
     lodash-es: ^4.17.21
     memfs: ^3.3.0
     mini-css-extract-plugin: ^2.4.2
-    mlly: ^0.2.7
+    mlly: ^0.2.8
     pathe: ^0.2.0
     pify: ^5.0.0
     postcss: ^8.3.9
@@ -12939,12 +12939,12 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"mlly@npm:^0.2.7":
-  version: 0.2.7
-  resolution: "mlly@npm:0.2.7"
+"mlly@npm:^0.2.8":
+  version: 0.2.8
+  resolution: "mlly@npm:0.2.8"
   dependencies:
     import-meta-resolve: ^1.1.1
-  checksum: d40e678c10821cad2a4cad196b0c015c5be62fdbaf4eaa5e633a6b5308a62d3f475491ec79edc5c618ee1befcff0b399e2bb56b2dd299039e0859559454ac2ac
+  checksum: 7acbab84eb80b4d936b466c0a5e9617b682984b415f49b675b133f9e0400ebdbd10d401b0b4dfe6a16694111500b9514484e4ea668872c357cb27ba03a9c54ae
   languageName: node
   linkType: hard
 
@@ -13690,7 +13690,7 @@ fsevents@~2.3.2:
     fsevents: ~2.3.2
     jiti: ^1.12.7
     listhen: ^0.2.5
-    mlly: ^0.2.7
+    mlly: ^0.2.8
     mri: ^1.2.0
     p-debounce: ^4.0.0
     pathe: ^0.2.0
@@ -13787,7 +13787,7 @@ fsevents@~2.3.2:
     hash-sum: ^2.0.0
     hookable: ^5.0.0
     ignore: ^5.1.8
-    mlly: ^0.2.7
+    mlly: ^0.2.8
     nuxi: 3.0.0
     ohmyfetch: ^0.3.1
     pathe: ^0.2.0

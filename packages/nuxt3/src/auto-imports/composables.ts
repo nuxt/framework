@@ -28,7 +28,7 @@ export async function scanForComposables (dir: string, identifiers: IdentifierMa
           for (const name of exp.names) {
             updateIdentifier(identifiers, name, { from: importPath })
           }
-        } else if (exp.type === 'delcalration') {
+        } else if (exp.type === 'declaration') {
           updateIdentifier(identifiers, exp.name, { from: importPath })
         }
       }
