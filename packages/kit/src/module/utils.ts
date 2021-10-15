@@ -180,6 +180,12 @@ export interface ExtendWebpackConfigOptions extends ExtendConfigOptions {
    * @default true
    */
   client?: boolean
+  /**
+   * Install plugin on modern build
+   *
+   * @default true
+   */
+  modern?: boolean
 }
 
 export interface ExtendViteConfigOptions extends ExtendConfigOptions {}
@@ -212,6 +218,12 @@ export function extendWebpackConfig (
     }
     if (options.client !== false) {
       const config = configs.find(i => i.name === 'client')
+      if (config) {
+        fn(config)
+      }
+    }
+    if (options.modern !== false) {
+      const config = configs.find(i => i.name === 'modern')
       if (config) {
         fn(config)
       }
