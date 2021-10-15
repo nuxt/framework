@@ -1,4 +1,4 @@
-import { existsSync, promises as fsp } from 'fs'
+import { existsSync, readFileSync } from 'fs'
 import { resolve } from 'pathe'
 import dotenv from 'dotenv'
 import { LoadNuxtConfigOptions } from './load'
@@ -52,7 +52,7 @@ export async function loadEnv (rootDir: string, options: LoadNuxtConfigOptions['
 }
 
 /** Load environment variables into an object. */
-export async function loadDotenv (opts: LoadDotEnvOptions) {
+export function loadDotenv (opts: LoadDotEnvOptions) {
   if (!opts.dotenvFile) {
     return
   }
@@ -62,7 +62,7 @@ export async function loadDotenv (opts: LoadDotEnvOptions) {
   const dotenvFile = resolve(opts.rootDir, opts.dotenvFile)
 
   if (existsSync(dotenvFile)) {
-    const parsed = dotenv.parse(await fsp.readFile(dotenvFile, 'utf-8'))
+    const parsed = dotenv.parse(readFileSync(dotenvFile, 'utf-8'))
     Object.assign(env, parsed)
   }
 

@@ -25,6 +25,8 @@ export interface LoadNuxtConfigOptions {
 export function loadNuxtConfig (opts: LoadNuxtConfigOptions): NuxtOptions {
   const rootDir = resolve(process.cwd(), opts.rootDir || '.')
 
+  loadEnv(rootDir, opts.envConfig)
+
   const nuxtConfigFile = tryResolveModule(resolve(rootDir, opts.configFile || 'nuxt.config'))
 
   let nuxtConfig: any = {}
@@ -49,8 +51,6 @@ export function loadNuxtConfig (opts: LoadNuxtConfigOptions): NuxtOptions {
   if (!nuxtConfig.rootDir) {
     nuxtConfig.rootDir = rootDir
   }
-
-  loadEnv(rootDir, opts.envConfig)
 
   // Resolve and apply defaults
   return applyDefaults(nuxtConfigSchema, nuxtConfig) as NuxtOptions
