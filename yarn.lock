@@ -3566,6 +3566,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/sass@npm:^1":
+  version: 1.16.1
+  resolution: "@types/sass@npm:1.16.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 3f86d2eaf4988a2775fc0fc164d35e73ce82d71228191da7b11d97ad5e8ac129f1c5f798307e31482f8cfebab758bd3b24e731860bed81afe5a1bbe13fa2b2df
+  languageName: node
+  linkType: hard
+
 "@types/semver@npm:^7":
   version: 7.3.8
   resolution: "@types/semver@npm:7.3.8"
@@ -6465,7 +6474,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:3.5.2, chokidar@npm:^3.4.1, chokidar@npm:^3.5.1, chokidar@npm:^3.5.2":
+"chokidar@npm:3.5.2, chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.4.1, chokidar@npm:^3.5.1, chokidar@npm:^3.5.2":
   version: 3.5.2
   resolution: "chokidar@npm:3.5.2"
   dependencies:
@@ -9270,6 +9279,16 @@ __metadata:
   resolution: "example-with-pages@workspace:examples/with-pages"
   dependencies:
     nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
+"example-with-scss@workspace:examples/with-scss":
+  version: 0.0.0-use.local
+  resolution: "example-with-scss@workspace:examples/with-scss"
+  dependencies:
+    "@types/sass": ^1
+    nuxt3: latest
+    sass: ^1.42.1
   languageName: unknown
   linkType: soft
 
@@ -16977,6 +16996,17 @@ fsevents@~2.3.2:
   dependencies:
     truncate-utf8-bytes: ^1.0.0
   checksum: aa733c012b7823cf65730603cf3b503c641cee6b239771d3164ca482f22d81a50e434a713938d994071db18e4202625669cc56bccc9d13d818b4c983b5f47fde
+  languageName: node
+  linkType: hard
+
+"sass@npm:^1.42.1":
+  version: 1.42.1
+  resolution: "sass@npm:1.42.1"
+  dependencies:
+    chokidar: ">=3.0.0 <4.0.0"
+  bin:
+    sass: sass.js
+  checksum: 467817475b23a3da3aac2f5e401f3b3d9431845b31ff1bc6269d4677852b4e1445e50d6ed1a8daffa4a76398cff6c531670171823466137ed8c2721c17983973
   languageName: node
   linkType: hard
 
