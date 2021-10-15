@@ -1,6 +1,8 @@
 import { promises as fs, existsSync } from 'fs'
 import { parse as parsePath, join } from 'pathe'
 import globby from 'globby'
+import { findExports } from 'mlly'
+import { camelCase } from 'scule'
 import { IdentifierMap } from './types'
 import { updateIdentifier } from './utils'
 
@@ -15,36 +17,21 @@ export async function scanForComposables (dir: string, identifiers: IdentifierMa
   await Promise.all(
     files.map(async (file) => {
       const code = await fs.readFile(join(dir, file), 'utf-8')
-      const exports = extractNamedExports(code)
+      const exports = findExports(code)
       const importPath = '~/composables/' + file
-      if (/\bexport default\b/.test(code)) {
-        updateIdentifier(identifiers, parsePath(file).name, { from: importPath, name: 'default' })
+      const defaultExport = exports.find(i => i.type === 'default')
+      if (defaultExport) {
+        updateIdentifier(identifiers, camelCase(parsePath(file).name), { from: importPath, name: 'default' })
       }
-      for (const name of exports) {
-        updateIdentifier(identifiers, name, { from: importPath })
+      for (const exp of exports) {
+        if (exp.type === 'named') {
+          for (const name of exp.names) {
+            updateIdentifier(identifiers, name, { from: importPath })
+          }
+        } else if (exp.type === 'delcalration') {
+          updateIdentifier(identifiers, exp.name, { from: importPath })
+        }
       }
     })
   )
-}
-
-const exportDecalareRE = /\bexport\s+(?:function|let|const|var)\s+([\w$_]+)/g
-const exportObjectRE = /\bexport\s+{([^}]+)}/g
-const namedAsRE = /^.*?\sas\s/
-const identifierRE = /^[\w$_]+$/
-
-export function extractNamedExports (code: string) {
-  const names = new Set<string>()
-
-  Array.from(code.matchAll(exportDecalareRE))
-    .forEach(([, name]) => names.add(name))
-
-  Array.from(code.matchAll(exportObjectRE))
-    .forEach(([, body]) => {
-      body.split(/,/g)
-        .map(name => name.replace(namedAsRE, '').trim())
-        .filter(name => identifierRE.test(name))
-        .forEach(name => names.add(name))
-    })
-
-  return names
 }
