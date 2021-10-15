@@ -697,8 +697,6 @@ export default {
    * @version 3
    */
   publicRuntimeConfig: {
-    app: {
-      $resolve: (val, get) => ({ ...get('app'), ...(val || {}) })
-    }
+    $resolve: (val, get) => ({ ...val || {}, app: { ...get('app'), ...val?.app || {} } })
   }
 }
