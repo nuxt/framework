@@ -127,7 +127,7 @@ function expand (target: Record<string, any>, source: Record<string, any> = {}, 
 }
 
 // Check if a file exists
-export async function exists (path: string) {
+async function exists (path: string) {
   try {
     await fsp.access(path)
     return true
