@@ -8,7 +8,7 @@ export interface Nuxt {
   callHook: Function;
 }
 
-export interface ViteOptions extends InlineConfig {
+export interface ViteOptions extends Omit<InlineConfig, 'build'> {
   /**
    * Options for vite-plugin-vue2
    *
@@ -16,7 +16,11 @@ export interface ViteOptions extends InlineConfig {
    */
   vue?: VueViteOptions
 
-  ssr?: SSROptions
+  ssr?: boolean | SSROptions
+
+  build?: boolean | InlineConfig['build']
+
+  experimentWarning?: boolean
 }
 
 export interface ViteBuildContext {
