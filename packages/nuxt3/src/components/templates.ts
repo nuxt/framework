@@ -38,8 +38,8 @@ ${options.components.map((c) => {
 
 export default function (nuxt) {
   for (const name in components) {
-    nuxt.app.component(name, components[name])
-    nuxt.app.component('Lazy' + name, components[name])
+    nuxt.vueApp.component(name, components[name])
+    nuxt.vueApp.component('Lazy' + name, components[name])
   }
 }
 `

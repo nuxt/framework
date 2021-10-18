@@ -26,7 +26,7 @@ export interface RuntimeNuxtHooks {
 }
 
 export interface NuxtApp {
-  app: App<Element>
+  vueApp: App<Element>
   globalName: string
 
   hooks: Hookable<RuntimeNuxtHooks>
@@ -62,7 +62,7 @@ export interface LegacyPlugin {
 }
 
 export interface CreateOptions {
-  app: NuxtApp['app']
+  appvueApp: NuxtApp['vueApp']
   ssrContext?: NuxtApp['ssrContext']
   globalName?: NuxtApp['globalName']
 }
@@ -88,12 +88,12 @@ export function createNuxtApp (options: CreateOptions) {
   nuxt.provide = (name: string, value: any) => {
     const $name = '$' + name
     defineGetter(nuxt, $name, value)
-    defineGetter(nuxt.app.config.globalProperties, $name, value)
+    defineGetter(nuxt.vueApp.config.globalProperties, $name, value)
   }
 
   // Inject $nuxt
-  defineGetter(nuxt.app, '$nuxt', nuxt)
-  defineGetter(nuxt.app.config.globalProperties, '$nuxt', nuxt)
+  defineGetter(nuxt.vueApp, '$nuxt', nuxt)
+  defineGetter(nuxt.vueApp.config.globalProperties, '$nuxt', nuxt)
 
   // Expose nuxt to the renderContext
   if (nuxt.ssrContext) {
@@ -102,7 +102,7 @@ export function createNuxtApp (options: CreateOptions) {
 
   // (temporary) Expose NuxtWelcome component in dev
   if (process.dev) {
-    nuxt.app.component('NuxtWelcome', defineAsyncComponent(() => import('./components/nuxt-welcome.vue')))
+    nuxt.vueApp.component('NuxtWelcome', defineAsyncComponent(() => import('./components/nuxt-welcome.vue')))
   }
 
   if (process.server) {

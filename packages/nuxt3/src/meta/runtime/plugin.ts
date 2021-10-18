@@ -8,7 +8,7 @@ import metaConfig from '#build/meta.config.mjs'
 export default defineNuxtPlugin((nuxt) => {
   useMeta(metaConfig.globalMeta)
 
-  nuxt.app.mixin({
+  nuxt.vueApp.mixin({
     [metaConfig.mixinKey] () {
       const instance = getCurrentInstance()
       const options = instance?.type || /* nuxt2 */ instance?.proxy?.$options
@@ -20,6 +20,6 @@ export default defineNuxtPlugin((nuxt) => {
 
   for (const name in Components) {
     // eslint-disable-next-line import/namespace
-    nuxt.app.component(name, Components[name])
+    nuxt.vueApp.component(name, Components[name])
   }
 })
