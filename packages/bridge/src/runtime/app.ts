@@ -9,16 +9,17 @@ export const defineNuxtComponent = defineComponent
 export interface RuntimeNuxtHooks { }
 
 export interface VueAppCompat {
-  component: Vue.component,
+  component: Vue['component'],
   config: {
     globalProperties: any
+    [key: string]: any
   },
-  directive: Vue.directive,
-  mixin: Vue.mixin,
-  mount: () => {},
-  provide: () => {},
-  unmount: () => {},
-  use: Vue.use
+  directive: Vue['directive'],
+  mixin: Vue['mixin'],
+  mount: Vue['mount'],
+  provide: (name: string, value: any) => void,
+  unmount: Vue['unmount'],
+  use: Vue['use']
   version: string
 }
 
