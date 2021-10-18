@@ -12,16 +12,16 @@ export const useHydration = mock()
 
 // Runtime config helper
 export const useRuntimeConfig = () => {
-  const app = useNuxtApp().vue2App
-  if (!app._$config) {
-    app._$config = reactive(app.$config)
+  const nuxtApp = useNuxtApp()
+  if (!nuxtApp.$config) {
+    nuxtApp.$config = reactive(nuxtApp.nuxt2Context.$config)
   }
-  return app._$config
+  return nuxtApp.$config
 }
 
 // Auto-import equivalents for `vue-router`
 export const useRouter = () => {
-  return useNuxtApp()?.legacyNuxt.router as VueRouter
+  return useNuxtApp()?.nuxt2Context.router as VueRouter
 }
 
 // This provides an equivalent interface to `vue-router` (unlike legacy implementation)
@@ -30,7 +30,7 @@ export const useRoute = () => {
 
   if (!nuxtApp._route) {
     Object.defineProperty(nuxtApp, '__route', {
-      get: () => nuxtApp.legacyNuxt.context.route
+      get: () => nuxtApp.nuxt2Context.context.route
     })
     nuxtApp._route = reactive(nuxtApp.__route)
     const router = useRouter()

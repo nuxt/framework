@@ -4,7 +4,7 @@ import { setNuxtAppInstance } from '#app'
 
 export default (ctx, inject) => {
   const nuxt = {
-    app: {
+    vueApp: {
       component: Vue.component.bind(Vue),
       config: {
         globalProperties: {}
@@ -23,7 +23,7 @@ export default (ctx, inject) => {
     globalName: 'nuxt',
     payload: process.client ? ctx.nuxtState : ctx.ssrContext.nuxt,
     isHydrating: ctx.isHMR,
-    legacyNuxt: ctx.app
+    nuxt2Context: ctx
   }
 
   nuxt.hooks = createHooks()
