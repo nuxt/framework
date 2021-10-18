@@ -81,8 +81,9 @@ export const writeTypes = async (nuxt: Nuxt) => {
     await fsp.writeFile(tsConfigPath, JSON.stringify(tsConfig, null, 2))
   }
 
-  nuxt.hook('app:templatesGenerated', writeFile) /* nuxt 3 */
-  nuxt.hook('build:templates', writeFile) /* nuxt 2 */
+  // This is needed for Nuxt 2 which clears the build directory again before building
+  // https://github.com/nuxt/nuxt.js/blob/dev/packages/builder/src/builder.js#L144
+  nuxt.hook('builder:prepared', writeFile)
 
   await writeFile()
 }
