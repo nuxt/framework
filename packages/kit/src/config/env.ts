@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'fs'
+import { promises as fsp } from 'fs'
 import { resolve } from 'pathe'
 import dotenv from 'dotenv'
 import { LoadNuxtConfigOptions } from './load'
@@ -52,7 +52,7 @@ export async function loadEnv (rootDir: string, options: LoadNuxtConfigOptions['
 }
 
 /** Load environment variables into an object. */
-export function loadDotenv (opts: LoadDotEnvOptions) {
+export async function loadDotenv (opts: LoadDotEnvOptions) {
   if (!opts.dotenvFile) {
     return
   }
@@ -61,8 +61,8 @@ export function loadDotenv (opts: LoadDotEnvOptions) {
 
   const dotenvFile = resolve(opts.rootDir, opts.dotenvFile)
 
-  if (existsSync(dotenvFile)) {
-    const parsed = dotenv.parse(readFileSync(dotenvFile, 'utf-8'))
+  if (await exists(dotenvFile)) {
+    const parsed = dotenv.parse(await fsp.readFile(dotenvFile, 'utf-8'))
     Object.assign(env, parsed)
   }
 
@@ -123,5 +123,15 @@ function expand (target: Record<string, any>, source: Record<string, any> = {}, 
 
   for (const key in target) {
     target[key] = interpolate(getValue(key))
+  }
+}
+
+// Check if a file exists
+export async function exists (path: string) {
+  try {
+    await fsp.access(path)
+    return true
+  } catch {
+    return false
   }
 }
