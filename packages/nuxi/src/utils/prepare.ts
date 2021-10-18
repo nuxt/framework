@@ -82,8 +82,8 @@ export const writeTypes = async (nuxt: Nuxt) => {
     await fsp.writeFile(tsConfigPath, JSON.stringify(tsConfig, null, 2))
   }
 
-  nuxt.hook('app:templatesGenerated', writeFile)
-  nuxt.hook('build:templates', writeFile)
+  nuxt.hook('app:templatesGenerated', writeFile) /* nuxt 3 */
+  nuxt.hook('build:templates', writeFile) /* nuxt 2 */
 
   await writeFile()
 }
