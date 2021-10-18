@@ -3,7 +3,7 @@ import { createHooks } from 'hookable/dist/index.mjs'
 import { setNuxtAppInstance } from '#app'
 
 export default (ctx, inject) => {
-  const nuxt = {
+  const nuxtApp = {
     vueApp: {
       component: Vue.component.bind(Vue),
       config: {
@@ -26,23 +26,23 @@ export default (ctx, inject) => {
     nuxt2Context: ctx
   }
 
-  nuxt.hooks = createHooks()
-  nuxt.hook = nuxt.hooks.hook
-  nuxt.callHook = nuxt.hooks.callHook
+  nuxtApp.hooks = createHooks()
+  nuxtApp.hook = nuxtApp.hooks.hook
+  nuxtApp.callHook = nuxtApp.hooks.callHook
 
   if (!Array.isArray(ctx.app.created)) {
     ctx.app.created = [ctx.app.created]
   }
 
   if (process.server) {
-    nuxt.ssrContext = ctx.ssrContext
+    nuxtApp.ssrContext = ctx.ssrContext
   }
 
   ctx.app.created.push(function () {
-    nuxt.vue2App = this
+    nuxtApp.vue2App = this
   })
 
-  setNuxtAppInstance(nuxt)
+  setNuxtAppInstance(nuxtApp)
 
-  inject('_nuxtApp', nuxt)
+  inject('_nuxtApp', nuxtApp)
 }
