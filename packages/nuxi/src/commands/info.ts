@@ -40,9 +40,9 @@ export default defineNuxtCommand({
     const infoObj = {
       OperatingSystem: os.type(),
       NodeVersion: process.version,
-      NuxtVersion: getDepVersion('nuxt') || getDepVersion('nuxt-edge') || (getDepVersion('nuxt3') ? '3-' + getDepVersion('nuxt3') : null),
+      NuxtVersion: getDepVersion('nuxt') || getDepVersion('nuxt-edge') || (getDepVersion('nuxt3') ? getDepVersion('nuxt3') : null),
       PackageManager: getPackageManager(rootDir),
-      Bundler: (nuxtConfig.vite || nuxtConfig?.buildModules?.find(m => m === 'nuxt-vite')) ? 'Vite' : 'Webpack',
+      Bundler: (nuxtConfig.vite !== false || nuxtConfig?.buildModules?.find(m => m === 'nuxt-vite')) ? 'Vite' : 'Webpack',
       UserConfig: Object.keys(nuxtConfig).map(key => '`' + key + '`').join(', '),
       RuntimeModules: listModules(nuxtConfig.modules),
       BuildModules: listModules(nuxtConfig.buildModules)
