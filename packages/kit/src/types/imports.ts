@@ -15,6 +15,10 @@ export interface AutoImport {
    * Module specifier to import from
    */
   from: string
+  /**
+   * Disable auto import
+   */
+  disabled?: Boolean
 }
 
 export interface AutoImportSource {
@@ -27,6 +31,10 @@ export interface AutoImportSource {
    *  Module specifier to import from
    */
   from: string
+  /**
+   * Disable auto import source
+   */
+  disabled?: Boolean
 }
 
 export interface AutoImportsOptions {

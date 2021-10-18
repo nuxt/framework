@@ -15,8 +15,11 @@ export default defineNuxtModule<AutoImportsOptions>({
     // Allow modules extending sources
     await nuxt.callHook('imports:sources', options.sources)
 
-    // Resolve sources
-    const autoImports: AutoImport[] = []
+    // Filter disabled sources
+    options.sources = options.sources.filter(source => source.disabled !== true)
+
+    // Resolve autoimports from sources
+    let autoImports: AutoImport[] = []
     for (const source of options.sources) {
       for (const importName of source.names) {
         if (typeof importName === 'string') {
@@ -29,6 +32,9 @@ export default defineNuxtModule<AutoImportsOptions>({
 
     // Allow modules extending resolved imports
     await nuxt.callHook('imports:extend', autoImports)
+
+    // Filter disabled imports
+    autoImports = autoImports.filter(i => i.disabled !== true)
 
     // temporary disable #746
     // @ts-ignore
