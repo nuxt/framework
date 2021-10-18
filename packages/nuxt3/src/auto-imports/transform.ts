@@ -1,6 +1,7 @@
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL } from 'ufo'
 import type { AutoImport } from '@nuxt/kit'
+import { toImports } from './utils'
 
 const excludeRE = [
   // imported from other module
@@ -78,28 +79,11 @@ export const TransformPlugin = createUnplugin((autoImports: AutoImport[]) => {
         return null
       }
 
-      const modules: Record<string, string[]> = {}
-
-      // group by module name
-      Array.from(matched).forEach((name) => {
-        const moduleName = autoImportMap.get(name).from
-        if (!modules[moduleName]) {
-          modules[moduleName] = []
-        }
-        modules[moduleName].push(name)
-      })
-
-      // Needed for webpack4/bridge support
+      // For webpack4/bridge support
       const isCJSContext = code.includes('require(')
 
-      // stringify import
-      const imports = !isCJSContext
-        ? Object.entries(modules)
-          .map(([moduleName, names]) => `import { ${names.join(',')} } from '${moduleName}';`)
-          .join('')
-        : Object.entries(modules)
-          .map(([moduleName, names]) => `const { ${names.join(',')} } = require('${moduleName}');`)
-          .join('')
+      const matchedImports = Array.from(matched).map(name => autoImportMap.get(name)).filter(Boolean)
+      const imports = toImports(matchedImports, isCJSContext)
 
       return imports + code
     }
