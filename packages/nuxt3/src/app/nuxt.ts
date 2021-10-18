@@ -61,7 +61,7 @@ export interface LegacyPlugin {
 }
 
 export interface CreateOptions {
-  appvueApp: NuxtApp['vueApp']
+  vueApp: NuxtApp['vueApp']
   ssrContext?: NuxtApp['ssrContext']
   globalName?: NuxtApp['globalName']
 }
