@@ -66,7 +66,7 @@ function nuxtVite () {
   })
 }
 
-nuxtVite.meta = { name: 'nuxt-vite', version }
+nuxtVite.meta = { name: 'nuxt-bridge:vite', version }
 
 export default nuxtVite
 
