@@ -1,10 +1,8 @@
 import { existsSync, promises as fsp } from 'fs'
 import { resolve } from 'pathe'
 import consola from 'consola'
-import type { NestedHooks } from 'hookable'
 import { extendPreset, prettyPath } from '../utils'
 import { NitroPreset, NitroContext, NitroInput } from '../context'
-import type { NitroHooks } from '..'
 import { worker } from './worker'
 
 export const browser: NitroPreset = extendPreset(worker, (input: NitroInput) => {
