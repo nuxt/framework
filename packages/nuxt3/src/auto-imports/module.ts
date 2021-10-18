@@ -33,6 +33,17 @@ export default defineNuxtModule<AutoImportsOptions>({
     // Allow modules extending resolved imports
     await nuxt.callHook('autoImports:extend', autoImports)
 
+    // Disable duplicate auto imports
+    const usedNames = new Set()
+    for (const autoImport of autoImports) {
+      if (usedNames.has(autoImport.as)) {
+        autoImport.disabled = true
+        console.warn(`Disabling duplicate auto import '${autoImport.as}' (imported from '${autoImport.from}')`)
+      } else {
+        usedNames.add(autoImport.as)
+      }
+    }
+
     // Filter disabled imports
     autoImports = autoImports.filter(i => i.disabled !== true)
 
