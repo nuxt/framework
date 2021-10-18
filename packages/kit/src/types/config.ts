@@ -11,7 +11,7 @@ export interface ConfigSchema extends _ConfigSchema {
 
   // TODO: Move to schema when untyped supports type annotation
   vite: boolean | import('vite').InlineConfig
-  imports: AutoImportsOptions
+  autoImports: AutoImportsOptions
 }
 
 export interface NuxtOptions extends ConfigSchema { }
