@@ -1,7 +1,7 @@
-import { builtinModules } from 'module'
 import { pathToFileURL } from 'url'
 import { join } from 'pathe'
 import * as vite from 'vite'
+import { ExternalsOptions, isExternal } from 'externality'
 import { hashId, uniq } from './utils'
 
 export interface TransformChunk {
@@ -22,27 +22,7 @@ export interface TransformOptions {
   viteServer: vite.ViteDevServer
 }
 
-function isExternal (opts: TransformOptions, id: string) {
-  if (builtinModules.includes(id)) {
-    return true
-  }
-
-  const ssrConfig = (opts.viteServer.config as any).ssr
-
-  if (!/\.[cm]?js/.test(id)) {
-    return false
-  }
-
-  if (ssrConfig.noExternal.find(ext => id.includes(ext))) {
-    return false
-  }
-
-  if (ssrConfig.external.find(ext => id.includes(ext))) {
-    return true
-  }
-
-  return id.includes('node_modules')
-}
+const toRegExp = (pattern: string | RegExp) => pattern instanceof RegExp ? pattern : new RegExp(`([\\/]|^)${pattern}([\\/]|$)`)
 
 async function transformRequest (opts: TransformOptions, id: string) {
   // Virtual modules start with `\0`
@@ -54,13 +34,40 @@ async function transformRequest (opts: TransformOptions, id: string) {
   }
   if (id && id.startsWith('/@fs/')) {
     id = id.slice('/@fs'.length)
+  } else if (!id.includes('entry') && id.startsWith('/')) {
+    // Relative to the root directory
+    id = '.' + id
   }
-  if (id.startsWith('/node_modules')) {
+  if (id.startsWith('./node_modules')) {
     id = join(opts.viteServer.config.root, id)
   }
 
   // Externals
-  if (isExternal(opts, id)) {
+  const ssrConfig = (opts.viteServer.config as any).ssr
+
+  const externalOpts: ExternalsOptions = {
+    inline: [
+      '\x00',
+      '#',
+      '~',
+      '@/',
+      '~~',
+      '@@/',
+      'virtual:',
+      /\.ts$/,
+      ...ssrConfig.noExternal
+    ],
+    external: [
+      ...ssrConfig.external.map(toRegExp),
+      /node_modules/
+    ],
+    resolve: {
+      type: 'module',
+      extensions: ['.ts', '.js', '.json', '.vue', '.mjs', '.jsx', '.tsx', '.wasm']
+    }
+  }
+
+  if (await isExternal(id, opts.viteServer.config.root, externalOpts)) {
     return {
       code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${(pathToFileURL(id))}').then(r => { ssrExportAll(r) })`,
       deps: [],
