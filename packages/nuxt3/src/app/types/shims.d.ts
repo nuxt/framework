@@ -1,4 +1,4 @@
-import { Component } from '@vue/runtime-core'
+import { DefineComponent } from '@vue/runtime-core'
 import { NuxtApp } from '../nuxt'
 
 declare global {
@@ -19,7 +19,8 @@ declare global {
 }
 
 declare module '*.vue' {
-  export default Component
+  const component: DefineComponent<{}, {}, any>
+  export default component
 }
 
 declare module '@vue/runtime-core' {
