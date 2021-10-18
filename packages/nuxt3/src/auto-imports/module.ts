@@ -4,7 +4,8 @@ import { isAbsolute, join, relative, resolve } from 'pathe'
 import { TransformPlugin } from './transform'
 import { Nuxt3AutoImports } from './imports'
 import { scanForComposables } from './composables'
-import { toImports } from './utils'
+import { filterInPlace, toImports } from './utils'
+import { AutoImportContext, updateAutoImportContext } from './context'
 
 export default defineNuxtModule<AutoImportsOptions>({
   name: 'auto-imports',
@@ -21,7 +22,7 @@ export default defineNuxtModule<AutoImportsOptions>({
     options.sources = options.sources.filter(source => source.disabled !== true)
 
     // Resolve autoimports from sources
-    let autoImports: AutoImport[] = []
+    const autoImports: AutoImport[] = []
     for (const source of options.sources) {
       for (const importName of source.names) {
         if (typeof importName === 'string') {
@@ -32,6 +33,9 @@ export default defineNuxtModule<AutoImportsOptions>({
       }
     }
 
+    // Use context to share state between module and transformer
+    const ctx = { autoImports, map: new Map() } as AutoImportContext
+
     // Scan for composables
     const composablesDir = join(nuxt.options.rootDir, 'composables')
     await scanForComposables(composablesDir, autoImports)
@@ -39,6 +43,7 @@ export default defineNuxtModule<AutoImportsOptions>({
       if (resolve(nuxt.options.rootDir, path).startsWith(composablesDir)) {
         await scanForComposables(composablesDir, autoImports)
         updateDTS()
+        updateAutoImportContext(ctx)
       }
     })
 
@@ -57,7 +62,8 @@ export default defineNuxtModule<AutoImportsOptions>({
     }
 
     // Filter disabled imports
-    autoImports = autoImports.filter(i => i.disabled !== true)
+    filterInPlace(autoImports, i => i.disabled !== true)
+    updateAutoImportContext(ctx)
 
     // temporary disable #746
     // @ts-ignore
@@ -74,8 +80,8 @@ export default defineNuxtModule<AutoImportsOptions>({
       })
     } else {
       // Transform to inject imports in production mode
-      addVitePlugin(TransformPlugin.vite(autoImports))
-      addWebpackPlugin(TransformPlugin.webpack(autoImports))
+      addVitePlugin(TransformPlugin.vite(ctx))
+      addWebpackPlugin(TransformPlugin.webpack(ctx))
     }
 
     // Add types

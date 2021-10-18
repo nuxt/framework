@@ -1,7 +1,7 @@
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL } from 'ufo'
-import type { AutoImport } from '@nuxt/kit'
 import { toImports } from './utils'
+import { AutoImportContext } from './context'
 
 const excludeRE = [
   // imported from other module
@@ -23,15 +23,7 @@ function stripeComments (code: string) {
     .replace(singlelineCommentsRE, '')
 }
 
-export const TransformPlugin = createUnplugin((autoImports: AutoImport[]) => {
-  const matchRE = new RegExp(`\\b(${autoImports.map(i => i.as).join('|')})\\b`, 'g')
-
-  // Create an internal map for faster lookup
-  const autoImportMap = new Map<string, AutoImport>()
-  for (const autoImport of autoImports) {
-    autoImportMap.set(autoImport.as, autoImport)
-  }
-
+export const TransformPlugin = createUnplugin((ctx: AutoImportContext) => {
   return {
     name: 'nuxt-auto-imports-transform',
     enforce: 'post',
@@ -61,7 +53,7 @@ export const TransformPlugin = createUnplugin((autoImports: AutoImport[]) => {
       const withoutComment = stripeComments(code)
 
       // find all possible injection
-      const matched = new Set(Array.from(withoutComment.matchAll(matchRE)).map(i => i[1]))
+      const matched = new Set(Array.from(withoutComment.matchAll(ctx.matchRE)).map(i => i[1]))
 
       // remove those already defined
       for (const regex of excludeRE) {
@@ -82,7 +74,7 @@ export const TransformPlugin = createUnplugin((autoImports: AutoImport[]) => {
       // For webpack4/bridge support
       const isCJSContext = code.includes('require(')
 
-      const matchedImports = Array.from(matched).map(name => autoImportMap.get(name)).filter(Boolean)
+      const matchedImports = Array.from(matched).map(name => ctx.map.get(name)).filter(Boolean)
       const imports = toImports(matchedImports, isCJSContext)
 
       return imports + code

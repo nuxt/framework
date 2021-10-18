@@ -25,3 +25,12 @@ export function toImports (autoImports: AutoImport[], isCJS = false) {
       .join('\n')
   }
 }
+
+export function filterInPlace<T> (arr: T[], predicate: (v: T) => any) {
+  let i = arr.length
+  while (i--) {
+    if (!predicate(arr[i])) {
+      arr.splice(i, 1)
+    }
+  }
+}

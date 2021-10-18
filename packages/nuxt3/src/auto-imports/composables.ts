@@ -4,6 +4,7 @@ import globby from 'globby'
 import { findExports } from 'mlly'
 import { camelCase } from 'scule'
 import { AutoImport } from '@nuxt/kit'
+import { filterInPlace } from './utils'
 
 export async function scanForComposables (dir: string, autoImports: AutoImport[]) {
   if (!existsSync(dir)) { return }
@@ -18,12 +19,7 @@ export async function scanForComposables (dir: string, autoImports: AutoImport[]
       const importPath = join('~/composables', file)
 
       // Remove original entries from the same import (for build watcher)
-      let i = autoImports.length
-      while (i--) {
-        if (autoImports[i].from === importPath) {
-          autoImports.splice(i, 1)
-        }
-      }
+      filterInPlace(autoImports, i => i.from !== importPath)
 
       const code = await fs.readFile(join(dir, file), 'utf-8')
       const exports = findExports(code)
