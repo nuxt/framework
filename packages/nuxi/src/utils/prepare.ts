@@ -78,7 +78,6 @@ export const writeTypes = async (nuxt: Nuxt) => {
 
   async function writeFile () {
     const tsConfigPath = resolve(nuxt.options.buildDir, 'tsconfig.json')
-    await fsp.mkdir(nuxt.options.buildDir, { recursive: true })
     await fsp.writeFile(tsConfigPath, JSON.stringify(tsConfig, null, 2))
   }
 
