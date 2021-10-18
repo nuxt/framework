@@ -39,7 +39,7 @@ export default (ctx, inject) => {
   }
 
   ctx.app.created.push(function () {
-    nuxt.legacyApp = this
+    nuxt.vue2App = this
   })
 
   setNuxtAppInstance(nuxt)

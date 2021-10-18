@@ -329,7 +329,7 @@ function getKey (vm) {
   const getCounter = createGetCounter(
     process.server
       ? vm.$ssrContext.fetchCounters
-      : nuxt.legacyApp._fetchCounters,
+      : nuxt.vue2App._fetchCounters,
     defaultKey
   )
 

@@ -10,7 +10,7 @@ export interface RuntimeNuxtHooks { }
 
 export interface NuxtAppCompat {
   legacyNuxt: Vue
-  legacyApp: ComponentOptions<Vue>
+  vue2App: ComponentOptions<Vue>
 
   globalName: string
 
