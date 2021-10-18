@@ -4,6 +4,7 @@ import type { TSConfig } from 'pkg-types'
 import type { NuxtConfig, NuxtOptions } from '..'
 import type { ModuleContainer } from '../module/container'
 import type { NuxtTemplate, Nuxt, NuxtApp } from '../types/nuxt'
+import type { AutoImport, AutoImportSource } from '../types/imports'
 
 type HookResult = Promise<void> | void
 
@@ -35,6 +36,10 @@ export interface NuxtHooks {
   'app:templates': (app: NuxtApp) => HookResult
   'app:templatesGenerated': (app: NuxtApp) => HookResult
   'builder:generateApp': () => HookResult
+
+  // Auto imports
+  'imports:sources': (importSources: AutoImportSource[]) => HookResult
+  'imports:extend': (imports: AutoImport[]) => HookResult
 
   // @nuxt/builder
   'build:before':

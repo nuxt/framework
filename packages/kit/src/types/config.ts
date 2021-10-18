@@ -1,6 +1,7 @@
 import { ConfigSchema as _ConfigSchema } from '../../schema/config'
 import { ModuleInstallOptions } from './module'
 import { NuxtHooks } from './hooks'
+import { AutoImportsOptions } from './imports'
 
 export interface ConfigSchema extends _ConfigSchema {
   hooks: NuxtHooks,
@@ -10,6 +11,7 @@ export interface ConfigSchema extends _ConfigSchema {
 
   // TODO: Move to schema when untyped supports type annotation
   vite: boolean | import('vite').InlineConfig
+  imports: AutoImportsOptions
 }
 
 export interface NuxtOptions extends ConfigSchema { }
