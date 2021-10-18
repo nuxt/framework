@@ -13,7 +13,7 @@ export default defineNuxtModule<AutoImportsOptions>({
   },
   async setup (options, nuxt) {
     // Allow modules extending sources
-    await nuxt.callHook('imports:sources', options.sources)
+    await nuxt.callHook('autoImports:sources', options.sources)
 
     // Filter disabled sources
     options.sources = options.sources.filter(source => source.disabled !== true)
@@ -31,7 +31,7 @@ export default defineNuxtModule<AutoImportsOptions>({
     }
 
     // Allow modules extending resolved imports
-    await nuxt.callHook('imports:extend', autoImports)
+    await nuxt.callHook('autoImports:extend', autoImports)
 
     // Filter disabled imports
     autoImports = autoImports.filter(i => i.disabled !== true)

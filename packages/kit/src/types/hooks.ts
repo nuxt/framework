@@ -38,8 +38,8 @@ export interface NuxtHooks {
   'builder:generateApp': () => HookResult
 
   // Auto imports
-  'imports:sources': (importSources: AutoImportSource[]) => HookResult
-  'imports:extend': (imports: AutoImport[]) => HookResult
+  'autoImports:sources': (autoImportSources: AutoImportSource[]) => HookResult
+  'autoImports:extend': (autoImports: AutoImport[]) => HookResult
 
   // @nuxt/builder
   'build:before':
