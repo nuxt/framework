@@ -1,7 +1,7 @@
 import { engines } from '../../package.json'
 
 export async function checkEngines () {
-  const semver = await import('semver')
+  const semver = await import('semver').then(r => r.default || r)
   const currentNode = process.versions.node
   const nodeRange = engines.node
 
