@@ -76,9 +76,16 @@ export const writeTypes = async (nuxt: Nuxt) => {
 
   consola.success('Generated', cyan(relative(process.cwd(), declarationPath)))
 
-  const tsConfigPath = resolve(nuxt.options.buildDir, 'tsconfig.json')
-  await fsp.mkdir(nuxt.options.buildDir, { recursive: true })
-  await fsp.writeFile(tsConfigPath, JSON.stringify(tsConfig, null, 2))
+  async function writeFile () {
+    const tsConfigPath = resolve(nuxt.options.buildDir, 'tsconfig.json')
+    await fsp.mkdir(nuxt.options.buildDir, { recursive: true })
+    await fsp.writeFile(tsConfigPath, JSON.stringify(tsConfig, null, 2))
+  }
+
+  nuxt.hook('app:templatesGenerated', writeFile)
+  nuxt.hook('build:templates', writeFile)
+
+  await writeFile()
 }
 
 function renderAttrs (obj: Record<string, string>) {
