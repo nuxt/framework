@@ -51,7 +51,7 @@ export default defineNuxtModule({
       await setupAutoImports()
     }
     if (opts.vite) {
-      await installModule(nuxt, _require.resolve('nuxt-vite'))
+      await installModule(nuxt, _require.resolve('./vite'))
     }
     if (opts.postcss8) {
       await installModule(nuxt, _require.resolve('@nuxt/postcss8'))
