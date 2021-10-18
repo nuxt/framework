@@ -2,7 +2,6 @@
 import { getCurrentInstance, reactive, defineAsyncComponent } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
-import { defineGetter } from './utils'
 import { legacyPlugin, LegacyContext } from './legacy'
 
 type NuxtMeta = {
@@ -197,4 +196,8 @@ export function useNuxtApp (): NuxtApp {
 
 export function useRuntimeConfig (): Record<string, any> {
   return useNuxtApp().$config
+}
+
+function defineGetter<K extends string | number | symbol, V> (obj: Record<K, V>, key: K, val: V) {
+  Object.defineProperty(obj, key, { get: () => val })
 }
