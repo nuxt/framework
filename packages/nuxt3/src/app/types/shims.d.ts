@@ -18,6 +18,7 @@ declare global {
   }
 }
 
+// https://github.com/vitejs/vite/blob/main/packages/create-vite/template-vue-ts/src/env.d.ts
 declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
