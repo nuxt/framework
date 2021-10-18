@@ -2684,6 +2684,11 @@ __metadata:
     vue: 3.2.20
     vue-bundle-renderer: ^0.3.2
     vue-server-renderer: ^2.6.14
+  peerDependencies:
+    vue: 3.2.20
+  peerDependenciesMeta:
+    vue:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -2811,6 +2816,8 @@ __metadata:
     unbuild: latest
     vite: ^2.6.9
     vue: 3.2.20
+  peerDependencies:
+    vue: 3.2.20
   languageName: unknown
   linkType: soft
 
@@ -2901,6 +2908,8 @@ __metadata:
     webpack-hot-middleware: ^2.25.1
     webpack-virtual-modules: ^0.4.3
     webpackbar: ^5.0.0-3
+  peerDependencies:
+    vue: 3.2.20
   languageName: unknown
   linkType: soft
 
