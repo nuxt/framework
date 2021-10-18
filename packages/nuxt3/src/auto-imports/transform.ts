@@ -1,6 +1,6 @@
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL } from 'ufo'
-import { IdentifierMap } from './types'
+import type { AutoImport } from '@nuxt/kit'
 
 const excludeRE = [
   // imported from other module
@@ -22,27 +22,36 @@ function stripeComments (code: string) {
     .replace(singlelineCommentsRE, '')
 }
 
-export const TransformPlugin = createUnplugin((map: IdentifierMap) => {
-  const matchRE = new RegExp(`\\b(${Object.keys(map).join('|')})\\b`, 'g')
+export const TransformPlugin = createUnplugin((autoImports: AutoImport[]) => {
+  const matchRE = new RegExp(`\\b(${autoImports.map(i => i.as).join('|')})\\b`, 'g')
+
+  // Create an internal map for faster lookup
+  const autoImportMap = new Map<string, AutoImport>()
+  for (const autoImport of autoImports) {
+    autoImportMap.set(autoImport.as, autoImport)
+  }
 
   return {
     name: 'nuxt-auto-imports-transform',
     enforce: 'post',
     transformInclude (id) {
       const { pathname, search } = parseURL(id)
-      const query = parseQuery(search)
+      const { type } = parseQuery(search)
 
       if (id.includes('node_modules')) {
         return false
       }
 
       // vue files
-      if (pathname.endsWith('.vue') && (query.type === 'template' || !search)) {
+      if (
+        pathname.endsWith('.vue') &&
+        (type === 'template' || type === 'script' || !search)
+      ) {
         return true
       }
 
       // js files
-      if (pathname.match(/\.((c|m)?j|t)sx?/g)) {
+      if (pathname.match(/\.((c|m)?j|t)sx?$/g)) {
         return true
       }
     },
@@ -73,7 +82,7 @@ export const TransformPlugin = createUnplugin((map: IdentifierMap) => {
 
       // group by module name
       Array.from(matched).forEach((name) => {
-        const moduleName = map[name]!
+        const moduleName = autoImportMap.get(name).from
         if (!modules[moduleName]) {
           modules[moduleName] = []
         }

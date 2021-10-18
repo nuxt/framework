@@ -180,6 +180,13 @@ export interface ExtendWebpackConfigOptions extends ExtendConfigOptions {
    * @default true
    */
   client?: boolean
+  /**
+   * Install plugin on modern build
+   *
+   * @default true
+   * @deprecated Nuxt 2 only
+   */
+  modern?: boolean
 }
 
 export interface ExtendViteConfigOptions extends ExtendConfigOptions {}
@@ -212,6 +219,13 @@ export function extendWebpackConfig (
     }
     if (options.client !== false) {
       const config = configs.find(i => i.name === 'client')
+      if (config) {
+        fn(config)
+      }
+    }
+    // Nuxt 2 backwards compatibility
+    if (options.modern !== false) {
+      const config = configs.find(i => i.name === 'modern')
       if (config) {
         fn(config)
       }
@@ -259,7 +273,7 @@ export function addVitePlugin (plugin: VitePlugin, options?: ExtendViteConfigOpt
 }
 
 export async function compileTemplate (template: NuxtTemplate, ctx: any) {
-  const data = { ...ctx, ...template.options }
+  const data = { ...ctx, options: template.options }
   if (template.src) {
     try {
       const srcContents = await fsp.readFile(template.src, 'utf-8')
