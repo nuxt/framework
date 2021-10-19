@@ -1,6 +1,6 @@
 import { pathToFileURL } from 'url'
 import * as vite from 'vite'
-import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults, toPathRegExp } from 'externality'
+import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults } from 'externality'
 import { hashId, uniq } from './utils'
 
 export interface TransformChunk {
@@ -27,15 +27,15 @@ function isExternal (opts: TransformOptions, id: string) {
 
   const externalOpts: ExternalsOptions = {
     inline: [
-      'virtual:',
+      /virtual:/,
       /\.ts$/,
       // Things like '~', '@', etc.
-      ...Object.keys(opts.viteServer.config.resolve.alias).map(toPathRegExp),
+      ...Object.keys(opts.viteServer.config.resolve.alias),
       ...ExternalsDefaults.inline,
       ...ssrConfig.noExternal
     ],
     external: [
-      ...ssrConfig.external.map(toPathRegExp),
+      ...ssrConfig.external,
       /node_modules/
     ],
     resolve: {
