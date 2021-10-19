@@ -1,11 +1,11 @@
-import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, addPluginTemplate, AutoImport } from '@nuxt/kit'
+import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, addPluginTemplate, AutoImport, useNuxt } from '@nuxt/kit'
 import type { AutoImportsOptions } from '@nuxt/kit'
 import { isAbsolute, join, relative, resolve } from 'pathe'
 import { TransformPlugin } from './transform'
 import { Nuxt3AutoImports } from './imports'
 import { scanForComposables } from './composables'
-import { filterInPlace, toImports } from './utils'
-import { AutoImportContext, updateAutoImportContext } from './context'
+import { toImports } from './utils'
+import { AutoImportContext, createAutoImportContext, updateAutoImportContext } from './context'
 
 export default defineNuxtModule<AutoImportsOptions>({
   name: 'auto-imports',
@@ -21,60 +21,33 @@ export default defineNuxtModule<AutoImportsOptions>({
     // Filter disabled sources
     options.sources = options.sources.filter(source => source.disabled !== true)
 
+    // Create a context to share state between module internals
+    const ctx = createAutoImportContext()
+
     // Resolve autoimports from sources
-    const autoImports: AutoImport[] = []
     for (const source of options.sources) {
       for (const importName of source.names) {
         if (typeof importName === 'string') {
-          autoImports.push({ name: importName, as: importName, from: source.from })
+          ctx.autoImports.push({ name: importName, as: importName, from: source.from })
         } else {
-          autoImports.push({ name: importName.name, as: importName.as || importName.name, from: source.from })
+          ctx.autoImports.push({ name: importName.name, as: importName.as || importName.name, from: source.from })
         }
       }
     }
 
-    // Use context to share state between module and transformer
-    const ctx = { autoImports, map: new Map() } as AutoImportContext
+    // User composables/ dir
+    const composablesDir = join(nuxt.options.srcDir, 'composables')
 
-    // Scan for composables
-    const composablesDir = join(nuxt.options.rootDir, 'composables')
-    await scanForComposables(composablesDir, autoImports)
-    nuxt.hook('builder:watch', async (_, path) => {
-      if (resolve(nuxt.options.rootDir, path).startsWith(composablesDir)) {
-        await scanForComposables(composablesDir, autoImports)
-        updateDTS()
-        updateAutoImportContext(ctx)
-      }
-    })
-
-    // Allow modules extending resolved imports
-    await nuxt.callHook('autoImports:extend', autoImports)
-
-    // Disable duplicate auto imports
-    const usedNames = new Set()
-    for (const autoImport of autoImports) {
-      if (usedNames.has(autoImport.as)) {
-        autoImport.disabled = true
-        console.warn(`Disabling duplicate auto import '${autoImport.as}' (imported from '${autoImport.from}')`)
-      } else {
-        usedNames.add(autoImport.as)
-      }
-    }
-
-    // Filter disabled imports
-    filterInPlace(autoImports, i => i.disabled !== true)
-    updateAutoImportContext(ctx)
-
-    // temporary disable #746
-    // @ts-ignore
+    // Transpile and injection
+    // @ts-ignore temporary disabled due to #746
     if (nuxt.options.dev && options.global) {
       // Add all imports to globalThis in development mode
       addPluginTemplate({
         filename: 'auto-imports.mjs',
         src: '',
         getContents: () => {
-          const imports = toImports(autoImports)
-          const globalThisSet = autoImports.map(i => `globalThis.${i.as} = ${i.as};`).join('\n')
+          const imports = toImports(ctx.autoImports)
+          const globalThisSet = ctx.autoImports.map(i => `globalThis.${i.as} = ${i.as};`).join('\n')
           return `${imports}\n\n${globalThisSet}\n\nexport default () => {};`
         }
       })
@@ -84,43 +57,49 @@ export default defineNuxtModule<AutoImportsOptions>({
       addWebpackPlugin(TransformPlugin.webpack(ctx))
     }
 
-    // Add types
-    const resolved = {}
-    const r = (id: string) => {
-      if (resolved[id]) { return resolved[id] }
-      let path = resolveAlias(id, nuxt.options.alias)
-      if (isAbsolute(path)) {
-        path = relative(nuxt.options.buildDir, path)
+    const updateAutoImports = async () => {
+      // Scan composables/
+      await scanForComposables(composablesDir, ctx.autoImports)
+      // Allow modules extending
+      await nuxt.callHook('autoImports:extend', ctx.autoImports)
+      // Update context
+      updateAutoImportContext(ctx)
+      // Generate types
+      generateDts(ctx)
+    }
+    await updateAutoImports()
+
+    // Watch composables/ directory
+    nuxt.hook('builder:watch', async (_, path) => {
+      if (resolve(nuxt.options.srcDir, path).startsWith(composablesDir)) {
+        await updateAutoImports()
       }
-      // Remove file extension for benefit of TypeScript
-      path = path.replace(/\.[a-z]+$/, '')
-      resolved[id] = path
-      return path
-    }
-
-    updateDTS()
-
-    addTemplate({
-      filename: 'auto-imports.d.ts',
-      write: true,
-      getContents: () => `// Generated by auto imports
-declare global {
-${autoImports.map(i => `  const ${i.as}: typeof import('${r(i.from)}')['${i.name}']`).join('\n')}
-}\nexport {}`
     })
-    nuxt.hook('prepare:types', ({ references }) => {
-      references.push({ path: resolve(nuxt.options.buildDir, 'auto-imports.d.ts') })
-    })
-
-    function updateDTS () {
-      addTemplate({
-        filename: 'auto-imports.d.ts',
-        write: true,
-        getContents: () => `// Generated by auto imports
-declare global {
-${autoImports.map(i => `  const ${i.as}: typeof import('${r(i.as)}')['${i.name}']`).join('\n')}
-}\nexport {}`
-      })
-    }
   }
 })
+
+function generateDts (ctx: AutoImportContext) {
+  const nuxt = useNuxt()
+
+  const resolved = {}
+  const r = (id: string) => {
+    if (resolved[id]) { return resolved[id] }
+    let path = resolveAlias(id, nuxt.options.alias)
+    if (isAbsolute(path)) {
+      path = relative(nuxt.options.buildDir, path)
+    }
+    // Remove file extension for benefit of TypeScript
+    path = path.replace(/\.[a-z]+$/, '')
+    resolved[id] = path
+    return path
+  }
+
+  addTemplate({
+    filename: 'auto-imports.d.ts',
+    write: true,
+    getContents: () => `// Generated by auto imports
+  declare global {
+  ${ctx.autoImports.map(i => `  const ${i.as}: typeof import('${r(i.as)}')['${i.name}']`).join('\n')}
+  }\nexport {}`
+  })
+}
