@@ -128,7 +128,7 @@ export const ssrPromise = (value, key) => {
 
 // Composition API functions
 export const onGlobalSetup = (fn) => {
-  warnOnce('onGlobalSetup', '`onGlobalSetup` is deprecated and can be replaced with `defineNuxtPlugin(nuxt => nuxt.provide)` (import from `#app`).')
+  warnOnce('onGlobalSetup', '`onGlobalSetup` is deprecated and can be replaced with `defineNuxtPlugin(nuxtApp => nuxtApp.provide)` (import from `#app`).')
   const app = useNuxtApp()
   app._setupFns.push(fn)
 }
