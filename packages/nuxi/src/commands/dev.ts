@@ -7,6 +7,7 @@ import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
+import { clearDir } from '../utils/fs'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -51,6 +52,7 @@ export default defineNuxtCommand({
           await currentNuxt.close()
         }
         const newNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
+        await clearDir(newNuxt.options.buildDir)
         prepare(newNuxt)
         currentNuxt = newNuxt
         await currentNuxt.ready()
@@ -73,6 +75,7 @@ export default defineNuxtCommand({
     const dLoad = debounce(load, 250)
     const watcher = chokidar.watch([rootDir], { ignoreInitial: true, depth: 1 })
     watcher.on('all', (_event, file) => {
+      if (!currentNuxt) { return }
       if (file.startsWith(currentNuxt.options.buildDir)) { return }
       if (file.match(/nuxt\.config\.(js|ts|mjs|cjs)$/)) {
         dLoad(true, `${relative(rootDir, file)} updated`)
