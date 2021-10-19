@@ -67,11 +67,18 @@ export interface ScanDir {
 }
 
 export interface ComponentsDir extends ScanDir {
+  /**
+   * Watch specified path for changes, including file additions and file deletions.
+   */
   watch?: boolean
   /**
    * Extensions supported by Nuxt builder.
    */
   extensions?: string[]
+  /**
+   * Transpile specified path using build.transpile.
+   * By default ('auto') it will set transpile: true if node_modules/ is in path.
+   */
   transpile?: 'auto' | boolean
 }
 
