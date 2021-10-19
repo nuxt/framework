@@ -9,14 +9,11 @@ import { filterInPlace } from './utils'
 export async function scanForComposables (dir: string, autoImports: AutoImport[]) {
   if (!existsSync(dir)) { return }
 
-  const files = await globby(
-    ['*.{ts,js,tsx,jsx,mjs,cjs,mts,cts}'],
-    { cwd: dir }
-  )
+  const files = await globby(['*.{ts,js,tsx,jsx,mjs,cjs,mts,cts}'], { cwd: dir })
 
   await Promise.all(
     files.map(async (file) => {
-      const importPath = join('~/composables', file)
+      const importPath = join(dir, file)
 
       // Remove original entries from the same import (for build watcher)
       filterInPlace(autoImports, i => i.from !== importPath)
