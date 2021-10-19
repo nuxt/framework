@@ -29,12 +29,12 @@
     "chokidar": "^3.5.2",
     "consola": "^2.15.3",
     "defu": "^5.0.0",
-    "fs-extra": "^10.0.0",
     "globby": "^11.0.4",
     "hash-sum": "^2.0.0",
     "hookable": "^5.0.0",
     "ignore": "^5.1.8",
-    "mlly": "^0.2.9",
+    "mlly": "^0.2.10",
+    "murmurhash-es": "^0.1.1",
     "nuxi": "3.0.0",
     "ohmyfetch": "^0.3.1",
     "pathe": "^0.2.0",
@@ -45,7 +45,6 @@
     "vue-router": "^4.0.12"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.13",
     "@types/hash-sum": "^1.0.0",
     "unbuild": "latest",
     "vue-meta": "next"
@@ -54,5 +53,8 @@
     "@vue/reactivity": "3.2.20",
     "@vue/shared": "3.2.20",
     "vue": "3.2.20"
+  },
+  "engines": {
+    "node": "^14.16.0 || ^16.11.0"
   }
 }
