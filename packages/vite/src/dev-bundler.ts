@@ -1,7 +1,6 @@
 import { pathToFileURL } from 'url'
-import { join } from 'pathe'
 import * as vite from 'vite'
-import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults } from 'externality'
+import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults, toPathRegExp } from 'externality'
 import { hashId, uniq } from './utils'
 
 export interface TransformChunk {
@@ -31,12 +30,12 @@ function isExternal (opts: TransformOptions, id: string) {
       'virtual:',
       /\.ts$/,
       // Things like '~', '@', etc.
-      ...Object.keys(opts.viteServer.config.resolve.alias).map(alias => new RegExp(`^${alias}(\\/|$)`)),
+      ...Object.keys(opts.viteServer.config.resolve.alias).map(toPathRegExp),
       ...ExternalsDefaults.inline,
       ...ssrConfig.noExternal
     ],
     external: [
-      ...ssrConfig.external.map(toRegExp),
+      ...ssrConfig.external.map(toPathRegExp),
       /node_modules/
     ],
     resolve: {
@@ -47,8 +46,6 @@ function isExternal (opts: TransformOptions, id: string) {
   return _isExternal(id, opts.viteServer.config.root, externalOpts)
 }
 
-const toRegExp = (pattern: string | RegExp) => pattern instanceof RegExp ? pattern : new RegExp(`([\\/]|^)${pattern}([\\/]|$)`)
-
 async function transformRequest (opts: TransformOptions, id: string) {
   // Virtual modules start with `\0`
   if (id && id.startsWith('/@id/__x00__')) {
@@ -58,13 +55,11 @@ async function transformRequest (opts: TransformOptions, id: string) {
     id = id.slice('/@id/'.length)
   }
   if (id && id.startsWith('/@fs/')) {
+    // Absolute path
     id = id.slice('/@fs'.length)
   } else if (!id.includes('entry') && id.startsWith('/')) {
     // Relative to the root directory
     id = '.' + id
-  }
-  if (id.startsWith('./node_modules')) {
-    id = join(opts.viteServer.config.root, id)
   }
 
   if (await isExternal(opts, id)) {

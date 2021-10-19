@@ -2805,7 +2805,7 @@ __metadata:
     chokidar: ^3.5.2
     consola: ^2.15.3
     defu: ^5.0.0
-    externality: 0.0.4
+    externality: 0.0.5
     fs-extra: ^10.0.0
     magic-string: ^0.25.7
     p-debounce: ^4.0.0
@@ -9397,15 +9397,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"externality@npm:0.0.4":
-  version: 0.0.4
-  resolution: "externality@npm:0.0.4"
+"externality@npm:0.0.5":
+  version: 0.0.5
+  resolution: "externality@npm:0.0.5"
   dependencies:
     allowlist: ^0.1.1
     enhanced-resolve: ^5.8.3
     ufo: ^0.7.9
     upath: ^2.0.1
-  checksum: c1eff623dcaf60b1ca6a795670ae1cf6eb25cfdc75f516444cdafeec1d0180d65faa3ec94ddc74dd0401414df32352bc9025ca59a0a9b9f576cfb70d69c3a9c5
+  checksum: c3bc71104922cef1b86d5dbc27478ec5774cd17dacea768764389676ee19960161c76ace88f66a413eef167af0892c592ec97bc260f1fd2be2d3eddad3222140
   languageName: node
   linkType: hard
 
