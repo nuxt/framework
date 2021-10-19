@@ -1,6 +1,6 @@
 import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, addPluginTemplate, useNuxt } from '@nuxt/kit'
 import type { AutoImportsOptions } from '@nuxt/kit'
-import { isAbsolute, join, relative, resolve } from 'pathe'
+import { isAbsolute, join, relative, resolve, normalize } from 'pathe'
 import { TransformPlugin } from './transform'
 import { Nuxt3AutoImports } from './imports'
 import { scanForComposables } from './composables'
@@ -35,8 +35,13 @@ export default defineNuxtModule<AutoImportsOptions>({
       }
     }
 
-    // User composables/ dir
-    const composablesDir = join(nuxt.options.srcDir, 'composables')
+    // composables/ dirs
+    let composablesDirs = [
+      join(nuxt.options.srcDir, 'composables'),
+      ...options.dirs
+    ]
+    await nuxt.callHook('autoImports:dirs', composablesDirs)
+    composablesDirs = composablesDirs.map(dir => normalize(dir))
 
     // Transpile and injection
     // @ts-ignore temporary disabled due to #746
@@ -59,7 +64,9 @@ export default defineNuxtModule<AutoImportsOptions>({
 
     const updateAutoImports = async () => {
       // Scan composables/
-      await scanForComposables(composablesDir, ctx.autoImports)
+      for (const composablesDir of composablesDirs) {
+        await scanForComposables(composablesDir, ctx.autoImports)
+      }
       // Allow modules extending
       await nuxt.callHook('autoImports:extend', ctx.autoImports)
       // Update context
@@ -71,7 +78,8 @@ export default defineNuxtModule<AutoImportsOptions>({
 
     // Watch composables/ directory
     nuxt.hook('builder:watch', async (_, path) => {
-      if (resolve(nuxt.options.srcDir, path).startsWith(composablesDir)) {
+      const _resolved = resolve(nuxt.options.srcDir, path)
+      if (composablesDirs.find(dir => _resolved.startsWith(dir))) {
         await updateAutoImports()
       }
     })
