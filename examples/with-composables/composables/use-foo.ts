@@ -1,3 +1,5 @@
+import { useState } from '#app'
+
 export function useA () {
   return 'a'
 }
@@ -17,5 +19,5 @@ export const useD = () => {
 export { useB, _useC as useC }
 
 export default function () {
-  return 'foo'
+  return useState('foo', () => 'bar')
 }
