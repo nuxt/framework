@@ -12,7 +12,8 @@ export default defineNuxtModule<AutoImportsOptions>({
   configKey: 'autoImports',
   defaults: {
     sources: Nuxt3AutoImports,
-    global: false
+    global: false,
+    dirs: []
   },
   async setup (options, nuxt) {
     // Allow modules extending sources
