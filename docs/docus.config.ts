@@ -5,6 +5,15 @@ export default {
   credits: false,
   template: 'docs',
   twitter: 'nuxt_js',
+  algolia: {
+    appId: "QPBQ67WNIG",
+    container: "#docsearch",
+    apiKey: "b590ae1153bf574215ca1605c19eb1fe",
+    indexName: "nuxtjs",
+    searchParameters: {
+      facetFilters: ["tags:v3"]
+    }
+  },
   github: {
     repo: 'nuxt/framework',
     dir: 'docs',
