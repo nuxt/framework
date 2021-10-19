@@ -1,7 +1,7 @@
 import { pathToFileURL } from 'url'
 import { join } from 'pathe'
 import * as vite from 'vite'
-import { ExternalsOptions, isExternal } from 'externality'
+import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults } from 'externality'
 import { hashId, uniq } from './utils'
 
 export interface TransformChunk {
@@ -20,6 +20,31 @@ export interface SSRTransformResult {
 
 export interface TransformOptions {
   viteServer: vite.ViteDevServer
+}
+
+function isExternal (opts: TransformOptions, id: string) {
+  // Externals
+  const ssrConfig = (opts.viteServer.config as any).ssr
+
+  const externalOpts: ExternalsOptions = {
+    inline: [
+      'virtual:',
+      /\.ts$/,
+      // Things like '~', '@', etc.
+      ...Object.keys(opts.viteServer.config.resolve.alias).map(alias => new RegExp(`^${alias}(\\/|$)`)),
+      ...ExternalsDefaults.inline,
+      ...ssrConfig.noExternal
+    ],
+    external: [
+      ...ssrConfig.external.map(toRegExp),
+      /node_modules/
+    ],
+    resolve: {
+      type: 'module',
+      extensions: ['.ts', '.js', '.json', '.vue', '.mjs', '.jsx', '.tsx', '.wasm']
+    }
+  }
+  return _isExternal(id, opts.viteServer.config.root, externalOpts)
 }
 
 const toRegExp = (pattern: string | RegExp) => pattern instanceof RegExp ? pattern : new RegExp(`([\\/]|^)${pattern}([\\/]|$)`)
@@ -42,32 +67,7 @@ async function transformRequest (opts: TransformOptions, id: string) {
     id = join(opts.viteServer.config.root, id)
   }
 
-  // Externals
-  const ssrConfig = (opts.viteServer.config as any).ssr
-
-  const externalOpts: ExternalsOptions = {
-    inline: [
-      '\x00',
-      '#',
-      '~',
-      '@/',
-      '~~',
-      '@@/',
-      'virtual:',
-      /\.ts$/,
-      ...ssrConfig.noExternal
-    ],
-    external: [
-      ...ssrConfig.external.map(toRegExp),
-      /node_modules/
-    ],
-    resolve: {
-      type: 'module',
-      extensions: ['.ts', '.js', '.json', '.vue', '.mjs', '.jsx', '.tsx', '.wasm']
-    }
-  }
-
-  if (await isExternal(id, opts.viteServer.config.root, externalOpts)) {
+  if (await isExternal(opts, id)) {
     return {
       code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${(pathToFileURL(id))}').then(r => { ssrExportAll(r) })`,
       deps: [],
