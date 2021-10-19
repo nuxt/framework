@@ -1,19 +1,16 @@
-import type { AutoImport } from '@nuxt/kit'
 import { expect } from 'chai'
-import { AutoImportContext, updateAutoImportContext } from '../src/auto-imports/context'
-import { TransformPlugin } from '../src/auto-imports/transform'
+import { context, transform as transformUtil } from './_auto-imports.mjs'
 
 describe('auto-imports:transform', () => {
-  const autoImports: AutoImport[] = [
+  const autoImports = [
     { name: 'ref', as: 'ref', from: 'vue' },
     { name: 'computed', as: 'computed', from: 'bar' }
   ]
+  const ctx = { autoImports, map: new Map() }
+  context.updateAutoImportContext(ctx)
 
-  const ctx = { autoImports, map: new Map() } as AutoImportContext
-  updateAutoImportContext(ctx)
-
-  const transformPlugin = TransformPlugin.raw(ctx, { framework: 'rollup' })
-  const transform = (code: string) => transformPlugin.transform.call({ error: null, warn: null }, code, '')
+  const transformPlugin = transformUtil.TransformPlugin.raw(ctx, { framework: 'rollup' })
+  const transform = (code) => transformPlugin.transform.call({ error: null, warn: null }, code, '')
 
   it('should correct inject', async () => {
     expect(await transform('const a = ref(0)')).to.equal('import { ref } from \'vue\';const a = ref(0)')

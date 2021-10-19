@@ -163,7 +163,11 @@ function parseSegment (segment: string) {
           state = SegmentParserState.catchall
         }
         if (c === ']') {
-          consumeBuffer()
+          if (!buffer) {
+            throw new Error('Empty param')
+          } else {
+            consumeBuffer()
+          }
           state = SegmentParserState.initial
         } else if (PARAM_CHAR_RE.test(c)) {
           buffer += c
