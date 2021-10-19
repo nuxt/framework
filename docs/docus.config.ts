@@ -6,9 +6,9 @@ export default {
   template: 'docs',
   twitter: 'nuxt_js',
   algolia: {
-    appId: "QPBQ67WNIG",
+    appId: "BH4D9OD16A",
     container: "#docsearch",
-    apiKey: "b590ae1153bf574215ca1605c19eb1fe",
+    apiKey: "ff80fbf046ce827f64f06e16f82f1401",
     indexName: "nuxtjs",
     searchParameters: {
       facetFilters: ["tags:v3"]
