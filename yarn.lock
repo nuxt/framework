@@ -2809,7 +2809,7 @@ __metadata:
     postcss-url: ^10.1.3
     ufo: ^0.7.9
     unbuild: latest
-    vite: ^2.6.9
+    vite: ^2.6.10
     vue: 3.2.20
   languageName: unknown
   linkType: soft
@@ -11644,12 +11644,12 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.12.8":
-  version: 1.12.8
-  resolution: "jiti@npm:1.12.8"
+"jiti@npm:^1.12.9":
+  version: 1.12.9
+  resolution: "jiti@npm:1.12.9"
   bin:
     jiti: bin/jiti.js
-  checksum: 86c130f6f0609c316d831498a34433d17692172d9237e903b3d0844465a8b782b9424f4d4c445050e048d9934fcc6013416a0f24c614f74dbb89506222730171
+  checksum: 6446c73d0ea6733eeef6994a6018e3ce265c677683931730058a1f08980a762eb4b003f4b8cb24d8a569548b440d54e55113237f4a69ebaea3f46fdce6bd5ebe
   languageName: node
   linkType: hard
 
@@ -13094,6 +13094,13 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
+"murmurhash-es@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "murmurhash-es@npm:0.1.1"
+  checksum: 3f5aa267161b21ad5b52f4b240ecd40014f21256114fad4b196202a8079ab08af8cdf5e7136caa591846232edc4222ba790ce300b8a6de6085e68e229da26766
+  languageName: node
+  linkType: hard
+
 "mustache@npm:^2.3.0":
   version: 2.3.2
   resolution: "mustache@npm:2.3.2"
@@ -13714,6 +13721,7 @@ fsevents@~2.3.2:
     "@types/clear": ^0
     "@types/mri": ^1.1.1
     "@types/rimraf": ^3
+    "@types/semver": ^7
     chokidar: ^3.5.2
     clear: ^0.1.0
     clipboardy: ^3.0.0
@@ -13732,6 +13740,7 @@ fsevents@~2.3.2:
     pkg-types: ^0.2.1
     rimraf: ^3.0.2
     scule: ^0.2.1
+    semver: ^7.3.5
     superb: ^4.0.0
     tiged: ^2.12.0
     unbuild: latest
@@ -13823,6 +13832,7 @@ fsevents@~2.3.2:
     hookable: ^5.0.0
     ignore: ^5.1.8
     mlly: ^0.2.10
+    murmurhash-es: ^0.1.1
     nuxi: 3.0.0
     ohmyfetch: ^0.3.1
     pathe: ^0.2.0
@@ -19279,7 +19289,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.5.7, vite@npm:^2.6.9":
+"vite@npm:^2.5.7":
   version: 2.6.9
   resolution: "vite@npm:2.6.9"
   dependencies:
@@ -19305,6 +19315,35 @@ fsevents@~2.3.2:
   bin:
     vite: bin/vite.js
   checksum: 52e42c75948fd86377452d087113523fdec5be2b653223d4e3c6135a0d07aed743ec587dc5b91fc674508d5d5cf80edb73b932fac7625c7ea8d16b07ea067c4e
+  languageName: node
+  linkType: hard
+
+"vite@npm:^2.6.10":
+  version: 2.6.10
+  resolution: "vite@npm:2.6.10"
+  dependencies:
+    esbuild: ^0.13.2
+    fsevents: ~2.3.2
+    postcss: ^8.3.8
+    resolve: ^1.20.0
+    rollup: ^2.57.0
+  peerDependencies:
+    less: "*"
+    sass: "*"
+    stylus: "*"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    less:
+      optional: true
+    sass:
+      optional: true
+    stylus:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 802b59c275ac099d6cfcf17636d1034cb6d3e7a363a33a4bf990cbe859059cec35249e958a26a59d5cfde3dbbbf207b8ac8817eb127063c96957d2e573389370
   languageName: node
   linkType: hard
 

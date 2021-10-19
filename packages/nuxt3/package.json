@@ -34,6 +34,7 @@
     "hookable": "^5.0.0",
     "ignore": "^5.1.8",
     "mlly": "^0.2.10",
+    "murmurhash-es": "^0.1.1",
     "nuxi": "3.0.0",
     "ohmyfetch": "^0.3.1",
     "pathe": "^0.2.0",
@@ -52,5 +53,8 @@
     "@vue/reactivity": "3.2.20",
     "@vue/shared": "3.2.20",
     "vue": "3.2.20"
+  },
+  "engines": {
+    "node": "^14.18.0 || ^16.11.0"
   }
 }
