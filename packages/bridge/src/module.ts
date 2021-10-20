@@ -1,5 +1,7 @@
 import { createRequire } from 'module'
+import { fileURLToPath } from 'url'
 import { defineNuxtModule, installModule, checkNuxtCompatibilityIssues } from '@nuxt/kit'
+import { dirname, resolve } from 'pathe'
 import type { BridgeConfig } from '../types'
 import { setupNitroBridge } from './nitro'
 import { setupAppBridge } from './app'
@@ -31,6 +33,7 @@ export default defineNuxtModule({
   } as BridgeConfig,
   async setup (opts, nuxt) {
     const _require = createRequire(import.meta.url)
+    const _dirname = dirname(fileURLToPath(import.meta.url))
 
     if (opts.nitro) {
       await setupNitroBridge()
@@ -51,7 +54,7 @@ export default defineNuxtModule({
       await setupAutoImports()
     }
     if (opts.vite) {
-      await installModule(nuxt, _require.resolve('./vite'))
+      await installModule(nuxt, _require.resolve(resolve(_dirname, '../dist/vite.mjs')))
     }
     if (opts.postcss8) {
       await installModule(nuxt, _require.resolve('@nuxt/postcss8'))

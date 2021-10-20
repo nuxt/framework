@@ -20,5 +20,6 @@ export default defineNuxtConfig({
   },
   bridge: {
     meta: true
+    // vite: true,
   }
 })

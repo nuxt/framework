@@ -48,10 +48,15 @@
     "@nuxt/types": "^2.15.8",
     "@types/fs-extra": "^9.0.13",
     "@types/node-fetch": "^3.0.2",
+    "nuxt": "^2",
     "unbuild": "latest",
-    "vue-router": "3"
+    "vue": "^2",
+    "vue-router": "^3"
   },
   "engines": {
     "node": "^14.16.0 || ^16.11.0"
+  },
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   }
 }

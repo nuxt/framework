@@ -2383,7 +2383,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/bridge@workspace:packages/bridge":
+"@nuxt/bridge@*, @nuxt/bridge@workspace:packages/bridge":
   version: 0.0.0-use.local
   resolution: "@nuxt/bridge@workspace:packages/bridge"
   dependencies:
@@ -2407,6 +2407,7 @@ __metadata:
     mlly: ^0.2.10
     node-fetch: ^3.0.0
     nuxi: 3.0.0
+    nuxt: ^2
     pathe: ^0.2.0
     postcss-import: ^14.0.2
     postcss-import-resolver: ^2.0.0
@@ -2419,7 +2420,8 @@ __metadata:
     unplugin-vue2-script-setup: 0.6.11
     vite: ^2.5.7
     vite-plugin-vue2: ^1.8.2
-    vue-router: 3
+    vue: ^2
+    vue-router: ^3
   languageName: unknown
   linkType: soft
 
@@ -9981,6 +9983,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "fixture-basic@workspace:test/fixtures/bridge"
   dependencies:
+    "@nuxt/bridge": "*"
     core-js: ^3
     nuxt: ^2
     vue: ^2
@@ -19784,7 +19787,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"vue-router@npm:3, vue-router@npm:^3.5.1":
+"vue-router@npm:^3, vue-router@npm:^3.5.1":
   version: 3.5.2
   resolution: "vue-router@npm:3.5.2"
   checksum: 342049e7cb0e4974879c57f9ecce342c180a1abce8df71137f902b201faa18d0a65c44936cbd4e9d62d5770d8f95395d73a5e05efa255475817f350bf7a094d1
