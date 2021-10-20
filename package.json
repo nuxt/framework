@@ -21,13 +21,13 @@
     "lint": "eslint --ext .vue,.ts,.js .",
     "test": "yarn lint && yarn test:presets",
     "test:presets": "mocha test/presets/*.mjs",
-    "test:bridge": "TEST_BRIDGE=1 yarn test:presets",
+    "test:bridge": "TEST_BRIDGE=1 yarn test:presets && TEST_BRIDGE=1 TEST_BRIDGE_VITE=1 yarn test:presets",
     "test:unit": "mocha -r jiti/register packages/**/test/*.test.*",
     "version": "yarn && git add yarn.lock"
   },
   "resolutions": {
     "nuxt3": "workspace:./packages/nuxt3",
-    "unbuild": "^0.5.7",
+    "unbuild": "^0.5.8",
     "jiti": "^1.12.9"
   },
   "devDependencies": {
@@ -51,7 +51,7 @@
     "object-hash": "^2.2.0",
     "pathe": "^0.2.0",
     "typescript": "^4.4.4",
-    "unbuild": "^0.5.7",
+    "unbuild": "^0.5.8",
     "vue-router": "next"
   },
   "packageManager": "yarn@3.0.2",
