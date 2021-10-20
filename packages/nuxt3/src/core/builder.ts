@@ -51,6 +51,7 @@ async function bundle (nuxt: Nuxt) {
   try {
     return bundle(nuxt)
   } catch (error) {
-    nuxt.callHook('build:error', error)
+    await nuxt.callHook('build:error', error)
+    throw error
   }
 }
