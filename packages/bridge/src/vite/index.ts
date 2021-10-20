@@ -9,6 +9,7 @@ export default defineNuxtModule<ViteOptions>({
   name: 'nuxt-bridge:vite',
   defaults: {},
   version,
+  configKey: 'vite',
   setup (viteOptions, nuxt) {
     // Only enable for development or production if `build: true` is set
     if (!nuxt.options.dev && !viteOptions.build) {
@@ -32,13 +33,13 @@ export default defineNuxtModule<ViteOptions>({
     nuxt.options._modules = nuxt.options._modules
       .filter(m => !(Array.isArray(m) && m[0] === '@nuxt/loading-screen'))
 
-    // Mask nuxt-vite  to avoid other modules depending on it's existence
+    // Mask nuxt-vite to avoid other modules depending on it's existence
     // TODO: Move to kit
     const getModuleName = (m) => {
       if (Array.isArray(m)) { m = m[0] }
       return m.meta ? m.meta.name : m
     }
-    const filterModule = modules => modules.filter(m => getModuleName(m) !== 'nuxt-vite')
+    const filterModule = modules => modules.filter(m => getModuleName(m) !== 'nuxt-bridge:vite')
     nuxt.options.modules = filterModule(nuxt.options.modules)
     nuxt.options.buildModules = filterModule(nuxt.options.buildModules)
 
