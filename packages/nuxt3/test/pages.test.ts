@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { utils } from './_pages.mjs'
+import { generateRoutesFromFiles } from '../src/pages/utils'
 
 describe('pages:utils', () => {
   describe('generateRoutesFromFiles', () => {
@@ -7,7 +7,7 @@ describe('pages:utils', () => {
 
     it('should generate correct route for 404', () => {
       const files = [`${pagesDir}/404.vue`]
-      const output = utils.generateRoutesFromFiles(files, pagesDir)
+      const output = generateRoutesFromFiles(files, pagesDir)
       expect(output[0]).to.deep.equal({
         name: '404',
         path: '/:catchAll(.*)*',
@@ -22,7 +22,7 @@ describe('pages:utils', () => {
         `${pagesDir}/parent/index.vue`,
         `${pagesDir}/parent/child/index.vue`
       ]
-      const output = utils.generateRoutesFromFiles(files, pagesDir)
+      const output = generateRoutesFromFiles(files, pagesDir)
       expect(output[0]).to.deep.equal({
         name: 'index',
         path: '/',
@@ -48,7 +48,7 @@ describe('pages:utils', () => {
         `${pagesDir}/parent.vue`,
         `${pagesDir}/parent/child.vue`
       ]
-      const output = utils.generateRoutesFromFiles(files, pagesDir)
+      const output = generateRoutesFromFiles(files, pagesDir)
       expect(output[0]).to.deep.equal({
         name: 'parent',
         path: '/parent',
@@ -66,7 +66,7 @@ describe('pages:utils', () => {
 
     it('should generate correct route for snake_case file', () => {
       const files = [`${pagesDir}/snake_case.vue`]
-      const output = utils.generateRoutesFromFiles(files, pagesDir)
+      const output = generateRoutesFromFiles(files, pagesDir)
       expect(output[0]).to.deep.equal({
         name: 'snake_case',
         path: '/snake_case',
@@ -77,7 +77,7 @@ describe('pages:utils', () => {
 
     it('should generate correct route for kebab-case file', () => {
       const files = [`${pagesDir}/kebab-case.vue`]
-      const output = utils.generateRoutesFromFiles(files, pagesDir)
+      const output = generateRoutesFromFiles(files, pagesDir)
       expect(output[0]).to.deep.equal({
         name: 'kebab-case',
         path: '/kebab-case',
@@ -92,7 +92,7 @@ describe('pages:utils', () => {
         `${pagesDir}/sub/[slug].vue`,
         `${pagesDir}/[sub]/route-[slug].vue`
       ]
-      const output = utils.generateRoutesFromFiles(files, pagesDir)
+      const output = generateRoutesFromFiles(files, pagesDir)
       expect(output[0]).to.deep.equal({
         name: 'slug',
         path: '/:slug?',
@@ -115,7 +115,7 @@ describe('pages:utils', () => {
 
     it('should generate correct catch-all route', () => {
       const files = [`${pagesDir}/[...slug].vue`]
-      const output = utils.generateRoutesFromFiles(files, pagesDir)
+      const output = generateRoutesFromFiles(files, pagesDir)
       expect(output[0]).to.deep.equal({
         name: 'slug',
         path: '/:slug(.*)*',
@@ -126,12 +126,12 @@ describe('pages:utils', () => {
 
     it('should throw unfinished param error for dynamic route', () => {
       const files = [`${pagesDir}/[slug.vue`]
-      expect(() => utils.generateRoutesFromFiles(files, pagesDir)).to.throw('Unfinished param "slug"')
+      expect(() => generateRoutesFromFiles(files, pagesDir)).to.throw('Unfinished param "slug"')
     })
 
     it('should throw empty param error for dynamic route', () => {
       const files = [`${pagesDir}/[].vue`]
-      expect(() => utils.generateRoutesFromFiles(files, pagesDir)).to.throw('Empty param')
+      expect(() => generateRoutesFromFiles(files, pagesDir)).to.throw('Empty param')
     })
 
     it('should only allow "_" & "." as special character for dynamic route', () => {
@@ -141,7 +141,7 @@ describe('pages:utils', () => {
         `${pagesDir}/[c3@3c].vue`,
         `${pagesDir}/[d4-4d].vue`
       ]
-      const output = utils.generateRoutesFromFiles(files, pagesDir)
+      const output = generateRoutesFromFiles(files, pagesDir)
       expect(output[0]).to.deep.equal({
         name: 'a1_1a',
         path: '/:a1_1a?',
