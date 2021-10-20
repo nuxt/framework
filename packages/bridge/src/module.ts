@@ -11,7 +11,7 @@ import { setupTypescript } from './typescript'
 import { setupMeta } from './meta'
 import { setupTranspile } from './transpile'
 import { setupScriptSetup } from './setup'
-import { pkgDir } from './dirs'
+import { distDir } from './dirs'
 
 export default defineNuxtModule({
   name: 'nuxt-bridge',
@@ -53,7 +53,7 @@ export default defineNuxtModule({
       await setupAutoImports()
     }
     if (opts.vite) {
-      await installModule(nuxt, _require.resolve(join(pkgDir, 'dist/vite.mjs')))
+      await installModule(nuxt, _require.resolve(join(distDir, 'vite.module.mjs')))
     }
     if (opts.postcss8) {
       await installModule(nuxt, _require.resolve('@nuxt/postcss8'))

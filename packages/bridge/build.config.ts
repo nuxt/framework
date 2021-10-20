@@ -5,9 +5,10 @@ export default defineBuildConfig({
   emitCJS: false,
   entries: [
     'src/module',
-    'src/vite/index',
     'src/dirs',
-    { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm', declaration: true },
+    { input: 'src/vite/index', name: 'vite.module' },
+    { input: 'src/vite/vite', name: 'vite' },
+    { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm', declaration: true }
   ],
   externals: [
     'webpack',
