@@ -1,6 +1,7 @@
 import { resolve } from 'pathe'
 import * as vite from 'vite'
 import consola from 'consola'
+import { distDir } from '../dirs'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import { defaultExportPlugin } from './plugins/default-export'
@@ -36,10 +37,10 @@ async function bundle (nuxt: Nuxt, builder: any) {
             _nuxt: nuxt.options.buildDir,
             '~': nuxt.options.srcDir,
             '@': nuxt.options.srcDir,
-            'web-streams-polyfill/ponyfill/es2018': require.resolve('./runtime/mock/web-streams-polyfill.mjs'),
-            'whatwg-url': require.resolve('./runtime/mock/whatwg-url.mjs'),
+            'web-streams-polyfill/ponyfill/es2018': resolve(distDir, 'runtime/vite/mock/web-streams-polyfill.mjs'),
+            'whatwg-url': resolve(distDir, 'runtime/vite/mock/whatwg-url.mjs'),
             // Cannot destructure property 'AbortController' of ..
-            'abort-controller': require.resolve('./runtime/mock/abort-controller.mjs')
+            'abort-controller': resolve(distDir, 'runtime/vite/mock/abort-controller.mjs')
           }
         },
         vue: {},

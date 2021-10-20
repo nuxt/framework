@@ -1,6 +1,7 @@
 import { resolve } from 'pathe'
 import consola from 'consola'
 import { addPluginTemplate, defineNuxtModule } from '@nuxt/kit'
+import { distDir } from '../dirs'
 import { version } from '../../package.json'
 import type { ViteOptions } from './types'
 
@@ -43,13 +44,13 @@ export default defineNuxtModule<ViteOptions>({
 
     if (nuxt.options.store) {
       addPluginTemplate({
-        src: resolve(__dirname, './runtime/templates', 'store.mjs'),
+        src: resolve(distDir, 'runtime/vite/templates/store.mjs'),
         fileName: 'store.js'
       })
     }
 
     addPluginTemplate({
-      src: resolve(__dirname, './runtime/templates', 'middleware.mjs'),
+      src: resolve(distDir, 'runtime/vite/templates/middleware.mjs'),
       fileName: 'middleware.js'
     })
 
