@@ -6,7 +6,8 @@ export default defineBuildConfig({
   entries: [
     'src/module',
     'src/vite/index',
-    { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm', declaration: true }
+    'src/dirs',
+    { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm', declaration: true },
   ],
   externals: [
     'webpack',
