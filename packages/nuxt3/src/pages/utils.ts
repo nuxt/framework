@@ -173,7 +173,7 @@ function parseSegment (segment: string) {
           buffer += c
         } else {
           // eslint-disable-next-line no-console
-          console.log(`Ignored character "${c}" while building param "${buffer}" from "segment"`)
+          // console.debug(`[pages]Ignored character "${c}" while building param "${buffer}" from "segment"`)
         }
         break
     }
