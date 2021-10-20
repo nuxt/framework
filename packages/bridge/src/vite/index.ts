@@ -1,8 +1,7 @@
-import { resolve } from 'pathe'
 import consola from 'consola'
 import { addPluginTemplate, defineNuxtModule } from '@nuxt/kit'
-import { distDir } from '../dirs'
 import { version } from '../../package.json'
+import { middlewareTemplate, storeTemplate } from './templates'
 import type { ViteOptions } from './types'
 
 export default defineNuxtModule<ViteOptions>({
@@ -44,22 +43,24 @@ export default defineNuxtModule<ViteOptions>({
     nuxt.options.buildModules = filterModule(nuxt.options.buildModules)
 
     if (nuxt.options.store) {
-      addPluginTemplate({
-        src: resolve(distDir, 'runtime/vite/templates/store.mjs'),
-        fileName: 'store.js'
-      })
+      addPluginTemplate(storeTemplate)
     }
-
-    addPluginTemplate({
-      src: resolve(distDir, 'runtime/vite/templates/middleware.mjs'),
-      fileName: 'middleware.js'
-    })
+    addPluginTemplate(middlewareTemplate)
 
     nuxt.hook('builder:prepared', async (builder) => {
       builder.bundleBuilder.close()
       delete builder.bundleBuilder
       const { ViteBuilder } = await import('./vite')
       builder.bundleBuilder = new ViteBuilder(builder)
+    })
+
+    // remove templates from nuxt-app
+    nuxt.hook('build:templates', (templates) => {
+      const templatesFiles = templates.templatesFiles.filter((template) => {
+        return !['store.js', 'middleware.js'].includes(template.dst)
+      })
+      templates.templatesFiles.length = 0
+      templates.templatesFiles.push(...templatesFiles)
     })
   }
 })

@@ -28,6 +28,7 @@
     "enhanced-resolve": "^5.8.3",
     "estree-walker": "^2.0.2",
     "fs-extra": "^10.0.0",
+    "hash-sum": "^2.0.0",
     "magic-string": "^0.25.7",
     "mlly": "^0.2.10",
     "node-fetch": "^3.0.0",
@@ -47,6 +48,7 @@
   "devDependencies": {
     "@nuxt/types": "^2.15.8",
     "@types/fs-extra": "^9.0.13",
+    "@types/hash-sum": "^1.0.0",
     "@types/node-fetch": "^3.0.2",
     "nuxt": "^2",
     "unbuild": "latest",

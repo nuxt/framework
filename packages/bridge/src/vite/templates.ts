@@ -1,24 +1,55 @@
-// Source: @nuxt/vue-app/template/store.js
+import hash from 'hash-sum'
+import { resolve } from 'pathe'
 
-import Vue from 'vue'
+import type { Nuxt, NuxtApp } from '@nuxt/kit'
+
+type TemplateContext = {
+  nuxt: Nuxt;
+  app: NuxtApp & { templateVars: Record<string, any> };
+}
+
+// TODO: Use an alias
+export const middlewareTemplate = {
+  filename: 'middleware.js',
+  src: '',
+  getContents (ctx: TemplateContext) {
+    const { dir, router: { middleware }, srcDir } = ctx.nuxt.options
+    const _middleware = ((typeof middleware !== 'undefined' && middleware) || []).map(m => ({
+      filePath: resolve(srcDir, dir.middleware, m.src),
+      id: m.name || m.src.replace(/[\\/]/g, '/').replace(/\.(js|ts)$/, '')
+    }))
+    return `${_middleware.map(m => `import $${hash(m.id)} from '${m.filePath}'`).join('\n')}
+const middleware = {
+${_middleware.map(m => `  ['${m.id}']: $${hash(m.id)}`).join(',\n')}
+}
+export default middleware`
+  }
+}
+
+export const storeTemplate = {
+  filename: 'store.js',
+  src: '',
+  getContents (ctx: TemplateContext) {
+    const { dir, srcDir } = ctx.nuxt.options
+    const { templateVars: { storeModules = [] } } = ctx.app
+    const _storeModules = storeModules.map(s => ({
+      filePath: resolve(srcDir, dir.store, s.src),
+      id: (s.src
+        .replace(/\.(js|ts)$/, '')
+        .replace(/[\\/]/g, '/')
+        .replace(/index/, '')
+      ) || 'root'
+    }))
+
+    return `import Vue from 'vue'
 import Vuex from 'vuex'
-<%
-const _storeModules = ((typeof storeModules !== 'undefined' && storeModules) || []).map(s => ({
-  filePath: relativeToBuild(srcDir, dir.store, s.src),
-  id: (s.src
-    .replace(/\.(js|ts)$/, '')
-    .replace(/[\\/]/g, '/')
-    .replace(/index/, '')
-  ) || 'root'
-}))
-%><%= _storeModules.map(s => `import * as $${hash(s.id)} from '${s.filePath}'`).join('\n') %>
-
+${_storeModules.map(s => `import * as $${hash(s.id)} from '${s.filePath}'`).join('\n')}
 Vue.use(Vuex)
 
 const VUEX_PROPERTIES = ['state', 'getters', 'actions', 'mutations']
 
 const storeModules = {
-<%= _storeModules.map(m => `  ['${m.id}']: $${hash(m.id)}`).join(',\n') %>
+${_storeModules.map(m => `  ['${m.id}']: $${hash(m.id)}`).join(',\n')}
 }
 
 export function createStore() {
@@ -38,7 +69,7 @@ export function createStore() {
 function normalizeRoot (moduleData, id) {
   moduleData = moduleData.default || moduleData
   if (moduleData.commit) {
-    throw new Error(`[nuxt] ${id} should export a method that returns a Vuex instance.`)
+    throw new Error(\`[nuxt] \${id} should export a method that returns a Vuex instance.\`)
   }
   if (typeof moduleData !== 'function') {
     // Avoid TypeError: setting a property that has only a getter when overwriting top level keys
@@ -98,5 +129,7 @@ function mergeProperty (storeModule, moduleData, property) {
     storeModule.state = moduleData || storeModule.state
   } else {
     storeModule[property] = { ...storeModule[property], ...moduleData }
+  }
+}`
   }
 }
