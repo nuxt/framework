@@ -2383,7 +2383,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/bridge@workspace:packages/bridge":
+"@nuxt/bridge@*, @nuxt/bridge@workspace:packages/bridge":
   version: 0.0.0-use.local
   resolution: "@nuxt/bridge@workspace:packages/bridge"
   dependencies:
@@ -2412,7 +2412,9 @@ __metadata:
     unbuild: latest
     unplugin: ^0.2.16
     unplugin-vue2-script-setup: 0.6.11
+    vue: ^2
     vue-router: 3
+    vue-template-compiler: ^2.6.14
   languageName: unknown
   linkType: soft
 
@@ -9668,6 +9670,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "fixture-basic@workspace:test/fixtures/bridge"
   dependencies:
+    "@nuxt/bridge": "*"
     core-js: ^3
     nuxt: ^2
     vue: ^2
