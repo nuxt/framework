@@ -55,7 +55,8 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       '@babel/parser': 'unenv/runtime/mock/proxy',
       '@vue/compiler-core': 'unenv/runtime/mock/proxy',
       '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
-      '@vue/compiler-ssr': 'unenv/runtime/mock/proxy'
+      '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
+      ...nitroContext.alias
     }
   }
 
@@ -143,7 +144,9 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   rollupConfig.plugins.push(raw())
 
   // WASM import support
-  rollupConfig.plugins.push(wasmPlugin())
+  if (nitroContext.experiments.wasm) {
+    rollupConfig.plugins.push(wasmPlugin())
+  }
 
   // https://github.com/rollup/plugins/tree/master/packages/replace
   rollupConfig.plugins.push(replace({

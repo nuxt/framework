@@ -15,13 +15,14 @@ import type { Options as EsbuildOptions } from './rollup/plugins/esbuild'
 import { runtimeDir } from './dirs'
 
 export interface NitroHooks {
-  'nitro:document': (htmlTemplate: { src: string, contents: string, dst: string, compiled: string }) => void
+  'nitro:document': (htmlTemplate: { src: string, contents: string, dst: string }) => void
   'nitro:rollup:before': (context: NitroContext) => void | Promise<void>
   'nitro:compiled': (context: NitroContext) => void
   'close': () => void
 }
 
 export interface NitroContext {
+  alias: Record<string, string>
   timing: boolean
   inlineDynamicImports: boolean
   minify: boolean
@@ -34,6 +35,9 @@ export interface NitroContext {
   rollupConfig?: RollupConfig
   esbuild?: {
     options?: EsbuildOptions
+  }
+  experiments?: {
+    wasm?: boolean
   }
   moduleSideEffects: string[]
   renderer: string
@@ -76,7 +80,7 @@ export interface NitroContext {
   }
 }
 
-type DeepPartial<T> = { [P in keyof T]?: DeepPartial<T[P]> }
+type DeepPartial<T> = T extends Record<string, any> ? { [P in keyof T]?: DeepPartial<T[P]> | T[P] } : T
 
 export interface NitroInput extends DeepPartial<NitroContext> {}
 
@@ -84,6 +88,7 @@ export type NitroPreset = NitroInput | ((input: NitroInput) => NitroInput)
 
 export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): NitroContext {
   const defaults: NitroContext = {
+    alias: {},
     timing: undefined,
     inlineDynamicImports: undefined,
     minify: undefined,
@@ -94,6 +99,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
     node: undefined,
     preset: undefined,
     rollupConfig: undefined,
+    experiments: {},
     moduleSideEffects: ['unenv/runtime/polyfill/'],
     renderer: undefined,
     serveStatic: undefined,

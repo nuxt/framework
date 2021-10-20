@@ -44,16 +44,20 @@ export function externals (opts: NodeExternalsOptions): Plugin {
         if (_id.startsWith('.') || opts.inline.find(i => _id.startsWith(i) || id.startsWith(i))) {
           return null
         }
-        // Bundle ts and wasm (currently - see https://github.com/nuxt/framework/discussions/692)
-        if (_id.endsWith('.ts') || _id.endsWith('.wasm')) {
+        // Bundle typescript, json and wasm (see https://github.com/nuxt/framework/discussions/692)
+        if (/\.(ts|wasm|json)$/.test(_id)) {
           return null
         }
       }
 
       // Track externals
       if (opts.trace !== false) {
-        const resolved = await this.resolve(originalId, importer, { ...options, skipSelf: true }).then(r => r.id)
-        trackedExternals.add(resolved)
+        const resolved = await this.resolve(originalId, importer, { ...options, skipSelf: true })
+        if (!resolved) {
+          console.warn(`Could not resolve \`${originalId}\`. Have you installed it?`)
+        } else {
+          trackedExternals.add(resolved.id)
+        }
       }
 
       return {
@@ -64,7 +68,7 @@ export function externals (opts: NodeExternalsOptions): Plugin {
     async buildEnd () {
       if (opts.trace !== false) {
         const tracedFiles = await nodeFileTrace(Array.from(trackedExternals), opts.traceOptions)
-          .then(r => r.fileList.map(f => resolve(opts.traceOptions.base, f)))
+          .then(r => Array.from(r.fileList).map(f => resolve(opts.traceOptions.base, f)))
           .then(r => r.filter(file => file.includes('node_modules')))
 
         // // Find all unique package names
