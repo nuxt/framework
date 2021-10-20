@@ -27,7 +27,7 @@ function isExternal (opts: TransformOptions, id: string) {
 
   const externalOpts: ExternalsOptions = {
     inline: [
-      /virtual:/,
+      /:/,
       /\.ts$/,
       // Things like '~', '@', etc.
       ...Object.keys(opts.viteServer.config.resolve.alias),
