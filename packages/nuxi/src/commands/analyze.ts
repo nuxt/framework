@@ -47,7 +47,7 @@ export default defineNuxtCommand({
       return (_req, res) => { res.end(contents) }
     })
 
-    app.use('/client', serveFile(join(statsDir, 'nitro.html')))
+    app.use('/client', serveFile(join(statsDir, 'client.html')))
     app.use('/nitro', serveFile(join(statsDir, 'nitro.html')))
     app.use(() => `
 <ul>
