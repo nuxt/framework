@@ -18,7 +18,7 @@ export default {
     layout: {
       type: String,
       default: null
-    },
+    }
   }
 }
 </script>
