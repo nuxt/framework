@@ -13786,7 +13786,7 @@ fsevents@~2.3.2:
     object-hash: ^2.2.0
     pathe: ^0.2.0
     typescript: ^4.4.4
-    unbuild: ^0.5.10
+    unbuild: ^0.5.9
     vue-router: next
   languageName: unknown
   linkType: soft
@@ -18802,7 +18802,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.5.10":
+"unbuild@npm:^0.5.9":
   version: 0.5.10
   resolution: "unbuild@npm:0.5.10"
   dependencies:
