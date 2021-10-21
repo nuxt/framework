@@ -41,7 +41,8 @@ export async function buildServer (ctx: ViteBuildContext) {
       external: [],
       noExternal: [
         ...ctx.nuxt.options.build.transpile,
-        /\\.vue$/,
+        /\.(vue|css|cjs)$/,
+        /\.(es|esm|esm-browser).js$/,
         'plugin-vue:',
         '/__vue-jsx',
         '#app',
