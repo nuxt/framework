@@ -29,10 +29,12 @@ async function createServerlessFunction (ctx: NitroContext) {
   const pageEntryPoint = path.join(output.dir, 'server', 'pages', 'index.mjs')
   const nftFile = `${pageEntryPoint}.nft.json`;
 
-  const mountDir = path.join('.output', 'server', 'pages')
+  // Should be `.output`, but taken from `output` for tests
+  const outputDirName = output.dir.split('/').slice(-1)[0];
+  const mountDir = path.join(outputDirName, 'server', 'pages')
 
-  await fs.ensureDir(path.join(rootDir, mountDir))
-  await fs.promises.rename(path.join(output.serverDir, 'index.mjs'), pageEntryPoint)
+  await fs.ensureDir(path.join(output.dir, 'server', 'pages'))
+  await fs.rename(path.join(output.serverDir, 'index.mjs'), pageEntryPoint)
 
   const includedFiles = await globby('**', { cwd: output.serverDir })
 
