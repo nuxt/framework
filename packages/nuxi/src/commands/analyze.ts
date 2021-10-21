@@ -31,7 +31,10 @@ export default defineNuxtCommand({
     const nuxt = await loadNuxt({
       rootDir,
       config: {
-        analyze: analyzeOptions
+        build: {
+          // @ts-ignore
+          analyze: analyzeOptions
+        }
       }
     })
 
@@ -47,18 +50,27 @@ export default defineNuxtCommand({
       return (_req, res) => { res.end(contents) }
     })
 
+    console.warn('Do not deploy analyze results! Use `nuxi build` before deployng.')
+
+    console.info('Starting stats server...')
+
     app.use('/client', serveFile(join(statsDir, 'client.html')))
     app.use('/nitro', serveFile(join(statsDir, 'nitro.html')))
-    app.use(() => `
-<ul>
-<li>
-  <a href="/client">Client bundle stats</a>
-</li>
-<li>
-  <a href="/nitro">Nitro server bundle stats</a>
-</li>
-</ul>
-    `)
+    app.use(() => `<!DOCTYPE html>
+<html lang="en">
+<head>
+<title><meta charset="utf-8">Nuxt Bundle Stats (experimental)</title>
+</head>
+  <h1>Nuxt Bundle Stats (experimental)</h1>
+  <ul>
+    <li>
+      <a href="/nitro">Nitro server bundle stats</a>
+    </li>
+    <li>
+      <a href="/client">Client bundle stats</a>
+    </li>
+  </ul>
+</html>`)
 
     await server.listen()
   }

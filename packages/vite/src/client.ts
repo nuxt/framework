@@ -47,10 +47,11 @@ export async function buildClient (ctx: ViteBuildContext) {
   } as ViteOptions)
 
   // Add analyze plugin if needed
-  if (ctx.nuxt.options.analyze) {
+  if (ctx.nuxt.options.build.analyze) {
     clientConfig.plugins.push(visualizer({
-      ...ctx.nuxt.options.analyze as any,
-      filename: ctx.nuxt.options.analyze.filename.replace('{name}', 'client'),
+      ...ctx.nuxt.options.build.analyze as any,
+      // @ts-ignore
+      filename: ctx.nuxt.options.build.analyze.filename.replace('{name}', 'client'),
       title: 'Client bundle stats',
       gzipSize: true
     }))
