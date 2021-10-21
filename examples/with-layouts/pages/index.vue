@@ -8,10 +8,6 @@
     <NuxtLink to="/same">
       Same layout
     </NuxtLink>
-
-    <NuxtLink to="/parent">
-      Parent Page
-    </NuxtLink>
   </div>
 </template>
 

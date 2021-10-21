@@ -1,24 +1,11 @@
 <template>
   <RouterView v-slot="{ Component }">
-    <NuxtLayout v-if="Component" :name="layout || Component.type.layout">
-      <transition name="page" mode="out-in">
-        <component :is="Component" :key="$route.path" />
-      </transition>
-    </NuxtLayout>
+    <component :is="Component" :key="$route.path" />
   </RouterView>
 </template>
 
 <script>
-import NuxtLayout from './layout'
-
 export default {
-  name: 'NuxtChild',
-  components: { NuxtLayout },
-  props: {
-    layout: {
-      type: String,
-      default: null
-    }
-  }
+  name: 'NuxtChild'
 }
 </script>
