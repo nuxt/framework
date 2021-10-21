@@ -12,7 +12,7 @@ export default defineNuxtCommand({
   meta: {
     name: 'analyze',
     usage: 'npx nuxi analyze [rootDir]',
-    description: 'Analyze your nuxt app'
+    description: 'Build nuxt and analyze production bundle (experimental)'
   },
   async invoke (args) {
     process.env.NODE_ENV = process.env.NODE_ENV || 'production'
