@@ -1,6 +1,8 @@
 import { join, resolve } from 'pathe'
-import { cyan } from 'colorette'
-import { importModule } from '../utils/cjs'
+import consola from 'consola'
+import { writeTypes } from '../utils/prepare'
+import { loadKit } from '../utils/kit'
+import { clearDir } from '../utils/fs'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -11,12 +13,13 @@ export default defineNuxtCommand({
   },
   async invoke (args) {
     process.env.NODE_ENV = process.env.NODE_ENV || 'production'
+
     const rootDir = resolve(args._[0] || '.')
-
-    const { loadNuxt, buildNuxt } = await importModule('@nuxt/kit', rootDir) as typeof import('@nuxt/kit')
-
     const outputDir = join(rootDir, '.nuxt/analyze/output')
     const buildDir = join(rootDir, '.nuxt/analyze/build')
+
+    const { loadNuxt, buildNuxt } = await loadKit(rootDir)
+
     const nuxt = await loadNuxt({
       rootDir,
       config: {
@@ -35,9 +38,11 @@ export default defineNuxtCommand({
       }
     })
 
+    await clearDir(nuxt.options.buildDir)
+    await writeTypes(nuxt)
     await buildNuxt(nuxt)
 
-    console.log(`Nitro server analysis available at ${cyan(join(buildDir, 'stats/nitro.html'))}`)
-    console.log(`Client analysis available at ${cyan(join(buildDir, 'stats/client.html'))}`)
+    consola.log(`Nitro server analysis available at \`${join(buildDir, 'stats/nitro.html')}\``)
+    consola.log(`Client analysis available at \`${join(buildDir, 'stats/client.html')}\``)
   }
 })
