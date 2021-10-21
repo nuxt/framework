@@ -6,6 +6,7 @@ import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { Connect } from 'vite'
 
 import { visualizer } from 'rollup-plugin-visualizer'
+import { transform } from 'esbuild'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { replace } from './plugins/replace'
 import { wpfs } from './utils/wpfs'
@@ -48,6 +49,22 @@ export async function buildClient (ctx: ViteBuildContext) {
 
   // Add analyze plugin if needed
   if (ctx.nuxt.options.build.analyze) {
+    clientConfig.plugins.push({
+      name: 'nuxt-analyze-minify',
+      async generateBundle (_opts, outputBundle) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        for (const [_bundleId, bundle] of Object.entries(outputBundle)) {
+          if (bundle.type !== 'chunk') { continue }
+          const originalEntries = Object.entries(bundle.modules)
+          const minifiedEntries = await Promise.all(originalEntries.map(async ([moduleId, module]) => {
+            const { code } = await transform(module.code || '', { minify: true })
+            return [moduleId, { ...module, code }]
+          }))
+          bundle.modules = Object.fromEntries(minifiedEntries)
+        }
+        return null
+      }
+    })
     clientConfig.plugins.push(visualizer({
       ...ctx.nuxt.options.build.analyze as any,
       // @ts-ignore
