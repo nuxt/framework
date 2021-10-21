@@ -3,6 +3,7 @@ import env from 'std-env'
 import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
+import defu from 'defu'
 
 export default {
   /**
@@ -273,7 +274,6 @@ export default {
    * Allows customizing the global ID used in the main HTML template as well as the main
    * Vue instance name and other options.
    * @version 2
-   * @version 3
    */
   globalName: {
     $resolve: val => (typeof val === 'string' && /^[a-zA-Z]+$/.test(val)) ? val.toLocaleLowerCase() : 'nuxt'
@@ -697,8 +697,6 @@ export default {
    * @version 3
    */
   publicRuntimeConfig: {
-    app: {
-      $resolve: (val, get) => ({ ...get('app'), ...(val || {}) })
-    }
+    $resolve: (val, get) => defu(val, { app: get('app') })
   }
 }

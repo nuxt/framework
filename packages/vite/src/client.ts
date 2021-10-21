@@ -1,14 +1,16 @@
 import { resolve } from 'pathe'
 import * as vite from 'vite'
-import fse from 'fs-extra'
 import consola from 'consola'
 import vitePlugin from '@vitejs/plugin-vue'
+import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
+import type { Connect } from 'vite'
 
 import { visualizer } from 'rollup-plugin-visualizer'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { replace } from './plugins/replace'
 import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
+import { writeManifest } from './manifest'
 
 export async function buildClient (ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -37,27 +39,30 @@ export async function buildClient (ctx: ViteBuildContext) {
       replace({ 'process.env': 'import.meta.env' }),
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'client'),
       vitePlugin(ctx.config.vue),
-      ...ctx.nuxt.options.build.analyze
-        ? [visualizer({
-            filename: resolve(ctx.nuxt.options.buildDir, 'stats/client.html'),
-            title: 'Client Build Visualization',
-            gzipSize: true,
-            template: 'sunburst',
-            ...ctx.nuxt.options.build.analyze as any
-          })]
-        : []
+      viteJsxPlugin()
     ],
     server: {
       middlewareMode: true
     }
   } as ViteOptions)
 
+  // Add analyze plugin if needed
+  if (ctx.nuxt.options.build.analyze) {
+    clientConfig.plugins.push(visualizer({
+      filename: resolve(ctx.nuxt.options.buildDir, 'stats/client.html'),
+      title: 'Client Build Visualization',
+      gzipSize: true,
+      template: 'sunburst',
+      ...ctx.nuxt.options.build.analyze as any
+    }))
+  }
+
   await ctx.nuxt.callHook('vite:extendConfig', clientConfig, { isClient: true, isServer: false })
 
   const viteServer = await vite.createServer(clientConfig)
   await ctx.nuxt.callHook('vite:serverCreated', viteServer)
 
-  const viteMiddleware = (req, res, next) => {
+  const viteMiddleware: Connect.NextHandleFunction = (req, res, next) => {
     // Workaround: vite devmiddleware modifies req.url
     const originalURL = req.url
     viteServer.middlewares.handle(req, res, (err) => {
@@ -78,24 +83,5 @@ export async function buildClient (ctx: ViteBuildContext) {
     consola.info(`Client built in ${Date.now() - start}ms`)
   }
 
-  // Write client manifest for use in vue-bundle-renderer
-  const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
-  const serverDist = resolve(ctx.nuxt.options.buildDir, 'dist/server')
-
-  // Legacy dev manifest
-  const devClientManifest = {
-    publicPath: ctx.nuxt.options.build.publicPath,
-    all: ['@vite/client', 'entry.mjs'],
-    initial: ['@vite/client', 'entry.mjs'],
-    async: [],
-    modules: {}
-  }
-
-  const clientManifest = ctx.nuxt.options.dev
-    ? devClientManifest
-    : await fse.readJSON(resolve(clientDist, 'manifest.json'))
-
-  await fse.mkdirp(serverDist)
-  await fse.writeFile(resolve(serverDist, 'client.manifest.json'), JSON.stringify(clientManifest, null, 2), 'utf8')
-  await fse.writeFile(resolve(serverDist, 'client.manifest.mjs'), 'export default ' + JSON.stringify(clientManifest, null, 2), 'utf8')
+  await writeManifest(ctx)
 }

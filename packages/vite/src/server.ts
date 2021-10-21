@@ -1,15 +1,20 @@
-import { resolve } from 'pathe'
+import { resolve, normalize } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
+import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import fse from 'fs-extra'
 import pDebounce from 'p-debounce'
 import consola from 'consola'
+import { resolveModule } from '@nuxt/kit'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { bundleRequest } from './dev-bundler'
+import { writeManifest } from './manifest'
+import { isCSS } from './utils'
 
 export async function buildServer (ctx: ViteBuildContext) {
+  const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     define: {
       'process.server': true,
@@ -24,21 +29,26 @@ export async function buildServer (ctx: ViteBuildContext) {
       alias: {
         '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/server'),
         // Alias vue
-        'vue/server-renderer': 'vue/server-renderer',
-        'vue/compiler-sfc': 'vue/compiler-sfc',
-        '@vue/reactivity': `@vue/reactivity/dist/reactivity.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
-        '@vue/shared': `@vue/shared/dist/shared.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
-        'vue-router': `vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`,
-        vue: `vue/dist/vue.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`
+        'vue/server-renderer': _resolve('vue/server-renderer'),
+        'vue/compiler-sfc': _resolve('vue/compiler-sfc'),
+        '@vue/reactivity': _resolve(`@vue/reactivity/dist/reactivity.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
+        '@vue/shared': _resolve(`@vue/shared/dist/shared.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
+        'vue-router': _resolve(`vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
+        vue: _resolve(`vue/dist/vue.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`)
       }
     },
     ssr: {
-      external: [
-        'axios'
-      ],
+      external: [],
       noExternal: [
-        ...ctx.nuxt.options.build.transpile.filter(i => typeof i === 'string'),
-        '#app'
+        ...ctx.nuxt.options.build.transpile,
+        /\\.vue$/,
+        'plugin-vue:',
+        '/__vue-jsx',
+        '#app',
+        /nuxt3\/dist/,
+        /nuxt3\/src/,
+        /@nuxt\/nitro\/dist/,
+        /@nuxt\/nitro\/src/
       ]
     },
     build: {
@@ -59,7 +69,8 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
-      vuePlugin()
+      vuePlugin(),
+      viteJsxPlugin()
     ]
   } as ViteOptions)
 
@@ -94,8 +105,10 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Build and watch
   const _doBuild = async () => {
     const start = Date.now()
-    const { code } = await bundleRequest(viteServer, resolve(ctx.nuxt.options.appDir, 'entry'))
+    const { code, ids } = await bundleRequest({ viteServer }, resolve(ctx.nuxt.options.appDir, 'entry'))
     await fse.writeFile(resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'), code, 'utf-8')
+    // Have CSS in the manifest to prevent FOUC on dev SSR
+    await writeManifest(ctx, ids.filter(isCSS).map(i => i.slice(1)))
     const time = (Date.now() - start)
     consola.success(`Vite server built in ${time}ms`)
     await onBuild()
@@ -107,6 +120,7 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   // Watch
   viteServer.watcher.on('all', (_event, file) => {
+    file = normalize(file) // Fix windows paths
     if (file.indexOf(ctx.nuxt.options.buildDir) === 0) { return }
     doBuild()
   })

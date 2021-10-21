@@ -1,12 +1,8 @@
 import chokidar from 'chokidar'
 import { Nuxt } from '@nuxt/kit'
-import fse from 'fs-extra'
 import { createApp, generateApp } from './app'
 
 export async function build (nuxt: Nuxt) {
-  //  Clear buildDir once
-  await fse.emptyDir(nuxt.options.buildDir)
-
   const app = createApp(nuxt)
   await generateApp(nuxt, app)
 
@@ -15,7 +11,7 @@ export async function build (nuxt: Nuxt) {
     nuxt.hook('builder:watch', async (event, path) => {
       if (event !== 'change' && /app|plugins/i.test(path)) {
         if (path.match(/app/i)) {
-          app.main = null
+          app.mainComponent = null
         }
         await generateApp(nuxt, app)
       }
@@ -23,6 +19,7 @@ export async function build (nuxt: Nuxt) {
     nuxt.hook('builder:generateApp', () => generateApp(nuxt, app))
   }
 
+  await nuxt.callHook('build:before', { nuxt }, nuxt.options.build)
   await bundle(nuxt)
   await nuxt.callHook('build:done', { nuxt })
 
@@ -51,5 +48,10 @@ function watch (nuxt: Nuxt) {
 async function bundle (nuxt: Nuxt) {
   const useVite = nuxt.options.vite !== false
   const { bundle } = await (useVite ? import('@nuxt/vite-builder') : import('@nuxt/webpack-builder'))
-  return bundle(nuxt)
+  try {
+    return bundle(nuxt)
+  } catch (error) {
+    await nuxt.callHook('build:error', error)
+    throw error
+  }
 }

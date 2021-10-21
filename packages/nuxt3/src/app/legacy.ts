@@ -123,21 +123,21 @@ const todo = new Set<keyof LegacyContext | keyof LegacyContext['ssrContext']>([
 
 const routerKeys: Array<keyof LegacyContext | keyof LegacyContext['ssrContext']> = ['route', 'params', 'query']
 
-export const legacyPlugin = (nuxt: NuxtApp) => {
-  nuxt._legacyContext = new Proxy(nuxt, {
+export const legacyPlugin = (nuxtApp: NuxtApp) => {
+  nuxtApp._legacyContext = new Proxy(nuxtApp, {
     get (nuxt, p: keyof LegacyContext | keyof LegacyContext['ssrContext']) {
       // Unsupported keys
       if (unsupported.has(p)) {
-        return mock(`Accessing ${p} is not supported in Nuxt3.`)
+        return mock(`Accessing ${p} is not supported in Nuxt 3.`)
       }
 
       if (todo.has(p)) {
-        return mock(`Accessing ${p} is not yet supported in Nuxt3.`)
+        return mock(`Accessing ${p} is not yet supported in Nuxt 3.`)
       }
 
       // vue-router implementation
       if (routerKeys.includes(p)) {
-        if (!('$router' in nuxt)) {
+        if (!('$router' in nuxtApp)) {
           return mock('vue-router is not being used in this project.')
         }
         switch (p) {
@@ -151,7 +151,7 @@ export const legacyPlugin = (nuxt: NuxtApp) => {
 
       if (p === '$config') {
         // TODO: needs implementation
-        return mock('Accessing runtime config is not yet supported in Nuxt3.')
+        return mock('Accessing runtime config is not yet supported in Nuxt 3.')
       }
 
       if (p === 'ssrContext') {
@@ -170,12 +170,12 @@ export const legacyPlugin = (nuxt: NuxtApp) => {
         return nuxt.payload.data
       }
 
-      if (p in nuxt.app) {
-        return nuxt.app[p]
+      if (p in nuxtApp.vueApp) {
+        return nuxtApp.vueApp[p]
       }
 
-      if (p in nuxt) {
-        return nuxt[p]
+      if (p in nuxtApp) {
+        return nuxtApp[p]
       }
 
       return mock(`Accessing ${p} is not supported in Nuxt3.`)
@@ -183,15 +183,15 @@ export const legacyPlugin = (nuxt: NuxtApp) => {
   }) as unknown as LegacyContext
 
   if (process.client) {
-    nuxt.hook('app:created', () => {
-      const legacyApp = { ...nuxt.app } as LegacyApp
+    nuxtApp.hook('app:created', () => {
+      const legacyApp = { ...nuxtApp.vueApp } as LegacyApp
       legacyApp.$root = legacyApp
 
       // @ts-ignore
       // TODO: https://github.com/nuxt/framework/issues/244
       legacyApp.constructor = legacyApp
 
-      window[`$${nuxt.globalName}`] = legacyApp
+      window[`$${nuxtApp.globalName}`] = legacyApp
     })
   }
 }

@@ -6,7 +6,7 @@ import defu from 'defu'
 import { mergeHooks } from 'hookable'
 import consola from 'consola'
 import chalk from 'chalk'
-import { get } from 'dot-prop'
+import dotProp from 'dot-prop'
 import type { NitroPreset, NitroInput } from '../context'
 
 export function hl (str: string) {
@@ -20,7 +20,7 @@ export function prettyPath (p: string, highlight = true) {
 
 export function compileTemplate (contents: string) {
   return (params: Record<string, any>) => contents.replace(/{{ ?([\w.]+) ?}}/g, (_, match) => {
-    const val = get(params, match)
+    const val = dotProp.get(params, match)
     if (!val) {
       consola.warn(`cannot resolve template param '${match}' in ${contents.substr(0, 20)}`)
     }
@@ -124,4 +124,27 @@ export function getDependencies (dir: string, mode: keyof typeof _getDependencie
 // TODO: Refactor to scule (https://github.com/unjs/scule/issues/6)
 export function serializeImportName (id: string) {
   return '_' + id.replace(/[^a-zA-Z0-9_$]/g, '_')
+}
+
+export function readPackageJson (
+  packageName: string,
+  _require: NodeRequire = createRequire(import.meta.url)
+) {
+  try {
+    return _require(`${packageName}/package.json`)
+  } catch (error) {
+    if (error.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED') {
+      const pkgModulePaths = /^(.*\/node_modules\/).*$/.exec(_require.resolve(packageName))
+      for (const pkgModulePath of pkgModulePaths) {
+        const path = resolve(pkgModulePath, packageName, 'package.json')
+        if (fse.existsSync(path)) {
+          return fse.readJSONSync(path)
+        }
+        continue
+      }
+
+      throw error
+    }
+    throw error
+  }
 }

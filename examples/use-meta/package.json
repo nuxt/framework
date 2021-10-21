@@ -1,0 +1,12 @@
+{
+  "name": "example-use-meta",
+  "private": true,
+  "devDependencies": {
+    "nuxt3": "latest"
+  },
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "start": "node .output/server"
+  }
+}

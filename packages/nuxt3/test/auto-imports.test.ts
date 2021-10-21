@@ -1,18 +1,32 @@
+import type { AutoImport } from '@nuxt/kit'
 import { expect } from 'chai'
+import { AutoImportContext, updateAutoImportContext } from '../src/auto-imports/context'
 import { TransformPlugin } from '../src/auto-imports/transform'
 
-describe('module:auto-imports:build', () => {
-  const { transform: _transform } = TransformPlugin.raw({ ref: 'vue', computed: 'bar' }, {} as any)
-  const transform = (code: string) => _transform.call({} as any, code, '')
+describe('auto-imports:transform', () => {
+  const autoImports: AutoImport[] = [
+    { name: 'ref', as: 'ref', from: 'vue' },
+    { name: 'computed', as: 'computed', from: 'bar' }
+  ]
+
+  const ctx = { autoImports, map: new Map() } as AutoImportContext
+  updateAutoImportContext(ctx)
+
+  const transformPlugin = TransformPlugin.raw(ctx, { framework: 'rollup' })
+  const transform = (code: string) => transformPlugin.transform.call({ error: null, warn: null }, code, '')
 
   it('should correct inject', async () => {
-    const result = await transform('const a = ref(0)')
-    expect(result).to.equal('import { ref } from \'vue\';const a = ref(0)')
+    expect(await transform('const a = ref(0)')).to.equal('import { ref } from \'vue\';const a = ref(0)')
+    expect(await transform('import { computed as ref } from "foo"; const a = ref(0)')).to.include('import { computed } from \'bar\';')
   })
 
-  it('should ignore imported', async () => {
-    const result = await transform('import { ref } from "foo";const a = ref(0)')
-    expect(result).to.equal(null)
+  it('should ignore existing imported', async () => {
+    expect(await transform('import { ref } from "foo"; const a = ref(0)')).to.equal(null)
+    expect(await transform('import ref from "foo"; const a = ref(0)')).to.equal(null)
+    expect(await transform('import { z as ref } from "foo"; const a = ref(0)')).to.equal(null)
+    expect(await transform('let ref = () => {}; const a = ref(0)')).to.equal(null)
+    expect(await transform('let { ref } = Vue; const a = ref(0)')).to.equal(null)
+    expect(await transform('let [\ncomputed,\nref\n] = Vue; const a = ref(0); const b = ref(0)')).to.equal(null)
   })
 
   it('should ignore comments', async () => {

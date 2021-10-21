@@ -3,7 +3,7 @@ import { resolve } from 'pathe'
 import defu from 'defu'
 import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils } from '@nuxt/kit'
 
-import * as defaultTemplates from '../app/templates'
+import * as defaultTemplates from './templates'
 
 export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp {
   return defu(options, {
@@ -59,12 +59,15 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   }
 
   // Resolve main (app.vue)
-  if (!app.main) {
-    app.main = tryResolvePath('~/App', resolveOptions) || tryResolvePath('~/app', resolveOptions)
+  if (!app.mainComponent) {
+    app.mainComponent = tryResolvePath('~/App', resolveOptions) || tryResolvePath('~/app', resolveOptions)
   }
-  if (!app.main) {
-    app.main = resolve(nuxt.options.appDir, 'app.tutorial.vue')
+  if (!app.mainComponent) {
+    app.mainComponent = resolve(nuxt.options.appDir, 'components/nuxt-welcome.vue')
   }
+
+  // Default root component
+  app.rootComponent = resolve(nuxt.options.appDir, 'components/nuxt-root.vue')
 
   // Resolve plugins
   app.plugins = [

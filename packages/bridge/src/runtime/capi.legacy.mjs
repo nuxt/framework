@@ -1,6 +1,7 @@
 import defu from 'defu'
-import { computed, customRef, getCurrentInstance as getVM, isReactive, isRef, onBeforeMount, onServerPrefetch, reactive, ref, set, shallowRef, toRaw, toRefs, watch } from '@vue/composition-api'
+import { computed, getCurrentInstance as getVM, isReactive, isRef, onBeforeMount, onServerPrefetch, reactive, ref, set, shallowRef, toRaw, toRefs, watch } from '@vue/composition-api'
 import { useNuxtApp } from './app'
+import { useState } from './composables'
 
 // Vue composition API export
 export {
@@ -77,7 +78,7 @@ warnOnce('import', `\`@nuxtjs/composition-api\` is deprecated. ${checkDocsMsg}`)
 
 // Stub functions that provided type support
 export const defineNuxtMiddleware = mw => mw
-export const defineNuxtPlugin = unsupported('You are using `defineNuxtPlugin`, which can be replaced with `defineNuxtPlugin` from `@nuxt/bridge`.')
+export const defineNuxtPlugin = unsupported('You are using `defineNuxtPlugin`, which can be replaced with `defineNuxtPlugin` (import from `#app`).')
 
 // Internal exports
 export const setMetaPlugin = unsupported('`setMetaPlugin` is an internal function that is no longer used.')
@@ -91,7 +92,6 @@ export const reqRef = unsupported('`reqRef` is a deprecated method that is no lo
 export const reqSsrRef = unsupported('`reqSsrRef` is no longer provided (`ssrRef` can be used instead).')
 
 // ssrRef helpers
-const isProxyable = val => !!val && typeof val === 'object'
 const sanitise = val => (val && JSON.parse(JSON.stringify(val))) || val
 const getValue = val => val instanceof Function ? val() : val
 
@@ -99,75 +99,21 @@ export const ssrRef = (value, key) => {
   const vm = getVM()
   if (!vm) { throw new Error('ssrRef no longer supports global/ambient context and must be called within a setup() function') }
 
-  const ssrRefs = useSSRRefs()
+  warnOnce('ssrRef', '`ssrRef` is deprecated and can be replaced with `useState`.')
 
-  let resolvedValue = isHMR() ? getValue(value) : ssrRefs[key] ?? getValue(value)
-
-  const _ref = ref(resolvedValue)
-  if (process.client) { return _ref }
-
-  const setData = (key, val) => {
-    ssrRefs[key] = sanitise(val)
-  }
-
-  if (value instanceof Function) { setData(key, resolvedValue) }
-
-  const getProxy = (track, trigger, observable) =>
-    new Proxy(observable, {
-      get (target, prop) {
-        track()
-        if (isProxyable(target[prop])) { return getProxy(track, trigger, target[prop]) }
-        return Reflect.get(target, prop)
-      },
-      set (obj, prop, newVal) {
-        const result = Reflect.set(obj, prop, newVal)
-        setData(key, resolvedValue)
-        trigger()
-        return result
-      }
-    })
-
-  const proxy = customRef((track, trigger) => ({
-    get: () => {
-      track()
-      if (isProxyable(resolvedValue)) { return getProxy(track, trigger, resolvedValue) }
-      return resolvedValue
-    },
-    set: (v) => {
-      setData(key, v)
-      resolvedValue = v
-      trigger()
-    }
-  }))
-
-  return proxy
+  return useState(key, value instanceof Function ? value : () => value)
 }
 
 export const shallowSsrRef = (value, key) => {
-  const ssrRefs = useSSRRefs()
+  warnOnce('shallowSsrRef', '`shallowSsrRef` is deprecated and can be replaced with `useState`.')
 
-  let resolvedValue = isHMR() ? getValue(value) : ssrRefs[key] ?? getValue(value)
+  const ref = ssrRef(value, key)
 
-  const _ref = shallowRef(resolvedValue)
-  if (process.client) { return _ref }
-
-  const setData = (key, val) => {
-    ssrRefs[key] = sanitise(val)
+  if (process.client) {
+    return shallowRef(ref.value)
   }
 
-  if (value instanceof Function) {
-    setData(key, resolvedValue)
-  }
-
-  return computed({
-    get () {
-      return resolvedValue
-    },
-    set (newValue) {
-      setData(key, newValue)
-      resolvedValue = newValue
-    }
-  })
+  return ref
 }
 
 export const ssrPromise = (value, key) => {
@@ -182,13 +128,13 @@ export const ssrPromise = (value, key) => {
 
 // Composition API functions
 export const onGlobalSetup = (fn) => {
-  warnOnce('onGlobalSetup', '`onGlobalSetup` is deprecated and can be replaced with `defineNuxtPlugin` and `nuxt.provide`.')
+  warnOnce('onGlobalSetup', '`onGlobalSetup` is deprecated and can be replaced with `defineNuxtPlugin(nuxtApp => nuxtApp.provide)` (import from `#app`).')
   const app = useNuxtApp()
   app._setupFns.push(fn)
 }
 
 export const useAsync = (cb, key) => {
-  warnOnce('useAsync', 'You are using `useAsync`, which can be replaced with `useAsyncData` from `@nuxt/bridge`.')
+  warnOnce('useAsync', 'You are using `useAsync`, which is deprecated.')
 
   const _ref = isRef(key) ? key : ssrRef(null, key)
 
@@ -201,16 +147,16 @@ export const useAsync = (cb, key) => {
 }
 
 export const useContext = () => {
-  warnOnce('useContext', 'You are using `useContext`, which can be replaced with `useNuxtApp` from `@nuxt/bridge`.')
+  warnOnce('useContext', 'You are using `useContext`, which can be replaced with `useNuxtApp` (import from `#app`).')
 
   const route = useRoute()
   const nuxt = useNuxtApp()
 
   return {
-    ...nuxt.legacyNuxt.context,
+    ...nuxt.nuxt2App.context,
     route: computed(() => route),
     query: computed(() => route.value.query),
-    from: computed(() => nuxt.legacyNuxt.context.from),
+    from: computed(() => nuxt.nuxt2App.context.from),
     params: computed(() => route.value.params)
   }
 }
@@ -300,12 +246,12 @@ export const wrapProperty = (property, makeComputed = true) => () => {
 }
 
 export const useRouter = () => {
-  warnOnce('useRouter', 'You are using `useRouter`, which can be replaced with `useRouter` from `@nuxt/bridge`.')
+  warnOnce('useRouter', 'You are using `useRouter`, which can be replaced with `useRouter` (import from `#app`).')
   return getCurrentInstance().$router
 }
 
 export const useRoute = () => {
-  warnOnce('useRoute', 'You are using `useRoute`, which can be replaced with `useRoute` from `@nuxt/bridge`.')
+  warnOnce('useRoute', 'You are using `useRoute`, which can be replaced with `useRoute` (import from `#app`).')
   const vm = getCurrentInstance()
   return computed(() => vm.$route)
 }
@@ -383,7 +329,7 @@ function getKey (vm) {
   const getCounter = createGetCounter(
     process.server
       ? vm.$ssrContext.fetchCounters
-      : nuxt.legacyApp._fetchCounters,
+      : nuxt.vue2App._fetchCounters,
     defaultKey
   )
 

@@ -8,9 +8,26 @@ export const defineNuxtComponent = defineComponent
 
 export interface RuntimeNuxtHooks { }
 
+export interface VueAppCompat {
+  component: Vue['component'],
+  config: {
+    globalProperties: any
+    [key: string]: any
+  },
+  directive: Vue['directive'],
+  mixin: Vue['mixin'],
+  mount: Vue['mount'],
+  provide: (name: string, value: any) => void,
+  unmount: Vue['unmount'],
+  use: Vue['use']
+  version: string
+}
+
 export interface NuxtAppCompat {
-  legacyNuxt: Vue
-  legacyApp: ComponentOptions<Vue>
+  nuxt2Context: Vue
+  vue2App: ComponentOptions<Vue>
+
+  vueApp: VueAppCompat
 
   globalName: string
 
@@ -33,26 +50,26 @@ export interface Context {
   $_nuxtApp: NuxtAppCompat
 }
 
-let currentNuxtInstance: NuxtAppCompat | null
+let currentNuxtAppInstance: NuxtAppCompat | null
 
-export const setNuxtInstance = (nuxt: NuxtAppCompat | null) => {
-  currentNuxtInstance = nuxt
+export const setNuxtAppInstance = (nuxt: NuxtAppCompat | null) => {
+  currentNuxtAppInstance = nuxt
 }
 
 export const defineNuxtPlugin = plugin => (ctx: Context) => {
-  setNuxtInstance(ctx.$_nuxtApp)
+  setNuxtAppInstance(ctx.$_nuxtApp)
   plugin(ctx.$_nuxtApp)
-  setNuxtInstance(null)
+  setNuxtAppInstance(null)
 }
 
 export const useNuxtApp = () => {
   const vm = getCurrentInstance()
 
   if (!vm) {
-    if (!currentNuxtInstance) {
-      throw new Error('nuxt instance unavailable')
+    if (!currentNuxtAppInstance) {
+      throw new Error('nuxt app instance unavailable')
     }
-    return currentNuxtInstance
+    return currentNuxtAppInstance
   }
 
   return vm?.proxy.$_nuxtApp
