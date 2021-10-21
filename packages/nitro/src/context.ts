@@ -95,7 +95,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
     minify: undefined,
     sourceMap: undefined,
     externals: undefined,
-    analyze: undefined,
+    analyze: nuxtOptions.analyze,
     entry: undefined,
     node: undefined,
     preset: undefined,

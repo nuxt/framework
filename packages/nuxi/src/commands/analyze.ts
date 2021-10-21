@@ -1,5 +1,8 @@
+import { promises as fsp } from 'fs'
 import { join, resolve } from 'pathe'
-import consola from 'consola'
+import { createApp, lazyHandle } from 'h3'
+import type { PluginVisualizerOptions } from 'rollup-plugin-visualizer'
+import { createServer } from '../utils/server'
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
 import { clearDir } from '../utils/fs'
@@ -15,26 +18,20 @@ export default defineNuxtCommand({
     process.env.NODE_ENV = process.env.NODE_ENV || 'production'
 
     const rootDir = resolve(args._[0] || '.')
-    const outputDir = join(rootDir, '.nuxt/analyze/output')
-    const buildDir = join(rootDir, '.nuxt/analyze/build')
+    const statsDir = join(rootDir, '.nuxt/stats')
 
     const { loadNuxt, buildNuxt } = await loadKit(rootDir)
+
+    const analyzeOptions: PluginVisualizerOptions = {
+      template: 'treemap',
+      projectRoot: rootDir,
+      filename: join(statsDir, '{name}.html')
+    }
 
     const nuxt = await loadNuxt({
       rootDir,
       config: {
-        nitro: {
-          analyze: {
-            filename: join(buildDir, 'stats/nitro.html')
-          },
-          output: {
-            dir: outputDir
-          }
-        },
-        buildDir,
-        build: {
-          analyze: true
-        }
+        analyze: analyzeOptions
       }
     })
 
@@ -42,7 +39,27 @@ export default defineNuxtCommand({
     await writeTypes(nuxt)
     await buildNuxt(nuxt)
 
-    consola.log(`Nitro server analysis available at \`${join(buildDir, 'stats/nitro.html')}\``)
-    consola.log(`Client analysis available at \`${join(buildDir, 'stats/client.html')}\``)
+    const app = createApp()
+    const server = createServer(app)
+
+    const serveFile = (filePath: string) => lazyHandle(async () => {
+      const contents = await fsp.readFile(filePath, 'utf-8')
+      return (_req, res) => { res.end(contents) }
+    })
+
+    app.use('/client', serveFile(join(statsDir, 'nitro.html')))
+    app.use('/nitro', serveFile(join(statsDir, 'nitro.html')))
+    app.use(() => `
+<ul>
+<li>
+  <a href="/client">Client bundle stats</a>
+</li>
+<li>
+  <a href="/nitro">Nitro server bundle stats</a>
+</li>
+</ul>
+    `)
+
+    await server.listen()
   }
 })
