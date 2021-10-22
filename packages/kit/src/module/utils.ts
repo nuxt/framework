@@ -10,7 +10,7 @@ import { NuxtCompatibilityConstraints, NuxtCompatibilityIssues } from '../types/
 import { Nuxt } from '../types/nuxt'
 import { useNuxt } from '../nuxt'
 import type { NuxtTemplate, NuxtPlugin, NuxtPluginTemplate } from '../types/nuxt'
-import { ComponentsOptions } from '..'
+import { ComponentsDir } from '..'
 
 /**
  * Renders given template using lodash template during build into the project buildDir
@@ -295,7 +295,7 @@ export async function compileTemplate (template: NuxtTemplate, ctx: any) {
  *
  * Requires Nuxt 2.13+
  */
-export function addComponentsDirectory (directory: ComponentsOptions['dirs'][number]) {
+export function addComponentsDirectory (directory: ComponentsDir) {
   const nuxt = useNuxt()
   ensureNuxtCompatibility({ nuxt: '>=2.13' })
   nuxt.options.components = nuxt.options.components || []
