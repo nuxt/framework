@@ -12,7 +12,7 @@ import replace from '@rollup/plugin-replace'
 import virtual from '@rollup/plugin-virtual'
 import wasmPlugin from '@rollup/plugin-wasm'
 import inject from '@rollup/plugin-inject'
-import analyze from 'rollup-plugin-analyzer'
+import { visualizer } from 'rollup-plugin-visualizer'
 import * as unenv from 'unenv'
 
 import type { Preset } from 'unenv'
@@ -55,7 +55,8 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       '@babel/parser': 'unenv/runtime/mock/proxy',
       '@vue/compiler-core': 'unenv/runtime/mock/proxy',
       '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
-      '@vue/compiler-ssr': 'unenv/runtime/mock/proxy'
+      '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
+      ...nitroContext.alias
     }
   }
 
@@ -308,11 +309,6 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   // https://github.com/rollup/plugins/tree/master/packages/inject
   rollupConfig.plugins.push(inject(env.inject))
 
-  if (nitroContext.analyze) {
-    // https://github.com/doesdev/rollup-plugin-analyzer
-    rollupConfig.plugins.push(analyze())
-  }
-
   // https://github.com/TrySound/rollup-plugin-terser
   // https://github.com/terser/terser#minify-nitroContext
   if (nitroContext.minify) {
@@ -324,6 +320,15 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       format: {
         comments: false
       }
+    }))
+  }
+
+  if (nitroContext.analyze) {
+    // https://github.com/btd/rollup-plugin-visualizer
+    rollupConfig.plugins.push(visualizer({
+      ...nitroContext.analyze,
+      filename: nitroContext.analyze.filename.replace('{name}', 'nitro'),
+      title: 'Nitro Server bundle stats'
     }))
   }
 

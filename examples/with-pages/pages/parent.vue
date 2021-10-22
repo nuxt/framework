@@ -1,6 +1,6 @@
 <template>
   <div>
-    Other layout
-    <slot />
+    Parent
+    <NuxtChild />
   </div>
 </template>

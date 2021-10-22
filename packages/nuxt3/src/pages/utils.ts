@@ -163,13 +163,17 @@ function parseSegment (segment: string) {
           state = SegmentParserState.catchall
         }
         if (c === ']') {
-          consumeBuffer()
+          if (!buffer) {
+            throw new Error('Empty param')
+          } else {
+            consumeBuffer()
+          }
           state = SegmentParserState.initial
         } else if (PARAM_CHAR_RE.test(c)) {
           buffer += c
         } else {
           // eslint-disable-next-line no-console
-          console.log(`Ignored character "${c}" while building param "${buffer}" from "segment"`)
+          // console.debug(`[pages]Ignored character "${c}" while building param "${buffer}" from "segment"`)
         }
         break
     }
@@ -225,4 +229,12 @@ export async function resolveLayouts (nuxt: Nuxt) {
     const name = kebabCase(basename(file).replace(extname(file), '')).replace(/["']/g, '')
     return { name, file }
   })
+}
+
+export function addComponentToRoutes (routes: NuxtRoute[]) {
+  return routes.map(route => ({
+    ...route,
+    children: addComponentToRoutes(route.children),
+    component: `{() => import('${route.file}')}`
+  }))
 }

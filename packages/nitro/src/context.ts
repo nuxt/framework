@@ -4,6 +4,7 @@ import defu from 'defu'
 import { createHooks, Hookable, NestedHooks } from 'hookable'
 import type { Preset } from 'unenv'
 import type { NuxtHooks, NuxtOptions } from '@nuxt/kit'
+import type { PluginVisualizerOptions } from 'rollup-plugin-visualizer'
 import { tryImport, resolvePath, detectTarget, extendPreset } from './utils'
 import * as PRESETS from './presets'
 import type { NodeExternalsOptions } from './rollup/plugins/externals'
@@ -22,12 +23,13 @@ export interface NitroHooks {
 }
 
 export interface NitroContext {
+  alias: Record<string, string>
   timing: boolean
   inlineDynamicImports: boolean
   minify: boolean
   sourceMap: boolean
   externals: boolean | NodeExternalsOptions
-  analyze: boolean
+  analyze: false | PluginVisualizerOptions
   entry: string
   node: boolean
   preset: string
@@ -87,12 +89,13 @@ export type NitroPreset = NitroInput | ((input: NitroInput) => NitroInput)
 
 export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): NitroContext {
   const defaults: NitroContext = {
+    alias: {},
     timing: undefined,
     inlineDynamicImports: undefined,
     minify: undefined,
     sourceMap: undefined,
     externals: undefined,
-    analyze: undefined,
+    analyze: nuxtOptions.build.analyze as any,
     entry: undefined,
     node: undefined,
     preset: undefined,

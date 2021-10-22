@@ -1,6 +1,5 @@
 <template>
   <div>
-    Other layout
-    <slot />
+    Parent/b
   </div>
 </template>
