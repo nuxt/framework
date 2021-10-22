@@ -16,7 +16,7 @@
 </template>
 
 <script>
-function isSpecialClick (event) {
+function isSpecialClick(event) {
   return event.button === 1 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey
 }
 
@@ -32,105 +32,102 @@ export default {
     }
   },
   watch: {
-    '$i18n.locale' (newValue) {
+    '$i18n.locale'(newValue) {
       this.update(this.options, newValue)
     },
-    options (newValue) {
+    options(newValue) {
       this.update(newValue, this.$i18n.locale)
     }
   },
-  mounted () {
+  mounted() {
     this.initialize(this.options, this.$i18n.locale)
   },
   methods: {
-    stripTrailingSlash (url) {
+    stripTrailingSlash(url) {
       return url.replace(/\/$|\/(?=\?)|\/(?=#)/g, '')
     },
-    getRelativePath (absoluteUrl) {
+    getRelativePath(absoluteUrl) {
       const { pathname, hash } = new URL(absoluteUrl)
       const url = pathname.replace(this.settings.url, '/') + hash
       return this.stripTrailingSlash(url)
     },
-    initialize (userOptions, code) {
+    async initialize(userOptions, code) {
       const lang = this.$i18n.locales.find(locale => locale.code === code)
 
-      Promise.all([
+      const docsearch = await Promise.all([
         import(/* webpackChunkName: "docsearch" */ '@docsearch/js'),
         import(/* webpackChunkName: "docsearch" */ '@docsearch/css')
-      ]).then(([docsearch]) => {
-        docsearch = docsearch.default
+      ]).then(([docsearch]) => docsearch.default)
 
-        docsearch(
-          Object.assign({}, userOptions, {
-            container: '#docsearch',
-            searchParameters: Object.assign(
-              {},
-              lang && {
-                facetFilters: [`${userOptions.langAttribute || 'language'}:${lang.iso}`].concat(
-                  userOptions.facetFilters || []
-                )
-              }
-            ),
-            navigator: {
-              navigate: ({ suggestionUrl }) => {
-                const { pathname: hitPathname } = new URL(window.location.origin + suggestionUrl)
+      docsearch({
+        ...userOptions,
+        container: '#docsearch',
+        searchParameters: {
+          ...((!lang) ? {} : {
+            facetFilters: [`${userOptions.langAttribute || 'language'}:${lang.iso}`].concat(
+              userOptions.facetFilters || []
+            )
+          }),
+        },
+        navigator: {
+          navigate: ({ itemUrl }) => {
+            const { pathname: hitPathname } = new URL(window.location.origin + itemUrl)
 
-                // Vue Router doesn't handle same-page navigation so we use
-                // the native browser location API for anchor navigation.
-                if (this.$router.history.current.path === hitPathname) {
-                  window.location.assign(window.location.origin + suggestionUrl)
-                } else {
-                  this.$router.push(suggestionUrl)
-                }
-              }
-            },
-            transformItems: (items) => {
-              return items.map((item) => {
-                return Object.assign({}, item, {
-                  url: this.getRelativePath(item.url)
-                })
-              })
-            },
-            hitComponent: ({ hit, children }) => {
-              return {
-                type: 'a',
-                ref: undefined,
-                constructor: undefined,
-                key: undefined,
-                props: {
-                  href: hit.url,
-                  onClick: (event) => {
-                    if (isSpecialClick(event)) {
-                      return
-                    }
-
-                    // We rely on the native link scrolling when user is
-                    // already on the right anchor because Vue Router doesn't
-                    // support duplicated history entries.
-                    if (this.$router.history.current.fullPath === hit.url) {
-                      return
-                    }
-
-                    const { pathname: hitPathname } = new URL(window.location.origin + hit.url)
-
-                    // If the hits goes to another page, we prevent the native link behavior
-                    // to leverage the Vue Router loading feature.
-                    if (this.$router.history.current.path !== hitPathname) {
-                      event.preventDefault()
-                    }
-
-                    this.$router.push(hit.url)
-                  },
-                  children
-                }
-              }
+            // Vue Router doesn't handle same-page navigation so we use
+            // the native browser location API for anchor navigation.
+            if (this.$router.history.current.path === hitPathname) {
+              window.location.assign(window.location.origin + itemUrl)
+            } else {
+              this.$router.push(itemUrl)
+            }
+          }
+        },
+        transformItems: (items) => {
+          return items.map((item) => {
+            return {
+              ...item,
+              url: this.getRelativePath(item.url)
             }
           })
-        )
+        },
+        hitComponent_disabled: ({ hit, children }) => {
+          return {
+            type: 'a',
+            ref: undefined,
+            constructor: undefined,
+            key: undefined,
+            props: {
+              href: hit.url,
+              onClick: (event) => {
+                if (isSpecialClick(event)) {
+                  return
+                }
+
+                // We rely on the native link scrolling when user is
+                // already on the right anchor because Vue Router doesn't
+                // support duplicated history entries.
+                if (this.$router.history.current.fullPath === hit.url) {
+                  return
+                }
+
+                const { pathname: hitPathname } = new URL(window.location.origin + hit.url)
+
+                // If the hits goes to another page, we prevent the native link behavior
+                // to leverage the Vue Router loading feature.
+                if (this.$router.history.current.path !== hitPathname) {
+                  event.preventDefault()
+                }
+
+                this.$router.push(hit.url)
+              },
+              children
+            }
+          }
+        }
       })
     },
-    update (options, lang) {
-      this.initialize(options, lang)
+    update(options, lang) {
+      return this.initialize(options, lang)
     }
   }
 }
@@ -141,7 +138,7 @@ export default {
   --docsearch-primary-color: #00dc82;
   --docsearch-highlight-color: var(--docsearch-primary-color);
   --docsearch-text-color: rgb(113, 113, 122);
-  --docsearch-modal-background: theme('colors.gray.100');
+  --docsearch-modal-background: theme("colors.gray.100");
   --docsearch-searchbox-shadow: 0 0 0 2px var(--docsearch-primary-color);
   --docsearch-searchbox-background: var(--color-transparent);
   --docsearch-searchbox-focus-background: var(--color-transparent);
@@ -155,12 +152,13 @@ export default {
 .dark {
   & .DocSearch {
     --docsearch-text-color: rgb(146, 173, 173);
-    --docsearch-modal-background: theme('colors.secondary-darker');
+    --docsearch-modal-background: theme("colors.secondary-darker");
     --docsearch-modal-shadow: inset 1px 1px 0 0 #052f14, 0 3px 8px 0 #0b160d;
     --docsearch-hit-color: var(--color-gray-300);
-    --docsearch-hit-background: theme('colors.secondary-darkest');
-    --docsearch-footer-background: theme('colors.secondary-darkest');
-    --docsearch-footer-shadow: inset 0 1px 0 0 rgba(73, 76, 106, 0.5), 0 -4px 8px 0 rgba(0, 0, 0, 0.2);
+    --docsearch-hit-background: theme("colors.secondary-darkest");
+    --docsearch-footer-background: theme("colors.secondary-darkest");
+    --docsearch-footer-shadow: inset 0 1px 0 0 rgba(73, 76, 106, 0.5),
+      0 -4px 8px 0 rgba(0, 0, 0, 0.2);
     --docsearch-container-background: rgb(0 30 38 / 64%);
   }
 }
