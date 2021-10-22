@@ -297,7 +297,7 @@ export async function compileTemplate (template: NuxtTemplate, ctx: any) {
  */
 export function addComponentsDirectory (directory: ComponentsDir) {
   const nuxt = useNuxt()
-  ensureNuxtCompatibility({ nuxt: '>=2.13' })
+  ensureNuxtCompatibility({ nuxt: '>=2.13' }, nuxt)
   nuxt.options.components = nuxt.options.components || []
   nuxt.hook('components:dirs', (dirs) => { dirs.push(directory) })
 }
