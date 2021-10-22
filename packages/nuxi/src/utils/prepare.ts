@@ -21,8 +21,9 @@ export const writeTypes = async (nuxt: Nuxt) => {
       paths: {}
     },
     include: [
-      '**/*',
-      join(relative(nuxt.options.buildDir, nuxt.options.rootDir), '**/*')
+      './nuxt.d.ts',
+      join(relative(nuxt.options.buildDir, nuxt.options.rootDir), '**/*'),
+      ...nuxt.options.srcDir !== nuxt.options.rootDir ? [join(relative(nuxt.options.buildDir, nuxt.options.srcDir), '**/*')] : []
     ]
   }
 
