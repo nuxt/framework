@@ -56,7 +56,7 @@ async function writeRoutes ({ output: { publicDir, serverDir }, _nuxt: { rootDir
   let nodeVersion = '14'
   try {
     const currentNodeVersion = fse.readJSONSync(join(rootDir, 'package.json')).engines.node
-    if (['16', '14', '12'].includes(currentNodeVersion)) {
+    if (['16', '14'].includes(currentNodeVersion)) {
       nodeVersion = currentNodeVersion
     }
   } catch {}
