@@ -78,6 +78,10 @@ export default defineNuxtModule({
       app.plugins.push({ src: '#build/components' })
     })
 
+    nuxt.hook('prepare:types', ({ references }) => {
+      references.push({ path: resolve(nuxt.options.buildDir, 'components.d.ts') })
+    })
+
     // Watch for changes
     nuxt.hook('builder:watch', async (event, path) => {
       if (!['add', 'unlink'].includes(event)) {

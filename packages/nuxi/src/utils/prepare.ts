@@ -6,7 +6,6 @@ import { getModulePaths, getNearestPackage } from './cjs'
 
 export const writeTypes = async (nuxt: Nuxt) => {
   const modulePaths = getModulePaths(nuxt.options.modulesDir)
-  const rootDir = nuxt.options.rootDir
 
   const tsConfig: TSConfig = {
     compilerOptions: {
@@ -63,7 +62,7 @@ export const writeTypes = async (nuxt: Nuxt) => {
     '',
     ...references.map((ref) => {
       if ('path' in ref) {
-        ref.path = relative(rootDir, ref.path)
+        ref.path = relative(nuxt.options.buildDir, ref.path)
       }
       return `/// <reference ${renderAttrs(ref)} />`
     }),
