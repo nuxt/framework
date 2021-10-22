@@ -295,11 +295,11 @@ export async function compileTemplate (template: NuxtTemplate, ctx: any) {
  *
  * Requires Nuxt 2.13+
  */
-export function addComponentsDirectory (directory: ComponentsDir) {
+export function addComponentsDir (dir: ComponentsDir) {
   const nuxt = useNuxt()
   ensureNuxtCompatibility({ nuxt: '>=2.13' }, nuxt)
   nuxt.options.components = nuxt.options.components || []
-  nuxt.hook('components:dirs', (dirs) => { dirs.push(directory) })
+  nuxt.hook('components:dirs', (dirs) => { dirs.push(dir) })
 }
 
 const serialize = (data: any) => JSON.stringify(data, null, 2).replace(/"{(.+)}"/g, '$1')
