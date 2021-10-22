@@ -295,7 +295,7 @@ export async function compileTemplate (template: NuxtTemplate, ctx: any) {
  *
  * Requires Nuxt 2.13+
  */
-export function registerComponentDirectory (directory: ComponentsOptions['dirs'][number]) {
+export function addComponentsDirectory (directory: ComponentsOptions['dirs'][number]) {
   const nuxt = useNuxt()
   ensureNuxtCompatibility({ nuxt: '>=2.13' })
   nuxt.options.components = nuxt.options.components || []
