@@ -90,14 +90,14 @@ export default {
             }
           })
         },
-        hitComponent_disabled: ({ hit, children }) => {
+        hitComponent: ({ hit, children }) => {
           return {
             type: 'a',
-            ref: undefined,
             constructor: undefined,
-            key: undefined,
+            __v: 1,
             props: {
               href: hit.url,
+              children: children,
               onClick: (event) => {
                 if (isSpecialClick(event)) {
                   return
@@ -120,7 +120,6 @@ export default {
 
                 this.$router.push(hit.url)
               },
-              children
             }
           }
         }
