@@ -289,7 +289,19 @@ export async function compileTemplate (template: NuxtTemplate, ctx: any) {
   throw new Error('Invalid template: ' + JSON.stringify(template))
 }
 
-const serialize = data => JSON.stringify(data, null, 2).replace(/"{(.+)}"/g, '$1')
+/**
+ * Register a directory to be scanned for components and imported only when used.
+ *
+ * Requires Nuxt 2.13+
+ */
+export function registerComponentDirectory (directory: string) {
+  const nuxt = useNuxt()
+  ensureNuxtCompatibility({ nuxt: '>=2.13' })
+  nuxt.options.components = nuxt.options.components || []
+  nuxt.hook('components:dirs', (dirs) => { dirs.push(directory) })
+}
+
+const serialize = (data: any) => JSON.stringify(data, null, 2).replace(/"{(.+)}"/g, '$1')
 
 const importName = (src: string) => `${camelCase(basename(src, extname(src))).replace(/[^a-zA-Z?\d\s:]/g, '')}_${hash(src)}`
 
