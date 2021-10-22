@@ -10,7 +10,7 @@ import { NuxtCompatibilityConstraints, NuxtCompatibilityIssues } from '../types/
 import { Nuxt } from '../types/nuxt'
 import { useNuxt } from '../nuxt'
 import type { NuxtTemplate, NuxtPlugin, NuxtPluginTemplate } from '../types/nuxt'
-import { ComponentsDir } from '..'
+import type { ComponentsDir } from '../types/components'
 
 /**
  * Renders given template using lodash template during build into the project buildDir
