@@ -141,10 +141,20 @@ export function useAsyncData<
   return asyncDataPromise as AsyncData<DataT>
 }
 
-function pick (obj: Record<string, any>, keys: string[]) {
+type PickInput = string | Record<string, PickInput[]>
+
+function pick (obj: Record<string, any>, keys: PickInput[]) {
   const newObj = {}
-  for (const key of keys) {
-    newObj[key] = obj[key]
+  for (let key = 0; key < keys.length; key++) {
+    const item = keys[key]
+    if (typeof item === 'object') {
+      for (const deepKey in item) {
+        const deepItem = item[deepKey]
+        newObj[deepKey] = pick(obj[deepKey], deepItem)
+      }
+    } else {
+      newObj[item] = obj[item]
+    }
   }
   return newObj
 }
