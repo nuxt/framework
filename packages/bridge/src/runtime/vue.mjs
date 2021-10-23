@@ -1,4 +1,4 @@
-import Vue from '#vue'
+import Vue from '@@vue'
 
 export * from '@vue/composition-api'
 
