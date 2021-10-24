@@ -8,7 +8,7 @@ import { ViteBuildContext, ViteOptions } from './types'
 import { wpfs } from './utils/wpfs'
 import { jsxPlugin } from './plugins/jsx'
 import { generateDevSSRManifest } from './manifest'
-import { bundleRequest } from './dev-bundler'
+import { bundleRequest } from '../../../vite/src/dev-bundler'
 
 export async function buildServer (ctx: ViteBuildContext) {
   // Workaround to disable HMR
@@ -44,6 +44,7 @@ export async function buildServer (ctx: ViteBuildContext) {
         'axios'
       ],
       noExternal: [
+        /\.(es|esm|esm-browser|esm-bundler).js$/,
         ...ctx.nuxt.options.build.transpile.filter(i => typeof i === 'string')
       ]
     },
@@ -95,7 +96,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Build and watch
   const _doBuild = async () => {
     const start = Date.now()
-    const { code } = await bundleRequest(viteServer, '/.nuxt/server.js')
+    const { code } = await bundleRequest({ viteServer }, '/.nuxt/server.js')
     await writeFile(resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'), code, 'utf-8')
     const time = (Date.now() - start)
     consola.info(`Server built in ${time}ms`)
