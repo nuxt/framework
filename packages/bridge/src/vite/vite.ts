@@ -78,11 +78,6 @@ async function bundle (nuxt: Nuxt, builder: any) {
     )
   }
 
-  // https://github.com/nuxt-community/i18n-module/pull/1079
-  const i18nAlias = ctx.config.resolve.alias['~i18n-klona']
-  if (i18nAlias) {
-    ctx.config.resolve.alias['~i18n-klona'] = i18nAlias.replace('.js', '.mjs')
-  }
   await ctx.nuxt.callHook('vite:extend', ctx)
 
   if (nuxt.options.dev) {
