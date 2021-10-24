@@ -2412,6 +2412,7 @@ __metadata:
     node-fetch: ^3.0.0
     nuxi: 3.0.0
     nuxt: ^2
+    p-debounce: ^4.0.0
     pathe: ^0.2.0
     postcss: ^8
     postcss-import: ^14.0.2
