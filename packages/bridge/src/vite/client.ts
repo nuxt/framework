@@ -25,10 +25,7 @@ export async function buildClient (ctx: ViteBuildContext) {
     },
     cacheDir: resolve(ctx.nuxt.options.rootDir, 'node_modules/.cache/vite/client'),
     resolve: {
-      alias: {
-        ...alias,
-        'vue2/env': ctx.config.resolve.alias['vue2/client']
-      }
+      alias
     },
     build: {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client'),
