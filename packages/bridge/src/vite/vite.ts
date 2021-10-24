@@ -54,7 +54,8 @@ async function bundle (nuxt: Nuxt, builder: any) {
           exclude: [
             'ufo',
             'date-fns',
-            'nanoid'
+            'nanoid',
+            'vue'
           ]
         },
         esbuild: {
