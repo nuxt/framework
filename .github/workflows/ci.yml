@@ -81,10 +81,10 @@ jobs:
         run: yarn build
 
       - name: Test with webpack
-        run: yarn test:bridge
+        run: yarn test:bridge:webpack
 
       - name: Test with vite
-        run: TEST_BRIDGE_VITE=1 yarn test:bridge
+        run: yarn test:bridge:vite
 
   build-release:
     needs:
