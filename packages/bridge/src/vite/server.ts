@@ -3,12 +3,12 @@ import * as vite from 'vite'
 import { createVuePlugin } from 'vite-plugin-vue2'
 import consola from 'consola'
 import { writeFile } from 'fs-extra'
+import { bundleRequest } from '../../../vite/src/dev-bundler'
 import pDebounce from './utils/p-debounce'
 import { ViteBuildContext, ViteOptions } from './types'
 import { wpfs } from './utils/wpfs'
 import { jsxPlugin } from './plugins/jsx'
 import { generateDevSSRManifest } from './manifest'
-import { bundleRequest } from '../../../vite/src/dev-bundler'
 
 export async function buildServer (ctx: ViteBuildContext) {
   // Workaround to disable HMR

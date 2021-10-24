@@ -10,7 +10,7 @@ export function setupAppBridge (_options: any) {
   nuxt.options.alias['#build'] = nuxt.options.buildDir
 
   // Resolve vue2 builds
-  nuxt.options.alias['vue2'] = resolveModule('vue/dist/vue.runtime.esm.js', { paths: nuxt.options.modulesDir })
+  nuxt.options.alias.vue2 = resolveModule('vue/dist/vue.runtime.esm.js', { paths: nuxt.options.modulesDir })
   nuxt.options.build.transpile.push('vue')
 
   // Alias vue to have identical vue3 exports
