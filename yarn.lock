@@ -2412,7 +2412,7 @@ __metadata:
     nuxi: 3.0.0
     nuxt: ^2
     pathe: ^0.2.0
-    postcss: 8
+    postcss: ^8
     postcss-import: ^14.0.2
     postcss-import-resolver: ^2.0.0
     postcss-preset-env: ^6.7.0
@@ -16392,7 +16392,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"postcss@npm:8, postcss@npm:^8.3.11":
+"postcss@npm:^8, postcss@npm:^8.3.11":
   version: 8.3.11
   resolution: "postcss@npm:8.3.11"
   dependencies:
