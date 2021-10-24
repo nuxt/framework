@@ -56,6 +56,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       rollupOptions: {
         input: resolve(ctx.nuxt.options.buildDir, 'server.js'),
         output: {
+          format: 'esm',
           entryFileNames: 'server.mjs',
           chunkFileNames: 'chunks/[name].mjs'
         },
