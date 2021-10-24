@@ -1,5 +1,4 @@
 import { createRequire } from 'module'
-import { resolve } from 'pathe'
 import { defineNuxtModule, installModule, checkNuxtCompatibilityIssues } from '@nuxt/kit'
 import type { BridgeConfig } from '../types'
 import { setupNitroBridge } from './nitro'
@@ -11,7 +10,6 @@ import { setupTypescript } from './typescript'
 import { setupMeta } from './meta'
 import { setupTranspile } from './transpile'
 import { setupScriptSetup } from './setup'
-import { distDir } from './dirs'
 
 export default defineNuxtModule({
   name: 'nuxt-bridge',
@@ -31,7 +29,7 @@ export default defineNuxtModule({
     typescript: true,
     resolve: true
   } as BridgeConfig,
-  async setup(opts, nuxt) {
+  async setup (opts, nuxt) {
     const _require = createRequire(import.meta.url)
 
     if (opts.nitro) {
