@@ -27,7 +27,7 @@
   },
   "resolutions": {
     "nuxt3": "workspace:./packages/nuxt3",
-    "unbuild": "^0.5.10",
+    "unbuild": "^0.5.11",
     "jiti": "^1.12.9"
   },
   "devDependencies": {
@@ -36,12 +36,12 @@
     "@types/chai": "^4.2.22",
     "@types/jsdom": "^16",
     "@types/mocha": "^9.0.0",
-    "@types/node": "^14.17.27",
+    "@types/node": "^14.17.29",
     "@types/object-hash": "^2",
     "chai": "^4.3.4",
-    "esbuild": "^0.13.8",
+    "esbuild": "^0.13.9",
     "eslint": "^7.32.0",
-    "eslint-plugin-jsdoc": "^36.1.1",
+    "eslint-plugin-jsdoc": "^37.0.0",
     "execa": "^5.1.1",
     "globby": "^11.0.4",
     "jiti": "^1.12.9",
@@ -51,7 +51,7 @@
     "object-hash": "^2.2.0",
     "pathe": "^0.2.0",
     "typescript": "^4.4.4",
-    "unbuild": "^0.5.10",
+    "unbuild": "^0.5.11",
     "vue-router": "next"
   },
   "packageManager": "yarn@3.0.2",
