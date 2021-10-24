@@ -12,7 +12,7 @@ export async function warmupViteServer (server: ViteDevServer, entries: string[]
     } catch (e) {
       consola.debug('Warmup for %s failed with: %s', url, e)
     }
-    const deps = Array.from(server.moduleGraph.urlToModuleMap.get(url).importedModules)
+    const deps = Array.from(server.moduleGraph.urlToModuleMap.get(url)?.importedModules || [])
     await Promise.all(deps.map(m => warmup(m.url)))
   }
 

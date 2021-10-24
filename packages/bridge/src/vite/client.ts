@@ -17,11 +17,7 @@ export async function buildClient (ctx: ViteBuildContext) {
 
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     define: {
-      'process.server': false,
-      'process.client': true,
-      'process.static': false,
-      global: 'window',
-      'module.hot': false
+      'global': 'globalThis',
     },
     cacheDir: resolve(ctx.nuxt.options.rootDir, 'node_modules/.cache/vite/client'),
     resolve: {
@@ -37,7 +33,13 @@ export async function buildClient (ctx: ViteBuildContext) {
       ssrManifest: true
     },
     plugins: [
-      replace({ 'process.env': 'import.meta.env' }),
+      replace({
+        'process.env': 'import.meta.env',
+        'process.client': 'true',
+        'process.server': 'false',
+        'process.static': 'false',
+        'module.hot': 'false'
+      }),
       jsxPlugin(),
       createVuePlugin(ctx.config.vue),
       PluginLegacy()
@@ -66,6 +68,9 @@ export async function buildClient (ctx: ViteBuildContext) {
     // Workaround: vite devmiddleware modifies req.url
     const originalURL = req.url
     req.url = req.url.replace('/_nuxt/', '/.nuxt/')
+    if (req.url.includes('@vite/client')) {
+      req.url = '/@vite/client'
+    }
     viteServer.middlewares.handle(req, res, (err) => {
       req.url = originalURL
       next(err)

@@ -33,8 +33,9 @@ async function bundle (nuxt: Nuxt, builder: any) {
           extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
           alias: {
             ...nuxt.options.alias,
+            '#build': nuxt.options.buildDir,
             '.nuxt': nuxt.options.buildDir,
-            _nuxt: nuxt.options.buildDir,
+            '/.nuxt/entry.mjs': resolve(nuxt.options.buildDir, 'client.js'),
             '~': nuxt.options.srcDir,
             '@': nuxt.options.srcDir,
             'web-streams-polyfill/ponyfill/es2018': resolve(distDir, 'runtime/vite/mock/web-streams-polyfill.mjs'),
@@ -85,7 +86,7 @@ async function bundle (nuxt: Nuxt, builder: any) {
   if (nuxt.options.dev) {
     ctx.nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer) => {
       const start = Date.now()
-      warmupViteServer(server, ['/.nuxt/client.js']).then(() => {
+      warmupViteServer(server, ['/.nuxt/entry.mjs']).then(() => {
         consola.info(`Vite warmed up in ${Date.now() - start}ms`)
       }).catch(consola.error)
     })

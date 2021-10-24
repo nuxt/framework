@@ -135,20 +135,16 @@ export async function generateDevSSRManifest (ctx: ViteBuildContext) {
   const ssrManifest = await readJSON(rDist('server/ssr-manifest.json'))
   const css = Object.keys(ssrManifest).filter(isCSS)
 
-  // renderer does not respect `publicPath` and will always append `/_nuxt/`,
-  // add this as an temporary workaround
-  const fixedCss = css.map(i => `../${i}`)
+  const entires = [
+    '@vite/client',
+    'entry.mjs',
+    ...css.map(i => `../${i}`)
+  ]
 
   const clientManifest = {
     publicPath: '',
-    all: [
-      'empty.js',
-      ...fixedCss
-    ],
-    initial: [
-      'empty.js',
-      ...fixedCss
-    ],
+    all: entires,
+    initial: entires,
     async: [],
     modules: {},
     assetsMapping: {}
