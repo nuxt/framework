@@ -19,7 +19,7 @@ const resolveTemplate = (template) => {
   }
 
   if (typeof template === 'boolean') {
-    consola.error(`Please specify a template`)
+    consola.error('Please specify a template')
     process.exit(1)
   }
 
