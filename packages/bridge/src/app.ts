@@ -10,22 +10,14 @@ export function setupAppBridge (_options: any) {
   nuxt.options.alias['#build'] = nuxt.options.buildDir
 
   // Resolve vue2 builds
-  nuxt.options.alias['vue2/client'] = resolveModule('vue/dist/vue.runtime.esm.js', { paths: nuxt.options.modulesDir })
-  nuxt.options.alias['vue2/server'] = resolveModule('vue/dist/vue.runtime.js', { paths: nuxt.options.modulesDir })
-  nuxt.hook('vite:extendConfig', (config, { isServer }) => {
-    config.resolve.alias['vue2/env'] = isServer ? nuxt.options.alias['vue2/server'] : nuxt.options.alias['vue2/client']
-  })
-  nuxt.hook('webpack:config', configs => {
-    for (const config of configs) {
-      const isServer = config.name === 'server'
-      config.resolve.alias['vue2/env'] =  isServer ? nuxt.options.alias['vue2/server'] : nuxt.options.alias['vue2/client']
-    }
-  })
+  nuxt.options.alias['vue2'] = resolveModule('vue/dist/vue.runtime.esm.js', { paths: nuxt.options.modulesDir })
+  nuxt.options.build.transpile.push('vue')
 
   // Alias vue to have identical vue3 exports
-  nuxt.options.alias['vue2/bridge'] = resolve(distDir, 'runtime/vue2-bridge.mjs')
-  nuxt.options.alias.vue = resolve(distDir, 'runtime/vue2-bridge.mjs')
+  nuxt.options.alias['vue2-bridge'] = resolve(distDir, 'runtime/vue2-bridge.mjs')
   for (const alias of [
+    // vue
+    'vue',
     // vue 3 helper packages
     '@vue/shared',
     '@vue/reactivity',
@@ -49,7 +41,7 @@ export function setupAppBridge (_options: any) {
       'vue/dist/vue.runtime.min'
     ].flatMap(m => [m, `${m}.js`])
   ]) {
-    nuxt.options.alias[alias] = 'vue2/bridge'
+    nuxt.options.alias[alias] = nuxt.options.alias['vue2-bridge']
   }
 
   // Deprecate various Nuxt options

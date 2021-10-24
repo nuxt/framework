@@ -56,7 +56,8 @@ async function bundle (nuxt: Nuxt, builder: any) {
             'date-fns',
             'nanoid',
             'vue',
-            'vue2'
+            'vue2',
+            'vue2-bridge'
           ]
         },
         esbuild: {
