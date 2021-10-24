@@ -31,7 +31,7 @@ export default defineNuxtModule({
     typescript: true,
     resolve: true
   } as BridgeConfig,
-  async setup (opts, nuxt) {
+  async setup(opts, nuxt) {
     const _require = createRequire(import.meta.url)
 
     if (opts.nitro) {
@@ -53,7 +53,8 @@ export default defineNuxtModule({
       await setupAutoImports()
     }
     if (opts.vite) {
-      await installModule(nuxt, _require.resolve(resolve(distDir, '../dist/vite.module.mjs')))
+      const viteModule = await import('./vite/module')
+      await installModule(nuxt, viteModule)
     }
     if (opts.postcss8) {
       await installModule(nuxt, _require.resolve('@nuxt/postcss8'))

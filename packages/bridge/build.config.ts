@@ -5,9 +5,6 @@ export default defineBuildConfig({
   emitCJS: false,
   entries: [
     'src/module',
-    'src/dirs',
-    { input: 'src/vite/index', name: 'vite.module' },
-    { input: 'src/vite/vite', name: 'vite' },
     { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm', declaration: true }
   ],
   externals: [
