@@ -37,7 +37,10 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     cacheDir: resolve(ctx.nuxt.options.rootDir, 'node_modules/.cache/vite/server'),
     resolve: {
-      alias
+      alias: {
+        ...alias,
+        'vue2/env': ctx.config.resolve.alias['vue2/server']
+      }
     },
     ssr: {
       external: [
