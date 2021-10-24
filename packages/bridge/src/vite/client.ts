@@ -17,7 +17,7 @@ export async function buildClient (ctx: ViteBuildContext) {
 
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     define: {
-      'global': 'globalThis',
+      global: 'globalThis'
     },
     cacheDir: resolve(ctx.nuxt.options.rootDir, 'node_modules/.cache/vite/client'),
     resolve: {
