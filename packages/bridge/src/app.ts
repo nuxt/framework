@@ -9,12 +9,17 @@ export function setupAppBridge (_options: any) {
   nuxt.options.alias['#app'] = resolve(distDir, 'runtime/index.mjs')
   nuxt.options.alias['#build'] = nuxt.options.buildDir
 
-  // Alias vue to a vue3-compat version of vue2
-  nuxt.options.alias['#vue'] = nuxt.options.alias.vue || resolveModule('vue/dist/vue.runtime.esm.js', { paths: nuxt.options.modulesDir })
+  // Resolve vue2 (internal use)
+  nuxt.options.alias['vue2'] = resolveModule('vue/dist/vue.runtime.esm.js', { paths: nuxt.options.modulesDir })
+
+  // Alias vue to to a compatible package with imports from vue3
+  nuxt.options.alias.vue = resolve(distDir, 'runtime/vue2-bridge.mjs')
+  nuxt.options.build.transpile.push('vue')
   for (const alias of [
     // vue 3 helper packages
     '@vue/shared',
     '@vue/reactivity',
+    '@vue/runtime-core',
     ...[
       // vue 2 dist files
       'vue/dist/vue.common.dev',
@@ -35,8 +40,6 @@ export function setupAppBridge (_options: any) {
   ]) {
     nuxt.options.alias[alias] = 'vue'
   }
-  nuxt.options.alias.vue = resolve(distDir, 'runtime/vue.mjs')
-  nuxt.options.build.transpile.push('vue')
 
   // Deprecate various Nuxt options
   if (nuxt.options.globalName !== 'nuxt') {
