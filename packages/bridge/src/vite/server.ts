@@ -55,6 +55,10 @@ export async function buildServer (ctx: ViteBuildContext) {
       ssrManifest: true,
       rollupOptions: {
         input: resolve(ctx.nuxt.options.buildDir, 'server.js'),
+        output: {
+          entryFileNames: 'server.mjs',
+          chunkFileNames: 'chunks/[name].mjs'
+        },
         onwarn (warning, rollupWarn) {
           if (!['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
             rollupWarn(warning)
