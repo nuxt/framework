@@ -50,11 +50,10 @@ export default defineNuxtCommand({
         }
         if (currentNuxt) {
           await currentNuxt.close()
-          currentNuxt = null
         }
         const newNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
         await clearDir(newNuxt.options.buildDir)
-        prepare(newNuxt)
+        prepare()
         currentNuxt = newNuxt
         await currentNuxt.ready()
         await buildNuxt(currentNuxt)
