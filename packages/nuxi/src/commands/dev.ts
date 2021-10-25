@@ -51,7 +51,7 @@ export default defineNuxtCommand({
         }
         const newNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
         await clearDir(newNuxt.options.buildDir)
-        writeTypes(newNuxt)
+        writeTypes(newNuxt).catch(console.error)
         currentNuxt = newNuxt
         await currentNuxt.ready()
         await buildNuxt(currentNuxt)
