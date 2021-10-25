@@ -15,7 +15,8 @@ export default {
      */
     config: {
       silent: { $resolve: (val, get) => val ?? !get('dev') },
-      performance: { $resolve: (val, get) => val ?? get('dev') }
+      performance: { $resolve: (val, get) => val ?? get('dev') },
+      compilerOptions: {}
     }
   },
 
