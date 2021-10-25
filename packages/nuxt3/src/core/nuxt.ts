@@ -44,6 +44,11 @@ async function initNuxt (nuxt: Nuxt) {
     opts.references.push({ types: 'nuxt3' })
   })
 
+  // Add builder types
+  nuxt.hook('prepare:types', (opts) => {
+    opts.references.push({ types: nuxt.options.vite !== false ? 'vite/client' : 'webpack-env' })
+  })
+
   // Init user modules
   await nuxt.callHook('modules:before', { nuxt } as ModuleContainer)
   const modulesToInstall = [
