@@ -229,7 +229,7 @@ export default {
         object: 'src',
         embed: 'src'
       },
-      compilerOptions: { $resolve: (val, get) => val ?? get('vue.config.compilerOptions') },
+      compilerOptions: { $resolve: (val, get) => val ?? get('vue.compilerOptions') },
     },
     css: {
       importLoaders: 0,

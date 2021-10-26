@@ -55,9 +55,7 @@ export async function bundle (nuxt: Nuxt) {
         // TODO: move to kit schema when it exists
         vue: {
           isProduction: !nuxt.options.dev,
-          script: nuxt.options.vue.config,
-          style: nuxt.options.vue.config,
-          template: nuxt.options.vue.config
+          template: { compilerOptions: nuxt.options.vue.compilerOptions }
         },
         css: resolveCSSOptions(nuxt),
         optimizeDeps: {

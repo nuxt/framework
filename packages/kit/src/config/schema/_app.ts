@@ -16,8 +16,13 @@ export default {
     config: {
       silent: { $resolve: (val, get) => val ?? !get('dev') },
       performance: { $resolve: (val, get) => val ?? get('dev') },
-      compilerOptions: {}
-    }
+    },
+    /**
+     * Options for the Vue compiler that will be passed at build time
+     * @see [documentation](https://v3.vuejs.org/api/application-config.html)
+     * @version 3
+     */
+    compilerOptions: {}
   },
 
   /**
