@@ -1,13 +1,17 @@
 import { execSync } from 'child_process'
-import { rmdir } from 'fs/promises'
-import { existsSync } from 'fs'
+import { promises as fsp, existsSync } from 'fs'
 import consola from 'consola'
 import { resolve } from 'pathe'
-import { getNearestPackage } from '../utils/cjs'
+import { resolveModule } from '../utils/cjs'
 import { defineNuxtCommand } from './index'
 
-function getNuxtVersion () {
-  return getNearestPackage('nuxt3', './node_modules')?.version
+async function getNuxtVersion (paths: string | string[]) {
+  const pkgJson = resolveModule('nuxt3/package.json', paths)
+  const pkg = pkgJson && JSON.parse(await fsp.readFile(pkgJson, 'utf8'))
+  if (!pkg.version) {
+    consola.warn('Cannot find any installed nuxt3 versions in ', paths)
+  }
+  return pkg.version || '0.0.0'
 }
 
 export default defineNuxtCommand({
@@ -22,38 +26,43 @@ export default defineNuxtCommand({
     const yarnLock = 'yarn.lock'
     const npmLock = 'package-lock.json'
 
-    consola.info('Detecting package manager...')
     const isYarn = existsSync(resolve(rootDir, yarnLock))
     const isNpm = existsSync(resolve(rootDir, npmLock))
     const packageManager = isYarn ? 'yarn' : isNpm ? 'npm' : null
     if (!packageManager) {
-      throw new Error('Cannot detect Package Manager.')
+      console.error('Cannot detect Package Manager in', rootDir)
+      process.exit(1)
     }
     const packageManagerVersion = execSync(`${packageManager} --version`).toString('utf8').trim()
     consola.info('Package Manager:', packageManager, packageManagerVersion)
 
+    const currentVersion = await getNuxtVersion(rootDir)
+    consola.info('Current nuxt version:', currentVersion)
+
     if (args.force || args.f) {
-      consola.info('Removing lock file and node_modules...')
+      consola.info('Removing lock-file and node_modules...')
       await Promise.all([
-        rmdir(yarnLock, { recursive: true }),
-        rmdir(npmLock, { recursive: true }),
-        rmdir('node_modules', { recursive: true })
+        fsp.rm(isYarn ? yarnLock : npmLock),
+        fsp.rmdir('node_modules', { recursive: true })
       ])
+      execSync(`${packageManager} install`, { stdio: 'inherit' })
+    } else {
+      consola.info('Upgrading nuxt...')
+      execSync(`${packageManager} ${isYarn ? 'add' : 'install'} nuxt3@latest`, { stdio: 'inherit' })
     }
 
-    consola.info('Upgrading nuxt3...')
-    const prevVersion = getNuxtVersion()
-    if (isYarn && Number(packageManagerVersion.split('.')[0]) > 1) {
-      execSync(`${packageManager} up nuxt3 -i`, { stdio: 'inherit' })
-    } else {
-      execSync(`${packageManager} upgrade nuxt3`, { stdio: 'inherit' })
-    }
-    const currentVersion = getNuxtVersion()
+    const upgradedVersion = await getNuxtVersion(rootDir)
+    consola.info('Upgraded nuxt version:', upgradedVersion)
 
-    if (prevVersion === currentVersion) {
-      consola.success('You\'re already using the latest nuxt3.')
+    if (upgradedVersion === currentVersion) {
+      consola.success('You\'re already using the latest version of nuxt3.')
     } else {
-      consola.success('Upgrade nuxt3 success. Upgraded from', prevVersion, 'to', currentVersion)
+      consola.success('Successfully upgraded nuxt from', currentVersion, 'to', upgradedVersion)
+      const commitA = currentVersion.split('.').pop()
+      const commitB = upgradedVersion.split('.').pop()
+      if (commitA && commitB) {
+        consola.info('Changelog:', `https://github.com/nuxt/framework/compare/${commitA}...${commitB}`)
+      }
     }
   }
 })
