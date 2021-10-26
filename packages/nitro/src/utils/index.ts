@@ -7,6 +7,7 @@ import { mergeHooks } from 'hookable'
 import consola from 'consola'
 import chalk from 'chalk'
 import dotProp from 'dot-prop'
+import { readNearestPackageJSON } from 'pkg-types'
 import type { NitroPreset, NitroInput } from '../context'
 
 export function hl (str: string) {
@@ -126,25 +127,10 @@ export function serializeImportName (id: string) {
   return '_' + id.replace(/[^a-zA-Z0-9_$]/g, '_')
 }
 
-export function readPackageJson (
+export function getPackageVersion (
   packageName: string,
   _require: NodeRequire = createRequire(import.meta.url)
-) {
-  try {
-    return _require(`${packageName}/package.json`)
-  } catch (error) {
-    if (error.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED') {
-      const pkgModulePaths = /^(.*\/node_modules\/).*$/.exec(_require.resolve(packageName))
-      for (const pkgModulePath of pkgModulePaths) {
-        const path = resolve(pkgModulePath, packageName, 'package.json')
-        if (fse.existsSync(path)) {
-          return fse.readJSONSync(path)
-        }
-        continue
-      }
-
-      throw error
-    }
-    throw error
-  }
+): Promise<string | undefined> {
+  const pkg = _require.resolve(packageName)
+  return readNearestPackageJSON(pkg).then(r => r?.version)
 }

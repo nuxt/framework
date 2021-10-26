@@ -2679,6 +2679,7 @@ __metadata:
     ora: ^6.0.1
     p-debounce: ^4.0.0
     pathe: ^0.2.0
+    pkg-types: ^0.2.3
     pretty-bytes: ^5.6.0
     rollup: ^2.58.3
     rollup-plugin-terser: ^7.0.2
@@ -15184,6 +15185,16 @@ fsevents@~2.3.2:
   dependencies:
     jsonc-parser: ^3.0.0
   checksum: e5b0497cc477852548d6485b8440eb03906c75aff2cd99a46ff5b109aa189b48012f232ae53ec3b803d3f9d401f12b29a6121460c335bf07e03674e9cea7a082
+  languageName: node
+  linkType: hard
+
+"pkg-types@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "pkg-types@npm:0.2.3"
+  dependencies:
+    jsonc-parser: ^3.0.0
+    pathe: ^0.2.0
+  checksum: 3d40669f29c58d1efa019e5f75633fd769d9479c0683045ae137664e1aab199126e48c21fac2129b75cef26fe4c353234c80e804e09ab2224dd9f8c99c8cf410
   languageName: node
   linkType: hard
 
