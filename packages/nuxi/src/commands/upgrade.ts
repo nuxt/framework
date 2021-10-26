@@ -32,8 +32,8 @@ export default defineNuxtCommand({
       if (verbose) { console.log('Removing lock file and node_modules...') }
       await Promise.all([
         remove(yarnLock),
-        remove(npmLock)
-        // remove('node_modules')
+        remove(npmLock),
+        remove('node_modules')
       ])
     }
 
