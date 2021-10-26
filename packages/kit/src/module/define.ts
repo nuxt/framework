@@ -89,8 +89,8 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
           }
         }
         for await (const template of virtualTemplates) {
-          await fsp.mkdir(dirname(template.dst), { recursive: true })
           const contents = await compileTemplate({ ...template, src: '' }, context)
+          await fsp.mkdir(dirname(template.dst), { recursive: true })
           await fsp.writeFile(template.dst, contents)
         }
       })
