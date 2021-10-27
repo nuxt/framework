@@ -94,7 +94,6 @@ export async function bundle (nuxt: Nuxt) {
     )
   }
 
-
   await nuxt.callHook('vite:extend', ctx)
 
   nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer) => {
