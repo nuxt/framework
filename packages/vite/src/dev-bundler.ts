@@ -149,7 +149,7 @@ async function __instantiateModule__(url, urlStack) {
   const stubModule = { [Symbol.toStringTag]: 'Module' }
   Object.defineProperty(stubModule, '__esModule', { value: true })
   mod.stubModule = stubModule
-  const importMeta = { url, hot: { accept() {} } }
+  const importMeta = { url, hot: { accept() {}, prune() {} } }
   urlStack = urlStack.concat(url)
   const isCircular = url => urlStack.includes(url)
   const pendingDeps = []
