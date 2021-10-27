@@ -25,6 +25,8 @@ function isExternal (opts: TransformOptions, id: string) {
   // Externals
   const ssrConfig = (opts.viteServer.config as any).ssr
 
+  // Vite's alias have two possible formats
+  // https://vitejs.dev/config/#resolve-alias
   const alias = opts.viteServer.config.resolve.alias || {}
   const aliasKeys = Array.isArray(alias)
     ? alias.map(i => i.find).filter(Boolean)
