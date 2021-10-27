@@ -149,6 +149,7 @@ async function __instantiateModule__(url, urlStack) {
   const stubModule = { [Symbol.toStringTag]: 'Module' }
   Object.defineProperty(stubModule, '__esModule', { value: true })
   mod.stubModule = stubModule
+  // https://vitejs.dev/guide/api-hmr.html
   const importMeta = { url, hot: { accept() {}, prune() {}, dispose() {}, invalidate() {}, decline() {}, on() {} } }
   urlStack = urlStack.concat(url)
   const isCircular = url => urlStack.includes(url)
