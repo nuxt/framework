@@ -94,7 +94,6 @@ export async function bundle (nuxt: Nuxt) {
     )
   }
 
-  console.log(ctx.config.resolve.alias)
 
   await nuxt.callHook('vite:extend', ctx)
 
