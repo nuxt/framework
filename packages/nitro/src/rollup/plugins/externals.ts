@@ -86,6 +86,9 @@ export function externals (opts: NodeExternalsOptions): Plugin {
         }
 
         const writeFile = async (file) => {
+          if (await fse.stat(file).then(i => i.isDirectory())) {
+            return
+          }
           const src = resolve(opts.traceOptions.base, file)
           const dst = resolve(opts.outDir, 'node_modules', file.split('node_modules/').pop())
           await fse.mkdirp(dirname(dst))
