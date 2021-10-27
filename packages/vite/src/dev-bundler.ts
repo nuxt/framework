@@ -25,12 +25,17 @@ function isExternal (opts: TransformOptions, id: string) {
   // Externals
   const ssrConfig = (opts.viteServer.config as any).ssr
 
+  const alias = opts.viteServer.config.resolve.alias || {}
+  const aliasKeys = Array.isArray(alias)
+    ? alias.map(i => i.find).filter(Boolean)
+    : Object.keys(alias)
+
   const externalOpts: ExternalsOptions = {
     inline: [
       /virtual:/,
       /\.ts$/,
       // Things like '~', '@', etc.
-      ...Object.keys(opts.viteServer.config.resolve.alias),
+      ...aliasKeys,
       ...ExternalsDefaults.inline,
       ...ssrConfig.noExternal
     ],
