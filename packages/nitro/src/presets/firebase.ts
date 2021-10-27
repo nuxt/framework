@@ -3,8 +3,8 @@ import { join, relative, resolve } from 'pathe'
 import fse from 'fs-extra'
 import consola from 'consola'
 import globby from 'globby'
-
-import { getPackageVersion, writeFile } from '../utils'
+import { readPackageJSON } from 'pkg-types'
+import { writeFile } from '../utils'
 import { NitroPreset, NitroContext } from '../context'
 
 export const firebase: NitroPreset = {
@@ -71,8 +71,8 @@ async function writeRoutes ({ output: { publicDir, serverDir }, _nuxt: { rootDir
         dependencies,
         devDependencies: {
           'firebase-functions-test': 'latest',
-          'firebase-admin': await getPackageVersion('firebase-admin'),
-          'firebase-functions': await getPackageVersion('firebase-functions')
+          'firebase-admin': await readPackageJSON('firebase-admin').then(p => p.version),
+          'firebase-functions': await readPackageJSON('firebase-functions').then(p => p.version)
         },
         engines: { node: nodeVersion }
       },
