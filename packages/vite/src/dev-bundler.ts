@@ -25,12 +25,19 @@ function isExternal (opts: TransformOptions, id: string) {
   // Externals
   const ssrConfig = (opts.viteServer.config as any).ssr
 
+  // Vite's alias have two possible formats
+  // https://vitejs.dev/config/#resolve-alias
+  const alias = opts.viteServer.config.resolve.alias || {}
+  const aliasKeys = Array.isArray(alias)
+    ? alias.map(i => i.find).filter(Boolean)
+    : Object.keys(alias)
+
   const externalOpts: ExternalsOptions = {
     inline: [
       /virtual:/,
       /\.ts$/,
       // Things like '~', '@', etc.
-      ...Object.keys(opts.viteServer.config.resolve.alias),
+      ...aliasKeys,
       ...ExternalsDefaults.inline,
       ...ssrConfig.noExternal
     ],
@@ -124,7 +131,7 @@ const ${hashId(chunk.id)} = ${chunk.code}
   const ssrModuleLoader = `
 const __pendingModules__ = new Map()
 const __pendingImports__ = new Map()
-const __ssrContext__ = { global: {} }
+const __ssrContext__ = { global: globalThis }
 
 function __ssrLoadModule__(url, urlStack = []) {
   const pendingModule = __pendingModules__.get(url)
@@ -142,7 +149,8 @@ async function __instantiateModule__(url, urlStack) {
   const stubModule = { [Symbol.toStringTag]: 'Module' }
   Object.defineProperty(stubModule, '__esModule', { value: true })
   mod.stubModule = stubModule
-  const importMeta = { url, hot: { accept() {} } }
+  // https://vitejs.dev/guide/api-hmr.html
+  const importMeta = { url, hot: { accept() {}, prune() {}, dispose() {}, invalidate() {}, decline() {}, on() {} } }
   urlStack = urlStack.concat(url)
   const isCircular = url => urlStack.includes(url)
   const pendingDeps = []

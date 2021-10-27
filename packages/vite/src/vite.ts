@@ -39,7 +39,7 @@ export async function bundle (nuxt: Nuxt) {
             '#app': nuxt.options.appDir,
             // We need this resolution to be present before the following entry, but it
             // will be filled in client/server configs
-            '#build/plugins': undefined,
+            '#build/plugins': '',
             '#build': nuxt.options.buildDir,
             '/build': nuxt.options.buildDir,
             '/app': nuxt.options.appDir,
@@ -52,7 +52,11 @@ export async function bundle (nuxt: Nuxt) {
           }
         },
         base: nuxt.options.build.publicPath,
-        vue: {},
+        // TODO: move to kit schema when it exists
+        vue: {
+          isProduction: !nuxt.options.dev,
+          template: { compilerOptions: nuxt.options.vue.compilerOptions }
+        },
         css: resolveCSSOptions(nuxt),
         optimizeDeps: {
           exclude: [],
