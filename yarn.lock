@@ -2831,7 +2831,7 @@ __metadata:
   resolution: "@nuxt/vite-builder@workspace:packages/vite"
   dependencies:
     "@nuxt/kit": 3.0.0
-    "@vitejs/plugin-vue": ^1.9.3
+    "@vitejs/plugin-vue": ^1.9.4
     "@vitejs/plugin-vue-jsx": ^1.2.0
     autoprefixer: ^10.3.7
     chokidar: ^3.5.2
@@ -4227,12 +4227,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:^1.9.3":
-  version: 1.9.3
-  resolution: "@vitejs/plugin-vue@npm:1.9.3"
+"@vitejs/plugin-vue@npm:^1.9.4":
+  version: 1.9.4
+  resolution: "@vitejs/plugin-vue@npm:1.9.4"
   peerDependencies:
     vite: ^2.5.10
-  checksum: b987535135b6ae82ba1bab3001ef1dfb39934402c733b56262740f4a0ee21dcb8b960218e641776d0f05d0271c89bc1cad44b7286ad8564c3179618673781dec
+  checksum: 43cb38a0520c6e60aa807ec6135fd4370965631c98275148fd938804505ef3e2a9c4a84e5bd0bc36285f2971afa12ed82d804ebd4b8d55f3bae9a6d58a744e26
   languageName: node
   linkType: hard
 
