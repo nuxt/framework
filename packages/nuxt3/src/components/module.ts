@@ -65,6 +65,9 @@ export default defineNuxtModule({
         return
       }
 
+      // Only globally register components in development mode
+      if (!nuxt.options.dev) { return }
+
       app.templates.push({
         ...componentsTemplate,
         options: { components }
