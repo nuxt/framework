@@ -1,6 +1,7 @@
 import { pathToFileURL } from 'url'
 import * as vite from 'vite'
 import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults } from 'externality'
+import { isValidNodeImport } from 'mlly'
 import { hashId, uniq } from './utils'
 
 export interface TransformChunk {
@@ -44,6 +45,8 @@ function isExternal (opts: TransformOptions, id: string) {
   return _isExternal(id, opts.viteServer.config.root, externalOpts)
 }
 
+const inlinedPackages = new Set<string>()
+
 async function transformRequest (opts: TransformOptions, id: string) {
   // Virtual modules start with `\0`
   if (id && id.startsWith('/@id/__x00__')) {
@@ -61,10 +64,18 @@ async function transformRequest (opts: TransformOptions, id: string) {
   }
 
   if (await isExternal(opts, id)) {
-    return {
-      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${(pathToFileURL(id))}').then(r => { exports.default = r.default; ssrExportAll(r) })`,
-      deps: [],
-      dynamicDeps: []
+    if (await isValidNodeImport(id)) {
+      return {
+        code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${(pathToFileURL(id))}').then(r => { exports.default = r.default; ssrExportAll(r) })`,
+        deps: [],
+        dynamicDeps: []
+      }
+    } else {
+      const packageName = id.replace(/^.*node_modules\/([^/]*)\/(.*)/g, '$1')
+      if (!inlinedPackages.has(packageName)) {
+        console.warn(`Automatically inlining \`${packageName}\` as it does not provide a valid Node ESM import. Please raise an issue with that package's maintainers directly. If you believe this to be incorrect, let us know so we can improve our detection.`)
+        inlinedPackages.add(packageName)
+      }
     }
   }
 
