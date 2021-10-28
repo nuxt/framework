@@ -39,7 +39,7 @@ function isExternal (opts: TransformOptions, id: string) {
     resolve: {
       type: 'module',
       extensions: ['.ts', '.js', '.json', '.vue', '.mjs', '.jsx', '.tsx', '.wasm']
-    },
+    }
     detectInvalidNodeImports: true
   }
   return _isExternal(id, opts.viteServer.config.root, externalOpts)
