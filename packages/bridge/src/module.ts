@@ -53,9 +53,6 @@ export default defineNuxtModule({
     if (opts.vite) {
       const viteModule = await import('./vite/module').then(r => r.default || r)
       await installModule(nuxt, viteModule)
-      nuxt.hook('prepare:types', (opts) => {
-        opts.references.push({ types: 'vite/client' })
-      })
     }
     if (opts.postcss8) {
       await installModule(nuxt, _require.resolve('@nuxt/postcss8'))
