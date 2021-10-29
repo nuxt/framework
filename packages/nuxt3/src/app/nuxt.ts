@@ -99,12 +99,6 @@ export function createNuxtApp (options: CreateOptions) {
     nuxtApp.ssrContext.nuxt = nuxtApp
   }
 
-  // (temporary) Expose NuxtWelcome component in dev
-  if (process.dev) {
-    // @ts-ignore
-    nuxtApp.vueApp.component('NuxtWelcome', defineAsyncComponent(() => import('./components/nuxt-welcome.vue')))
-  }
-
   if (process.server) {
     // Expose to server renderer to create window.__NUXT__
     nuxtApp.ssrContext = nuxtApp.ssrContext || {}
