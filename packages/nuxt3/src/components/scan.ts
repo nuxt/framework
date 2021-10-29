@@ -74,7 +74,7 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
         chunkName,
         shortPath,
         export: 'default',
-        global: Boolean(dir.global),
+        global: dir.global,
         level: Number(dir.level),
         prefetch: Boolean(dir.prefetch),
         preload: Boolean(dir.preload)
