@@ -1,3 +1,6 @@
+// ImportMeta augmentation
+import './types/env'
+
 // Config
 export * from './config/load'
 export * from './config/env'
