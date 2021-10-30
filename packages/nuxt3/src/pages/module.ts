@@ -15,6 +15,12 @@ export default defineNuxtModule({
       return
     }
 
+    // Add $router types
+    nuxt.hook('prepare:types', ({ references }) => {
+      console.log('test')
+      references.push({ types: 'vue-router' })
+    })
+
     // Regenerate templates when adding or removing pages
     nuxt.hook('builder:watch', async (event, path) => {
       const pathPattern = new RegExp(`^(${nuxt.options.dir.pages}|${nuxt.options.dir.layouts})/`)
