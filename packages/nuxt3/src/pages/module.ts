@@ -17,7 +17,6 @@ export default defineNuxtModule({
 
     // Add $router types
     nuxt.hook('prepare:types', ({ references }) => {
-      console.log('test')
       references.push({ types: 'vue-router' })
     })
 
