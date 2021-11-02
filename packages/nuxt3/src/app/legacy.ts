@@ -122,7 +122,7 @@ const staticFlags = {
   isDev: process.dev,
   isStatic: false,
   target: 'server',
-  modern: true
+  modern: false
 }
 
 export const legacyPlugin = (nuxtApp: NuxtApp) => {
