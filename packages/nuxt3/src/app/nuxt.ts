@@ -137,7 +137,7 @@ export function normalizePlugins (_plugins: Array<Plugin | LegacyPlugin>) {
   let needsLegacyContext = false
 
   const plugins = _plugins.map((plugin) => {
-    if (!plugin) {
+    if (typeof plugin !== 'function') {
       return () => {}
     }
     if (isLegacyPlugin(plugin)) {
