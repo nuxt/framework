@@ -59,6 +59,10 @@ async function transformRequest (opts: TransformOptions, id: string) {
     // Relative to the root directory
     id = '.' + id
   }
+  // On Windows, this may be `/C:/my/path` at this point, in which case we want to remove the `/`
+  if (id.match(/^\/\w:/)) {
+    id = id.slice(1)
+  }
 
   if (await isExternal(opts, id)) {
     return {
