@@ -8,6 +8,7 @@ import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
 import { warmupViteServer } from './utils/warmup'
+import { sanitizeFileName } from './utils/sanitize'
 import { resolveCSSOptions } from './css'
 
 export interface ViteOptions extends InlineConfig {
@@ -68,7 +69,10 @@ export async function bundle (nuxt: Nuxt) {
         build: {
           emptyOutDir: false,
           rollupOptions: {
-            input: resolve(nuxt.options.appDir, 'entry')
+            input: resolve(nuxt.options.appDir, 'entry'),
+            output: {
+              sanitizeFileName
+            }
           }
         },
         plugins: [

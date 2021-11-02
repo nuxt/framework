@@ -18,6 +18,7 @@ import * as unenv from 'unenv'
 import type { Preset } from 'unenv'
 import { NitroContext } from '../context'
 import { resolvePath } from '../utils'
+import { sanitizeFileName } from '../utils/sanitize'
 import { pkgDir } from '../dirs'
 
 import { dynamicRequire } from './plugins/dynamic-require'
@@ -110,6 +111,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       intro: '',
       outro: '',
       preferConst: true,
+      sanitizeFileName,
       sourcemap: nitroContext.sourceMap,
       sourcemapExcludeSources: true,
       sourcemapPathTransform (relativePath, sourcemapPath) {
