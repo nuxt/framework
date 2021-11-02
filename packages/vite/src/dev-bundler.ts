@@ -1,4 +1,6 @@
 import { pathToFileURL } from 'url'
+import { resolve } from 'pathe'
+import { existsSync } from 'fs-extra'
 import * as vite from 'vite'
 import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults } from 'externality'
 import { hashId, uniq } from './utils'
@@ -57,7 +59,10 @@ async function transformRequest (opts: TransformOptions, id: string) {
     id = id.slice('/@fs'.length)
   } else if (!id.includes('entry') && id.startsWith('/')) {
     // Relative to the root directory
-    id = '.' + id
+    const resolvedPath = resolve(opts.viteServer.config.root, '.' + id)
+    if (existsSync(resolvedPath)) {
+      id = resolvedPath
+    }
   }
 
   if (await isExternal(opts, id)) {
