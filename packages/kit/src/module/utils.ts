@@ -302,15 +302,15 @@ export function addComponentsDir (dir: ComponentsDir) {
   nuxt.hook('components:dirs', (dirs) => { dirs.push(dir) })
 }
 
+export type AddComponentOptions = { name: string, filePath: string } & Partial<Exclude<Component,
+'shortPath' | 'async' | 'level' | 'import' | 'asyncImport'
+>>
+
 /**
  * Register a directory to be scanned for components and imported only when used.
  *
  * Requires Nuxt 2.13+
  */
-export type AddComponentOptions = { name: string, filePath: string } & Partial<Exclude<Component,
-'shortPath' | 'async' | 'level' | 'import' | 'asyncImport'
->>
-
 export function addComponent (opts: AddComponentOptions) {
   const nuxt = useNuxt()
   ensureNuxtCompatibility({ nuxt: '>=2.13' }, nuxt)
