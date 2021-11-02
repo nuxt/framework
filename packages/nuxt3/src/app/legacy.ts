@@ -120,7 +120,7 @@ const staticFlags = {
   isClient: process.client,
   isServer: process.server,
   isDev: process.dev,
-  isStatic: false,
+  isStatic: undefined,
   target: 'server',
   modern: false
 }
