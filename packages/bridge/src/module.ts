@@ -17,8 +17,8 @@ export default defineNuxtModule({
   defaults: {
     nitro: true,
     vite: false,
-    app: true,
-    capi: true,
+    app: {},
+    capi: {},
     transpile: true,
     scriptSetup: true,
     autoImports: true,
