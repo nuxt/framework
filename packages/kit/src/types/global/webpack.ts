@@ -1,6 +1,9 @@
-/* eslint-disable no-use-before-define */
+/**
+ * Reference: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/webpack-env/index.d.ts
+ */
 
 export type WebpackModuleId = string | number
+
 export interface WebpackHot {
   /**
    * Accept code updates for the specified dependencies. The callback is called when dependencies were replaced.
@@ -205,4 +208,12 @@ export interface AcceptOptions {
    * Indicates that apply() is automatically called by check function
    */
   autoApply?: boolean | undefined
+}
+
+export interface WebpackImportMeta {
+  /** an alias for `module.hot` - see https://webpack.js.org/api/hot-module-replacement/ */
+  webpackHot?: WebpackHot | undefined
+
+  /** the webpack major version as number */
+  webpack?: number
 }
