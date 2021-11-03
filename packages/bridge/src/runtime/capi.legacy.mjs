@@ -88,7 +88,7 @@ export const globalPlugin = unsupported('`globalPlugin` is an internal function 
 // Deprecated functions
 export const withContext = unsupported('`withContext` is a deprecated method that is no longer provided and can be replaced with `useNuxtApp` (import from `#app`).')
 export const useStatic = unsupported('`useStatic` is a deprecated method that is no longer provided.')
-export const reqRef = unsupported('`reqRef` is a deprecated method that is no longer provided  and can be replaced with `ref` (import from `@vue/composition-api`).')
+export const reqRef = unsupported('`reqRef` is a deprecated method that is no longer provided and can be replaced with `ref` (import from `@vue/composition-api`).')
 export const reqSsrRef = unsupported('`reqSsrRef` is no longer provided and can be replaced with `useState` (import from `#app`).')
 
 // ssrRef helpers
