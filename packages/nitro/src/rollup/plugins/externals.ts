@@ -1,7 +1,9 @@
+import { existsSync } from 'fs'
 import { resolve, dirname } from 'pathe'
 import fse from 'fs-extra'
 import { nodeFileTrace, NodeFileTraceOptions } from '@vercel/nft'
 import type { Plugin } from 'rollup'
+import { resolvePath } from 'mlly'
 
 export interface NodeExternalsOptions {
   inline?: string[]
@@ -10,6 +12,7 @@ export interface NodeExternalsOptions {
   trace?: boolean
   traceOptions?: NodeFileTraceOptions
   moduleDirectories?: string[]
+  exportConditions?: string[]
 }
 
 export function externals (opts: NodeExternalsOptions): Plugin {
@@ -60,8 +63,16 @@ export function externals (opts: NodeExternalsOptions): Plugin {
         }
       }
 
+      const resolved = await this.resolve(originalId, importer, { ...options, skipSelf: true })
+      if (!existsSync(resolved.id)) {
+        resolved.id = await resolvePath(_id, {
+          conditions: opts.exportConditions,
+          url: opts.moduleDirectories
+        })
+      }
+
       return {
-        id: _id,
+        ...resolved,
         external: true
       }
     },

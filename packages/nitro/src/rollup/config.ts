@@ -273,7 +273,13 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
         base: '/',
         processCwd: nitroContext._nuxt.rootDir,
         exportsOnly: true
-      }
+      },
+      exportConditions: [
+        'default',
+        'module',
+        'node',
+        'import'
+      ]
     })))
   }
 
