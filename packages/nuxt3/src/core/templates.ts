@@ -33,11 +33,11 @@ export const cssTemplate = {
 export const clientPluginTemplate = {
   filename: 'plugins/client.mjs',
   getContents (ctx: TemplateContext) {
-    const { app } = ctx
+    const plugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'server')
     return [
-      importSources(app.plugins.filter(p => !p.mode || p.mode !== 'server').map(p => p.src)),
+      importSources(plugins.map(p => p.src)),
       'export default [',
-      app.plugins.filter(p => !p.mode || p.mode !== 'server').map(p => importName(p.src)).join(',\n  '),
+      plugins.map(p => importName(p.src)).join(',\n  '),
       ']'
     ].join('\n')
   }
@@ -46,13 +46,13 @@ export const clientPluginTemplate = {
 export const serverPluginTemplate = {
   filename: 'plugins/server.mjs',
   getContents (ctx: TemplateContext) {
-    const { app } = ctx
+    const plugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'client')
     return [
       "import preload from '#app/plugins/preload.server'",
-      importSources(app.plugins.filter(p => !p.mode || p.mode !== 'client').map(p => p.src)),
+      importSources(plugins.map(p => p.src)),
       'export default [',
       '  preload,',
-      app.plugins.filter(p => !p.mode || p.mode !== 'client').map(p => importName(p.src)).join(',\n  '),
+      plugins.map(p => importName(p.src)).join(',\n  '),
       ']'
     ].join('\n')
   }
