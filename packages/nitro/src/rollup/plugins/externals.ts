@@ -65,7 +65,7 @@ export function externals (opts: NodeExternalsOptions): Plugin {
 
       const resolved = await this.resolve(originalId, importer, { ...options, skipSelf: true })
       if (!existsSync(resolved.id)) {
-        resolved.id = await resolvePath(_id, {
+        resolved.id = await resolvePath(resolved.id, {
           conditions: opts.exportConditions,
           url: opts.moduleDirectories
         })
