@@ -3,13 +3,14 @@ import { resolve, dirname, normalize } from 'pathe'
 import fse from 'fs-extra'
 import { nodeFileTrace, NodeFileTraceOptions } from '@vercel/nft'
 import type { Plugin } from 'rollup'
-import { resolvePath, isValidNodeImport } from 'mlly'
+import { resolvePath, isValidNodeImport, normalizeid } from 'mlly'
 
 export interface NodeExternalsOptions {
   inline?: string[]
   external?: string[]
   outDir?: string
   trace?: boolean
+  normalizeId?: boolean
   traceOptions?: NodeFileTraceOptions
   moduleDirectories?: string[]
   exportConditions?: string[]
@@ -59,8 +60,9 @@ export function externals (opts: NodeExternalsOptions): Plugin {
       trackedExternals.add(resolved.id)
 
       // Normalize id with explicit protocol
-      // TODO: Fix production build
-      // resolved.id = normalizeid(resolved.id)
+      if (opts.normalizeId) {
+        resolved.id = normalizeid(resolved.id)
+      }
 
       return {
         ...resolved,

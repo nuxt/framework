@@ -253,6 +253,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     rollupConfig.plugins.push(externals(defu(nitroContext.externals as any, {
       outDir: nitroContext.output.serverDir,
       moduleDirectories,
+      normalizeId: nitroContext._nuxt.dev,
       external: [
         ...(nitroContext._nuxt.dev ? [nitroContext._nuxt.buildDir] : [])
       ],
