@@ -59,7 +59,8 @@ export function externals (opts: NodeExternalsOptions): Plugin {
       trackedExternals.add(resolved.id)
 
       // Normalize id with explicit protocol
-      resolved.id = normalizeid(resolved.id)
+      // TODO: Fix production build
+      // resolved.id = normalizeid(resolved.id)
 
       return {
         ...resolved,
