@@ -1,9 +1,9 @@
 import { existsSync } from 'fs'
-import { resolve, dirname } from 'pathe'
+import { resolve, dirname, normalize } from 'pathe'
 import fse from 'fs-extra'
 import { nodeFileTrace, NodeFileTraceOptions } from '@vercel/nft'
 import type { Plugin } from 'rollup'
-import { resolvePath } from 'mlly'
+import { resolvePath, isValidNodeImport, normalizeid, isNodeBuiltin } from 'mlly'
 
 export interface NodeExternalsOptions {
   inline?: string[]
@@ -21,55 +21,45 @@ export function externals (opts: NodeExternalsOptions): Plugin {
   return {
     name: 'node-externals',
     async resolveId (id, importer, options) {
-      // Internals
+      // Skip internals
       if (!id || id.startsWith('\x00') || id.includes('?') || id.startsWith('#')) {
         return null
       }
 
-      const originalId = id
-
       // Normalize path on windows
-      if (process.platform === 'win32') {
-        if (id.startsWith('/')) {
-          // Add back C: prefix on Windows
-          id = resolve(id)
-        }
-        id = id.replace(/\\/g, '/')
-      }
+      const normalizedId = normalize(id)
 
-      // Normalize from node_modules
-      const _id = id.split('node_modules/').pop()
-
-      // Skip checks if is an explicit external
+      const _id = normalizedId.split('node_modules/').pop()
       if (!opts.external.find(i => _id.startsWith(i) || id.startsWith(i))) {
         // Resolve relative paths and exceptions
         // Ensure to take absolute and relative id
         if (_id.startsWith('.') || opts.inline.find(i => _id.startsWith(i) || id.startsWith(i))) {
           return null
         }
-        // Bundle typescript, json and wasm (see https://github.com/nuxt/framework/discussions/692)
-        if (/\.(ts|wasm|json)$/.test(_id)) {
-          return null
-        }
       }
 
-      // Track externals
-      if (opts.trace !== false) {
-        const resolved = await this.resolve(originalId, importer, { ...options, skipSelf: true })
-        if (!resolved) {
-          console.warn(`Could not resolve \`${originalId}\`. Have you installed it?`)
-        } else {
-          trackedExternals.add(resolved.id)
-        }
-      }
-
-      const resolved = await this.resolve(originalId, importer, { ...options, skipSelf: true })
+      // Resolve external (rollup => node)
+      const resolved = await this.resolve(id, importer, { ...options, skipSelf: true }) || { id }
       if (!existsSync(resolved.id)) {
         resolved.id = await resolvePath(resolved.id, {
           conditions: opts.exportConditions,
           url: opts.moduleDirectories
         })
       }
+
+      // Ensure id is a valid import
+      if (!await isValidNodeImport(resolved.id)) {
+        return {
+          ...resolved,
+          external: false
+        }
+      }
+
+      // Track externals
+      trackedExternals.add(resolved.id)
+
+      // Normalize id with explicit protocol
+      resolved.id = normalizeid(resolved.id)
 
       return {
         ...resolved,
