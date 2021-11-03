@@ -33,7 +33,7 @@ export function externals (opts: NodeExternalsOptions): Plugin {
       if (!opts.external.find(i => _id.startsWith(i) || id.startsWith(i))) {
         // Resolve relative paths and exceptions
         // Ensure to take absolute and relative id
-        if (_id.startsWith('.') || opts.inline.find(i => _id.startsWith(i) || id.startsWith(i))) {
+        if (_id.startsWith('.') || opts.inline.find(i => _id.startsWith(i) || normalizedId.startsWith(i))) {
           return null
         }
       }
