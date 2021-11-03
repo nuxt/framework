@@ -3,7 +3,7 @@ import { resolve, dirname, normalize } from 'pathe'
 import fse from 'fs-extra'
 import { nodeFileTrace, NodeFileTraceOptions } from '@vercel/nft'
 import type { Plugin } from 'rollup'
-import { resolvePath, isValidNodeImport, normalizeid, isNodeBuiltin } from 'mlly'
+import { resolvePath, isValidNodeImport, normalizeid } from 'mlly'
 
 export interface NodeExternalsOptions {
   inline?: string[]
