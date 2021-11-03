@@ -289,6 +289,8 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     preferBuiltins: true,
     rootDir: nitroContext._nuxt.rootDir,
     moduleDirectories,
+    // 'module' is intentionally not supported because of externals
+    mainFields: ['main'],
     exportConditions: [
       'default',
       'module',
