@@ -15,7 +15,7 @@ export default (ctx, inject) => {
       provide: inject,
       unmount: () => { },
       use (vuePlugin) {
-        vuePlugin.install(this)
+        vuePlugin.install(Vue)
       },
       version: Vue.version
     },
