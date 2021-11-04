@@ -1,6 +1,6 @@
 import { getContext } from 'unctx'
 import { readPackageJSON, resolvePackageJSON } from 'pkg-types'
-import { importModule, tryImportModule, tryResolveModule, RequireModuleOptions } from './utils/cjs'
+import { importModule, tryImportModule, RequireModuleOptions } from './utils/cjs'
 import type { Nuxt } from './types/nuxt'
 import type { NuxtConfig } from './types/config'
 import type { LoadNuxtConfigOptions } from './config/load'
