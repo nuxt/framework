@@ -14,6 +14,8 @@ export default {
    *   }
    * }
    * ```
+   *
+   * @version 2 This option is not supported with Bridge and Nuxt 3
    */
   https: false,
   port: process.env.NUXT_PORT || process.env.PORT || process.env.npm_package_config_nuxt_port || 3000,
