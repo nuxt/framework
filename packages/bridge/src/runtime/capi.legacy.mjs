@@ -73,8 +73,9 @@ const warnOnce = (id, message) => {
   }
 }
 
+// TODO: Add warning back once we had replacement for useAsync and useMeta
 // Warn in case of having any imports from `@nuxtjs/composition-api`
-warnOnce('import', `\`@nuxtjs/composition-api\` is deprecated. ${checkDocsMsg}`)
+// warnOnce('import', `\`@nuxtjs/composition-api\` is deprecated. ${checkDocsMsg}`)
 
 // Stub functions that provided type support
 export const defineNuxtMiddleware = unsupported('You are using `defineNuxtMiddleware`, which is not supported. You can remove wrapper function to keep using Nuxt 2 middleware.')
