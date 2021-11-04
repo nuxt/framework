@@ -62,7 +62,7 @@ export { ref }
 
 // Common deprecation utils
 // TODO: Add migration guide docs to @nuxtjs/composition-api
-const checkDocsMsg = 'Please see https://v3.nuxtjs.org/getting-started/composition-api for more information.'
+const checkDocsMsg = 'Please see https://go.nuxtjs.dev/bridge-capi for more information.'
 const msgPrefix = '[bridge] [legacy capi]'
 const unsupported = message => () => { throw new Error(`${msgPrefix} ${message} ${checkDocsMsg}`) }
 const _warned = {}
