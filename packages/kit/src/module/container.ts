@@ -1,5 +1,6 @@
 import { parse, relative } from 'pathe'
 import consola from 'consola'
+import { resolveAlias } from '@nuxt/kit'
 import type { Nuxt, NuxtPluginTemplate, NuxtTemplate } from '../types/nuxt'
 import { chainFn } from '../utils/task'
 import { addTemplate, addPluginTemplate, addServerMiddleware, extendRoutes } from './utils'
@@ -102,7 +103,9 @@ export function createModuleContainer (nuxt: Nuxt) {
     },
 
     /** Allows extending routes by chaining `options.build.extendRoutes` function. */
-    extendRoutes,
+    extendRoutes (fn) {
+      nuxt.hook('build:extendRoutes', routes => fn(routes, resolveAlias))
+    },
 
     /** `requireModule` is a shortcut for `addModule` */
     requireModule: installModule,

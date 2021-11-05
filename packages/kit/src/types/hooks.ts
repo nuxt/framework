@@ -64,7 +64,7 @@ export interface NuxtHooks {
     templatesFiles: NuxtTemplate[],
     resolve: (...args: string[]) => string
   }) => HookResult
-  'build:extendRoutes': (routes: NuxtRoute[], resolve: (...args: string[]) => string) => HookResult
+  'build:extendRoutes': (routes: NuxtRoute[]) => HookResult
   'build:done': (builder: Builder) => HookResult
   'watch:restart': (event: { event: string, path: string }) => HookResult
   // 'watch:fileChanged': (builder: Builder, fileName: string) => HookResult
