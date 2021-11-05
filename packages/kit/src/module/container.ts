@@ -1,8 +1,8 @@
 import { parse, relative } from 'pathe'
 import consola from 'consola'
-import { resolveAlias } from '@nuxt/kit'
 import type { Nuxt, NuxtPluginTemplate, NuxtTemplate } from '../types/nuxt'
 import { chainFn } from '../utils/task'
+import { resolveAlias } from '../utils/resolve'
 import { addTemplate, addPluginTemplate, addServerMiddleware } from './utils'
 import { installModule } from './install'
 
