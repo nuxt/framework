@@ -58,6 +58,12 @@ export async function buildClient (ctx: ViteBuildContext) {
 
   // Create development server
   const viteServer = await vite.createServer(clientConfig)
+
+  // Support Vite's transformIndexHtml hook
+  ctx.nuxt.hook('nitro:document', async (doc) => {
+    doc.contents = await viteServer.transformIndexHtml(doc.src, doc.contents) || doc.contents
+  })
+
   await ctx.nuxt.callHook('vite:serverCreated', viteServer)
 
   const viteMiddleware = (req, res, next) => {
