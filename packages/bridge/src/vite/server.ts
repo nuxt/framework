@@ -5,11 +5,11 @@ import consola from 'consola'
 import fse from 'fs-extra'
 import pDebounce from 'p-debounce'
 import { bundleRequest } from '../../../vite/src/dev-bundler'
+import { wpfs } from '../../../vite/src/utils/wpfs'
+import { isCSS } from '../../../vite/src/utils'
 import { ViteBuildContext, ViteOptions } from './types'
-import { wpfs } from './utils/wpfs'
 import { jsxPlugin } from './plugins/jsx'
 import { generateDevSSRManifest } from './manifest'
-import { isCSS } from './utils'
 
 export async function buildServer (ctx: ViteBuildContext) {
   // Workaround to disable HMR
