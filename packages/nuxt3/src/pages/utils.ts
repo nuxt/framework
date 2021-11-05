@@ -1,14 +1,7 @@
 import { basename, extname, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
-import { Nuxt, resolveFiles } from '@nuxt/kit'
+import { Nuxt, resolveFiles, NuxtRoute } from '@nuxt/kit'
 import { kebabCase } from 'scule'
-
-export interface NuxtRoute {
-  name?: string
-  path: string
-  file: string
-  children: NuxtRoute[]
-}
 
 enum SegmentParserState {
   initial,

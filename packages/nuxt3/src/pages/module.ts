@@ -1,5 +1,5 @@
 import { existsSync } from 'fs'
-import { defineNuxtModule, addTemplate, addPlugin } from '@nuxt/kit'
+import { defineNuxtModule, addTemplate, addPlugin, resolveAlias } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { distDir } from '../dirs'
 import { resolveLayouts, resolvePagesRoutes, addComponentToRoutes } from './utils'
@@ -45,6 +45,7 @@ export default defineNuxtModule({
       filename: 'routes.mjs',
       async getContents () {
         const routes = await resolvePagesRoutes(nuxt)
+        await nuxt.callHook('build:extendRoutes', routes, (...args) => resolveAlias(resolve(...args), nuxt.options.alias))
         const serializedRoutes = addComponentToRoutes(routes)
         return `export default ${JSON.stringify(serializedRoutes, null, 2).replace(/"{(.+)}"/g, '$1')}`
       }

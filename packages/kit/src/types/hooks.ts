@@ -31,6 +31,13 @@ type RenderResult = {
 // https://www.typescriptlang.org/docs/handbook/triple-slash-directives.html
 export type TSReference = { types: string } | { path: string }
 
+export type NuxtRoute = {
+  name?: string,
+  path: string,
+  file: string,
+  children: NuxtRoute[]
+}
+
 export interface NuxtHooks {
   // nuxt3
   'app:resolve': (app: NuxtApp) => HookResult
@@ -57,7 +64,7 @@ export interface NuxtHooks {
     templatesFiles: NuxtTemplate[],
     resolve: (...args: string[]) => string
   }) => HookResult
-  'build:extendRoutes': (routes: any[], resolve: (...args: string[]) => string) => HookResult
+  'build:extendRoutes': (routes: NuxtRoute[], resolve: (...args: string[]) => string) => HookResult
   'build:done': (builder: Builder) => HookResult
   'watch:restart': (event: { event: string, path: string }) => HookResult
   // 'watch:fileChanged': (builder: Builder, fileName: string) => HookResult

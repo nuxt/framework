@@ -11,6 +11,7 @@ import { Nuxt } from '../types/nuxt'
 import { useNuxt } from '../nuxt'
 import type { NuxtTemplate, NuxtPlugin, NuxtPluginTemplate } from '../types/nuxt'
 import type { ComponentsDir, Component } from '../types/components'
+import type { NuxtHooks } from '../types/hooks'
 
 /**
  * Renders given template using lodash template during build into the project buildDir
@@ -346,6 +347,11 @@ export function addComponent (opts: AddComponentOptions) {
       components.push(component)
     }
   })
+}
+
+export function extendRoutes (cb: NuxtHooks['build:extendRoutes']) {
+  const nuxt = useNuxt()
+  nuxt.hook('build:extendRoutes', cb)
 }
 
 const serialize = (data: any) => JSON.stringify(data, null, 2).replace(/"{(.+)}"/g, '$1')
