@@ -1,5 +1,5 @@
 import { existsSync } from 'fs'
-import { defineNuxtModule, addTemplate, addPlugin, resolveAlias } from '@nuxt/kit'
+import { defineNuxtModule, addTemplate, addPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { distDir } from '../dirs'
 import { resolveLayouts, resolvePagesRoutes, addComponentToRoutes } from './utils'
