@@ -227,7 +227,7 @@ export async function resolveLayouts (nuxt: Nuxt) {
 export function addComponentToRoutes (routes: NuxtRoute[]) {
   return routes.map(route => ({
     ...route,
-    children: addComponentToRoutes(route.children),
+    children: route.children ? addComponentToRoutes(route.children) : [],
     component: `{() => import('${route.file}')}`
   }))
 }

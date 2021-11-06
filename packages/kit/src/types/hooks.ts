@@ -35,7 +35,7 @@ export type NuxtRoute = {
   name?: string,
   path: string,
   file: string,
-  children: NuxtRoute[]
+  children?: NuxtRoute[]
 }
 
 export interface NuxtHooks {
