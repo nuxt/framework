@@ -6,7 +6,7 @@ const PREFIX = 'defaultexport:'
 const hasPrefix = (id: string = '') => id.startsWith(PREFIX)
 const removePrefix = (id: string = '') => hasPrefix(id) ? id.substr(PREFIX.length) : id
 
-const hasDefaultExport = (code: string = '') => code.includes('export default')
+const hasDefaultExport = (code: string = '') => code.match(/export (default|.* as default)/g)
 const addDefaultExport = (code: string = '') => code + '\n\n' + 'export default () => {}'
 
 export function defaultExportPlugin () {
