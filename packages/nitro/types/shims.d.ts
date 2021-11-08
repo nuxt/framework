@@ -11,8 +11,7 @@ declare module '#assets' {
 }
 
 declare module '#config' {
-  export interface PublicRuntimeConfig extends Record<string, any> { }
-  export interface PrivateRuntimeConfig extends PublicRuntimeConfig { }
+  import type { PublicRuntimeConfig, PrivateRuntimeConfig } from '@nuxt/nitro'
   export const privateConfig: PrivateRuntimeConfig
   export const publicConfig: PublicRuntimeConfig
   export default privateConfig

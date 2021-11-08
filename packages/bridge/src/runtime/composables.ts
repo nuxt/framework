@@ -1,6 +1,7 @@
 import { reactive, toRef, isReactive, Ref } from '@vue/composition-api'
 import type VueRouter from 'vue-router'
 import type { Route } from 'vue-router'
+import type { PublicRuntimeConfig, PrivateRuntimeConfig } from '@nuxt/nitro'
 import { useNuxtApp } from './app'
 
 export * from '@vue/composition-api'
@@ -16,7 +17,7 @@ export const useRuntimeConfig = () => {
   if (!nuxtApp.$config) {
     nuxtApp.$config = reactive(nuxtApp.nuxt2Context.app.$config)
   }
-  return nuxtApp.$config
+  return nuxtApp.$config as PublicRuntimeConfig & Partial<PrivateRuntimeConfig>
 }
 
 // Auto-import equivalents for `vue-router`
