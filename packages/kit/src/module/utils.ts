@@ -88,9 +88,10 @@ export function normalizePlugin (plugin: NuxtPlugin | string): NuxtPlugin {
 
   if (!plugin.src) {
     throw new Error('Invalid plugin. src option is required: ' + JSON.stringify(plugin))
-  } else {
-    plugin.src = normalize(plugin.src)
   }
+
+  // Normalize full path to plugin
+  plugin.src = normalize(plugin.src)
 
   // Normalize mode
   if (plugin.ssr) {
