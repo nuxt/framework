@@ -9,3 +9,11 @@ declare module '#assets' {
   export function statAsset (id: string): Promise<AssetMeta>
   export function getKeys() : Promise<string[]>
 }
+
+declare module '#config' {
+  export interface PublicRuntimeConfig extends Record<string, any> { }
+  export interface PrivateRuntimeConfig extends PublicRuntimeConfig { }
+  export const privateConfig: PrivateRuntimeConfig
+  export const publicConfig: PublicRuntimeConfig
+  export default privateConfig
+}
