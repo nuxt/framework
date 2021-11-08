@@ -2,6 +2,7 @@
 import { getCurrentInstance, reactive, defineAsyncComponent } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
+import type { Router } from 'vue-router'
 import { defineGetter } from './utils'
 import { legacyPlugin, LegacyContext } from './legacy'
 
@@ -34,6 +35,8 @@ export interface NuxtApp {
   callHook: NuxtApp['hooks']['callHook']
 
   [key: string]: any
+
+  $router: Router
 
   _asyncDataPromises?: Record<string, Promise<any>>
   _legacyContext?: LegacyContext
