@@ -3,7 +3,6 @@ import { getCurrentInstance, reactive } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import type { Router } from 'vue-router'
-import { defineGetter } from './utils'
 import { legacyPlugin, LegacyContext } from './legacy'
 
 type NuxtMeta = {
