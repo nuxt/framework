@@ -1,7 +1,7 @@
 import { reactive, toRef, isReactive, Ref } from '@vue/composition-api'
 import type VueRouter from 'vue-router'
 import type { Route } from 'vue-router'
-import type { PublicRuntimeConfig, PrivateRuntimeConfig } from '@nuxt/nitro'
+import type { PublicRuntimeConfig, PrivateRuntimeConfig } from '@nuxt/kit'
 import { useNuxtApp } from './app'
 
 export * from '@vue/composition-api'

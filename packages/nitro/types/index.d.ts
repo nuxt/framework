@@ -9,6 +9,3 @@ declare module '@nuxt/kit' {
 
 export * from './fetch'
 export * from '../dist'
-
-export interface PublicRuntimeConfig extends Record<string, any> { }
-export interface PrivateRuntimeConfig extends PublicRuntimeConfig { }

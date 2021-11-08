@@ -2,7 +2,7 @@
 import { getCurrentInstance, reactive } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
-import type { PublicRuntimeConfig, PrivateRuntimeConfig } from '@nuxt/nitro'
+import type { PublicRuntimeConfig, PrivateRuntimeConfig } from '@nuxt/kit'
 import { legacyPlugin, LegacyContext } from './legacy'
 
 type NuxtMeta = {
