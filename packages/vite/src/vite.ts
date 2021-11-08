@@ -4,6 +4,7 @@ import consola from 'consola'
 import type { Nuxt } from '@nuxt/kit'
 import type { InlineConfig, SSROptions } from 'vite'
 import type { Options } from '@vitejs/plugin-vue'
+import { sanitizeFilePath } from 'mlly'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
@@ -39,20 +40,20 @@ export async function bundle (nuxt: Nuxt) {
             '#app': nuxt.options.appDir,
             // We need this resolution to be present before the following entry, but it
             // will be filled in client/server configs
-            '#build/plugins': undefined,
+            '#build/plugins': '',
             '#build': nuxt.options.buildDir,
-            '/build': nuxt.options.buildDir,
-            '/app': nuxt.options.appDir,
             '/entry.mjs': resolve(nuxt.options.appDir, 'entry'),
-            '~': nuxt.options.srcDir,
-            '@': nuxt.options.srcDir,
             'web-streams-polyfill/ponyfill/es2018': 'unenv/runtime/mock/empty',
             // Cannot destructure property 'AbortController' of ..
             'abort-controller': 'unenv/runtime/mock/empty'
           }
         },
         base: nuxt.options.build.publicPath,
-        vue: {},
+        // TODO: move to kit schema when it exists
+        vue: {
+          isProduction: !nuxt.options.dev,
+          template: { compilerOptions: nuxt.options.vue.compilerOptions }
+        },
         css: resolveCSSOptions(nuxt),
         optimizeDeps: {
           exclude: [],
@@ -62,13 +63,15 @@ export async function bundle (nuxt: Nuxt) {
         },
         esbuild: {
           jsxFactory: 'h',
-          jsxFragment: 'Fragment'
+          jsxFragment: 'Fragment',
+          tsconfigRaw: '{}'
         },
         clearScreen: false,
         build: {
           emptyOutDir: false,
           rollupOptions: {
-            input: resolve(nuxt.options.appDir, 'entry')
+            input: resolve(nuxt.options.appDir, 'entry'),
+            output: { sanitizeFileName: sanitizeFilePath }
           }
         },
         plugins: [
@@ -94,7 +97,7 @@ export async function bundle (nuxt: Nuxt) {
 
   nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer) => {
     const start = Date.now()
-    warmupViteServer(server, ['/app/entry.mjs']).then(() => {
+    warmupViteServer(server, ['/entry.mjs']).then(() => {
       consola.info(`Vite warmed up in ${Date.now() - start}ms`)
     }).catch(consola.error)
   })

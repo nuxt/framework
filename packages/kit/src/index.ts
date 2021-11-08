@@ -1,3 +1,6 @@
+// Augmentations
+import './types/global'
+
 // Config
 export * from './config/load'
 export * from './config/env'
@@ -20,3 +23,5 @@ export * from './types/config'
 export * from './types/hooks'
 export * from './types/module'
 export * from './types/nuxt'
+export * from './types/components'
+export * from './types/imports'

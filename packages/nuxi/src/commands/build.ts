@@ -3,6 +3,7 @@ import consola from 'consola'
 
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
+import { clearDir } from '../utils/fs'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -19,9 +20,11 @@ export default defineNuxtCommand({
 
     const nuxt = await loadNuxt({ rootDir })
 
+    await clearDir(nuxt.options.buildDir)
+
     await writeTypes(nuxt)
 
-    nuxt.hook('error', (err) => {
+    nuxt.hook('build:error', (err) => {
       consola.error('Nuxt Build Error:', err)
       process.exit(1)
     })

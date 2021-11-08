@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'http'
 import type { App } from 'vue'
 import type { Component } from '@vue/runtime-core'
 import mockContext from 'unenv/runtime/mock/proxy'
-import type { NuxtApp } from './nuxt'
+import { NuxtApp, useRuntimeConfig } from './nuxt'
 
 type Route = any
 type Store = any
@@ -92,19 +92,12 @@ function mock (warning: string) {
 }
 
 const unsupported = new Set<keyof LegacyContext | keyof LegacyContext['ssrContext']>([
-  'isClient',
-  'isServer',
-  'isStatic',
   'store',
-  'target',
   'spa',
-  'env',
-  'modern',
   'fetchCounters'
 ])
 
 const todo = new Set<keyof LegacyContext | keyof LegacyContext['ssrContext']>([
-  'isDev',
   'isHMR',
   // Routing handlers - needs implementation or deprecation
   'base',
@@ -123,8 +116,17 @@ const todo = new Set<keyof LegacyContext | keyof LegacyContext['ssrContext']>([
 
 const routerKeys: Array<keyof LegacyContext | keyof LegacyContext['ssrContext']> = ['route', 'params', 'query']
 
-export const legacyPlugin = (nuxt: NuxtApp) => {
-  nuxt._legacyContext = new Proxy(nuxt, {
+const staticFlags = {
+  isClient: process.client,
+  isServer: process.server,
+  isDev: process.dev,
+  isStatic: undefined,
+  target: 'server',
+  modern: false
+}
+
+export const legacyPlugin = (nuxtApp: NuxtApp) => {
+  nuxtApp._legacyContext = new Proxy(nuxtApp, {
     get (nuxt, p: keyof LegacyContext | keyof LegacyContext['ssrContext']) {
       // Unsupported keys
       if (unsupported.has(p)) {
@@ -137,7 +139,7 @@ export const legacyPlugin = (nuxt: NuxtApp) => {
 
       // vue-router implementation
       if (routerKeys.includes(p)) {
-        if (!('$router' in nuxt)) {
+        if (!('$router' in nuxtApp)) {
           return mock('vue-router is not being used in this project.')
         }
         switch (p) {
@@ -149,9 +151,12 @@ export const legacyPlugin = (nuxt: NuxtApp) => {
         }
       }
 
-      if (p === '$config') {
-        // TODO: needs implementation
-        return mock('Accessing runtime config is not yet supported in Nuxt 3.')
+      if (p === '$config' || p === 'env') {
+        return useRuntimeConfig()
+      }
+
+      if (p in staticFlags) {
+        return staticFlags[p]
       }
 
       if (p === 'ssrContext') {
@@ -170,12 +175,12 @@ export const legacyPlugin = (nuxt: NuxtApp) => {
         return nuxt.payload.data
       }
 
-      if (p in nuxt.app) {
-        return nuxt.app[p]
+      if (p in nuxtApp.vueApp) {
+        return nuxtApp.vueApp[p]
       }
 
-      if (p in nuxt) {
-        return nuxt[p]
+      if (p in nuxtApp) {
+        return nuxtApp[p]
       }
 
       return mock(`Accessing ${p} is not supported in Nuxt3.`)
@@ -183,15 +188,15 @@ export const legacyPlugin = (nuxt: NuxtApp) => {
   }) as unknown as LegacyContext
 
   if (process.client) {
-    nuxt.hook('app:created', () => {
-      const legacyApp = { ...nuxt.app } as LegacyApp
+    nuxtApp.hook('app:created', () => {
+      const legacyApp = { ...nuxtApp.vueApp } as LegacyApp
       legacyApp.$root = legacyApp
 
       // @ts-ignore
       // TODO: https://github.com/nuxt/framework/issues/244
       legacyApp.constructor = legacyApp
 
-      window[`$${nuxt.globalName}`] = legacyApp
+      window[`$${nuxtApp.globalName}`] = legacyApp
     })
   }
 }

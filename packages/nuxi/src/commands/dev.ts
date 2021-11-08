@@ -7,37 +7,33 @@ import { createServer, createLoadingHandler } from '../utils/server'
 import { showBanner } from '../utils/banner'
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
+import { clearDir } from '../utils/fs'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
   meta: {
     name: 'dev',
-    usage: 'npx nuxi dev [rootDir] [--clipboard] [--open, -o] [--port, -p] [--host, -h] [--ssl-cert] [--ssl-key]',
+    usage: 'npx nuxi dev [rootDir] [--clipboard] [--open, -o] [--port, -p] [--host, -h] [--https] [--ssl-cert] [--ssl-key]',
     description: 'Run nuxt development server'
   },
   async invoke (args) {
     process.env.NODE_ENV = process.env.NODE_ENV || 'development'
-    const https = !!(args['ssl-cert'] && args['ssl-key'])
     const server = createServer()
     const listener = await server.listen({
       clipboard: args.clipboard,
       open: args.open || args.o,
       port: args.port || args.p,
       hostname: args.host || args.h,
-      ...(https && {
-        https,
-        certificate: {
-          cert: args['ssl-cert'],
-          key: args['ssl-key']
-        }
-      })
+      https: Boolean(args.https),
+      certificate: (args['ssl-cert'] && args['ssl-key']) && {
+        cert: args['ssl-cert'],
+        key: args['ssl-key']
+      }
     })
 
     const rootDir = resolve(args._[0] || '.')
 
     const { loadNuxt, buildNuxt } = await loadKit(rootDir)
-
-    const prepare = debounce((nuxt: Nuxt) => writeTypes(nuxt), 1000)
 
     let currentNuxt: Nuxt
     const load = async (isRestart: boolean, reason?: string) => {
@@ -51,9 +47,10 @@ export default defineNuxtCommand({
           await currentNuxt.close()
         }
         const newNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
-        prepare(newNuxt)
+        await clearDir(newNuxt.options.buildDir)
         currentNuxt = newNuxt
         await currentNuxt.ready()
+        writeTypes(currentNuxt).catch(console.error)
         await buildNuxt(currentNuxt)
         server.setApp(currentNuxt.server.app)
         if (isRestart && args.clear !== false) {
@@ -72,19 +69,26 @@ export default defineNuxtCommand({
     // TODO: Watcher service, modules, and requireTree
     const dLoad = debounce(load, 250)
     const watcher = chokidar.watch([rootDir], { ignoreInitial: true, depth: 1 })
-    watcher.on('all', (_event, file) => {
+    watcher.on('all', (event, file) => {
+      if (!currentNuxt) { return }
       if (file.startsWith(currentNuxt.options.buildDir)) { return }
       if (file.match(/nuxt\.config\.(js|ts|mjs|cjs)$/)) {
         dLoad(true, `${relative(rootDir, file)} updated`)
       }
-      if (['addDir', 'unlinkDir'].includes(_event) && file.match(/pages$/)) {
-        dLoad(true, `Directory \`pages/\` ${_event === 'addDir' ? 'created' : 'removed'}`)
-      }
-      if (['addDir', 'unlinkDir'].includes(_event) && file.match(/components$/)) {
-        dLoad(true, `Directory \`components/\` ${_event === 'addDir' ? 'created' : 'removed'}`)
-      }
-      if (['add', 'unlink'].includes(_event) && file.match(/app\.(js|ts|mjs|jsx|tsx|vue)$/)) {
-        dLoad(true, `\`${relative(rootDir, file)}\` ${_event === 'add' ? 'created' : 'removed'}`)
+
+      const isDirChange = ['addDir', 'unlinkDir'].includes(event)
+      const isFileChange = ['add', 'unlink'].includes(event)
+      const reloadDirs = ['pages', 'components', 'composables']
+
+      if (isDirChange) {
+        const dir = reloadDirs.find(dir => file.endsWith(dir))
+        if (dir) {
+          dLoad(true, `Directory \`${dir}/\` ${event === 'addDir' ? 'created' : 'removed'}`)
+        }
+      } else if (isFileChange) {
+        if (file.match(/app\.(js|ts|mjs|jsx|tsx|vue)$/)) {
+          dLoad(true, `\`${relative(rootDir, file)}\` ${event === 'add' ? 'created' : 'removed'}`)
+        }
       }
     })
 

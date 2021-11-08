@@ -7,16 +7,21 @@ export default {
   /** Vue.js config */
   vue: {
     /**
-     * Properties that will be set directly on `Vue.config` for vue@2 and `app.config` for vue@3.
+     * Properties that will be set directly on `Vue.config` for vue@2.
      *
      * @see [vue@2 Documentation](https://vuejs.org/v2/api/#Global-Config)
-     * @see [vue@3 Documentation](https://v3.vuejs.org/api/application-config.html)
     * @version 2
      */
     config: {
       silent: { $resolve: (val, get) => val ?? !get('dev') },
-      performance: { $resolve: (val, get) => val ?? get('dev') }
-    }
+      performance: { $resolve: (val, get) => val ?? get('dev') },
+    },
+    /**
+     * Options for the Vue compiler that will be passed at build time
+     * @see [documentation](https://v3.vuejs.org/api/application-config.html)
+     * @version 3
+     */
+    compilerOptions: {}
   },
 
   /**
@@ -182,6 +187,7 @@ export default {
    * ]
    * ```
    * @version 2
+   * @version 3
    */
   css: [],
 
@@ -246,18 +252,15 @@ export default {
    */
   loadingIndicator: {
     $resolve: (val, get) => {
-      if (typeof val === 'string') {
-        val = { name: val }
-      }
-      return {
+      val = typeof val === 'string' ? { name: val } : val
+      return defu(val, {
         name: 'default',
         color: get('loading.color') || '#D3D3D3',
         color2: '#F5F5F5',
         background: (get('manifest') && get('manifest.theme_color')) || 'white',
         dev: get('dev'),
-        loading: get('messages.loading'),
-        ...val
-      }
+        loading: get('messages.loading')
+      })
     }
   },
 
@@ -271,14 +274,18 @@ export default {
    * @see [vue@3 documentation](https://v3.vuejs.org/guide/transitions-enterleave.html)
    * @version 2
    */
-  pageTransition: {
-    $resolve: val => typeof val === 'string' ? { name: val } : val,
-    name: 'page',
-    mode: 'out-in',
-    appear: { $resolve: (val, get) => (get('render.ssr') === false) ? true : Boolean(val) },
-    appearClass: 'appear',
-    appearActiveClass: 'appear-active',
-    appearToClass: 'appear-to'
+   pageTransition: {
+    $resolve: (val, get) => {
+      val = typeof val === 'string' ? { name: val } : val
+      return defu(val, {
+        name: 'page',
+        mode: 'out-in',
+        appear: get('render.ssr') === false || Boolean(val),
+        appearClass: 'appear',
+        appearActiveClass: 'appear-active',
+        appearToClass: 'appear-to'
+      })
+    }
   },
 
   /**
@@ -292,9 +299,13 @@ export default {
    * @version 2
    */
   layoutTransition: {
-    $resolve: val => typeof val === 'string' ? { name: val } : val,
-    name: 'layout',
-    mode: 'out-in'
+    $resolve: val => {
+      val = typeof val === 'string' ? { name: val } : val
+      return defu(val, {
+        name: 'layout',
+        mode: 'out-in'
+      })
+    }
   },
 
   /**

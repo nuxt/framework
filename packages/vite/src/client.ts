@@ -1,14 +1,16 @@
 import { resolve } from 'pathe'
 import * as vite from 'vite'
 import consola from 'consola'
-import vitePlugin from '@vitejs/plugin-vue'
+import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
+import type { Connect } from 'vite'
 
 import { cacheDirPlugin } from './plugins/cache-dir'
-import { replace } from './plugins/replace'
+import { analyzePlugin } from './plugins/analyze'
 import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
+import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 
 export async function buildClient (ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -34,22 +36,27 @@ export async function buildClient (ctx: ViteBuildContext) {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client')
     },
     plugins: [
-      replace({ 'process.env': 'import.meta.env' }),
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'client'),
-      vitePlugin(ctx.config.vue),
-      viteJsxPlugin()
+      vuePlugin(ctx.config.vue),
+      viteJsxPlugin(),
+      devStyleSSRPlugin(ctx.nuxt.options.rootDir)
     ],
     server: {
       middlewareMode: true
     }
   } as ViteOptions)
 
+  // Add analyze plugin if needed
+  if (ctx.nuxt.options.build.analyze) {
+    clientConfig.plugins.push(...analyzePlugin(ctx))
+  }
+
   await ctx.nuxt.callHook('vite:extendConfig', clientConfig, { isClient: true, isServer: false })
 
   const viteServer = await vite.createServer(clientConfig)
   await ctx.nuxt.callHook('vite:serverCreated', viteServer)
 
-  const viteMiddleware = (req, res, next) => {
+  const viteMiddleware: Connect.NextHandleFunction = (req, res, next) => {
     // Workaround: vite devmiddleware modifies req.url
     const originalURL = req.url
     viteServer.middlewares.handle(req, res, (err) => {

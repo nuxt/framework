@@ -1,10 +1,11 @@
 import type { IncomingMessage, ServerResponse } from 'http'
-import type { HookCallback } from 'hookable'
 import type { Compiler, Configuration, Stats } from 'webpack'
 import type { TSConfig } from 'pkg-types'
-import type { NuxtConfig, NuxtOptions } from '..'
 import type { ModuleContainer } from '../module/container'
 import type { NuxtTemplate, Nuxt, NuxtApp } from '../types/nuxt'
+import type { AutoImport, AutoImportSource } from '../types/imports'
+import type { NuxtConfig, NuxtOptions } from './config'
+import type { Component, ComponentsDir, ScanDir, ComponentsOptions } from './components'
 
 type HookResult = Promise<void> | void
 
@@ -30,11 +31,21 @@ type RenderResult = {
 // https://www.typescriptlang.org/docs/handbook/triple-slash-directives.html
 export type TSReference = { types: string } | { path: string }
 
-export interface NuxtHooks extends Record<string, HookCallback> {
+export interface NuxtHooks {
   // nuxt3
   'app:resolve': (app: NuxtApp) => HookResult
   'app:templates': (app: NuxtApp) => HookResult
+  'app:templatesGenerated': (app: NuxtApp) => HookResult
   'builder:generateApp': () => HookResult
+
+  // Auto imports
+  'autoImports:sources': (autoImportSources: AutoImportSource[]) => HookResult
+  'autoImports:extend': (autoImports: AutoImport[]) => HookResult
+  'autoImports:dirs': (dirs: string[]) => HookResult
+
+  // Components
+  'components:dirs': (dirs: ComponentsOptions['dirs']) => HookResult
+  'components:extend': (components: (Component | ComponentsDir | ScanDir)[]) => HookResult
 
   // @nuxt/builder
   'build:before':
@@ -54,14 +65,15 @@ export interface NuxtHooks extends Record<string, HookCallback> {
 
   // @nuxt/nitro
   'nitro:document': (template: { src: string, contents: string }) => HookResult
+  'nitro:context': (context: any) => HookResult
 
   // @nuxt/cli
-  'cli:buildError': (error: unknown) => HookResult
   'generate:cache:ignore': (ignore: string[]) => HookResult
   'config': (options: NuxtConfig) => HookResult
   'run:before': (options: { argv: string[], cmd: { name: string, usage: string, description: string, options: Record<string, any> }, rootDir: string }) => HookResult
 
   // nuxi
+  'build:error': (error: Error) => HookResult
   'prepare:types': (options: { references: TSReference[], declarations: string[], tsConfig: TSConfig }) => HookResult
 
   // @nuxt/core
@@ -131,6 +143,11 @@ export interface NuxtHooks extends Record<string, HookCallback> {
   'export:extendRoutes': ({ routes }: { routes: any[] }) => HookResult
   'export:routeFailed': ({ route, errors }: { route: any, errors: any[] }) => HookResult
   'export:done': (generator: Generator, { errors }: { errors: any[] }) => HookResult
+
+  // vite
+  'vite:extend': (viteBuildContext: { nuxt: Nuxt, config: any }) => HookResult
+  'vite:extendConfig': (viteInlineConfig: any, env: { isClient: boolean, isServer: boolean }) => HookResult
+  'vite:serverCreated': (viteServer: any) => HookResult
 }
 
 export type NuxtHookName = keyof NuxtHooks

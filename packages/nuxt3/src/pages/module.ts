@@ -2,7 +2,7 @@ import { existsSync } from 'fs'
 import { defineNuxtModule, addTemplate, addPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { distDir } from '../dirs'
-import { resolveLayouts, resolvePagesRoutes } from './utils'
+import { resolveLayouts, resolvePagesRoutes, addComponentToRoutes } from './utils'
 
 export default defineNuxtModule({
   name: 'router',
@@ -14,6 +14,11 @@ export default defineNuxtModule({
     if (!existsSync(pagesDir)) {
       return
     }
+
+    // Add $router types
+    nuxt.hook('prepare:types', ({ references }) => {
+      references.push({ types: 'vue-router' })
+    })
 
     // Regenerate templates when adding or removing pages
     nuxt.hook('builder:watch', async (event, path) => {
@@ -40,7 +45,7 @@ export default defineNuxtModule({
       filename: 'routes.mjs',
       async getContents () {
         const routes = await resolvePagesRoutes(nuxt)
-        const serializedRoutes = routes.map(route => ({ ...route, component: `{() => import('${route.file}')}` }))
+        const serializedRoutes = addComponentToRoutes(routes)
         return `export default ${JSON.stringify(serializedRoutes, null, 2).replace(/"{(.+)}"/g, '$1')}`
       }
     })

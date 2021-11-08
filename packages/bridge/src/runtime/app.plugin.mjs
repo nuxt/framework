@@ -1,19 +1,19 @@
 import Vue from 'vue'
-import { createHooks } from 'hookable/dist/index.mjs'
+import { createHooks } from 'hookable'
 import { setNuxtAppInstance } from '#app'
 
 export default (ctx, inject) => {
-  const nuxt = {
-    app: {
+  const nuxtApp = {
+    vueApp: {
       component: Vue.component.bind(Vue),
       config: {
         globalProperties: {}
       },
       directive: Vue.directive.bind(Vue),
       mixin: Vue.mixin.bind(Vue),
-      mount: () => {},
+      mount: () => { },
       provide: inject,
-      unmount: () => {},
+      unmount: () => { },
       use (vuePlugin) {
         vuePlugin.install(this)
       },
@@ -23,26 +23,35 @@ export default (ctx, inject) => {
     globalName: 'nuxt',
     payload: process.client ? ctx.nuxtState : ctx.ssrContext.nuxt,
     isHydrating: ctx.isHMR,
-    legacyNuxt: ctx.app
+    nuxt2Context: ctx
   }
 
-  nuxt.hooks = createHooks()
-  nuxt.hook = nuxt.hooks.hook
-  nuxt.callHook = nuxt.hooks.callHook
+  nuxtApp.hooks = createHooks()
+  nuxtApp.hook = nuxtApp.hooks.hook
+  nuxtApp.callHook = nuxtApp.hooks.callHook
 
   if (!Array.isArray(ctx.app.created)) {
     ctx.app.created = [ctx.app.created]
   }
 
   if (process.server) {
-    nuxt.ssrContext = ctx.ssrContext
+    nuxtApp.ssrContext = ctx.ssrContext
   }
 
   ctx.app.created.push(function () {
-    nuxt.legacyApp = this
+    nuxtApp.vue2App = this
   })
 
-  setNuxtAppInstance(nuxt)
+  const proxiedApp = new Proxy(nuxtApp, {
+    get (target, prop) {
+      if (prop[0] === '$') {
+        return target.nuxt2Context[prop] || target.vue2App?.[prop]
+      }
+      return Reflect.get(target, prop)
+    }
+  })
 
-  inject('_nuxtApp', nuxt)
+  setNuxtAppInstance(proxiedApp)
+
+  inject('_nuxtApp', proxiedApp)
 }

@@ -1,7 +1,8 @@
-import { builtinModules } from 'module'
 import { pathToFileURL } from 'url'
-import { join } from 'pathe'
+import { existsSync } from 'fs'
+import { resolve } from 'pathe'
 import * as vite from 'vite'
+import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults } from 'externality'
 import { hashId, uniq } from './utils'
 
 export interface TransformChunk {
@@ -23,25 +24,26 @@ export interface TransformOptions {
 }
 
 function isExternal (opts: TransformOptions, id: string) {
-  if (builtinModules.includes(id)) {
-    return true
-  }
-
+  // Externals
   const ssrConfig = (opts.viteServer.config as any).ssr
 
-  if (!/\.[cm]?js/.test(id)) {
-    return false
+  const externalOpts: ExternalsOptions = {
+    inline: [
+      /virtual:/,
+      /\.ts$/,
+      ...ExternalsDefaults.inline,
+      ...ssrConfig.noExternal
+    ],
+    external: [
+      ...ssrConfig.external,
+      /node_modules/
+    ],
+    resolve: {
+      type: 'module',
+      extensions: ['.ts', '.js', '.json', '.vue', '.mjs', '.jsx', '.tsx', '.wasm']
+    }
   }
-
-  if (ssrConfig.noExternal.find(ext => id.includes(ext))) {
-    return false
-  }
-
-  if (ssrConfig.external.find(ext => id.includes(ext))) {
-    return true
-  }
-
-  return id.includes('node_modules')
+  return _isExternal(id, opts.viteServer.config.root, externalOpts)
 }
 
 async function transformRequest (opts: TransformOptions, id: string) {
@@ -53,16 +55,23 @@ async function transformRequest (opts: TransformOptions, id: string) {
     id = id.slice('/@id/'.length)
   }
   if (id && id.startsWith('/@fs/')) {
+    // Absolute path
     id = id.slice('/@fs'.length)
-  }
-  if (id.startsWith('/node_modules')) {
-    id = join(opts.viteServer.config.root, id)
+    // On Windows, this may be `/C:/my/path` at this point, in which case we want to remove the `/`
+    if (id.match(/^\/\w:/)) {
+      id = id.slice(1)
+    }
+  } else if (!id.includes('entry') && id.startsWith('/')) {
+    // Relative to the root directory
+    const resolvedPath = resolve(opts.viteServer.config.root, '.' + id)
+    if (existsSync(resolvedPath)) {
+      id = resolvedPath
+    }
   }
 
-  // Externals
-  if (isExternal(opts, id)) {
+  if (await isExternal(opts, id)) {
     return {
-      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${(pathToFileURL(id))}').then(r => { ssrExportAll(r) })`,
+      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${(pathToFileURL(id))}').then(r => { exports.default = r.default; ssrExportAll(r) }).catch(e => { console.error(e); throw new Error('[vite dev] Error loading external "${id}".') })`,
       deps: [],
       dynamicDeps: []
     }
@@ -122,7 +131,7 @@ const ${hashId(chunk.id)} = ${chunk.code}
   const ssrModuleLoader = `
 const __pendingModules__ = new Map()
 const __pendingImports__ = new Map()
-const __ssrContext__ = { global: {} }
+const __ssrContext__ = { global: globalThis }
 
 function __ssrLoadModule__(url, urlStack = []) {
   const pendingModule = __pendingModules__.get(url)
@@ -140,7 +149,8 @@ async function __instantiateModule__(url, urlStack) {
   const stubModule = { [Symbol.toStringTag]: 'Module' }
   Object.defineProperty(stubModule, '__esModule', { value: true })
   mod.stubModule = stubModule
-  const importMeta = { url, hot: { accept() {} } }
+  // https://vitejs.dev/guide/api-hmr.html
+  const importMeta = { url, hot: { accept() {}, prune() {}, dispose() {}, invalidate() {}, decline() {}, on() {} } }
   urlStack = urlStack.concat(url)
   const isCircular = url => urlStack.includes(url)
   const pendingDeps = []

@@ -8,43 +8,48 @@
     ".": "./dist/index.mjs",
     "./cli": "./bin/nuxi.mjs"
   },
-  "bin": {
-    "nu": "./bin/nuxi.mjs",
-    "nuxi": "./bin/nuxi.mjs"
-  },
-  "scripts": {
-    "prepack": "unbuild"
-  },
+  "bin": "./bin/nuxi.mjs",
   "files": [
     "bin",
     "dist"
   ],
-  "optionalDependencies": {
-    "fsevents": "~2.3.2"
+  "scripts": {
+    "prepack": "unbuild"
   },
   "devDependencies": {
-    "@nuxt/design": "0.1.3",
+    "@nuxt/design": "0.1.4",
     "@nuxt/kit": "3.0.0",
     "@types/clear": "^0",
     "@types/mri": "^1.1.1",
+    "@types/rimraf": "^3",
+    "@types/semver": "^7",
     "chokidar": "^3.5.2",
     "clear": "^0.1.0",
     "clipboardy": "^3.0.0",
     "colorette": "^2.0.16",
     "consola": "^2.15.3",
     "deep-object-diff": "^1.1.0",
-    "degit": "^2.8.4",
     "destr": "^1.1.0",
+    "execa": "^5.1.1",
     "flat": "^5.0.2",
-    "jiti": "^1.12.7",
+    "jiti": "^1.12.9",
     "listhen": "^0.2.5",
-    "mlly": "^0.2.6",
+    "mlly": "^0.3.12",
     "mri": "^1.2.0",
     "p-debounce": "^4.0.0",
     "pathe": "^0.2.0",
-    "pkg-types": "^0.1.3",
+    "pkg-types": "^0.3.1",
+    "rimraf": "^3.0.2",
     "scule": "^0.2.1",
+    "semver": "^7.3.5",
     "superb": "^4.0.0",
+    "tiged": "^2.12.0",
     "unbuild": "latest"
+  },
+  "optionalDependencies": {
+    "fsevents": "~2.3.2"
+  },
+  "engines": {
+    "node": "^14.16.0 || ^16.11.0 || ^17.0.0"
   }
 }

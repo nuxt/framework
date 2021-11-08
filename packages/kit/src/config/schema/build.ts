@@ -1,4 +1,4 @@
-import env from 'std-env'
+import { isCI, isTest } from 'std-env'
 import { hasProtocol } from 'ufo'
 
 export default {
@@ -10,14 +10,12 @@ export default {
    * @see [std-env](https://github.com/unjs/std-env)
   * @version 2
    */
-  quiet: Boolean(env.ci || env.test),
+  quiet: Boolean(isCI || isTest),
 
   /**
    * Nuxt uses `webpack-bundle-analyzer` to visualize your bundles and how to optimize them.
    *
-   * This option is normally enabled by the CLI argument `--analyze`.
-   *
-   * Set to `true` to enable bundle analysis, or pass [an object with options](https://github.com/webpack-contrib/webpack-bundle-analyzer#options-for-plugin).
+   * Set to `true` to enable bundle analysis, or pass an object with options: [for webpack](https://github.com/webpack-contrib/webpack-bundle-analyzer#options-for-plugin) or [for vite](https://github.com/btd/rollup-plugin-visualizer#options).
    *
    * @example
    * ```js
@@ -25,7 +23,6 @@ export default {
    *   analyzerMode: 'static'
    * }
    * ```
-   * @version 2
    */
   analyze: false,
 
@@ -231,7 +228,8 @@ export default {
         source: 'src',
         object: 'src',
         embed: 'src'
-      }
+      },
+      compilerOptions: { $resolve: (val, get) => val ?? get('vue.compilerOptions') },
     },
     css: {
       importLoaders: 0,

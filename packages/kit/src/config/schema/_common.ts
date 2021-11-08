@@ -1,8 +1,9 @@
 import { join, resolve } from 'pathe'
-import env from 'std-env'
+import { isDevelopment } from 'std-env'
 import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
+import defu from 'defu'
 
 export default {
   /**
@@ -80,13 +81,13 @@ export default {
    * @version 2
    * @version 3
    */
-  dev: Boolean(env.dev),
+  dev: Boolean(isDevelopment),
 
   /**
    * Whether your app is being unit tested
    * @version 2
    */
-  test: Boolean(env.test),
+  test: Boolean(isDevelopment),
 
   /**
    * Set to true to enable debug mode.
@@ -273,7 +274,6 @@ export default {
    * Allows customizing the global ID used in the main HTML template as well as the main
    * Vue instance name and other options.
    * @version 2
-   * @version 3
    */
   globalName: {
     $resolve: val => (typeof val === 'string' && /^[a-zA-Z]+$/.test(val)) ? val.toLocaleLowerCase() : 'nuxt'
@@ -457,7 +457,7 @@ export default {
    * @version 3
    */
   extensions: {
-    $resolve: val => ['.js', '.mjs', '.ts', '.tsx', '.vue'].concat(val).filter(Boolean)
+    $resolve: val => ['.js', '.jsx', '.mjs', '.ts', '.tsx', '.vue'].concat(val).filter(Boolean)
   },
 
   /**
@@ -697,8 +697,6 @@ export default {
    * @version 3
    */
   publicRuntimeConfig: {
-    app: {
-      $resolve: (val, get) => ({ ...get('app'), ...(val || {}) })
-    }
+    $resolve: (val, get) => defu(val, { app: get('app') })
   }
 }
