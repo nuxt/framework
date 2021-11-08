@@ -1,7 +1,6 @@
 
 import type { Nuxt, NuxtApp } from '@nuxt/kit'
 
-import { normalize } from 'pathe'
 import { importName, importSources } from './template.utils'
 
 type TemplateContext = {
@@ -34,14 +33,11 @@ export const cssTemplate = {
 export const clientPluginTemplate = {
   filename: 'plugins/client.mjs',
   getContents (ctx: TemplateContext) {
-    const clientPlugins = ctx.app.plugins
-      .filter(p => !p.mode || p.mode !== 'server')
-      .map(p => normalize(p.src))
-
+    const clientPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'server')
     return [
-      importSources(clientPlugins),
+      importSources(clientPlugins.map(p => p.src)),
       'export default [',
-      clientPlugins.map(p => importName(p)).join(',\n  '),
+      clientPlugins.map(p => importName(p.src)).join(',\n  '),
       ']'
     ].join('\n')
   }
@@ -50,16 +46,13 @@ export const clientPluginTemplate = {
 export const serverPluginTemplate = {
   filename: 'plugins/server.mjs',
   getContents (ctx: TemplateContext) {
-    const serverPlugins = ctx.app.plugins
-      .filter(p => !p.mode || p.mode !== 'client')
-      .map(p => normalize(p.src))
-
+    const serverPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'client')
     return [
       "import preload from '#app/plugins/preload.server'",
-      importSources(serverPlugins),
+      importSources(serverPlugins.map(p => p.src)),
       'export default [',
       '  preload,',
-      serverPlugins.map(p => importName(p)).join(',\n  '),
+      serverPlugins.map(p => importName(p.src)).join(',\n  '),
       ']'
     ].join('\n')
   }
