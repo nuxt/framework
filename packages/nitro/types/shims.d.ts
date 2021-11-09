@@ -14,5 +14,6 @@ declare module '#config' {
   import type { PublicRuntimeConfig, PrivateRuntimeConfig, RuntimeConfig } from '@nuxt/kit'
   export const privateConfig: PrivateRuntimeConfig
   export const publicConfig: PublicRuntimeConfig
-  export default RuntimeConfig
+  const runtimeConfig: RuntimeConfig
+  export default runtimeConfig
 }
