@@ -2,6 +2,6 @@ import { defineNuxtConfig } from 'nuxt3'
 
 export default defineNuxtConfig({
   buildModules: [
-    '~/modules/addRoutes'
+    '~/modules/pages'
   ]
 })

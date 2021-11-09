@@ -1,5 +1,5 @@
 {
-  "name": "example-with-extend-routes",
+  "name": "example-module-extend-pages",
   "private": true,
   "devDependencies": {
     "nuxt3": "latest"

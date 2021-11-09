@@ -10197,6 +10197,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-module-extend-pages@workspace:examples/module-extend-pages":
+  version: 0.0.0-use.local
+  resolution: "example-module-extend-pages@workspace:examples/module-extend-pages"
+  dependencies:
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-use-async-data@workspace:examples/use-async-data":
   version: 0.0.0-use.local
   resolution: "example-use-async-data@workspace:examples/use-async-data"
@@ -10240,14 +10248,6 @@ __metadata:
 "example-with-composables@workspace:examples/with-composables":
   version: 0.0.0-use.local
   resolution: "example-with-composables@workspace:examples/with-composables"
-  dependencies:
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
-"example-with-extend-routes@workspace:examples/with-extendRoutes":
-  version: 0.0.0-use.local
-  resolution: "example-with-extend-routes@workspace:examples/with-extendRoutes"
   dependencies:
     nuxt3: latest
   languageName: unknown

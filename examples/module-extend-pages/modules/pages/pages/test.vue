@@ -1,5 +1,5 @@
 <template>
   <div>
-    Hello test PAge
+    Test page added by module
   </div>
 </template>

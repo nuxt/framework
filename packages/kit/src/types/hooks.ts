@@ -34,6 +34,7 @@ export type TSReference = { types: string } | { path: string }
 export type NuxtPage = {
   name?: string,
   path: string,
+  file: string,
   children?: NuxtPage[]
 }
 
@@ -43,7 +44,7 @@ export interface NuxtHooks {
   'app:templates': (app: NuxtApp) => HookResult
   'app:templatesGenerated': (app: NuxtApp) => HookResult
   'builder:generateApp': () => HookResult
-  'pages:extend': (routes: NuxtPage[]) => HookResult
+  'pages:extend': (pages: NuxtPage[]) => HookResult
 
   // Auto imports
   'autoImports:sources': (autoImportSources: AutoImportSource[]) => HookResult
