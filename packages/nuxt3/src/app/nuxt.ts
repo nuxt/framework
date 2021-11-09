@@ -2,7 +2,7 @@
 import { getCurrentInstance, reactive } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
-import type { PublicRuntimeConfig, PrivateRuntimeConfig } from '@nuxt/kit'
+import type { RuntimeConfig } from '@nuxt/kit'
 import { legacyPlugin, LegacyContext } from './legacy'
 
 type NuxtMeta = {
@@ -193,7 +193,7 @@ export function useNuxtApp (): NuxtApp {
   return vm.appContext.app.$nuxt
 }
 
-export function useRuntimeConfig (): PublicRuntimeConfig & Partial<PrivateRuntimeConfig> {
+export function useRuntimeConfig (): RuntimeConfig {
   return useNuxtApp().$config
 }
 

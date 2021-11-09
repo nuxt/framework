@@ -11,8 +11,8 @@ declare module '#assets' {
 }
 
 declare module '#config' {
-  import type { PublicRuntimeConfig, PrivateRuntimeConfig } from '@nuxt/kit'
+  import type { PublicRuntimeConfig, PrivateRuntimeConfig, RuntimeConfig } from '@nuxt/kit'
   export const privateConfig: PrivateRuntimeConfig
   export const publicConfig: PublicRuntimeConfig
-  export default privateConfig
+  export default RuntimeConfig
 }
