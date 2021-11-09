@@ -1,5 +1,5 @@
 import { join, resolve } from 'pathe'
-import env from 'std-env'
+import { isDevelopment } from 'std-env'
 import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
@@ -81,13 +81,13 @@ export default {
    * @version 2
    * @version 3
    */
-  dev: Boolean(env.dev),
+  dev: Boolean(isDevelopment),
 
   /**
    * Whether your app is being unit tested
    * @version 2
    */
-  test: Boolean(env.test),
+  test: Boolean(isDevelopment),
 
   /**
    * Set to true to enable debug mode.
@@ -457,7 +457,7 @@ export default {
    * @version 3
    */
   extensions: {
-    $resolve: val => ['.js', '.mjs', '.ts', '.tsx', '.vue'].concat(val).filter(Boolean)
+    $resolve: val => ['.js', '.jsx', '.mjs', '.ts', '.tsx', '.vue'].concat(val).filter(Boolean)
   },
 
   /**

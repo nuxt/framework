@@ -34,27 +34,11 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
    */
   const scannedPaths: string[] = []
 
-  for (const {
-    path,
-    pattern,
-    ignore = [],
-    prefix,
-    extendComponent,
-    pathPrefix,
-    level,
-    prefetch = false,
-    preload = false
-  } of dirs.sort(sortDirsByPathLength)) {
-    /**
-     * memory resolve components names from components folders
-     */
+  for (const dir of dirs.sort(sortDirsByPathLength)) {
     const resolvedNames = new Map<string, string>()
 
-    for (const _file of await globby(pattern!, { cwd: path, ignore })) {
-      /**
-       * full file path
-       */
-      const filePath = join(path, _file)
+    for (const _file of await globby(dir.pattern!, { cwd: dir.path, ignore: dir.ignore })) {
+      const filePath = join(dir.path, _file)
 
       // TODO: better comment check if already checked if the component has been already scanned or not
       if (scannedPaths.find(d => filePath.startsWith(d))) {
@@ -74,8 +58,8 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
        * TODO: not sure about the second path
        */
       const prefixParts = ([] as string[]).concat(
-        prefix ? splitByCase(prefix) : [],
-        pathPrefix !== false ? splitByCase(relative(path, dirname(filePath))) : []
+        dir.prefix ? splitByCase(dir.prefix) : [],
+        (dir.pathPrefix !== false) ? splitByCase(relative(dir.path, dirname(filePath))) : []
       )
 
       /**
@@ -88,7 +72,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
       let fileName = basename(filePath, extname(filePath))
 
       if (fileName.toLowerCase() === 'index') {
-        fileName = pathPrefix === false ? basename(dirname(filePath)) : '' /* inherits from path */
+        fileName = dir.pathPrefix === false ? basename(dirname(filePath)) : '' /* inherits from path */
       }
 
       /**
@@ -145,15 +129,14 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
         chunkName,
         shortPath,
         export: 'default',
-        global: Boolean(global), // TOOD: deprecated why not remove it here ?
-        level: Number(level),
-        prefetch: Boolean(prefetch),
-        preload: Boolean(preload)
+        global: dir.global,
+        level: Number(dir.level),
+        prefetch: Boolean(dir.prefetch),
+        preload: Boolean(dir.preload)
       }
 
-      // TODO: not sure about this here
-      if (typeof extendComponent === 'function') {
-        component = (await extendComponent(component)) || component
+      if (typeof dir.extendComponent === 'function') {
+        component = (await dir.extendComponent(component)) || component
       }
 
       // Check if component is already defined, used to overwite if level is inferiour
@@ -165,7 +148,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
       }
     }
 
-    scannedPaths.push(path)
+    scannedPaths.push(dir.path)
   }
 
   return components

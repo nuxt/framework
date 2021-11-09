@@ -2,15 +2,15 @@ import { existsSync, promises as fsp } from 'fs'
 import { basename, extname, parse, resolve } from 'pathe'
 import lodashTemplate from 'lodash.template'
 import hash from 'hash-sum'
+import { pascalCase, camelCase, kebabCase } from 'scule'
 import type { WebpackPluginInstance, Configuration as WebpackConfig } from 'webpack'
 import type { Plugin as VitePlugin, UserConfig as ViteConfig } from 'vite'
-import { camelCase } from 'scule'
-import semver from 'semver'
+import satisfies from 'semver/functions/satisfies.js' // npm/node-semver#381
 import { NuxtCompatibilityConstraints, NuxtCompatibilityIssues } from '../types/module'
 import { Nuxt } from '../types/nuxt'
 import { useNuxt } from '../nuxt'
 import type { NuxtTemplate, NuxtPlugin, NuxtPluginTemplate } from '../types/nuxt'
-import type { ComponentsDir } from '../types/components'
+import type { ComponentsDir, Component } from '../types/components'
 
 /**
  * Renders given template using lodash template during build into the project buildDir
@@ -302,6 +302,52 @@ export function addComponentsDir (dir: ComponentsDir) {
   nuxt.hook('components:dirs', (dirs) => { dirs.push(dir) })
 }
 
+export type AddComponentOptions = { name: string, filePath: string } & Partial<Exclude<Component,
+'shortPath' | 'async' | 'level' | 'import' | 'asyncImport'
+>>
+
+/**
+ * Register a directory to be scanned for components and imported only when used.
+ *
+ * Requires Nuxt 2.13+
+ */
+export function addComponent (opts: AddComponentOptions) {
+  const nuxt = useNuxt()
+  ensureNuxtCompatibility({ nuxt: '>=2.13' }, nuxt)
+  nuxt.options.components = nuxt.options.components || []
+
+  // Apply defaults
+  const component: Component = {
+    export: opts.export || 'default',
+    chunkName: 'components/' + kebabCase(opts.name),
+    global: opts.global ?? false,
+    kebabName: kebabCase(opts.name || ''),
+    pascalName: pascalCase(opts.name || ''),
+    prefetch: false,
+    preload: false,
+
+    // Nuxt 2 support
+    shortPath: opts.filePath,
+    async: false,
+    level: 0,
+    asyncImport: `() => import('${opts.filePath}').then(r => r['${opts.export || 'default'}'])`,
+    import: `require('${opts.filePath}')['${opts.export || 'default'}']`,
+
+    ...opts
+  }
+
+  nuxt.hook('components:extend', (components: Component[]) => {
+    const existingComponent = components.find(c => c.pascalName === component.pascalName || c.kebabName === component.kebabName)
+    if (existingComponent) {
+      const name = existingComponent.pascalName || existingComponent.kebabName
+      console.warn(`Overriding ${name} component.`)
+      Object.assign(existingComponent, component)
+    } else {
+      components.push(component)
+    }
+  })
+}
+
 const serialize = (data: any) => JSON.stringify(data, null, 2).replace(/"{(.+)}"/g, '$1')
 
 const importName = (src: string) => `${camelCase(basename(src, extname(src))).replace(/[^a-zA-Z?\d\s:]/g, '')}_${hash(src)}`
@@ -356,7 +402,8 @@ export function checkNuxtCompatibilityIssues (constraints: NuxtCompatibilityCons
   const issues: NuxtCompatibilityIssues = []
   if (constraints.nuxt) {
     const nuxtVersion = getNuxtVersion(nuxt)
-    if (!semver.satisfies(nuxtVersion, constraints.nuxt)) {
+    const nuxtSemanticVersion = nuxtVersion.split('-').shift()
+    if (!satisfies(nuxtSemanticVersion, constraints.nuxt)) {
       issues.push({
         name: 'nuxt',
         message: `Nuxt version \`${constraints.nuxt}\` is required but currently using \`${nuxtVersion}\``

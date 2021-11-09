@@ -1,4 +1,6 @@
 import { pathToFileURL } from 'url'
+import { existsSync } from 'fs'
+import { resolve } from 'pathe'
 import * as vite from 'vite'
 import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults } from 'externality'
 import { hashId, uniq } from './utils'
@@ -29,8 +31,6 @@ function isExternal (opts: TransformOptions, id: string) {
     inline: [
       /virtual:/,
       /\.ts$/,
-      // Things like '~', '@', etc.
-      ...Object.keys(opts.viteServer.config.resolve.alias),
       ...ExternalsDefaults.inline,
       ...ssrConfig.noExternal
     ],
@@ -57,14 +57,21 @@ async function transformRequest (opts: TransformOptions, id: string) {
   if (id && id.startsWith('/@fs/')) {
     // Absolute path
     id = id.slice('/@fs'.length)
+    // On Windows, this may be `/C:/my/path` at this point, in which case we want to remove the `/`
+    if (id.match(/^\/\w:/)) {
+      id = id.slice(1)
+    }
   } else if (!id.includes('entry') && id.startsWith('/')) {
     // Relative to the root directory
-    id = '.' + id
+    const resolvedPath = resolve(opts.viteServer.config.root, '.' + id)
+    if (existsSync(resolvedPath)) {
+      id = resolvedPath
+    }
   }
 
   if (await isExternal(opts, id)) {
     return {
-      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${(pathToFileURL(id))}').then(r => { exports.default = r.default; ssrExportAll(r) })`,
+      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${(pathToFileURL(id))}').then(r => { exports.default = r.default; ssrExportAll(r) }).catch(e => { console.error(e); throw new Error('[vite dev] Error loading external "${id}".') })`,
       deps: [],
       dynamicDeps: []
     }
@@ -124,7 +131,7 @@ const ${hashId(chunk.id)} = ${chunk.code}
   const ssrModuleLoader = `
 const __pendingModules__ = new Map()
 const __pendingImports__ = new Map()
-const __ssrContext__ = { global: {} }
+const __ssrContext__ = { global: globalThis }
 
 function __ssrLoadModule__(url, urlStack = []) {
   const pendingModule = __pendingModules__.get(url)
@@ -142,7 +149,8 @@ async function __instantiateModule__(url, urlStack) {
   const stubModule = { [Symbol.toStringTag]: 'Module' }
   Object.defineProperty(stubModule, '__esModule', { value: true })
   mod.stubModule = stubModule
-  const importMeta = { url, hot: { accept() {} } }
+  // https://vitejs.dev/guide/api-hmr.html
+  const importMeta = { url, hot: { accept() {}, prune() {}, dispose() {}, invalidate() {}, decline() {}, on() {} } }
   urlStack = urlStack.concat(url)
   const isCircular = url => urlStack.includes(url)
   const pendingDeps = []

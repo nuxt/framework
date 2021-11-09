@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { createHooks } from 'hookable/dist/index.mjs'
+import { createHooks } from 'hookable'
 import { setNuxtAppInstance } from '#app'
 
 export default (ctx, inject) => {
@@ -11,9 +11,9 @@ export default (ctx, inject) => {
       },
       directive: Vue.directive.bind(Vue),
       mixin: Vue.mixin.bind(Vue),
-      mount: () => {},
+      mount: () => { },
       provide: inject,
-      unmount: () => {},
+      unmount: () => { },
       use (vuePlugin) {
         vuePlugin.install(this)
       },
@@ -42,7 +42,16 @@ export default (ctx, inject) => {
     nuxtApp.vue2App = this
   })
 
-  setNuxtAppInstance(nuxtApp)
+  const proxiedApp = new Proxy(nuxtApp, {
+    get (target, prop) {
+      if (prop[0] === '$') {
+        return target.nuxt2Context[prop] || target.vue2App?.[prop]
+      }
+      return Reflect.get(target, prop)
+    }
+  })
 
-  inject('_nuxtApp', nuxtApp)
+  setNuxtAppInstance(proxiedApp)
+
+  inject('_nuxtApp', proxiedApp)
 }

@@ -75,7 +75,7 @@ export function externals (opts: NodeExternalsOptions): Plugin {
         const pkgs = new Set<string>()
         for (const file of tracedFiles) {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const [_, baseDir, pkgName, _importPath] = /(.+\/node_modules\/)([^@/]+|@[^/]+\/[^/]+)\/(.*)/.exec(file)
+          const [_, baseDir, pkgName, _importPath] = /^(.+\/node_modules\/)([^@/]+|@[^/]+\/[^/]+)(\/?.*?)?$/.exec(file)
           pkgs.add(resolve(baseDir, pkgName, 'package.json'))
         }
 
@@ -86,6 +86,10 @@ export function externals (opts: NodeExternalsOptions): Plugin {
         }
 
         const writeFile = async (file) => {
+          // Skip symlinks that are included in fileList
+          if (await fse.stat(file).then(i => i.isDirectory())) {
+            return
+          }
           const src = resolve(opts.traceOptions.base, file)
           const dst = resolve(opts.outDir, 'node_modules', file.split('node_modules/').pop())
           await fse.mkdirp(dirname(dst))

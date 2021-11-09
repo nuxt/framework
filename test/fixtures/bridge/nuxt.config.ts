@@ -19,6 +19,7 @@ export default defineNuxtConfig({
     output: { dir: process.env.NITRO_OUTPUT_DIR }
   },
   bridge: {
-    meta: true
+    meta: true,
+    vite: !!process.env.TEST_BRIDGE_VITE
   }
 })

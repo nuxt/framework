@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import { getCurrentInstance, reactive, defineAsyncComponent } from 'vue'
+import { getCurrentInstance, reactive } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import { legacyPlugin, LegacyContext } from './legacy'
@@ -99,12 +99,6 @@ export function createNuxtApp (options: CreateOptions) {
     nuxtApp.ssrContext.nuxt = nuxtApp
   }
 
-  // (temporary) Expose NuxtWelcome component in dev
-  if (process.dev) {
-    // @ts-ignore
-    nuxtApp.vueApp.component('NuxtWelcome', defineAsyncComponent(() => import('./components/nuxt-welcome.vue')))
-  }
-
   if (process.server) {
     // Expose to server renderer to create window.__NUXT__
     nuxtApp.ssrContext = nuxtApp.ssrContext || {}
@@ -137,6 +131,9 @@ export function normalizePlugins (_plugins: Array<Plugin | LegacyPlugin>) {
   let needsLegacyContext = false
 
   const plugins = _plugins.map((plugin) => {
+    if (typeof plugin !== 'function') {
+      return () => {}
+    }
     if (isLegacyPlugin(plugin)) {
       needsLegacyContext = true
       return (nuxtApp: NuxtApp) => plugin(nuxtApp._legacyContext!, nuxtApp.provide)
