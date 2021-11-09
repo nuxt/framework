@@ -83,16 +83,14 @@ export const useNuxt2Meta = (metaOptions: Reffed<MetaInfo> | (() => Reffed<MetaI
   const $root = vm.$root
 
   if (!vm._vueMeta) {
-    if (!vm._vueMeta) {
-      vm._vueMeta = true
+    vm._vueMeta = true
 
-      let parent = vm.$parent as AugmentedComponent
-      while (parent && parent !== $root) {
-        if (!parent._vueMeta) {
-          parent._vueMeta = false
-        }
-        parent = parent.$parent
+    let parent = vm.$parent as AugmentedComponent
+    while (parent && parent !== $root) {
+      if (parent._vueMeta === undefined) {
+        parent._vueMeta = false
       }
+      parent = parent.$parent
     }
   }
   // @ts-ignore
