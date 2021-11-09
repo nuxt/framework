@@ -35,7 +35,7 @@ export type NuxtPagesRoute = {
   name?: string,
   path: string,
   file: string,
-  children: NuxtPagesRoute[]
+  children?: NuxtPagesRoute[]
 }
 
 export interface NuxtHooks {
