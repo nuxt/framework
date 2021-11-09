@@ -15,8 +15,9 @@ function hyphenate (str: string):string {
 
 /**
  * Scan the components inside different components folders
+ * and return a unique list of components
  *
- * @param dirs list and create a context where components are defined
+ * @param dirs all folders where components are defined
  * @param srcDir src path of your app
  * @returns {Promise} Component found promise
  */
@@ -35,15 +36,20 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
   const scannedPaths: string[] = []
 
   for (const dir of dirs.sort(sortDirsByPathLength)) {
+    /**
+     * Array of all resolve name components find 2 dimension array
+     */
+
     const resolvedNames = new Map<string, string>()
 
     for (const _file of await globby(dir.pattern!, { cwd: dir.path, ignore: dir.ignore })) {
       const filePath = join(dir.path, _file)
 
-      // TODO: better comment check if already checked if the component has been already scanned or not
       if (scannedPaths.find(d => filePath.startsWith(d))) {
         continue
       }
+
+      console.log(scannedPaths)
 
       // TODO: add good comment of the condition
       if (filePaths.has(filePath)) { continue }
@@ -55,7 +61,6 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
        *
        * @example prefix: 'nuxt' -> ['nuxt']
        * @example prefix: 'nuxt-test' -> ['nuxt', 'test']
-       * TODO: not sure about the second path
        */
       const prefixParts = ([] as string[]).concat(
         dir.prefix ? splitByCase(dir.prefix) : [],
@@ -93,13 +98,6 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
 
       const componentName = pascalCase(componentNameParts) + pascalCase(fileNameParts)
 
-      // console.log('-------')
-      // console.log('file name: ', fileName)
-      // console.log('fileNameParts: ', fileNameParts)
-      // console.log('components parts: ', componentNameParts)
-      // console.log('componentName: ', componentName)
-      // console.log('-------')
-
       // TODO: test this case
       if (resolvedNames.has(componentName)) {
         console.warn(`Two component files resolving to the same name \`${componentName}\`:\n` +
@@ -114,13 +112,6 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
       const kebabName = hyphenate(componentName)
       const shortPath = relative(srcDir, filePath)
       const chunkName = 'components/' + kebabName
-
-      console.log('-------')
-      console.log('pascalName: ', pascalName)
-      console.log('kebabName: ', kebabName)
-      console.log('shortPath: ', shortPath)
-      console.log('chunkName: ', chunkName)
-      console.log('-------')
 
       let component: Component = {
         filePath,
@@ -150,6 +141,8 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
 
     scannedPaths.push(dir.path)
   }
+
+  // console.log(components)
 
   return components
 }
