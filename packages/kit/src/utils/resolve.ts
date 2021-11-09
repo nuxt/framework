@@ -74,7 +74,6 @@ function existsSyncSensitive (path: string, files?: string[]) {
   return _files.includes(basename(path))
 }
 
-export type ResolveAliasFn = { path: string, alias: ResolveOptions['alias'] };
 /**
  * Return a path with any relevant aliases resolved.
  *
