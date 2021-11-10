@@ -2,7 +2,7 @@
   <div>
     Hello World
 
-    <Html :lang="'' + dynamic">
+    <Html :lang="String(dynamic)">
       <Head>
         <Title>{{ dynamic }} title</Title>
         <Meta name="description" :content="`My page's ${dynamic} description`" />
