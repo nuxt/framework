@@ -212,5 +212,5 @@ export const Html = defineComponent({
 export const Body = defineComponent({
   name: 'Body',
   props: globalProps,
-  setup: setupForUseMeta(bodyAttrs => ({ bodyAttrs }), true)
+  setup: (_props, ctx) => ctx.slots.default
 })
