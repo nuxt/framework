@@ -111,6 +111,20 @@ export default {
   /**
    * Set default configuration for `<head>` on every page.
    *
+   * @example
+   * ```js
+   * meta: {
+   *  meta: [
+   *    {
+   *      name: 'viewport',
+   *      content: 'test content'
+   *    }
+   *  ],
+   *  script: [{src: 'https://awesome-lib.js'],
+   *  link: [{rel: 'stylesheet', href: 'https://awesome-lib.css'],
+   *  style: [{ children: ':root { color: red }', type: 'text/css' }], // please note that this is an area that is likely to change
+   * }
+   * ```
    * @version 3
    */
   meta: {
