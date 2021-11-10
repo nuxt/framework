@@ -199,7 +199,7 @@ export const Head = defineComponent({
     version: String,
     xmlns: String
   },
-  setup: setupForUseMeta(headAttrs => ({ headAttrs }), true)
+  setup: setupForUseMeta(htmlAttrs => ({ htmlAttrs }), true)
 })
 
 // <body>
