@@ -193,6 +193,12 @@ export const Style = defineComponent({
 // <head>
 export const Head = defineComponent({
   name: 'Head',
+  setup: setupForUseMeta(() => ({}), true)
+})
+
+// <html>
+export const Html = defineComponent({
+  name: 'Html',
   props: {
     ...globalProps,
     manifest: String,
