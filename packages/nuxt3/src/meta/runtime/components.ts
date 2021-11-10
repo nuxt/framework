@@ -193,7 +193,7 @@ export const Style = defineComponent({
 // <head>
 export const Head = defineComponent({
   name: 'Head',
-  setup: setupForUseMeta(() => ({}), true)
+  setup: (_props, ctx) => ctx.slots.default
 })
 
 // <html>
@@ -212,5 +212,5 @@ export const Html = defineComponent({
 export const Body = defineComponent({
   name: 'Body',
   props: globalProps,
-  setup: (_props, ctx) => ctx.slots.default
+  setup: setupForUseMeta(bodyAttrs => ({ bodyAttrs }), true)
 })
