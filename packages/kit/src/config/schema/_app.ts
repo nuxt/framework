@@ -116,7 +116,7 @@ export default {
    * meta: {
    *  meta: [
    *    // <meta name="viewport" content="width=device-width, initial-scale=1">
-   *    { name: 'viewport', content: 'test content' }
+   *    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
    *  ],
    *  script: [
    *    // <script src="https://myawesome-lib.js"></script>
