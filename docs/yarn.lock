@@ -5064,6 +5064,9 @@ file-loader@^6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/file-loader/-/file-loader-6.2.0.tgz#baef7cf8e1840df325e4390b4484879480eebe4d"
   integrity sha512-qo3glqyTa61Ytg4u73GultjHGjdRyig3tG6lPtyX/jOEJvHif9uB0/OCI2Kif6ctF3caQTW2G5gym21oAsI4pw==
+  dependencies:
+    loader-utils "^2.0.0"
+    schema-utils "^3.0.0"
 
 file-uri-to-path@1.0.0:
   version "1.0.0"
@@ -6074,6 +6077,8 @@ is-accessor-descriptor@^0.1.6:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/is-accessor-descriptor/-/is-accessor-descriptor-0.1.6.tgz#a9e12cb3ae8d876727eeef3843f8a0897b5c98d6"
   integrity sha1-qeEss66Nh2cn7u84Q/igiXtcmNY=
+  dependencies:
+    kind-of "^3.0.2"
 
 is-accessor-descriptor@^1.0.0:
   version "1.0.0"
@@ -9755,6 +9760,8 @@ rxjs@^6.6.0:
   version "6.6.7"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.7.tgz#90ac018acabf491bf65044235d5863c4dab804c9"
   integrity sha512-hTdwr+7yYNIT5n4AMYp85KA6yw2Va0FLa3Rguvbpa4W3I5xynaBZo41cM3XM+4Q6fRMj3sBYIR1VAmZMXYJvRQ==
+  dependencies:
+    tslib "^1.9.0"
 
 safe-buffer@5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
@@ -10246,10 +10253,10 @@ std-env@^2.2.1, std-env@^2.3.0, std-env@^2.3.1:
   dependencies:
     ci-info "^3.1.1"
 
-std-env@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/std-env/-/std-env-3.0.1.tgz#bc4cbc0e438610197e34c2d79c3df30b491f5182"
-  integrity sha512-mC1Ps9l77/97qeOZc+HrOL7TIaOboHqMZ24dGVQrlxFcpPpfCHpH+qfUT7Dz+6mlG8+JPA1KfBQo19iC/+Ngcw==
+std-env@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/std-env/-/std-env-3.0.0.tgz#8dbd16bd2aadc18992072e2f5839e897f4ee2733"
+  integrity sha512-GoFEqAGzhaexp/T01rIiLOK9LHa6HmVwEUyeU4cwdSnOhfxpw9IMeAFi44SHWbCErEs29qEh7vAOUbtUmoycjA==
 
 stream-browserify@^2.0.1:
   version "2.0.2"
