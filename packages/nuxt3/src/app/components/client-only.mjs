@@ -9,7 +9,7 @@ const ClientOnly = defineComponent({
     return () => (
       show.value
         ? slots.default?.()
-        : slots.fallback?.()
+        : (slots.fallback ?? slots.placeholder)?.()
     )
   }
 })
