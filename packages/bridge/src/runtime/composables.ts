@@ -6,7 +6,8 @@ import type { Route } from 'vue-router'
 import type { RuntimeConfig } from '@nuxt/kit'
 import { useNuxtApp } from './app'
 
-export { useLazyAsyncData, useLazyFetch } from '../../../nuxt3/src/app/composables'
+export { useLazyAsyncData } from './asyncData'
+export { useLazyFetch } from './fetch'
 
 export * from '@vue/composition-api'
 
