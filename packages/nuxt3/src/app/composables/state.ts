@@ -1,7 +1,15 @@
 /* eslint-disable no-redeclare */
 import { toRef } from 'vue'
-import type { Ref, InjectionKey } from 'vue'
+import type { Ref } from 'vue'
 import { useNuxtApp } from '#app'
+
+const stateSymbol = Symbol('nuxt-states')
+
+export interface NuxtStates { }
+export type StateKey<T> = string & { [stateSymbol]: T }
+
+/** Return a typed string that can be used as a key for `useState`. */
+export const stateKey = <T> (k: string) => k as StateKey<T>
 
 /**
  * Create a global reactive ref that will be hydrated but not shared across ssr requests
@@ -9,13 +17,12 @@ import { useNuxtApp } from '#app'
  * @param key a unique key ensuring that data fetching can be properly de-duplicated across requests
  * @param init a function that provides initial value for the state when it's not initiated
  */
-export function useState<T> (key: InjectionKey<T>): Ref<T | undefined>
-export function useState<T = any> (key: string): Ref<T | undefined>
-export function useState<T> (key: InjectionKey<T>, init: (() => T)): Ref<T>
-export function useState<T = any> (key: string, init: (() => T)): Ref<T>
-export function useState<T = any> (key: InjectionKey<T> | string, init?: (() => T)): Ref<T> {
+
+export function useState<T = unknown, K extends string = string, S = K extends keyof NuxtStates ? NuxtStates[K] : T> (key: K | StateKey<T>): Ref<S | undefined>
+export function useState<T = unknown, K extends string = string, S = K extends keyof NuxtStates ? NuxtStates[K] : T> (key: K | StateKey<T>, init: (() => S)): Ref<S>
+export function useState (key: string, init?: (() => any)): Ref<any> {
   const nuxt = useNuxtApp()
-  const state = toRef(nuxt.payload.state, key.toString()) // Symbols will end up like "Symbol('key')" which is good enough
+  const state = toRef(nuxt.payload.state, key)
   if (state.value === undefined && init) {
     state.value = init()
   }
