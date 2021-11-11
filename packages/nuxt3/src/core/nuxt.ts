@@ -77,6 +77,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   options._majorVersion = 3
   options.buildModules.push(pagesModule, metaModule, componentsModule, autoImportsModule)
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))
+  options.alias['vue-demi'] = resolve(options.appDir, 'compat/vue-demi')
 
   const nuxt = createNuxt(options)
 

@@ -113,7 +113,6 @@ function baseAlias (ctx: WebpackConfigContext) {
     '#app': options.appDir,
     '#build/plugins': resolve(options.buildDir, 'plugins', ctx.isClient ? 'client' : 'server'),
     '#build': options.buildDir,
-    'vue-demi': resolve(options.buildDir, 'vue-demi.mjs'),
     ...options.alias,
     ...ctx.alias
   }
