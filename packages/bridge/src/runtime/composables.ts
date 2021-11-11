@@ -6,11 +6,14 @@ import type { Route } from 'vue-router'
 import type { RuntimeConfig } from '@nuxt/kit'
 import { useNuxtApp } from './app'
 
+export { useLazyAsyncData, useLazyFetch } from '../../../nuxt3/src/app/composables'
+
 export * from '@vue/composition-api'
 
 const mock = () => () => { throw new Error('not implemented') }
 
 export const useAsyncData = mock()
+export const useFetch = mock()
 export const useHydration = mock()
 
 // Runtime config helper

@@ -1,4 +1,4 @@
-import { onBeforeMount, onUnmounted, ref, getCurrentInstance } from 'vue'
+import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance } from 'vue'
 import type { Ref } from 'vue'
 import { NuxtApp, useNuxtApp } from '#app'
 
@@ -114,7 +114,8 @@ export function useAsyncData<
 
   // Server side
   if (process.server && fetchOnServer) {
-    asyncData.refresh()
+    const promise = asyncData.refresh()
+    onServerPrefetch(() => promise)
   }
 
   // Client side

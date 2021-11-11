@@ -2,6 +2,16 @@ import Vue from 'vue'
 import { createHooks } from 'hookable'
 import { setNuxtAppInstance } from '#app'
 
+// Reshape payload to match key `useLazyAsyncData` expects
+function swapAsyncData (state) {
+  state._asyncData = state._asyncData || {}
+  return {
+    ...state,
+    _data: state.data,
+    data: state._asyncData
+  }
+}
+
 export default (ctx, inject) => {
   const nuxtApp = {
     vueApp: {
@@ -21,7 +31,8 @@ export default (ctx, inject) => {
     },
     provide: inject,
     globalName: 'nuxt',
-    payload: process.client ? ctx.nuxtState : ctx.ssrContext.nuxt,
+    payload: process.client ? swapAsyncData(ctx.nuxtState) : swapAsyncData(ctx.ssrContext.nuxt),
+    _asyncDataPromises: [],
     isHydrating: ctx.isHMR,
     nuxt2Context: ctx
   }
