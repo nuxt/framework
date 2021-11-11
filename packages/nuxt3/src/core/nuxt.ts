@@ -61,7 +61,7 @@ async function initNuxt (nuxt: Nuxt) {
   // Add <ClientOnly>
   addComponent({
     name: 'clientOnly',
-    filePath: resolve(nuxt.options.appDir, 'components/client-only.ts')
+    filePath: resolve(nuxt.options.appDir, 'components/client-only')
   })
 
   for (const m of modulesToInstall) {
