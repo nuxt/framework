@@ -2,7 +2,7 @@ import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance }
 import type { Ref } from 'vue'
 import { NuxtApp, useNuxtApp } from '#app'
 
-export type _Transform<Input=any, Output=any> = (input: Input) => Output
+export type _Transform<Input = any, Output = any> = (input: Input) => Output
 
 export type PickFrom<T, K extends Array<string>> = T extends Array<any> ? T : T extends Record<string, any> ? Pick<T, K[number]> : T
 export type KeysOf<T> = Array<keyof T extends string ? keyof T : string>
@@ -39,7 +39,7 @@ export function useAsyncData<
   key: string,
   handler: (ctx?: NuxtApp) => Promise<DataT>,
   options: AsyncDataOptions<DataT, Transform, PickKeys> = {}
-) : AsyncData<PickFrom<ReturnType<Transform>, PickKeys>> {
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>> {
   // Validate arguments
   if (typeof key !== 'string') {
     throw new TypeError('asyncData key must be a string')

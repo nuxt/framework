@@ -10,14 +10,14 @@ export type UseFetchOptions<
   DataT,
   Transform extends _Transform<DataT, any> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-> = AsyncDataOptions<DataT, Transform, PickKeys> & FetchOptions & { key?: string }
+  > = AsyncDataOptions<DataT, Transform, PickKeys> & FetchOptions & { key?: string }
 
 export function useFetch<
-    ReqT extends string = string,
-    ResT = FetchResult<ReqT>,
-    Transform extends (res: ResT) => any = (res: ResT) => ResT,
-    PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-  > (
+  ReqT extends string = string,
+  ResT = FetchResult<ReqT>,
+  Transform extends (res: ResT) => any = (res: ResT) => ResT,
+  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
+> (
   url: ReqT,
   opts: UseFetchOptions<ResT, Transform, PickKeys> = {}
 ) {
@@ -45,7 +45,7 @@ export function useLazyFetch<
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   url: ReqT,
-  opts: UseFetchOptions<ResT, Transform, PickKeys> = {}
+  opts: Omit<UseFetchOptions<ResT, Transform, PickKeys>, 'lazy'> = {}
 ) {
   return useFetch(url, { ...opts, lazy: true })
 }
