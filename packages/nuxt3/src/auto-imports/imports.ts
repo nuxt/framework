@@ -11,6 +11,7 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
       'defineNuxtPlugin',
       'useRuntimeConfig',
       'useState',
+      'stateKey',
       'useFetch'
     ]
   },
