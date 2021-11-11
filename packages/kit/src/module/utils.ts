@@ -1,5 +1,5 @@
 import { existsSync, promises as fsp } from 'fs'
-import { basename, extname, parse, resolve } from 'pathe'
+import { basename, extname, normalize, parse, resolve } from 'pathe'
 import lodashTemplate from 'lodash.template'
 import hash from 'hash-sum'
 import { pascalCase, camelCase, kebabCase } from 'scule'
@@ -11,6 +11,7 @@ import { Nuxt } from '../types/nuxt'
 import { useNuxt } from '../nuxt'
 import type { NuxtTemplate, NuxtPlugin, NuxtPluginTemplate } from '../types/nuxt'
 import type { ComponentsDir, Component } from '../types/components'
+import type { NuxtHooks } from '../types/hooks'
 
 /**
  * Renders given template using lodash template during build into the project buildDir
@@ -89,6 +90,9 @@ export function normalizePlugin (plugin: NuxtPlugin | string): NuxtPlugin {
   if (!plugin.src) {
     throw new Error('Invalid plugin. src option is required: ' + JSON.stringify(plugin))
   }
+
+  // Normalize full path to plugin
+  plugin.src = normalize(plugin.src)
 
   // Normalize mode
   if (plugin.ssr) {
@@ -346,6 +350,11 @@ export function addComponent (opts: AddComponentOptions) {
       components.push(component)
     }
   })
+}
+
+export function extendPages (cb: NuxtHooks['pages:extend']) {
+  const nuxt = useNuxt()
+  nuxt.hook('pages:extend', cb)
 }
 
 const serialize = (data: any) => JSON.stringify(data, null, 2).replace(/"{(.+)}"/g, '$1')

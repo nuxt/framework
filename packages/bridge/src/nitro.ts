@@ -21,9 +21,6 @@ export function setupNitroBridge () {
   // @ts-ignore
   nuxt.options.build.indicator = false
 
-  // Disable fetch polyfill (nitro provides it)
-  nuxt.options.fetch.server = false
-
   // Create contexts
   const nitroOptions = (nuxt.options as any).nitro || {}
   const nitroContext = getNitroContext(nuxt.options, nitroOptions)
@@ -129,11 +126,6 @@ export function setupNitroBridge () {
   // Add typed route responses
   nuxt.hook('prepare:types', (opts) => {
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'nitro.d.ts') })
-
-    for (const stub of ['#storage', '#assets']) {
-      // The `@nuxt/nitro` types will be overwritten by packages/nitro/types/shims.d.ts
-      opts.tsConfig.compilerOptions.paths[stub] = ['@nuxt/nitro']
-    }
   })
 
   // nuxt build/dev
