@@ -10,7 +10,7 @@ export type UseFetchOptions<
   DataT,
   Transform extends _Transform<DataT, any> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-  > = AsyncDataOptions<DataT, Transform, PickKeys> & FetchOptions & { key?: string }
+> = AsyncDataOptions<DataT, Transform, PickKeys> & FetchOptions & { key?: string }
 
 export function useFetch<
   ReqT extends string = string,
