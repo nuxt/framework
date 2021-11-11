@@ -35,10 +35,8 @@ export const clientPluginTemplate = {
   getContents (ctx: TemplateContext) {
     const clientPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'server')
     return [
-      "import clientOnly from '#app/plugins/client-only'",
       importSources(clientPlugins.map(p => p.src)),
       'export default [',
-      '  clientOnly,',
       clientPlugins.map(p => importName(p.src)).join(',\n  '),
       ']'
     ].join('\n')
@@ -51,11 +49,9 @@ export const serverPluginTemplate = {
     const serverPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'client')
     return [
       "import preload from '#app/plugins/preload.server'",
-      "import clientOnly from '#app/plugins/client-only'",
       importSources(serverPlugins.map(p => p.src)),
       'export default [',
       '  preload,',
-      '  clientOnly,',
       serverPlugins.map(p => importName(p.src)).join(',\n  '),
       ']'
     ].join('\n')

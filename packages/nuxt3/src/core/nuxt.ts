@@ -58,6 +58,12 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: resolve(nuxt.options.appDir, 'components/nuxt-welcome.vue')
   })
 
+  // Add <ClientOnly>
+  addComponent({
+    name: 'clientOnly',
+    filePath: resolve(nuxt.options.appDir, 'components/client-only.ts')
+  })
+
   for (const m of modulesToInstall) {
     await installModule(nuxt, m)
   }
