@@ -12,10 +12,12 @@ export const writeTypes = async (nuxt: Nuxt) => {
       target: 'ESNext',
       module: 'ESNext',
       moduleResolution: 'Node',
+      skipLibCheck: true,
       strict: true,
       allowJs: true,
       noEmit: true,
       resolveJsonModule: true,
+      allowSyntheticDefaultImports: true,
       types: ['node'],
       baseUrl: relative(nuxt.options.buildDir, nuxt.options.rootDir),
       paths: {}
@@ -31,6 +33,7 @@ export const writeTypes = async (nuxt: Nuxt) => {
     ...nuxt.options.alias,
     '#build': nuxt.options.buildDir,
     // The `@nuxt/nitro` types will be overwritten by packages/nitro/types/shims.d.ts
+    '#config': '@nuxt/nitro',
     '#storage': '@nuxt/nitro',
     '#assets': '@nuxt/nitro'
   }
