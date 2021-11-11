@@ -1,3 +1,4 @@
+/* eslint-disable no-redeclare */
 import { reactive, toRef, isReactive, Ref } from '@vue/composition-api'
 import type VueRouter from 'vue-router'
 import type { Route } from 'vue-router'
@@ -40,8 +41,18 @@ export const useRoute = () => {
   return nuxtApp._route as Route
 }
 
+const stateSymbol = Symbol('nuxt-states')
+
+export interface NuxtStates { }
+export type StateKey<T> = string & { [stateSymbol]: T }
+
+/** Return a typed string that can be used as a key for `useState`. */
+export const stateKey = <T> (k: string) => k as StateKey<T>
+
 // payload.state is used for vuex by nuxt 2
-export const useState = <T>(key: string, init?: (() => T)): Ref<T> => {
+export function useState<T = unknown, K extends string = string, S = K extends keyof NuxtStates ? NuxtStates[K] : T> (key: K | StateKey<T>): Ref<S | undefined>
+export function useState<T = unknown, K extends string = string, S = K extends keyof NuxtStates ? NuxtStates[K] : T> (key: K | StateKey<T>, init: (() => S)): Ref<S>
+export function useState (key: string, init?: (() => any)): Ref<any> {
   const nuxtApp = useNuxtApp()
   if (!nuxtApp.payload.useState) {
     nuxtApp.payload.useState = {}
