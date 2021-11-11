@@ -2,7 +2,6 @@
 import { getCurrentInstance, reactive } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
-import type { Router } from 'vue-router'
 import { legacyPlugin, LegacyContext } from './legacy'
 
 type NuxtMeta = {
@@ -34,8 +33,6 @@ export interface NuxtApp {
   callHook: NuxtApp['hooks']['callHook']
 
   [key: string]: any
-
-  $router: Router
 
   _asyncDataPromises?: Record<string, Promise<any>>
   _legacyContext?: LegacyContext
