@@ -35,7 +35,7 @@
     "globby": "^11.0.4",
     "hash-sum": "^2.0.0",
     "magic-string": "^0.25.7",
-    "mlly": "^0.3.12",
+    "mlly": "^0.3.13",
     "murmurhash-es": "^0.1.1",
     "node-fetch": "^3.1.0",
     "nuxi": "3.0.0",
