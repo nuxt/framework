@@ -38,6 +38,18 @@ export function useFetch<
   return useAsyncData(opts.key, () => $fetch(url, opts) as Promise<ResT>, opts)
 }
 
+export function useLazyFetch<
+  ReqT extends string = string,
+  ResT = FetchResult<ReqT>,
+  Transform extends (res: ResT) => any = (res: ResT) => ResT,
+  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
+> (
+  url: ReqT,
+  opts: UseFetchOptions<ResT, Transform, PickKeys> = {}
+) {
+  return useFetch(url, { ...opts, lazy: true })
+}
+
 function generateKey (keys) {
   return '$f' + murmurHashV3(JSON.stringify(keys))
 }

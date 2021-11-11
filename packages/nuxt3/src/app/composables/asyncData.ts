@@ -146,6 +146,18 @@ export function useAsyncData<
   return asyncDataPromise as AsyncData<DataT>
 }
 
+export function useLazyAsyncData<
+  DataT,
+  Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
+  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
+> (
+  key: string,
+  handler: (ctx?: NuxtApp) => Promise<DataT>,
+  options: Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'lazy'> = {}
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>> {
+  return useAsyncData(key, handler, { ...options, lazy: true })
+}
+
 function pick (obj: Record<string, any>, keys: string[]) {
   const newObj = {}
   for (const key of keys) {
