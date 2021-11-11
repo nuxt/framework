@@ -51,7 +51,7 @@ export const stateKey = <T> (k: string) => k as StateKey<T>
 
 // payload.state is used for vuex by nuxt 2
 export function useState<T = unknown, K extends string = string, S = K extends keyof NuxtStates ? NuxtStates[K] : T> (key: K | StateKey<T>): Ref<S | undefined>
-export function useState<T = unknown, K extends string = string, S = K extends keyof NuxtStates ? NuxtStates[K] : T> (key: K | StateKey<T>, init: (() => S)): Ref<S>
+export function useState<T = unknown, K extends string = string, S = K extends keyof NuxtStates ? NuxtStates[K] : T> (key: K | StateKey<T>, init: (() => K extends keyof NuxtStates ? NuxtStates[K] : T)): Ref<S>
 export function useState (key: string, init?: (() => any)): Ref<any> {
   const nuxtApp = useNuxtApp()
   if (!nuxtApp.payload.useState) {

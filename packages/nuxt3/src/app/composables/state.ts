@@ -19,7 +19,7 @@ export const stateKey = <T> (k: string) => k as StateKey<T>
  */
 
 export function useState<T = unknown, K extends string = string, S = K extends keyof NuxtStates ? NuxtStates[K] : T> (key: K | StateKey<T>): Ref<S | undefined>
-export function useState<T = unknown, K extends string = string, S = K extends keyof NuxtStates ? NuxtStates[K] : T> (key: K | StateKey<T>, init: (() => S)): Ref<S>
+export function useState<T = unknown, K extends string = string, S = K extends keyof NuxtStates ? NuxtStates[K] : T> (key: K | StateKey<T>, init: (() => K extends keyof NuxtStates ? NuxtStates[K] : T)): Ref<S>
 export function useState (key: string, init?: (() => any)): Ref<any> {
   const nuxt = useNuxtApp()
   const state = toRef(nuxt.payload.state, key)
