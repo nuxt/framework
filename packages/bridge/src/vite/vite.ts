@@ -51,6 +51,7 @@ async function bundle (nuxt: Nuxt, builder: any) {
         css: resolveCSSOptions(nuxt),
         optimizeDeps: {
           exclude: [
+            ...nuxt.options.build.transpile.filter(i => typeof i === 'string'),
             'ufo',
             'date-fns',
             'nanoid',
