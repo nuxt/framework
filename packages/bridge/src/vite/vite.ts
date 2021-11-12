@@ -56,7 +56,8 @@ async function bundle (nuxt: Nuxt, builder: any) {
             'nanoid',
             'vue',
             'vue2',
-            'vue2-bridge'
+            'vue2-bridge',
+            'vue-demi'
           ]
         },
         esbuild: {
