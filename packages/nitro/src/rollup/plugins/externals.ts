@@ -87,7 +87,7 @@ export function externals (opts: NodeExternalsOptions): Plugin {
 
         const writeFile = async (file) => {
           // Skip symlinks that are included in fileList
-          if (await fse.stat(file).then(i => i.isDirectory())) {
+          if (await fse.stat(file).then((i) => i.isDirectory()).catch(() => true)) {
             return
           }
           const src = resolve(opts.traceOptions.base, file)
