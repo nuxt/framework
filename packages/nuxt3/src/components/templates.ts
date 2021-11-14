@@ -22,6 +22,20 @@ const createImportMagicComments = (options: ImportMagicCommentsOptions) => {
   ].filter(Boolean).join(', ')
 }
 
+export const getEnvComponentTemplate = (component: Component) => `
+<script setup>
+import Client from '${component.envPaths.client}'
+${component.envPaths.server ? `import Server from '${component.envPaths.server}'` : ''}
+</script>
+
+<template>
+  <ClientOnly>
+    <Client><slot/></Client>
+    ${component.envPaths.server ? '<template #fallback><Server><slot/></Server></template>' : ''}
+  </ClientOnly>
+</template>
+`
+
 export const componentsTemplate = {
   filename: 'components.mjs',
   getContents ({ options }: { options: ComponentsTemplateOptions }) {

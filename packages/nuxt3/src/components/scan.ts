@@ -34,8 +34,6 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
   const scannedPaths: string[] = []
 
   for (const dir of dirs.sort(sortDirsByPathLength)) {
-    const resolvedNames = new Map<string, string>()
-
     for (const _file of await globby(dir.pattern!, { cwd: dir.path, ignore: dir.ignore })) {
       const filePath = join(dir.path, _file)
 
@@ -70,17 +68,6 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
       }
 
       const componentName = pascalCase(componentNameParts) + pascalCase(fileNameParts)
-
-      if (resolvedNames.has(componentName)) {
-        // eslint-disable-next-line no-console
-        console.warn(`Two component files resolving to the same name \`${componentName}\`:\n` +
-          `\n - ${filePath}` +
-          `\n - ${resolvedNames.get(componentName)}`
-        )
-        continue
-      }
-      resolvedNames.set(componentName, filePath)
-
       const pascalName = pascalCase(componentName).replace(/["']/g, '')
       const kebabName = hyphenate(componentName)
       const shortPath = relative(srcDir, filePath)
@@ -114,16 +101,20 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
       if (definedComponent && component.level < definedComponent.level) {
         Object.assign(definedComponent, component)
       } else if (definedComponent?.envPaths && component.envPaths) {
+        // merge client and server component path
         Object.assign(definedComponent.envPaths, component.envPaths)
       } else if (!definedComponent) {
         components.push(component)
+      } else {
+        console.warn(`Two component files resolving to the same name \`${componentName}\`:\n` +
+          `\n - ${filePath}` +
+          `\n - ${definedComponent.filePath}`
+        )
       }
     }
 
     scannedPaths.push(dir.path)
   }
-
-  console.log({ components })
 
   return components
 }

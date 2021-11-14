@@ -2,7 +2,7 @@ import { statSync } from 'fs'
 import { resolve } from 'pathe'
 import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import type { Component, ComponentsDir } from '@nuxt/kit'
-import { componentsTemplate, componentsTypeTemplate } from './templates'
+import { componentsTemplate, componentsTypeTemplate, getEnvComponentTemplate } from './templates'
 import { scanComponents } from './scan'
 import { loaderPlugin } from './loader'
 
@@ -64,6 +64,15 @@ export default defineNuxtModule({
       if (!components.length) {
         return
       }
+
+      components.filter(i => i.envPaths).forEach((component) => {
+        component.filePath = `#build/env-components-${component.pascalName}.vue`
+        app.templates.push({
+          filename: `env-components-${component.pascalName}.vue`,
+          write: true,
+          getContents: () => getEnvComponentTemplate(component)
+        })
+      })
 
       app.templates.push({
         ...componentsTemplate,
