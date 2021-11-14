@@ -1,6 +1,6 @@
 <template>
   <div>
-    Loading width...
+    Loading width... (server fallback)
     <slot />
   </div>
 </template>

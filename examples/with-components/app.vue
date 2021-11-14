@@ -1,15 +1,10 @@
 <template>
   <div>
-    <hello-world class="red" />
+    <hello-world />
     <nuxt3 />
-    <Foo class="red">
-      <div>This is slot</div>
-    </Foo>
+    <ClientAndServer style="color: red">
+      <div>[Slot]</div>
+    </ClientAndServer>
+    <JustClient />
   </div>
 </template>
-
-<style>
-.red {
-  color: red;
-}
-</style>
