@@ -1,5 +1,5 @@
 import { existsSync } from 'fs'
-import { defineNuxtModule, addTemplate, addPlugin } from '@nuxt/kit'
+import { defineNuxtModule, addTemplate, addPlugin, templateUtils } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { distDir } from '../dirs'
 import { resolveLayouts, resolvePagesRoutes, addComponentToRoutes } from './utils'
@@ -47,7 +47,7 @@ export default defineNuxtModule({
         const pages = await resolvePagesRoutes(nuxt)
         await nuxt.callHook('pages:extend', pages)
         const serializedRoutes = addComponentToRoutes(pages)
-        return `export default ${JSON.stringify(serializedRoutes, null, 2).replace(/"{(.+)}"/g, '$1')}`
+        return `export default ${templateUtils.serialize(serializedRoutes)}`
       }
     })
 
@@ -61,7 +61,7 @@ export default defineNuxtModule({
         }))
         return [
           'import { defineAsyncComponent } from \'vue\'',
-          `export default ${JSON.stringify(layoutsObject, null, 2).replace(/"{(.+)}"/g, '$1')}`
+          `export default ${templateUtils.serialize(layoutsObject)}`
         ].join('\n')
       }
     })
