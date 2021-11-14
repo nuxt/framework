@@ -1,3 +1,5 @@
+export type ComponentEnv = 'client' | 'server'
+
 export interface Component {
   pascalName: string
   kebabName: string
@@ -9,6 +11,10 @@ export interface Component {
   prefetch: boolean
   preload: boolean
   global?: boolean
+  envPaths?: {
+    server?: string
+    client?: string
+  }
 
   /** @deprecated */
   import?: string

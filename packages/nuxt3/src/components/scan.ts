@@ -1,7 +1,7 @@
 import { basename, extname, join, dirname, relative } from 'pathe'
 import globby from 'globby'
 import { pascalCase, splitByCase } from 'scule'
-import type { ScanDir, Component } from '@nuxt/kit'
+import type { ScanDir, Component, ComponentEnv } from '@nuxt/kit'
 
 export function sortDirsByPathLength ({ path: pathA }: ScanDir, { path: pathB }: ScanDir): number {
   return pathB.split(/[\\/]/).filter(Boolean).length - pathA.split(/[\\/]/).filter(Boolean).length
@@ -11,6 +11,21 @@ export function sortDirsByPathLength ({ path: pathA }: ScanDir, { path: pathB }:
 // TODO: update to vue3?
 function hyphenate (str: string):string {
   return str.replace(/\B([A-Z])/g, '-$1').toLowerCase()
+}
+
+function resolveEnvComponent (fileName:string) {
+  const match = fileName.match(/^(.+)\.(client|server)$/)
+  if (match) {
+    return {
+      fileName: match[1],
+      env: match[2] as ComponentEnv
+    }
+  } else {
+    return {
+      fileName,
+      env: undefined
+    }
+  }
 }
 
 export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<Component[]> {
@@ -36,10 +51,14 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
         dir.prefix ? splitByCase(dir.prefix) : [],
         (dir.pathPrefix !== false) ? splitByCase(relative(dir.path, dirname(filePath))) : []
       )
+      let env: ComponentEnv | undefined
       let fileName = basename(filePath, extname(filePath))
       if (fileName.toLowerCase() === 'index') {
         fileName = dir.pathPrefix === false ? basename(dirname(filePath)) : '' /* inherits from path */
       }
+      // eslint-disable-next-line prefer-const
+      ({ env, fileName } = resolveEnvComponent(fileName))
+
       const fileNameParts = splitByCase(fileName)
 
       const componentNameParts: string[] = []
@@ -80,6 +99,12 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
         preload: Boolean(dir.preload)
       }
 
+      if (env) {
+        component.envPaths = {
+          [env]: filePath
+        }
+      }
+
       if (typeof dir.extendComponent === 'function') {
         component = (await dir.extendComponent(component)) || component
       }
@@ -88,6 +113,8 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
       const definedComponent = components.find(c => c.pascalName === component.pascalName)
       if (definedComponent && component.level < definedComponent.level) {
         Object.assign(definedComponent, component)
+      } else if (definedComponent?.envPaths && component.envPaths) {
+        Object.assign(definedComponent.envPaths, component.envPaths)
       } else if (!definedComponent) {
         components.push(component)
       }
@@ -95,6 +122,8 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
 
     scannedPaths.push(dir.path)
   }
+
+  console.log({ components })
 
   return components
 }
