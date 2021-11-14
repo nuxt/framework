@@ -1,7 +1,15 @@
 <template>
   <div>
-    <hello-world />
+    <hello-world class="red" />
     <nuxt3 />
-    <Foo />
+    <Foo class="red">
+      <div>This is slot</div>
+    </Foo>
   </div>
 </template>
+
+<style>
+.red {
+  color: red;
+}
+</style>

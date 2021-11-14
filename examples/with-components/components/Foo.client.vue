@@ -5,5 +5,6 @@ const width = window.innerWidth
 <template>
   <div>
     Window width: {{ width }}
+    <slot />
   </div>
 </template>
