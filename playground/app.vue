@@ -4,6 +4,9 @@
     <h1 class="greeting">
       {{ hello }}, <br>Nuxt 3!
     </h1>
+    <ClientOnly fallback="...">
+      Hello {{ l() }}
+    </ClientOnly>
   </div>
 </template>
 
@@ -16,6 +19,7 @@ const greetings = [
   '你好'
 ]
 const hello = useState('hello', () => greetings[Math.random() * greetings.length | 0])
+const l = () => window.location.pathname
 </script>
 
 <style scoped>

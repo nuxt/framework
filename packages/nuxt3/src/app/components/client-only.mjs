@@ -1,17 +1,14 @@
 import { ref, onMounted, defineComponent } from 'vue'
 
-const ClientOnly = defineComponent({
-  setup (_, { slots }) {
-    const show = ref(false)
-    onMounted(() => {
-      show.value = true
-    })
+export default defineComponent({
+  name: 'ClientOnly',
+  setup (_, { slots, attrs }) {
+    const mounted = ref(false)
+    onMounted(() => { mounted.value = true })
     return () => (
-      show.value
+      mounted.value
         ? slots.default?.()
-        : (slots.fallback ?? slots.placeholder)?.()
+        : (slots.fallback || slots.placeholder)?.() || attrs.fallback || attrs.placeholder
     )
   }
 })
-
-export default ClientOnly
