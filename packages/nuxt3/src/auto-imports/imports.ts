@@ -29,6 +29,14 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
       'useRouter'
     ]
   },
+  // vue-demi (mocked)
+  {
+    from: 'vue-demi',
+    names: [
+      'isVue2',
+      'isVue3'
+    ]
+  },
   // vue
   {
     from: 'vue',
@@ -37,7 +45,6 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
       'defineEmits',
       'defineExpose',
       'defineProps',
-      'withAsyncContext',
       'withCtx',
       'withDefaults',
       'withDirectives',
