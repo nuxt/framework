@@ -45,7 +45,6 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
       'defineEmits',
       'defineExpose',
       'defineProps',
-      'withAsyncContext',
       'withCtx',
       'withDefaults',
       'withDirectives',
