@@ -27,6 +27,8 @@ export function setupAppBridge (_options: any) {
     '@vue/reactivity',
     '@vue/runtime-core',
     '@vue/runtime-dom',
+    // vue-demi
+    'vue-demi',
     ...[
       // vue 2 dist files
       'vue/dist/vue.common.dev',
@@ -47,6 +49,17 @@ export function setupAppBridge (_options: any) {
   ]) {
     nuxt.options.alias[alias] = nuxt.options.alias['vue2-bridge']
   }
+
+  // Ensure TS still recognises vue imports
+  nuxt.hook('prepare:types', ({ tsConfig }) => {
+    tsConfig.compilerOptions.paths.vue2 = ['vue']
+    delete tsConfig.compilerOptions.paths.vue
+
+    // @ts-ignore
+    tsConfig.vueCompilerOptions = {
+      experimentalCompatMode: 2
+    }
+  })
 
   // Deprecate various Nuxt options
   if (nuxt.options.globalName !== 'nuxt') {
