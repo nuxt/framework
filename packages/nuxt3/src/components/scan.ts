@@ -22,24 +22,17 @@ function hyphenate (str: string):string {
  * @returns {Promise} Component found promise
  */
 export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Promise<Component[]> {
-  /**
-   * all the components find
-   */
+  // All scanned components
   const components: Component[] = []
-  /**
-   * memore filePaths to not have duplicate
-   */
+
+  // Keep resolved path to avoid duplicates
   const filePaths = new Set<string>()
-  /**
-   * all the paths scanned
-   */
+
+  // All scanned paths
   const scannedPaths: string[] = []
 
   for (const dir of dirs.sort(sortDirsByPathLength)) {
-    /**
-     * Array of all resolve name components find 2 dimension array
-     */
-
+    // A map from resolved path to component name (used for making duplicate warning message)
     const resolvedNames = new Map<string, string>()
 
     for (const _file of await globby(dir.pattern!, { cwd: dir.path, ignore: dir.ignore })) {
@@ -49,15 +42,14 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
         continue
       }
 
-      console.log(scannedPaths)
-
-      // TODO: add good comment of the condition
+      // Avoid duplicate paths
       if (filePaths.has(filePath)) { continue }
+
       filePaths.add(filePath)
 
       /**
-       * create an array of prefixes base on the prefix config
-       * empty prefix will be an empty array
+       * Create an array of prefixes base on the prefix config
+       * Empty prefix will be an empty array
        *
        * @example prefix: 'nuxt' -> ['nuxt']
        * @example prefix: 'nuxt-test' -> ['nuxt', 'test']
@@ -68,7 +60,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
       )
 
       /**
-       * in case you have index as filename the component become the parent path
+       * In case we have index as filename the component become the parent path
        *
        * @example third-components/index.vue -> third-component
        * if not take the filename
@@ -81,10 +73,10 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
       }
 
       /**
-       * array of fileName part
+       * Array of fileName parts splitted by case, / or -
        *
        * @example third-component -> ['third', 'component']
-       * @example AwesomeComponent -> ['AwesomeComponents']
+       * @example AwesomeComponent -> ['Awesome', 'Component']
        */
       const fileNameParts = splitByCase(fileName)
 
@@ -98,7 +90,6 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
 
       const componentName = pascalCase(componentNameParts) + pascalCase(fileNameParts)
 
-      // TODO: test this case
       if (resolvedNames.has(componentName)) {
         console.warn(`Two component files resolving to the same name \`${componentName}\`:\n` +
           `\n - ${filePath}` +
@@ -138,11 +129,8 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
         components.push(component)
       }
     }
-
     scannedPaths.push(dir.path)
   }
-
-  // console.log(components)
 
   return components
 }
