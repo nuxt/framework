@@ -1,17 +1,19 @@
-import { ref, onMounted, defineComponent } from 'vue'
+import { ref, onMounted, defineComponent, createElementBlock } from 'vue'
 
-const ClientOnly = defineComponent({
+export default defineComponent({
+  name: 'ClientOnly',
+  // eslint-disable-next-line vue/require-prop-types
+  props: ['fallback', 'placeholder', 'placeholderTag', 'fallbackTag'],
   setup (_, { slots }) {
-    const show = ref(false)
-    onMounted(() => {
-      show.value = true
-    })
-    return () => (
-      show.value
-        ? slots.default?.()
-        : (slots.fallback ?? slots.placeholder)?.()
-    )
+    const mounted = ref(false)
+    onMounted(() => { mounted.value = true })
+    return (props) => {
+      if (mounted.value) { return slots.default?.() }
+      const slot = slots.fallback || slots.placeholder
+      if (slot) { return slot() }
+      const fallbackStr = props.fallback || props.placeholder || ''
+      const fallbackTag = props.fallbackTag || props.placeholderTag || 'span'
+      return createElementBlock(fallbackTag, null, fallbackStr)
+    }
   }
 })
-
-export default ClientOnly
