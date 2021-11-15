@@ -54,6 +54,11 @@ export function setupAppBridge (_options: any) {
   nuxt.hook('prepare:types', ({ tsConfig }) => {
     tsConfig.compilerOptions.paths.vue2 = ['vue']
     delete tsConfig.compilerOptions.paths.vue
+
+    // @ts-ignore
+    tsConfig.vueCompilerOptions = {
+      experimentalCompatMode: 2
+    }
   })
 
   // Deprecate various Nuxt options
