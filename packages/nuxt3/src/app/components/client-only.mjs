@@ -1,14 +1,19 @@
-import { ref, onMounted, defineComponent } from 'vue'
+import { ref, onMounted, defineComponent, createElementBlock } from 'vue'
 
 export default defineComponent({
   name: 'ClientOnly',
-  setup (_, { slots, attrs }) {
+  // eslint-disable-next-line vue/require-prop-types
+  props: ['fallback', 'placeholder', 'placeholderTag', 'fallbackTag'],
+  setup (_, { slots }) {
     const mounted = ref(false)
     onMounted(() => { mounted.value = true })
-    return () => (
-      mounted.value
-        ? slots.default?.()
-        : (slots.fallback || slots.placeholder)?.() || attrs.fallback || attrs.placeholder
-    )
+    return (props) => {
+      if (mounted.value) { return slots.default?.() }
+      const slot = slots.fallback || slots.placeholder
+      if (slot) { return slot() }
+      const fallbackStr = props.fallback || props.placeholder || ''
+      const fallbackTag = props.fallbackTag || props.placeholderTag || 'span'
+      return createElementBlock(fallbackTag, null, fallbackStr)
+    }
   }
 })
