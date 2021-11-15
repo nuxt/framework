@@ -40,7 +40,9 @@ export interface ScanDir {
    * Prefix component name by it's path.
    */
   pathPrefix?: boolean
-
+  /**
+   * Ignore scanning this directory if set to `true`
+   */
   enabled?: boolean
   /**
    * Level is used to define a hint when overwriting the components which have the same name in two different directories.
