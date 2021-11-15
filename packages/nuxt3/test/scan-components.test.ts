@@ -1,22 +1,14 @@
+import { resolve } from 'path'
 import { ComponentsDir } from '@nuxt/kit'
+import { expect } from 'chai'
+import { scanComponents } from '../src/components/scan'
 
-/**
- *
- * We want to test:
- * - already scanned path
- * - already filePaths
- * - with no prefix
- * - having an index.vue component
- * - different file name parts
- * - with extendComponent
- * - different component level
- *
- */
+const fixtureDir = resolve(__dirname, 'fixture')
+const rFixture = (...p) => resolve(fixtureDir, ...p)
 
-const srcDir: string = '/Users/nuxt/framework/examples/hello-world'
 const dirs: ComponentsDir[] = [
   {
-    path: '/Users/nuxt/framework/examples/hello-world/components',
+    path: rFixture('components'),
     level: 0,
     enabled: true,
     extensions: [
@@ -31,7 +23,7 @@ const dirs: ComponentsDir[] = [
     transpile: false
   },
   {
-    path: '/Users/nuxt/framework/examples/hello-world/components',
+    path: rFixture('components'),
     level: 0,
     enabled: true,
     extensions: [
@@ -46,7 +38,7 @@ const dirs: ComponentsDir[] = [
     transpile: false
   },
   {
-    path: '/Users/nuxt/framework/examples/hello-world/other-components',
+    path: rFixture('components'),
     extensions: [
       'vue'
     ],
@@ -63,6 +55,51 @@ const dirs: ComponentsDir[] = [
   }
 ]
 
-describe('auto-imports:transform', () => {
-  console.log(dirs, srcDir)
+const expectedComponents = [
+  {
+    filePath: '~/components/HelloWorld.vue',
+    pascalName: 'HelloWorld',
+    kebabName: 'hello-world',
+    chunkName: 'components/hello-world',
+    shortPath: 'components/HelloWorld.vue',
+    export: 'default',
+    global: undefined,
+    level: 0,
+    prefetch: false,
+    preload: false
+  },
+  {
+    filePath: '~/components/Nuxt3.vue',
+    pascalName: 'Nuxt3',
+    kebabName: 'nuxt3',
+    chunkName: 'components/nuxt3',
+    shortPath: 'components/Nuxt3.vue',
+    export: 'default',
+    global: undefined,
+    level: 0,
+    prefetch: false,
+    preload: false
+  },
+  {
+    filePath: '~/components/parent-folder/index.vue',
+    pascalName: 'ParentFolder',
+    kebabName: 'parent-folder',
+    chunkName: 'components/parent-folder',
+    shortPath: 'components/parent-folder/index.vue',
+    export: 'default',
+    global: undefined,
+    level: 0,
+    prefetch: false,
+    preload: false
+  }
+]
+
+const srcDir = rFixture('.')
+
+it('components:scanComponents', async () => {
+  const scannedComponents = await scanComponents(dirs, srcDir)
+  for (const c of scannedComponents) {
+    c.filePath = c.filePath.replace(srcDir, '~')
+  }
+  expect(scannedComponents).deep.eq(expectedComponents)
 })
