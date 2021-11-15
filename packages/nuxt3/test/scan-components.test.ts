@@ -57,7 +57,6 @@ const dirs: ComponentsDir[] = [
 
 const expectedComponents = [
   {
-    filePath: '~/components/HelloWorld.vue',
     pascalName: 'HelloWorld',
     kebabName: 'hello-world',
     chunkName: 'components/hello-world',
@@ -69,7 +68,6 @@ const expectedComponents = [
     preload: false
   },
   {
-    filePath: '~/components/Nuxt3.vue',
     pascalName: 'Nuxt3',
     kebabName: 'nuxt3',
     chunkName: 'components/nuxt3',
@@ -81,7 +79,6 @@ const expectedComponents = [
     preload: false
   },
   {
-    filePath: '~/components/parent-folder/index.vue',
     pascalName: 'ParentFolder',
     kebabName: 'parent-folder',
     chunkName: 'components/parent-folder',
@@ -99,7 +96,7 @@ const srcDir = rFixture('.')
 it('components:scanComponents', async () => {
   const scannedComponents = await scanComponents(dirs, srcDir)
   for (const c of scannedComponents) {
-    c.filePath = c.filePath.replace(srcDir, '~')
+    delete c.filePath
   }
   expect(scannedComponents).deep.eq(expectedComponents)
 })
