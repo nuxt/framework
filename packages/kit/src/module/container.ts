@@ -107,7 +107,12 @@ export function createModuleContainer (nuxt: Nuxt) {
       if (isNuxt2(nuxt)) {
         nuxt.options.router.extendRoutes = chainFn(nuxt.options.router.extendRoutes, fn)
       } else {
-        nuxt.hook('pages:extend', fn)
+        nuxt.hook('pages:extend', async (pages, ...args) => {
+          const maybeRoutes = await fn(pages, ...args)
+          if (maybeRoutes) {
+            console.warn('[kit] [compat] Using `extendRoutes` in Nuxt 3 needs to directly modify first argument instead of returning updated routes. Skipping extended routes.')
+          }
+        })
       }
     },
 
