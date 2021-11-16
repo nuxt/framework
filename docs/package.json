@@ -14,6 +14,7 @@
     "@docus/theme": "1.2.2",
     "@nuxt/kit": "link:../packages/kit",
     "@nuxt/typescript-build": "^2.1.0",
+    "@stackblitz/sdk": "^1.5.3",
     "fs-extra": "^10.0.0",
     "jiti": "^1.12.9",
     "pathe": "^0.2.0",
