@@ -6,7 +6,6 @@ import { pascalCase, camelCase, kebabCase } from 'scule'
 import type { WebpackPluginInstance, Configuration as WebpackConfig } from 'webpack'
 import type { Plugin as VitePlugin, UserConfig as ViteConfig } from 'vite'
 import satisfies from 'semver/functions/satisfies.js' // npm/node-semver#381
-import { chainFn } from '../utils/task'
 import { NuxtCompatibilityConstraints, NuxtCompatibilityIssues } from '../types/module'
 import { Nuxt } from '../types/nuxt'
 import { useNuxt } from '../nuxt'
