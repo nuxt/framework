@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [14]
+        node: [lts/*]
 
     steps:
       - uses: actions/checkout@v2
@@ -39,7 +39,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node: [14]
+        node: [lts/fermium, lts/gallium]
 
     steps:
       - uses: actions/checkout@v2
@@ -66,7 +66,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        node: [14]
+        node: [lts/fermium, lts/gallium]
 
     steps:
       - uses: actions/checkout@v2
@@ -99,7 +99,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [14]
+        node: [lts/*]
 
     steps:
       - uses: actions/checkout@v2
