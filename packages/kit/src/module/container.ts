@@ -3,8 +3,7 @@ import consola from 'consola'
 import { isNuxt2 } from '@nuxt/kit'
 import type { Nuxt, NuxtPluginTemplate, NuxtTemplate } from '../types/nuxt'
 import { chainFn } from '../utils/task'
-import { resolveAlias } from '../utils/resolve'
-import { addTemplate, addPluginTemplate, addServerMiddleware, extendPages } from './utils'
+import { addTemplate, addPluginTemplate, addServerMiddleware } from './utils'
 import { installModule } from './install'
 
 /** Legacy ModuleContainer for backwards compatibility with existing Nuxt 2 modules. */
