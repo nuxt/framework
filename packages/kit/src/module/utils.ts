@@ -6,6 +6,7 @@ import { pascalCase, camelCase, kebabCase } from 'scule'
 import type { WebpackPluginInstance, Configuration as WebpackConfig } from 'webpack'
 import type { Plugin as VitePlugin, UserConfig as ViteConfig } from 'vite'
 import satisfies from 'semver/functions/satisfies.js' // npm/node-semver#381
+import { chainFn } from '../utils/task'
 import { NuxtCompatibilityConstraints, NuxtCompatibilityIssues } from '../types/module'
 import { Nuxt } from '../types/nuxt'
 import { useNuxt } from '../nuxt'
@@ -354,7 +355,11 @@ export function addComponent (opts: AddComponentOptions) {
 
 export function extendPages (cb: NuxtHooks['pages:extend']) {
   const nuxt = useNuxt()
-  nuxt.hook('pages:extend', cb)
+  if (isNuxt2(nuxt)) {
+    nuxt.hook('build:extendRoutes', cb)
+  } else {
+    nuxt.hook('pages:extend', cb)
+  }
 }
 
 const serialize = (data: any) => JSON.stringify(data, null, 2).replace(/"{(.+)}"/g, '$1')

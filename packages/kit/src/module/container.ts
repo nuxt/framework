@@ -1,5 +1,6 @@
 import { parse, relative } from 'pathe'
 import consola from 'consola'
+import { isNuxt2 } from '@nuxt/kit'
 import type { Nuxt, NuxtPluginTemplate, NuxtTemplate } from '../types/nuxt'
 import { chainFn } from '../utils/task'
 import { resolveAlias } from '../utils/resolve'
@@ -104,7 +105,11 @@ export function createModuleContainer (nuxt: Nuxt) {
 
     /** Allows extending routes by chaining `options.build.extendRoutes` function. */
     extendRoutes (fn) {
-      extendPages(routes => fn(routes, resolveAlias))
+      if (isNuxt2(nuxt)) {
+        nuxt.options.router.extendRoutes = chainFn(nuxt.options.router.extendRoutes, fn)
+      } else {
+        extendPages(routes => fn(routes, resolveAlias))
+      }
     },
 
     /** `requireModule` is a shortcut for `addModule` */
