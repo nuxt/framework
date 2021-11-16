@@ -1,15 +1,15 @@
+<script setup>
+const counter = useState('counter', () => Math.round(Math.random() * 1000))
+</script>
+
 <template>
   <div>
-    Locale: {{ locale }}
-    <button @click="updateLocale">
-      Set to Klington
+    Counter: {{ counter }}
+    <button @click="counter++">
+      +
+    </button>
+    <button @click="counter--">
+      -
     </button>
   </div>
 </template>
-
-<script setup>
-// Defined in composables/stats.ts
-// same as useState('locale')
-const locale = useLocale()
-const updateLocale = () => { locale.value = 'tlh-klingon' }
-</script>
