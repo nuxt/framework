@@ -108,7 +108,7 @@ export function createModuleContainer (nuxt: Nuxt) {
       if (isNuxt2(nuxt)) {
         nuxt.options.router.extendRoutes = chainFn(nuxt.options.router.extendRoutes, fn)
       } else {
-        extendPages(routes => fn(routes, resolveAlias))
+        nuxt.hook('pages:extend', fn)
       }
     },
 
