@@ -1,6 +1,5 @@
 import type { Hookable } from 'hookable'
-// @ts-ignore
-import type { Vue } from 'vue/types/vue'
+import type { VueConstructor } from 'vue'
 import type { ComponentOptions } from 'vue'
 import { defineComponent, getCurrentInstance } from './composables'
 
@@ -11,26 +10,11 @@ export const defineNuxtComponent = defineComponent
 
 export interface RuntimeNuxtHooks { }
 
-export interface VueAppCompat {
-  component: Vue['component'],
-  config: {
-    globalProperties: any
-    [key: string]: any
-  },
-  directive: Vue['directive'],
-  mixin: Vue['mixin'],
-  mount: Vue['mount'],
-  provide: (name: string, value: any) => void,
-  unmount: Vue['unmount'],
-  use: Vue['use']
-  version: string
-}
-
 export interface NuxtAppCompat {
   nuxt2Context: Vue
   vue2App: ComponentOptions<Vue>
 
-  vueApp: VueAppCompat
+  vueApp: VueConstructor
 
   globalName: string
 
