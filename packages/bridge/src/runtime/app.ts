@@ -1,6 +1,5 @@
 import type { Hookable } from 'hookable'
-import type { VueConstructor } from 'vue'
-import type { ComponentOptions } from 'vue'
+import type { VueConstructor, ComponentOptions } from 'vue'
 import { defineComponent, getCurrentInstance } from './composables'
 
 export const isVue2 = true
