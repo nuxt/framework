@@ -25,6 +25,8 @@ export interface RuntimeNuxtHooks {
   'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
 }
 
+export interface NuxtAppInjections { }
+
 export interface NuxtApp {
   vueApp: App<Element>
   globalName: string
@@ -53,8 +55,8 @@ export interface NuxtApp {
 }
 
 export const NuxtPluginIndicator = '__nuxt_plugin'
-export interface Plugin {
-  (nuxt: NuxtApp): Promise<void> | void
+export interface Plugin<Injections extends Record<string, any> = Record<string, any>> {
+  (nuxt: NuxtApp): Promise<void> | Promise<Injections> | void | Injections
   [NuxtPluginIndicator]?: true
 }
 export interface LegacyPlugin {
@@ -117,9 +119,14 @@ export function createNuxtApp (options: CreateOptions) {
   return nuxtApp
 }
 
-export function applyPlugin (nuxtApp: NuxtApp, plugin: Plugin) {
+export async function applyPlugin (nuxtApp: NuxtApp, plugin: Plugin) {
   if (typeof plugin !== 'function') { return }
-  return callWithNuxt(nuxtApp, () => plugin(nuxtApp))
+  const result = await callWithNuxt(nuxtApp, () => plugin(nuxtApp))
+  if (result && typeof result === 'object') {
+    for (const key in result) {
+      nuxtApp.provide(key, result[key])
+    }
+  }
 }
 
 export async function applyPlugins (nuxtApp: NuxtApp, plugins: Plugin[]) {
@@ -149,7 +156,7 @@ export function normalizePlugins (_plugins: Array<Plugin | LegacyPlugin>) {
   return plugins as Plugin[]
 }
 
-export function defineNuxtPlugin (plugin: Plugin) {
+export function defineNuxtPlugin<T> (plugin: Plugin<T>) {
   plugin[NuxtPluginIndicator] = true
   return plugin
 }
@@ -174,13 +181,13 @@ export async function callWithNuxt (nuxt: NuxtApp, setup: () => any) {
   setNuxtAppInstance(nuxt)
   const p = setup()
   setNuxtAppInstance(null)
-  await p
+  return await p
 }
 
 /**
  * Returns the current Nuxt instance.
  */
-export function useNuxtApp (): NuxtApp {
+export function useNuxtApp (): NuxtApp & NuxtAppInjections {
   const vm = getCurrentInstance()
 
   if (!vm) {
