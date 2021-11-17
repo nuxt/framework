@@ -2,6 +2,7 @@ import { relative, resolve, join } from 'pathe'
 import consola from 'consola'
 import * as rollup from 'rollup'
 import fse from 'fs-extra'
+import { hasProtocol } from 'ufo'
 import { printFSTree } from './utils/tree'
 import { getRollupConfig } from './rollup/config'
 import { hl, prettyPath, serializeTemplate, writeFile, isDirectory } from './utils'
@@ -31,8 +32,9 @@ export async function generate (nitroContext: NitroContext) {
   consola.start('Generating public...')
 
   const clientDist = resolve(nitroContext._nuxt.buildDir, 'dist/client')
+  const useCDN = hasProtocol(nitroContext._nuxt.publicPath, true)
   if (await isDirectory(clientDist)) {
-    await fse.copy(clientDist, join(nitroContext.output.publicDir, nitroContext._nuxt.publicPath))
+    await fse.copy(clientDist, join(nitroContext.output.publicDir, useCDN ? nitroContext._nuxt.cdnDirName : nitroContext._nuxt.publicPath))
   }
 
   const publicDir = nitroContext._nuxt.publicDir
