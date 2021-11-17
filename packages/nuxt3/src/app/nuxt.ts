@@ -56,7 +56,7 @@ export interface NuxtApp {
 
 export const NuxtPluginIndicator = '__nuxt_plugin'
 export interface Plugin<Injections extends Record<string, any> = Record<string, any>> {
-  (nuxt: NuxtApp): Promise<void> | Promise<Injections> | void | Injections
+  (nuxt: NuxtApp): Promise<void> | Promise<{ provide?: Injections }> | void | { provide: Injections }
   [NuxtPluginIndicator]?: true
 }
 export interface LegacyPlugin {
@@ -121,10 +121,10 @@ export function createNuxtApp (options: CreateOptions) {
 
 export async function applyPlugin (nuxtApp: NuxtApp, plugin: Plugin) {
   if (typeof plugin !== 'function') { return }
-  const result = await callWithNuxt(nuxtApp, () => plugin(nuxtApp))
-  if (result && typeof result === 'object') {
-    for (const key in result) {
-      nuxtApp.provide(key, result[key])
+  const { provide } = await callWithNuxt(nuxtApp, () => plugin(nuxtApp)) || {}
+  if (provide && typeof provide === 'object') {
+    for (const key in provide) {
+      nuxtApp.provide(key, provide[key])
     }
   }
 }
@@ -177,9 +177,9 @@ export const setNuxtAppInstance = (nuxt: NuxtApp | null) => {
  * @param nuxt A Nuxt instance
  * @param setup The function to call
  */
-export async function callWithNuxt (nuxt: NuxtApp, setup: () => any) {
+export async function callWithNuxt<T extends () => any> (nuxt: NuxtApp, setup: T) {
   setNuxtAppInstance(nuxt)
-  const p = setup()
+  const p: ReturnType<T> = setup()
   setNuxtAppInstance(null)
   return await p
 }
