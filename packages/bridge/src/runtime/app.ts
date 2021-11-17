@@ -58,7 +58,7 @@ export const setNuxtAppInstance = (nuxt: NuxtAppCompat | null) => {
   currentNuxtAppInstance = nuxt
 }
 
-export const defineNuxtPlugin = plugin => (ctx: Context) => {
+export function defineNuxtPlugin (plugin: (nuxtApp: NuxtAppCompat) => void): (ctx: Context) => void {
   setNuxtAppInstance(ctx.$_nuxtApp)
   plugin(ctx.$_nuxtApp)
   setNuxtAppInstance(null)
