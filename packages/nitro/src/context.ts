@@ -69,7 +69,7 @@ export interface NitroContext {
     serverDir: string
     routerBase: string
     publicPath: string
-    cdnDirName:string
+    cdnDirName: string
     isStatic: boolean
     fullStatic: boolean
     staticAssets: any
