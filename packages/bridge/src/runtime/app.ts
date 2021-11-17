@@ -76,5 +76,5 @@ export const useNuxtApp = () => {
     return currentNuxtAppInstance
   }
 
-  return vm?.proxy.$_nuxtApp
+  return vm.proxy.$_nuxtApp
 }
