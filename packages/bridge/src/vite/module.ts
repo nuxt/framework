@@ -43,7 +43,9 @@ export default defineNuxtModule<ViteOptions>({
     addPluginTemplate(middlewareTemplate)
 
     nuxt.hook('builder:prepared', async (builder) => {
-      builder.bundleBuilder.close()
+      if (builder.bundleBuilder.close) {
+        builder.bundleBuilder.close()
+      }
       delete builder.bundleBuilder
       const { ViteBuilder } = await import('./vite')
       builder.bundleBuilder = new ViteBuilder(builder)
