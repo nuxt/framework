@@ -49,7 +49,6 @@ export interface NuxtAppCompat {
 }
 
 export interface Context {
-  // eslint-disable-next-line
   $_nuxtApp: NuxtAppCompat
 }
 
@@ -75,5 +74,5 @@ export const useNuxtApp = () => {
     return currentNuxtAppInstance
   }
 
-  return vm?.proxy.$_nuxtApp
+  return vm.proxy.$_nuxtApp
 }
