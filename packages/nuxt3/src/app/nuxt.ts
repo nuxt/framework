@@ -25,15 +25,13 @@ export interface RuntimeNuxtHooks {
   'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
 }
 
-export interface NuxtAppInjections { }
-
-export interface NuxtApp extends NuxtAppInjections {
+export interface _NuxtApp {
   vueApp: App<Element>
   globalName: string
 
   hooks: Hookable<RuntimeNuxtHooks>
-  hook: NuxtApp['hooks']['hook']
-  callHook: NuxtApp['hooks']['callHook']
+  hook: _NuxtApp['hooks']['hook']
+  callHook: _NuxtApp['hooks']['callHook']
 
   [key: string]: any
 
@@ -54,9 +52,11 @@ export interface NuxtApp extends NuxtAppInjections {
   provide: (name: string, value: any) => void
 }
 
+export interface NuxtApp extends _NuxtApp { }
+
 export const NuxtPluginIndicator = '__nuxt_plugin'
 export interface Plugin<Injections extends Record<string, any> = Record<string, any>> {
-  (nuxt: NuxtApp): Promise<void> | Promise<{ provide?: Injections }> | void | { provide?: Injections }
+  (nuxt: _NuxtApp): Promise<void> | Promise<{ provide?: Injections }> | void | { provide?: Injections }
   [NuxtPluginIndicator]?: true
 }
 export interface LegacyPlugin {
