@@ -27,7 +27,7 @@ export interface RuntimeNuxtHooks {
 
 export interface NuxtAppInjections { }
 
-export interface NuxtApp {
+export interface NuxtApp extends NuxtAppInjections {
   vueApp: App<Element>
   globalName: string
 
@@ -187,7 +187,7 @@ export function callWithNuxt<T extends () => any> (nuxt: NuxtApp, setup: T) {
 /**
  * Returns the current Nuxt instance.
  */
-export function useNuxtApp (): NuxtApp & NuxtAppInjections {
+export function useNuxtApp (): NuxtApp {
   const vm = getCurrentInstance()
 
   if (!vm) {
