@@ -53,5 +53,5 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
   })
 
-  return { router }
+  return { provide: { router } }
 })
