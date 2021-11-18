@@ -8,7 +8,7 @@ export default {
    * @default {{ dirs: [`~/components`] }}
    * @see [Nuxt 3](https://v3.nuxtjs.org/docs/directory-structure/components) and
    * [Nuxt 2](https://nuxtjs.org/docs/directory-structure/components/) documentation
-   * @type {boolean | import('../src/types/components').ComponentsOptions | import('../src/types/components').ComponentsOptions['dirs']}
+   * @type {boolean | typeof import('../src/types/components').ComponentsOptions | typeof import('../src/types/components').ComponentsOptions['dirs']}
    */
   components: {
     $resolve: (val, get) => {

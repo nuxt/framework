@@ -46,7 +46,7 @@ export default {
   // TODO: split out into separate file
   /**
    * Configuration that will be passed directly to Vite.
-   * @type {boolean | import('vite').InlineConfig}
+   * @type {boolean | typeof import('vite').InlineConfig}
    */
   vite: undefined,
 }

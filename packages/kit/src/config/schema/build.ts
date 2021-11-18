@@ -23,7 +23,7 @@ export default {
    *   analyzerMode: 'static'
    * }
    * ```
-   * @type {boolean | import('webpack-bundle-analyzer').BundleAnalyzerPlugin.Options | import('rollup-plugin-visualizer').PluginVisualizerOptions}
+   * @type {boolean | typeof import('webpack-bundle-analyzer').BundleAnalyzerPlugin.Options | typeof import('rollup-plugin-visualizer').PluginVisualizerOptions}
    */
   analyze: false,
 
