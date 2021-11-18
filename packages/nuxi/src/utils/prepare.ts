@@ -39,7 +39,13 @@ export const writeTypes = async (nuxt: Nuxt) => {
     '#assets': '@nuxt/nitro'
   }
 
+  // Do not alias types for Vue 3 packages to support Volar
+  const excludedAlias = [/^vue$/, /^@vue\/.*$/]
+
   for (const alias in aliases) {
+    if (excludedAlias.some(re => re.test(alias))) {
+      continue
+    }
     const relativePath = relative(nuxt.options.rootDir, aliases[alias]).replace(/(?<=\w)\.\w+$/g, '') /* remove extension */ || '.'
     tsConfig.compilerOptions.paths[alias] = [relativePath]
 
