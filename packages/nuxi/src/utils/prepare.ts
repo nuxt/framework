@@ -39,7 +39,7 @@ export const writeTypes = async (nuxt: Nuxt) => {
     '#assets': '@nuxt/nitro'
   }
 
-  // Do not alias types for Vue 3 packages to support Volar
+  // Exclude bridge alias types to support Volar
   const excludedAlias = [/^@vue\/.*$/]
 
   for (const alias in aliases) {
