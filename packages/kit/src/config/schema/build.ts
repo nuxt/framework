@@ -172,7 +172,6 @@ export default {
    *   cdnDirName: process.env.CDN_DIR_NAME || 'dir'
    * }
    * ```
-   * @version 2
    * @version 3
    */
   cdnDirName: { 
