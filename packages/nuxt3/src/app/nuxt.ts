@@ -25,7 +25,7 @@ export interface RuntimeNuxtHooks {
   'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
 }
 
-export interface _NuxtApp {
+interface _NuxtApp {
   vueApp: App<Element>
   globalName: string
 
