@@ -65,10 +65,13 @@ export default defineNuxtModule({
         return
       }
 
+      // Handle environment-specify components
       components.filter(i => i.envPaths).forEach((component) => {
-        component.filePath = `#build/c-${component.pascalName}.vue`
+        const filename = `env-${component.pascalName}.vue`
+        component.filePath = `#build/${filename}`
+        component.shortPath = `#build/${filename}`
         app.templates.push({
-          filename: `c-${component.pascalName}.vue`,
+          filename,
           write: true,
           getContents: () => getEnvComponentTemplate(component)
         })
