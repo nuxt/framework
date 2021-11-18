@@ -11,6 +11,10 @@ export interface Component {
   prefetch: boolean
   preload: boolean
   global?: boolean
+
+  /**
+   * Environment-specific components (`.client.vue` and `.server.vue`) real paths
+   */
   envPaths?: {
     server?: string
     client?: string

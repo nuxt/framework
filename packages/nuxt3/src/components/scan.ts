@@ -132,16 +132,19 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
         component = (await dir.extendComponent(component)) || component
       }
 
-      // Check if component is already defined, used to overwite if level is inferiour
+      // Check if component is already defined
       const definedComponent = components.find(c => c.pascalName === component.pascalName)
-      if (definedComponent && component.level < definedComponent.level) {
-        Object.assign(definedComponent, component)
-      } else if (definedComponent?.envPaths && component.envPaths) {
-        // merge client and server component path
-        Object.assign(definedComponent.envPaths, component.envPaths)
-      } else if (!definedComponent) {
+      if (!definedComponent) {
+        // Not defined, add component
         components.push(component)
+      } else if (component.level < definedComponent.level) {
+        // Overwite if level is inferiour
+        Object.assign(definedComponent, component)
+      } else if (definedComponent.envPaths && component.envPaths) {
+        // Merge client and server component path
+        Object.assign(definedComponent.envPaths, component.envPaths)
       } else {
+        // Naming conflict warning, ignore the later one
         console.warn(`Two component files resolving to the same name \`${componentName}\`:\n` +
           `\n - ${filePath}` +
           `\n - ${definedComponent.filePath}`
