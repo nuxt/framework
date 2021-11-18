@@ -1,6 +1,6 @@
 import { createRequire } from 'module'
-import { pathToFileURL } from 'url'
 import { normalize, dirname } from 'pathe'
+import jiti from 'jiti'
 
 export function getModulePaths (paths?: string | string[]): string[] {
   return [].concat(
@@ -31,7 +31,7 @@ export function requireModule (id: string, paths?: string | string[]) {
 
 export function importModule (id: string, paths?: string | string[]) {
   const resolvedPath = resolveModule(id, paths)
-  return import(pathToFileURL(resolvedPath).href)
+  return jiti(resolvedPath, { interopDefault: true })(resolvedPath)
 }
 
 export function getNearestPackage (id: string, paths?: string | string[]) {
