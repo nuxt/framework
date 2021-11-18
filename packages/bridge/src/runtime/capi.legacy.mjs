@@ -214,6 +214,7 @@ export const defineComponent = (options) => {
 }
 
 export const useMeta = (init) => {
+  warnOnce('useMeta', 'You are using `useMeta`, which has a replacement provided by Nuxt Bridge. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#usemeta).')
   const vm = getCurrentInstance()
   const refreshMeta = () => vm.$meta().refresh()
 
@@ -241,6 +242,7 @@ export const useMeta = (init) => {
 
 // Wrapped properties
 export const wrapProperty = (property, makeComputed = true) => () => {
+  warnOnce('wrapProperty', 'You are using `wrapProperty`, which is deprecated. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#wrapproperty).')
   const vm = getCurrentInstance()
   return makeComputed ? computed(() => vm[property]) : vm[property]
 }
