@@ -40,7 +40,7 @@ export const writeTypes = async (nuxt: Nuxt) => {
   }
 
   // Do not alias types for Vue 3 packages to support Volar
-  const excludedAlias = [/^vue$/, /^@vue\/.*$/]
+  const excludedAlias = [/^@vue\/.*$/]
 
   for (const alias in aliases) {
     if (excludedAlias.some(re => re.test(alias))) {
