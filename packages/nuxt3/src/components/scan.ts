@@ -1,7 +1,7 @@
 import { basename, extname, join, dirname, relative } from 'pathe'
 import globby from 'globby'
 import { pascalCase, splitByCase } from 'scule'
-import type { ScanDir, Component, ComponentEnv } from '@nuxt/kit'
+import type { ScanDir, Component, ComponentEnv, ComponentsDir } from '@nuxt/kit'
 
 export function sortDirsByPathLength ({ path: pathA }: ScanDir, { path: pathB }: ScanDir): number {
   return pathB.split(/[\\/]/).filter(Boolean).length - pathA.split(/[\\/]/).filter(Boolean).length
@@ -28,9 +28,22 @@ function resolveEnvComponent (fileName:string) {
   }
 }
 
-export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<Component[]> {
+/**
+ * Scan the components inside different components folders
+ * and return a unique list of components
+ *
+ * @param dirs all folders where components are defined
+ * @param srcDir src path of your app
+ * @returns {Promise} Component found promise
+ */
+export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Promise<Component[]> {
+  // All scanned components
   const components: Component[] = []
+
+  // Keep resolved path to avoid duplicates
   const filePaths = new Set<string>()
+
+  // All scanned paths
   const scannedPaths: string[] = []
 
   for (const dir of dirs.sort(sortDirsByPathLength)) {
@@ -41,22 +54,45 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
         continue
       }
 
+      // Avoid duplicate paths
       if (filePaths.has(filePath)) { continue }
+
       filePaths.add(filePath)
 
-      // Resolve componentName
+      /**
+       * Create an array of prefixes base on the prefix config
+       * Empty prefix will be an empty array
+       *
+       * @example prefix: 'nuxt' -> ['nuxt']
+       * @example prefix: 'nuxt-test' -> ['nuxt', 'test']
+       */
       const prefixParts = ([] as string[]).concat(
         dir.prefix ? splitByCase(dir.prefix) : [],
         (dir.pathPrefix !== false) ? splitByCase(relative(dir.path, dirname(filePath))) : []
       )
       let env: ComponentEnv | undefined
+
+      /**
+       * In case we have index as filename the component become the parent path
+       *
+       * @example third-components/index.vue -> third-component
+       * if not take the filename
+       * @example thid-components/Awesome.vue -> Awesome
+       */
       let fileName = basename(filePath, extname(filePath))
+
       if (fileName.toLowerCase() === 'index') {
         fileName = dir.pathPrefix === false ? basename(dirname(filePath)) : '' /* inherits from path */
       }
       // eslint-disable-next-line prefer-const
       ({ env, fileName } = resolveEnvComponent(fileName))
 
+      /**
+       * Array of fileName parts splitted by case, / or -
+       *
+       * @example third-component -> ['third', 'component']
+       * @example AwesomeComponent -> ['Awesome', 'Component']
+       */
       const fileNameParts = splitByCase(fileName)
 
       const componentNameParts: string[] = []
@@ -112,7 +148,6 @@ export async function scanComponents (dirs: ScanDir[], srcDir: string): Promise<
         )
       }
     }
-
     scannedPaths.push(dir.path)
   }
 
