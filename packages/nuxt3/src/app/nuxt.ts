@@ -177,11 +177,11 @@ export const setNuxtAppInstance = (nuxt: NuxtApp | null) => {
  * @param nuxt A Nuxt instance
  * @param setup The function to call
  */
-export async function callWithNuxt<T extends () => any> (nuxt: NuxtApp, setup: T) {
+export function callWithNuxt<T extends () => any> (nuxt: NuxtApp, setup: T) {
   setNuxtAppInstance(nuxt)
   const p: ReturnType<T> = setup()
   setNuxtAppInstance(null)
-  return await p
+  return p
 }
 
 /**
