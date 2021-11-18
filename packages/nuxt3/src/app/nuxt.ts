@@ -56,7 +56,7 @@ export interface NuxtApp {
 
 export const NuxtPluginIndicator = '__nuxt_plugin'
 export interface Plugin<Injections extends Record<string, any> = Record<string, any>> {
-  (nuxt: NuxtApp): Promise<void> | Promise<{ provide?: Injections }> | void | { provide: Injections }
+  (nuxt: NuxtApp): Promise<void> | Promise<{ provide?: Injections }> | void | { provide?: Injections }
   [NuxtPluginIndicator]?: true
 }
 export interface LegacyPlugin {
