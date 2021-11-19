@@ -2828,7 +2828,7 @@ __metadata:
     mime: ^3.0.0
     mlly: ^0.3.13
     node-fetch: ^3.1.0
-    ohmyfetch: ^0.4.6
+    ohmyfetch: ^0.4.7
     ora: ^6.0.1
     p-debounce: ^4.0.0
     pathe: ^0.2.0
@@ -2844,7 +2844,7 @@ __metadata:
     ufo: ^0.7.9
     unbuild: latest
     unenv: ^0.4.1
-    unstorage: ^0.3.2
+    unstorage: ^0.3.3
     vue: 3.2.22
     vue-bundle-renderer: ^0.3.2
     vue-server-renderer: ^2.6.14
@@ -4025,10 +4025,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^14.17.33":
-  version: 14.17.33
-  resolution: "@types/node@npm:14.17.33"
-  checksum: 47ee8d5a398f84b376023f03b83e43a71f1bf617d1014d34c0af24b0332b42e7b392c967c20bfb907fb37971993035e3b25c47a1678c745c5d122d8205ba5a19
+"@types/node@npm:^14.17.34":
+  version: 14.17.34
+  resolution: "@types/node@npm:14.17.34"
+  checksum: 803a7532b6998aca6aa1b3e6239f280e82612d4f641d38fbf08962c905ea9d1b278b2f09d396beac5120a4e68f33d7467298b197f2f00150ec1dcd546de02a89
   languageName: node
   linkType: hard
 
@@ -15019,7 +15019,7 @@ __metadata:
     "@types/chai": ^4.2.22
     "@types/jsdom": ^16
     "@types/mocha": ^9.0.0
-    "@types/node": ^14.17.33
+    "@types/node": ^14.17.34
     "@types/object-hash": ^2
     chai: ^4.3.4
     esbuild: ^0.13.14
@@ -15071,7 +15071,7 @@ __metadata:
     mlly: ^0.3.13
     murmurhash-es: ^0.1.1
     nuxi: 3.0.0
-    ohmyfetch: ^0.4.6
+    ohmyfetch: ^0.4.7
     pathe: ^0.2.0
     scule: ^0.2.1
     ufo: ^0.7.9
@@ -15209,7 +15209,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ohmyfetch@npm:^0.4.5, ohmyfetch@npm:^0.4.6":
+"ohmyfetch@npm:^0.4.5":
   version: 0.4.6
   resolution: "ohmyfetch@npm:0.4.6"
   dependencies:
@@ -15218,6 +15218,18 @@ __metadata:
     ufo: ^0.7.9
     undici: ^4.9.5
   checksum: f2b08aab8f6f74a66fef7d0e3f8c30c8c2bb5b42b52817a746fbc445a399c8584cd9abf72a1a5061323c2c6025b4a01626d1f4f701aa81107cfe4e593085feeb
+  languageName: node
+  linkType: hard
+
+"ohmyfetch@npm:^0.4.7":
+  version: 0.4.7
+  resolution: "ohmyfetch@npm:0.4.7"
+  dependencies:
+    destr: ^1.1.0
+    node-fetch: ^3.0.0
+    ufo: ^0.7.9
+    undici: ^4.9.5
+  checksum: 456ef4d22700f854c666448ccecef27c6194ee47211d90a12bd1fb1a1a12a4badfc0e67471d2c6ed65ee06352edc907027c88ad323e77dd6e616439dba92bab2
   languageName: node
   linkType: hard
 
@@ -18557,8 +18569,8 @@ __metadata:
   linkType: hard
 
 "rollup-plugin-esbuild@npm:^4.7.1":
-  version: 4.7.2
-  resolution: "rollup-plugin-esbuild@npm:4.7.2"
+  version: 4.7.1
+  resolution: "rollup-plugin-esbuild@npm:4.7.1"
   dependencies:
     "@rollup/pluginutils": ^4.1.1
     joycon: ^3.0.1
@@ -18566,7 +18578,7 @@ __metadata:
   peerDependencies:
     esbuild: ">=0.10.1"
     rollup: ^1.20.0 || ^2.0.0
-  checksum: 14d35699349ed573e533a416823885b730cdb27757e2d7f935749c8e6bb59aaa6f2bc60a20843c927d647cd561c4865fcaaddaaeea6e38677915037bb3930e41
+  checksum: 8827e8ed915edf37f3cf611b316f0642a05b7f95f9ee8e9536f306724ddca0e6f9803dee085f7d634814e6a8cf6f70585d2b5b09c0dde91704a882656b9406ff
   languageName: node
   linkType: hard
 
@@ -20775,9 +20787,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unstorage@npm:^0.3.2":
-  version: 0.3.2
-  resolution: "unstorage@npm:0.3.2"
+"unstorage@npm:^0.3.3":
+  version: 0.3.3
+  resolution: "unstorage@npm:0.3.3"
   dependencies:
     anymatch: ^3.1.1
     chokidar: ^3.5.2
@@ -20789,7 +20801,7 @@ __metadata:
     ohmyfetch: ^0.4.5
     ufo: ^0.7.9
     ws: ^8.2.1
-  checksum: c00092bc2cd46e03687e7d045da76db1057c6af76078f144dc055a693e24d78773fc63ac88f3adbb7709199fa1fc87e5c2c13f7a3f8d01b4c7bfdda738b096fc
+  checksum: dee9a5b0bf6448a6f2b8fb0475dc28dfba4f38e847529a8bf792c1e370f494af30c5b07ef8ca3f1f90d8b111636e543011ae94cdabd17a9feca73ac7cb684d67
   languageName: node
   linkType: hard
 
