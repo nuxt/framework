@@ -68,7 +68,7 @@ const unsupported = message => () => { throw new Error(`${msgPrefix} ${message} 
 const _warned = {}
 const warnOnce = (id, message) => {
   if (!_warned[id]) {
-    console.warn(msgPrefix, message)
+    console.warn(msgPrefix, message, checkDocsMsg)
     _warned[id] = true
   }
 }
@@ -77,8 +77,8 @@ const warnOnce = (id, message) => {
 warnOnce('import', `\`@nuxtjs/composition-api\` is deprecated. ${checkDocsMsg}`)
 
 // Stub functions that provided type support
-export const defineNuxtMiddleware = unsupported('You are using `defineNuxtMiddleware`, which is not supported. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#definenuxtmiddleware).')
-export const defineNuxtPlugin = unsupported('You are using `defineNuxtPlugin`, which has a Nuxt 3-compatible replacement. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#definenuxtplugin).')
+export const defineNuxtMiddleware = unsupported('You are using `defineNuxtMiddleware`, which is not supported.')
+export const defineNuxtPlugin = unsupported('You are using `defineNuxtPlugin`, which has a Nuxt 3-compatible replacement.')
 
 // Internal exports
 export const setMetaPlugin = unsupported('`setMetaPlugin` is an internal function that is no longer used.')
@@ -86,10 +86,10 @@ export const setSSRContext = unsupported('`setSSRContext` is an internal functio
 export const globalPlugin = unsupported('`globalPlugin` is an internal function that is no longer used.')
 
 // Deprecated functions
-export const withContext = unsupported('`withContext` is a deprecated method that is no longer provided, but which has a Nuxt 3-compatible replacement. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#usecontext-and-withcontext).')
+export const withContext = unsupported('`withContext` is a deprecated method that is no longer provided, but which has a Nuxt 3-compatible replacement.')
 export const useStatic = unsupported('`useStatic` is a deprecated method that is no longer provided.')
-export const reqRef = unsupported('`reqRef` is a deprecated method that is no longer provided, but which has a Nuxt 3-compatible replacement. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#ssrref-and-shallowssrref).')
-export const reqSsrRef = unsupported('`reqSsrRef` is no longer provided, but has a Nuxt 3-compatible replacement. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#ssrref-and-shallowssrref).')
+export const reqRef = unsupported('`reqRef` is a deprecated method that is no longer provided, but which has a Nuxt 3-compatible replacement.')
+export const reqSsrRef = unsupported('`reqSsrRef` is no longer provided, but has a Nuxt 3-compatible replacement.')
 
 // ssrRef helpers
 const sanitise = val => (val && JSON.parse(JSON.stringify(val))) || val
@@ -99,13 +99,13 @@ export const ssrRef = (value, key) => {
   const vm = getVM()
   if (!vm) { throw new Error('ssrRef no longer supports global/ambient context and must be called within a setup() function') }
 
-  warnOnce('ssrRef', '`ssrRef` is deprecated and has a Nuxt 3-compatible replacement. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#ssrref-and-shallowssrref).')
+  warnOnce('ssrRef', '`ssrRef` is deprecated and has a Nuxt 3-compatible replacement.')
 
   return useState(key, value instanceof Function ? value : () => value)
 }
 
 export const shallowSsrRef = (value, key) => {
-  warnOnce('shallowSsrRef', '`shallowSsrRef` is deprecated and has a Nuxt 3-compatible replacement. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#ssrref-and-shallowssrref).')
+  warnOnce('shallowSsrRef', '`shallowSsrRef` is deprecated and has a Nuxt 3-compatible replacement.')
 
   const ref = ssrRef(value, key)
 
@@ -117,7 +117,7 @@ export const shallowSsrRef = (value, key) => {
 }
 
 export const ssrPromise = (value, key) => {
-  warnOnce('ssrPromise', 'ssrPromise is deprecated. Please see https://v3.nuxtjs.org/getting-started/bridge-composition-api#ssrpromise).')
+  warnOnce('ssrPromise', 'ssrPromise is deprecated.')
 
   const ssrRefs = useSSRRefs()
   const promise = Promise.resolve(isHMR() ? getValue(value) : ssrRefs[key] ?? getValue(value))
@@ -128,13 +128,13 @@ export const ssrPromise = (value, key) => {
 
 // Composition API functions
 export const onGlobalSetup = (fn) => {
-  warnOnce('onGlobalSetup', '`onGlobalSetup` is deprecated. Please see https://v3.nuxtjs.org/getting-started/bridge-composition-api#onglobalsetup).')
+  warnOnce('onGlobalSetup', '`onGlobalSetup` is deprecated.')
   const app = useNuxtApp()
   app._setupFns.push(fn)
 }
 
 export const useAsync = (cb, key) => {
-  warnOnce('useAsync', 'You are using `useAsync`, which has a Nuxt 3-compatible replacement. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#useasync-and-usefetch).')
+  warnOnce('useAsync', 'You are using `useAsync`, which has a Nuxt 3-compatible replacement.')
 
   const _ref = isRef(key) ? key : ssrRef(null, key)
 
@@ -147,7 +147,7 @@ export const useAsync = (cb, key) => {
 }
 
 export const useContext = () => {
-  warnOnce('useContext', 'You are using `useContext`, which has a Nuxt 3-compatible replacement. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#usecontext-and-withcontext).')
+  warnOnce('useContext', 'You are using `useContext`, which has a Nuxt 3-compatible replacement.')
 
   const route = useRoute()
   const nuxt = useNuxtApp()
@@ -214,7 +214,7 @@ export const defineComponent = (options) => {
 }
 
 export const useMeta = (init) => {
-  warnOnce('useMeta', 'You are using `useMeta`, which has a replacement provided by Nuxt Bridge. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#usemeta).')
+  warnOnce('useMeta', 'You are using `useMeta`, which has a replacement provided by Nuxt Bridge.')
   const vm = getCurrentInstance()
   const refreshMeta = () => vm.$meta().refresh()
 
@@ -242,24 +242,24 @@ export const useMeta = (init) => {
 
 // Wrapped properties
 export const wrapProperty = (property, makeComputed = true) => () => {
-  warnOnce('wrapProperty', 'You are using `wrapProperty`, which is deprecated. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#wrapproperty).')
+  warnOnce('wrapProperty', 'You are using `wrapProperty`, which is deprecated.')
   const vm = getCurrentInstance()
   return makeComputed ? computed(() => vm[property]) : vm[property]
 }
 
 export const useRouter = () => {
-  warnOnce('useRouter', 'You are using `useRouter`, which has a Nuxt 3-compatible replacement. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#userouter-and-useroute).')
+  warnOnce('useRouter', 'You are using `useRouter`, which has a Nuxt 3-compatible replacement.')
   return _useRouter()
 }
 
 export const useRoute = () => {
-  warnOnce('useRoute', 'You are using `useRoute`, which has a Nuxt 3-compatible replacement. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#userouter-and-useroute).')
+  warnOnce('useRoute', 'You are using `useRoute`, which has a Nuxt 3-compatible replacement.')
   const vm = getCurrentInstance()
   return computed(() => vm.$route)
 }
 
 export const useStore = () => {
-  warnOnce('useRoute', 'You are using `useStore`, which has a Nuxt 3-compatible replacement. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#usestore).')
+  warnOnce('useRoute', 'You are using `useStore`, which has a Nuxt 3-compatible replacement.')
   return getCurrentInstance().$store
 }
 
@@ -485,7 +485,7 @@ async function callFetches () {
 const isSsrHydration = vm => vm.$vnode?.elm?.dataset?.fetchKey
 
 export const useFetch = (callback) => {
-  warnOnce('useFetch', 'You are using `useFetch`, which has a Nuxt 3-compatible replacement. See https://v3.nuxtjs.org/getting-started/bridge-composition-api#useasync-and-usefetch).')
+  warnOnce('useFetch', 'You are using `useFetch`, which has a Nuxt 3-compatible replacement.')
   const vm = getCurrentInstance()
   const nuxt = useNuxtApp()
 
