@@ -10,7 +10,6 @@ Nuxt can be configured easily with one single file, called `nuxt.config`, with e
 
 ```ts
 import { defineNuxtConfig } from 'nuxt3'
-// or import { defineNuxtConfig } from '@nuxt/bridge'
 
 export default defineNuxtConfig({
   // My Nuxt config
