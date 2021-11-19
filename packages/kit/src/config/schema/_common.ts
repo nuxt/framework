@@ -225,7 +225,7 @@ export default {
    *   function () {}
    * ]
    * ```
-   * @type {import('../src/types/module').ModuleInstallOptions[]}
+   * @type {typeof import('../src/types/module').ModuleInstallOptions[]}
    * @version 2
    * @version 3
    */
@@ -262,7 +262,7 @@ export default {
    * decreases the size of `node_modules` in production deployments. Please refer to each
    * module's documentation to see if it is recommended to use `modules` or `buildModules`.
    *
-   * @type {import('../src/types/module').ModuleInstallOptions[]}
+   * @type {typeof import('../src/types/module').ModuleInstallOptions[]}
    * @version 2
    * @version 3
    */
@@ -658,7 +658,7 @@ export default {
    * ```
    * @version 2
    * @version 3
-   * @type {import('../src/types/hooks').NuxtHooks}
+   * @type {typeof import('../src/types/hooks').NuxtHooks}
    */
   hooks: null,
 
@@ -684,7 +684,7 @@ export default {
    *   }
    * }
    * ```
-   * @type {import('../src/types/runtime-config').PrivateRuntimeConfig}
+   * @type {typeof import('../src/types/runtime-config').PrivateRuntimeConfig}
    * @version 2
    * @version 3
    */
@@ -709,7 +709,7 @@ export default {
    *   }
    * }
    * ```
-   * @type {import('../src/types/runtime-config').PublicRuntimeConfig}
+   * @type {typeof import('../src/types/runtime-config').PublicRuntimeConfig}
    * @version 2
    * @version 3
    */
