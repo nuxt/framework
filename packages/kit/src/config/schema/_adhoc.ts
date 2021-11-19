@@ -31,7 +31,7 @@ export default {
    * Configure how Nuxt auto-imports composables into your application.
    *
    * @see [Nuxt 3 documentation](https://v3.nuxtjs.org/docs/directory-structure/composables)
-   * @type {import('../src/types/imports').AutoImportsOptions}
+   * @type {typeof import('../src/types/imports').AutoImportsOptions}
    */
   autoImports: {
     global: false,
