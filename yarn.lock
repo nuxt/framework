@@ -10249,6 +10249,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"example-extend-routes@workspace:examples/extend-routes":
+  version: 0.0.0-use.local
+  resolution: "example-extend-routes@workspace:examples/extend-routes"
+  dependencies:
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-hello-world@workspace:examples/hello-world":
   version: 0.0.0-use.local
   resolution: "example-hello-world@workspace:examples/hello-world"

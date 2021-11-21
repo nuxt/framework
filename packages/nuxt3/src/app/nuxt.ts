@@ -3,6 +3,7 @@ import { getCurrentInstance, reactive } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import type { RuntimeConfig } from '@nuxt/kit'
+import { Router } from 'vue-router'
 import { legacyPlugin, LegacyContext } from './compat/legacy-app'
 
 type NuxtMeta = {
@@ -22,6 +23,7 @@ export interface RuntimeNuxtHooks {
   'app:rendered': () => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
+  'router:created': (router: Router) => HookResult
   'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
 }
 
