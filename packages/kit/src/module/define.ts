@@ -28,12 +28,10 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
 
     // Install hooks
     if (mod.hooks) {
-      if (nuxt.hooks) {
-        // Nuxt 3
-        nuxt.hooks.addHooks(mod.hooks)
-      } else {
-        // Nuxt 2
+      if (isNuxt2(nuxt)) {
         nuxt.addHooks(mod.hooks)
+      } else {
+        nuxt.hooks.addHooks(mod.hooks)
       }
     }
 
