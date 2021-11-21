@@ -18,6 +18,7 @@
     "@nuxt/design": "0.1.5",
     "@nuxt/devalue": "^2.0.0",
     "@nuxt/kit": "3.0.0",
+    "@nuxt/schema": "3.0.0",
     "@rollup/plugin-alias": "^3.1.8",
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-inject": "^4.0.3",

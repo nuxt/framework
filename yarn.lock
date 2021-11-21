@@ -2880,6 +2880,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nuxt/schema@workspace:packages/schema":
+  version: 0.0.0-use.local
+  resolution: "@nuxt/schema@workspace:packages/schema"
+  dependencies:
+    "@types/lodash.template": ^4
+    "@types/semver": ^7
+    create-require: ^1.1.1
+    defu: ^5.0.0
+    jiti: ^1.12.9
+    pathe: ^0.2.0
+    scule: ^0.2.1
+    std-env: ^3.0.1
+    ufo: ^0.7.9
+    unbuild: latest
+  languageName: unknown
+  linkType: soft
+
 "@nuxt/server-edge@npm:2.16.0-27282256.ab1c6cb4":
   version: 2.16.0-27282256.ab1c6cb4
   resolution: "@nuxt/server-edge@npm:2.16.0-27282256.ab1c6cb4"
