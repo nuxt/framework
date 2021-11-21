@@ -22,6 +22,3 @@ export * from './template'
 // TODO
 export * from './internal/cjs'
 export * from './internal/template'
-
-// Reexport types from schema
-export type { Nuxt, TSReference, NuxtOptions } from '@nuxt/schema'
