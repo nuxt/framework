@@ -29,8 +29,5 @@
   },
   "engines": {
     "node": "^14.16.0 || ^16.11.0 || ^17.0.0"
-  },
-  "publishConfig": {
-    "access": "public"
   }
 }
