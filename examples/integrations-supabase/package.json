@@ -1,0 +1,14 @@
+{
+  "name": "example-integrations-supabase",
+  "private": true,
+  "devDependencies": {
+    "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
+    "@supabase/supabase-js": "latest",
+    "nuxt3": "latest"
+  },
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "start": "node .output/server/index.mjs"
+  }
+}
