@@ -3,11 +3,12 @@ import type { CombinedVueInstance } from 'vue/types/vue'
 import type { MetaInfo } from 'vue-meta'
 import type VueRouter from 'vue-router'
 import type { Route } from 'vue-router'
-import type { RuntimeConfig } from '@nuxt/kit'
+import type { RuntimeConfig } from '@nuxt/schema'
 import { useNuxtApp } from './app'
 
 export { useLazyAsyncData } from './asyncData'
 export { useLazyFetch } from './fetch'
+export { useCookie } from './cookie'
 
 export * from '@vue/composition-api'
 
