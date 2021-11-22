@@ -1,5 +1,5 @@
 import chokidar from 'chokidar'
-import type { Nuxt } from '@nuxt/schema'
+import { Nuxt } from '@nuxt/kit'
 import { createApp, generateApp } from './app'
 
 export async function build (nuxt: Nuxt) {

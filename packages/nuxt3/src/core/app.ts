@@ -1,8 +1,7 @@
 import { promises as fsp } from 'fs'
 import { resolve } from 'pathe'
 import defu from 'defu'
-import type { Nuxt, NuxtApp } from '@nuxt/schema'
-import { tryResolvePath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils } from '@nuxt/kit'
+import { tryResolvePath, resolveFiles, Nuxt, NuxtApp, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils } from '@nuxt/kit'
 
 import * as defaultTemplates from './templates'
 

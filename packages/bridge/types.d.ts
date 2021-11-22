@@ -1,5 +1,5 @@
 import type {} from '@nuxt/nitro'
-import type { NuxtConfig as _NuxtConfig } from '@nuxt/schema'
+import type { NuxtConfig as _NuxtConfig } from '@nuxt/kit'
 import type { MetaInfo } from 'vue-meta'
 
 export interface BridgeConfig {

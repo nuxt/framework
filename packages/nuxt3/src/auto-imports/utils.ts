@@ -1,4 +1,4 @@
-import type { AutoImport } from '@nuxt/schema'
+import type { AutoImport } from '@nuxt/kit'
 
 export function toImports (autoImports: AutoImport[], isCJS = false) {
   const aliasKeyword = isCJS ? ' : ' : ' as '

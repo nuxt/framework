@@ -1,7 +1,7 @@
 import hash from 'hash-sum'
 import { resolve } from 'pathe'
 
-import type { Nuxt, NuxtApp } from '@nuxt/schema'
+import type { Nuxt, NuxtApp } from '@nuxt/kit'
 
 type TemplateContext = {
   nuxt: Nuxt;

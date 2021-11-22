@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-import { ComponentsDir } from '@nuxt/schema'
+import { ComponentsDir } from '@nuxt/kit'
 import { expect } from 'chai'
 import { scanComponents } from '../src/components/scan'
 

@@ -4,8 +4,7 @@ import consola from 'consola'
 import { createCommonJS } from 'mlly'
 import { defaults, merge, cloneDeep } from 'lodash-es'
 import createResolver from 'postcss-import-resolver'
-import { requireModule } from '@nuxt/kit'
-import type { Nuxt } from '@nuxt/schema'
+import { Nuxt, requireModule } from '@nuxt/kit'
 
 const isPureObject = obj => obj !== null && !Array.isArray(obj) && typeof obj === 'object'
 

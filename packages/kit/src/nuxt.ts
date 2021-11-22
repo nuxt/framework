@@ -1,7 +1,22 @@
+import { getContext } from 'unctx'
 import { readPackageJSON, resolvePackageJSON } from 'pkg-types'
-import type { Nuxt, NuxtConfig } from '@nuxt/schema'
-import { importModule, tryImportModule, RequireModuleOptions } from '../internal/cjs'
-import type { LoadNuxtConfigOptions } from './config'
+import { importModule, tryImportModule, RequireModuleOptions } from './utils/cjs'
+import type { Nuxt } from './types/nuxt'
+import type { NuxtConfig } from './types/config'
+import type { LoadNuxtConfigOptions } from './config/load'
+
+/** Direct access to the Nuxt context - see https://github.com/unjs/unctx. */
+export const nuxtCtx = getContext<Nuxt>('nuxt')
+
+/**
+ * Get access to Nuxt (if run within the Nuxt context) - see https://github.com/unjs/unctx.
+ *
+ * @example
+ * ```js
+ * const nuxt = useNuxt()
+ * ```
+ */
+export const useNuxt = nuxtCtx.use
 
 export interface LoadNuxtOptions extends LoadNuxtConfigOptions {
   rootDir: string
@@ -37,7 +52,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
     for: opts.dev ? 'dev' : 'build',
     configOverrides: opts.config,
     ready: opts.ready,
-    envConfig: opts.dotenv // TODO: Backward format convertion
+    envConfig: opts.envConfig
   })
 
   return nuxt as Nuxt
