@@ -1,5 +1,5 @@
 import mri from 'mri'
-import { red, cyan } from 'colorette'
+import { red } from 'colorette'
 import consola from 'consola'
 import { checkEngines } from './utils/engines'
 import { commands, Command, NuxtCommand } from './commands'
