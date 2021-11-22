@@ -1,10 +1,10 @@
 # Cookies
 
-> Nuxt provides a SSR-friendly composables to read and write cookies.
+> Nuxt provides SSR-friendly composable to read and write cookies.
 
 ## Usage
 
-Within your pages, components and plugins you can use `useCookie` to create a reactive reference bound to a specific cookie .
+Within your pages, components, and plugins you can use `useCookie` to create a reactive reference bound to a specific cookie.
 
 ```js
 const cookie = useCookie(name, options)
@@ -20,10 +20,10 @@ const cookie = useCookie(name, options)
 
 ## Example
 
-Example below create a cookie called counter and if it doesn't exist set a random value. Whenever we update `counter`, cookie will be updated.
+The example below creates a cookie called counter and if it doesn't exist set a random value. Whenever we update `counter`, the cookie will be updated.
 
 ::alert
-If netiher of `expires` and `maxAge` are set, cookie will be session only and removed if user closes their browser.
+If neither of `expires` and `maxAge` are set, cookie will be session-only and removed if the user closes their browser.
 ::
 
 
@@ -54,9 +54,9 @@ counter.value = counter.value || Math.round(Math.random() * 1000)
 
 ## Options
 
-Cookie composable accepts these properties in the options. Use them to modify behavior of cookie.
+Cookie composable accepts these properties in the options. Use them to modify the behavior of cookies.
 
-Most of options will be directly paseed to [cookie](https://github.com/jshttp/cookie) library to serialize and deserialize cookies.
+Most of the options will be directly passed to [cookie](https://github.com/jshttp/cookie) package.
 
 ### `maxAge` / `expires`
 
@@ -69,7 +69,7 @@ will delete it on a condition like exiting a web browser application.
 
 ::alert{icon=💡}
 **Note:** The [cookie storage model specification](https://tools.ietf.org/html/rfc6265#section-5.3) states that if both `expires` and
-`maxAge` are set, then `maxAge` takes precedence, but it is possible not all clients by obey this,
+`maxAge` are set, then `maxAge` takes precedence, but it is possible not all clients obey this,
 so if both are set, they should point to the same date and time.eaks!
 ::
 
@@ -77,7 +77,7 @@ so if both are set, they should point to the same date and time.eaks!
 #### `httpOnly`
 
 Specifies the `boolean` value for the [`HttpOnly` `Set-Cookie` attribute](https://tools.ietf.org/html/rfc6265#section-5.2.6). When truthy,
-the `HttpOnly` attribute is set, otherwise it is not. By default, the `HttpOnly` attribute is not set.
+the `HttpOnly` attribute is set, otherwise, it is not. By default, the `HttpOnly` attribute is not set.
 
 ::alert{icon=💡}
 **Note** be careful when setting this to `true`, as compliant clients will not allow client-side
@@ -87,7 +87,7 @@ JavaScript to see the cookie in `document.cookie`.
 #### `secure`
 
 Specifies the `boolean` value for the [`Secure` `Set-Cookie` attribute](https://tools.ietf.org/html/rfc6265#section-5.2.5). When truthy,
-the `Secure` attribute is set, otherwise it is not. By default, the `Secure` attribute is not set.
+the `Secure` attribute is set, otherwise,it is not. By default, the `Secure` attribute is not set.
 
 ::alert{icon=💡}
 **Note:** be careful when setting this to `true`, as compliant clients will not send the cookie back to
