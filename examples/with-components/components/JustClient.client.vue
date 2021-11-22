@@ -5,6 +5,6 @@ const height = window.innerHeight
 <template>
   <div>
     This is client only.
-    Window width: {{ height }}
+    Window height: {{ height }}
   </div>
 </template>
