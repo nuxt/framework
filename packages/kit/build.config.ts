@@ -4,21 +4,11 @@ export default defineBuildConfig({
   declaration: true,
   emitCJS: false,
   entries: [
-    {
-      input: 'src/config/schema/index',
-      outDir: 'schema',
-      name: 'config',
-      builder: 'untyped',
-      defaults: {
-        rootDir: '/project/'
-      }
-    },
     'src/index'
   ],
   externals: [
+    '@nuxt/schema',
     'webpack',
-    'vite',
-    'nuxt',
-    'nuxt3'
+    'vite'
   ]
 })
