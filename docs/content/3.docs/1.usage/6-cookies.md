@@ -4,7 +4,7 @@
 
 ## Usage
 
-Within your pages, components and plugins you can use `useCookie` to create a reactive reference bound to a specific cookie.
+Within your pages, components and plugins you can use `useCookie` to create a reactive reference bound to a specific cookie .
 
 ```js
 const cookie = useCookie(name, options)
@@ -14,6 +14,9 @@ const cookie = useCookie(name, options)
 **`useCookie` only works during `setup` or `Lifecycle Hooks`**
 ::
 
+::alert{icon=😌}
+`useCookie` ref will be automatically serialize and deserialized cookie value to JSON.
+::
 
 ## Example
 
@@ -119,8 +122,7 @@ Specifies a function that will be used to encode a cookie's value. Since value o
 has a limited character set (and must be a simple string), this function can be used to encode
 a value into a string suited for a cookie's value.
 
-The default function is the global `encodeURIComponent`, which will encode a JavaScript string
-into UTF-8 byte sequences and then URL-encode any that fall outside of the cookie range.
+The default encoder is the `JSON.stringify` + `encodeURIComponent`.
 
 #### `decode`
 
@@ -128,15 +130,12 @@ Specifies a function that will be used to decode a cookie's value. Since the val
 has a limited character set (and must be a simple string), this function can be used to decode
 a previously-encoded cookie value into a JavaScript string or other object.
 
-The default function is the global [`decodeURIComponent`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURIComponent
-), which will decode any URL-encoded
-sequences into their byte representations.
+The default decoder is `decodeURIComponent` + [destr](https://github.com/unjs/destr).
 
 ::alert{icon=💡}
 **Note** if an error is thrown from this function, the original, non-decoded cookie value will
 be returned as the cookie's value.
 ::
-
 
 ## Handling cookies in API routes
 

@@ -31,6 +31,7 @@
     "consola": "^2.15.3",
     "cookie": "^0.4.1",
     "defu": "^5.0.0",
+    "destr": "^1.1.0",
     "enhanced-resolve": "^5.8.3",
     "estree-walker": "^2.0.2",
     "externality": "^0.1.5",
