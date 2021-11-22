@@ -22,9 +22,6 @@ const cookie = useCookie(name, options)
 
 The example below creates a cookie called counter and if it doesn't exist set a random value. Whenever we update `counter`, the cookie will be updated.
 
-
-
-
 ```vue
 <template>
   <div>
@@ -48,7 +45,6 @@ counter.value = counter.value || Math.round(Math.random() * 1000)
 ```
 
 :button-link[Open on StackBlitz]{href="https://stackblitz.com/github/nuxt/framework/tree/main/examples/use-cookie?terminal=dev" blank}
-
 
 ## Options
 
@@ -74,7 +70,6 @@ so if both are set, they should point to the same date and time.eaks!
 ::alert
 If neither of `expires` and `maxAge` are set, cookie will be session-only and removed if the user closes their browser.
 ::
-
 
 #### `httpOnly`
 
@@ -110,11 +105,11 @@ is considered the ["default path"](https://tools.ietf.org/html/rfc6265#section-5
 
 Specifies the `boolean` or `string` to be the value for the [`SameSite` `Set-Cookie` attribute](https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-03#section-4.1.2.7).
 
-  - `true` will set the `SameSite` attribute to `Strict` for strict same site enforcement.
-  - `false` will not set the `SameSite` attribute.
-  - `'lax'` will set the `SameSite` attribute to `Lax` for lax same site enforcement.
-  - `'none'` will set the `SameSite` attribute to `None` for an explicit cross-site cookie.
-  - `'strict'` will set the `SameSite` attribute to `Strict` for strict same site enforcement.
+- `true` will set the `SameSite` attribute to `Strict` for strict same site enforcement.
+- `false` will not set the `SameSite` attribute.
+- `'lax'` will set the `SameSite` attribute to `Lax` for lax same site enforcement.
+- `'none'` will set the `SameSite` attribute to `None` for an explicit cross-site cookie.
+- `'strict'` will set the `SameSite` attribute to `Strict` for strict same site enforcement.
 
 More information about the different enforcement levels can be found in [the specification](https://tools.ietf.org/html/draft-ietf-httpbis-rfc6265bis-03#section-4.1.2.7).
 
