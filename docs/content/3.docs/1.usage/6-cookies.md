@@ -22,9 +22,7 @@ const cookie = useCookie(name, options)
 
 The example below creates a cookie called counter and if it doesn't exist set a random value. Whenever we update `counter`, the cookie will be updated.
 
-::alert
-If neither of `expires` and `maxAge` are set, cookie will be session-only and removed if the user closes their browser.
-::
+
 
 
 ```vue
@@ -71,6 +69,10 @@ will delete it on a condition like exiting a web browser application.
 **Note:** The [cookie storage model specification](https://tools.ietf.org/html/rfc6265#section-5.3) states that if both `expires` and
 `maxAge` are set, then `maxAge` takes precedence, but it is possible not all clients obey this,
 so if both are set, they should point to the same date and time.eaks!
+::
+
+::alert
+If neither of `expires` and `maxAge` are set, cookie will be session-only and removed if the user closes their browser.
 ::
 
 
