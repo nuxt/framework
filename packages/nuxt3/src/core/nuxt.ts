@@ -1,6 +1,7 @@
 import { resolve } from 'pathe'
 import { createHooks } from 'hookable'
-import { loadNuxtConfig, LoadNuxtOptions, Nuxt, NuxtOptions, NuxtConfig, nuxtCtx, installModule, ModuleContainer, NuxtHooks, addComponent } from '@nuxt/kit'
+import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
+import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent } from '@nuxt/kit'
 import pagesModule from '../pages/module'
 import metaModule from '../meta/module'
 import componentsModule from '../components/module'
@@ -42,6 +43,7 @@ async function initNuxt (nuxt: Nuxt) {
   // Add nuxt3 types
   nuxt.hook('prepare:types', (opts) => {
     opts.references.push({ types: 'nuxt3' })
+    opts.references.push({ path: resolve(nuxt.options.buildDir, 'plugins.d.ts') })
   })
 
   // Init user modules

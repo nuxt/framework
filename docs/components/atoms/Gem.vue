@@ -79,6 +79,7 @@ export default {
     controls.enableZoom = false
     controls.target.set(0, 0.75, 0)
     controls.enableDamping = true
+    controls.enablePan = false
     // Lock Y Axis
     controls.minPolarAngle = Math.PI / 2
     controls.maxPolarAngle = Math.PI / 2
@@ -101,7 +102,7 @@ export default {
 
     const tick = () => {
       const elapsedTime = clock.getElapsedTime()
-      const deltaTime = elapsedTime - previousTime
+      const _deltaTime = elapsedTime - previousTime
       previousTime = elapsedTime
       if (gem) {
         gem.rotation.y = 1.1 * elapsedTime

@@ -12,7 +12,7 @@ import type { Compiler, Watching } from 'webpack'
 import type { Context as WebpackDevMiddlewareContext, Options as WebpackDevMiddlewareOptions } from 'webpack-dev-middleware'
 import type { MiddlewareOptions as WebpackHotMiddlewareOptions } from 'webpack-hot-middleware'
 
-import type { Nuxt } from '@nuxt/kit'
+import type { Nuxt } from '@nuxt/schema'
 import { createMFS } from './utils/mfs'
 import { client, server } from './configs'
 import { createWebpackConfigContext, applyPresets, getWebpackConfig } from './utils/config'
@@ -201,7 +201,6 @@ class WebpackBundler {
 
     const { name } = compiler.options
     const buildOptions = this.nuxt.options.build
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { client, ...hotMiddlewareOptions } = buildOptions.hotMiddleware || {}
 
     // Create webpack dev middleware
