@@ -99,7 +99,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
     entry: undefined,
     node: undefined,
     preset: undefined,
-    rollupConfig: undefined,
+    rollupConfig: nuxtOptions.build.rollup,
     experiments: {},
     moduleSideEffects: ['unenv/runtime/polyfill/'],
     renderer: undefined,

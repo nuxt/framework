@@ -28,6 +28,14 @@ export default {
   analyze: false,
 
   /**
+   * Pass through Rollup options. Useful, for example, if polling for rebuild is required for some environments.
+   *
+   * @see [Rollup Options](https://rollupjs.org/guide/en/#big-list-of-options)
+   * @type {RollupOptions}
+   */
+  rollup: {},
+
+  /**
    * Enable the profiler in webpackbar.
    *
    * It is normally enabled by CLI argument `--profile`.

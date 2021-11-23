@@ -79,6 +79,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   const runtimeAppDir = join(nitroContext._internal.runtimeDir, 'app')
 
   const rollupConfig: RollupConfig = {
+    ...nitroContext.rollupConfig,
     input: resolvePath(nitroContext, nitroContext.entry),
     output: {
       dir: nitroContext.output.serverDir,
