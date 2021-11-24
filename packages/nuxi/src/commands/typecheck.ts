@@ -24,9 +24,11 @@ export default defineNuxtCommand({
     await nuxt.close()
 
     // Prefer local install if possible
-    const hasLocalInstall = tryResolveModule('typescript') && tryResolveModule('vue-tsc/package.json')
-    const npxArgs = hasLocalInstall ? '' : '-p vue-tsc -p typescript '
-
-    await execa('npx', `${npxArgs}vue-tsc --noEmit`.split(' '), { stdio: 'inherit' })
+    const hasLocalInstall = tryResolveModule('typescript', rootDir) && tryResolveModule('vue-tsc/package.json', rootDir)
+    if (hasLocalInstall) {
+      await execa('vue-tsc', ['--noEmit'], { preferLocal: true, stdio: 'inherit', cwd: rootDir })
+    } else {
+      await execa('npx', '-p vue-tsc -p typescript vue-tsc --noEmit'.split(' '), { stdio: 'inherit', cwd: rootDir })
+    }
   }
 })
