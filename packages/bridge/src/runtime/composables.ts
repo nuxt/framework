@@ -57,12 +57,12 @@ export const useState = <T>(key: string, init?: (() => T)): Ref<T> => {
   if (!isReactive(nuxtApp.payload.useState)) {
     nuxtApp.payload.useState = reactive(nuxtApp.payload.useState)
   }
-  
+
   // see @vuejs/composition-api reactivity tracking on a reactive object with set
   if (!(key in nuxtApp.payload.useState)) {
-    set(nuxtApp.payload.useState, key, undefined)  
+    set(nuxtApp.payload.useState, key, undefined)
   }
-  
+
   const state = toRef(nuxtApp.payload.useState, key)
   if (state.value === undefined && init) {
     state.value = init()
