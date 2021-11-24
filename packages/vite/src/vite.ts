@@ -1,3 +1,4 @@
+import { promises as fsp } from 'fs'
 import * as vite from 'vite'
 import { resolve } from 'pathe'
 import consola from 'consola'
@@ -49,6 +50,7 @@ export async function bundle (nuxt: Nuxt) {
           }
         },
         base: nuxt.options.build.publicPath,
+        publicDir: resolve(nuxt.options.srcDir, nuxt.options.dir.public),
         // TODO: move to kit schema when it exists
         vue: {
           isProduction: !nuxt.options.dev,
