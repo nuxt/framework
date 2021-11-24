@@ -1,10 +1,12 @@
 import { ConfigSchema } from '../../schema/config'
 
+/** Normalized Nuxt options */
 export interface NuxtOptions extends ConfigSchema { }
 
 type DeepPartial<T> = T extends Record<string, any> ? { [P in keyof T]?: DeepPartial<T[P]> | T[P] } : T
 
-export interface NuxtConfig extends DeepPartial<NuxtOptions> { }
+/** User configuration (may be different from normalized NuxtOptions) */
+export interface NuxtConfig extends DeepPartial<ConfigSchema> { }
 
 
 export interface PublicRuntimeConfig extends Record<string, any> { }
