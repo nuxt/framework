@@ -122,20 +122,15 @@ export function useAsyncData<
   }
 
   // Client side
-  if (process.client) {
-    if (!asyncData.pending.value) {
-      // 1. Hydration (server: true): no fetch
-    } else if (instance && nuxt.isHydrating) {
+  // 1. Hydration (server: true): no fetch
+  if (process.client && asyncData.pending.value) {
+    if (instance && (nuxt.isHydrating || options.lazy)) {
       // 2. Initial load (server: false): fetch on mounted
+      // 3. Navigation (lazy: true): fetch on mounted
       instance._nuxtOnBeforeMountCbs.push(asyncData.refresh)
-    } else if (!nuxt.isHydrating) {
-      if (instance && options.lazy) {
-        // 3. Navigation (lazy: true): fetch on mounted
-        instance._nuxtOnBeforeMountCbs.push(asyncData.refresh)
-      } else {
-        // 4. Navigation (lazy: false) - or plugin usage: await fetch
-        asyncData.refresh()
-      }
+    } else {
+      // 4. Navigation (lazy: false) - or plugin usage: await fetch
+      asyncData.refresh()
     }
   }
 
