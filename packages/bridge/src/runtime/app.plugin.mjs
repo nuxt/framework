@@ -5,6 +5,7 @@ import { setNuxtAppInstance } from '#app'
 // Reshape payload to match key `useLazyAsyncData` expects
 function proxiedState (state) {
   state._asyncData = state._asyncData || {}
+  state._errors = state._errors || {}
   return new Proxy(state, {
     get (target, prop) {
       if (prop === 'data') {
@@ -39,7 +40,7 @@ export default (ctx, inject) => {
     globalName: 'nuxt',
     payload: proxiedState(process.client ? ctx.nuxtState : ctx.ssrContext.nuxt),
     _asyncDataPromises: [],
-    isHydrating: ctx.isHMR,
+    isHydrating: true,
     nuxt2Context: ctx
   }
 
@@ -51,12 +52,20 @@ export default (ctx, inject) => {
     ctx.app.created = [ctx.app.created]
   }
 
+  if (!Array.isArray(ctx.app.mounted)) {
+    ctx.app.mounted = [ctx.app.mounted]
+  }
+
   if (process.server) {
     nuxtApp.ssrContext = ctx.ssrContext
   }
 
   ctx.app.created.push(function () {
     nuxtApp.vue2App = this
+  })
+
+  ctx.app.mounted.push(function () {
+    nuxtApp.isHydrating = false
   })
 
   const proxiedApp = new Proxy(nuxtApp, {

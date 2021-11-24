@@ -73,9 +73,9 @@ export function useAsyncData<
   }
 
   const asyncData = {
-    data: ref(nuxt.payload.data[key]?.data ?? options.default()),
-    pending: ref(nuxt.payload.data[key]?.pending ?? true),
-    error: ref(nuxt.payload.data[key]?.error ?? null)
+    data: ref(nuxt.payload.data[key] ?? options.default()),
+    pending: ref(true),
+    error: ref(nuxt.payload._errors[key] ?? null)
   } as AsyncData<DataT>
 
   asyncData.refresh = (force?: boolean) => {
@@ -103,11 +103,8 @@ export function useAsyncData<
       })
       .finally(() => {
         asyncData.pending.value = false
-        nuxt.payload.data[key] = {
-          data: asyncData.data.value,
-          error: asyncData.error.value,
-          pending: asyncData.pending.value
-        }
+        nuxt.payload.data[key] = asyncData.data.value
+        nuxt.payload._errors[key] = !!asyncData.error.value
         delete nuxt._asyncDataPromises[key]
       })
     return nuxt._asyncDataPromises[key]
@@ -122,9 +119,11 @@ export function useAsyncData<
   }
 
   // Client side
-  // 1. Hydration (server: true): no fetch
-  if (process.client && asyncData.pending.value) {
-    if (instance && (nuxt.isHydrating || options.lazy)) {
+  if (process.client) {
+    if (fetchOnServer && nuxt.isHydrating) {
+      // 1. Hydration (server: true): no fetch
+      asyncData.pending.value = false
+    } else if (instance && (nuxt.isHydrating || options.lazy)) {
       // 2. Initial load (server: false): fetch on mounted
       // 3. Navigation (lazy: true): fetch on mounted
       instance._nuxtOnBeforeMountCbs.push(asyncData.refresh)
