@@ -41,7 +41,6 @@ When running `nuxt build` with the Node preset, the result will be an entry poin
 - **localFetch**: an isomorphic fetch to allow [direct API calls](/docs/usage/data-fetching) 
 - **$fetch**: the isomorphic fetch [upgraded by `ohmyfetch` for better DX](https://github.com/unjs/ohmyfetch)
 
-
 ::alert{type=warning}
 It is not recommended to use this preset directly, and particularly not with a 3rd-party server.
 ::
