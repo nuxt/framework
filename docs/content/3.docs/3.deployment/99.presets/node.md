@@ -33,7 +33,14 @@ NITRO_PRESET=node npx nuxt build
 
 ## Entry point
 
-When running `nuxt build` with the Node preset, the result will be an entry point exporting a function with the familiar `(req, res) => {}` signature used in [express](https://expressjs.com/), [h3](https://github.com/unjs/h3), etc.
+When running `nuxt build` with the Node preset, the result will be an entry point exporting several named exports:
+
+- **handle**: a function with the familiar `(req, res) => {}` signature used in [express](https://expressjs.com/), [h3](https://github.com/unjs/h3), etc.
+- **stack**: internal stack [used by `h3`](https://github.com/unjs/h3)
+- **localCall**: a function you can use to call the different api routes in your server without requiring a network call
+- **localFetch**: an isomorphic fetch to allow [direct API calls](/docs/usage/data-fetching) 
+- **$fetch**: the isomorphic fetch [upgraded by `ohmyfetch` for better DX](https://github.com/unjs/ohmyfetch)
+
 
 ::alert{type=warning}
 It is not recommended to use this preset directly, and particularly not with a 3rd-party server.
