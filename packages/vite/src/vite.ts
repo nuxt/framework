@@ -1,4 +1,3 @@
-import { promises as fsp } from 'fs'
 import * as vite from 'vite'
 import { resolve } from 'pathe'
 import consola from 'consola'
