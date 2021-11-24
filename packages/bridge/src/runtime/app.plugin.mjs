@@ -64,9 +64,7 @@ export default (ctx, inject) => {
     nuxtApp.vue2App = this
   })
 
-  ctx.app.mounted.push(function () {
-    nuxtApp.isHydrating = false
-  })
+  ctx.app.mounted.push(() => { nuxtApp.isHydrating = false })
 
   const proxiedApp = new Proxy(nuxtApp, {
     get (target, prop) {
