@@ -105,7 +105,7 @@ export function useAsyncData<
         asyncData.pending.value = false
         nuxt.payload.data[key] = asyncData.data.value
         if (asyncData.error.value) {
-          nuxt.payload._errors[key] = !!asyncData.error.value
+          nuxt.payload._errors[key] = true
         }
         delete nuxt._asyncDataPromises[key]
       })
