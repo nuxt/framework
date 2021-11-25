@@ -76,6 +76,7 @@ export function createNuxtApp (options: CreateOptions) {
     payload: reactive({
       data: {},
       state: {},
+      _errors: {},
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
     isHydrating: process.client,
@@ -180,7 +181,10 @@ export const setNuxtAppInstance = (nuxt: NuxtApp | null) => {
 export function callWithNuxt<T extends () => any> (nuxt: NuxtApp, setup: T) {
   setNuxtAppInstance(nuxt)
   const p: ReturnType<T> = setup()
-  setNuxtAppInstance(null)
+  if (process.server) {
+    // Unset nuxt instance to prevent context-sharing in server-side
+    setNuxtAppInstance(null)
+  }
   return p
 }
 

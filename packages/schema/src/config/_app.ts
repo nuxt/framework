@@ -37,7 +37,8 @@ export default {
       return defu(val, {
         basePath: get('router.base'),
         assetsPath: isRelativePublicPath ? get('build.publicPath') : useCDN ? '/' : joinURL(get('router.base'), get('build.publicPath')),
-        cdnURL: useCDN ? get('build.publicPath') : null
+        cdnURL: useCDN ? get('build.publicPath') : null,
+        publicAssetsDir: useCDN ? get('build.cdnDirName') : get('build.publicPath')
       })
     }
   },
