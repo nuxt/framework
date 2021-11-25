@@ -2,7 +2,6 @@ import { relative, resolve, join } from 'pathe'
 import consola from 'consola'
 import * as rollup from 'rollup'
 import fse from 'fs-extra'
-// import { hasProtocol } from 'ufo'
 import { printFSTree } from './utils/tree'
 import { getRollupConfig } from './rollup/config'
 import { hl, prettyPath, serializeTemplate, writeFile, isDirectory, readDirRecursively } from './utils'
@@ -141,7 +140,7 @@ function startRollupWatcher (nitroContext: NitroContext) {
       // Encountered an error while bundling
       case 'ERROR':
         consola.error('Rollup error: ' + event.error)
-      // consola.error(event.error)
+        // consola.error(event.error)
     }
   })
   return watcher
