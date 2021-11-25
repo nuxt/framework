@@ -163,19 +163,19 @@ export default {
   },
 
   /**
-   * Directory name of the build output.
+   * Directory name of the build output assets.
    *
    * @note This is only applied when you set the publicPath to a CDN and in production.
    *
    * @example
    * ```js
    * build: {
-   *   cdnDirName: process.env.CDN_DIR_NAME || 'dir'
+   *   cdnDir: process.env.CDN_DIR|| 'dir'
    * }
    * ```
    * @version 3
    */
-  cdnDirName: { 
+  cdnDir: { 
     $resolve: (val) => {
       return (val || 'client')
     }
