@@ -9,7 +9,7 @@ export const cloudflare: NitroPreset = extendPreset(worker, {
   ignore: [
     'wrangler.toml'
   ],
-  previewCommand: config => `npx miniflare ${relative(config.output.dir, config.output.serverDir)}/index.mjs --site ${relative(config.output.dir, config.output.publicDir)}`,
+  previewCommand: ({ output }) => `npx miniflare ${relative(output.dir, output.serverDir)}/index.mjs --site ${relative(output.dir, output.publicDir)}`,
   hooks: {
     async 'nitro:compiled' ({ output, _nuxt }: NitroContext) {
       await writeFile(resolve(output.dir, 'package.json'), JSON.stringify({ private: true, main: './server/index.mjs' }, null, 2))
