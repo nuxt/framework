@@ -16,13 +16,12 @@ export default defineNuxtCommand({
     const rootDir = resolve(args._[0] || '.')
 
     try {
-      const serverPath = resolve(rootDir, '.output')
-      const nitroConfigPath = resolve(serverPath, 'nitro.json')
-      const nitroConfig = JSON.parse(await fsp.readFile(nitroConfigPath, 'utf-8'))
+      const outputPath = resolve(rootDir, '.output')
+      const nitroConfig = JSON.parse(await fsp.readFile(resolve(outputPath, 'nitro.json'), 'utf-8'))
       if (nitroConfig.preview) {
         consola.info(`Previewing \`${nitroConfig.preset}\` build.`)
         const [command, ...args] = nitroConfig.preview.split(' ')
-        await execa(command, args, { stdio: 'inherit', cwd: serverPath })
+        await execa(command, args, { stdio: 'inherit', cwd: outputPath })
       } else {
         consola.error(`Preview is not supported for \`${nitroConfig.preset}\`.`)
       }
