@@ -30,6 +30,13 @@ async function cleanupDir (dir: string) {
 export async function generate (nitroContext: NitroContext) {
   consola.start('Generating public...')
 
+  // Preserve nitro preset in .output/nitro.json
+  const nitroConfigPath = resolve(nitroContext.output.dir, 'nitro.json')
+  const nitroConfig = {
+    preset: nitroContext.preset
+  }
+  await writeFile(nitroConfigPath, JSON.stringify(nitroConfig, null, 2))
+
   const publicDir = nitroContext._nuxt.publicDir
   let publicFiles: string[] = []
   if (await isDirectory(publicDir)) {
