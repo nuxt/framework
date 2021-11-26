@@ -11,7 +11,7 @@ type _CookieOptions = Omit<CookieSerializeOptions & CookieParseOptions, 'decode'
 export interface CookieOptions<T=any> extends _CookieOptions {
   decode?(value: string): T
   encode?(value: T): string;
-  default?: T
+  default?: () => T
 }
 
 export interface CookieRef<T> extends Ref<T> {}
@@ -25,7 +25,7 @@ export function useCookie <T=string> (name: string, _opts?: CookieOptions<T>): C
   const opts = { ...CookieDefaults, ..._opts }
   const cookies = readRawCookies(opts)
 
-  const cookie = ref(cookies[name] ?? _opts.default)
+  const cookie = ref(cookies[name] ?? _opts.default?.())
 
   if (process.client) {
     watch(cookie, () => { writeClientCookie(name, cookie.value, opts as CookieSerializeOptions) })
