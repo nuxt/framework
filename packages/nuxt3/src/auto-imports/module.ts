@@ -1,4 +1,4 @@
-import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, addPluginTemplate, useNuxt } from '@nuxt/kit'
+import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, addPluginTemplate, useNuxt, addPlugin } from '@nuxt/kit'
 import type { AutoImportsOptions } from '@nuxt/schema'
 import { isAbsolute, join, relative, resolve, normalize } from 'pathe'
 import { TransformPlugin } from './transform'
@@ -44,31 +44,17 @@ export default defineNuxtModule<AutoImportsOptions>({
     await nuxt.callHook('autoImports:dirs', composablesDirs)
     composablesDirs = composablesDirs.map(dir => normalize(dir))
 
-    // Support for importing from '#imports'
-    addTemplate({
-      filename: 'imports.mjs',
-      getContents: () => toExports(ctx.autoImports)
-    })
-    nuxt.options.alias['#imports'] = join(nuxt.options.buildDir, 'imports')
+    const globalMode = nuxt.options.dev && options.global
 
-    // Transpile and injection
-    // @ts-ignore temporary disabled due to #746
-    if (nuxt.options.dev && options.global) {
-      // Add all imports to globalThis in development mode
-      addPluginTemplate({
-        filename: 'auto-imports.mjs',
-        src: '',
-        getContents: () => {
-          const imports = toImports(ctx.autoImports)
-          const globalThisSet = ctx.autoImports.map(i => `globalThis.${i.as} = ${i.as};`).join('\n')
-          return `${imports}\n\n${globalThisSet}\n\nexport default () => {};`
-        }
-      })
+    if (globalMode) {
+      addPlugin(join(nuxt.options.buildDir, 'auto-imports'))
     } else {
       // Transform to inject imports in production mode
       addVitePlugin(TransformPlugin.vite(ctx))
       addWebpackPlugin(TransformPlugin.webpack(ctx))
     }
+
+    nuxt.options.alias['#imports'] = join(nuxt.options.buildDir, 'imports')
 
     const updateAutoImports = async () => {
       // Scan composables/
@@ -79,9 +65,29 @@ export default defineNuxtModule<AutoImportsOptions>({
       await nuxt.callHook('autoImports:extend', ctx.autoImports)
       // Update context
       updateAutoImportContext(ctx)
+
+      // Support for importing from '#imports'
+      addTemplate({
+        filename: 'imports.mjs',
+        getContents: () => toExports(ctx.autoImports)
+      })
+
+      if (globalMode) {
+        // Add all imports to globalThis in development mode
+        addTemplate({
+          filename: 'auto-imports.mjs',
+          getContents: () => {
+            const imports = toImports(ctx.autoImports)
+            const globalThisSet = ctx.autoImports.map(i => `globalThis.${i.as} = ${i.as};`).join('\n')
+            return `${imports}\n\n${globalThisSet}\n\nexport default () => {};`
+          }
+        })
+      }
+
       // Generate types
       generateDts(ctx)
     }
+
     await updateAutoImports()
 
     // Add generated types to `nuxt.d.ts`
