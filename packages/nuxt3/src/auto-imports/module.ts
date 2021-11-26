@@ -1,4 +1,4 @@
-import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, addPluginTemplate, useNuxt, addPlugin } from '@nuxt/kit'
+import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, useNuxt, addPlugin } from '@nuxt/kit'
 import type { AutoImportsOptions } from '@nuxt/schema'
 import { isAbsolute, join, relative, resolve, normalize } from 'pathe'
 import { TransformPlugin } from './transform'
