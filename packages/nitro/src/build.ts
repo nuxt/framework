@@ -30,10 +30,11 @@ async function cleanupDir (dir: string) {
 export async function generate (nitroContext: NitroContext) {
   consola.start('Generating public...')
 
-  // Preserve nitro preset in .output/nitro.json
+  // Preserve nitro preset and preview command in .output/nitro.json
   const nitroConfigPath = resolve(nitroContext.output.dir, 'nitro.json')
   const nitroConfig = {
-    preset: nitroContext.preset
+    preset: nitroContext.preset,
+    preview: nitroContext.previewCommand?.(nitroContext)
   }
   await writeFile(nitroConfigPath, JSON.stringify(nitroConfig, null, 2))
 

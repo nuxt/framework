@@ -1,7 +1,7 @@
 import consola from 'consola'
 import fse from 'fs-extra'
 import globby from 'globby'
-import { join, resolve } from 'pathe'
+import { join, relative, resolve } from 'pathe'
 import { hl, prettyPath, writeFile } from '../utils'
 import { NitroPreset, NitroContext } from '../context'
 
@@ -11,6 +11,7 @@ export const azure: NitroPreset = {
   output: {
     serverDir: '{{ output.dir }}/server/functions'
   },
+  previewCommand: ({ output }) => `npx @azure/static-web-apps-cli start ${relative(output.dir, output.publicDir)} --api-location ${relative(output.dir, resolve(output.serverDir, '..'))}`,
   hooks: {
     async 'nitro:compiled' (ctx: NitroContext) {
       await writeRoutes(ctx)
