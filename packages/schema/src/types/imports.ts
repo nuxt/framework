@@ -52,4 +52,10 @@ export interface AutoImportsOptions {
    * By default <rootDir>/composables is added
    */
    dirs?: []
+   /**
+    * Exclusion patterns for transforming files
+    * 
+    * By default /node_modules/ is added
+    */
+   exclude?: RegExp[]
 }

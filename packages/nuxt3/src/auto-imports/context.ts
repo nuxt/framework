@@ -3,6 +3,7 @@ import type { AutoImport } from '@nuxt/schema'
 export interface AutoImportContext {
   autoImports: AutoImport[]
   matchRE: RegExp
+  exclude: RegExp[]
   map: Map<string, AutoImport>
 }
 
@@ -10,7 +11,8 @@ export function createAutoImportContext (): AutoImportContext {
   return {
     autoImports: [],
     map: new Map(),
-    matchRE: /__never__/
+    matchRE: /__never__/,
+    exclude: []
   }
 }
 

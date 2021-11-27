@@ -31,7 +31,7 @@ export const TransformPlugin = createUnplugin((ctx: AutoImportContext) => {
       const { pathname, search } = parseURL(id)
       const { type } = parseQuery(search)
 
-      if (id.includes('node_modules')) {
+      if (ctx.exclude.some(pattern => id.match(pattern))) {
         return false
       }
 

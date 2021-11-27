@@ -13,7 +13,8 @@ export default defineNuxtModule<AutoImportsOptions>({
   defaults: {
     sources: Nuxt3AutoImports,
     global: false,
-    dirs: []
+    dirs: [],
+    exclude: [/node_modules/]
   },
   async setup (options, nuxt) {
     // Allow modules extending sources
@@ -24,6 +25,9 @@ export default defineNuxtModule<AutoImportsOptions>({
 
     // Create a context to share state between module internals
     const ctx = createAutoImportContext()
+
+    // Add exclude patterns
+    ctx.exclude = options.exclude
 
     // Resolve autoimports from sources
     for (const source of options.sources) {
