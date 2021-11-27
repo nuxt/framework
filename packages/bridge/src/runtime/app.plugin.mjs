@@ -49,11 +49,11 @@ export default (ctx, inject) => {
   nuxtApp.callHook = nuxtApp.hooks.callHook
 
   if (!Array.isArray(ctx.app.created)) {
-    ctx.app.created = [ctx.app.created]
+    ctx.app.created = typeof ctx.app.created === 'undefined' ? [] : [ctx.app.created]
   }
 
   if (!Array.isArray(ctx.app.mounted)) {
-    ctx.app.mounted = [ctx.app.mounted]
+    ctx.app.mounted = typeof ctx.app.mounted === 'undefined' ? [] : [ctx.app.mounted]
   }
 
   if (process.server) {
