@@ -33,14 +33,32 @@ const getSPARenderer = cachedResult(async () => {
       serverRendered: false,
       config: publicConfig
     }
+
+    let entryFiles = Object.values(clientManifest).filter(
+      (fileValue: any) => fileValue.isEntry
+    )
+    if ('all' in clientManifest && 'initial' in clientManifest) {
+      // Upgrade legacy manifest (also see normalizeClientManifest in vue-bundle-renderer)
+      // https://github.com/nuxt-contrib/vue-bundle-renderer/issues/12
+      entryFiles = clientManifest.initial.map(file => ({ file }))
+    }
+
     return {
       html: '<div id="__nuxt"></div>',
       renderResourceHints: () => '',
-      renderStyles: () => '',
-      renderScripts: () => clientManifest.initial.map((s) => {
-        const isMJS = !s.endsWith('.js')
-        return `<script ${isMJS ? 'type="module"' : ''} src="${publicPath}${s}"></script>`
-      }).join('')
+      renderStyles: () =>
+        entryFiles
+          .flatMap(({ css }) => css)
+          .filter(css => css != null)
+          .map(file => `<link rel="stylesheet" href="${publicPath}${file}">`)
+          .join(''),
+      renderScripts: () =>
+        entryFiles
+          .map(({ file }) => {
+            const isMJS = !file.endsWith('.js')
+            return `<script ${isMJS ? 'type="module"' : ''} src="${publicPath}${file}"></script>`
+          })
+          .join('')
     }
   }
 })
