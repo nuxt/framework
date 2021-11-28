@@ -10,7 +10,7 @@ const NUXT_NO_SSR = process.env.NUXT_NO_SSR
 const PAYLOAD_JS = '/payload.js'
 
 const getClientManifest = cachedImport(() => import('#build/dist/server/client.manifest.mjs'))
-const getSSRApp = cachedImport(() => import('#build/dist/server/server.mjs'))
+const getSSRApp = !process.env.NUXT_NO_SSR && cachedImport(() => import('#build/dist/server/server.mjs'))
 
 const publicPath = (publicConfig.app && publicConfig.app.assetsPath) || process.env.PUBLIC_PATH || '/_nuxt'
 
