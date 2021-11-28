@@ -28,8 +28,9 @@
   </header>
 </template>
 
-<script>
-import { defineComponent, useContext, useRoute, computed } from '@nuxtjs/composition-api'
+<script lang="ts">
+import { useDocusConfig } from '#docus'
+import { defineComponent, computed, useNuxtApp } from '#app'
 
 export default defineComponent({
   props: {
@@ -39,14 +40,16 @@ export default defineComponent({
     }
   },
   setup () {
-    const { $docus } = useContext()
-    const route = useRoute()
+    const app = useNuxtApp()
+    const settings = useDocusConfig()
+    const { $route } = app
+    const route = computed(() => $route)
+
     const currentSlug = computed(() => {
       return route.value.path !== '/' && route.value.params?.pathMatch
         ? route.value.params.pathMatch.split('/')[0]
         : null
     })
-    const settings = computed(() => $docus.settings.value)
 
     function isActive (link) {
       return `/${currentSlug.value}` === link.to

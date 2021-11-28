@@ -23,8 +23,8 @@
   </component>
 </template>
 
-<script>
-import { defineComponent, computed } from '@nuxtjs/composition-api'
+<script lang="ts">
+import { defineComponent, computed } from '#app'
 
 export default defineComponent({
   props: {

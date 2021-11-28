@@ -55,8 +55,8 @@ export default {
       const lang = this.$i18n.locales.find(locale => locale.code === code)
 
       const docsearch = await Promise.all([
-        import(/* webpackChunkName: "docsearch" */ '@docsearch/js'),
-        import(/* webpackChunkName: "docsearch" */ '@docsearch/css')
+        import(/* webpackChunkName: "docsearch" */ '@docsearch/js')
+        // import(/* webpackChunkName: "docsearch" */ '@docsearch/css')
       ]).then(([docsearch]) => docsearch.default)
 
       docsearch({

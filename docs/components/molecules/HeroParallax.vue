@@ -11,8 +11,8 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, ref, onMounted, onBeforeUnmount } from '@nuxtjs/composition-api'
+<script lang="ts">
+import { defineComponent, ref, onMounted, onBeforeUnmount } from '#app'
 
 export default defineComponent({
   setup () {

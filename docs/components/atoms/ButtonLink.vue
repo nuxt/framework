@@ -7,8 +7,8 @@
   </Link>
 </template>
 
-<script>
-import { defineComponent } from '@nuxtjs/composition-api'
+<script lang="ts">
+import { defineComponent } from '#app'
 
 export default defineComponent({
   props: {

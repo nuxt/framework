@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { defineComponent, useContext, useRoute, ref, watch, computed } from '@nuxtjs/composition-api'
+import { defineComponent, ref, watch, computed, useNuxtApp } from '#app'
 
 export default defineComponent({
   props: {
@@ -17,14 +17,18 @@ export default defineComponent({
     }
   },
   setup (props) {
-    const { $menu } = useContext()
-    const route = useRoute()
+    const { $menu, $route } = useNuxtApp()
+
+    const route = computed(() => $route)
+
     const currentSlug = computed(() => {
       return route.value.path !== '/' && route.value.params?.pathMatch
         ? route.value.params.pathMatch.split('/')[0]
         : null
     })
+
     const nav = ref(null)
+
     const openedLink = ref(null)
 
     function selectActiveLink () {

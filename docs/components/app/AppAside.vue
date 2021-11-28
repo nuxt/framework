@@ -80,7 +80,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useContext, ref, watch } from '@nuxtjs/composition-api'
+import { defineComponent, useNuxtApp, ref, watch, computed } from '#app'
+import { useDocusTheme } from '#docus'
 
 export default defineComponent({
   props: {
@@ -90,12 +91,14 @@ export default defineComponent({
     }
   },
   setup () {
-    const { $docus, $menu } = useContext()
+    const $theme = useDocusTheme()
+    const { $menu } = useNuxtApp()
+    const layout = computed(() => $theme.value.layout)
 
-    const mobileMainNav = ref(!$docus.layout.value.aside)
+    const mobileMainNav = ref(!layout.value.aside)
 
     watch($menu.visible, (value, old) => {
-      if (value && !old && $docus.layout.value.aside) {
+      if (value && !old && layout.value.aside) {
         mobileMainNav.value = false
       }
     })
@@ -111,7 +114,7 @@ export default defineComponent({
     return {
       mobileMainNav,
       mobileBack,
-      layout: $docus.layout
+      layout
     }
   }
 })

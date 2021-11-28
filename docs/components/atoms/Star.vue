@@ -2,8 +2,9 @@
   <div ref="star" class="absolute bg-primary-300 dark:bg-white rounded-full opacity-100 star" :style="style" />
 </template>
 
-<script>
-import { defineComponent, ref, computed, onMounted } from '@nuxtjs/composition-api'
+<script lang="ts">
+import { defineComponent, ref, computed, onMounted } from '#app'
+
 export default defineComponent({
   setup () {
     const style = ref({})
@@ -34,6 +35,7 @@ export default defineComponent({
   }
 })
 </script>
+
 <style lang="postcss" scoped>
 /* Stars */
 .star {

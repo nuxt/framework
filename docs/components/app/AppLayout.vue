@@ -15,24 +15,29 @@
   </div>
 </template>
 
-<script>
-import { defineComponent } from '@nuxtjs/composition-api'
+<script lang="ts">
+import { defineComponent, useLazyAsyncData } from '#app'
+import { useDocusLayout, useDocusContent } from '#docus'
 
 export default defineComponent({
-  data () {
+  setup () {
+    const layout = useDocusLayout()
+    const $content = useDocusContent()
+
+    const { data: headerLinks } = useLazyAsyncData(
+      'header-links',
+      async () => {
+        const collection = await $content
+          .search('/collections/header')
+          .fetch()
+
+        return collection.links
+      }
+    )
+
     return {
-      headerLinks: []
-    }
-  },
-  async fetch () {
-    const { $docus } = this
-    this.headerLinks = (await $docus
-      .search('/collections/header')
-      .fetch()).links
-  },
-  computed: {
-    layout () {
-      return this.$docus.layout.value
+      layout,
+      headerLinks
     }
   }
 })
