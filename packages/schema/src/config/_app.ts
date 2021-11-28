@@ -193,6 +193,13 @@ export default {
   extendPlugins: null,
 
   /**
+   * You may want to disable plugins auto importing.
+   * @type {boolean}
+   * @version 3
+   */
+  autoRegisterPlugins: true,
+
+  /**
    * You can define the CSS files/modules/libraries you want to set globally
    * (included in every page).
    *
