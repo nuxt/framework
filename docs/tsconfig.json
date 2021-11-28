@@ -9,8 +9,10 @@
     "allowJs": true,
     "noUnusedLocals": true,
     "resolveJsonModule": true,
-    "types": [
-      "node"
-    ]
+    "types": ["node"],
+    "paths": {
+      "#app": ["./node_modules/@nuxt/bridge/dist/runtime"],
+      "#docus": ["./node_modules/docus/dist/runtime"]
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { resolve } from 'path'
-import { withDocus } from '@docus/app'
+import { withDocus } from 'docus'
 
 export default withDocus({
   /**
@@ -57,21 +57,16 @@ export default withDocus({
   loading: {
     color: '#00DC82'
   },
-  css: [resolve(__dirname, './assets/nuxt.css')],
-  windicss: {
-    root: resolve(__dirname),
-    config: resolve(__dirname, 'windi.config.js')
-  },
+  css: [resolve(__dirname, './assets/nuxt.css'), '@docsearch/css'],
   /**
    * Modules
    */
   buildModules: [
-    '@nuxt/typescript-build',
     '@docus/github',
     'vue-plausible'
   ],
   plugins: [
-    '~/plugins/mq'
+    { src: '~/plugins/mq' }
   ],
   publicRuntimeConfig: {
     plausible: {

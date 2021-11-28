@@ -1,6 +1,7 @@
+import { defineConfig } from 'windicss/helpers'
 import colors from 'windicss/colors'
 
-export default {
+export default defineConfig({
   safelist: 'bg-secondary-darker',
   theme: {
     colors: {
@@ -135,4 +136,4 @@ export default {
       lineHeight: '2rem'
     }
   }
-}
+})
