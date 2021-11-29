@@ -25,7 +25,7 @@ export function useCookie <T=string> (name: string, _opts?: CookieOptions<T>): C
   const opts = { ...CookieDefaults, ..._opts }
   const cookies = readRawCookies(opts)
 
-  const cookie = ref(cookies[name]) as unknown as CookieRef<T>
+  const cookie = ref(cookies[name] ?? _opts.default?.()) as unknown as CookieRef<T>
 
   if (process.client) {
     watch(cookie, () => { writeClientCookie(name, cookie.value, opts as _CookieOptions) })
