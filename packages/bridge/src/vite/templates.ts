@@ -26,7 +26,7 @@ export const middlewareTemplate = {
     })
     return `${_middleware.map(m => `import $${hash(m.id)} from ${JSON.stringify(m.filePath)}`).join('\n')}
 const middleware = {
-${_middleware.map(m => `  ['${m.id}']: $${hash(m.id)}`).join(',\n')}
+${_middleware.map(m => `  [${JSON.stringify(m.id)}]: $${hash(m.id)}`).join(',\n')}
 }
 export default middleware`
   }
@@ -55,7 +55,7 @@ Vue.use(Vuex)
 const VUEX_PROPERTIES = ['state', 'getters', 'actions', 'mutations']
 
 const storeModules = {
-${_storeModules.map(m => `  ['${m.id}']: $${hash(m.id)}`).join(',\n')}
+${_storeModules.map(m => `  [${JSON.stringify(m.id)}]: $${hash(m.id)}`).join(',\n')}
 }
 
 export function createStore() {

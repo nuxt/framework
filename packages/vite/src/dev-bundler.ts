@@ -78,7 +78,7 @@ async function transformRequest (opts: TransformOptions, id: string) {
       ? withoutVersionQuery
       : pathToFileURL(withoutVersionQuery)
     return {
-      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import(${JSON.stringify(path)}).then(r => { exports.default = r.default; ssrExportAll(r) }).catch(e => { console.error(e); throw new Error('[vite dev] Error loading external "${id}".') })`,
+      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import(${JSON.stringify(path)}).then(r => { exports.default = r.default; ssrExportAll(r) }).catch(e => { console.error(e); throw new Error(${JSON.stringify(`[vite dev] Error loading external "${id}".`)})`,
       deps: [],
       dynamicDeps: []
     }
@@ -132,7 +132,7 @@ const ${hashId(chunk.id)} = ${chunk.code}
 `).join('\n')
 
   const manifestCode = 'const __modules__ = {\n' +
-   chunks.map(chunk => ` '${chunk.id}': ${hashId(chunk.id)}`).join(',\n') + '\n}'
+   chunks.map(chunk => ` ${JSON.stringify(chunk.id)}: ${hashId(chunk.id)}`).join(',\n') + '\n}'
 
   // https://github.com/vitejs/vite/blob/main/packages/vite/src/node/ssr/ssrModuleLoader.ts
   const ssrModuleLoader = `
@@ -213,7 +213,7 @@ async function __instantiateModule__(url, urlStack) {
     chunksCode,
     manifestCode,
     ssrModuleLoader,
-    `export default await __ssrLoadModule__('${entryURL}')`
+    `export default await __ssrLoadModule__(${JSON.stringify(entryURL)})`
   ].join('\n\n')
 
   return {
