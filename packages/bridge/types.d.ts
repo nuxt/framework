@@ -1,7 +1,7 @@
 import type {} from '@nuxt/nitro'
 import type { NuxtConfig as _NuxtConfig } from '@nuxt/schema'
 import type { MetaInfo } from 'vue-meta'
-import { PluginOptions as ScriptSetupPluginOptions } from 'unplugin-vue2-script-setup/dist'
+import type { PluginOptions as ScriptSetupPluginOptions } from 'unplugin-vue2-script-setup/dist'
 
 export interface BridgeConfig {
   nitro: boolean
