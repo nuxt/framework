@@ -7,9 +7,11 @@ import destr from 'destr'
 import { useNuxtApp } from '#app'
 
 type _CookieOptions = Omit<CookieSerializeOptions & CookieParseOptions, 'decode' | 'encode'>
+
 export interface CookieOptions<T=any> extends _CookieOptions {
   decode?(value: string): T
   encode?(value: T): string;
+  default?: () => T
 }
 
 export interface CookieRef<T> extends Ref<T> {}
@@ -70,7 +72,7 @@ function writeClientCookie (name: string, value: any, opts: CookieSerializeOptio
 
 function writeServerCookie (res: ServerResponse, name: string, value: any, opts: CookieSerializeOptions = {}) {
   if (res) {
-    // TODO: Try to smart join with exisiting Set-Cookie headers
+    // TODO: Try to smart join with existing Set-Cookie headers
     appendHeader(res, 'Set-Cookie', serializeCookie(name, value, opts))
   }
 }
