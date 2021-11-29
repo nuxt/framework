@@ -32,7 +32,7 @@
     "jiti": "^1.12.9"
   },
   "devDependencies": {
-    "@nuxtjs/eslint-config": "^7.0.0",
+    "@nuxtjs/eslint-config": "^8.0.0",
     "@nuxtjs/eslint-config-typescript": "^7.0.2",
     "@types/chai": "^4.2.22",
     "@types/jsdom": "^16",
