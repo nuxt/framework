@@ -39,7 +39,7 @@ export async function generate (nitroContext: NitroContext) {
 
   const clientDist = resolve(nitroContext._nuxt.buildDir, 'dist/client')
   if (await isDirectory(clientDist)) {
-    await fse.copy(clientDist, join(nitroContext.output.publicDir, nitroContext._nuxt.publicAssetsDir), {
+    await fse.copy(clientDist, join(nitroContext.output.publicDir, nitroContext._nuxt.publicPath), {
       // TODO: Workaround vite's issue that duplicates public files
       // https://github.com/nuxt/framework/issues/1192
       filter: src => !publicFiles.includes(src.replace(clientDist, ''))

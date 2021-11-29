@@ -163,25 +163,6 @@ export default {
   },
 
   /**
-   * Directory name of the build output assets.
-   *
-   * @note This is only applied when you set the publicPath to a CDN and in production.
-   *
-   * @example
-   * ```js
-   * build: {
-   *   cdnDir: process.env.CDN_DIR|| 'dir'
-   * }
-   * ```
-   * @version 3
-   */
-  cdnDir: { 
-    $resolve: (val) => {
-      return (val || 'client')
-    }
-  },
-
-  /**
    * The polyfill library to load to provide URL and URLSearchParams.
    *
    * Defaults to `'url'` ([see package](https://www.npmjs.com/package/url)).
