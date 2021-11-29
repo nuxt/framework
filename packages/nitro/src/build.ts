@@ -73,7 +73,7 @@ export async function writeTypes (nitroContext: NitroContext) {
     if (typeof mw.handle !== 'string') { continue }
     const relativePath = relative(nitroContext._nuxt.buildDir, mw.handle).replace(/\.[a-z]+$/, '')
     routeTypes[mw.route] = routeTypes[mw.route] || []
-    routeTypes[mw.route].push(`Awaited<ReturnType<typeof import('${relativePath}').default>>`)
+    routeTypes[mw.route].push(`Awaited<ReturnType<typeof import(${JSON.stringify(relativePath)}).default>>`)
   }
 
   const lines = [

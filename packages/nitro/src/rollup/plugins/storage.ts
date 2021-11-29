@@ -35,7 +35,7 @@ export function storage (opts: StorageOptions) {
 import { createStorage } from 'unstorage'
 import { assets } from '#assets'
 
-${driverImports.map(i => `import ${serializeImportName(i)} from '${i}'`).join('\n')}
+${driverImports.map(i => `import ${serializeImportName(i)} from ${JSON.stringify(i)}`).join('\n')}
 
 export const storage = createStorage({})
 

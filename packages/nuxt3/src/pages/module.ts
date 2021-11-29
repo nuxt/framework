@@ -122,7 +122,7 @@ export default defineNuxtModule({
       async getContents () {
         const layouts = await resolveLayouts(nuxt)
         const layoutsObject = Object.fromEntries(layouts.map(({ name, file }) => {
-          return [name, `{defineAsyncComponent({ suspensible: false, loader: () => import('${file}') })}`]
+          return [name, `{defineAsyncComponent({ suspensible: false, loader: () => import(${JSON.stringify(file)}) })}`]
         }))
         return [
           'import { defineAsyncComponent } from \'vue\'',

@@ -24,7 +24,7 @@ export const middlewareTemplate = {
         id: m.name || m.src.replace(/[\\/]/g, '/').replace(/\.(js|ts)$/, '')
       }
     })
-    return `${_middleware.map(m => `import $${hash(m.id)} from '${m.filePath}'`).join('\n')}
+    return `${_middleware.map(m => `import $${hash(m.id)} from ${JSON.stringify(m.filePath)}`).join('\n')}
 const middleware = {
 ${_middleware.map(m => `  ['${m.id}']: $${hash(m.id)}`).join(',\n')}
 }
@@ -49,7 +49,7 @@ export const storeTemplate = {
 
     return `import Vue from 'vue'
 import Vuex from 'vuex'
-${_storeModules.map(s => `import * as $${hash(s.id)} from '${s.filePath}'`).join('\n')}
+${_storeModules.map(s => `import * as $${hash(s.id)} from ${JSON.stringify(s.filePath)}`).join('\n')}
 Vue.use(Vuex)
 
 const VUEX_PROPERTIES = ['state', 'getters', 'actions', 'mutations']

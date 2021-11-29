@@ -82,7 +82,7 @@ function normalizeKey (key) {
 function getAssetProd (assets: Record<string, Asset>) {
   return `
 const _assets = {\n${Object.entries(assets).map(([id, asset]) =>
-  `  ['${normalizeKey(id)}']: {\n    import: () => import('${asset.fsPath}').then(r => r.default || r),\n    meta: ${JSON.stringify(asset.meta)}\n  }`
+  `  ['${normalizeKey(id)}']: {\n    import: () => import(${JSON.stringify(asset.fsPath)}).then(r => r.default || r),\n    meta: ${JSON.stringify(asset.meta)}\n  }`
 ).join(',\n')}\n}
 
 ${normalizeKey.toString()}

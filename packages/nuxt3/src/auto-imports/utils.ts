@@ -20,11 +20,11 @@ export function toImports (autoImports: AutoImport[], isCJS = false) {
   const map = toImportModuleMap(autoImports, isCJS)
   if (isCJS) {
     return Object.entries(map)
-      .map(([name, imports]) => `const { ${Array.from(imports).join(', ')} } = require('${name}');`)
+      .map(([name, imports]) => `const { ${Array.from(imports).join(', ')} } = require(${JSON.stringify(name)});`)
       .join('\n')
   } else {
     return Object.entries(map)
-      .map(([name, imports]) => `import { ${Array.from(imports).join(', ')} } from '${name}';`)
+      .map(([name, imports]) => `import { ${Array.from(imports).join(', ')} } from ${JSON.stringify(name)};`)
       .join('\n')
   }
 }

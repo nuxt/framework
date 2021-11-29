@@ -35,9 +35,9 @@ export function middleware (getMiddleware: () => ServerMiddleware[]) {
         const lazyImports = unique(middleware.filter(m => m.lazy !== false && !imports.includes(m.handle)).map(m => m.handle))
 
         return `
-  ${imports.map(handle => `import ${getImportId(handle)} from '${handle}';`).join('\n')}
+  ${imports.map(handle => `import ${getImportId(handle)} from ${JSON.stringify(handle)};`).join('\n')}
 
-  ${lazyImports.map(handle => `const ${getImportId(handle)} = () => import('${handle}');`).join('\n')}
+  ${lazyImports.map(handle => `const ${getImportId(handle)} = () => import(${JSON.stringify(handle)});`).join('\n')}
 
   const middleware = [
     ${middleware.map(m => `{ route: '${m.route}', handle: ${getImportId(m.handle)}, lazy: ${m.lazy || true}, promisify: ${m.promisify !== undefined ? m.promisify : true} }`).join(',\n')}

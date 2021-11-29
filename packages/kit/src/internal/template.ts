@@ -33,9 +33,9 @@ const importSources = (sources: string | string[], { lazy = false } = {}) => {
   }
   return sources.map((src) => {
     if (lazy) {
-      return `const ${importName(src)} = () => import('${src}' /* webpackChunkName: '${src}' */)`
+      return `const ${importName(src)} = () => import(${JSON.stringify(src)} /* webpackChunkName: ${JSON.stringify(src)} */)`
     }
-    return `import ${importName(src)} from '${src}'`
+    return `import ${importName(src)} from ${JSON.stringify(src)}`
   }).join('\n')
 }
 

@@ -43,8 +43,8 @@ export async function addComponent (opts: AddComponentOptions) {
     shortPath: opts.filePath,
     async: false,
     level: 0,
-    asyncImport: `() => import('${opts.filePath}').then(r => r['${opts.export || 'default'}'])`,
-    import: `require('${opts.filePath}')['${opts.export || 'default'}']`,
+    asyncImport: `() => import(${JSON.stringify(opts.filePath)}).then(r => r['${opts.export || 'default'}'])`,
+    import: `require(${JSON.stringify(opts.filePath)})['${opts.export || 'default'}']`,
 
     ...opts
   }

@@ -25,21 +25,21 @@ export const vueShim = {
 export const appComponentTemplate = {
   filename: 'app-component.mjs',
   getContents (ctx: TemplateContext) {
-    return `export { default } from '${ctx.app.mainComponent}'`
+    return `export { default } from ${JSON.stringify(ctx.app.mainComponent)}`
   }
 }
 // TODO: Use an alias
 export const rootComponentTemplate = {
   filename: 'root-component.mjs',
   getContents (ctx: TemplateContext) {
-    return `export { default } from '${ctx.app.rootComponent}'`
+    return `export { default } from ${JSON.stringify(ctx.app.rootComponent)}`
   }
 }
 
 export const cssTemplate = {
   filename: 'css.mjs',
   getContents (ctx: TemplateContext) {
-    return ctx.nuxt.options.css.map(i => `import '${i.src || i}';`).join('\n')
+    return ctx.nuxt.options.css.map(i => `import ${JSON.stringify(i.src || i)};`).join('\n')
   }
 }
 
@@ -104,7 +104,7 @@ type Decorate<T extends Record<string, any>> = { [K in keyof T as K extends stri
 
 type InjectionType<A extends Plugin> = A extends Plugin<infer T> ? Decorate<T> : unknown
 
-type NuxtAppInjections = \n  ${tsImports.map(p => `InjectionType<typeof import('${p}').default>`).join(' &\n  ')}
+type NuxtAppInjections = \n  ${tsImports.map(p => `InjectionType<typeof import(${JSON.stringify(p)}).default>`).join(' &\n  ')}
 
 declare module '#app' {
   interface NuxtApp extends NuxtAppInjections { }
