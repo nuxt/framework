@@ -53,7 +53,7 @@ export default (ctx, inject) => {
   }
 
   if (!Array.isArray(ctx.app.mounted)) {
-    ctx.app.mounted = typeof ctx.app.mounted === 'undefined' ? [] : [ctx.app.mounted]
+    ctx.app.mounted = [ctx.app.mounted].filter(Boolean)
   }
 
   if (process.server) {
