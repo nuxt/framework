@@ -1,12 +1,13 @@
 import { addVitePlugin, addWebpackPlugin, useNuxt } from '@nuxt/kit'
 import scriptSetupPlugin from 'unplugin-vue2-script-setup'
+import { PluginOptions } from 'unplugin-vue2-script-setup/dist'
 
-export const setupScriptSetup = () => {
+export const setupScriptSetup = (options: true | PluginOptions) => {
   const nuxt = useNuxt()
-  const options = nuxt.options.scriptSetup
-  
-  addVitePlugin(scriptSetupPlugin.vite(options))
-  addWebpackPlugin(scriptSetupPlugin.webpack(options))
+  const config = options === true ? {} : options
+
+  addVitePlugin(scriptSetupPlugin.vite(config))
+  addWebpackPlugin(scriptSetupPlugin.webpack(config))
 
   nuxt.hook('prepare:types', ({ references }) => {
     references.push({

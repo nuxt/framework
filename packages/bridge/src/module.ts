@@ -45,7 +45,7 @@ export default defineNuxtModule({
       await setupCAPIBridge(opts.capi)
     }
     if (opts.scriptSetup) {
-      await setupScriptSetup()
+      await setupScriptSetup(opts.scriptSetup)
     }
     if (opts.autoImports) {
       await setupAutoImports()
