@@ -2,6 +2,8 @@ import { resolve } from 'path'
 import { withDocus } from 'docus'
 
 export default withDocus({
+  target: 'static',
+
   /**
    * Has to specify rootDir as we use nuxt-extend
    */
