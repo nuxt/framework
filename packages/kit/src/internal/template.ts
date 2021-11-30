@@ -3,6 +3,7 @@ import lodashTemplate from 'lodash.template'
 import hash from 'hash-sum'
 import { camelCase } from 'scule'
 import { basename, extname } from 'pathe'
+import { genDynamicImport, genImport } from 'mlly'
 
 import type { NuxtTemplate } from '@nuxt/schema'
 
@@ -33,9 +34,9 @@ const importSources = (sources: string | string[], { lazy = false } = {}) => {
   }
   return sources.map((src) => {
     if (lazy) {
-      return `const ${importName(src)} = () => import(${JSON.stringify(src)} /* webpackChunkName: ${JSON.stringify(src)} */)`
+      return `const ${importName(src)} = ${genDynamicImport(src, { comment: `webpackChunkName: ${JSON.stringify(src)}` })}`
     }
-    return `import ${importName(src)} from ${JSON.stringify(src)}`
+    return genImport(src, importName(src))
   }).join('\n')
 }
 

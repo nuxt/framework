@@ -1,4 +1,5 @@
 import type { AutoImport } from '@nuxt/schema'
+import { genExport, genImport } from 'mlly'
 
 export function toImportModuleMap (autoImports: AutoImport[], isCJS = false) {
   const aliasKeyword = isCJS ? ' : ' : ' as '
@@ -24,7 +25,7 @@ export function toImports (autoImports: AutoImport[], isCJS = false) {
       .join('\n')
   } else {
     return Object.entries(map)
-      .map(([name, imports]) => `import { ${Array.from(imports).join(', ')} } from ${JSON.stringify(name)};`)
+      .map(([name, imports]) => genImport(name, Array.from(imports)))
       .join('\n')
   }
 }
@@ -32,7 +33,7 @@ export function toImports (autoImports: AutoImport[], isCJS = false) {
 export function toExports (autoImports: AutoImport[]) {
   const map = toImportModuleMap(autoImports, false)
   return Object.entries(map)
-    .map(([name, imports]) => `export { ${Array.from(imports).join(', ')} } from '${name}';`)
+    .map(([name, imports]) => genExport(name, imports))
     .join('\n')
 }
 

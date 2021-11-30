@@ -17,7 +17,7 @@ import * as unenv from 'unenv'
 import devalue from '@nuxt/devalue'
 
 import type { Preset } from 'unenv'
-import { sanitizeFilePath } from 'mlly'
+import { sanitizeFilePath, genImport } from 'mlly'
 import { NitroContext } from '../context'
 import { resolvePath } from '../utils'
 import { pkgDir } from '../dirs'
@@ -215,7 +215,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // Polyfill
   rollupConfig.plugins.push(virtual({
-    '#polyfill': env.polyfill.map(p => `import '${p}';`).join('\n')
+    '#polyfill': env.polyfill.map(p => genImport(p)).join('\n')
   }))
 
   // https://github.com/rollup/plugins/tree/master/packages/alias

@@ -1,6 +1,7 @@
 import { existsSync } from 'fs'
 import { defineNuxtModule, addTemplate, addPlugin, templateUtils, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
+import { genDynamicImport, genObjectFromRawEntries } from 'mlly'
 import { distDir } from '../dirs'
 import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
@@ -74,7 +75,7 @@ export default defineNuxtModule({
         const pages = await resolvePagesRoutes(nuxt)
         await nuxt.callHook('pages:extend', pages)
         const { routes: serializedRoutes, imports } = normalizeRoutes(pages)
-        return [...imports, `export default ${templateUtils.serialize(serializedRoutes)}`].join('\n')
+        return [...imports, `export default ${serializedRoutes}`].join('\n')
       }
     })
 
@@ -121,12 +122,12 @@ export default defineNuxtModule({
       filename: 'layouts.mjs',
       async getContents () {
         const layouts = await resolveLayouts(nuxt)
-        const layoutsObject = Object.fromEntries(layouts.map(({ name, file }) => {
-          return [name, `{defineAsyncComponent({ suspensible: false, loader: () => import(${JSON.stringify(file)}) })}`]
+        const layoutsObject = genObjectFromRawEntries(layouts.map(({ name, file }) => {
+          return [name, `defineAsyncComponent({ suspensible: false, loader: ${genDynamicImport(file)} })`]
         }))
         return [
           'import { defineAsyncComponent } from \'vue\'',
-          `export default ${templateUtils.serialize(layoutsObject)}`
+          `export default ${layoutsObject}`
         ].join('\n')
       }
     })

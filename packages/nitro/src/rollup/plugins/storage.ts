@@ -1,4 +1,5 @@
 import virtual from '@rollup/plugin-virtual'
+import { genImport } from 'mlly'
 import { serializeImportName } from '../../utils'
 
 export interface StorageOptions {
@@ -35,7 +36,7 @@ export function storage (opts: StorageOptions) {
 import { createStorage } from 'unstorage'
 import { assets } from '#assets'
 
-${driverImports.map(i => `import ${serializeImportName(i)} from ${JSON.stringify(i)}`).join('\n')}
+${driverImports.map(i => genImport(i, serializeImportName(i))).join('\n')}
 
 export const storage = createStorage({})
 
