@@ -2,8 +2,8 @@
   "name": "docs",
   "private": true,
   "scripts": {
-    "dev": "yarn gendocs && nuxt dev",
-    "build": "yarn gendocs && nuxt generate --force-build",
+    "dev": "yarn gendocs && nuxi dev",
+    "build": "yarn gendocs && nuxi generate --force-build",
     "build:ci": "./scripts/make-schema.sh && yarn build",
     "gendocs": "jiti ./scripts/gen-docs.ts"
   },
