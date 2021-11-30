@@ -25,6 +25,6 @@
     "@docus/docs-theme": "npm:@docus/docs-theme-edge@latest",
     "@docus/github": "npm:@docus/github-edge@latest",
     "docus": "npm:docus-edge@latest",
-    "three": "^0.134.0"
+    "three": "^0.135.0"
   }
 }
