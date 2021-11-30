@@ -6,7 +6,8 @@
   </nav>
 </template>
 
-<script>
+<script lang="ts">
+import { useMenu } from '@docus/docs-theme/composables'
 import { defineComponent, ref, watch, computed, useNuxtApp } from '#app'
 
 export default defineComponent({
@@ -17,7 +18,8 @@ export default defineComponent({
     }
   },
   setup (props) {
-    const { $menu, $route } = useNuxtApp()
+    const $menu = useMenu()
+    const { $route } = useNuxtApp()
 
     const route = computed(() => $route)
 

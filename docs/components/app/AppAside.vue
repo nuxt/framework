@@ -80,7 +80,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, useNuxtApp, ref, watch, computed } from '#app'
+import { useMenu } from '@docus/docs-theme/composables'
+import { defineComponent, ref, watch, computed } from '#app'
 import { useDocusTheme } from '#docus'
 
 export default defineComponent({
@@ -92,7 +93,7 @@ export default defineComponent({
   },
   setup () {
     const $theme = useDocusTheme()
-    const { $menu } = useNuxtApp()
+    const $menu = useMenu()
     const layout = computed(() => $theme.value.layout)
 
     const mobileMainNav = ref(!layout.value.aside)
