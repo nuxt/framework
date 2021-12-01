@@ -12,7 +12,8 @@ const PAYLOAD_JS = '/payload.js'
 const getClientManifest = cachedImport(() => import('#build/dist/server/client.manifest.mjs'))
 const getSSRApp = cachedImport(() => import('#build/dist/server/server.mjs'))
 
-const publicPath = (publicConfig.app && publicConfig.app.assetsPath) || process.env.PUBLIC_PATH || '/_nuxt'
+const appConfig = publicConfig._app /* Nuxt 2 */ || publicConfig.app /* Nuxt 3 */
+const publicPath = appConfig ? appConfig.cdnURL || appConfig.assetsPath : '/_nuxt'
 
 const getSSRRenderer = cachedResult(async () => {
   // Load client manifest

@@ -46,7 +46,7 @@ export async function prepareManifests (ctx: ViteBuildContext) {
 export async function generateBuildManifest (ctx: ViteBuildContext) {
   const rDist = (...args: string[]): string => resolve(ctx.nuxt.options.buildDir, 'dist', ...args)
 
-  const publicPath = ctx.nuxt.options.app.assetsPath // Default: /nuxt/
+  const publicPath = ctx.nuxt.options._app.cdnURL || ctx.nuxt.options._app.assetsPath // Default: /nuxt/
   const viteClientManifest = await fse.readJSON(rDist('client/manifest.json'))
   const clientEntries = Object.entries(viteClientManifest)
 
