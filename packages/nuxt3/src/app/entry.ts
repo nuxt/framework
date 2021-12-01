@@ -1,10 +1,8 @@
 import { CreateOptions } from '#app'
 
 const entry = process.server
-  /* @ts-expect-error mjs is not recognized */
-  ? (ctx?: CreateOptions['ssrContext']) => import('./bootstrap.mjs').then(m => m.default(ctx))
-  /* @ts-expect-error mjs is not recognized */
-  : () => import('./bootstrap.mjs').then(m => m.default)
+  ? (ctx?: CreateOptions['ssrContext']) => import('#app/bootstrap').then(m => m.default(ctx))
+  : () => import('#app/bootstrap').then(m => m.default)
 
 if (process.client) {
   entry()
