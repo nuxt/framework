@@ -2842,7 +2842,7 @@ __metadata:
     serve-placeholder: ^1.2.4
     serve-static: ^1.14.1
     std-env: ^3.0.1
-    table: ^6.7.5
+    table: ^6.7.4
     ufo: ^0.7.9
     unbuild: latest
     unenv: ^0.4.1
@@ -19744,7 +19744,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"table@npm:^6.7.5":
+"table@npm:^6.7.4":
   version: 6.7.5
   resolution: "table@npm:6.7.5"
   dependencies:
