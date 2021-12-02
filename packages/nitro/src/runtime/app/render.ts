@@ -1,6 +1,7 @@
 import type { ServerResponse } from 'http'
 import { createRenderer } from 'vue-bundle-renderer'
 import devalue from '@nuxt/devalue'
+import { joinURL } from 'ufo'
 import { privateConfig, publicConfig } from './config'
 // @ts-ignore
 import htmlTemplate from '#build/views/document.template.mjs'
@@ -13,7 +14,7 @@ const getClientManifest = cachedImport(() => import('#build/dist/server/client.m
 const getSSRApp = cachedImport(() => import('#build/dist/server/server.mjs'))
 
 const appConfig = publicConfig._app /* Nuxt 2 */ || publicConfig.app /* Nuxt 3 */
-const publicPath = appConfig ? appConfig.cdnURL || appConfig.assetsPath : '/_nuxt'
+const publicPath = appConfig ? joinURL(appConfig.cdnURL, appConfig.assetsPath) : '/_nuxt'
 
 const getSSRRenderer = cachedResult(async () => {
   // Load client manifest

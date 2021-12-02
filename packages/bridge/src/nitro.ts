@@ -1,7 +1,7 @@
 import { promises as fsp } from 'fs'
 import fetch from 'node-fetch'
 import { addPluginTemplate, useNuxt } from '@nuxt/kit'
-import { stringifyQuery } from 'ufo'
+import { hasProtocol, isRelative, joinURL, stringifyQuery } from 'ufo'
 import { resolve } from 'pathe'
 import { build, generate, prepare, getNitroContext, NitroContext, createDevServer, wpfs, resolveMiddleware } from '@nuxt/nitro'
 import { AsyncLoadingPlugin } from './async-loading'
@@ -13,6 +13,14 @@ export function setupNitroBridge () {
   // Ensure we're not just building with 'static' target
   if (!nuxt.options.dev && nuxt.options.target === 'static' && !nuxt.options._prepare && !nuxt.options._export && !nuxt.options._legacyGenerate) {
     throw new Error('[nitro] Please use `nuxt generate` for static target')
+  }
+
+  // Default CDN assetsPath to `/_nuxt` for better caching
+  const useCDN = hasProtocol(nuxt.options.build.publicPath, true) && !nuxt.options.dev
+  const isRelativePublicPath = isRelative(nuxt.options.build.publicPath)
+
+  if (nuxt.options.app.basePath === nuxt.options.app.assetsPath) {
+    nuxt.options.app.assetsPath = isRelativePublicPath ? nuxt.options.build.publicPath : useCDN ? '/_nuxt/' : joinURL(nuxt.options.router.base, nuxt.options.build.publicPath)
   }
 
   // Disable loading-screen
