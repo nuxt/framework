@@ -1,6 +1,6 @@
 import { ref, onMounted, defineComponent, createElementBlock, h } from 'vue'
 
-const ClientOnly = defineComponent({
+export default defineComponent({
   name: 'ClientOnly',
   // eslint-disable-next-line vue/require-prop-types
   props: ['fallback', 'placeholder', 'placeholderTag', 'fallbackTag'],
@@ -33,5 +33,3 @@ export function wrapClientOnly (component, mode) {
     }
   })
 }
-
-export default ClientOnly
