@@ -31,6 +31,7 @@ export async function buildClient (ctx: ViteBuildContext) {
           entryFileNames: ctx.nuxt.options.dev ? 'entry.mjs' : '[name]-[hash].mjs'
         }
       },
+      assetsDir: '.',
       manifest: true,
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client')
     },
