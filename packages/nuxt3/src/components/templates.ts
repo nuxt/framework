@@ -22,38 +22,30 @@ const createImportMagicComments = (options: ImportMagicCommentsOptions) => {
   ].filter(Boolean).join(', ')
 }
 
-// export const getEnvComponentTemplate = (component: Component) => `
-// <script setup>
-// import Client from '${component.envPaths.client}'
-// ${component.envPaths.server ? `import Server from '${component.envPaths.server}'` : ''}
-// </script>
-
-// <template>
-//   <ClientOnly>
-//     <Client v-bind="$attrs"><slot/></Client>
-//     ${component.envPaths.server ? '<template #fallback><Server v-bind="$attrs"><slot/></Server></template>' : ''}
-//   </ClientOnly>
-// </template>
-// `
-
 export function getComponentPath (component: Component, mode?: NuxtPlugin['mode']) {
   if (!component.envPaths || !mode || mode === 'all') {
     return component.filePath
   }
-  return mode === 'client'
+  const envPath = mode === 'client'
     ? component.envPaths.client
-    : component.envPaths.server || '#build/Empty.vue'
+    : component.envPaths.server
+  return envPath || '#app/components/nuxt-empty'
 }
 
 function getComponentTemplate (components: Component[], mode: NuxtPlugin['mode']) {
-  return `import { defineAsyncComponent } from 'vue'
+  return `import { defineAsyncComponent, h as __h } from 'vue'
+import { wrapClientOnly } from '#app/components/client-only'
 
 const components = {
 ${components.filter(c => c.global !== false).map((c) => {
-  const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
+  let exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
   const magicComments = createImportMagicComments(c)
+  const path = getComponentPath(c, mode)
+  if (c.envPaths) {
+    exp = `wrapClientOnly(${exp}, '${mode}')`
+  }
 
-  return `  '${c.pascalName}': defineAsyncComponent(() => import('${getComponentPath(c, mode)}' /* ${magicComments} */).then(c => ${exp}))`
+  return `  '${c.pascalName}': defineAsyncComponent(() => import('${path}' /* ${magicComments} */).then(c => ${exp}))`
 }).join(',\n')}
 }
 

@@ -1,6 +1,6 @@
-import { ref, onMounted, defineComponent, createElementBlock } from 'vue'
+import { ref, onMounted, defineComponent, createElementBlock, h } from 'vue'
 
-export default defineComponent({
+const ClientOnly = defineComponent({
   name: 'ClientOnly',
   // eslint-disable-next-line vue/require-prop-types
   props: ['fallback', 'placeholder', 'placeholderTag', 'fallbackTag'],
@@ -17,3 +17,21 @@ export default defineComponent({
     }
   }
 })
+
+export function wrapClientOnly (component, mode) {
+  return defineComponent({
+    name: 'ClientOnlyWarpper',
+    setup (props, { attrs, slots }) {
+      const mounted = ref(false)
+      onMounted(() => { mounted.value = true })
+      return () => {
+        if (mounted.value === (mode !== 'server')) {
+          return h(component, { props, attrs }, slots)
+        }
+        return h('div')
+      }
+    }
+  })
+}
+
+export default ClientOnly

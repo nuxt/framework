@@ -66,24 +66,6 @@ export default defineNuxtModule<ComponentsOptions>({
         return
       }
 
-      // // Handle environment-specify components
-      // components.filter(i => i.envPaths).forEach((component) => {
-      //   const filename = `env-${component.pascalName}.vue`
-      //   component.filePath = `#build/${filename}`
-      //   component.shortPath = `#build/${filename}`
-      //   app.templates.push({
-      //     filename,
-      //     write: true,
-      //     getContents: () => getEnvComponentTemplate(component)
-      //   })
-      // })
-
-      app.templates.push({
-        filename: 'Empty.vue',
-        write: true,
-        getContents: () => '<template></template>'
-      })
-
       app.templates.push({
         ...componentsClientTemplate,
         options: { components }
@@ -130,14 +112,14 @@ export default defineNuxtModule<ComponentsOptions>({
       }))
     })
 
-    // TODO: webpack
     nuxt.hook('webpack:config', (configs) => {
       configs.forEach((config) => {
-        console.log(config)
+        config.plugins = config.plugins || []
+        config.plugins.push(loaderPlugin.webpack({
+          getComponents,
+          mode: config.name === 'client' ? 'client' : 'server'
+        }))
       })
     })
-
-    // addWebpackPlugin(loaderPlugin.webpack(loaderOptions))
-    // addVitePlugin(loaderPlugin.vite(loaderOptions))
   }
 })

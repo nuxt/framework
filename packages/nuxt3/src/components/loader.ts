@@ -31,6 +31,7 @@ function transform (content: string, components: Component[], mode: 'server' | '
   let num = 0
   let imports = ''
   const map = new Map<Component, string>()
+  let hasEnvComponents = false
 
   // replace `_resolveComponent("...")` to direct import
   const newContent = content.replace(/ _resolveComponent\("(.*?)"\)/g, (full, name) => {
@@ -39,11 +40,19 @@ function transform (content: string, components: Component[], mode: 'server' | '
       const identifier = map.get(component) || `__nuxt_component_${num++}`
       map.set(component, identifier)
       imports += `import ${identifier} from "${getComponentPath(component, mode)}";`
+      if (component.envPaths) {
+        hasEnvComponents = true
+        return ` wrapClientOnly(${identifier}, '${mode}')`
+      }
       return ` ${identifier}`
     }
     // no matched
     return full
   })
+
+  if (hasEnvComponents) {
+    imports = 'import { wrapClientOnly } from \'#app/components/client-only\';' + imports
+  }
 
   return `${imports}\n${newContent}`
 }
