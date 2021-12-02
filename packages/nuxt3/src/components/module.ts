@@ -1,16 +1,17 @@
 import { statSync } from 'fs'
 import { resolve } from 'pathe'
 import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
-import type { Component, ComponentsDir } from '@nuxt/kit'
-import { componentsTemplate, componentsTypeTemplate, getEnvComponentTemplate } from './templates'
+import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
+import { componentsTemplate, getEnvComponentTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
 import { loaderPlugin } from './loader'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
 const isDirectory = (p: string) => { try { return statSync(p).isDirectory() } catch (_e) { return false } }
 
-export default defineNuxtModule({
+export default defineNuxtModule<ComponentsOptions>({
   name: 'components',
+  configKey: 'components',
   defaults: {
     dirs: ['~/components']
   },

@@ -3,10 +3,10 @@ import defu from 'defu'
 import { applyDefaults } from 'untyped'
 import consola from 'consola'
 import { dirname } from 'pathe'
-import { useNuxt, nuxtCtx } from '../nuxt'
-import type { Nuxt, NuxtTemplate } from '../types/nuxt'
-import type { NuxtModule, LegacyNuxtModule, ModuleOptions } from '../types/module'
-import { checkNuxtCompatibilityIssues, compileTemplate, isNuxt2, templateUtils } from './utils'
+import type { Nuxt, NuxtTemplate, NuxtModule, LegacyNuxtModule, ModuleOptions } from '@nuxt/schema'
+import { useNuxt, nuxtCtx } from '../context'
+import { isNuxt2, checkNuxtCompatibilityIssues } from '../compatibility'
+import { templateUtils, compileTemplate } from '../internal/template'
 
 /**
  * Define a Nuxt module, automatically merging defaults with user provided options, installing
@@ -28,7 +28,11 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
 
     // Install hooks
     if (mod.hooks) {
-      nuxt.hooks.addHooks(mod.hooks)
+      if (isNuxt2(nuxt)) {
+        nuxt.addHooks(mod.hooks)
+      } else {
+        nuxt.hooks.addHooks(mod.hooks)
+      }
     }
 
     // Stop if no install provided
@@ -65,13 +69,10 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (input: NuxtMod
       // Support virtual templates with getContents() by writing them to .nuxt directory
       let virtualTemplates: NuxtTemplate[]
       nuxt.hook('builder:prepared', (_builder, buildOptions) => {
-        virtualTemplates = []
-        buildOptions.templates.forEach((template, index, arr) => {
-          if (!template.getContents) { return }
-          // Remove template from template array to handle it ourselves
-          arr.splice(index, 1)
-          virtualTemplates.push(template)
-        })
+        virtualTemplates = buildOptions.templates.filter(t => t.getContents)
+        for (const template of virtualTemplates) {
+          buildOptions.templates.splice(buildOptions.templates.indexOf(template), 1)
+        }
       })
       nuxt.hook('build:templates', async (templates) => {
         const context = {

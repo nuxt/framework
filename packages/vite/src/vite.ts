@@ -1,7 +1,7 @@
 import * as vite from 'vite'
 import { resolve } from 'pathe'
 import consola from 'consola'
-import type { Nuxt } from '@nuxt/kit'
+import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
 import type { Options } from '@vitejs/plugin-vue'
 import { sanitizeFilePath } from 'mlly'
@@ -49,6 +49,7 @@ export async function bundle (nuxt: Nuxt) {
           }
         },
         base: nuxt.options.build.publicPath,
+        publicDir: resolve(nuxt.options.srcDir, nuxt.options.dir.public),
         // TODO: move to kit schema when it exists
         vue: {
           isProduction: !nuxt.options.dev,

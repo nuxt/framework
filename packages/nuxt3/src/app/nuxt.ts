@@ -2,7 +2,7 @@
 import { getCurrentInstance, reactive } from 'vue'
 import type { App, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
-import type { RuntimeConfig } from '@nuxt/kit'
+import type { RuntimeConfig } from '@nuxt/schema'
 import { legacyPlugin, LegacyContext } from './compat/legacy-app'
 
 type NuxtMeta = {
@@ -25,13 +25,13 @@ export interface RuntimeNuxtHooks {
   'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
 }
 
-export interface NuxtApp {
+interface _NuxtApp {
   vueApp: App<Element>
   globalName: string
 
   hooks: Hookable<RuntimeNuxtHooks>
-  hook: NuxtApp['hooks']['hook']
-  callHook: NuxtApp['hooks']['callHook']
+  hook: _NuxtApp['hooks']['hook']
+  callHook: _NuxtApp['hooks']['callHook']
 
   [key: string]: any
 
@@ -52,9 +52,11 @@ export interface NuxtApp {
   provide: (name: string, value: any) => void
 }
 
+export interface NuxtApp extends _NuxtApp { }
+
 export const NuxtPluginIndicator = '__nuxt_plugin'
-export interface Plugin {
-  (nuxt: NuxtApp): Promise<void> | void
+export interface Plugin<Injections extends Record<string, any> = Record<string, any>> {
+  (nuxt: _NuxtApp): Promise<void> | Promise<{ provide?: Injections }> | void | { provide?: Injections }
   [NuxtPluginIndicator]?: true
 }
 export interface LegacyPlugin {
@@ -74,6 +76,7 @@ export function createNuxtApp (options: CreateOptions) {
     payload: reactive({
       data: {},
       state: {},
+      _errors: {},
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
     isHydrating: process.client,
@@ -117,9 +120,14 @@ export function createNuxtApp (options: CreateOptions) {
   return nuxtApp
 }
 
-export function applyPlugin (nuxtApp: NuxtApp, plugin: Plugin) {
+export async function applyPlugin (nuxtApp: NuxtApp, plugin: Plugin) {
   if (typeof plugin !== 'function') { return }
-  return callWithNuxt(nuxtApp, () => plugin(nuxtApp))
+  const { provide } = await callWithNuxt(nuxtApp, () => plugin(nuxtApp)) || {}
+  if (provide && typeof provide === 'object') {
+    for (const key in provide) {
+      nuxtApp.provide(key, provide[key])
+    }
+  }
 }
 
 export async function applyPlugins (nuxtApp: NuxtApp, plugins: Plugin[]) {
@@ -149,7 +157,7 @@ export function normalizePlugins (_plugins: Array<Plugin | LegacyPlugin>) {
   return plugins as Plugin[]
 }
 
-export function defineNuxtPlugin (plugin: Plugin) {
+export function defineNuxtPlugin<T> (plugin: Plugin<T>) {
   plugin[NuxtPluginIndicator] = true
   return plugin
 }
@@ -170,11 +178,14 @@ export const setNuxtAppInstance = (nuxt: NuxtApp | null) => {
  * @param nuxt A Nuxt instance
  * @param setup The function to call
  */
-export async function callWithNuxt (nuxt: NuxtApp, setup: () => any) {
+export function callWithNuxt<T extends () => any> (nuxt: NuxtApp, setup: T) {
   setNuxtAppInstance(nuxt)
-  const p = setup()
-  setNuxtAppInstance(null)
-  await p
+  const p: ReturnType<T> = setup()
+  if (process.server) {
+    // Unset nuxt instance to prevent context-sharing in server-side
+    setNuxtAppInstance(null)
+  }
+  return p
 }
 
 /**
