@@ -1,8 +1,8 @@
 import { statSync } from 'fs'
 import { resolve } from 'pathe'
-import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
-import { componentsTemplate, getEnvComponentTemplate, componentsTypeTemplate } from './templates'
+import { componentsTypeTemplate, componentsClientTemplate, componentsServerTemplate } from './templates'
 import { scanComponents } from './scan'
 import { loaderPlugin } from './loader'
 
@@ -66,20 +66,31 @@ export default defineNuxtModule<ComponentsOptions>({
         return
       }
 
-      // Handle environment-specify components
-      components.filter(i => i.envPaths).forEach((component) => {
-        const filename = `env-${component.pascalName}.vue`
-        component.filePath = `#build/${filename}`
-        component.shortPath = `#build/${filename}`
-        app.templates.push({
-          filename,
-          write: true,
-          getContents: () => getEnvComponentTemplate(component)
-        })
+      // // Handle environment-specify components
+      // components.filter(i => i.envPaths).forEach((component) => {
+      //   const filename = `env-${component.pascalName}.vue`
+      //   component.filePath = `#build/${filename}`
+      //   component.shortPath = `#build/${filename}`
+      //   app.templates.push({
+      //     filename,
+      //     write: true,
+      //     getContents: () => getEnvComponentTemplate(component)
+      //   })
+      // })
+
+      app.templates.push({
+        filename: 'Empty.vue',
+        write: true,
+        getContents: () => '<template></template>'
       })
 
       app.templates.push({
-        ...componentsTemplate,
+        ...componentsClientTemplate,
+        options: { components }
+      })
+
+      app.templates.push({
+        ...componentsServerTemplate,
         options: { components }
       })
 
@@ -88,7 +99,8 @@ export default defineNuxtModule<ComponentsOptions>({
         options: { components, buildDir: nuxt.options.buildDir }
       })
 
-      app.plugins.push({ src: '#build/components' })
+      app.plugins.push({ src: '#build/components-client', mode: 'client' })
+      app.plugins.push({ src: '#build/components-server', mode: 'server' })
     })
 
     nuxt.hook('prepare:types', ({ references }) => {
@@ -108,8 +120,24 @@ export default defineNuxtModule<ComponentsOptions>({
       }
     })
 
-    const loaderOptions = { getComponents: () => components }
-    addWebpackPlugin(loaderPlugin.webpack(loaderOptions))
-    addVitePlugin(loaderPlugin.vite(loaderOptions))
+    const getComponents = () => components
+
+    nuxt.hook('vite:extendConfig', (config, { isClient }) => {
+      config.plugins = config.plugins || []
+      config.plugins.push(loaderPlugin.vite({
+        getComponents,
+        mode: isClient ? 'client' : 'server'
+      }))
+    })
+
+    // TODO: webpack
+    nuxt.hook('webpack:config', (configs) => {
+      configs.forEach((config) => {
+        console.log(config)
+      })
+    })
+
+    // addWebpackPlugin(loaderPlugin.webpack(loaderOptions))
+    // addVitePlugin(loaderPlugin.vite(loaderOptions))
   }
 })

@@ -1,9 +1,11 @@
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL } from 'ufo'
 import { Component } from '@nuxt/schema'
+import { getComponentPath } from './templates'
 
 interface LoaderOptions {
   getComponents(): Component[]
+  mode: 'server' | 'client'
 }
 
 export const loaderPlugin = createUnplugin((options: LoaderOptions) => ({
@@ -17,7 +19,7 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => ({
     return pathname.endsWith('.vue') && (query.type === 'template' || !search)
   },
   transform (code) {
-    return transform(code, options.getComponents())
+    return transform(code, options.getComponents(), options.mode)
   }
 }))
 
@@ -25,7 +27,7 @@ function findComponent (components: Component[], name:string) {
   return components.find(({ pascalName, kebabName }) => [pascalName, kebabName].includes(name))
 }
 
-function transform (content: string, components: Component[]) {
+function transform (content: string, components: Component[], mode: 'server' | 'client') {
   let num = 0
   let imports = ''
   const map = new Map<Component, string>()
@@ -36,7 +38,7 @@ function transform (content: string, components: Component[]) {
     if (component) {
       const identifier = map.get(component) || `__nuxt_component_${num++}`
       map.set(component, identifier)
-      imports += `import ${identifier} from "${component.filePath}";`
+      imports += `import ${identifier} from "${getComponentPath(component, mode)}";`
       return ` ${identifier}`
     }
     // no matched

@@ -1,6 +1,6 @@
 
 import { relative } from 'pathe'
-import type { Component } from '@nuxt/schema'
+import type { Component, NuxtPlugin } from '@nuxt/schema'
 
 export type ComponentsTemplateOptions = {
   buildDir?: string
@@ -22,31 +22,38 @@ const createImportMagicComments = (options: ImportMagicCommentsOptions) => {
   ].filter(Boolean).join(', ')
 }
 
-export const getEnvComponentTemplate = (component: Component) => `
-<script setup>
-import Client from '${component.envPaths.client}'
-${component.envPaths.server ? `import Server from '${component.envPaths.server}'` : ''}
-</script>
+// export const getEnvComponentTemplate = (component: Component) => `
+// <script setup>
+// import Client from '${component.envPaths.client}'
+// ${component.envPaths.server ? `import Server from '${component.envPaths.server}'` : ''}
+// </script>
 
-<template>
-  <ClientOnly>
-    <Client v-bind="$attrs"><slot/></Client>
-    ${component.envPaths.server ? '<template #fallback><Server v-bind="$attrs"><slot/></Server></template>' : ''}
-  </ClientOnly>
-</template>
-`
+// <template>
+//   <ClientOnly>
+//     <Client v-bind="$attrs"><slot/></Client>
+//     ${component.envPaths.server ? '<template #fallback><Server v-bind="$attrs"><slot/></Server></template>' : ''}
+//   </ClientOnly>
+// </template>
+// `
 
-export const componentsTemplate = {
-  filename: 'components.mjs',
-  getContents ({ options }: { options: ComponentsTemplateOptions }) {
-    return `import { defineAsyncComponent } from 'vue'
+export function getComponentPath (component: Component, mode?: NuxtPlugin['mode']) {
+  if (!component.envPaths || !mode || mode === 'all') {
+    return component.filePath
+  }
+  return mode === 'client'
+    ? component.envPaths.client
+    : component.envPaths.server || '#build/Empty.vue'
+}
+
+function getComponentTemplate (components: Component[], mode: NuxtPlugin['mode']) {
+  return `import { defineAsyncComponent } from 'vue'
 
 const components = {
-${options.components.filter(c => c.global !== false).map((c) => {
+${components.filter(c => c.global !== false).map((c) => {
   const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
   const magicComments = createImportMagicComments(c)
 
-  return `  '${c.pascalName}': defineAsyncComponent(() => import('${c.filePath}' /* ${magicComments} */).then(c => ${exp}))`
+  return `  '${c.pascalName}': defineAsyncComponent(() => import('${getComponentPath(c, mode)}' /* ${magicComments} */).then(c => ${exp}))`
 }).join(',\n')}
 }
 
@@ -57,6 +64,19 @@ export default function (nuxtApp) {
   }
 }
 `
+}
+
+export const componentsClientTemplate = {
+  filename: 'components-client.mjs',
+  getContents ({ options }: { options: ComponentsTemplateOptions }) {
+    return getComponentTemplate(options.components, 'client')
+  }
+}
+
+export const componentsServerTemplate = {
+  filename: 'components-server.mjs',
+  getContents ({ options }: { options: ComponentsTemplateOptions }) {
+    return getComponentTemplate(options.components, 'server')
   }
 }
 
