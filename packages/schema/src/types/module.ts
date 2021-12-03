@@ -51,12 +51,20 @@ export interface LegacyNuxtModule {
   meta?: ModuleMeta
 }
 
-/** A Nuxt module definition */
-export interface NuxtModule<T extends ModuleOptions = any> extends ModuleMeta {
+/** Input module passed to defineNuxtModule */
+export interface ModuleDefinition<T extends ModuleOptions = any> extends ModuleMeta {
   defaults?: T
+  schema?: T
   setup?: (this: null, resolvedOptions: T, nuxt: Nuxt) => void | Promise<void>
   hooks?: Partial<NuxtHooks>
 }
+
+
+/** Normalized nuxt module from defineNuxtModule */
+export interface NuxtModule<T extends ModuleOptions = any> extends ModuleMeta {
+  (this: null, resolvedOptions: T, nuxt: Nuxt): void | Promise<void>
+}
+
 
 export type ModuleSrc = string | NuxtModule | LegacyNuxtModule
 
