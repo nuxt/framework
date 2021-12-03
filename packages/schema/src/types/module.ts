@@ -52,11 +52,12 @@ export interface Nuxt2Module {
 }
 
 /** Input module passed to defineNuxtModule */
-export interface ModuleDefinition<T extends ModuleOptions = ModuleOptions> extends ModuleMeta {
+export interface ModuleDefinition<T extends ModuleOptions = ModuleOptions> {
   defaults?: T
   schema?: T
   setup?: (this: null, resolvedOptions: T, nuxt: Nuxt) => void | Promise<void>
   hooks?: Partial<NuxtHooks>
+  meta?: ModuleMeta
 }
 
 

@@ -31,7 +31,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
     if (_options) { return _options }
     const nuxtModule = useModule()
     const nuxt = useNuxt()
-    const configKey = nuxtModule.configKey || nuxtModule.name
+    const configKey = nuxtModule.meta.configKey || nuxtModule.meta.name
     _options = defu(inlineOptions, nuxt.options[configKey], nuxtModule.defaults) as OptionsT
     if (nuxtModule.schema) {
       _options = applyDefaults(nuxtModule.schema, _options) as OptionsT
@@ -45,10 +45,10 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
     if (_meta) { return _meta }
     const _module = useModule()
     _meta = {
-      name: _module.name || _module.configKey,
-      version: _module.version,
-      configKey: _module.configKey || _module.name,
-      requires: _module.requires
+      name: _module.meta.name || _module.meta.configKey,
+      version: _module.meta.version,
+      configKey: _module.meta.configKey || _module.meta.name,
+      requires: _module.meta.requires
     }
     return _meta
   }
@@ -67,10 +67,10 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
     nuxt.hooks.addHooks(_module.hooks)
 
     // Check compatibility contraints
-    if (_module.requires) {
-      const issues = checkNuxtCompatibilityIssues(_module.requires, nuxt)
+    if (_module.meta.requires) {
+      const issues = checkNuxtCompatibilityIssues(_module.meta.requires, nuxt)
       if (issues.length) {
-        consola.warn(`Module \`${_module.name}\` is disabled due to incompatibility issues:\n${issues.toString()}`)
+        consola.warn(`Module \`${_module.meta.name}\` is disabled due to incompatibility issues:\n${issues.toString()}`)
         return
       }
     }
