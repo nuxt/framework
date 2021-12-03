@@ -80,12 +80,10 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
   }
 
   // Define getters for options and meta
-  Object.defineProperties(setupModule, {
-    options: { get: () => useModuleOptions() },
-    meta: { get: () => useModuleMeta() }
-  })
+  setupModule.getOptions = useModuleOptions
+  setupModule.getMeta = useModuleMeta
 
-  return setupModule
+  return setupModule as NuxtModule
 }
 
 // -- Nuxt2 compatibility shims --

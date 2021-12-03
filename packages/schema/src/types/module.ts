@@ -46,13 +46,13 @@ export interface ModuleMeta {
 export type ModuleOptions = Record<string, any>
 
 /** A pre-kit Nuxt module */
-export interface LegacyNuxtModule {
+export interface Nuxt2Module {
   (this: ModuleContainer, inlineOptions?: ModuleOptions): void | Promise<void>
   meta?: ModuleMeta
 }
 
 /** Input module passed to defineNuxtModule */
-export interface ModuleDefinition<T extends ModuleOptions = any> extends ModuleMeta {
+export interface ModuleDefinition<T extends ModuleOptions = ModuleOptions> extends ModuleMeta {
   defaults?: T
   schema?: T
   setup?: (this: null, resolvedOptions: T, nuxt: Nuxt) => void | Promise<void>
@@ -61,18 +61,19 @@ export interface ModuleDefinition<T extends ModuleOptions = any> extends ModuleM
 
 
 /** Normalized nuxt module from defineNuxtModule */
-export interface NuxtModule<T extends ModuleOptions = any> extends ModuleMeta {
+export interface NuxtModule<T extends ModuleOptions = ModuleOptions> {
   (this: null, resolvedOptions: T, nuxt: Nuxt): void | Promise<void>
+  getOptions?: () => T
+  getMeta?: () => ModuleMeta
 }
 
-
-export type ModuleSrc = string | NuxtModule | LegacyNuxtModule
+export type ModuleSrc = string | Nuxt2Module | NuxtModule
 
 export interface ModuleInstallOptionsObj {
   src: ModuleSrc,
   meta: ModuleMeta
   options: ModuleOptions
-  handler: LegacyNuxtModule
+  handler: Nuxt2Module | NuxtModule
 }
 
 export type ModuleInstallOptions =
