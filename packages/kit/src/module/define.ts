@@ -47,7 +47,8 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
     _meta = {
       name: _module.meta.name || _module.meta.configKey,
       version: _module.meta.version,
-      configKey: _module.meta.configKey || _module.meta.name,
+      // @ts-ignore Remove top level fallbacks in RC
+      configKey: _module.meta.configKey || _module.meta.name || _module.configKey || _module.name,
       requires: _module.meta.requires
     }
     return _meta
