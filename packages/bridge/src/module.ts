@@ -12,8 +12,10 @@ import { setupTranspile } from './transpile'
 import { setupScriptSetup } from './setup'
 
 export default defineNuxtModule({
-  name: 'nuxt-bridge',
-  configKey: 'bridge',
+  meta: {
+    name: 'nuxt-bridge',
+    configKey: 'bridge'
+  },
   defaults: {
     nitro: true,
     vite: false,
@@ -52,10 +54,10 @@ export default defineNuxtModule({
     }
     if (opts.vite) {
       const viteModule = await import('./vite/module').then(r => r.default || r)
-      await installModule(nuxt, viteModule)
+      await installModule(viteModule)
     }
     if (opts.postcss8) {
-      await installModule(nuxt, _require.resolve('@nuxt/postcss8'))
+      await installModule(_require.resolve('@nuxt/postcss8'))
     }
     if (opts.typescript) {
       await setupTypescript()

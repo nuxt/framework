@@ -3,7 +3,7 @@ import defu from 'defu'
 import { applyDefaults } from 'untyped'
 import consola from 'consola'
 import { dirname } from 'pathe'
-import type { Nuxt, NuxtTemplate, NuxtModule, ModuleOptions, ModuleMeta, ModuleDefinition } from '@nuxt/schema'
+import type { Nuxt, NuxtTemplate, NuxtModule, ModuleOptions, ModuleDefinition } from '@nuxt/schema'
 import { useNuxt, nuxtCtx } from '../context'
 import { isNuxt2, checkNuxtCompatibilityIssues } from '../compatibility'
 import { templateUtils, compileTemplate } from '../internal/template'
@@ -12,85 +12,80 @@ import { templateUtils, compileTemplate } from '../internal/template'
  * Define a Nuxt module, automatically merging defaults with user provided options, installing
  * any hooks that are provided, and calling an optional setup function for full control.
  */
-export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: ModuleDefinition<OptionsT> | ((nuxt: Nuxt) => ModuleDefinition<OptionsT>)): NuxtModule {
-  // Resolves input module to optionally init with nuxt
-  let _module: ModuleDefinition<OptionsT>
-  function useModule () {
-    if (_module) { return _module }
-    if (typeof definition === 'function') {
-      _module = definition(useNuxt())
-    } else {
-      _module = definition
-    }
-    return _module
+export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: ModuleDefinition<OptionsT>): NuxtModule<OptionsT> {
+  // Normalize definition and meta
+  if (!definition.meta) { definition.meta = {} }
+  if (!definition.meta.configKey) {
+    // @ts-ignore TODO Remove non-meta allbacks in RC
+    definition.meta.name = definition.meta.name || definition.name
+    // @ts-ignore
+    definition.meta.configKey = definition.meta.configKey || definition.configKey || definition.meta.name
   }
 
   // Resolves module options from inline options, [configKey] in nuxt.config, defaults and schema
-  let _options: OptionsT
-  function useModuleOptions (inlineOptions?: OptionsT) {
-    if (_options) { return _options }
-    const nuxtModule = useModule()
-    const nuxt = useNuxt()
-    const configKey = nuxtModule.meta.configKey || nuxtModule.meta.name
-    _options = defu(inlineOptions, nuxt.options[configKey], nuxtModule.defaults) as OptionsT
-    if (nuxtModule.schema) {
-      _options = applyDefaults(nuxtModule.schema, _options) as OptionsT
+  function getOptions (inlineOptions?: OptionsT, nuxt: Nuxt = useNuxt()) {
+    let _options: OptionsT
+    const configKey = definition.meta.configKey || definition.meta.name
+    const _defaults = typeof definition.defaults === 'function' ? definition.defaults(nuxt) : definition.defaults
+    _options = defu(inlineOptions, nuxt.options[configKey], _defaults) as OptionsT
+    if (definition.schema) {
+      _options = applyDefaults(definition.schema, _options) as OptionsT
     }
-    return _options
-  }
-
-  // Resolves module meta
-  let _meta: ModuleMeta
-  function useModuleMeta () {
-    if (_meta) { return _meta }
-    const _module = useModule()
-    _meta = {
-      name: _module.meta.name || _module.meta.configKey,
-      version: _module.meta.version,
-      // @ts-ignore Remove top level fallbacks in RC
-      configKey: _module.meta.configKey || _module.meta.name || _module.configKey || _module.name,
-      requires: _module.meta.requires
-    }
-    return _meta
+    return Promise.resolve(_options)
   }
 
   // Module format is always a simple function
-  function setupModule (inlineOptions: OptionsT) {
-    // Prepare
-    const nuxt = useNuxt() || this.nuxt /* nuxt 2 */
-    nuxt2Shims(nuxt)
+  async function normalizedModule (inlineOptions: OptionsT, nuxt: Nuxt) {
+    if (!nuxt) {
+      nuxt = useNuxt() || this.nuxt /* invoked by nuxt 2 */
+    }
 
-    // Resolve module and options
-    const _module = useModule()
-    const _options = useModuleOptions(inlineOptions)
-
-    // Register hooks
-    nuxt.hooks.addHooks(_module.hooks)
+    // Avoid duplicate installs
+    const uniqueKey = definition.meta.name || definition.meta.configKey
+    if (uniqueKey) {
+      nuxt.options._requiredModules = nuxt.options._requiredModules || {}
+      if (nuxt.options._requiredModules[uniqueKey]) {
+        // TODO: Notify user if inline options is provided since will be ignored!
+        return
+      }
+      nuxt.options._requiredModules[uniqueKey] = true
+    }
 
     // Check compatibility contraints
-    if (_module.meta.requires) {
-      const issues = checkNuxtCompatibilityIssues(_module.meta.requires, nuxt)
+    if (definition.meta.requires) {
+      const issues = checkNuxtCompatibilityIssues(definition.meta.requires, nuxt)
       if (issues.length) {
-        consola.warn(`Module \`${_module.meta.name}\` is disabled due to incompatibility issues:\n${issues.toString()}`)
+        consola.warn(`Module \`${definition.meta.name}\` is disabled due to incompatibility issues:\n${issues.toString()}`)
         return
       }
     }
 
+    // Prepare
+    nuxt2Shims(nuxt)
+
+    // Resolve module and options
+    const _options = await getOptions(inlineOptions, nuxt)
+
+    // Register hooks
+    if (definition.hooks) {
+      nuxt.hooks.addHooks(definition.hooks)
+    }
+
     // Call setup
-    return _module.setup.call(null, _options, nuxt)
+    await definition.setup?.call(null, _options, nuxt)
   }
 
   // Define getters for options and meta
-  setupModule.getOptions = useModuleOptions
-  setupModule.getMeta = useModuleMeta
+  normalizedModule.getMeta = () => Promise.resolve(definition.meta)
+  normalizedModule.getOptions = getOptions
 
-  return setupModule as NuxtModule
+  return normalizedModule as NuxtModule<OptionsT>
 }
 
-// -- Nuxt2 compatibility shims --
+// -- Nuxt 2 compatibility shims --
 const NUXT2_SHIMS_KEY = '__nuxt2_shims_key__'
 function nuxt2Shims (nuxt: Nuxt) {
-  // Avoid duplicate install
+  // Avoid duplicate install and only apply to Nuxt2
   if (!isNuxt2(nuxt) || nuxt[NUXT2_SHIMS_KEY]) { return }
   nuxt[NUXT2_SHIMS_KEY] = true
 
