@@ -1,5 +1,6 @@
 import { createRequire } from 'module'
 import { defineNuxtModule, installModule, checkNuxtCompatibilityIssues } from '@nuxt/kit'
+import type { NuxtModule } from '@nuxt/schema'
 import type { BridgeConfig, ScriptSetupOptions } from '../types'
 import { setupNitroBridge } from './nitro'
 import { setupAppBridge } from './app'
@@ -53,7 +54,7 @@ export default defineNuxtModule({
       await setupAutoImports()
     }
     if (opts.vite) {
-      const viteModule = await import('./vite/module').then(r => r.default || r)
+      const viteModule = await import('./vite/module').then(r => r.default || r) as NuxtModule
       await installModule(viteModule)
     }
     if (opts.postcss8) {
