@@ -232,21 +232,21 @@ export default {
   modules: [],
 
   /**
-   * Modules that are only required during development and build time.
+   * BuildModules that are only required during development and build time.
    *
-   * Modules are Nuxt extensions which can extend its core functionality and add endless integrations
+   * BuildModules are Nuxt extensions which can extend its core functionality and add endless integrations
    *
-   * Each module is either a string (which can refer to a package, or be a path to a file), a
+   * Each buildModule is either a string (which can refer to a package, or be a path to a file), a
    * tuple with the module as first string and the options as a second object, or an inline module function.
    *
-   * Nuxt tries to resolve each item in the modules array using node require path
+   * Nuxt tries to resolve each item in the buildModules array using node require path
    * (in `node_modules`) and then will be resolved from project `srcDir` if `~` alias is used.
    *
    * @note Modules are executed sequentially so the order is important.
    *
    * @example
    * ```js
-   * modules: [
+   * buildModules: [
    *   // Using package name
    *   '@nuxtjs/axios',
    *   // Relative to your project srcDir
