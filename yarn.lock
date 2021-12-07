@@ -3004,6 +3004,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nuxt/ui@link:../nuxt-ui::locator=nuxt-framework%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@nuxt/ui@link:../nuxt-ui::locator=nuxt-framework%40workspace%3A."
+  languageName: node
+  linkType: soft
+
 "@nuxt/utils-edge@npm:2.16.0-27305297.ab1c6cb4":
   version: 2.16.0-27305297.ab1c6cb4
   resolution: "@nuxt/utils-edge@npm:2.16.0-27305297.ab1c6cb4"
@@ -4491,6 +4497,13 @@ __metadata:
   version: 1.1.2
   resolution: "@ungap/promise-all-settled@npm:1.1.2"
   checksum: 08d37fdfa23a6fe8139f1305313562ebad973f3fac01bcce2773b2bda5bcb0146dfdcf3cb6a722cf0a5f2ca0bc56a827eac8f1e7b3beddc548f654addf1fc34c
+  languageName: node
+  linkType: hard
+
+"@unocss/reset@npm:^0.15.5":
+  version: 0.15.5
+  resolution: "@unocss/reset@npm:0.15.5"
+  checksum: f2962ab4ce4d288af78b110ace3807ec0089dcbd94013d1d5609b2d222b8ddb9ebb36b50193c60825fabf561d4bf722211c07f49116c0c2a64a2445fbf22653a
   languageName: node
   linkType: hard
 
@@ -15010,6 +15023,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxt-framework@workspace:."
   dependencies:
+    "@nuxt/ui": "link:../nuxt-ui"
     "@nuxtjs/eslint-config": ^7.0.0
     "@nuxtjs/eslint-config-typescript": ^7.0.2
     "@types/chai": ^4.2.22
@@ -15017,6 +15031,7 @@ __metadata:
     "@types/mocha": ^9.0.0
     "@types/node": ^14.17.34
     "@types/object-hash": ^2
+    "@unocss/reset": ^0.15.5
     chai: ^4.3.4
     esbuild: ^0.14.1
     eslint: ^8.3.0
