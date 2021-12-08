@@ -100,7 +100,7 @@ export default {
    * use your own middleware by passing it in directly - for example,
    * `otherComp({ myOptions: 'example' })`.
    *
-   * @type {boolean | typeof import('compression').CompressionOptions | ((req: typeof import('http').IncomingMessage, res: typeof import('http').ServerResponse, next: (err?: any) => void) => any) }
+   * @type {boolean | object | Function}
    */
   compressor: {
     threshold: 0

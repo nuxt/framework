@@ -17,7 +17,6 @@ export default defineBuildConfig({
   ],
   externals: [
     // Type imports
-    'compression',
     'vue-meta',
     'vue',
     'hookable',
