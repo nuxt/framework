@@ -32,7 +32,7 @@ const openInEditor = () => {
         <p class="text-4xl">
           {{ date }}
         </p>
-        <label for="locale-chooser">Locale</label>
+        <label for="locale-chooser">Preview a different locale</label>
         <select id="locale-chooser" v-model="locale" class="m-auto w-50 border n-border-base rounded p-1">
           <option v-for="l of locales" :key="l" :value="l">
             {{ l }}
