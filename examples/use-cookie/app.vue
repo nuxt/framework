@@ -67,7 +67,7 @@ const openInEditor = () => {
         <div>
           This demo showcases using the
           <a href="https://v3.nuxtjs.org/docs/usage/cookies" class="bold hover:text-green5 hover:underline">useCookie</a>
-          API to persistent small amount of data that can be used by both client side and server side.
+          API to persist small amounts of data that can be used both client-side and server-side.
         </div>
         <NButton icon="carbon-edit" class="flex-none" @click="openInEditor">
           Open in Editor
