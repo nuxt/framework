@@ -65,7 +65,7 @@ const openInEditor = () => {
       <div :class="interacted ? 'opacity-100' : 'opacity-0'" class="transition py-5 flex items-center gap-2 text-gray-400">
         <NIcon icon="carbon-idea" class="text-xl flex-none" />
         <div>
-          This demo showcases you how to use the
+          This demo showcases using the
           <a href="https://v3.nuxtjs.org/docs/usage/cookies" class="bold hover:text-green5 hover:underline">useCookie</a>
           API to persistent small amount of data that can be used by both client side and server side.
         </div>
