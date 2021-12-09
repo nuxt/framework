@@ -3,31 +3,38 @@ const user = useCookie<{ name: string }>('user')
 const logins = useCookie<number>('logins')
 
 const name = ref('')
+const interacted = ref(false)
 
 const login = () => {
   logins.value = (logins.value || 0) + 1
   user.value = { name: name.value }
+  interacted.value = true
 }
 
 const logout = () => {
   user.value = null
+  interacted.value = true
+}
+
+const openInEditor = () => {
+  fetch('/__open-in-editor?file=app.vue')
 }
 </script>
 
 <template>
-  <div class="relative font-sans">
-    <div class="container mx-auto py-8">
-      <div class="flex items-bottom">
+  <div class="relative font-sans" n="green6">
+    <div class="container max-w-200 mx-auto py-10 px-4">
+      <div class="flex flex-col gap-2 items-center">
         <img src="https://raw.githubusercontent.com/nuxt/framework/main/playground/assets/logo.svg" h="12">
-        <div class="mt-auto text-2xl mx-3 m-0.5 flex">
+        <div class="text-xl flex">
           <div class="op-50">
             examples/
           </div><a href="https://v3.nuxtjs.org/docs/usage/cookies" class="hover:text-green5 hover:underline">useCookie</a>
         </div>
       </div>
-      <NCard class="mt-2 p-5 flex flex-col gap-2">
+      <NCard class="mt-8 p-6 flex flex-col h-50 gap-2 text-center">
         <template v-if="user">
-          <h1 class="text-3xl">
+          <h1 class="text-3xl mb-3">
             Welcome, {{ user.name }}! 👋
           </h1>
           <div>
@@ -42,17 +49,30 @@ const logout = () => {
           </div>
         </template>
         <template v-else>
-          <h1 class="text-3xl">
+          <h1 class="text-3xl mb-3">
             Login
           </h1>
-          <NTextInput v-model="name" placeholder="Enter your name..." @keypress.enter="login()" />
+          <NTextInput v-model="name" n="lg" class="w-100 m-auto" placeholder="Enter your name..." @keypress.enter="login()" />
           <div class="mt-3">
-            <NButton n="green6" icon="carbon:user" :disabled="!name" @click="login">
+            <NButton icon="carbon:user" :disabled="!name" @click="login">
               Log in
             </NButton>
           </div>
         </template>
       </NCard>
+
+      <!-- Tips -->
+      <div :class="interacted ? 'opacity-100' : 'opacity-0'" class="transition py-5 flex items-center gap-2 text-gray-400">
+        <NIcon icon="carbon-idea" class="text-xl flex-none" />
+        <div>
+          This demo showcases you how to use the
+          <a href="https://v3.nuxtjs.org/docs/usage/cookies" class="bold hover:text-green5 hover:underline">useCookie</a>
+          API to persistent small amount of data that can be used by both client side and server side.
+        </div>
+        <NButton icon="carbon-edit" class="flex-none" @click="openInEditor">
+          Open in Editor
+        </NButton>
+      </div>
     </div>
   </div>
 </template>

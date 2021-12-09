@@ -32,7 +32,8 @@
     "jiti": "^1.12.9"
   },
   "devDependencies": {
-    "@nuxt/ui": "link:../nuxt-ui",
+    "@iconify-json/carbon": "^1.0.12",
+    "@nuxt/ui": "^0.0.0-alpha.1",
     "@nuxtjs/eslint-config": "^7.0.0",
     "@nuxtjs/eslint-config-typescript": "^7.0.2",
     "@types/chai": "^4.2.22",
