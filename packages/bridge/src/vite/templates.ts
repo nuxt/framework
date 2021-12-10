@@ -26,7 +26,7 @@ export const middlewareTemplate = {
         return null
       }
       return {
-        filePath: resolve(srcDir, dir.middleware, m.src),
+        filePath,
         id: m.name || m.src.replace(/[\\/]/g, '/').replace(/\.(js|ts)$/, '')
       }
     }).filter(Boolean) as Array<{ filePath: string, id: string }>
