@@ -22,7 +22,10 @@ const openInEditor = () => {
         <div class="text-xl flex">
           <div class="op-50">
             examples/
-          </div><a href="https://github.com/nuxt/framework/tree/main/examples/locale" class="hover:text-green5 hover:underline">locale</a>
+          </div>
+          <NLink href="https://github.com/nuxt/framework/tree/main/examples/locale" target="_blank">
+            locale
+          </NLink>
         </div>
       </div>
       <NCard class="mt-8 p-6 flex flex-col h-50 gap-2 text-center">

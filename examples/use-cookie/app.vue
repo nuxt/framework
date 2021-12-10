@@ -29,7 +29,10 @@ const openInEditor = () => {
         <div class="text-xl flex">
           <div class="op-50">
             examples/
-          </div><a href="https://v3.nuxtjs.org/docs/usage/cookies" class="hover:text-green5 hover:underline">useCookie</a>
+          </div>
+          <NLink href="https://v3.nuxtjs.org/docs/usage/cookies" target="_blank">
+            useCookie
+          </NLink>
         </div>
       </div>
       <NCard class="mt-8 p-6 flex flex-col h-50 gap-2 text-center">
@@ -66,7 +69,9 @@ const openInEditor = () => {
         <NIcon icon="carbon-idea" class="text-xl flex-none" />
         <div>
           This demo showcases using the
-          <a href="https://v3.nuxtjs.org/docs/usage/cookies" class="bold hover:text-green5 hover:underline">useCookie</a>
+          <NLink href="https://v3.nuxtjs.org/docs/usage/cookies" target="_blank">
+            useCookie
+          </NLink>
           API to persist small amounts of data that can be used both client-side and server-side.
         </div>
         <NButton icon="carbon-edit" class="flex-none" @click="openInEditor">
