@@ -13,8 +13,8 @@ const openInEditor = () => {
           <div class="op-50">
             examples/
           </div>
-          <NLink href="https://github.com/nuxt/framework/tree/main/examples/components" target="_blank">
-            components
+          <NLink href="https://github.com/nuxt/framework/tree/main/examples/with-components" target="_blank">
+            with-components
           </NLink>
         </div>
       </div>
