@@ -20,13 +20,8 @@ export const middlewareTemplate = {
       if (typeof m === 'string') {
         m = { src: m }
       }
-      // Check if this is user-provided middleware
-      const filePath = resolve(srcDir, dir.middleware, m.src)
-      if (!existsSync(filePath)) {
-        return null
-      }
       return {
-        filePath,
+        filePath: resolve(srcDir, dir.middleware, m.src),
         id: m.name || m.src.replace(/[\\/]/g, '/').replace(/\.(js|ts)$/, '')
       }
     }).filter(Boolean) as Array<{ filePath: string, id: string }>
