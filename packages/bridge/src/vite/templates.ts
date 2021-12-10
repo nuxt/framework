@@ -1,3 +1,4 @@
+import { existsSync } from 'fs'
 import hash from 'hash-sum'
 import { resolve } from 'pathe'
 
@@ -15,7 +16,15 @@ export const middlewareTemplate = {
   getContents (ctx: TemplateContext) {
     const { dir, router: { middleware }, srcDir } = ctx.nuxt.options
     const _middleware = ((typeof middleware !== 'undefined' && middleware) || []).map((m) => {
-      if (typeof m === 'string') { return false }
+      // Normalize string middleware
+      if (typeof m === 'string') {
+        m = { src: m }
+      }
+      // Check if this is user-provided middleware
+      const filePath = resolve(srcDir, dir.middleware, m.src)
+      if (!existsSync(filePath)) {
+        return null
+      }
       return {
         filePath: resolve(srcDir, dir.middleware, m.src),
         id: m.name || m.src.replace(/[\\/]/g, '/').replace(/\.(js|ts)$/, '')
