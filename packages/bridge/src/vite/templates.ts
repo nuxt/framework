@@ -1,4 +1,3 @@
-import { existsSync } from 'fs'
 import hash from 'hash-sum'
 import { resolve } from 'pathe'
 
