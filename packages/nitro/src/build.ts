@@ -49,7 +49,9 @@ export async function generate (nitroContext: NitroContext) {
 
     // Copy nested /_nuxt/_nuxt files across
     // TODO: Workaround vite issue
-    await fse.copy(join(clientDist, nitroContext._nuxt.publicPath), join(nitroContext.output.publicDir, nitroContext._nuxt.publicPath))
+    if (await isDirectory(join(clientDist, nitroContext._nuxt.publicPath))) {
+      await fse.copy(join(clientDist, nitroContext._nuxt.publicPath), join(nitroContext.output.publicDir, nitroContext._nuxt.publicPath))
+    }
   }
 
   consola.success('Generated public ' + prettyPath(nitroContext.output.publicDir))
