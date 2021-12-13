@@ -1,5 +1,11 @@
+<script setup lang="ts">
+const route = useRoute()
+</script>
+
 <template>
-  <MyLayout>
+  <NuxtExampleLayout name="with-pages">
+    <NuxtPage />
+
     <template #nav>
       <nav class="flex align-center gap-4 p-4">
         <NuxtLink to="/" class="n-link-base">
@@ -16,6 +22,11 @@
         </NuxtLink>
       </nav>
     </template>
-    <NuxtPage />
-  </MyLayout>
+
+    <template #footer>
+      <div class="text-center p-4 op-50">
+        Current route: <code>{{ route.path }}</code>
+      </div>
+    </template>
+  </NuxtExampleLayout>
 </template>

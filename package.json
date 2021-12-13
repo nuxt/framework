@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.0.12",
-    "@nuxt/ui": "^0.0.0-alpha.3",
+    "@nuxt/ui": "^0.0.0-alpha.4",
     "@nuxtjs/eslint-config": "^7.0.0",
     "@nuxtjs/eslint-config-typescript": "^7.0.2",
     "@types/chai": "^4.2.22",
