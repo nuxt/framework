@@ -2,6 +2,7 @@ import { relative, resolve, join } from 'pathe'
 import consola from 'consola'
 import * as rollup from 'rollup'
 import fse from 'fs-extra'
+import { withoutTrailingSlash } from 'ufo'
 import { printFSTree } from './utils/tree'
 import { getRollupConfig } from './rollup/config'
 import { hl, prettyPath, serializeTemplate, writeFile, isDirectory, readDirRecursively } from './utils'
@@ -39,11 +40,16 @@ export async function generate (nitroContext: NitroContext) {
 
   const clientDist = resolve(nitroContext._nuxt.buildDir, 'dist/client')
   if (await isDirectory(clientDist)) {
+    const assetsPath = withoutTrailingSlash(join(clientDist, nitroContext._nuxt.publicPath))
     await fse.copy(clientDist, join(nitroContext.output.publicDir, nitroContext._nuxt.publicPath), {
       // TODO: Workaround vite's issue that duplicates public files
       // https://github.com/nuxt/framework/issues/1192
-      filter: src => !publicFiles.includes(src.replace(clientDist, ''))
+      filter: src => !publicFiles.includes(src.replace(clientDist, '')) && !src.includes(assetsPath)
     })
+
+    // Copy nested /_nuxt/_nuxt files across
+    // TODO: Workaround vite issue
+    await fse.copy(join(clientDist, nitroContext._nuxt.publicPath), join(nitroContext.output.publicDir, nitroContext._nuxt.publicPath))
   }
 
   consola.success('Generated public ' + prettyPath(nitroContext.output.publicDir))

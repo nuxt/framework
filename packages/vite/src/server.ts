@@ -6,6 +6,7 @@ import fse from 'fs-extra'
 import pDebounce from 'p-debounce'
 import consola from 'consola'
 import { resolveModule } from '@nuxt/kit'
+import { withoutLeadingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
@@ -54,6 +55,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     build: {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
+      assetsDir: withoutLeadingSlash(ctx.nuxt.options.app.assetsPath),
       ssr: true,
       rollupOptions: {
         output: {

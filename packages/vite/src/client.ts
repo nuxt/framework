@@ -5,6 +5,7 @@ import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { Connect } from 'vite'
 
+import { withoutLeadingSlash } from 'ufo'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { analyzePlugin } from './plugins/analyze'
 import { wpfs } from './utils/wpfs'
@@ -31,7 +32,7 @@ export async function buildClient (ctx: ViteBuildContext) {
           entryFileNames: ctx.nuxt.options.dev ? 'entry.mjs' : '[name]-[hash].mjs'
         }
       },
-      assetsDir: '.',
+      assetsDir: withoutLeadingSlash(ctx.nuxt.options.app.assetsPath),
       manifest: true,
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client')
     },
