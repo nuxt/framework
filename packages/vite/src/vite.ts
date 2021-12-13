@@ -48,7 +48,7 @@ export async function bundle (nuxt: Nuxt) {
             'abort-controller': 'unenv/runtime/mock/empty'
           }
         },
-        base: nuxt.options.app.cdnURL || '/',
+        base: nuxt.options.dev ? nuxt.options.build.publicPath : nuxt.options.app.cdnURL || '/',
         publicDir: resolve(nuxt.options.srcDir, nuxt.options.dir.public),
         // TODO: move to kit schema when it exists
         vue: {
