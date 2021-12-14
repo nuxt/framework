@@ -298,6 +298,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // https://github.com/rollup/plugins/tree/master/packages/commonjs
   rollupConfig.plugins.push(commonjs({
+    sourceMap: !!nitroContext.sourceMap,
     esmExternals: id => !id.startsWith('unenv/'),
     requireReturnsDefault: 'auto'
   }))
