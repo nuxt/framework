@@ -15062,7 +15062,7 @@ __metadata:
     object-hash: ^2.2.0
     pathe: ^0.2.0
     typescript: ^4.5.4
-    unbuild: ^0.6.3
+    unbuild: ^0.6.5
     vue-router: next
   languageName: unknown
   linkType: soft
@@ -20489,9 +20489,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.6.3":
-  version: 0.6.4
-  resolution: "unbuild@npm:0.6.4"
+"unbuild@npm:^0.6.5":
+  version: 0.6.5
+  resolution: "unbuild@npm:0.6.5"
   dependencies:
     "@rollup/plugin-alias": ^3.1.8
     "@rollup/plugin-commonjs": ^21.0.1
@@ -20522,7 +20522,7 @@ __metadata:
     untyped: ^0.3.0
   bin:
     unbuild: dist/cli.mjs
-  checksum: 2332f8e23343edb40b7e1ae5e621c9f1f1663d2d6849a201336b5034a2c7a758a6dca933d8ec2903844b13c5c72db8aac2ebb66ccbee27d860f8070f8914d1bb
+  checksum: 9d02757acadfa2f6f1eed055fdd291be81fe288174426b17a6785a1bd8c1c5824758ae765b0ba38c395d3e7aafae7615e4a3e433a6c182760f0b34f0ae7c383d
   languageName: node
   linkType: hard
 
