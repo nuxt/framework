@@ -14173,9 +14173,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mkdist@npm:^0.3.7":
-  version: 0.3.7
-  resolution: "mkdist@npm:0.3.7"
+"mkdist@npm:^0.3.8":
+  version: 0.3.8
+  resolution: "mkdist@npm:0.3.8"
   dependencies:
     defu: ^5.0.0
     esbuild: ^0.13.8
@@ -14191,7 +14191,7 @@ __metadata:
       optional: true
   bin:
     mkdist: dist/cli.js
-  checksum: 0fde5af42ae7ee9ee73df8fe04eb2750f43560d724ffd1e9851585c86be62fa3696747ca062175ad8d0deb0bee843c702e2e538a30f5e6f3361a770bcfa1940b
+  checksum: dc75c296a008c3ec56a6c45fc45cd99a0a7d03780912a4a1c1aba033de27ba44d4278294f78c0ea14a76d26ee7d0861da33e7c92fa10719acb6078ee10a5cc1b
   languageName: node
   linkType: hard
 
@@ -15062,7 +15062,7 @@ __metadata:
     object-hash: ^2.2.0
     pathe: ^0.2.0
     typescript: ^4.5.4
-    unbuild: ^0.6.5
+    unbuild: ^0.6.6
     vue-router: next
   languageName: unknown
   linkType: soft
@@ -20489,9 +20489,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.6.5":
-  version: 0.6.5
-  resolution: "unbuild@npm:0.6.5"
+"unbuild@npm:^0.6.6":
+  version: 0.6.6
+  resolution: "unbuild@npm:0.6.6"
   dependencies:
     "@rollup/plugin-alias": ^3.1.8
     "@rollup/plugin-commonjs": ^21.0.1
@@ -20507,7 +20507,7 @@ __metadata:
     jiti: ^1.12.9
     magic-string: ^0.25.7
     mkdirp: ^1.0.4
-    mkdist: ^0.3.7
+    mkdist: ^0.3.8
     mlly: ^0.3.15
     mri: ^1.2.0
     pathe: ^0.2.0
@@ -20522,7 +20522,7 @@ __metadata:
     untyped: ^0.3.0
   bin:
     unbuild: dist/cli.mjs
-  checksum: 9d02757acadfa2f6f1eed055fdd291be81fe288174426b17a6785a1bd8c1c5824758ae765b0ba38c395d3e7aafae7615e4a3e433a6c182760f0b34f0ae7c383d
+  checksum: 68023af69e736df682a314206f2f0d8a044804252d0812dc327a4b5ef54504f3a9f458c95b31fdb7ed872a2c62ba3c272a4b79f8c021aad03223458508416cef
   languageName: node
   linkType: hard
 
