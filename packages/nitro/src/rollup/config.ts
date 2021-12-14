@@ -149,7 +149,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // https://github.com/rollup/plugins/tree/master/packages/replace
   rollupConfig.plugins.push(replace({
-    sourceMap: nitroContext.sourceMap,
+    sourceMap: !!nitroContext.sourceMap,
     preventAssignment: true,
     values: {
       'process.env.NODE_ENV': nitroContext._nuxt.dev ? '"development"' : '"production"',
