@@ -4,7 +4,7 @@ import { resolve } from 'pathe'
 import { distDir } from './dirs'
 import { KeyPlugin } from './capi-legacy-key-plugin'
 
-export function setupCAPIBridge (_options: any) {
+export function setupCAPIBridge (options: { legacy?: boolean }) {
   const nuxt = useNuxt()
 
   // Error if `@nuxtjs/composition-api` is added
@@ -35,6 +35,11 @@ export function setupCAPIBridge (_options: any) {
     // @ts-ignore
     configs.forEach(config => config.entry.app.unshift(capiPluginPath))
   })
+
+  if (options.legacy === false) {
+    // Skip adding `@nuxtjs/composition-api` handlers if legacy support is disabled
+    return
+  }
 
   // Handle legacy `@nuxtjs/composition-api`
   nuxt.options.alias['@nuxtjs/composition-api'] = resolve(distDir, 'runtime/capi.legacy.mjs')
