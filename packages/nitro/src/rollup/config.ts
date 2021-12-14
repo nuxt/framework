@@ -306,7 +306,11 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   rollupConfig.plugins.push(json())
 
   // https://github.com/rollup/plugins/tree/master/packages/inject
-  rollupConfig.plugins.push(inject(env.inject))
+  rollupConfig.plugins.push(inject({
+    // @ts-ignore
+    sourceMap: !!nitroContext.sourceMap,
+    ...env.inject
+  }))
 
   // https://github.com/TrySound/rollup-plugin-terser
   // https://github.com/terser/terser#minify-nitroContext
