@@ -2836,7 +2836,7 @@ __metadata:
     mime: ^3.0.0
     mlly: ^0.3.15
     node-fetch: ^3.1.0
-    ohmyfetch: ^0.4.8
+    ohmyfetch: ^0.4.10
     ora: ^6.0.1
     p-debounce: ^4.0.0
     pathe: ^0.2.0
@@ -15102,7 +15102,7 @@ __metadata:
     mlly: ^0.3.15
     murmurhash-es: ^0.1.1
     nuxi: 3.0.0
-    ohmyfetch: ^0.4.8
+    ohmyfetch: ^0.4.10
     pathe: ^0.2.0
     scule: ^0.2.1
     ufo: ^0.7.9
@@ -15240,7 +15240,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ohmyfetch@npm:^0.4.5, ohmyfetch@npm:^0.4.8":
+"ohmyfetch@npm:^0.4.10":
+  version: 0.4.10
+  resolution: "ohmyfetch@npm:0.4.10"
+  dependencies:
+    destr: ^1.1.0
+    node-fetch: ^3.0.0
+    ufo: ^0.7.9
+    undici: ^4.9.5
+  checksum: 9f56b7a10fd6c8bf719e183a81320626cb20a33591bc23dff14292e06ce554a8559c11e8365c477be2d1a69fcdbe77897eef995677b0084b95e12016fd966af2
+  languageName: node
+  linkType: hard
+
+"ohmyfetch@npm:^0.4.5":
   version: 0.4.9
   resolution: "ohmyfetch@npm:0.4.9"
   dependencies:

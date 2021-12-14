@@ -52,7 +52,7 @@
     "mime": "^3.0.0",
     "mlly": "^0.3.15",
     "node-fetch": "^3.1.0",
-    "ohmyfetch": "^0.4.8",
+    "ohmyfetch": "^0.4.10",
     "ora": "^6.0.1",
     "p-debounce": "^4.0.0",
     "pathe": "^0.2.0",
