@@ -109,7 +109,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       outro: '',
       preferConst: true,
       sanitizeFileName: sanitizeFilePath,
-      sourcemap: nitroContext.sourceMap,
+      sourcemap: !!nitroContext.sourceMap,
       sourcemapExcludeSources: true,
       sourcemapPathTransform (relativePath, sourcemapPath) {
         return resolve(dirname(sourcemapPath), relativePath)
@@ -172,7 +172,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   // ESBuild
   rollupConfig.plugins.push(esbuild({
     target: 'es2019',
-    sourceMap: true,
+    sourceMap: !!nitroContext.sourceMap,
     ...nitroContext.esbuild?.options
   }))
 
