@@ -7,9 +7,10 @@ declare module '#assets' {
   export interface AssetMeta { type?: string, etag?: string, mtime?: string }
 
   export const assets: {
-    readAsset<T = any> (id: string): Promise<T>
-    statAsset (id: string): Promise<AssetMeta>
-    getKeys() : Promise<string[]>
+    getKeys(): Promise<string[]>
+    hasItem(id: string): Promise<boolean>
+    getItem<T = any> (id: string): Promise<T>
+    getMeta(id: string): Promise<AssetMeta>
   }
 }
 
