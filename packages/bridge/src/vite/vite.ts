@@ -86,11 +86,15 @@ async function bundle (nuxt: Nuxt, builder: any) {
   await ctx.nuxt.callHook('vite:extend', ctx)
 
   if (nuxt.options.dev) {
-    ctx.nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer) => {
+    ctx.nuxt.hook('vite:serverCreated', async (server: vite.ViteDevServer) => {
       const start = Date.now()
       warmupViteServer(server, ['/.nuxt/entry.mjs']).then(() => {
         consola.info(`Vite warmed up in ${Date.now() - start}ms`)
       }).catch(consola.error)
+
+      consola.info('Optimizing deps...')
+      await vite.optimizeDeps(server.config, false, true)
+      consola.success('Deps optimized')
     })
   }
 

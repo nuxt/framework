@@ -2,7 +2,7 @@ import * as vite from 'vite'
 import { resolve } from 'pathe'
 import consola from 'consola'
 import type { Nuxt } from '@nuxt/schema'
-import type { InlineConfig, SSROptions } from 'vite'
+import { InlineConfig, optimizeDeps, SSROptions } from 'vite'
 import type { Options } from '@vitejs/plugin-vue'
 import { sanitizeFilePath } from 'mlly'
 import { buildClient } from './client'
@@ -99,11 +99,15 @@ export async function bundle (nuxt: Nuxt) {
 
   await nuxt.callHook('vite:extend', ctx)
 
-  nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer) => {
+  nuxt.hook('vite:serverCreated', async (server: vite.ViteDevServer) => {
     const start = Date.now()
     warmupViteServer(server, ['/entry.mjs']).then(() => {
       consola.info(`Vite warmed up in ${Date.now() - start}ms`)
     }).catch(consola.error)
+
+    consola.info('Optimizing deps...')
+    await optimizeDeps(server.config, false, true)
+    consola.success('Deps optimized')
   })
 
   await buildClient(ctx)
