@@ -22,14 +22,15 @@ export interface ViteBuildContext {
 }
 
 export async function bundle (nuxt: Nuxt) {
+  const userViteConfig = nuxt.options.vite as any || {}
   const ctx: ViteBuildContext = {
     nuxt,
     config: vite.mergeConfig(
-      nuxt.options.vite as any || {},
+      userViteConfig,
       {
         root: nuxt.options.srcDir,
         mode: nuxt.options.dev ? 'development' : 'production',
-        logLevel: 'warn',
+        logLevel: userViteConfig.logLevel || 'warn',
         define: {
           'process.dev': nuxt.options.dev
         },

@@ -17,15 +17,16 @@ async function bundle (nuxt: Nuxt, builder: any) {
     p.src = nuxt.resolver.resolvePath(resolve(nuxt.options.buildDir, p.src))
   }
 
+  const userViteConfig = nuxt.options.vite as any || {}
   const ctx: ViteBuildContext = {
     nuxt,
     builder,
     config: vite.mergeConfig(
-      nuxt.options.vite || {},
+      userViteConfig,
       {
         root: nuxt.options.rootDir,
         mode: nuxt.options.dev ? 'development' : 'production',
-        logLevel: 'warn',
+        logLevel: userViteConfig.logLevel || 'warn',
         define: {
           'process.dev': nuxt.options.dev
         },
