@@ -3083,7 +3083,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/ui@npm:^0.0.0-alpha.5":
+"@nuxt/ui@npm:^0.0.0-alpha.5, @nuxt/ui@npm:latest":
   version: 0.0.0-alpha.5
   resolution: "@nuxt/ui@npm:0.0.0-alpha.5"
   dependencies:
@@ -10645,6 +10645,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-locale@workspace:examples/locale"
   dependencies:
+    "@nuxt/ui": latest
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -10653,6 +10654,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-module-extend-pages@workspace:examples/module-extend-pages"
   dependencies:
+    "@nuxt/ui": latest
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -10661,6 +10663,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-use-async-data@workspace:examples/use-async-data"
   dependencies:
+    "@nuxt/ui": latest
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -10669,6 +10672,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-use-cookie@workspace:examples/use-cookie"
   dependencies:
+    "@nuxt/ui": latest
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -10677,6 +10681,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-use-fetch@workspace:examples/use-fetch"
   dependencies:
+    "@nuxt/ui": latest
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -10685,6 +10690,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-use-meta@workspace:examples/use-meta"
   dependencies:
+    "@nuxt/ui": latest
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -10693,6 +10699,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-use-state@workspace:examples/use-state"
   dependencies:
+    "@nuxt/ui": latest
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -10701,6 +10708,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-with-components@workspace:examples/with-components"
   dependencies:
+    "@nuxt/ui": latest
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -10709,6 +10717,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-with-composables@workspace:examples/with-composables"
   dependencies:
+    "@nuxt/ui": latest
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -10717,6 +10726,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-with-layouts@workspace:examples/with-layouts"
   dependencies:
+    "@nuxt/ui": latest
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -10725,6 +10735,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-with-pages@workspace:examples/with-pages"
   dependencies:
+    "@nuxt/ui": latest
     nuxt3: latest
   languageName: unknown
   linkType: soft
