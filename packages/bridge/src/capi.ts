@@ -39,7 +39,6 @@ export function setupCAPIBridge (_options: any) {
   // Handle legacy `@nuxtjs/composition-api`
   nuxt.options.alias['@nuxtjs/composition-api'] = resolve(distDir, 'runtime/capi.legacy.mjs')
   nuxt.options.build.transpile.push('@nuxtjs/composition-api', '@vue/composition-api')
-  addPlugin(resolve(distDir, 'runtime/capi.legacy.plugin.mjs'))
 
   // Enable automatic ssrRef key generation
   addVitePlugin(KeyPlugin.vite())
