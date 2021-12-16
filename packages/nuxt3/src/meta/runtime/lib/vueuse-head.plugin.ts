@@ -1,5 +1,5 @@
 import { createHead, renderHeadToString } from '@vueuse/head'
-import { ref, watchEffect, onBeforeUnmount, getCurrentInstance } from 'vue'
+import { ref, watch, onBeforeUnmount, getCurrentInstance } from 'vue'
 import type { MetaObject } from '..'
 import { defineNuxtPlugin } from '#app'
 
@@ -14,7 +14,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     if (process.server) { return }
 
-    watchEffect(() => {
+    const stop = watch(() => headObj.value, () => {
       head.updateDOM()
     })
 
@@ -22,6 +22,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     if (!vm) { return }
 
     onBeforeUnmount(() => {
+      stop()
       head.removeHeadObjs(headObj)
       head.updateDOM()
     })
