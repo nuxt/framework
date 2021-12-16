@@ -26,11 +26,10 @@ export async function bundle (nuxt: Nuxt) {
   const ctx: ViteBuildContext = {
     nuxt,
     config: vite.mergeConfig(
-      userViteConfig,
       {
         root: nuxt.options.srcDir,
         mode: nuxt.options.dev ? 'development' : 'production',
-        logLevel: userViteConfig.logLevel || 'warn',
+        logLevel: 'warn',
         define: {
           'process.dev': nuxt.options.dev
         },
@@ -94,7 +93,8 @@ export async function bundle (nuxt: Nuxt) {
             ]
           }
         }
-      } as ViteOptions
+      } as ViteOptions,
+      userViteConfig
     )
   }
 
