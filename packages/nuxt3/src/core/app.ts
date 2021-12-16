@@ -79,3 +79,19 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   // Extend app
   await nuxt.callHook('app:resolve', app)
 }
+
+export function initApp (nuxt: Nuxt) {
+  const app = createApp(nuxt)
+
+  nuxt.hook('builder:generateApp', () => generateApp(nuxt, app))
+  nuxt.hook('builder:watch', async (event, path) => {
+    if (event !== 'change' && /app|plugins/i.test(path)) {
+      if (path.match(/app/i)) {
+        app.mainComponent = null
+      }
+      await generateApp(nuxt, app)
+    }
+  })
+
+  return app
+}

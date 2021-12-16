@@ -1,22 +1,11 @@
 import chokidar from 'chokidar'
 import type { Nuxt } from '@nuxt/schema'
-import { createApp, generateApp } from './app'
 
 export async function build (nuxt: Nuxt) {
-  const app = createApp(nuxt)
-  await generateApp(nuxt, app)
+  await nuxt.callHook('builder:generateApp')
 
   if (nuxt.options.dev) {
     watch(nuxt)
-    nuxt.hook('builder:watch', async (event, path) => {
-      if (event !== 'change' && /app|plugins/i.test(path)) {
-        if (path.match(/app/i)) {
-          app.mainComponent = null
-        }
-        await generateApp(nuxt, app)
-      }
-    })
-    nuxt.hook('builder:generateApp', () => generateApp(nuxt, app))
   }
 
   await nuxt.callHook('build:before', { nuxt }, nuxt.options.build)
