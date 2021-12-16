@@ -1,5 +1,5 @@
 import { createRequire } from 'module'
-import { useNuxt, addPlugin, addPluginTemplate, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { useNuxt, addPluginTemplate, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { distDir } from './dirs'
 import { KeyPlugin } from './capi-legacy-key-plugin'
