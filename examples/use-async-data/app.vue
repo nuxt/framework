@@ -12,7 +12,7 @@ const { data, refresh, pending } = await useAsyncData('/api/hello', () => $fetch
     </div>
     <template #tips>
       <div>
-        Nuxt will automatically read in any files in the
+        Nuxt will automatically read files in the
         <a href="https://v3.nuxtjs.org/docs/directory-structure/server#api-routes" target="_blank">
           <code>~/server/api</code> directory
         </a>
