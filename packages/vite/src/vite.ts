@@ -22,7 +22,6 @@ export interface ViteBuildContext {
 }
 
 export async function bundle (nuxt: Nuxt) {
-  const userViteConfig = nuxt.options.vite as any || {}
   const ctx: ViteBuildContext = {
     nuxt,
     config: vite.mergeConfig(
@@ -94,7 +93,7 @@ export async function bundle (nuxt: Nuxt) {
           }
         }
       } as ViteOptions,
-      userViteConfig
+      nuxt.options.vite as any || {}
     )
   }
 

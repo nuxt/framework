@@ -17,7 +17,6 @@ async function bundle (nuxt: Nuxt, builder: any) {
     p.src = nuxt.resolver.resolvePath(resolve(nuxt.options.buildDir, p.src))
   }
 
-  const userViteConfig = nuxt.options.vite as any || {}
   const ctx: ViteBuildContext = {
     nuxt,
     builder,
@@ -80,7 +79,7 @@ async function bundle (nuxt: Nuxt, builder: any) {
           defaultExportPlugin()
         ]
       } as ViteOptions,
-      userViteConfig
+      nuxt.options.vite || {}
     )
   }
 
