@@ -22,6 +22,12 @@ const CookieDefaults: CookieOptions<any> = {
 }
 
 export function useCookie <T=string> (name: string, _opts?: CookieOptions<T>): CookieRef<T> {
+  const nuxtApp = useNuxtApp()
+  nuxtApp._cookies = nuxtApp._cookies || {}
+  if (nuxtApp._cookies[name]) {
+    return nuxtApp._cookies[name]
+  }
+
   const opts = { ...CookieDefaults, ..._opts }
   const cookies = readRawCookies(opts)
 
@@ -39,6 +45,8 @@ export function useCookie <T=string> (name: string, _opts?: CookieOptions<T>): C
       }
     })
   }
+
+  nuxtApp._cookies[name] = cookie
 
   return cookie as CookieRef<T>
 }
