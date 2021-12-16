@@ -94,4 +94,13 @@ export function setupAppBridge (_options: any) {
       })
     }
   })
+
+  nuxt.hook('builder:generateApp', async () => {
+    const { Builder } = await import('@nuxt/builder')
+    ;(nuxt.options.build as any).createRoutes = () => []
+
+    const builder = new Builder(nuxt)
+    await nuxt.callHook('builder:prepared', builder, nuxt.options.build)
+    await builder.generateRoutesAndFiles()
+  })
 }
