@@ -24,10 +24,9 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
 
   // Resolves module options from inline options, [configKey] in nuxt.config, defaults and schema
   function getOptions (inlineOptions?: OptionsT, nuxt: Nuxt = useNuxt()) {
-    let _options: OptionsT
     const configKey = definition.meta.configKey || definition.meta.name
     const _defaults = typeof definition.defaults === 'function' ? definition.defaults(nuxt) : definition.defaults
-    _options = defu(inlineOptions, nuxt.options[configKey], _defaults) as OptionsT
+    let _options = defu(inlineOptions, nuxt.options[configKey], _defaults) as OptionsT
     if (definition.schema) {
       _options = applyDefaults(definition.schema, _options) as OptionsT
     }
