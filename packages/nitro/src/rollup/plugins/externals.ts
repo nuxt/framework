@@ -69,7 +69,7 @@ export function externals (opts: NodeExternalsOptions): Plugin {
     },
     async buildEnd () {
       if (opts.trace !== false) {
-        for (const pkgName of opts.include || []) {
+        for (const pkgName of opts.traceInclude || []) {
           const path = await this.resolve(pkgName)
           if (path.id) {
             trackedExternals.add(path.id)
