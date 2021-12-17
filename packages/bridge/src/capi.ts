@@ -1,10 +1,11 @@
 import { createRequire } from 'module'
 import { useNuxt, addPlugin, addPluginTemplate, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
+import { BridgeConfig } from '../types'
 import { distDir } from './dirs'
 import { KeyPlugin } from './capi-legacy-key-plugin'
 
-export function setupCAPIBridge (options: { legacy?: boolean }) {
+export function setupCAPIBridge (options: Exclude<BridgeConfig['capi'], boolean>) {
   const nuxt = useNuxt()
 
   // Error if `@nuxtjs/composition-api` is added
