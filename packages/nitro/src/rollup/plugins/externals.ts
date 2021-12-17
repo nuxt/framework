@@ -11,7 +11,7 @@ export interface NodeExternalsOptions {
   traceOptions?: NodeFileTraceOptions
   moduleDirectories?: string[]
   /** additional packages to include in `.output/server/node_modules` */
-  include?: string[]
+  traceInclude?: string[]
 }
 
 export function externals (opts: NodeExternalsOptions): Plugin {
