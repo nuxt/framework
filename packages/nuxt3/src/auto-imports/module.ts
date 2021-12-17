@@ -89,7 +89,6 @@ export default defineNuxtModule<AutoImportsOptions>({
       references.push({ path: resolve(nuxt.options.buildDir, 'auto-imports.d.ts') })
       references.push({ path: resolve(nuxt.options.buildDir, 'imports.d.ts') })
       references.push({ path: resolve(nuxt.options.buildDir, 'components.d.ts') })
-
     })
 
     // Watch composables/ directory
