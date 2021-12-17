@@ -13,7 +13,7 @@ export async function installModule (nuxtModule: string | NuxtModule, inlineOpti
     // @ts-ignore
     [nuxt, nuxtModule] = [nuxtModule, inlineOptions]
     inlineOptions = {}
-    console.warn(new Error('`installModule` is being called with old signuture!'))
+    console.warn(new Error('`installModule` is being called with old signature!'))
   }
 
   // Import if input is string
