@@ -16,7 +16,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
   // Normalize definition and meta
   if (!definition.meta) { definition.meta = {} }
   if (!definition.meta.configKey) {
-    // @ts-ignore TODO Remove non-meta allbacks in RC
+    // @ts-ignore TODO Remove non-meta fallbacks in RC
     definition.meta.name = definition.meta.name || definition.name
     // @ts-ignore
     definition.meta.configKey = definition.meta.configKey || definition.configKey || definition.meta.name
