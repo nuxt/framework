@@ -308,6 +308,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // https://github.com/rollup/plugins/tree/master/packages/inject
   rollupConfig.plugins.push(inject({
+    // TODO: https://github.com/rollup/plugins/pull/1066
     // @ts-ignore
     sourceMap: !!nitroContext.sourceMap,
     ...env.inject
