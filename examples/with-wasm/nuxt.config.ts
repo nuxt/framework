@@ -6,7 +6,7 @@ export default defineNuxtConfig({
       wasm: true
     }
   },
-  buildModules: [
+  modules: [
     '@nuxt/ui'
   ]
 })
