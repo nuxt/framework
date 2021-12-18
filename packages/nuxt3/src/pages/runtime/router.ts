@@ -3,8 +3,7 @@ import {
   createRouter,
   createWebHistory,
   createMemoryHistory,
-  RouterLink,
-  RouteLocationNormalizedLoaded
+  RouterLink
 } from 'vue-router'
 import NuxtChild from './child.vue'
 import NuxtPage from './page.vue'
@@ -20,18 +19,6 @@ declare module 'vue' {
     NuxtLayout: typeof NuxtLayout
     NuxtLink: typeof RouterLink
   }
-}
-
-const START_LOCATION_NORMALIZED: RouteLocationNormalizedLoaded = {
-  path: '/',
-  name: undefined,
-  params: {},
-  query: {},
-  hash: '',
-  fullPath: '/',
-  matched: [],
-  meta: {},
-  redirectedFrom: undefined
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -61,7 +48,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // https://github.com/vuejs/vue-router-next/blob/master/src/router.ts#L1192-L1200
   const route = {}
-  for (const key in START_LOCATION_NORMALIZED) {
+  for (const key in router.currentRoute.value) {
     route[key] = computed(() => router.currentRoute.value[key])
   }
 
