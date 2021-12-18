@@ -1,9 +1,10 @@
-import { shallowRef } from 'vue'
+import { computed, reactive, shallowRef } from 'vue'
 import {
   createRouter,
   createWebHistory,
   createMemoryHistory,
-  RouterLink
+  RouterLink,
+  RouteLocationNormalizedLoaded
 } from 'vue-router'
 import NuxtChild from './child.vue'
 import NuxtPage from './page.vue'
@@ -19,6 +20,18 @@ declare module 'vue' {
     NuxtLayout: typeof NuxtLayout
     NuxtLink: typeof RouterLink
   }
+}
+
+const START_LOCATION_NORMALIZED: RouteLocationNormalizedLoaded = {
+  path: '/',
+  name: undefined,
+  params: {},
+  query: {},
+  hash: '',
+  fullPath: '/',
+  matched: [],
+  meta: {},
+  redirectedFrom: undefined
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -45,6 +58,14 @@ export default defineNuxtPlugin((nuxtApp) => {
   Object.defineProperty(nuxtApp.vueApp.config.globalProperties, 'previousRoute', {
     get: () => previousRoute.value
   })
+
+  // https://github.com/vuejs/vue-router-next/blob/master/src/router.ts#L1192-L1200
+  const route = {}
+  for (const key in START_LOCATION_NORMALIZED) {
+    route[key] = computed(() => router.currentRoute.value[key])
+  }
+
+  nuxtApp._route = reactive(route)
 
   nuxtApp.hook('app:created', async () => {
     if (process.server) {
