@@ -8,9 +8,6 @@ export const useRouter = () => {
 
 export const useRoute = (): RouteLocationNormalizedLoaded => {
   const nuxtApp = useNuxtApp()
-  if (nuxtApp._route) {
-    return nuxtApp._route
-  }
 
   const currentRoute = (nuxtApp.$router as Router).currentRoute
 
