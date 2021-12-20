@@ -1,4 +1,5 @@
-import { promises as fsp } from 'fs'
+import { existsSync, promises as fsp } from 'fs'
+import { dirname, relative } from 'path'
 import { execa } from 'execa'
 import { resolve } from 'pathe'
 import consola from 'consola'
@@ -9,27 +10,38 @@ export default defineNuxtCommand({
   meta: {
     name: 'preview',
     usage: 'npx nuxi preview|start [rootDir]',
-    description: 'Launches a built Nuxt server for local testing.'
+    description: 'Launches nitro server for local testing after `nuxi build`.'
   },
   async invoke (args) {
     process.env.NODE_ENV = process.env.NODE_ENV || 'production'
     const rootDir = resolve(args._[0] || '.')
 
-    try {
-      const outputPath = resolve(rootDir, '.output')
-      const nitroConfig = JSON.parse(await fsp.readFile(resolve(outputPath, 'nitro.json'), 'utf-8'))
-      if (nitroConfig.preview) {
-        consola.info(`Previewing \`${nitroConfig.preset}\` build.`)
-        const [command, ...args] = nitroConfig.preview.split(' ')
-        await execa(command, args, { stdio: 'inherit', cwd: outputPath })
-      } else {
-        consola.error(`Preview is not supported for \`${nitroConfig.preset}\`.`)
-      }
-    } catch (e) {
-      if (e.message?.includes?.('ENOENT')) {
-        return consola.error('You must run `nuxi build` before previewing your site.')
-      }
-      consola.error(e)
+    const nitroJSONPaths = ['.output/nitro.json', 'nitro.json'].map(p => resolve(rootDir, p))
+    const nitroJSONPath = nitroJSONPaths.find(p => existsSync(p))
+    if (!nitroJSONPath) {
+      consola.error('Cannot find `nitro.json`. Did you run `nuxi build` first? Search path:\n', nitroJSONPaths)
+      process.exit(1)
+    }
+    const outputPath = dirname(nitroJSONPath)
+    const nitroJSON = JSON.parse(await fsp.readFile(nitroJSONPath, 'utf-8'))
+
+    consola.warn('This command is for local preview. Do not use in production!')
+
+    consola.info('Node.js version:', process.versions.node)
+    consola.info('Preset:', nitroJSON.preset)
+    consola.info('Working dir:', relative(process.cwd(), outputPath))
+
+    if (!nitroJSON.preview) {
+      consola.error('Preview is not supported for this build.')
+      process.exit(1)
+    }
+
+    consola.info('Starting preview command:', nitroJSON.preview)
+
+    if (nitroJSON.preview) {
+      const [command, ...args] = nitroJSON.preview.split(' ')
+      consola.log('')
+      await execa(command, args, { stdio: 'inherit', cwd: outputPath })
     }
   }
 })
