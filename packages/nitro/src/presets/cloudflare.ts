@@ -1,4 +1,4 @@
-import { relative, resolve } from 'pathe'
+import { resolve } from 'pathe'
 import consola from 'consola'
 import { extendPreset, writeFile, prettyPath, hl } from '../utils'
 import { NitroContext, NitroPreset } from '../context'
@@ -9,7 +9,7 @@ export const cloudflare: NitroPreset = extendPreset(worker, {
   ignore: [
     'wrangler.toml'
   ],
-  previewCommand: ({ output }) => `npx miniflare ${relative(output.dir, output.serverDir)}/index.mjs --site ${relative(output.dir, output.publicDir)}`,
+  previewCommand: 'npx miniflare {{ output.serverDir }}/index.mjs --site {{ output.publicDir }}',
   hooks: {
     async 'nitro:compiled' ({ output, _nuxt }: NitroContext) {
       await writeFile(resolve(output.dir, 'package.json'), JSON.stringify({ private: true, main: './server/index.mjs' }, null, 2))

@@ -51,18 +51,18 @@ export async function writeFile (file: string, contents: string, log = false) {
   }
 }
 
-export function resolvePath (nitroContext: NitroInput, path: string | ((nitroContext: NitroInput) => string), resolveBase: string = ''): string {
-  if (typeof path === 'function') {
-    path = path(nitroContext)
+export function evalTemplate (ctx, input: string | ((ctx) => string)): string {
+  if (typeof input === 'function') {
+    input = input(ctx)
   }
-
-  if (typeof path !== 'string') {
-    throw new TypeError('Invalid path: ' + path)
+  if (typeof input !== 'string') {
+    throw new TypeError('Invalid template: ' + input)
   }
+  return compileTemplate(input)(ctx)
+}
 
-  path = compileTemplate(path)(nitroContext)
-
-  return resolve(resolveBase, path)
+export function resolvePath (nitroContext: NitroInput, input: string | ((nitroContext: NitroInput) => string), resolveBase: string = ''): string {
+  return resolve(resolveBase, evalTemplate(nitroContext, input))
 }
 
 export function detectTarget () {

@@ -4,7 +4,7 @@ import * as rollup from 'rollup'
 import fse from 'fs-extra'
 import { printFSTree } from './utils/tree'
 import { getRollupConfig } from './rollup/config'
-import { hl, prettyPath, serializeTemplate, writeFile, isDirectory, readDirRecursively } from './utils'
+import { hl, prettyPath, serializeTemplate, writeFile, isDirectory, readDirRecursively, evalTemplate } from './utils'
 import { NitroContext } from './context'
 import { scanMiddleware } from './server/middleware'
 
@@ -34,7 +34,8 @@ export async function generate (nitroContext: NitroContext) {
   const nitroConfigPath = resolve(nitroContext.output.dir, 'nitro.json')
   const nitroConfig = {
     preset: nitroContext.preset,
-    preview: nitroContext.previewCommand?.(nitroContext)
+    preview: evalTemplate(nitroContext, nitroContext.previewCommand)
+      .replace(new RegExp(nitroContext.output.dir, 'g'), '.')
   }
   await writeFile(nitroConfigPath, JSON.stringify(nitroConfig, null, 2))
 

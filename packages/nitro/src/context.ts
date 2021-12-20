@@ -40,7 +40,7 @@ export interface NitroContext {
   experiments?: {
     wasm?: boolean
   }
-  previewCommand?: (config: NitroContext) => string
+  previewCommand?: string | ((config: NitroContext) => string)
   moduleSideEffects: string[]
   renderer: string
   serveStatic: boolean
