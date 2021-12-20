@@ -1,6 +1,6 @@
 import { createRequire } from 'module'
 import { defineNuxtModule, installModule, checkNuxtCompatibilityIssues } from '@nuxt/kit'
-import type { BridgeConfig } from '../types'
+import type { BridgeConfig, ScriptSetupOptions } from '../types'
 import { setupNitroBridge } from './nitro'
 import { setupAppBridge } from './app'
 import { setupCAPIBridge } from './capi'
@@ -42,10 +42,10 @@ export default defineNuxtModule({
       if (!opts.app) {
         throw new Error('[bridge] Cannot enable composition-api with app disabled!')
       }
-      await setupCAPIBridge(opts.capi)
+      await setupCAPIBridge(opts.capi === true ? {} : opts.capi)
     }
     if (opts.scriptSetup) {
-      await setupScriptSetup()
+      await setupScriptSetup(opts.scriptSetup as ScriptSetupOptions)
     }
     if (opts.autoImports) {
       await setupAutoImports()
