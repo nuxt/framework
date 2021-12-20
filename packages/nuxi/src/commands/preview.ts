@@ -25,23 +25,18 @@ export default defineNuxtCommand({
     const outputPath = dirname(nitroJSONPath)
     const nitroJSON = JSON.parse(await fsp.readFile(nitroJSONPath, 'utf-8'))
 
-    consola.warn('This command is for local preview. Do not use in production!')
-
     consola.info('Node.js version:', process.versions.node)
     consola.info('Preset:', nitroJSON.preset)
     consola.info('Working dir:', relative(process.cwd(), outputPath))
 
-    if (!nitroJSON.preview) {
+    if (!nitroJSON.commands.preview) {
       consola.error('Preview is not supported for this build.')
       process.exit(1)
     }
 
-    consola.info('Starting preview command:', nitroJSON.preview)
-
-    if (nitroJSON.preview) {
-      const [command, ...args] = nitroJSON.preview.split(' ')
-      consola.log('')
-      await execa(command, args, { stdio: 'inherit', cwd: outputPath })
-    }
+    consola.info('Starting preview command:', nitroJSON.commands.preview)
+    const [command, ...commandArgs] = nitroJSON.commands.preview.split(' ')
+    consola.log('')
+    await execa(command, commandArgs, { stdio: 'inherit', cwd: outputPath })
   }
 })
