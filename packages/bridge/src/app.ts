@@ -96,10 +96,10 @@ export function setupAppBridge (_options: any) {
   })
 
   nuxt.hook('builder:generateApp', async () => {
-    const { Builder } = await import('@nuxt/builder')
+    const { getBuilder } = await import('nuxt')
     ;(nuxt.options.build as any).createRoutes = () => []
 
-    const builder = new Builder(nuxt)
+    const builder = getBuilder(nuxt)
     await nuxt.callHook('builder:prepared', builder, nuxt.options.build)
     await builder.generateRoutesAndFiles()
   })
