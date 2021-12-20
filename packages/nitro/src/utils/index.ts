@@ -65,6 +65,10 @@ export function resolvePath (nitroContext: NitroInput, input: string | ((nitroCo
   return resolve(resolveBase, evalTemplate(nitroContext, input))
 }
 
+export function replaceAll (input: string, from: string, to: string) {
+  return input.replace(new RegExp(from, 'g'), to)
+}
+
 export function detectTarget () {
   if (process.env.NETLIFY || process.env.NETLIFY_LOCAL) {
     return 'netlify'

@@ -71,5 +71,5 @@ async function writeRoutes ({ output: { dir, serverDir } }: NitroContext) {
   await zipDirectory(dir, join(dir, 'deploy.zip'))
   const zipPath = prettyPath(resolve(dir, 'deploy.zip'))
 
-  consola.success(`Ready to run \`az functionapp deployment source config-zip -g <resource-group> -n <app-name> --src ${zipPath}\``)
+  consola.success(`Ready to deploy using \`az functionapp deployment source config-zip -g <resource-group> -n <app-name> --src ${zipPath}\``)
 }

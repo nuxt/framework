@@ -1,8 +1,7 @@
-import consola from 'consola'
 import fse from 'fs-extra'
 import globby from 'globby'
 import { join, resolve } from 'pathe'
-import { hl, prettyPath, writeFile } from '../utils'
+import { writeFile } from '../utils'
 import { NitroPreset, NitroContext } from '../context'
 
 export const azure: NitroPreset = {
@@ -11,7 +10,9 @@ export const azure: NitroPreset = {
   output: {
     serverDir: '{{ output.dir }}/server/functions'
   },
-  previewCommand: 'npx @azure/static-web-apps-cli start {{ output.publicDir }} --api-location {{ output.serverDir }}/..',
+  commands: {
+    preview: 'npx @azure/static-web-apps-cli start {{ output.publicDir }} --api-location {{ output.serverDir }}/..'
+  },
   hooks: {
     async 'nitro:compiled' (ctx: NitroContext) {
       await writeRoutes(ctx)
@@ -102,8 +103,4 @@ async function writeRoutes ({ output }: NitroContext) {
   if (!indexFileExists) {
     await writeFile(indexPath, '')
   }
-
-  const apiDir = resolve(output.serverDir, '..')
-
-  consola.success('Ready to run', hl('npx @azure/static-web-apps-cli start ' + prettyPath(output.publicDir) + ' --api-location ' + prettyPath(apiDir)), 'for local testing')
 }

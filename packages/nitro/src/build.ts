@@ -4,7 +4,7 @@ import * as rollup from 'rollup'
 import fse from 'fs-extra'
 import { printFSTree } from './utils/tree'
 import { getRollupConfig } from './rollup/config'
-import { hl, prettyPath, serializeTemplate, writeFile, isDirectory, readDirRecursively, evalTemplate } from './utils'
+import { hl, prettyPath, serializeTemplate, writeFile, isDirectory, readDirRecursively, replaceAll } from './utils'
 import { NitroContext } from './context'
 import { scanMiddleware } from './server/middleware'
 
@@ -29,15 +29,6 @@ async function cleanupDir (dir: string) {
 
 export async function generate (nitroContext: NitroContext) {
   consola.start('Generating public...')
-
-  // Preserve nitro preset and preview command in .output/nitro.json
-  const nitroConfigPath = resolve(nitroContext.output.dir, 'nitro.json')
-  const nitroConfig = {
-    preset: nitroContext.preset,
-    preview: evalTemplate(nitroContext, nitroContext.previewCommand)
-      .replace(new RegExp(nitroContext.output.dir, 'g'), '.')
-  }
-  await writeFile(nitroConfigPath, JSON.stringify(nitroConfig, null, 2))
 
   const publicDir = nitroContext._nuxt.publicDir
   let publicFiles: string[] = []
@@ -116,9 +107,34 @@ async function _build (nitroContext: NitroContext) {
   consola.start('Writing server bundle...')
   await build.write(nitroContext.rollupConfig.output)
 
+  const rewriteBuildPaths = (input: unknown, to: string) =>
+    typeof input === 'string' ? replaceAll(input, nitroContext.output.dir, to) : undefined
+
+  // Write build info
+  const nitroConfigPath = resolve(nitroContext.output.dir, 'nitro.json')
+  const buildInfo = {
+    date: new Date(),
+    preset: nitroContext.preset,
+    commands: {
+      preview: rewriteBuildPaths(nitroContext.commands.preview, '.'),
+      deploy: rewriteBuildPaths(nitroContext.commands.deploy, '.')
+    }
+  }
+  await writeFile(nitroConfigPath, JSON.stringify(buildInfo, null, 2))
+
   consola.success('Server built')
   await printFSTree(nitroContext.output.serverDir)
   await nitroContext._internal.hooks.callHook('nitro:compiled', nitroContext)
+
+  // Show deploy and preview hints
+  const rOutDir = relative(process.cwd(), nitroContext.output.dir)
+  if (nitroContext.commands.preview) {
+    // consola.info(`You can preview this build using \`${rewriteBuildPaths(nitroContext.commands.preview, rOutDir)}\``)
+    consola.info('You can preview this build using `nuxi preview`')
+  }
+  if (nitroContext.commands.deploy) {
+    consola.info(`You can deploy this build using \`${rewriteBuildPaths(nitroContext.commands.deploy, rOutDir)}\``)
+  }
 
   return {
     entry: resolve(nitroContext.rollupConfig.output.dir, nitroContext.rollupConfig.output.entryFileNames as string)
