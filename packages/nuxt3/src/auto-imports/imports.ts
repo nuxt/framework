@@ -15,7 +15,7 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
       'useFetch',
       'useLazyFetch',
       'useCookie',
-      'useReqHeaders'
+      'useRequestHeaders'
     ]
   },
   // #meta
