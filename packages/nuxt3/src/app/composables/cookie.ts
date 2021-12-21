@@ -57,7 +57,8 @@ function readRawCookies (opts: CookieOptions = {}): Record<string, string> {
   }
 }
 
-function serializeCookie (name: string, value: any, opts: CookieSerializeOptions = {}) {
+function serializeCookie (name: string, value: any, _opts: CookieSerializeOptions = {}) {
+  const opts = { ..._opts }
   if (value === null || value === undefined) {
     opts.maxAge = -1
   }
