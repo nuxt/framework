@@ -1,23 +1,19 @@
 export interface NuxtCompatibility {
   /**
-   * Required nuxt version. for example, `^2.14.0` or `>=3.0.0-27219851.6e49637`.
+   * Required nuxt version in semver format.
+   *
+   * @example `^2.14.0` or `>=3.0.0-27219851.6e49637`.
    *
    */
   nuxt?: string
 
   /**
-   * Special requirements for the module
+   * Bridge constraint for Nuxt 2 support.
+   *
+   * - `true`:  When using Nuxt 2, using bridge module is required
+   * - `false`: When using Nuxt 2, using bridge module is not supported
   */
-  requires?: {
-    /**
-     * Nuxt 2 bridge compatibility
-     *
-    * - `undefined` `false`: Bridge is not supported
-     * - `true`: Having bridge is necessary for this module
-     * - `optional`: Module should work with/without bridge
-     */
-    bridge?: boolean | 'optional'
-  }
+  bridge?: Boolean
 }
 
 export interface NuxtCompatibilityIssue {

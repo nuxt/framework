@@ -8,7 +8,7 @@ import { useNuxt } from './context'
 export async function checkNuxtCompatibility (constraints: NuxtCompatibility, nuxt: Nuxt = useNuxt()): Promise<NuxtCompatibilityIssues> {
   const issues: NuxtCompatibilityIssues = []
 
-  // Nuxt version checking
+  // Nuxt version check
   if (constraints.nuxt) {
     const nuxtVersion = getNuxtVersion(nuxt)
     const nuxtSemanticVersion = nuxtVersion.split('-').shift()
@@ -20,10 +20,30 @@ export async function checkNuxtCompatibility (constraints: NuxtCompatibility, nu
     }
   }
 
-  // Allow extending compatibility checker
+  // Bridge compatibility check
+  if (isNuxt2(nuxt)) {
+    const bridgeRequirement = constraints?.bridge
+    const hasBridge = !!(nuxt.options as any).bridge
+    if (bridgeRequirement === true && !hasBridge) {
+      issues.push({
+        name: 'bridge',
+        message: 'Nuxt bridge is required'
+      })
+    } else if (bridgeRequirement === false && hasBridge) {
+      issues.push({
+        name: 'bridge',
+        message: 'Nuxt bridge is not supported'
+      })
+    }
+  }
+
+  // Allow extending compatibility checks
   await nuxt.callHook('kit:compatibility', constraints, issues)
 
-  issues.toString = () => issues.map(issue => ` - [${issue.name}] ${issue.message}`).join('\n')
+  // Issues formatter
+  issues.toString = () =>
+    issues.map(issue => ` - [${issue.name}] ${issue.message}`).join('\n')
+
   return issues
 }
 

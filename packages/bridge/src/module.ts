@@ -26,7 +26,7 @@ export default defineNuxtModule({
     transpile: true,
     scriptSetup: true,
     autoImports: true,
-    constraints: true,
+    compatibility: true,
     meta: null,
     // TODO: Remove from 2.16
     postcss8: true,
@@ -70,7 +70,7 @@ export default defineNuxtModule({
     if (opts.transpile) {
       setupTranspile()
     }
-    if (opts.constraints) {
+    if (opts.compatibility) {
       nuxt.hook('modules:done', async (moduleContainer: any) => {
         for (const [name, m] of Object.entries(moduleContainer.requiredModules || {})) {
           const compat = ((m as any)?.handler?.meta?.compatibility || {}) as NuxtCompatibility

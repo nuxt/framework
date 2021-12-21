@@ -3,8 +3,12 @@ module.exports = function (...args) {
   return import('./dist/module.mjs').then(m => m.default.call(this, ...args))
 }
 
+const pkg = require('./package.json')
+
 module.exports.defineNuxtConfig = (config = {}) => {
   if (config.bridge !== false) {
+    config.bridge = config.bridge || {}
+    config.bridge._version = pkg.version
     if (!config.buildModules) {
       config.buildModules = []
     }
@@ -14,8 +18,6 @@ module.exports.defineNuxtConfig = (config = {}) => {
   }
   return config
 }
-
-const pkg = require('./package.json')
 
 module.exports.meta = {
   pkg,
