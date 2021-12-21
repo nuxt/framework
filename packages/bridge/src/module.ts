@@ -1,5 +1,5 @@
 import { createRequire } from 'module'
-import { defineNuxtModule, installModule, checkNuxtCompatibility } from '@nuxt/kit'
+import { defineNuxtModule, installModule, checkNuxtCompatibility, nuxtCtx } from '@nuxt/kit'
 import type { NuxtModule } from '@nuxt/schema'
 import { NuxtCompatibility } from '@nuxt/schema/src/types/compatibility'
 import type { BridgeConfig, ScriptSetupOptions } from '../types'
@@ -35,6 +35,11 @@ export default defineNuxtModule({
   } as BridgeConfig,
   async setup (opts, nuxt) {
     const _require = createRequire(import.meta.url)
+
+    // Allow using kit compasables in all modules
+    if (!nuxtCtx.use()) {
+      nuxtCtx.set(nuxt)
+    }
 
     if (opts.nitro) {
       await setupNitroBridge()
