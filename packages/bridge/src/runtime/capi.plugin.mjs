@@ -10,7 +10,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.nuxt2Context.app.setup = function (...args) {
     const result = _originalSetup instanceof Function ? _originalSetup(...args) : {}
 
-    const hookResult = useNuxtApp().hooks.callHookWith(hooks => hooks.map(hook => hook()), 'vue:setup')
+    const hookResult = nuxtApp.hooks.callHookWith(hooks => hooks.map(hook => hook()), 'vue:setup')
     if (process.dev && hookResult && hookResult.some(i => i && 'then' in i)) {
       console.error('[nuxt] Error in `vue:setup`. Callbacks must be synchronous.')
     }
