@@ -1,7 +1,7 @@
 import { pascalCase, kebabCase } from 'scule'
 import type { ComponentsDir, Component } from '@nuxt/schema'
 import { useNuxt } from './context'
-import { ensureNuxtCompatibility } from './compatibility'
+import { assertNuxtCompatibility } from './compatibility'
 
 /**
  * Register a directory to be scanned for components and imported only when used.
@@ -10,7 +10,7 @@ import { ensureNuxtCompatibility } from './compatibility'
  */
 export function addComponentsDir (dir: ComponentsDir) {
   const nuxt = useNuxt()
-  ensureNuxtCompatibility({ nuxt: '>=2.13' }, nuxt)
+  assertNuxtCompatibility({ nuxt: '>=2.13' }, nuxt)
   nuxt.options.components = nuxt.options.components || []
   nuxt.hook('components:dirs', (dirs) => { dirs.push(dir) })
 }
@@ -26,7 +26,7 @@ export type AddComponentOptions = { name: string, filePath: string } & Partial<E
  */
 export function addComponent (opts: AddComponentOptions) {
   const nuxt = useNuxt()
-  ensureNuxtCompatibility({ nuxt: '>=2.13' }, nuxt)
+  assertNuxtCompatibility({ nuxt: '>=2.13' }, nuxt)
   nuxt.options.components = nuxt.options.components || []
 
   // Apply defaults

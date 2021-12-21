@@ -5,7 +5,7 @@ import consola from 'consola'
 import { dirname } from 'pathe'
 import type { Nuxt, NuxtTemplate, NuxtModule, ModuleOptions, ModuleDefinition } from '@nuxt/schema'
 import { useNuxt, nuxtCtx } from '../context'
-import { isNuxt2, checkNuxtCompatibilityIssues } from '../compatibility'
+import { isNuxt2, checkNuxtCompatibility } from '../compatibility'
 import { templateUtils, compileTemplate } from '../internal/template'
 
 /**
@@ -16,7 +16,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
   // Normalize definition and meta
   if (!definition.meta) { definition.meta = {} }
   if (!definition.meta.configKey) {
-    // @ts-ignore TODO Remove non-meta fallbacks in RC
+    // @ts-ignore TODO: Remove non-meta fallbacks in RC
     definition.meta.name = definition.meta.name || definition.name
     // @ts-ignore
     definition.meta.configKey = definition.meta.configKey || definition.configKey || definition.meta.name
@@ -51,8 +51,8 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
     }
 
     // Check compatibility contraints
-    if (definition.meta.requires) {
-      const issues = checkNuxtCompatibilityIssues(definition.meta.requires, nuxt)
+    if (definition.meta.compatibility) {
+      const issues = checkNuxtCompatibility(definition.meta.compatibility, nuxt)
       if (issues.length) {
         consola.warn(`Module \`${definition.meta.name}\` is disabled due to incompatibility issues:\n${issues.toString()}`)
         return

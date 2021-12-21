@@ -1,25 +1,6 @@
 import { NuxtHooks } from './hooks'
-import type { Nuxt, NuxtTemplate } from "./nuxt";
-
-
-export interface NuxtCompatibilityConstraints {
-  /**
-   * Required nuxt version. for example, `^2.14.0` or `>=3.0.0-27219851.6e49637`.
-   */
-  nuxt?: string
-}
-
-export interface NuxtCompatibilityIssue {
-  name: string
-  message: string
-}
-
-export interface NuxtCompatibilityIssues extends Array<NuxtCompatibilityIssue> {
-  /**
-   * Return formatted error message
-   */
-  toString(): string
-}
+import type { Nuxt, NuxtTemplate } from "./nuxt"
+import type { NuxtCompatibility } from './compatibility'
 
 export interface ModuleMeta {
   /** Module name */
@@ -35,9 +16,9 @@ export interface ModuleMeta {
   configKey?: string
 
   /**
-   * Semver constraints for the versions of Nuxt or features this module are supported.
+   * Constraints for the versions of Nuxt or features this module requires
    */
-  requires?: NuxtCompatibilityConstraints
+  compatibility?: NuxtCompatibility
 
   [key: string]: any
 }

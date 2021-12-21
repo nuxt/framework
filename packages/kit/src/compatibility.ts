@@ -1,11 +1,11 @@
 import satisfies from 'semver/functions/satisfies.js' // npm/node-semver#381
-import type { Nuxt, NuxtCompatibilityConstraints, NuxtCompatibilityIssues } from '@nuxt/schema'
+import type { Nuxt, NuxtCompatibility, NuxtCompatibilityIssues } from '@nuxt/schema'
 import { useNuxt } from './context'
 
 /**
  * Check version constraints and return incompatibility issues as an array
  */
-export function checkNuxtCompatibilityIssues (constraints: NuxtCompatibilityConstraints, nuxt: Nuxt = useNuxt()): NuxtCompatibilityIssues {
+export function checkNuxtCompatibility (constraints: NuxtCompatibility, nuxt: Nuxt = useNuxt()): NuxtCompatibilityIssues {
   const issues: NuxtCompatibilityIssues = []
   if (constraints.nuxt) {
     const nuxtVersion = getNuxtVersion(nuxt)
@@ -24,8 +24,8 @@ export function checkNuxtCompatibilityIssues (constraints: NuxtCompatibilityCons
 /**
  * Check version constraints and throw a detailed error if has any, otherwise returns true
  */
-export function ensureNuxtCompatibility (constraints: NuxtCompatibilityConstraints, nuxt: Nuxt = useNuxt()): true {
-  const issues = checkNuxtCompatibilityIssues(constraints, nuxt)
+export function assertNuxtCompatibility (constraints: NuxtCompatibility, nuxt: Nuxt = useNuxt()): true {
+  const issues = checkNuxtCompatibility(constraints, nuxt)
   if (issues.length) {
     throw new Error('Nuxt compatibility issues found:\n' + issues.toString())
   }
@@ -35,8 +35,8 @@ export function ensureNuxtCompatibility (constraints: NuxtCompatibilityConstrain
 /**
  * Check version constraints and return true if passed, otherwise returns false
  */
-export function hasNuxtCompatibility (constraints: NuxtCompatibilityConstraints, nuxt: Nuxt = useNuxt()) {
-  return !checkNuxtCompatibilityIssues(constraints, nuxt).length
+export function hasNuxtCompatibility (constraints: NuxtCompatibility, nuxt: Nuxt = useNuxt()) {
+  return !checkNuxtCompatibility(constraints, nuxt).length
 }
 
 /**

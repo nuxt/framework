@@ -1,6 +1,7 @@
 import { createRequire } from 'module'
-import { defineNuxtModule, installModule, checkNuxtCompatibilityIssues } from '@nuxt/kit'
+import { defineNuxtModule, installModule, checkNuxtCompatibility } from '@nuxt/kit'
 import type { NuxtModule } from '@nuxt/schema'
+import { NuxtCompatibility } from '@nuxt/schema/src/types/compatibility'
 import type { BridgeConfig, ScriptSetupOptions } from '../types'
 import { setupNitroBridge } from './nitro'
 import { setupAppBridge } from './app'
@@ -72,9 +73,9 @@ export default defineNuxtModule({
     if (opts.constraints) {
       nuxt.hook('modules:done', (moduleContainer: any) => {
         for (const [name, m] of Object.entries(moduleContainer.requiredModules || {})) {
-          const requires = (m as any)?.handler?.meta?.requires
-          if (requires) {
-            const issues = checkNuxtCompatibilityIssues(requires, nuxt)
+          const compat = ((m as any)?.handler?.meta?.compatibility || {}) as NuxtCompatibility
+          if (compat) {
+            const issues = checkNuxtCompatibility(compat, nuxt)
             if (issues.length) {
               console.warn(`[bridge] Detected module incompatibility issues for \`${name}\`:\n` + issues.toString())
             }
