@@ -14,6 +14,7 @@ import wasmPlugin from '@rollup/plugin-wasm'
 import inject from '@rollup/plugin-inject'
 import { visualizer } from 'rollup-plugin-visualizer'
 import * as unenv from 'unenv'
+import devalue from '@nuxt/devalue'
 
 import type { Preset } from 'unenv'
 import { sanitizeFilePath } from 'mlly'
@@ -22,7 +23,7 @@ import { resolvePath } from '../utils'
 import { pkgDir } from '../dirs'
 
 import { dynamicRequire } from './plugins/dynamic-require'
-import { externals } from './plugins/externals'
+import { externals, NodeExternalsOptions } from './plugins/externals'
 import { timing } from './plugins/timing'
 // import { autoMock } from './plugins/automock'
 import { staticAssets, dirnames } from './plugins/static'
@@ -164,7 +165,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       'process.env.NUXT_STATIC_VERSION': JSON.stringify(nitroContext._nuxt.staticAssets.version),
       'process.env.NUXT_FULL_STATIC': nitroContext._nuxt.fullStatic as unknown as string,
       'process.env.NITRO_PRESET': JSON.stringify(nitroContext.preset),
-      'process.env.RUNTIME_CONFIG': JSON.stringify(nitroContext._nuxt.runtimeConfig),
+      'process.env.RUNTIME_CONFIG': devalue(nitroContext._nuxt.runtimeConfig),
       'process.env.DEBUG': JSON.stringify(nitroContext._nuxt.dev)
     }
   }))
@@ -249,7 +250,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // Externals Plugin
   if (nitroContext.externals) {
-    rollupConfig.plugins.push(externals(defu(nitroContext.externals as any, {
+    rollupConfig.plugins.push(externals(defu(nitroContext.externals as NodeExternalsOptions, {
       outDir: nitroContext.output.serverDir,
       moduleDirectories,
       external: [
@@ -266,7 +267,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
         nitroContext._nuxt.srcDir,
         nitroContext._nuxt.rootDir,
         nitroContext._nuxt.serverDir,
-        ...nitroContext.middleware.map(m => m.handle),
+        ...nitroContext.middleware.map(m => m.handle).filter(i => typeof i === 'string') as string[],
         ...(nitroContext._nuxt.dev ? [] : ['vue', '@vue/', '@nuxt/'])
       ],
       traceOptions: {
