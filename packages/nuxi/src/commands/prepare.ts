@@ -1,3 +1,4 @@
+import { buildNuxt } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { clearDir } from '../utils/fs'
 import { loadKit } from '../utils/kit'
@@ -18,6 +19,7 @@ export default defineNuxtCommand({
     const nuxt = await loadNuxt({ rootDir, config: { _prepare: true } })
     await clearDir(nuxt.options.buildDir)
 
+    await buildNuxt(nuxt)
     await writeTypes(nuxt)
   }
 })
