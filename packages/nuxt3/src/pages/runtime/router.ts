@@ -1,11 +1,11 @@
-import { shallowRef } from 'vue'
+import { computed, reactive, shallowRef } from 'vue'
 import {
   createRouter,
   createWebHistory,
   createMemoryHistory,
   RouterLink
 } from 'vue-router'
-import NuxtChild from './child.vue'
+import NuxtNestedPage from './nested-page.vue'
 import NuxtPage from './page.vue'
 import NuxtLayout from './layout'
 import { defineNuxtPlugin } from '#app'
@@ -14,7 +14,7 @@ import routes from '#build/routes'
 
 declare module 'vue' {
   export interface GlobalComponents {
-    NuxtChild: typeof NuxtChild
+    NuxtNestedPage: typeof NuxtNestedPage
     NuxtPage: typeof NuxtPage
     NuxtLayout: typeof NuxtLayout
     NuxtLink: typeof RouterLink
@@ -22,10 +22,12 @@ declare module 'vue' {
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.component('NuxtChild', NuxtChild)
+  nuxtApp.vueApp.component('NuxtNestedPage', NuxtNestedPage)
   nuxtApp.vueApp.component('NuxtPage', NuxtPage)
   nuxtApp.vueApp.component('NuxtLayout', NuxtLayout)
   nuxtApp.vueApp.component('NuxtLink', RouterLink)
+  // TODO: remove before release - present for backwards compatibility & intentionally undocumented
+  nuxtApp.vueApp.component('NuxtChild', NuxtNestedPage)
 
   const routerHistory = process.client
     ? createWebHistory()
@@ -45,6 +47,14 @@ export default defineNuxtPlugin((nuxtApp) => {
   Object.defineProperty(nuxtApp.vueApp.config.globalProperties, 'previousRoute', {
     get: () => previousRoute.value
   })
+
+  // https://github.com/vuejs/vue-router-next/blob/master/src/router.ts#L1192-L1200
+  const route = {}
+  for (const key in router.currentRoute.value) {
+    route[key] = computed(() => router.currentRoute.value[key])
+  }
+
+  nuxtApp._route = reactive(route)
 
   nuxtApp.hook('app:created', async () => {
     if (process.server) {
