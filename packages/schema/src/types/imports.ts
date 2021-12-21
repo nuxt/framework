@@ -51,7 +51,7 @@ export interface AutoImportsOptions {
    *
    * By default <rootDir>/composables is added
    */
-   dirs?: []
+   dirs?: string[]
    /**
     * Exclusion patterns for transforming files
     * 
