@@ -1,6 +1,7 @@
 import { promises as fsp } from 'fs'
 import { join, relative, resolve } from 'pathe'
 import { Nuxt, TSReference } from '@nuxt/schema'
+import { buildNuxt } from '@nuxt/kit'
 import defu from 'defu'
 import type { TSConfig } from 'pkg-types'
 import { getModulePaths, getNearestPackage } from './cjs'
@@ -67,7 +68,7 @@ export const writeTypes = async (nuxt: Nuxt) => {
 
   const declarations: string[] = []
 
-  await nuxt.callHook('builder:generateApp')
+  await buildNuxt(nuxt)
   await nuxt.callHook('prepare:types', { references, declarations, tsConfig })
 
   const declaration = [

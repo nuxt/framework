@@ -8,7 +8,6 @@ import componentsModule from '../components/module'
 import autoImportsModule from '../auto-imports/module'
 import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
-import { initApp } from './app'
 import { initNitro } from './nitro'
 import { addModuleTranspiles } from './modules'
 
@@ -74,8 +73,6 @@ async function initNuxt (nuxt: Nuxt) {
   await nuxt.callHook('modules:done', { nuxt } as ModuleContainer)
 
   await addModuleTranspiles()
-
-  await initApp(nuxt)
 
   await nuxt.callHook('ready', nuxt)
 }
