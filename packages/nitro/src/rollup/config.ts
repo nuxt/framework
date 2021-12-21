@@ -14,6 +14,7 @@ import wasmPlugin from '@rollup/plugin-wasm'
 import inject from '@rollup/plugin-inject'
 import { visualizer } from 'rollup-plugin-visualizer'
 import * as unenv from 'unenv'
+import devalue from '@nuxt/devalue'
 
 import type { Preset } from 'unenv'
 import { sanitizeFilePath } from 'mlly'
@@ -22,7 +23,7 @@ import { resolvePath } from '../utils'
 import { pkgDir } from '../dirs'
 
 import { dynamicRequire } from './plugins/dynamic-require'
-import { externals } from './plugins/externals'
+import { externals, NodeExternalsOptions } from './plugins/externals'
 import { timing } from './plugins/timing'
 // import { autoMock } from './plugins/automock'
 import { staticAssets, dirnames } from './plugins/static'
@@ -109,7 +110,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       outro: '',
       preferConst: true,
       sanitizeFileName: sanitizeFilePath,
-      sourcemap: nitroContext.sourceMap,
+      sourcemap: !!nitroContext.sourceMap,
       sourcemapExcludeSources: true,
       sourcemapPathTransform (relativePath, sourcemapPath) {
         return resolve(dirname(sourcemapPath), relativePath)
@@ -149,7 +150,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // https://github.com/rollup/plugins/tree/master/packages/replace
   rollupConfig.plugins.push(replace({
-    // @ts-ignore https://github.com/rollup/plugins/pull/810
+    sourceMap: !!nitroContext.sourceMap,
     preventAssignment: true,
     values: {
       'process.env.NODE_ENV': nitroContext._nuxt.dev ? '"development"' : '"production"',
@@ -164,7 +165,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       'process.env.NUXT_STATIC_VERSION': JSON.stringify(nitroContext._nuxt.staticAssets.version),
       'process.env.NUXT_FULL_STATIC': nitroContext._nuxt.fullStatic as unknown as string,
       'process.env.NITRO_PRESET': JSON.stringify(nitroContext.preset),
-      'process.env.RUNTIME_CONFIG': JSON.stringify(nitroContext._nuxt.runtimeConfig),
+      'process.env.RUNTIME_CONFIG': devalue(nitroContext._nuxt.runtimeConfig),
       'process.env.DEBUG': JSON.stringify(nitroContext._nuxt.dev)
     }
   }))
@@ -172,7 +173,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   // ESBuild
   rollupConfig.plugins.push(esbuild({
     target: 'es2019',
-    sourceMap: true,
+    sourceMap: !!nitroContext.sourceMap,
     ...nitroContext.esbuild?.options
   }))
 
@@ -249,7 +250,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // Externals Plugin
   if (nitroContext.externals) {
-    rollupConfig.plugins.push(externals(defu(nitroContext.externals as any, {
+    rollupConfig.plugins.push(externals(defu(nitroContext.externals as NodeExternalsOptions, {
       outDir: nitroContext.output.serverDir,
       moduleDirectories,
       external: [
@@ -266,7 +267,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
         nitroContext._nuxt.srcDir,
         nitroContext._nuxt.rootDir,
         nitroContext._nuxt.serverDir,
-        ...nitroContext.middleware.map(m => m.handle),
+        ...nitroContext.middleware.map(m => m.handle).filter(i => typeof i === 'string') as string[],
         ...(nitroContext._nuxt.dev ? [] : ['vue', '@vue/', '@nuxt/'])
       ],
       traceOptions: {
@@ -298,6 +299,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // https://github.com/rollup/plugins/tree/master/packages/commonjs
   rollupConfig.plugins.push(commonjs({
+    sourceMap: !!nitroContext.sourceMap,
     esmExternals: id => !id.startsWith('unenv/'),
     requireReturnsDefault: 'auto'
   }))
@@ -306,7 +308,12 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
   rollupConfig.plugins.push(json())
 
   // https://github.com/rollup/plugins/tree/master/packages/inject
-  rollupConfig.plugins.push(inject(env.inject))
+  rollupConfig.plugins.push(inject({
+    // TODO: https://github.com/rollup/plugins/pull/1066
+    // @ts-ignore
+    sourceMap: !!nitroContext.sourceMap,
+    ...env.inject
+  }))
 
   // https://github.com/TrySound/rollup-plugin-terser
   // https://github.com/terser/terser#minify-nitroContext
