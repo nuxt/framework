@@ -42,20 +42,25 @@ export interface AutoImportsOptions {
    * Auto import sources
    */
   sources?: AutoImportSource[]
+
   /**
    * [experimental] Use globalThis injection instead of transform for development
    */
   global?: boolean
+
   /**
    * Additional directories to scan composables from
    *
    * By default <rootDir>/composables is added
    */
-   dirs?: string[]
-   /**
-    * Exclusion patterns for transforming files
-    * 
-    * By default /node_modules/ is added
-    */
-   exclude?: RegExp[]
+  dirs?: string[]
+
+  transform: {
+    /**
+     * Exclusion patterns for transforming files
+     *
+     * By default /node_modules/ is added
+     */
+    exclude?: RegExp[]
+  }
 }

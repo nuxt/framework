@@ -15,7 +15,7 @@ describe('auto-imports:transform', () => {
     { name: 'foo', as: 'foo', from: 'excluded' }
   ]
 
-  const ctx = { autoImports, map: new Map(), exclude: [/excluded/] } as AutoImportContext
+  const ctx = { autoImports, map: new Map(), transformExclude: [/excluded/] } as AutoImportContext
   updateAutoImportContext(ctx)
 
   const transformPlugin = TransformPlugin.raw(ctx, { framework: 'rollup' })
