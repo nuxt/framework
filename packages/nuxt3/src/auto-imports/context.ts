@@ -3,16 +3,20 @@ import type { AutoImport } from '@nuxt/schema'
 export interface AutoImportContext {
   autoImports: AutoImport[]
   matchRE: RegExp
-  transformExclude: RegExp[]
+  transform: {
+    exclude: RegExp[]
+  }
   map: Map<string, AutoImport>
 }
 
-export function createAutoImportContext (): AutoImportContext {
+export function createAutoImportContext (opts): AutoImportContext {
   return {
     autoImports: [],
     map: new Map(),
     matchRE: /__never__/,
-    transformExclude: []
+    transform: {
+      exclude: opts.transform.exclude || [/node_modules/]
+    }
   }
 }
 

@@ -59,7 +59,7 @@ export interface AutoImportsOptions {
     /**
      * Exclusion patterns for transforming files
      *
-     * By default /node_modules/ is added
+     * By default [/node_modules/] will be used
      */
     exclude?: RegExp[]
   }
