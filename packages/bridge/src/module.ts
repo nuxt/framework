@@ -71,11 +71,11 @@ export default defineNuxtModule({
       setupTranspile()
     }
     if (opts.constraints) {
-      nuxt.hook('modules:done', (moduleContainer: any) => {
+      nuxt.hook('modules:done', async (moduleContainer: any) => {
         for (const [name, m] of Object.entries(moduleContainer.requiredModules || {})) {
           const compat = ((m as any)?.handler?.meta?.compatibility || {}) as NuxtCompatibility
           if (compat) {
-            const issues = checkNuxtCompatibility(compat, nuxt)
+            const issues = await checkNuxtCompatibility(compat, nuxt)
             if (issues.length) {
               console.warn(`[bridge] Detected module incompatibility issues for \`${name}\`:\n` + issues.toString())
             }

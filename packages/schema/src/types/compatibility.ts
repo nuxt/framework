@@ -12,8 +12,8 @@ export interface NuxtCompatibility {
     /**
      * Nuxt 2 bridge compatibility
      *
+    * - `undefined` `false`: Bridge is not supported
      * - `true`: Having bridge is necessary for this module
-     * - `false`: Bridge is not supported
      * - `optional`: Module should work with/without bridge
      */
     bridge?: boolean | 'optional'

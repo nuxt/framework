@@ -52,7 +52,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
 
     // Check compatibility contraints
     if (definition.meta.compatibility) {
-      const issues = checkNuxtCompatibility(definition.meta.compatibility, nuxt)
+      const issues = await checkNuxtCompatibility(definition.meta.compatibility, nuxt)
       if (issues.length) {
         consola.warn(`Module \`${definition.meta.name}\` is disabled due to incompatibility issues:\n${issues.toString()}`)
         return
