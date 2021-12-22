@@ -20,7 +20,7 @@ export default defineComponent({
 
 export function wrapClientOnly (component, mode) {
   return defineComponent({
-    name: 'ClientOnlyWarpper',
+    name: 'ClientOnlyWrapper',
     setup (props, { attrs, slots }) {
       const mounted = ref(false)
       onMounted(() => { mounted.value = true })
