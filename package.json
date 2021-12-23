@@ -28,6 +28,7 @@
   },
   "resolutions": {
     "nuxt3": "workspace:./packages/nuxt3",
+    "@nuxt/ui": "npm:@nuxt/ui-edge@^0.0.0-27337800.43e0b6e",
     "unbuild": "^0.6.7",
     "jiti": "^1.12.9"
   },
