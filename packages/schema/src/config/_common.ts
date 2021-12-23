@@ -225,7 +225,7 @@ export default {
    *   function () {}
    * ]
    * ```
-   * @type {typeof import('../src/types/module').ModuleInstallOptions[]}
+   * @type {(typeof import('../src/types/module').NuxtModule | string)[]}
    * @version 2
    * @version 3
    */
@@ -262,7 +262,7 @@ export default {
    * decreases the size of `node_modules` in production deployments. Please refer to each
    * module's documentation to see if it is recommended to use `modules` or `buildModules`.
    *
-   * @type {typeof import('../src/types/module').ModuleInstallOptions[]}
+   * @type {(typeof import('../src/types/module').NuxtModule | string)[]}
    * @version 2
    * @version 3
    */
@@ -714,6 +714,6 @@ export default {
    * @version 3
    */
   publicRuntimeConfig: {
-    $resolve: (val, get) => defu(val, { app: get('app') })
+    $resolve: (val = {}, get) => ({ ...val, app: defu(val.app, get('app')) })
   },
 }

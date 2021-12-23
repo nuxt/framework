@@ -1,5 +1,8 @@
+import { readFileSync } from 'fs'
 import type { AutoImport } from '@nuxt/schema'
 import { expect } from 'chai'
+import { join } from 'pathe'
+import { createCommonJS, findExports } from 'mlly'
 import * as VueFunctions from 'vue'
 import { AutoImportContext, updateAutoImportContext } from '../src/auto-imports/context'
 import { TransformPlugin } from '../src/auto-imports/transform'
@@ -8,10 +11,17 @@ import { Nuxt3AutoImports } from '../src/auto-imports/imports'
 describe('auto-imports:transform', () => {
   const autoImports: AutoImport[] = [
     { name: 'ref', as: 'ref', from: 'vue' },
-    { name: 'computed', as: 'computed', from: 'bar' }
+    { name: 'computed', as: 'computed', from: 'bar' },
+    { name: 'foo', as: 'foo', from: 'excluded' }
   ]
 
-  const ctx = { autoImports, map: new Map() } as AutoImportContext
+  const ctx = {
+    autoImports,
+    map: new Map(),
+    transform: {
+      exclude: [/excluded/]
+    }
+  } as AutoImportContext
   updateAutoImportContext(ctx)
 
   const transformPlugin = TransformPlugin.raw(ctx, { framework: 'rollup' })
@@ -35,6 +45,31 @@ describe('auto-imports:transform', () => {
     const result = await transform('// import { computed } from "foo"\n;const a = computed(0)')
     expect(result).to.equal('import { computed } from \'bar\';// import { computed } from "foo"\n;const a = computed(0)')
   })
+
+  it('should exclude files from transform', async () => {
+    expect(await transform('const a = foo()')).to.not.include('import { foo } from "excluded"')
+  })
+})
+
+const excludedNuxtHelpers = ['useHydration']
+
+describe('auto-imports:nuxt3', () => {
+  try {
+    const { __dirname } = createCommonJS(import.meta.url)
+    const entrypointContents = readFileSync(join(__dirname, '../src/app/composables/index.ts'), 'utf8')
+
+    const names = findExports(entrypointContents).flatMap(i => i.names || i.name)
+    for (const name of names) {
+      if (excludedNuxtHelpers.includes(name)) {
+        continue
+      }
+      it(`should register ${name} globally`, () => {
+        expect(Nuxt3AutoImports.find(a => a.from === '#app').names).to.include(name)
+      })
+    }
+  } catch (e) {
+    console.log(e)
+  }
 })
 
 const excludedVueHelpers = [

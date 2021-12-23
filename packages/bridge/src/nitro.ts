@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import { addPluginTemplate, useNuxt } from '@nuxt/kit'
 import { stringifyQuery } from 'ufo'
 import { resolve } from 'pathe'
-import { build, generate, prepare, getNitroContext, NitroContext, createDevServer, wpfs, resolveMiddleware } from '@nuxt/nitro'
+import { build, generate, prepare, getNitroContext, NitroContext, createDevServer, wpfs, resolveMiddleware, scanMiddleware, writeTypes } from '@nuxt/nitro'
 import { AsyncLoadingPlugin } from './async-loading'
 import { distDir } from './dirs'
 
@@ -42,6 +42,14 @@ export function setupNitroBridge () {
   nuxt.addHooks(nitroDevContext.nuxtHooks)
   nuxt.hook('close', () => nitroDevContext._internal.hooks.callHook('close'))
   nitroDevContext._internal.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
+
+  // Use custom document template if provided
+  if (nuxt.options.appTemplatePath) {
+    nuxt.hook('nitro:document', async (template) => {
+      template.src = nuxt.options.appTemplatePath
+      template.contents = await fsp.readFile(nuxt.options.appTemplatePath, 'utf-8')
+    })
+  }
 
   // Expose process.env.NITRO_PRESET
   nuxt.options.env.NITRO_PRESET = nitroContext.preset
@@ -128,6 +136,12 @@ export function setupNitroBridge () {
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'nitro.d.ts') })
   })
 
+  // nuxt prepare
+  nuxt.hook('builder:generateApp', async () => {
+    nitroDevContext.scannedMiddleware = await scanMiddleware(nitroDevContext._nuxt.serverDir)
+    await writeTypes(nitroDevContext)
+  })
+
   // nuxt build/dev
   // @ts-ignore
   nuxt.options.build._minifyServer = false
@@ -142,7 +156,7 @@ export function setupNitroBridge () {
     }
   })
 
-  // nude dev
+  // nuxt dev
   if (nuxt.options.dev) {
     nitroDevContext._internal.hooks.hook('nitro:compiled', () => { nuxt.server.watch() })
     nuxt.hook('build:compile', ({ compiler }) => { compiler.outputFileSystem = wpfs })
