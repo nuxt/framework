@@ -3,15 +3,14 @@ import { existsSync } from 'fs'
 import { resolve } from 'pathe'
 import * as vite from 'vite'
 import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults } from 'externality'
-import { hashId } from './utils'
+import { parseURL } from 'ufo'
+import { hashId, uniq } from './utils'
 
 export interface TransformChunk {
   id: string,
   code: string,
   deps: string[],
   parents: string[]
-  dynamicDeps: string[],
-  isDynamic: boolean,
 }
 
 export interface SSRTransformResult {
@@ -71,9 +70,11 @@ async function transformRequest (opts: TransformOptions, id: string) {
     }
   }
 
-  if (await isExternal(opts, id)) {
+  const { pathname } = parseURL(id)
+
+  if (await isExternal(opts, pathname)) {
     return {
-      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${(pathToFileURL(id))}').then(r => { exports.default = r.default; ssrExportAll(r) }).catch(e => { console.error(e); throw new Error('[vite dev] Error loading external "${id}".') })`,
+      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${(pathToFileURL(pathname))}').then(r => { exports.default = r.default; ssrExportAll(r) }).catch(e => { console.error(e); throw new Error('[vite dev] Error loading external "${id}".') })`,
       deps: [],
       dynamicDeps: []
     }
@@ -82,7 +83,7 @@ async function transformRequest (opts: TransformOptions, id: string) {
   // Transform
   const res: SSRTransformResult = await opts.viteServer.transformRequest(id, { ssr: true }).catch((err) => {
     // eslint-disable-next-line no-console
-    console.warn(`[SSR] Error transforming ${id}: ${err}`)
+    console.warn(`[SSR] Error transforming ${id}:`, err)
     // console.error(err)
   }) as SSRTransformResult || { code: '', map: {}, deps: [], dynamicDeps: [] }
 
@@ -93,42 +94,22 @@ ${res.code || '/* empty */'};
   return { code, deps: res.deps || [], dynamicDeps: res.dynamicDeps || [] }
 }
 
-function markChunkAsSync (chunk: TransformChunk, chunks: Record<string, TransformChunk>) {
-  if (!chunk.isDynamic) {
-    return
-  }
-  chunk.isDynamic = false
-  for (const id of chunk.deps) {
-    if (chunks[id]) {
-      markChunkAsSync(chunks[id], chunks)
-    }
-  }
-}
-
-async function transformRequestRecursive (opts: TransformOptions, id: string, parent = '<entry>', chunks: Record<string, TransformChunk> = {}, isDynamic = false) {
+async function transformRequestRecursive (opts: TransformOptions, id, parent = '<entry>', chunks: Record<string, TransformChunk> = {}) {
   if (chunks[id]) {
-    if (!isDynamic) {
-      // chunks that been imported as both dynamic and sync
-      markChunkAsSync(chunks[id], chunks)
-    }
     chunks[id].parents.push(parent)
     return
   }
   const res = await transformRequest(opts, id)
+  const deps = uniq([...res.deps, ...res.dynamicDeps])
 
-  chunks[id] = <TransformChunk>{
+  chunks[id] = {
     id,
     code: res.code,
-    deps: res.deps,
-    dynamicDeps: res.dynamicDeps,
-    isDynamic,
+    deps,
     parents: [parent]
-  }
-  for (const dep of res.deps) {
-    await transformRequestRecursive(opts, dep, id, chunks, isDynamic)
-  }
-  for (const dep of res.dynamicDeps) {
-    await transformRequestRecursive(opts, dep, id, chunks, true)
+  } as TransformChunk
+  for (const dep of deps) {
+    await transformRequestRecursive(opts, dep, id, chunks)
   }
   return Object.values(chunks)
 }
@@ -233,6 +214,6 @@ async function __instantiateModule__(url, urlStack) {
 
   return {
     code,
-    chunks
+    ids: chunks.map(i => i.id)
   }
 }

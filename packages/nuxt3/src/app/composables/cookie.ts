@@ -25,7 +25,7 @@ export function useCookie <T=string> (name: string, _opts?: CookieOptions<T>): C
   const opts = { ...CookieDefaults, ..._opts }
   const cookies = readRawCookies(opts)
 
-  const cookie = ref(cookies[name] ?? _opts.default?.())
+  const cookie = ref(cookies[name] ?? opts.default?.())
 
   if (process.client) {
     watch(cookie, () => { writeClientCookie(name, cookie.value, opts as CookieSerializeOptions) })
@@ -59,7 +59,7 @@ function readRawCookies (opts: CookieOptions = {}): Record<string, string> {
 
 function serializeCookie (name: string, value: any, opts: CookieSerializeOptions = {}) {
   if (value === null || value === undefined) {
-    opts.maxAge = -1
+    return serialize(name, value, { ...opts, maxAge: -1 })
   }
   return serialize(name, value, opts)
 }
