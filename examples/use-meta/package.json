@@ -7,7 +7,7 @@
     "start": "node .output/server"
   },
   "devDependencies": {
-    "@nuxt/ui": "latest",
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest",
     "nuxt3": "latest"
   }
 }
