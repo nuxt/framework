@@ -7,7 +7,5 @@ export function useRequestHeaders (include?) {
   if (process.client) { return {} }
   const headers: Record<string, string> = useNuxtApp().ssrContext?.req.headers ?? {}
   if (!include) { return headers }
-  const existedKeys: K[] = include.filter((key) => headers.hasOwnProperty(key))
-  if (!existedKeys.length) { return {} }
-  return Object.fromEntries(existedKeys.map((key) => [key, headers[key]]))
+  return Object.fromEntries(include.filter((key) => headers.hasOwnProperty(key)).map((key) => [key, headers[key]]));
 }
