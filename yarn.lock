@@ -10605,7 +10605,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-hello-world@workspace:examples/hello-world"
   dependencies:
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
     nuxt3: latest
   languageName: unknown
   linkType: soft
