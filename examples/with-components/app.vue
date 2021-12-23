@@ -1,5 +1,5 @@
 <template>
-  <NuxtExampleLayout :show-tips="true" name="with-components">
+  <NuxtExampleLayout :show-tips="true" example="with-components">
     <h1 class="text-xl opacity-50">
       Auto Imported Components
     </h1>

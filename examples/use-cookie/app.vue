@@ -18,7 +18,7 @@ const logout = () => {
 </script>
 
 <template>
-  <NuxtExampleLayout :show-tips="interacted" class="h-50" name="use-cookie">
+  <NuxtExampleLayout :show-tips="interacted" class="h-50" example="use-cookie">
     <template v-if="user">
       <h1 class="text-3xl mb-3">
         Welcome, {{ user.name }}! 👋

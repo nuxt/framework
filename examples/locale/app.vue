@@ -6,7 +6,7 @@ const date = useLocaleDate(new Date('2016-10-26') /* NUXT_BIRTHDAY */)
 </script>
 
 <template>
-  <NuxtExampleLayout :show-tips="true" name="locale">
+  <NuxtExampleLayout :show-tips="true" example="locale">
     <h1 class="text-xl opacity-50">
       Nuxt birthday
     </h1>

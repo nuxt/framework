@@ -8,7 +8,7 @@ const { data } = await useAsyncData('sum',
 </script>
 
 <template>
-  <NuxtExampleLayout name="with-wasm">
+  <NuxtExampleLayout example="with-wasm">
     {{ a }} + {{ b }} = {{ data.sum }}
   </NuxtExampleLayout>
 </template>

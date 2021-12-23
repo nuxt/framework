@@ -1,5 +1,5 @@
 <template>
-  <NuxtExampleLayout name="use-meta" :show-tips="true">
+  <NuxtExampleLayout example="use-meta" :show-tips="true">
     <div
       class="bg-gray-400/10 border-2 border-dashed border-gray-400/50 rounded-xl py-8 px-2 op-80"
     >

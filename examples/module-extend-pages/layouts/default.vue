@@ -1,5 +1,5 @@
 <template>
-  <NuxtExampleLayout name="module-extend-pages">
+  <NuxtExampleLayout example="module-extend-pages">
     <slot />
   </NuxtExampleLayout>
 </template>

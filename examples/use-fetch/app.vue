@@ -3,7 +3,7 @@ const { data } = await useFetch('/api/hello', { params: { foo: 'bar' } })
 </script>
 
 <template>
-  <NuxtExampleLayout name="use-fetch" show-tips="true">
+  <NuxtExampleLayout example="use-fetch" show-tips="true">
     Server response
     <pre class="text-left"><code>{{ data }}</code></pre>
     <template #tips>
