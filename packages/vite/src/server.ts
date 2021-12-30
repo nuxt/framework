@@ -68,6 +68,9 @@ export async function buildServer (ctx: ViteBuildContext) {
         }
       }
     },
+    server: {
+      preTransformRequests: false
+    },
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
       vuePlugin(ctx.config.vue),
