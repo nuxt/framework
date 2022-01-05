@@ -13,7 +13,7 @@ module.exports.defineNuxtConfig = (config = {}) => {
       config.buildModules = []
     }
     if (!config.buildModules.find(m => m === '@nuxt/bridge' || m === '@nuxt/bridge-edge')) {
-      config.buildModules.unshift('@nuxt/bridge')
+      config.buildModules.push('@nuxt/bridge')
     }
   }
   return config
