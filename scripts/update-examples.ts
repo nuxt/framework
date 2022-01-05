@@ -13,8 +13,9 @@ async function run () {
       return
     }
 
+    const startCommand = 'npm run dev'
     const github = `https://github.com/nuxt/framework/tree/main/examples/${name}`
-    const stackblitz = `https://stackblitz.com/github/nuxt/framework/tree/main/examples/${name}?file=app.vue`
+    const stackblitz = `https://stackblitz.com/github/nuxt/framework/tree/main/examples/${name}?file=app.vue&command=${encodeURIComponent(startCommand)}`
     return {
       name,
       path,
@@ -25,7 +26,7 @@ async function run () {
 
   const table = '| Example | Source | Playground |\n|---|---|---|\n' + data.filter(Boolean).map(i => `| \`${i.name}\` | [GitHub](${i.github}) | [Play Online](${i.stackblitz}) |`).join('\n')
 
-  await fs.writeFile(resolve(examplesRoot, 'README.md'), '# Nuxt 3 Examples\n\n' + table, 'utf-8')
+  await fs.writeFile(resolve(examplesRoot, 'README.md'), `# Nuxt 3 Examples\n\n${table}\n`, 'utf-8')
 }
 
 run()
