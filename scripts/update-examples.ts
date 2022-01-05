@@ -13,9 +13,8 @@ async function run () {
       return
     }
 
-    const startCommand = 'npm run dev'
     const github = `https://github.com/nuxt/framework/tree/main/examples/${name}`
-    const stackblitz = `https://stackblitz.com/github/nuxt/framework/tree/main/examples/${name}?file=app.vue&command=${encodeURIComponent(startCommand)}`
+    const stackblitz = `https://stackblitz.com/github/nuxt/framework/tree/main/examples/${name}?file=app.vue&terminal=dev`
     return {
       name,
       path,
