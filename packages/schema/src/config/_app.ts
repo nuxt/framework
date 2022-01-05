@@ -29,16 +29,26 @@ export default {
   /**
    * Nuxt App configuration.
    * @version 2
+   * @version 3
    */
   app: {
     $resolve: (val, get) => {
-      const useCDN = hasProtocol(get('build.publicPath'), true) && !get('dev')
+      const useCDN = (val?.cdnURL || hasProtocol(get('build.publicPath'), true)) && !get('dev')
       const isRelativePublicPath = isRelative(get('build.publicPath'))
-      return defu(val, {
-        basePath: get('router.base'),
-        assetsPath: isRelativePublicPath ? get('build.publicPath') : useCDN ? '/' : joinURL(get('router.base'), get('build.publicPath')),
-        cdnURL: useCDN ? get('build.publicPath') : null
-      })
+
+      const basePath = val?.basePath ?? get('router.base')
+      const assetsPath = val?.assetsPath ?? (isRelativePublicPath ? get('build.publicPath') : useCDN ? '/_nuxt/' : joinURL(get('router.base'), get('build.publicPath')))
+      const cdnURL = val?.cdnURL ?? (useCDN ? get('build.publicPath') : null)
+
+      if (basePath === assetsPath) {
+        throw new Error('[schema] basePath and assetsPath cannot be the same')
+      }
+
+      return {
+        basePath,
+        assetsPath,
+        cdnURL
+      }
     }
   },
 
