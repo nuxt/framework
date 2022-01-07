@@ -35,7 +35,10 @@ export async function buildServer (ctx: ViteBuildContext) {
         '@vue/shared': _resolve(`@vue/shared/dist/shared.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
         'vue-router': _resolve(`vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
         vue: _resolve(`vue/dist/vue.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`)
-      }
+      },
+      // By default Vite resolves `module` field, which not always a native ESM module
+      // Setting this option can bypass that and fallback to cjs version
+      mainFields: []
     },
     ssr: {
       external: [],
