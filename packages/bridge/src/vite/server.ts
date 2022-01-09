@@ -41,7 +41,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       alias,
       // By default Vite resolves `module` field, which not always a native ESM module
       // Setting this option can bypass that and fallback to cjs version
-      mainFields: ['main']
+      mainFields: ctx.nuxt.options.dev ? ['main'] : undefined
     },
     ssr: {
       external: [
