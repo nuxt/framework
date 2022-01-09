@@ -1,15 +1,15 @@
 import * as vite from 'vite'
-import {resolve} from 'pathe'
+import { resolve } from 'pathe'
 import consola from 'consola'
-import type {Nuxt} from '@nuxt/schema'
-import type {InlineConfig, SSROptions} from 'vite'
-import type {Options} from '@vitejs/plugin-vue'
-import {sanitizeFilePath} from 'mlly'
-import {buildClient} from './client'
-import {buildServer} from './server'
+import type { Nuxt } from '@nuxt/schema'
+import type { InlineConfig, SSROptions } from 'vite'
+import type { Options } from '@vitejs/plugin-vue'
+import { sanitizeFilePath } from 'mlly'
+import { buildClient } from './client'
+import { buildServer } from './server'
 import virtual from './plugins/virtual'
-import {warmupViteServer} from './utils/warmup'
-import {resolveCSSOptions} from './css'
+import { warmupViteServer } from './utils/warmup'
+import { resolveCSSOptions } from './css'
 
 export interface ViteOptions extends InlineConfig {
   vue?: Options
@@ -21,7 +21,7 @@ export interface ViteBuildContext {
   config: ViteOptions
 }
 
-export async function bundle(nuxt: Nuxt) {
+export async function bundle (nuxt: Nuxt) {
   const ctx: ViteBuildContext = {
     nuxt,
     config: vite.mergeConfig(
@@ -52,7 +52,7 @@ export async function bundle(nuxt: Nuxt) {
         // TODO: move to kit schema when it exists
         vue: {
           isProduction: !nuxt.options.dev,
-          template: {compilerOptions: nuxt.options.vue.compilerOptions}
+          template: { compilerOptions: nuxt.options.vue.compilerOptions }
         },
         css: resolveCSSOptions(nuxt),
         optimizeDeps: {
@@ -74,7 +74,7 @@ export async function bundle(nuxt: Nuxt) {
           emptyOutDir: false,
           rollupOptions: {
             input: resolve(nuxt.options.appDir, 'entry'),
-            output: {sanitizeFileName: sanitizeFilePath}
+            output: { sanitizeFileName: sanitizeFilePath }
           }
         },
         plugins: [
