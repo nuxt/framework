@@ -1,6 +1,6 @@
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
-import { withoutLeadingSlash, withoutTrailingSlash } from 'ufo'
+import { joinURL, withoutLeadingSlash, withoutTrailingSlash } from 'ufo'
 import type { ViteBuildContext } from './vite'
 
 export async function writeManifest (ctx: ViteBuildContext, extraEntries: string[] = []) {
@@ -16,7 +16,7 @@ export async function writeManifest (ctx: ViteBuildContext, extraEntries: string
 
   // Legacy dev manifest
   const devClientManifest = {
-    publicPath: ctx.nuxt.options.build.publicPath,
+    publicPath: joinURL(ctx.nuxt.options.app.basePath, ctx.nuxt.options.app.buildAssetsPath),
     all: entries,
     initial: entries,
     async: [],
@@ -28,8 +28,8 @@ export async function writeManifest (ctx: ViteBuildContext, extraEntries: string
     : await fse.readJSON(resolve(clientDist, 'manifest.json'))
 
   if (!ctx.nuxt.options.dev) {
-    const assetsDir = withoutTrailingSlash(withoutLeadingSlash(ctx.nuxt.options.app.assetsPath))
-    const publicPathRE = new RegExp(`^${assetsDir}/`)
+    const assetsDir = withoutTrailingSlash(withoutLeadingSlash(ctx.nuxt.options.app.buildAssetsPath))
+    const publicPathRE = new RegExp(`^${assetsDir.replace(/[/]/g, '\\/')}/`)
 
     // Remove assetsDir prefix (`_nuxt`) inserted by vite
     clientManifest = Object.fromEntries(Object.entries(clientManifest).map(([key, value]) => {

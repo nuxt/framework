@@ -1,7 +1,8 @@
+import { joinURL } from 'ufo'
 import { Plugin } from 'vite'
 import { isCSS } from '../utils'
 
-export function devStyleSSRPlugin (rootDir: string): Plugin {
+export function devStyleSSRPlugin (rootDir: string, prefix: string): Plugin {
   return {
     name: 'nuxt:dev-style-ssr',
     apply: 'serve',
@@ -17,8 +18,8 @@ export function devStyleSSRPlugin (rootDir: string): Plugin {
       }
 
       // When dev `<style>` is injected, remove the `<link>` styles from manifest
-      // TODO: Use `app.assetsPath` or unique hash
-      return code + `\ndocument.querySelectorAll(\`link[href="/_nuxt${moduleId}"]\`).forEach(i=>i.remove())`
+      const selector = joinURL(prefix, moduleId)
+      return code + `\ndocument.querySelectorAll(\`link[href="${selector}"]\`).forEach(i=>i.remove())`
     }
   }
 }

@@ -11,6 +11,12 @@ for (const type of ['private', 'public']) {
   }
 }
 
+// Load dynamic app configuration
+const appConfig = _runtimeConfig.public.app
+appConfig.basePath = process.env.BASE_PATH || appConfig.basePath
+appConfig.cdnURL = process.env.CDN_URL || appConfig.cdnURL
+appConfig.buildAssetsPath = process.env.BUILD_ASSETS_PATH || appConfig.buildAssetsPath
+
 // Named exports
 export const privateConfig = deepFreeze(defu(_runtimeConfig.private, _runtimeConfig.public))
 export const publicConfig = deepFreeze(_runtimeConfig.public)

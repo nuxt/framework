@@ -6,10 +6,10 @@ import fse from 'fs-extra'
 import pDebounce from 'p-debounce'
 import consola from 'consola'
 import { resolveModule } from '@nuxt/kit'
-import { withoutLeadingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
+import { DynamicBasePathPlugin } from './plugins/dynamic-base'
 import { bundleRequest } from './dev-bundler'
 import { writeManifest } from './manifest'
 import { isCSS } from './utils'
@@ -39,7 +39,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       }
     },
     ssr: {
-      external: [],
+      external: ['#config'],
       noExternal: [
         ...ctx.nuxt.options.build.transpile,
         // TODO: Use externality for production (rollup) build
@@ -55,7 +55,6 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     build: {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
-      assetsDir: withoutLeadingSlash(ctx.nuxt.options.app.assetsPath),
       ssr: true,
       rollupOptions: {
         output: {
@@ -77,6 +76,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
       vuePlugin(ctx.config.vue),
+      DynamicBasePathPlugin.vite({ env: ctx.nuxt.options.dev ? 'dev' : 'server', devAppConfig: ctx.nuxt.options.app }),
       viteJsxPlugin()
     ]
   } as ViteOptions)

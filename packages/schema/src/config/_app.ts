@@ -1,7 +1,6 @@
 import { resolve, join } from 'pathe'
 import { existsSync, readdirSync } from 'fs'
 import defu from 'defu'
-import { isRelative, joinURL, hasProtocol } from 'ufo'
 
 export default {
   /** Vue.js config */
@@ -32,23 +31,57 @@ export default {
    * @version 3
    */
   app: {
-    $resolve: (val, get) => {
-      const useCDN = (val?.cdnURL || hasProtocol(get('build.publicPath'), true)) && !get('dev')
-      const isRelativePublicPath = isRelative(get('build.publicPath'))
-
-      const basePath = val?.basePath ?? get('router.base')
-      const assetsPath = val?.assetsPath ?? (isRelativePublicPath ? get('build.publicPath') : useCDN ? '/_nuxt/' : joinURL(get('router.base'), get('build.publicPath')))
-      const cdnURL = val?.cdnURL ?? (useCDN ? get('build.publicPath') : null)
-
-      if (basePath === assetsPath) {
-        throw new Error('[schema] basePath and assetsPath cannot be the same')
-      }
-
-      return {
-        basePath,
-        assetsPath,
-        cdnURL
-      }
+    /**
+     * The base path of your Nuxt application.
+     *
+     * This can be set at runtime by setting the BASE_PATH environment variable.
+     * @example
+     * ```bash
+     * BASE_PATH=/prefix/ node .output/server/index.mjs
+     * ```
+     *
+     * To update your static assets with a runtime base path, you must use the magic '__NUXT_BASE__' string
+     * when referencing your static assets in your components.
+     *
+     * @example
+     * ```vue
+     * <template>
+     *   <img src="/__NUXT_BASE__/logo.svg" alt="My logo loaded from a dynamic base path.">
+     * </template>
+     * ```
+     */
+    basePath: '/',
+    /** The folder name for the built site assets, relative to `basePath` (or `cdnURL` if set). This is set at build time and should not be customized at runtime. */
+    buildAssetsPath: '/_nuxt/',
+    /**
+     * The folder name for the built site assets, relative to `basePath` (or `cdnURL` if set).
+     * @deprecated - use `buildAssetsPath` instead
+     * @version 2
+     */
+    assetsPath: {
+      $resolve: (val, get) => val ?? get('buildAssetsPath')
+    },
+    /**
+     * An absolute URL to serve the public folder from.
+     *
+     * This can be set at runtime by setting the CDN_URL environment variable.
+     * @example
+     * ```bash
+     * CDN_URL=https://mycdn.org/ node .output/server/index.mjs
+     * ```
+     *
+     * To use the CDN for the public folder, you must use the magic '__NUXT_BASE__' string
+     * when referencing your static assets in your components.
+     *
+     * @example
+     * ```vue
+     * <template>
+     *   <img src="/__NUXT_BASE__/logo.svg" alt="My logo loaded from CDN.">
+     * </template>
+     * ```
+    */
+    cdnURL: {
+      $resolve: (val, get) => get('dev') ? null : val || null
     }
   },
 

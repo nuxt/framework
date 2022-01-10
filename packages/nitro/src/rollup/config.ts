@@ -159,8 +159,6 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       'process.server': 'true',
       'process.client': 'false',
       'process.env.NUXT_NO_SSR': JSON.stringify(!nitroContext._nuxt.ssr),
-      'process.env.ROUTER_BASE': JSON.stringify(nitroContext._nuxt.routerBase),
-      'process.env.PUBLIC_PATH': JSON.stringify(nitroContext._nuxt.publicPath),
       'process.env.NUXT_STATIC_BASE': JSON.stringify(nitroContext._nuxt.staticAssets.base),
       'process.env.NUXT_STATIC_VERSION': JSON.stringify(nitroContext._nuxt.staticAssets.version),
       'process.env.NUXT_FULL_STATIC': nitroContext._nuxt.fullStatic as unknown as string,

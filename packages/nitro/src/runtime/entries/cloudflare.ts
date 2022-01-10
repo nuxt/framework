@@ -1,9 +1,11 @@
 import '#polyfill'
 import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
+import { joinURL } from 'ufo'
 import { localCall } from '../server'
 import { requestHasBody, useRequestBody } from '../server/utils'
+import config from '#config'
 
-const PUBLIC_PATH = process.env.PUBLIC_PATH // Default: /_nuxt/
+const PUBLIC_PATH = joinURL(config.app.basePath, config.app.buildAssetsPath) // Default: /_nuxt/
 
 addEventListener('fetch', (event: any) => {
   event.respondWith(handleEvent(event))
@@ -42,7 +44,7 @@ async function handleEvent (event) {
 }
 
 function assetsCacheControl (request) {
-  if (request.url.includes(PUBLIC_PATH) /* TODO: Check with routerBase */) {
+  if (request.url.startsWith(PUBLIC_PATH)) {
     return {
       browserTTL: 31536000,
       edgeTTL: 31536000

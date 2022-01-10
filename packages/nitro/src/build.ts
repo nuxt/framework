@@ -40,8 +40,8 @@ export async function generate (nitroContext: NitroContext) {
 
   const clientDist = resolve(nitroContext._nuxt.buildDir, 'dist/client')
   if (await isDirectory(clientDist)) {
-    const viteAssetsPath = withoutTrailingSlash(join(clientDist, nitroContext._nuxt.publicPath))
-    const distPublicPath = join(nitroContext.output.publicDir, nitroContext._nuxt.publicPath)
+    const viteAssetsPath = withoutTrailingSlash(join(clientDist, nitroContext._nuxt.buildAssetsPath))
+    const distPublicPath = join(nitroContext.output.publicDir, nitroContext._nuxt.buildAssetsPath)
 
     await fse.copy(clientDist, distPublicPath, {
       // TODO: Workaround vite's issue that duplicates public files

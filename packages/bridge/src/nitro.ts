@@ -1,7 +1,7 @@
 import { promises as fsp } from 'fs'
 import fetch from 'node-fetch'
 import { addPluginTemplate, useNuxt } from '@nuxt/kit'
-import { hasProtocol, isRelative, joinURL, stringifyQuery } from 'ufo'
+import { stringifyQuery } from 'ufo'
 import { resolve } from 'pathe'
 import { build, generate, prepare, getNitroContext, NitroContext, createDevServer, wpfs, resolveMiddleware, scanMiddleware, writeTypes } from '@nuxt/nitro'
 import { AsyncLoadingPlugin } from './async-loading'
@@ -15,13 +15,12 @@ export function setupNitroBridge () {
     throw new Error('[nitro] Please use `nuxt generate` for static target')
   }
 
-  // Default CDN assetsPath to `/_nuxt` for better caching
-  const useCDN = hasProtocol(nuxt.options.build.publicPath, true) && !nuxt.options.dev
-  const isRelativePublicPath = isRelative(nuxt.options.build.publicPath)
-
-  if (nuxt.options.app.basePath === nuxt.options.app.assetsPath) {
-    nuxt.options.app.assetsPath = isRelativePublicPath ? nuxt.options.build.publicPath : useCDN ? '/_nuxt/' : joinURL(nuxt.options.router.base, nuxt.options.build.publicPath)
-  }
+  // Handle legacy property name `assetsPath`
+  nuxt.options.app.buildAssetsPath = nuxt.options.app.buildAssetsPath || nuxt.options.app.assetsPath
+  nuxt.options.app.assetsPath = nuxt.options.app.buildAssetsPath
+  // Nitro expects app config on `config.app` rather than `config._app`
+  nuxt.options.publicRuntimeConfig.app = nuxt.options.publicRuntimeConfig.app || {}
+  Object.assign(nuxt.options.publicRuntimeConfig.app, nuxt.options.publicRuntimeConfig._app)
 
   // Disable loading-screen
   // @ts-ignore

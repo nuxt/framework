@@ -2,6 +2,7 @@ import '#polyfill'
 import { Server } from 'http'
 import destr from 'destr'
 import { handle } from '../server'
+import config from '#config'
 
 const server = new Server(handle)
 
@@ -14,7 +15,7 @@ server.listen(port, hostname, (err) => {
     console.error(err)
     process.exit(1)
   }
-  console.log(`Listening on http://${hostname}:${port}`)
+  console.log(`Listening on http://${hostname}:${port}${config.app.basePath}`)
 })
 
 export default {}

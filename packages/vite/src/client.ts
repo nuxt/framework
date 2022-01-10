@@ -5,13 +5,14 @@ import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { Connect } from 'vite'
 
-import { withoutLeadingSlash } from 'ufo'
+import { joinURL } from 'ufo'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { analyzePlugin } from './plugins/analyze'
 import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
+import { DynamicBasePathPlugin } from './plugins/dynamic-base'
 
 export async function buildClient (ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -32,7 +33,6 @@ export async function buildClient (ctx: ViteBuildContext) {
           entryFileNames: ctx.nuxt.options.dev ? 'entry.mjs' : '[name]-[hash].mjs'
         }
       },
-      assetsDir: withoutLeadingSlash(ctx.nuxt.options.app.assetsPath),
       manifest: true,
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client')
     },
@@ -40,7 +40,8 @@ export async function buildClient (ctx: ViteBuildContext) {
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'client'),
       vuePlugin(ctx.config.vue),
       viteJsxPlugin(),
-      devStyleSSRPlugin(ctx.nuxt.options.rootDir)
+      DynamicBasePathPlugin.vite({ env: 'client', devAppConfig: ctx.nuxt.options.app }),
+      devStyleSSRPlugin(ctx.nuxt.options.rootDir, joinURL(ctx.nuxt.options.app.basePath, ctx.nuxt.options.app.buildAssetsPath))
     ],
     server: {
       middlewareMode: true

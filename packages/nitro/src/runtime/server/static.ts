@@ -2,9 +2,11 @@ import { createError } from 'h3'
 import { withoutTrailingSlash, withLeadingSlash, parseURL } from 'ufo'
 // @ts-ignore
 import { getAsset, readAsset } from '#static'
+import config from '#config'
 
 const METHODS = ['HEAD', 'GET']
-const PUBLIC_PATH = process.env.PUBLIC_PATH // Default: /_nuxt/
+
+const PUBLIC_PATH = config.app.buildAssetsPath // Default: /_nuxt/
 const TWO_DAYS = 2 * 60 * 60 * 24
 const STATIC_ASSETS_BASE = process.env.NUXT_STATIC_BASE + '/' + process.env.NUXT_STATIC_VERSION
 
