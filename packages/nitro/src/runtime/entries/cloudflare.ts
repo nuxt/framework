@@ -1,5 +1,5 @@
 import '#polyfill'
-import { getAssetFromKV } from '@cloudflare/kv-asset-handler'
+import { getAssetFromKV, mapRequestToAsset } from '@cloudflare/kv-asset-handler'
 import { joinURL } from 'ufo'
 import { localCall } from '../server'
 import { requestHasBody, useRequestBody } from '../server/utils'
@@ -13,7 +13,7 @@ addEventListener('fetch', (event: any) => {
 
 async function handleEvent (event) {
   try {
-    return await getAssetFromKV(event, { cacheControl: assetsCacheControl })
+    return await getAssetFromKV(event, { cacheControl: assetsCacheControl, mapRequestToAsset: publicPathModifier })
   } catch (_err) {
     // Ignore
   }
@@ -51,4 +51,9 @@ function assetsCacheControl (request) {
     }
   }
   return {}
+}
+
+const publicPathModifier = (request: Request) => {
+  const url = request.url.replace(config.app.basePath, '/')
+  return mapRequestToAsset(new Request(url, request))
 }
