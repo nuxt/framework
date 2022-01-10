@@ -39,9 +39,6 @@ export const DynamicBasePathPlugin = createUnplugin(function (options: DynamicBa
       // Dynamically compute string URLs featuring basePath
       for (const delimiter of ['`', '"', "'"]) {
         const delimiterRE = new RegExp(`${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g')
-        if (code.match(delimiterRE)) {
-          console.log(code.match(delimiterRE))
-        }
         /* eslint-disable-next-line no-template-curly-in-string */
         code = code.replace(delimiterRE, '`$1${NUXT_BASE}$2`')
       }
