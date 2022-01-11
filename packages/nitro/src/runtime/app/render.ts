@@ -121,10 +121,10 @@ export async function renderMiddleware (req, res: ServerResponse) {
     res.setHeader('Content-Type', 'text/html;charset=UTF-8')
     
     // Add Cache-Control and Etag headers for cache server
-    if (publicConfig.app.cacheControl) {
+    if (publicConfig.app?.cacheControl) {
       res.setHeader('Cache-Control', publicConfig.app.cacheControl);
     }
-    if (publicConfig.app.etag) {
+    if (publicConfig.app?.etag) {
       const etag = createEtag(data);
       const ifMatch = req.headers['if-none-match'] === etag
       if (ifMatch) {
@@ -138,8 +138,6 @@ export async function renderMiddleware (req, res: ServerResponse) {
 
   const error = ssrContext.nuxt && ssrContext.nuxt.error
   res.statusCode = error ? error.statusCode : 200
-  
-
   res.end(data, 'utf-8')
 }
 
