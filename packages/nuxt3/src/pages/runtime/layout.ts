@@ -11,7 +11,7 @@ export default defineComponent({
   },
   setup (props, context) {
     return () => {
-      const layout = (typeof props.name === 'object' ? props.name.value : props.name) ?? 'default'
+      const layout = (props.name && typeof props.name === 'object' ? props.name.value : props.name) ?? 'default'
       if (!layouts[layout]) {
         if (process.dev && layout && layout !== 'default') {
           console.warn(`Invalid layout \`${layout}\` selected.`)
