@@ -1,7 +1,7 @@
 <template>
-  <RouterView v-slot="{ Component }">
-    <NuxtLayout v-if="Component" :name="layout || updatedComponentLayout || Component.type.layout">
-      <transition name="page" mode="out-in">
+  <RouterView v-slot="{ Component, route }">
+    <NuxtLayout v-if="Component" :name="layout || route.meta.layout">
+      <transition v-bind="route.meta.transition || { name: 'page', mode: 'out-in' }">
         <!-- <keep-alive> -->
         <Suspense @pending="() => onSuspensePending(Component)" @resolve="() => onSuspenseResolved(Component)">
           <component :is="Component" :key="$route.path" />
@@ -14,8 +14,6 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-
 import NuxtLayout from './layout'
 import { useNuxtApp } from '#app'
 
@@ -29,15 +27,9 @@ export default {
     }
   },
   setup () {
-    // Disable HMR reactivity in production
-    const updatedComponentLayout = process.dev ? ref(null) : null
-
     const nuxtApp = useNuxtApp()
 
     function onSuspensePending (Component) {
-      if (process.dev) {
-        updatedComponentLayout.value = Component.type.layout || null
-      }
       return nuxtApp.callHook('page:start', Component)
     }
 
@@ -46,7 +38,6 @@ export default {
     }
 
     return {
-      updatedComponentLayout,
       onSuspensePending,
       onSuspenseResolved
     }

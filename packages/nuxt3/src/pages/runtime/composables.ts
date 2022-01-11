@@ -1,3 +1,4 @@
+import { ComputedRef, /* KeepAliveProps, */ Ref, TransitionProps } from 'vue'
 import type { Router, RouteLocationNormalizedLoaded } from 'vue-router'
 import { useNuxtApp } from '#app'
 
@@ -11,6 +12,14 @@ export const useRoute = () => {
 
 export interface PageMeta {
   [key: string]: any
+  transition?: TransitionProps
+  layout?: false | string | Ref<false | string> | ComputedRef<false | string>
+  // TODO: https://github.com/vuejs/vue-next/issues/3652
+  // keepalive?: KeepAliveProps
+}
+
+declare module 'vue-router' {
+  interface RouteMeta extends PageMeta {}
 }
 
 const warnRuntimeUsage = (method: string) =>
