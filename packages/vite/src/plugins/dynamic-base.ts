@@ -17,8 +17,8 @@ export const DynamicBasePathPlugin = createUnplugin(function (options: DynamicBa
     enforce: 'post',
     transform (code, id) {
       if (options.globalPublicPath && id.includes('entry.ts')) {
-        code = 'import { joinURL } from "ufo";\n' +
-          `${options.globalPublicPath} = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsPath);\n` + code
+        code = 'import { joinURL } from "ufo";' +
+          `${options.globalPublicPath} = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsPath);` + code
       }
 
       if (code.includes('NUXT_BASE') && !code.includes('const NUXT_BASE =')) {
