@@ -38,6 +38,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       },
       // By default Vite resolves `module` field, which not always a native ESM module
       // Setting this option can bypass that and fallback to cjs version
+      // TODO: Fix nitro/unenv issue with `main` field
       mainFields: ctx.nuxt.options.dev ? ['main'] : undefined
     },
     ssr: {
