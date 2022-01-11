@@ -6,7 +6,6 @@ import config from '#config'
 
 const METHODS = ['HEAD', 'GET']
 
-const PUBLIC_PATH = config.app.buildAssetsPath // Default: /_nuxt/
 const TWO_DAYS = 2 * 60 * 60 * 24
 const STATIC_ASSETS_BASE = process.env.NUXT_STATIC_BASE + '/' + process.env.NUXT_STATIC_VERSION
 
@@ -29,7 +28,7 @@ export default async function serveStatic (req, res) {
   }
 
   if (!asset) {
-    if (id.startsWith(PUBLIC_PATH) && !id.startsWith(STATIC_ASSETS_BASE)) {
+    if (id.startsWith(config.app.buildAssetsPath) && !id.startsWith(STATIC_ASSETS_BASE)) {
       throw createError({
         statusMessage: 'Cannot find static asset ' + id,
         statusCode: 404
@@ -64,7 +63,7 @@ export default async function serveStatic (req, res) {
     res.setHeader('Last-Modified', asset.mtime)
   }
 
-  if (id.startsWith(PUBLIC_PATH)) {
+  if (id.startsWith(config.app.buildAssetsPath)) {
     res.setHeader('Cache-Control', `max-age=${TWO_DAYS}, immutable`)
   }
 

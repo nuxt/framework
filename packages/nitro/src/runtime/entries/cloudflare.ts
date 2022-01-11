@@ -1,11 +1,11 @@
 import '#polyfill'
 import { getAssetFromKV, mapRequestToAsset } from '@cloudflare/kv-asset-handler'
-import { joinURL } from 'ufo'
+import { joinURL, withoutBase } from 'ufo'
 import { localCall } from '../server'
 import { requestHasBody, useRequestBody } from '../server/utils'
 import config from '#config'
 
-const PUBLIC_PATH = joinURL(config.app.basePath, config.app.buildAssetsPath) // Default: /_nuxt/
+const buildAssetsURL = joinURL(config.app.basePath, config.app.buildAssetsPath) // Default: /_nuxt/
 
 addEventListener('fetch', (event: any) => {
   event.respondWith(handleEvent(event))
@@ -13,7 +13,7 @@ addEventListener('fetch', (event: any) => {
 
 async function handleEvent (event) {
   try {
-    return await getAssetFromKV(event, { cacheControl: assetsCacheControl, mapRequestToAsset: publicPathModifier })
+    return await getAssetFromKV(event, { cacheControl: assetsCacheControl, mapRequestToAsset: basePathModifier })
   } catch (_err) {
     // Ignore
   }
@@ -44,7 +44,7 @@ async function handleEvent (event) {
 }
 
 function assetsCacheControl (request) {
-  if (request.url.startsWith(PUBLIC_PATH)) {
+  if (request.url.startsWith(buildAssetsURL)) {
     return {
       browserTTL: 31536000,
       edgeTTL: 31536000
@@ -53,7 +53,7 @@ function assetsCacheControl (request) {
   return {}
 }
 
-const publicPathModifier = (request: Request) => {
-  const url = request.url.replace(config.app.basePath, '/')
+const basePathModifier = (request: Request) => {
+  const url = withoutBase(request.url, config.app.basePath)
   return mapRequestToAsset(new Request(url, request))
 }
