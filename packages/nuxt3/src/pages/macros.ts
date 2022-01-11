@@ -44,10 +44,10 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
 
       // ensure we tree-shake any _other_ exports out of the macro script
       const currentExports = findExports(code)
-      const macroExports = Object.values(options.macros)
       for (const match of currentExports) {
-        if (!macroExports.includes(match.name)) {
+        if (match.type === 'default') {
           code = code.replace(match.code, '/*#__PURE__*/ false &&')
+          code += '\nexport default {}'
         }
       }
 
