@@ -18,6 +18,7 @@ import devalue from '@nuxt/devalue'
 
 import type { Preset } from 'unenv'
 import { sanitizeFilePath } from 'mlly'
+import { joinURL } from 'ufo'
 import { NitroContext } from '../context'
 import { resolvePath } from '../utils'
 import { pkgDir } from '../dirs'
@@ -158,6 +159,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       'global.': 'globalThis.',
       'process.server': 'true',
       'process.client': 'false',
+      'process.env.BUILD_ASSETS_URL': JSON.stringify(joinURL(nitroContext._nuxt.basePath, nitroContext._nuxt.buildAssetsPath)),
       'process.env.NUXT_NO_SSR': JSON.stringify(!nitroContext._nuxt.ssr),
       'process.env.NUXT_STATIC_BASE': JSON.stringify(nitroContext._nuxt.staticAssets.base),
       'process.env.NUXT_STATIC_VERSION': JSON.stringify(nitroContext._nuxt.staticAssets.version),
