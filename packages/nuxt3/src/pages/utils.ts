@@ -229,7 +229,7 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
   return {
     imports: metaImports,
     routes: routes.map((route) => {
-      const metaImportName = `${pascalCase(route.file)}Meta`
+      const metaImportName = `${pascalCase(route.file.replace(/[^\w]/g, ''))}Meta`
       metaImports.add(`import { meta as ${metaImportName} } from '${route.file}?macro=true'`)
       return {
         ...route,
