@@ -12,10 +12,10 @@ export const useRoute = () => {
 
 export interface PageMeta {
   [key: string]: any
-  transition?: TransitionProps
+  transition?: false | TransitionProps
   layout?: false | string | Ref<false | string> | ComputedRef<false | string>
   // TODO: https://github.com/vuejs/vue-next/issues/3652
-  // keepalive?: KeepAliveProps
+  // keepalive?: false | KeepAliveProps
 }
 
 declare module 'vue-router' {
