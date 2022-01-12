@@ -3479,6 +3479,7 @@ __metadata:
     ufo: ^0.7.9
     unbuild: latest
     vite: ^2.7.10
+    vite-node: ~0.0.141
     vue: 3.2.26
   peerDependencies:
     vue: 3.2.26
@@ -14034,6 +14035,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"kolorist@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "kolorist@npm:1.5.1"
+  checksum: c113be08834fc03a24699612141c79879fceba9ff9765ad500507fb594ee4fa3465a3453ea90bbc9b0dd82f7ba5dbd79814da28e9ebaf8da27266a0088ba2714
+  languageName: node
+  linkType: hard
+
 "last-call-webpack-plugin@npm:^3.0.0":
   version: 3.0.0
   resolution: "last-call-webpack-plugin@npm:3.0.0"
@@ -15214,6 +15222,13 @@ __metadata:
   version: 0.3.16
   resolution: "mlly@npm:0.3.16"
   checksum: 1c2706a50f364dde8ef0cacec311e52d18a9e89238a3d5431fdb3e617baacb074586abfe267fee256a86a6c880f775d253cc28abf218c886ac97942f3c95492a
+  languageName: node
+  linkType: hard
+
+"mlly@npm:^0.3.17":
+  version: 0.3.17
+  resolution: "mlly@npm:0.3.17"
+  checksum: 9f1b987d0fae2ff15355334b7c6b07e5d3914bc7a232f99953737d6def29b446c118abea8a8261afccdea46fdd84efd5ed0910d4fc6c372f4f4438515d477697
   languageName: node
   linkType: hard
 
@@ -22092,6 +22107,21 @@ __metadata:
     core-util-is: 1.0.2
     extsprintf: ^1.2.0
   checksum: c431df0bedf2088b227a4e051e0ff4ca54df2c114096b0c01e1cbaadb021c30a04d7dd5b41ab277bcd51246ca135bf931d4c4c796ecae7a4fef6d744ecef36ea
+  languageName: node
+  linkType: hard
+
+"vite-node@npm:~0.0.141":
+  version: 0.0.141
+  resolution: "vite-node@npm:0.0.141"
+  dependencies:
+    kolorist: ^1.5.1
+    minimist: ^1.2.5
+    mlly: ^0.3.17
+    pathe: ^0.2.0
+    vite: ^2.7.10
+  bin:
+    vite-node: vite-node.js
+  checksum: 37ec5fe02cf743da40a00805314c65155bfd24e944396a39e750f02cb4020fc0c1e4fcb92ce873a4805d7081899ac5d5efea5bbc2494bdb69c9eaf4b7cf443cb
   languageName: node
   linkType: hard
 
