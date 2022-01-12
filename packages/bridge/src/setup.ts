@@ -1,5 +1,4 @@
-import { useNuxt } from '@nuxt/kit'
-import { installModule } from '@nuxt/kit/src'
+import { useNuxt, installModule } from '@nuxt/kit'
 import scriptSetupPlugin from 'unplugin-vue2-script-setup/nuxt'
 import type { ScriptSetupOptions } from '../types'
 
