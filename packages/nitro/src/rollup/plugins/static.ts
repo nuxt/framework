@@ -3,7 +3,7 @@ import createEtag from 'etag'
 import mime from 'mime'
 import { relative, resolve } from 'pathe'
 import virtual from '@rollup/plugin-virtual'
-import globby from 'globby'
+import { globby } from 'globby'
 import type { Plugin } from 'rollup'
 import type { NitroContext } from '../../context'
 
