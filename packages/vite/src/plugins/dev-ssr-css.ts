@@ -2,7 +2,12 @@ import { joinURL } from 'ufo'
 import { Plugin } from 'vite'
 import { isCSS } from '../utils'
 
-export function devStyleSSRPlugin (rootDir: string, prefix: string): Plugin {
+export interface DevStyleSSRPluginOptions {
+  rootDir: string
+  prefix: string
+}
+
+export function devStyleSSRPlugin (options: DevStyleSSRPluginOptions): Plugin {
   return {
     name: 'nuxt:dev-style-ssr',
     apply: 'serve',
@@ -13,12 +18,12 @@ export function devStyleSSRPlugin (rootDir: string, prefix: string): Plugin {
       }
 
       let moduleId = id
-      if (moduleId.startsWith(rootDir)) {
-        moduleId = moduleId.slice(rootDir.length)
+      if (moduleId.startsWith(options.rootDir)) {
+        moduleId = moduleId.slice(options.rootDir.length)
       }
 
       // When dev `<style>` is injected, remove the `<link>` styles from manifest
-      const selector = joinURL(prefix, moduleId)
+      const selector = joinURL(options.prefix, moduleId)
       return code + `\ndocument.querySelectorAll(\`link[href="${selector}"]\`).forEach(i=>i.remove())`
     }
   }

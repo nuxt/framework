@@ -41,7 +41,10 @@ export async function buildClient (ctx: ViteBuildContext) {
       vuePlugin(ctx.config.vue),
       viteJsxPlugin(),
       DynamicBasePathPlugin.vite({ env: 'client', devAppConfig: ctx.nuxt.options.app }),
-      devStyleSSRPlugin(ctx.nuxt.options.rootDir, joinURL(ctx.nuxt.options.app.basePath, ctx.nuxt.options.app.buildAssetsPath))
+      devStyleSSRPlugin({
+        rootDir: ctx.nuxt.options.rootDir,
+        prefix: joinURL(ctx.nuxt.options.app.basePath, ctx.nuxt.options.app.buildAssetsPath)
+      })
     ],
     server: {
       middlewareMode: true
