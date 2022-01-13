@@ -39,7 +39,7 @@ export async function bundle (nuxt: Nuxt) {
             '#app': nuxt.options.appDir,
             // We need this resolution to be present before the following entry, but it
             // will be filled in client/server configs
-            '#build/plugins': '',
+            '#build/plugins': null,
             '#build': nuxt.options.buildDir,
             '/entry.mjs': resolve(nuxt.options.appDir, 'entry'),
             'web-streams-polyfill/ponyfill/es2018': 'unenv/runtime/mock/empty',
