@@ -39,7 +39,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       // [webpack] Export named exports rather than the default (component)
       const defaultExport = code.match(/export \{ default \} from ['"]([^'"]+)['"]/)
       if (defaultExport) {
-        return defaultExport[0].replace('{ default }', '*')
+        return defaultExport[0].replace('{ default }', `{${Object.values(options.macros).join(', ')}}`)
       }
 
       // ensure we tree-shake any _other_ exports out of the macro script
