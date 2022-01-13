@@ -39,7 +39,10 @@ export async function buildClient (ctx: ViteBuildContext) {
       jsxPlugin(),
       createVuePlugin(ctx.config.vue),
       PluginLegacy(),
-      devStyleSSRPlugin(ctx.nuxt.options.rootDir, joinURL(ctx.nuxt.options.app.basePath, ctx.nuxt.options.app.buildAssetsPath))
+      devStyleSSRPlugin({
+        rootDir: ctx.nuxt.options.rootDir,
+        prefix: joinURL(ctx.nuxt.options.app.basePath, ctx.nuxt.options.app.buildAssetsPath)
+      })
     ],
     server: {
       middlewareMode: true
