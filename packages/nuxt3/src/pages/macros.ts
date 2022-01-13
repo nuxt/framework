@@ -77,7 +77,7 @@ const starts = {
 
 function extractObject (code: string) {
   // Strip comments
-  code = code.replace(/\/\/.*$/gm, '')
+  code = code.replace(/^\s*\/\/.*$/gm, '')
 
   const stack = []
   let result = ''
