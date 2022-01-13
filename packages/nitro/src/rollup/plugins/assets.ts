@@ -39,7 +39,7 @@ export function assets (opts: AssetOptions): Plugin {
         const assets: Record<string, Asset> = {}
         for (const assetdir in opts.dirs) {
           const dirOpts = opts.dirs[assetdir]
-          const files = globby.sync('**/*.*', { cwd: dirOpts.dir, absolute: false })
+          const files = await globby('**/*.*', { cwd: dirOpts.dir, absolute: false })
           for (const _id of files) {
             const fsPath = resolve(dirOpts.dir, _id)
             const id = assetdir + '/' + _id
