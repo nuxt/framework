@@ -2895,7 +2895,7 @@ __metadata:
     "@types/jsdom": ^16.2.14
     "@types/node-fetch": ^3.0.2
     "@types/serve-static": ^1.13.10
-    "@vercel/nft": ^0.17.2
+    "@vercel/nft": ^0.17.3
     archiver: ^5.3.0
     chalk: ^5.0.0
     chokidar: ^3.5.2
@@ -4770,7 +4770,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vercel/nft@npm:^0.17.2":
+"@vercel/nft@npm:^0.17.3":
   version: 0.17.3
   resolution: "@vercel/nft@npm:0.17.3"
   dependencies:
@@ -15325,7 +15325,7 @@ __metadata:
     pathe: ^0.2.0
     typescript: ^4.5.4
     unbuild: ^0.6.7
-    vitest: ^0.1.0
+    vitest: ^0.1.12
     vue-router: next
   languageName: unknown
   linkType: soft
@@ -21385,7 +21385,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.1.0":
+"vitest@npm:^0.1.12":
   version: 0.1.12
   resolution: "vitest@npm:0.1.12"
   dependencies:
