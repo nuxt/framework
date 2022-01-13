@@ -18,7 +18,6 @@ import devalue from '@nuxt/devalue'
 
 import type { Preset } from 'unenv'
 import { sanitizeFilePath } from 'mlly'
-import { joinURL } from 'ufo'
 import { NitroContext } from '../context'
 import { resolvePath } from '../utils'
 import { pkgDir } from '../dirs'
