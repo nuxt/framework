@@ -2,10 +2,9 @@ import { relative, resolve, join } from 'pathe'
 import consola from 'consola'
 import * as rollup from 'rollup'
 import fse from 'fs-extra'
-import { withoutTrailingSlash } from 'ufo'
 import { printFSTree } from './utils/tree'
 import { getRollupConfig } from './rollup/config'
-import { hl, prettyPath, serializeTemplate, writeFile, isDirectory, readDirRecursively, replaceAll } from './utils'
+import { hl, prettyPath, serializeTemplate, writeFile, isDirectory, replaceAll } from './utils'
 import { NitroContext } from './context'
 import { scanMiddleware } from './server/middleware'
 
@@ -31,29 +30,18 @@ async function cleanupDir (dir: string) {
 export async function generate (nitroContext: NitroContext) {
   consola.start('Generating public...')
 
+  await nitroContext._internal.hooks.callHook('nitro:generate', nitroContext)
+
   const publicDir = nitroContext._nuxt.publicDir
-  let publicFiles: string[] = []
   if (await isDirectory(publicDir)) {
-    publicFiles = readDirRecursively(publicDir).map(r => r.replace(publicDir, ''))
     await fse.copy(publicDir, nitroContext.output.publicDir)
   }
 
   const clientDist = resolve(nitroContext._nuxt.buildDir, 'dist/client')
   if (await isDirectory(clientDist)) {
-    const viteAssetsPath = withoutTrailingSlash(join(clientDist, nitroContext._nuxt.buildAssetsPath))
     const distPublicPath = join(nitroContext.output.publicDir, nitroContext._nuxt.buildAssetsPath)
 
-    await fse.copy(clientDist, distPublicPath, {
-      // TODO: Workaround vite's issue that duplicates public files
-      // https://github.com/nuxt/framework/issues/1192
-      filter: src => !publicFiles.includes(src.replace(clientDist, '')) && !src.includes(viteAssetsPath)
-    })
-
-    // Copy doubly-nested /_nuxt/_nuxt files across
-    // TODO: Workaround vite issue
-    if (await isDirectory(viteAssetsPath)) {
-      await fse.copy(viteAssetsPath, distPublicPath)
-    }
+    await fse.copy(clientDist, distPublicPath)
   }
 
   consola.success('Generated public ' + prettyPath(nitroContext.output.publicDir))

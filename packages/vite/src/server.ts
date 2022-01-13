@@ -1,18 +1,19 @@
-import { resolve, normalize } from 'pathe'
+import { join, resolve, normalize } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
-import fse from 'fs-extra'
+import fse, { rmSync } from 'fs-extra'
 import pDebounce from 'p-debounce'
 import consola from 'consola'
 import { resolveModule } from '@nuxt/kit'
+import { withoutTrailingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { DynamicBasePathPlugin } from './plugins/dynamic-base'
 import { bundleRequest } from './dev-bundler'
 import { writeManifest } from './manifest'
-import { isCSS } from './utils'
+import { isCSS, isDirectory, readDirRecursively } from './utils'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
@@ -82,6 +83,33 @@ export async function buildServer (ctx: ViteBuildContext) {
   } as ViteOptions)
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
+
+  ctx.nuxt.hook('nitro:generate', async () => {
+    const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
+
+    // Remove public files that have been duplicated into buildAssetsPath
+    // TODO: Add option to configure this behaviour in vite
+    const publicDir = join(ctx.nuxt.options.srcDir, ctx.nuxt.options.dir.public)
+    let publicFiles: string[] = []
+    if (await isDirectory(publicDir)) {
+      publicFiles = readDirRecursively(publicDir).map(r => r.replace(publicDir, ''))
+      for (const file of publicFiles) {
+        try {
+          rmSync(join(clientDist, file))
+        } catch {}
+      }
+    }
+
+    // Copy doubly-nested /_nuxt/_nuxt files into buildAssetsPath
+    // TODO: Workaround vite issue
+    if (await isDirectory(clientDist)) {
+      const nestedAssetsPath = withoutTrailingSlash(join(clientDist, ctx.nuxt.options.app.buildAssetsPath))
+
+      if (await isDirectory(nestedAssetsPath)) {
+        await fse.copy(nestedAssetsPath, clientDist)
+      }
+    }
+  })
 
   const onBuild = () => ctx.nuxt.callHook('build:resources', wpfs)
 

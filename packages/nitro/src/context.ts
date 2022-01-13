@@ -19,6 +19,7 @@ export interface NitroHooks {
   'nitro:document': (htmlTemplate: { src: string, contents: string, dst: string }) => void
   'nitro:rollup:before': (context: NitroContext) => void | Promise<void>
   'nitro:compiled': (context: NitroContext) => void
+  'nitro:generate': (context: NitroContext) => void | Promise<void>
   'close': () => void
 }
 

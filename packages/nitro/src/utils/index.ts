@@ -152,11 +152,3 @@ export function readPackageJson (
     throw error
   }
 }
-
-export function readDirRecursively (dir: string) {
-  return fse.readdirSync(dir).reduce((files, file) => {
-    const name = join(dir, file)
-    const isDirectory = fse.statSync(name).isDirectory()
-    return isDirectory ? [...files, ...readDirRecursively(name)] : [...files, name]
-  }, [])
-}
