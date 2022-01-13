@@ -2,7 +2,6 @@ import { basename, extname, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
 import type { Nuxt, NuxtRoute } from '@nuxt/schema'
 import { resolveFiles } from '@nuxt/kit'
-import { kebabCase } from 'scule'
 
 enum SegmentParserState {
   initial,
@@ -220,7 +219,7 @@ export async function resolveLayouts (nuxt: Nuxt) {
   const files = await resolveFiles(layoutDir, `*{${nuxt.options.extensions.join(',')}}`)
 
   return files.map((file) => {
-    const name = kebabCase(basename(file).replace(extname(file), '')).replace(/["']/g, '')
+    const name = basename(file).replace(extname(file), '').replace(/["']/g, '')
     return { name, file }
   })
 }
