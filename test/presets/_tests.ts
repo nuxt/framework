@@ -44,7 +44,7 @@ export function setupTest (preset) {
         NODE_ENV: 'production'
       }
     })
-  }, 60000)
+  }, (isBridge ? 120 : 60) * 1000)
 
   afterAll(async () => {
     if (ctx.server) {
