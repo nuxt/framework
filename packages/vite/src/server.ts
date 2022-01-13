@@ -2,7 +2,7 @@ import { join, resolve, normalize } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
-import fse, { rmSync } from 'fs-extra'
+import fse from 'fs-extra'
 import pDebounce from 'p-debounce'
 import consola from 'consola'
 import { resolveModule } from '@nuxt/kit'
@@ -95,7 +95,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       publicFiles = readDirRecursively(publicDir).map(r => r.replace(publicDir, ''))
       for (const file of publicFiles) {
         try {
-          rmSync(join(clientDist, file))
+          fse.rmSync(join(clientDist, file))
         } catch {}
       }
     }

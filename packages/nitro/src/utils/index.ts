@@ -1,5 +1,5 @@
 import { createRequire } from 'module'
-import { relative, dirname, join, resolve } from 'pathe'
+import { relative, dirname, resolve } from 'pathe'
 import fse from 'fs-extra'
 import jiti from 'jiti'
 import defu from 'defu'
