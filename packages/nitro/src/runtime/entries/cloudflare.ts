@@ -1,11 +1,9 @@
 import '#polyfill'
 import { getAssetFromKV, mapRequestToAsset } from '@cloudflare/kv-asset-handler'
-import { joinURL, withoutBase } from 'ufo'
+import { withoutBase } from 'ufo'
 import { localCall } from '../server'
 import { requestHasBody, useRequestBody } from '../server/utils'
 import config from '#config'
-
-const buildAssetsURL = joinURL(config.app.basePath, config.app.buildAssetsPath) // Default: /_nuxt/
 
 addEventListener('fetch', (event: any) => {
   event.respondWith(handleEvent(event))
@@ -44,7 +42,7 @@ async function handleEvent (event) {
 }
 
 function assetsCacheControl (request) {
-  if (request.url.startsWith(buildAssetsURL)) {
+  if (request.url.startsWith(config.app.buildAssetsURL)) {
     return {
       browserTTL: 31536000,
       edgeTTL: 31536000

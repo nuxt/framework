@@ -1,5 +1,6 @@
 import destr from 'destr'
 import defu from 'defu'
+import { joinURL } from 'ufo'
 
 // Bundled runtime config (injected by nitro)
 const _runtimeConfig = process.env.RUNTIME_CONFIG as any
@@ -13,9 +14,14 @@ for (const type of ['private', 'public']) {
 
 // Load dynamic app configuration
 const appConfig = _runtimeConfig.public.app
-appConfig.basePath = process.env.BASE_PATH || appConfig.basePath
-appConfig.cdnURL = process.env.CDN_URL || appConfig.cdnURL
-appConfig.buildAssetsPath = process.env.BUILD_ASSETS_PATH || appConfig.buildAssetsPath
+appConfig.basePath = process.env.APP_BASE_PATH || appConfig.basePath
+appConfig.cdnURL = process.env.APP_CDN_URL || appConfig.cdnURL
+appConfig.buildAssetsPath = process.env.APP_BUILD_ASSETS_PATH || appConfig.buildAssetsPath
+Object.defineProperty(appConfig, 'buildAssetsURL', {
+  get () {
+    return joinURL(appConfig.basePath, appConfig.buildAssetsPath)
+  }
+})
 
 // Named exports
 export const privateConfig = deepFreeze(defu(_runtimeConfig.private, _runtimeConfig.public))
