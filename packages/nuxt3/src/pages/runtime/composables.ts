@@ -31,7 +31,7 @@ const warnRuntimeUsage = (method: string) =>
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const definePageMeta = (meta: PageMeta): void => {
-  if (!process.dev) {
+  if (process.dev) {
     warnRuntimeUsage('definePageMeta')
   }
 }
