@@ -2,7 +2,7 @@ import { createApp, useBase } from 'h3'
 import { createFetch, Headers } from 'ohmyfetch'
 import destr from 'destr'
 import { createCall, createFetch as createLocalFetch } from 'unenv/runtime/fetch/index'
-import config from '../app/config'
+import appConfig from '../app/app-config'
 import { timingMiddleware } from './timing'
 import { handleError } from './error'
 // @ts-ignore
@@ -18,7 +18,7 @@ app.use(serverMiddleware)
 app.use(() => import('../app/render').then(e => e.renderMiddleware), { lazy: true })
 
 export const stack = app.stack
-export const handle = useBase(config.app.basePath, app)
+export const handle = useBase(appConfig.routerBase, app)
 export const localCall = createCall(handle)
 export const localFetch = createLocalFetch(localCall, globalThis.fetch)
 

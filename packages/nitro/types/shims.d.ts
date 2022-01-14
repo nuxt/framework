@@ -21,3 +21,13 @@ declare module '#config' {
   const runtimeConfig: PrivateRuntimeConfig & PublicRuntimeConfig
   export default runtimeConfig
 }
+
+declare module '#app-config' {
+  const _default: {
+    buildAssetsPath: string
+    buildAssetsURL: string
+    publicAssetsURL: string
+    routerBase: string
+  }
+  export default _default
+}

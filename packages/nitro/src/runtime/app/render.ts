@@ -2,6 +2,7 @@ import type { ServerResponse } from 'http'
 import { createRenderer } from 'vue-bundle-renderer'
 import devalue from '@nuxt/devalue'
 import { privateConfig, publicConfig } from './config'
+import appConfig from './app-config'
 // @ts-ignore
 import htmlTemplate from '#build/views/document.template.mjs'
 
@@ -21,7 +22,7 @@ const getSSRRenderer = cachedResult(async () => {
   if (!createSSRApp) { throw new Error('Server bundle is not available') }
   // Create renderer
   const { renderToString } = await import('#nitro-renderer')
-  return createRenderer((createSSRApp), { clientManifest, renderToString, publicPath: publicConfig.app.buildAssetsURL }).renderToString
+  return createRenderer((createSSRApp), { clientManifest, renderToString, publicPath: appConfig.buildAssetsURL }).renderToString
 })
 
 const getSPARenderer = cachedResult(async () => {
@@ -48,13 +49,13 @@ const getSPARenderer = cachedResult(async () => {
         entryFiles
           .flatMap(({ css }) => css)
           .filter(css => css != null)
-          .map(file => `<link rel="stylesheet" href="${publicConfig.app.buildAssetsURL}${file}">`)
+          .map(file => `<link rel="stylesheet" href="${appConfig.buildAssetsURL}${file}">`)
           .join(''),
       renderScripts: () =>
         entryFiles
           .map(({ file }) => {
             const isMJS = !file.endsWith('.js')
-            return `<script ${isMJS ? 'type="module"' : ''} src="${publicConfig.app.buildAssetsURL}${file}"></script>`
+            return `<script ${isMJS ? 'type="module"' : ''} src="${appConfig.buildAssetsURL}${file}"></script>`
           })
           .join('')
     }
