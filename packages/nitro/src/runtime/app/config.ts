@@ -19,7 +19,7 @@ appConfig.cdnURL = process.env.APP_CDN_URL || appConfig.cdnURL
 appConfig.buildAssetsPath = process.env.APP_BUILD_ASSETS_PATH || appConfig.buildAssetsPath
 Object.defineProperty(appConfig, 'buildAssetsURL', {
   get () {
-    return joinURL(appConfig.basePath, appConfig.buildAssetsPath)
+    return joinURL(appConfig.cdnURL || appConfig.basePath, appConfig.buildAssetsPath)
   }
 })
 
