@@ -1,4 +1,5 @@
 import { promises as fsp } from 'fs'
+import { createRequire } from 'module'
 import { resolve, dirname } from 'pathe'
 import { nodeFileTrace, NodeFileTraceOptions } from '@vercel/nft'
 import type { Plugin } from 'rollup'
@@ -16,6 +17,7 @@ export interface NodeExternalsOptions {
 
 export function externals (opts: NodeExternalsOptions): Plugin {
   const trackedExternals = new Set<string>()
+  const _require = createRequire(import.meta.url)
 
   return {
     name: 'node-externals',
@@ -58,7 +60,7 @@ export function externals (opts: NodeExternalsOptions): Plugin {
         if (!resolved) {
           console.warn(`Could not resolve \`${originalId}\`. Have you installed it?`)
         } else {
-          trackedExternals.add(resolved.id)
+          trackedExternals.add(_require.resolve(resolved.id))
         }
       }
 
@@ -72,7 +74,7 @@ export function externals (opts: NodeExternalsOptions): Plugin {
         for (const pkgName of opts.traceInclude || []) {
           const path = await this.resolve(pkgName)
           if (path?.id) {
-            trackedExternals.add(path.id)
+            trackedExternals.add(_require.resolve(path.id))
           }
         }
         const tracedFiles = await nodeFileTrace(Array.from(trackedExternals), opts.traceOptions)

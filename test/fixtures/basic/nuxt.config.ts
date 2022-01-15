@@ -5,6 +5,9 @@ export default defineNuxtConfig({
   nitro: {
     output: { dir: process.env.NITRO_OUTPUT_DIR }
   },
+  vite: {
+    optimizeDeps: false
+  },
   publicRuntimeConfig: {
     // @ts-ignore TODO: Fix schema types
     testConfig: '123'
