@@ -15325,7 +15325,7 @@ __metadata:
     pathe: ^0.2.0
     typescript: ^4.5.4
     unbuild: ^0.6.7
-    vitest: ^0.1.12
+    vitest: ^0.1.17
     vue-router: next
   languageName: unknown
   linkType: soft
@@ -21327,36 +21327,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:>=2.7.10":
-  version: 2.7.11
-  resolution: "vite@npm:2.7.11"
-  dependencies:
-    esbuild: ^0.13.12
-    fsevents: ~2.3.2
-    postcss: ^8.4.5
-    resolve: ^1.20.0
-    rollup: ^2.59.0
-  peerDependencies:
-    less: "*"
-    sass: "*"
-    stylus: "*"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  peerDependenciesMeta:
-    less:
-      optional: true
-    sass:
-      optional: true
-    stylus:
-      optional: true
-  bin:
-    vite: bin/vite.js
-  checksum: e67f34cdd460840847157d19e833eb7f19ff8160afc23ce4c88f92b34ba35f99a8eab43cd88d814d1bd13662b1784eb3d224e04c64d209d0ea920a270b09f7ea
-  languageName: node
-  linkType: hard
-
-"vite@npm:^2.7.12":
+"vite@npm:>=2.7.12, vite@npm:^2.7.12":
   version: 2.7.12
   resolution: "vite@npm:2.7.12"
   dependencies:
@@ -21385,9 +21356,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.1.12":
-  version: 0.1.12
-  resolution: "vitest@npm:0.1.12"
+"vitest@npm:^0.1.17":
+  version: 0.1.17
+  resolution: "vitest@npm:0.1.17"
   dependencies:
     "@types/chai": ^4.3.0
     "@types/chai-subset": ^1.3.3
@@ -21395,7 +21366,7 @@ __metadata:
     local-pkg: ^0.4.1
     tinypool: ^0.1.1
     tinyspy: ^0.2.8
-    vite: ">=2.7.10"
+    vite: ">=2.7.12"
   peerDependencies:
     "@vitest/ui": "*"
     c8: "*"
@@ -21412,7 +21383,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 49ede6ed05d793a66063dbce8c148a26871ed6bb6d691e8188d3eb456228415c616e8e96068c48e30d6403e5fd4d6dfea1da50b4d6ec7ac53b1aa595f96e83be
+  checksum: 2209aaaa75c47a81b6e8c7e0a4a6187bdb2ea540e69ca0989f22435afb10e07f55d2a7e5c8fba4d09d8fe08ec914efac686a9e66d5a31846e32b5e3d96a0107e
   languageName: node
   linkType: hard
 
