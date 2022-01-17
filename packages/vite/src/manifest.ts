@@ -1,6 +1,6 @@
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
-import { joinURL, withoutBase } from 'ufo'
+import { joinURL, withoutBase, withoutLeadingSlash } from 'ufo'
 import type { ViteBuildContext } from './vite'
 
 export async function writeManifest (ctx: ViteBuildContext, extraEntries: string[] = []) {
@@ -33,7 +33,8 @@ export async function writeManifest (ctx: ViteBuildContext, extraEntries: string
       const entry: Record<string, any> = value
       for (const key of ['css', 'assets']) {
         if (key in entry) {
-          entry[key] = entry[key].map(item => withoutBase(item, ctx.nuxt.options.app.buildAssetsDir))
+          entry[key] = entry[key].map(item => withoutLeadingSlash(withoutBase(item, withoutLeadingSlash(ctx.nuxt.options.app.buildAssetsDir)))
+          )
         }
       }
       return [key, entry]
