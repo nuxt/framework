@@ -78,6 +78,7 @@ export interface NuxtHooks {
   // @nuxt/nitro
   'nitro:document': (template: { src: string, contents: string }) => HookResult
   'nitro:context': (context: any) => HookResult
+  'nitro:generate': (context: any) => HookResult
 
   // @nuxt/cli
   'generate:cache:ignore': (ignore: string[]) => HookResult
