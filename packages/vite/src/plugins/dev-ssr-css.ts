@@ -4,7 +4,7 @@ import { isCSS } from '../utils'
 
 export interface DevStyleSSRPluginOptions {
   rootDir: string
-  prefix: string
+  buildAssetsURL: string
 }
 
 export function devStyleSSRPlugin (options: DevStyleSSRPluginOptions): Plugin {
@@ -23,7 +23,7 @@ export function devStyleSSRPlugin (options: DevStyleSSRPluginOptions): Plugin {
       }
 
       // When dev `<style>` is injected, remove the `<link>` styles from manifest
-      const selector = joinURL(options.prefix, moduleId)
+      const selector = joinURL(options.buildAssetsURL, moduleId)
       return code + `\ndocument.querySelectorAll(\`link[href="${selector}"]\`).forEach(i=>i.remove())`
     }
   }
