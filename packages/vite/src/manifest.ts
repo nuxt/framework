@@ -1,6 +1,6 @@
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
-import { joinURL, withoutBase, withoutLeadingSlash } from 'ufo'
+import { joinURL } from 'ufo'
 import type { ViteBuildContext } from './vite'
 
 export async function writeManifest (ctx: ViteBuildContext, extraEntries: string[] = []) {
