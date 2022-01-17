@@ -1,16 +1,12 @@
 import type { IncomingMessage, ServerResponse } from 'http'
-import { resolve } from 'pathe'
 import pify from 'pify'
 import webpack from 'webpack'
-import Glob from 'glob'
-import webpackDevMiddleware from 'webpack-dev-middleware'
+import webpackDevMiddleware, { API } from 'webpack-dev-middleware'
 import webpackHotMiddleware from 'webpack-hot-middleware'
 import VirtualModulesPlugin from 'webpack-virtual-modules'
 import consola from 'consola'
 
 import type { Compiler, Watching } from 'webpack'
-import type { Context as WebpackDevMiddlewareContext, Options as WebpackDevMiddlewareOptions } from 'webpack-dev-middleware'
-import type { MiddlewareOptions as WebpackHotMiddlewareOptions } from 'webpack-hot-middleware'
 
 import type { Nuxt } from '@nuxt/schema'
 import { joinURL } from 'ufo'
@@ -19,285 +15,157 @@ import { createMFS } from './utils/mfs'
 import { client, server } from './configs'
 import { createWebpackConfigContext, applyPresets, getWebpackConfig } from './utils/config'
 
-const glob = pify(Glob)
-class WebpackBundler {
-  nuxt: Nuxt
-  plugins: Array<string>
-  compilers: Array<Compiler>
-  compilersWatching: Array<Watching & { closeAsync?: () => void }>
-  // TODO: change this when pify has better types https://github.com/sindresorhus/pify/pull/76
-  devMiddleware: Record<string, Function & { close?: () => Promise<void>, context?: WebpackDevMiddlewareContext<IncomingMessage, ServerResponse> }>
-  hotMiddleware: Record<string, Function>
-  virtualModules: VirtualModulesPlugin
-  mfs?: Compiler['outputFileSystem']
-  __closed?: boolean
+// TODO: Support plugins
+// const plugins: string[] = []
 
-  constructor (nuxt: Nuxt) {
-    this.nuxt = nuxt
-    // TODO: plugins
-    this.plugins = []
+export async function bundle (nuxt: Nuxt) {
+  // Initialize shared MFS for dev
+  const mfs = nuxt.options.dev ? createMFS() : null
 
-    // Class fields
-    this.compilers = []
-    this.compilersWatching = []
-    this.devMiddleware = {}
-    this.hotMiddleware = {}
-
-    // Bind middleware to self
-    this.middleware = this.middleware.bind(this)
-
-    // Initialize shared MFS for dev
-    if (this.nuxt.options.dev) {
-      this.mfs = createMFS() as Compiler['outputFileSystem']
-    }
-
-    // Initialize virtual modules instance
-    this.virtualModules = new VirtualModulesPlugin(nuxt.vfs)
-    const writeFiles = () => {
-      for (const filePath in nuxt.vfs) {
-        this.virtualModules.writeModule(filePath, nuxt.vfs[filePath])
-      }
-    }
-    // Workaround to initialize virtual modules
-    nuxt.hook('build:compile', ({ compiler }) => {
-      if (compiler.name === 'server') { writeFiles() }
-    })
-    // Update virtual modules when templates are updated
-    nuxt.hook('app:templatesGenerated', writeFiles)
-  }
-
-  getWebpackConfig (name) {
-    const ctx = createWebpackConfigContext({ nuxt: this.nuxt })
-
-    if (name === 'client') {
-      applyPresets(ctx, client)
-    } else if (name === 'server') {
-      applyPresets(ctx, server)
-    } else {
-      throw new Error(`Unsupported webpack config ${name}`)
-    }
-
-    return getWebpackConfig(ctx)
-  }
-
-  async build () {
-    const { options } = this.nuxt
-
-    const webpackConfigs = [
-      this.getWebpackConfig('client')
-    ]
-
-    if (options.ssr) {
-      webpackConfigs.push(this.getWebpackConfig('server'))
-    }
-
-    await this.nuxt.callHook('webpack:config', webpackConfigs)
-
-    // Check styleResource existence
-    const { styleResources } = this.nuxt.options.build
-    if (styleResources && Object.keys(styleResources).length) {
-      consola.warn(
-        'Using styleResources without the @nuxtjs/style-resources is not suggested and can lead to severe performance issues.',
-        'Please use https://github.com/nuxt-community/style-resources-module'
-      )
-      for (const ext of Object.keys(styleResources)) {
-        await Promise.all(Array.from(styleResources[ext]).map(async (p) => {
-          const styleResourceFiles = await glob(resolve(this.nuxt.options.rootDir, p as string))
-
-          if (!styleResourceFiles || styleResourceFiles.length === 0) {
-            throw new Error(`Style Resource not found: ${p}`)
-          }
-        }))
-      }
-    }
-
-    // Configure compilers
-    this.compilers = webpackConfigs.map((config) => {
-      // Support virtual modules (input)
-      config.plugins.push(this.virtualModules)
-      config.plugins.push(DynamicBasePlugin.webpack({
-        env: this.nuxt.options.dev ? 'dev' : config.name as 'client',
-        devAppConfig: this.nuxt.options.app,
-        globalPublicPath: '__webpack_public_path__'
-      }))
-
-      // Create compiler
-      const compiler = webpack(config)
-
-      // In dev, write files in memory FS
-      if (options.dev) {
-        compiler.outputFileSystem = this.mfs!
-      }
-
-      return compiler
-    })
-
-    // Start Builds
-    if (options.dev) {
-      return Promise.all(this.compilers.map(c => this.webpackCompile(c)))
-    } else {
-      for (const c of this.compilers) {
-        await this.webpackCompile(c)
-      }
+  // Initialize virtual modules instance
+  const virtualModules = new VirtualModulesPlugin(nuxt.vfs)
+  const writeFiles = () => {
+    for (const filePath in nuxt.vfs) {
+      virtualModules.writeModule(filePath, nuxt.vfs[filePath])
     }
   }
+  // Workaround to initialize virtual modules
+  nuxt.hook('build:compile', ({ compiler }) => {
+    if (compiler.name === 'server') { writeFiles() }
+  })
+  // Update virtual modules when templates are updated
+  nuxt.hook('app:templatesGenerated', writeFiles)
 
-  async webpackCompile (compiler) {
+  const compilersWatching: Watching[] = []
+
+  async function webpackCompile (compiler: Compiler) {
     const { name } = compiler.options
-    const { options } = this.nuxt
 
-    await this.nuxt.callHook('build:compile', { name, compiler })
+    await nuxt.callHook('build:compile', { name, compiler })
 
     // Load renderer resources after build
     compiler.hooks.done.tap('load-resources', async (stats) => {
-      await this.nuxt.callHook('build:compiled', {
-        name,
-        compiler,
-        stats
-      })
-
+      await nuxt.callHook('build:compiled', { name, compiler, stats })
       // Reload renderer
-      await this.nuxt.callHook('build:resources', this.mfs)
+      await nuxt.callHook('build:resources', mfs)
     })
 
     // --- Dev Build ---
-    if (options.dev) {
+    if (nuxt.options.dev) {
       // Client build
-      if (['client', 'modern'].includes(name)) {
+      if (name === 'client') {
         return new Promise((resolve, reject) => {
           compiler.hooks.done.tap('nuxt-dev', () => { resolve(null) })
           compiler.hooks.failed.tap('nuxt-errorlog', (err) => { reject(err) })
           // Start watch
-          this.webpackDev(compiler)
+          webpackDev(compiler)
         })
       }
 
       // Server, build and watch for changes
       return new Promise((resolve, reject) => {
-        const watching = compiler.watch(options.watchers.webpack, (err) => {
-          if (err) {
-            return reject(err)
-          }
+        const watching = compiler.watch(nuxt.options.watchers.webpack, (err) => {
+          if (err) { return reject(err) }
           resolve(null)
         })
 
-        watching.closeAsync = pify(watching.close)
-        this.compilersWatching.push(watching)
+        compilersWatching.push(watching)
       })
     }
 
     // --- Production Build ---
-    compiler.run = pify(compiler.run)
-    const stats = await compiler.run()
+    const stats = await pify(compiler.run)()
 
     if (stats.hasErrors()) {
       // non-quiet mode: errors will be printed by webpack itself
       const error = new Error('Nuxt build error')
-      if (options.build.quiet === true) {
+      if (nuxt.options.build.quiet === true) {
         error.stack = stats.toString('errors-only')
       }
       throw error
     }
 
     // Await for renderer to load resources (programmatic, tests and generate)
-    await this.nuxt.callHook('build:resources')
+    await nuxt.callHook('build:resources')
   }
 
-  async webpackDev (compiler: Compiler) {
+  async function webpackDev (compiler: Compiler) {
     consola.debug('Creating webpack middleware...')
 
     const { name } = compiler.options
-    const buildOptions = this.nuxt.options.build
-    const { client, ...hotMiddlewareOptions } = buildOptions.hotMiddleware || {}
 
     // Create webpack dev middleware
-    this.devMiddleware[name] = pify(
-      // @ts-ignore
-      webpackDevMiddleware(
-        // @ts-ignore
-        compiler,
-        {
-          publicPath: joinURL(this.nuxt.options.app.baseURL, this.nuxt.options.app.buildAssetsDir),
-          outputFileSystem: this.mfs,
-          stats: 'none',
-          ...buildOptions.devMiddleware
-        } as WebpackDevMiddlewareOptions<IncomingMessage, ServerResponse>
-      )
-    )
+    const devMiddleware = pify(webpackDevMiddleware(compiler, {
+      // TODO: waiting for https://github.com/nuxt/framework/pull/2249
+      publicPath: joinURL(nuxt.options.app.baseURL, nuxt.options.app.buildAssetsDir),
+      outputFileSystem: mfs as any,
+      stats: 'none',
+      ...nuxt.options.webpack.devMiddleware
+    })) as API<IncomingMessage, ServerResponse>
 
-    this.devMiddleware[name].close = pify(this.devMiddleware[name].close)
+    compilersWatching.push(devMiddleware.context.watching)
+    nuxt.hook('close', () => pify(devMiddleware.close)())
 
-    // @ts-ignore
-    this.compilersWatching.push(this.devMiddleware[name].context.watching)
-
-    this.hotMiddleware[name] = pify(
-      webpackHotMiddleware(
-        compiler,
-        {
-          log: false,
-          heartbeat: 10000,
-          path: joinURL(this.nuxt.options.app.baseURL, '__webpack_hmr', name),
-          ...hotMiddlewareOptions
-        } as WebpackHotMiddlewareOptions
-      )
-    )
+    const { client: _client, ...hotMiddlewareOptions } = nuxt.options.webpack.hotMiddleware || {}
+    const hotMiddleware = pify(webpackHotMiddleware(compiler, {
+      log: false,
+      heartbeat: 10000,
+      path: joinURL(nuxt.options.app.baseURL, '__webpack_hmr', name),
+      ...hotMiddlewareOptions
+    }))
 
     // Register devMiddleware on server
-    await this.nuxt.callHook('server:devMiddleware', this.middleware)
+    await nuxt.callHook('server:devMiddleware', async (req, res, next) => {
+      for (const mw of [devMiddleware, hotMiddleware]) {
+        await mw?.(req, res)
+      }
+      next()
+    })
   }
 
-  async middleware (req: IncomingMessage, res: ServerResponse, next: () => any) {
-    if (this.devMiddleware && this.devMiddleware.client) {
-      await this.devMiddleware.client(req, res)
+  const webpackConfigs = [client, ...nuxt.options.ssr ? [server] : []].map((preset) => {
+    const ctx = createWebpackConfigContext(nuxt)
+    applyPresets(ctx, preset)
+    return getWebpackConfig(ctx)
+  })
+
+  await nuxt.callHook('webpack:config', webpackConfigs)
+
+  // Configure compilers
+  const compilers = webpackConfigs.map((config) => {
+    // Support virtual modules (input)
+    config.plugins.push(virtualModules)
+
+    config.plugins.push(DynamicBasePlugin.webpack({
+      env: nuxt.options.dev ? 'dev' : config.name as 'client',
+      devAppConfig: nuxt.options.app,
+      globalPublicPath: '__webpack_public_path__'
+    }))
+
+    // Create compiler
+    const compiler = webpack(config)
+
+    // In dev, write files in memory FS
+    if (nuxt.options.dev) {
+      compiler.outputFileSystem = mfs
     }
 
-    if (this.hotMiddleware && this.hotMiddleware.client) {
-      await this.hotMiddleware.client(req, res)
-    }
+    return compiler
+  })
 
-    next()
-  }
-
-  async unwatch () {
-    await Promise.all(this.compilersWatching.map(watching => watching.closeAsync()))
-  }
-
-  async close () {
-    if (this.__closed) {
-      return
-    }
-    this.__closed = true
-
-    // Unwatch
-    await this.unwatch()
-
-    // Stop webpack middleware
-    for (const devMiddleware of Object.values(this.devMiddleware)) {
-      await devMiddleware.close()
-    }
-
-    for (const compiler of this.compilers) {
+  nuxt.hook('close', async () => {
+    for (const compiler of compilers) {
       await new Promise(resolve => compiler.close(resolve))
     }
+    await Promise.all(compilersWatching.map(watching => pify(watching.close)()))
+  })
 
-    // Cleanup MFS
-    if (this.mfs) {
-      delete this.mfs
-    }
-
-    // Cleanup more resources
-    delete this.compilers
-    delete this.compilersWatching
-    delete this.devMiddleware
-    delete this.hotMiddleware
+  // Start Builds
+  if (nuxt.options.dev) {
+    return Promise.all(compilers.map(c => webpackCompile(c)))
   }
 
-  forGenerate () {
-    this.nuxt.options.target = 'static'
+  for (const c of compilers) {
+    await webpackCompile(c)
   }
-}
-
-export function bundle (nuxt: Nuxt) {
-  const bundler = new WebpackBundler(nuxt)
-  return bundler.build()
 }

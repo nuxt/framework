@@ -10,7 +10,10 @@ import router from './router'
 import server from './server'
 import cli from './cli'
 import generate from './generate'
+import postcss from './postcss'
 import typescript from './typescript'
+import vite from './vite'
+import webpack from './webpack'
 
 /*
 TODO for top level normalizations: (nuxt2)
@@ -42,16 +45,8 @@ export default {
   server,
   cli,
   generate,
+  ...postcss,
   typescript,
-
-  /**
-   * Configuration that will be passed directly to Vite.
-   *
-   * See https://vitejs.dev/config for more information.
-   * Please note that not all vite options are supported in Nuxt.
-   *
-   * @type {boolean | typeof import('vite').InlineConfig}
-   * @version 3
-   */
-  vite: undefined,
+  ...vite,
+  ...webpack,
 }

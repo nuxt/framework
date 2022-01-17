@@ -32,8 +32,8 @@ export function babel (ctx: WebpackConfigContext) {
   })
 
   // https://github.com/webpack-contrib/terser-webpack-plugin
-  if (options.build.terser) {
-    const terser = new TerserWebpackPlugin({
+  if (options.webpack.terser) {
+    config.plugins.push(new TerserWebpackPlugin({
       // cache, TODO
       extractComments: {
         condition: 'some',
@@ -41,16 +41,14 @@ export function babel (ctx: WebpackConfigContext) {
       },
       terserOptions: {
         compress: {
-          ecma: ctx.isModern ? 6 : undefined
+          ecma: 6
         },
         mangle: {
           reserved: reservedVueTags
         }
       },
-      ...options.build.terser as any
-    })
-
-    config.plugins.push(terser as any)
+      ...options.webpack.terser
+    }))
   }
 }
 
@@ -58,7 +56,7 @@ function getBabelOptions (ctx: WebpackConfigContext) {
   const { options } = ctx
 
   const babelOptions: any = {
-    ...options.build.babel,
+    ...options.webpack.babel,
     envName: ctx.name
   }
 

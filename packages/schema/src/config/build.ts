@@ -8,7 +8,8 @@ export default {
    * It is enabled by default when a CI or test environment is detected.
    *
    * @see [std-env](https://github.com/unjs/std-env)
-  * @version 2
+   * @version 2
+   * @version 3
    */
   quiet: Boolean(isCI || isTest),
 
@@ -85,14 +86,12 @@ export default {
    * }
    * ```
    * @version 2
-   * @version 3 webpack only
    */
   extractCSS: false,
 
   /**
    * Enables CSS source map support (defaults to true in development)
    * @version 2
-   * @version 3 webpack only
    */
   cssSourceMap: {
     $resolve: (val, get) => val ?? get('dev')
@@ -163,7 +162,6 @@ export default {
    *
    * Defaults to `'url'` ([see package](https://www.npmjs.com/package/url)).
    * @version 2
-   * @version 3 webpack only
    */
   serverURLPolyfill: 'url',
 
@@ -184,7 +182,6 @@ export default {
    * }
    * ```
    * @version 2
-   * @version 3 webpack only
    */
   filenames: {
     app: ({ isDev, isModern }) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
@@ -198,7 +195,6 @@ export default {
   /**
    * Customize the options of Nuxt's integrated webpack loaders.
    * @version 2
-   * @version 3 webpack only
    */
   loaders: {
     $resolve: (val, get) => {
@@ -271,7 +267,6 @@ export default {
    * ]
    * ```
    * @version 2
-   * @version 3 webpack only
    */
   plugins: [],
 
@@ -285,7 +280,6 @@ export default {
    * @note Enabling sourceMap will leave `//# sourceMappingURL` linking comment at
    * the end of each output file if webpack `config.devtool` is set to `source-map`.
    * @version 2
-   * @version 3 webpack only
    */
   terser: {},
 
@@ -300,7 +294,6 @@ export default {
   /**
    * Hard-replaces `typeof process`, `typeof window` and `typeof document` to tree-shake bundle.
    * @version 2
-   * @version 3 webpack only
    */
   aggressiveCodeRemoval: false,
 
@@ -311,7 +304,6 @@ export default {
    *
    * @see [optimize-css-assets-webpack-plugin documentation](https://github.com/NMFR/optimize-css-assets-webpack-plugin).
    * @version 2
-   * @version 3 webpack only
    */
   optimizeCSS: {
     $resolve: (val, get) => val ?? (get('build.extractCSS') ? {} : false)
@@ -320,7 +312,6 @@ export default {
   /**
    * Configure [webpack optimization](https://webpack.js.org/configuration/optimization/).
    * @version 2
-   * @version 3 webpack only
    */
   optimization: {
     runtimeChunk: 'single',
@@ -351,7 +342,6 @@ export default {
    * Nuxt will automatically detect the current version of `core-js` in your project (`'auto'`),
    * or you can specify which version you want to use (`2` or `3`).
    * @version 2
-   * @version 3 webpack only
    */
   corejs: 'auto',
 
@@ -363,7 +353,6 @@ export default {
    *
    * @note `.babelrc` is ignored by default.
    * @version 2
-   * @version 3 webpack only
    */
   babel: {
     configFile: false,
@@ -454,7 +443,6 @@ export default {
    * Customize PostCSS Loader plugins.
    * Sames options as https://github.com/webpack-contrib/postcss-loader#options
    * @version 2
-   * @version 3 webpack only
    */
   postcss: {
     execute: undefined,
@@ -551,7 +539,6 @@ export default {
   /**
    * See [webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware) for available options.
    * @version 2
-   * @version 3 webpack only
    */
   devMiddleware: {
     stats: 'none'
@@ -559,7 +546,6 @@ export default {
   /**
    * See [webpack-hot-middleware](https://github.com/webpack-contrib/webpack-hot-middleware) for available options.
    * @version 2
-   * @version 3 webpack only
    */
   hotMiddleware: {},
 
@@ -585,7 +571,6 @@ export default {
   /**
    * Set to `false` to disable the overlay provided by [FriendlyErrorsWebpackPlugin](https://github.com/nuxt/friendly-errors-webpack-plugin)
    * @version 2
-   * @version 3 webpack only
    */
   friendlyErrors: true,
   /**
@@ -596,7 +581,6 @@ export default {
   /**
    * Filters to hide build warnings.
    * @version 2
-   * @version 3 webpack only
    */
   warningIgnoreFilters: [],
 

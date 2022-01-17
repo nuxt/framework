@@ -24,6 +24,12 @@ export default defineBuildConfig({
     'webpack-bundle-analyzer',
     'rollup-plugin-visualizer',
     'vite',
+    'mini-css-extract-plugin',
+    'terser-webpack-plugin',
+    'css-minimizer-webpack-plugin',
+    'webpack-dev-middleware',
+    'webpack-hot-middleware',
+    'postcss',
     // Implicit
     '@vue/compiler-core',
     '@vue/shared'

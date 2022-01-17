@@ -2981,6 +2981,7 @@ __metadata:
     defu: ^5.0.1
     jiti: ^1.12.9
     pathe: ^0.2.0
+    postcss-import-resolver: ^2.0.0
     scule: ^0.2.1
     std-env: ^3.0.1
     ufo: ^0.7.9
@@ -3298,7 +3299,6 @@ __metadata:
     esbuild-loader: ^2.18.0
     file-loader: ^6.2.0
     fs-extra: ^10.0.0
-    glob: ^7.2.0
     hash-sum: ^2.0.0
     lodash-es: ^4.17.21
     memfs: ^3.4.1

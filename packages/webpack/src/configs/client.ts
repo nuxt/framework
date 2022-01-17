@@ -50,7 +50,7 @@ function clientHMR (ctx: WebpackConfigContext) {
     return
   }
 
-  const clientOptions = options.build.hotMiddleware?.client || {} as ClientOptions
+  const clientOptions = options.webpack.hotMiddleware?.client || {}
   const hotMiddlewareClientOptions = {
     reload: true,
     timeout: 30000,
@@ -81,7 +81,7 @@ function clientPlugins (ctx: WebpackConfigContext) {
 
   // Webpack Bundle Analyzer
   // https://github.com/webpack-contrib/webpack-bundle-analyzer
-  if (!ctx.isDev && ctx.name === 'client' && options.build.analyze) {
+  if (!ctx.isDev && ctx.name === 'client' && options.webpack.analyze) {
     const statsDir = resolve(options.buildDir, 'stats')
 
     // @ts-ignore
@@ -92,7 +92,7 @@ function clientPlugins (ctx: WebpackConfigContext) {
       openAnalyzer: !options.build.quiet,
       reportFilename: resolve(statsDir, `${ctx.name}.html`),
       statsFilename: resolve(statsDir, `${ctx.name}.json`),
-      ...options.build.analyze as any
+      ...options.webpack.analyze === true ? {} : options.webpack.analyze
     }))
   }
 }

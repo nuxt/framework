@@ -9,7 +9,6 @@ export default defineBuildConfig({
     '@nuxt/kit',
     '@vue/babel-preset-jsx',
     'postcss',
-    'postcss-import-resolver',
     'postcss-loader',
     'babel-loader',
     'vue-loader',
