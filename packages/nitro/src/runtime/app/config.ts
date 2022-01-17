@@ -15,7 +15,7 @@ for (const type of ['private', 'public']) {
 const appConfig = _runtimeConfig.public.app
 appConfig.baseURL = process.env.APP_BASE_PATH || appConfig.baseURL
 appConfig.cdnURL = process.env.APP_CDN_URL || appConfig.cdnURL
-appConfig.buildAssetsPath = process.env.APP_BUILD_ASSETS_PATH || appConfig.buildAssetsPath
+appConfig.buildAssetsDir = process.env.APP_BUILD_ASSETS_PATH || appConfig.buildAssetsDir
 
 // Named exports
 export const privateConfig = deepFreeze(defu(_runtimeConfig.private, _runtimeConfig.public))

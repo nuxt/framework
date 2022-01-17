@@ -16,7 +16,7 @@ export async function writeManifest (ctx: ViteBuildContext, extraEntries: string
 
   // Legacy dev manifest
   const devClientManifest = {
-    publicPath: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsPath),
+    publicPath: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir),
     all: entries,
     initial: entries,
     async: [],
@@ -33,7 +33,7 @@ export async function writeManifest (ctx: ViteBuildContext, extraEntries: string
       const entry: Record<string, any> = value
       for (const key of ['css', 'assets']) {
         if (key in entry) {
-          entry[key] = entry[key].map(item => withoutBase(item, ctx.nuxt.options.app.buildAssetsPath))
+          entry[key] = entry[key].map(item => withoutBase(item, ctx.nuxt.options.app.buildAssetsDir))
         }
       }
       return [key, entry]

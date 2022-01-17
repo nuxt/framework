@@ -24,7 +24,7 @@ declare module '#config' {
 
 declare module '#paths' {
   export const baseURL: () => string
-  export const buildAssetsPath: () => string
+  export const buildAssetsDir: () => string
 
   export const buildAssetsURL: (...path: string[]) => string
   export const publicAssetsURL: (...path: string[]) => string

@@ -217,7 +217,7 @@ class WebpackBundler {
         // @ts-ignore
         compiler,
         {
-          publicPath: joinURL(this.nuxt.options.app.baseURL, this.nuxt.options.app.buildAssetsPath),
+          publicPath: joinURL(this.nuxt.options.app.baseURL, this.nuxt.options.app.buildAssetsDir),
           outputFileSystem: this.mfs,
           stats: 'none',
           ...buildOptions.devMiddleware

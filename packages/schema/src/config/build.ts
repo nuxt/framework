@@ -155,7 +155,7 @@ export default {
    * @version 2
    */
   publicPath: {
-    $resolve: (val, get) => val ? withTrailingSlash(normalizeURL(val)) : get('app.buildAssetsPath')
+    $resolve: (val, get) => val ? withTrailingSlash(normalizeURL(val)) : get('app.buildAssetsDir')
   },
 
   /**

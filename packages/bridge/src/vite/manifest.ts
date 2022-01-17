@@ -64,7 +64,7 @@ export async function generateBuildManifest (ctx: ViteBuildContext) {
 
   const clientManifest = {
     // This publicPath will be ignored by Nitro and computed dynamically
-    publicPath: ctx.nuxt.options.app.buildAssetsPath,
+    publicPath: ctx.nuxt.options.app.buildAssetsDir,
     all: uniq([
       polyfillName,
       clientEntryName,

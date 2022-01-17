@@ -39,8 +39,8 @@ export async function generate (nitroContext: NitroContext) {
 
   const clientDist = resolve(nitroContext._nuxt.buildDir, 'dist/client')
   if (await isDirectory(clientDist)) {
-    const buildAssetsPath = join(nitroContext.output.publicDir, nitroContext._nuxt.buildAssetsPath)
-    await fse.copy(clientDist, buildAssetsPath)
+    const buildAssetsDir = join(nitroContext.output.publicDir, nitroContext._nuxt.buildAssetsDir)
+    await fse.copy(clientDist, buildAssetsDir)
   }
 
   consola.success('Generated public ' + prettyPath(nitroContext.output.publicDir))

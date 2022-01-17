@@ -49,7 +49,7 @@ export async function bundle (nuxt: Nuxt) {
           }
         },
         base: nuxt.options.dev
-          ? joinURL(nuxt.options.app.baseURL, nuxt.options.app.buildAssetsPath)
+          ? joinURL(nuxt.options.app.baseURL, nuxt.options.app.buildAssetsDir)
           : '/__NUXT_BASE__/',
         publicDir: resolve(nuxt.options.srcDir, nuxt.options.dir.public),
         // TODO: move to kit schema when it exists
@@ -74,7 +74,7 @@ export async function bundle (nuxt: Nuxt) {
         },
         clearScreen: false,
         build: {
-          assetsDir: withoutLeadingSlash(nuxt.options.app.buildAssetsPath),
+          assetsDir: withoutLeadingSlash(nuxt.options.app.buildAssetsDir),
           emptyOutDir: false,
           rollupOptions: {
             input: resolve(nuxt.options.appDir, 'entry'),

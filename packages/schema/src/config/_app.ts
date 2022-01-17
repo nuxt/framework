@@ -42,14 +42,14 @@ export default {
      */
     baseURL: '/',
     /** The folder name for the built site assets, relative to `baseURL` (or `cdnURL` if set). This is set at build time and should not be customized at runtime. */
-    buildAssetsPath: '/_nuxt/',
+    buildAssetsDir: '/_nuxt/',
     /**
      * The folder name for the built site assets, relative to `baseURL` (or `cdnURL` if set).
-     * @deprecated - use `buildAssetsPath` instead
+     * @deprecated - use `buildAssetsDir` instead
      * @version 2
      */
     assetsPath: {
-      $resolve: (val, get) => val ?? get('buildAssetsPath')
+      $resolve: (val, get) => val ?? get('buildAssetsDir')
     },
     /**
      * An absolute URL to serve the public folder from (production-only).

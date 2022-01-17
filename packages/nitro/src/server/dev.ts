@@ -77,7 +77,7 @@ export function createDevServer (nitroContext: NitroContext) {
   const app = createApp()
 
   // _nuxt and static
-  const buildAssetsURL = joinURL(nitroContext._nuxt.baseURL, nitroContext._nuxt.buildAssetsPath)
+  const buildAssetsURL = joinURL(nitroContext._nuxt.baseURL, nitroContext._nuxt.buildAssetsDir)
   app.use(buildAssetsURL, serveStatic(resolve(nitroContext._nuxt.buildDir, 'dist/client')))
   app.use(nitroContext._nuxt.baseURL, serveStatic(resolve(nitroContext._nuxt.publicDir)))
 

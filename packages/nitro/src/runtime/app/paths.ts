@@ -5,12 +5,12 @@ export function baseURL () {
   return config.app.baseURL
 }
 
-export function buildAssetsPath () {
-  return config.app.buildAssetsPath
+export function buildAssetsDir () {
+  return config.app.buildAssetsDir
 }
 
 export function buildAssetsURL (...path: string[]) {
-  return joinURL(publicAssetsURL(), config.app.buildAssetsPath, ...path)
+  return joinURL(publicAssetsURL(), config.app.buildAssetsDir, ...path)
 }
 
 export function publicAssetsURL (...path: string[]) {

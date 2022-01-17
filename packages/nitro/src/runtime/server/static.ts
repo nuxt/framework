@@ -2,7 +2,7 @@ import { createError } from 'h3'
 import { withoutTrailingSlash, withLeadingSlash, parseURL } from 'ufo'
 // @ts-ignore
 import { getAsset, readAsset } from '#static'
-import { buildAssetsPath } from '#paths'
+import { buildAssetsDir } from '#paths'
 
 const METHODS = ['HEAD', 'GET']
 
@@ -27,7 +27,7 @@ export default async function serveStatic (req, res) {
     }
   }
 
-  const isBuildAsset = id.startsWith(buildAssetsPath())
+  const isBuildAsset = id.startsWith(buildAssetsDir())
 
   if (!asset) {
     if (isBuildAsset && !id.startsWith(STATIC_ASSETS_BASE)) {

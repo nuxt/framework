@@ -87,7 +87,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   ctx.nuxt.hook('nitro:generate', async () => {
     const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
 
-    // Remove public files that have been duplicated into buildAssetsPath
+    // Remove public files that have been duplicated into buildAssetsDir
     // TODO: Add option to configure this behaviour in vite
     const publicDir = join(ctx.nuxt.options.srcDir, ctx.nuxt.options.dir.public)
     let publicFiles: string[] = []
@@ -100,10 +100,10 @@ export async function buildServer (ctx: ViteBuildContext) {
       }
     }
 
-    // Copy doubly-nested /_nuxt/_nuxt files into buildAssetsPath
+    // Copy doubly-nested /_nuxt/_nuxt files into buildAssetsDir
     // TODO: Workaround vite issue
     if (await isDirectory(clientDist)) {
-      const nestedAssetsPath = withoutTrailingSlash(join(clientDist, ctx.nuxt.options.app.buildAssetsPath))
+      const nestedAssetsPath = withoutTrailingSlash(join(clientDist, ctx.nuxt.options.app.buildAssetsDir))
 
       if (await isDirectory(nestedAssetsPath)) {
         await fse.copy(nestedAssetsPath, clientDist)

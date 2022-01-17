@@ -43,7 +43,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       DynamicBasePlugin.vite({ env: 'client', devAppConfig: ctx.nuxt.options.app }),
       devStyleSSRPlugin({
         rootDir: ctx.nuxt.options.rootDir,
-        buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsPath)
+        buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
       })
     ],
     server: {

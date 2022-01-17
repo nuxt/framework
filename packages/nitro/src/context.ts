@@ -73,7 +73,7 @@ export interface NitroContext {
     publicDir: string
     serverDir: string
     baseURL: string
-    buildAssetsPath: string
+    buildAssetsDir: string
     isStatic: boolean
     fullStatic: boolean
     staticAssets: any
@@ -141,7 +141,7 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
       publicDir: resolve(nuxtOptions.srcDir, nuxtOptions.dir.public || nuxtOptions.dir.static),
       serverDir: resolve(nuxtOptions.srcDir, (nuxtOptions.dir as any).server || 'server'),
       baseURL: nuxtOptions.app.baseURL,
-      buildAssetsPath: nuxtOptions.app.buildAssetsPath,
+      buildAssetsDir: nuxtOptions.app.buildAssetsDir,
       isStatic: nuxtOptions.target === 'static' && !nuxtOptions.dev,
       fullStatic: nuxtOptions.target === 'static' && !nuxtOptions._legacyGenerate,
       staticAssets: nuxtOptions.generate.staticAssets,
