@@ -106,7 +106,8 @@ export async function buildServer (ctx: ViteBuildContext) {
       const nestedAssetsPath = withoutTrailingSlash(join(clientDist, ctx.nuxt.options.app.buildAssetsDir))
 
       if (await isDirectory(nestedAssetsPath)) {
-        await fse.copy(nestedAssetsPath, clientDist)
+        await fse.copy(nestedAssetsPath, clientDist, { recursive: true })
+        await fse.remove(nestedAssetsPath)
       }
     }
   })
