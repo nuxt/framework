@@ -2822,7 +2822,7 @@ __metadata:
     hash-sum: ^2.0.0
     jiti: ^1.12.9
     lodash.template: ^4.5.0
-    mlly: ^0.3.17
+    mlly: ^0.3.19
     pathe: ^0.2.0
     pkg-types: ^0.3.2
     rc9: ^1.2.0
@@ -2917,7 +2917,7 @@ __metadata:
     jiti: ^1.12.9
     listhen: ^0.2.6
     mime: ^3.0.0
-    mlly: ^0.3.17
+    mlly: ^0.3.19
     node-fetch: ^3.1.0
     ohmyfetch: ^0.4.14
     ora: ^6.0.1
@@ -3184,7 +3184,7 @@ __metadata:
     externality: ^0.1.5
     fs-extra: ^10.0.0
     magic-string: ^0.25.7
-    mlly: ^0.3.17
+    mlly: ^0.3.19
     p-debounce: ^4.0.0
     pathe: ^0.2.0
     postcss-import: ^14.0.2
@@ -3303,7 +3303,7 @@ __metadata:
     lodash-es: ^4.17.21
     memfs: ^3.4.1
     mini-css-extract-plugin: ^2.4.6
-    mlly: ^0.3.17
+    mlly: ^0.3.19
     pathe: ^0.2.0
     pify: ^5.0.0
     postcss: ^8.4.5
@@ -14506,6 +14506,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mlly@npm:^0.3.19":
+  version: 0.3.19
+  resolution: "mlly@npm:0.3.19"
+  checksum: 85d646936d5d94b6783e12257adb64ceac9ece32ccaa33d911d44f0c265a91d4f34092beb39641cd108c14a4228f56fc591af60412f65964c72561fbd244ad36
+  languageName: node
+  linkType: hard
+
 "modify-values@npm:^1.0.0":
   version: 1.0.1
   resolution: "modify-values@npm:1.0.1"
@@ -15256,7 +15263,7 @@ __metadata:
     fsevents: ~2.3.2
     jiti: ^1.12.9
     listhen: ^0.2.6
-    mlly: ^0.3.17
+    mlly: ^0.3.19
     mri: ^1.2.0
     p-debounce: ^4.0.0
     pathe: ^0.2.0
@@ -15362,7 +15369,7 @@ __metadata:
     hash-sum: ^2.0.0
     hookable: ^5.1.1
     ignore: ^5.2.0
-    mlly: ^0.3.17
+    mlly: ^0.3.19
     murmurhash-es: ^0.1.1
     nuxi: 3.0.0
     ohmyfetch: ^0.4.14

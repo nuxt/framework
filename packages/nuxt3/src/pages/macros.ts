@@ -36,16 +36,14 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
         return `export { meta } from "${specifier}"`
       }
 
-      // [webpack] Export named exports rather than the default (component)
-      const defaultExport = code.match(/export \{ default \} from ['"]([^'"]+)['"]/)
-      if (defaultExport) {
-        return defaultExport[0].replace('{ default }', `{${Object.values(options.macros).join(', ')}}`)
-      }
-
-      // ensure we tree-shake any _other_ exports out of the macro script
       const currentExports = findExports(code)
       for (const match of currentExports) {
-        if (match.type === 'default') {
+        if (match.type !== 'default') { continue }
+        if (match.specifier && match._type === 'named') {
+          // [webpack] Export named exports rather than the default (component)
+          return code.replace(match.code, `export {${Object.values(options.macros).join(', ')}} from "${match.specifier}"`)
+        } else {
+          // ensure we tree-shake any _other_ default exports out of the macro script
           code = code.replace(match.code, '/*#__PURE__*/ false &&')
           code += '\nexport default {}'
         }
