@@ -29,11 +29,10 @@ export default defineNuxtPlugin((nuxtApp) => {
   // TODO: remove before release - present for backwards compatibility & intentionally undocumented
   nuxtApp.vueApp.component('NuxtChild', NuxtNestedPage)
 
-  const base = useRuntimeConfig().app.basePath
-
+  const { basePath } = useRuntimeConfig().app
   const routerHistory = process.client
-    ? createWebHistory(base)
-    : createMemoryHistory(base)
+    ? createWebHistory(basePath)
+    : createMemoryHistory(basePath)
 
   const router = createRouter({
     history: routerHistory,
