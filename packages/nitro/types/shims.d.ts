@@ -23,7 +23,7 @@ declare module '#config' {
 }
 
 declare module '#paths' {
-  export const basePath: () => string
+  export const baseURL: () => string
   export const buildAssetsPath: () => string
 
   export const buildAssetsURL: (...path: string[]) => string

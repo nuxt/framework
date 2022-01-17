@@ -40,11 +40,11 @@ export default {
      * BASE_PATH=/prefix/ node .output/server/index.mjs
      * ```
      */
-    basePath: '/',
-    /** The folder name for the built site assets, relative to `basePath` (or `cdnURL` if set). This is set at build time and should not be customized at runtime. */
+    baseURL: '/',
+    /** The folder name for the built site assets, relative to `baseURL` (or `cdnURL` if set). This is set at build time and should not be customized at runtime. */
     buildAssetsPath: '/_nuxt/',
     /**
-     * The folder name for the built site assets, relative to `basePath` (or `cdnURL` if set).
+     * The folder name for the built site assets, relative to `baseURL` (or `cdnURL` if set).
      * @deprecated - use `buildAssetsPath` instead
      * @version 2
      */
@@ -325,7 +325,7 @@ export default {
    * @see [vue@3 documentation](https://v3.vuejs.org/guide/transitions-enterleave.html)
    * @version 2
    */
-   pageTransition: {
+  pageTransition: {
     $resolve: (val, get) => {
       val = typeof val === 'string' ? { name: val } : val
       return defu(val, {

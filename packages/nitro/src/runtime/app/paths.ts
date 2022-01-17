@@ -1,8 +1,8 @@
 import { joinURL } from 'ufo'
 import config from '#config'
 
-export function basePath () {
-  return config.app.basePath
+export function baseURL () {
+  return config.app.baseURL
 }
 
 export function buildAssetsPath () {
@@ -14,6 +14,6 @@ export function buildAssetsURL (...path: string[]) {
 }
 
 export function publicAssetsURL (...path: string[]) {
-  const publicBase = config.app.cdnURL || config.app.basePath
+  const publicBase = config.app.cdnURL || config.app.baseURL
   return path.length ? joinURL(publicBase, ...path) : publicBase
 }

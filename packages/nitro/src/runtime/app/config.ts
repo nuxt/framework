@@ -13,7 +13,7 @@ for (const type of ['private', 'public']) {
 
 // Load dynamic app configuration
 const appConfig = _runtimeConfig.public.app
-appConfig.basePath = process.env.APP_BASE_PATH || appConfig.basePath
+appConfig.baseURL = process.env.APP_BASE_PATH || appConfig.baseURL
 appConfig.cdnURL = process.env.APP_CDN_URL || appConfig.cdnURL
 appConfig.buildAssetsPath = process.env.APP_BUILD_ASSETS_PATH || appConfig.buildAssetsPath
 

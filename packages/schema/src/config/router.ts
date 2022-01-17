@@ -18,7 +18,7 @@ export default {
    * @version 2
    */
   base: {
-    $resolve: (val, get) => val ? withTrailingSlash(normalizeURL(val)) : get('app.basePath')
+    $resolve: (val, get) => val ? withTrailingSlash(normalizeURL(val)) : get('app.baseURL')
   },
 
   /** @private */

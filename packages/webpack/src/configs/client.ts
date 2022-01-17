@@ -54,7 +54,7 @@ function clientHMR (ctx: WebpackConfigContext) {
   const hotMiddlewareClientOptions = {
     reload: true,
     timeout: 30000,
-    path: joinURL(options.app.basePath, '__webpack_hmr', ctx.name),
+    path: joinURL(options.app.baseURL, '__webpack_hmr', ctx.name),
     ...clientOptions,
     ansiColors: JSON.stringify(clientOptions.ansiColors || {}),
     overlayStyles: JSON.stringify(clientOptions.overlayStyles || {}),

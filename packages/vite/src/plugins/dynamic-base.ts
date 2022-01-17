@@ -6,7 +6,7 @@ interface DynamicBasePluginOptions {
   globalPublicPath?: string
 }
 
-export const DynamicBasePathPlugin = createUnplugin(function (options: DynamicBasePluginOptions) {
+export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePluginOptions) {
   return {
     name: 'nuxt:dynamic-base-path',
     resolveId (id) {
@@ -22,7 +22,7 @@ export const DynamicBasePathPlugin = createUnplugin(function (options: DynamicBa
       }
 
       if (code.includes('NUXT_BASE') && !code.includes('const NUXT_BASE =')) {
-        code = 'const NUXT_BASE = NUXT_CONFIG.app.cdnURL || NUXT_CONFIG.app.basePath;' + code
+        code = 'const NUXT_BASE = NUXT_CONFIG.app.cdnURL || NUXT_CONFIG.app.baseURL;' + code
 
         if (options.env === 'dev') {
           code = `const NUXT_CONFIG = { app: ${JSON.stringify(options.devAppConfig)} };` + code
@@ -36,7 +36,7 @@ export const DynamicBasePathPlugin = createUnplugin(function (options: DynamicBa
       // Sanitize imports
       code = code.replace(/from *['"]\/__NUXT_BASE__(\/[^'"]*)['"]/g, 'from "$1"')
 
-      // Dynamically compute string URLs featuring basePath
+      // Dynamically compute string URLs featuring baseURL
       for (const delimiter of ['`', '"', "'"]) {
         const delimiterRE = new RegExp(`${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g')
         /* eslint-disable-next-line no-template-curly-in-string */

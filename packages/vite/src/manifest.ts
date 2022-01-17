@@ -16,7 +16,7 @@ export async function writeManifest (ctx: ViteBuildContext, extraEntries: string
 
   // Legacy dev manifest
   const devClientManifest = {
-    publicPath: joinURL(ctx.nuxt.options.app.basePath, ctx.nuxt.options.app.buildAssetsPath),
+    publicPath: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsPath),
     all: entries,
     initial: entries,
     async: [],

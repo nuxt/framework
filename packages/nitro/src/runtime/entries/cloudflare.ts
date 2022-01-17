@@ -3,7 +3,7 @@ import { getAssetFromKV, mapRequestToAsset } from '@cloudflare/kv-asset-handler'
 import { withoutBase } from 'ufo'
 import { localCall } from '../server'
 import { requestHasBody, useRequestBody } from '../server/utils'
-import { buildAssetsURL, basePath } from '#paths'
+import { buildAssetsURL, baseURL } from '#paths'
 
 addEventListener('fetch', (event: any) => {
   event.respondWith(handleEvent(event))
@@ -11,7 +11,7 @@ addEventListener('fetch', (event: any) => {
 
 async function handleEvent (event) {
   try {
-    return await getAssetFromKV(event, { cacheControl: assetsCacheControl, mapRequestToAsset: basePathModifier })
+    return await getAssetFromKV(event, { cacheControl: assetsCacheControl, mapRequestToAsset: baseURLModifier })
   } catch (_err) {
     // Ignore
   }
@@ -51,7 +51,7 @@ function assetsCacheControl (request) {
   return {}
 }
 
-const basePathModifier = (request: Request) => {
-  const url = withoutBase(request.url, basePath())
+const baseURLModifier = (request: Request) => {
+  const url = withoutBase(request.url, baseURL())
   return mapRequestToAsset(new Request(url, request))
 }

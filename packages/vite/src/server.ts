@@ -10,7 +10,7 @@ import { withoutTrailingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
-import { DynamicBasePathPlugin } from './plugins/dynamic-base'
+import { DynamicBasePlugin } from './plugins/dynamic-base'
 import { bundleRequest } from './dev-bundler'
 import { writeManifest } from './manifest'
 import { isCSS, isDirectory, readDirRecursively } from './utils'
@@ -77,7 +77,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
       vuePlugin(ctx.config.vue),
-      DynamicBasePathPlugin.vite({ env: ctx.nuxt.options.dev ? 'dev' : 'server', devAppConfig: ctx.nuxt.options.app }),
+      DynamicBasePlugin.vite({ env: ctx.nuxt.options.dev ? 'dev' : 'server', devAppConfig: ctx.nuxt.options.app }),
       viteJsxPlugin()
     ]
   } as ViteOptions)

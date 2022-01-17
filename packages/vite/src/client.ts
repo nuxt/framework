@@ -12,7 +12,7 @@ import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
-import { DynamicBasePathPlugin } from './plugins/dynamic-base'
+import { DynamicBasePlugin } from './plugins/dynamic-base'
 
 export async function buildClient (ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -40,10 +40,10 @@ export async function buildClient (ctx: ViteBuildContext) {
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'client'),
       vuePlugin(ctx.config.vue),
       viteJsxPlugin(),
-      DynamicBasePathPlugin.vite({ env: 'client', devAppConfig: ctx.nuxt.options.app }),
+      DynamicBasePlugin.vite({ env: 'client', devAppConfig: ctx.nuxt.options.app }),
       devStyleSSRPlugin({
         rootDir: ctx.nuxt.options.rootDir,
-        buildAssetsURL: joinURL(ctx.nuxt.options.app.basePath, ctx.nuxt.options.app.buildAssetsPath)
+        buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsPath)
       })
     ],
     server: {

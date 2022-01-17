@@ -77,9 +77,9 @@ export function createDevServer (nitroContext: NitroContext) {
   const app = createApp()
 
   // _nuxt and static
-  const buildAssetsURL = joinURL(nitroContext._nuxt.basePath, nitroContext._nuxt.buildAssetsPath)
+  const buildAssetsURL = joinURL(nitroContext._nuxt.baseURL, nitroContext._nuxt.buildAssetsPath)
   app.use(buildAssetsURL, serveStatic(resolve(nitroContext._nuxt.buildDir, 'dist/client')))
-  app.use(nitroContext._nuxt.basePath, serveStatic(resolve(nitroContext._nuxt.publicDir)))
+  app.use(nitroContext._nuxt.baseURL, serveStatic(resolve(nitroContext._nuxt.publicDir)))
 
   // debugging endpoint to view vfs
   app.use('/_vfs', useBase('/_vfs', handleVfs(nitroContext)))

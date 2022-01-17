@@ -8,12 +8,12 @@ import { worker } from './worker'
 
 export const browser: NitroPreset = extendPreset(worker, (input: NitroInput) => {
   // TODO: Join base at runtime
-  const basePath = input._nuxt.basePath
+  const baseURL = input._nuxt.baseURL
 
   const script = `<script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('${joinURL(basePath, 'sw.js')}');
+    navigator.serviceWorker.register('${joinURL(baseURL, 'sw.js')}');
   });
 }
 </script>`
@@ -23,11 +23,11 @@ if ('serviceWorker' in navigator) {
 <html>
 <head>
   <meta charset="utf-8">
-  <link rel="prefetch" href="${joinURL(basePath, 'sw.js')}">
-  <link rel="prefetch" href="${joinURL(basePath, '_server/index.mjs')}">
+  <link rel="prefetch" href="${joinURL(baseURL, 'sw.js')}">
+  <link rel="prefetch" href="${joinURL(baseURL, '_server/index.mjs')}">
   <script>
   async function register () {
-    const registration = await navigator.serviceWorker.register('${joinURL(basePath, 'sw.js')}')
+    const registration = await navigator.serviceWorker.register('${joinURL(baseURL, 'sw.js')}')
     await navigator.serviceWorker.ready
     registration.active.addEventListener('statechange', (event) => {
       if (event.target.state === 'activated') {
@@ -64,7 +64,7 @@ if ('serviceWorker' in navigator) {
         tmpl.contents = tmpl.contents.replace('</body>', script + '</body>')
       },
       async 'nitro:compiled' ({ output }: NitroContext) {
-        await fsp.writeFile(resolve(output.publicDir, 'sw.js'), `self.importScripts('${joinURL(basePath, '_server/index.mjs')}');`, 'utf8')
+        await fsp.writeFile(resolve(output.publicDir, 'sw.js'), `self.importScripts('${joinURL(baseURL, '_server/index.mjs')}');`, 'utf8')
 
         // Temp fix
         if (!existsSync(resolve(output.publicDir, 'index.html'))) {
