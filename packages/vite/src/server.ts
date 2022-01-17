@@ -2,18 +2,16 @@ import { resolve, normalize } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
-import fse from 'fs-extra'
 import pDebounce from 'p-debounce'
 import consola from 'consola'
 import { resolveModule } from '@nuxt/kit'
-import { ViteNodeServer } from 'vite-node/server'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { bundleRequest } from './dev-bundler'
 import { writeManifest } from './manifest'
 import { isCSS } from './utils'
-import { distDir } from './dirs'
+import { prepareDevServerEntry, viteNodeServer } from './plugins/vite-node-server'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
@@ -77,7 +75,8 @@ export async function buildServer (ctx: ViteBuildContext) {
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
       vuePlugin(ctx.config.vue),
-      viteJsxPlugin()
+      viteJsxPlugin(),
+      ctx.nuxt.options.dev ? viteNodeServer() : null
     ]
   } as ViteOptions)
 
@@ -109,16 +108,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Initialize plugins
   await viteServer.pluginContainer.buildStart({})
 
-  const viteNode = new ViteNodeServer(viteServer)
-  const entryPath = resolve(ctx.nuxt.options.appDir, 'entry')
-  const serverCode = await fse.readFile(resolve(distDir, 'runtime/server.mjs'), 'utf-8')
-  await fse.writeFile(
-    resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'),
-    serverCode.replace('__NUXT_SERVER_ENTRY__', entryPath),
-    'utf-8'
-  )
-  const serverContext = await import('vite-node')
-  serverContext.setServer(viteNode)
+  await prepareDevServerEntry(ctx)
 
   // Build and watch
   const _doBuild = async () => {

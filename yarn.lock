@@ -3479,7 +3479,7 @@ __metadata:
     ufo: ^0.7.9
     unbuild: latest
     vite: ^2.7.10
-    vite-node: ~0.1.12
+    vite-node: ~0.1.18
     vue: 3.2.26
   peerDependencies:
     vue: 3.2.26
@@ -22110,18 +22110,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:~0.1.12":
-  version: 0.1.12
-  resolution: "vite-node@npm:0.1.12"
+"vite-node@npm:~0.1.18":
+  version: 0.1.19
+  resolution: "vite-node@npm:0.1.19"
   dependencies:
     kolorist: ^1.5.1
     minimist: ^1.2.5
     mlly: ^0.3.17
     pathe: ^0.2.0
-    vite: ^2.7.10
+    vite: ^2.7.12
   bin:
-    vite-node: vite-node.js
-  checksum: 44de62d6d89b13dea3f35ef766f766d136f4354ed8b045a2b1226edce29544d914055962d705bf69638af0f1475d3e5aba0c182f4f1dbc05fba4c704ee0b9f13
+    vite-node: vite-node.mjs
+  checksum: 3c5f11840bc20f4f63c5a2d1385e29ae680c325b1d4a8b77c943a3a0475c9053103fcd4e079bfb5d34a075d3ea4c4edbd4a3200c315b4a005d55815124bba541
   languageName: node
   linkType: hard
 
@@ -22183,6 +22183,35 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: 1757108547ca34bd01a8ee3973cb04b484492c9e5690fc75f54bbcbde5965ab6e0a5b8355c336adf0a9117aa0fdae3053af3aafa9e5eb783282fffa948cfbe11
+  languageName: node
+  linkType: hard
+
+"vite@npm:^2.7.12":
+  version: 2.7.12
+  resolution: "vite@npm:2.7.12"
+  dependencies:
+    esbuild: ^0.13.12
+    fsevents: ~2.3.2
+    postcss: ^8.4.5
+    resolve: ^1.20.0
+    rollup: ^2.59.0
+  peerDependencies:
+    less: "*"
+    sass: "*"
+    stylus: "*"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    less:
+      optional: true
+    sass:
+      optional: true
+    stylus:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 56d62ae8131b02891f2dbd81f26a3ca28a02bfe390f9cb4e0c2d8dc831c2e2f8264dd3c45b14c7dd48e79d83d323a35148f92729e1f3385fae04fcd691f3f985
   languageName: node
   linkType: hard
 
