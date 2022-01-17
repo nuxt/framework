@@ -1,5 +1,5 @@
 import { createHash } from 'crypto'
-import fse from 'fs-extra'
+import { promises as fsp, readdirSync, statSync } from 'fs'
 import { join } from 'pathe'
 
 export function uniq<T> (arr: T[]): T[] {
@@ -36,16 +36,16 @@ export function hash (input: string, length = 8) {
 }
 
 export function readDirRecursively (dir: string) {
-  return fse.readdirSync(dir).reduce((files, file) => {
+  return readdirSync(dir).reduce((files, file) => {
     const name = join(dir, file)
-    const isDirectory = fse.statSync(name).isDirectory()
+    const isDirectory = statSync(name).isDirectory()
     return isDirectory ? [...files, ...readDirRecursively(name)] : [...files, name]
   }, [])
 }
 
 export async function isDirectory (path: string) {
   try {
-    return (await fse.stat(path)).isDirectory()
+    return (await fsp.stat(path)).isDirectory()
   } catch (_err) {
     return false
   }
