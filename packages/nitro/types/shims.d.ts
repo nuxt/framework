@@ -22,12 +22,10 @@ declare module '#config' {
   export default runtimeConfig
 }
 
-declare module '#app-config' {
-  const _default: {
-    buildAssetsPath: string
-    buildAssetsURL: string
-    publicAssetsURL: string
-    routerBase: string
-  }
-  export default _default
+declare module '#paths' {
+  export const basePath: () => string
+  export const buildAssetsPath: () => string
+
+  export const buildAssetsURL: (...path: string[]) => string
+  export const publicAssetsURL: (...path: string[]) => string
 }

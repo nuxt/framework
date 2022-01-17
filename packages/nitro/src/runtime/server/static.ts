@@ -2,7 +2,7 @@ import { createError } from 'h3'
 import { withoutTrailingSlash, withLeadingSlash, parseURL } from 'ufo'
 // @ts-ignore
 import { getAsset, readAsset } from '#static'
-import appConfig from '#app-config'
+import { buildAssetsPath } from '#paths'
 
 const METHODS = ['HEAD', 'GET']
 
@@ -27,8 +27,10 @@ export default async function serveStatic (req, res) {
     }
   }
 
+  const isBuildAsset = id.startsWith(buildAssetsPath())
+
   if (!asset) {
-    if (id.startsWith(appConfig.buildAssetsPath) && !id.startsWith(STATIC_ASSETS_BASE)) {
+    if (isBuildAsset && !id.startsWith(STATIC_ASSETS_BASE)) {
       throw createError({
         statusMessage: 'Cannot find static asset ' + id,
         statusCode: 404
@@ -63,7 +65,7 @@ export default async function serveStatic (req, res) {
     res.setHeader('Last-Modified', asset.mtime)
   }
 
-  if (id.startsWith(appConfig.buildAssetsPath)) {
+  if (isBuildAsset) {
     res.setHeader('Cache-Control', `max-age=${TWO_DAYS}, immutable`)
   }
 

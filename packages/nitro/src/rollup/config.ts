@@ -225,7 +225,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     entries: {
       '#nitro': nitroContext._internal.runtimeDir,
       '#nitro-renderer': resolve(nitroContext._internal.runtimeDir, 'app', renderer),
-      '#app-config': resolve(nitroContext._internal.runtimeDir, 'app/app-config'),
+      '#paths': resolve(nitroContext._internal.runtimeDir, 'app/paths'),
       '#config': resolve(nitroContext._internal.runtimeDir, 'app/config'),
       '#nitro-vue-renderer': vue2ServerRenderer,
       // Only file and data URLs are supported by the default ESM loader on Windows (#427)
