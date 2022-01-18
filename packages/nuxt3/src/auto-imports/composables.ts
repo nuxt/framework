@@ -1,5 +1,5 @@
 import { promises as fsp, existsSync } from 'fs'
-import { parse as parsePath, join } from 'pathe'
+import { parse as parsePath } from 'pathe'
 import { findExports } from 'mlly'
 import { camelCase } from 'scule'
 import { AutoImport } from '@nuxt/schema'
