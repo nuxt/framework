@@ -14,8 +14,13 @@ export function viteNodeServer (ctx: ViteBuildContext): Plugin {
       let node: ViteNodeServer | undefined
       server.middlewares.use('/__nuxt_vite_node__', async (req, res, next) => {
         if (!node && ctx.ssrServer) {
-          // @ts-expect-error TODO: remove when Vite is upgraded
-          node = new ViteNodeServer(ctx.ssrServer)
+          node = new ViteNodeServer(ctx.ssrServer, {
+            deps: {
+              inline: [
+                ...ctx.nuxt.options.build.transpile as string[]
+              ]
+            }
+          })
         }
         if (!node) {
           return next()
