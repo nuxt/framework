@@ -1,6 +1,5 @@
 import type http from 'http'
 import type https from 'https'
-import type { Listener } from 'listhen'
 import type { IncomingMessage, ServerResponse } from 'http'
 import type { Compiler, Configuration, Stats } from 'webpack'
 import type { TSConfig } from 'pkg-types'
@@ -104,7 +103,7 @@ export interface NuxtHooks {
   'render:setupMiddleware': (app: any) => HookResult
   'render:errorMiddleware': (app: any) => HookResult
   'render:done': (server: Server) => HookResult
-  'listen': (listenerServer: http.Server | https.Server, listener: Listener) => HookResult
+  'listen': (listenerServer: http.Server | https.Server, listener: any) => HookResult
   'server:nuxt:renderLoading': (req: IncomingMessage, res: ServerResponse) => HookResult
   'render:route': (url: string, result: RenderResult, context: any) => HookResult
   'render:routeDone': (url: string, result: RenderResult, context: any) => HookResult
