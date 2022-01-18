@@ -14,4 +14,4 @@ const runner = new ViteNodeRunner({
   }
 })
 
-export default runner.executeFile(entry)
+export default runner.executeFile(entry).then(i => i.default())

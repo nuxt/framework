@@ -23,7 +23,7 @@ const getSSRRenderer = cachedResult(async () => {
   if (!createSSRApp) { throw new Error('Server bundle is not available') }
   // Create renderer
   const { renderToString } = await import('#nitro-renderer')
-  return createRenderer((createSSRApp), { clientManifest, renderToString, publicPath }).renderToString
+  return createRenderer(createSSRApp, { clientManifest, renderToString, publicPath }).renderToString
 })
 
 const getSPARenderer = cachedResult(async () => {
