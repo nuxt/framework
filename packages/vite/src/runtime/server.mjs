@@ -5,11 +5,12 @@ const serverURL = '__NUXT_SERVER_URL__'
 
 const runner = new ViteNodeRunner({
   root: process.cwd(),
-  fetchModule (id) {
-    return $fetch(serverURL, {
+  base: '/_nuxt/', // TODO: read from config
+  async fetchModule (id) {
+    return await $fetch(serverURL, {
       method: 'POST',
       body: { id }
-    }).then(res => res.json())
+    })
   }
 })
 

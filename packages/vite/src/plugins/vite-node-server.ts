@@ -3,17 +3,24 @@ import type { Plugin } from 'vite'
 import { ViteNodeServer } from 'vite-node/server'
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
-import { ViteBuildContext } from '../../dist'
+import { ViteBuildContext } from '../index'
 import { distDir } from '../dirs'
 
-export function viteNodeServer (): Plugin {
+export function viteNodeServer (ctx: ViteBuildContext): Plugin {
   return {
     name: 'nuxt:vite-node-server',
     enforce: 'pre',
     configureServer (server) {
-      const node = new ViteNodeServer(server as any)
+      let node: ViteNodeServer | undefined
+      server.middlewares.use('/__nuxt_vite_node__', async (req, res, next) => {
+        if (!node && ctx.ssrServer) {
+          // @ts-expect-error TODO: remove when Vite is upgraded
+          node = new ViteNodeServer(ctx.ssrServer)
+        }
+        if (!node) {
+          return next()
+        }
 
-      server.middlewares.use('/__nuxt_vite_node__', async (req, res) => {
         const body = await getBodyJson(req) || {}
         const { id } = body
         if (!id) {

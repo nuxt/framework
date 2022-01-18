@@ -11,6 +11,7 @@ import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
+import { viteNodeServer } from './plugins/vite-node-server'
 
 export async function buildClient (ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -38,7 +39,8 @@ export async function buildClient (ctx: ViteBuildContext) {
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'client'),
       vuePlugin(ctx.config.vue),
       viteJsxPlugin(),
-      devStyleSSRPlugin(ctx.nuxt.options.rootDir)
+      devStyleSSRPlugin(ctx.nuxt.options.rootDir),
+      ctx.nuxt.options.dev ? viteNodeServer(ctx) : null
     ],
     server: {
       middlewareMode: true
@@ -53,6 +55,7 @@ export async function buildClient (ctx: ViteBuildContext) {
   await ctx.nuxt.callHook('vite:extendConfig', clientConfig, { isClient: true, isServer: false })
 
   const viteServer = await vite.createServer(clientConfig)
+  ctx.clientServer = viteServer
   await ctx.nuxt.callHook('vite:serverCreated', viteServer)
 
   const viteMiddleware: Connect.NextHandleFunction = (req, res, next) => {

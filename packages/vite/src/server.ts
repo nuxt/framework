@@ -11,7 +11,7 @@ import { cacheDirPlugin } from './plugins/cache-dir'
 import { bundleRequest } from './dev-bundler'
 import { writeManifest } from './manifest'
 import { isCSS } from './utils'
-import { prepareDevServerEntry, viteNodeServer } from './plugins/vite-node-server'
+import { prepareDevServerEntry } from './plugins/vite-node-server'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
@@ -75,8 +75,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
       vuePlugin(ctx.config.vue),
-      viteJsxPlugin(),
-      ctx.nuxt.options.dev ? viteNodeServer() : null
+      viteJsxPlugin()
     ]
   } as ViteOptions)
 
@@ -101,6 +100,7 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   // Start development server
   const viteServer = await vite.createServer(serverConfig)
+  ctx.ssrServer = viteServer
 
   // Close server on exit
   ctx.nuxt.hook('close', () => viteServer.close())
