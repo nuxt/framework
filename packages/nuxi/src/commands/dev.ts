@@ -93,5 +93,6 @@ export default defineNuxtCommand({
     })
 
     await load(false)
+    await currentNuxt.hooks.callHook('listen', listener.server, listener)
   }
 })
