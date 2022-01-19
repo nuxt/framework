@@ -46,8 +46,8 @@ function watch (nuxt: Nuxt) {
 }
 
 async function bundle (nuxt: Nuxt) {
-  const useVite = nuxt.options.vite !== false
-  const { bundle } = await (useVite ? import('@nuxt/vite-builder') : import('@nuxt/webpack-builder'))
+  const builder = nuxt.options.build.builder
+  const { bundle } = typeof builder === 'string' ? await import(builder) : builder
   try {
     return bundle(nuxt)
   } catch (error) {

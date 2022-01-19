@@ -3,6 +3,24 @@ import { normalizeURL, withTrailingSlash } from 'ufo'
 
 export default {
   /**
+   * The builder to use for bundling the Vue part of your application.
+   *
+   * @type {'vite' | 'webpack' | { bundle: (nuxt: typeof import('../src/types/nuxt').Nuxt) => Promise<void> }}
+   */
+  builder: {
+    $resolve: (val, get) => {
+      if (typeof val === 'object') {
+        return val
+      }
+      const map = {
+        vite: '@nuxt/vite-builder',
+        webpack: '@nuxt/webpack-builder',
+      }
+      return map[val] || get('vite') === false ? map.webpack : map.vite
+    },
+  },
+
+  /**
    * Suppresses most of the build output log.
    *
    * It is enabled by default when a CI or test environment is detected.
