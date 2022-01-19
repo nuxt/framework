@@ -1,13 +1,17 @@
-import { resolve } from 'pathe'
+import { resolve, join } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import consola from 'consola'
 import { resolveModule } from '@nuxt/kit'
+import { withoutTrailingSlash } from 'ufo'
+import fse from 'fs-extra'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { prepareDevServerEntry } from './plugins/vite-node-server'
+import { DynamicBasePlugin } from './plugins/dynamic-base'
+import { isDirectory, readDirRecursively } from './utils'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
@@ -34,7 +38,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       }
     },
     ssr: {
-      external: [],
+      external: ['#config'],
       noExternal: [
         ...ctx.nuxt.options.build.transpile,
         // TODO: Use externality for production (rollup) build
@@ -50,7 +54,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     build: {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
-      ssr: true,
+      ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
         output: {
           entryFileNames: 'server.mjs',
@@ -71,11 +75,40 @@ export async function buildServer (ctx: ViteBuildContext) {
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
       vuePlugin(ctx.config.vue),
+      DynamicBasePlugin.vite({ env: ctx.nuxt.options.dev ? 'dev' : 'server', devAppConfig: ctx.nuxt.options.app }),
       viteJsxPlugin()
     ]
   } as ViteOptions)
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
+
+  ctx.nuxt.hook('nitro:generate', async () => {
+    const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
+
+    // Remove public files that have been duplicated into buildAssetsDir
+    // TODO: Add option to configure this behaviour in vite
+    const publicDir = join(ctx.nuxt.options.srcDir, ctx.nuxt.options.dir.public)
+    let publicFiles: string[] = []
+    if (await isDirectory(publicDir)) {
+      publicFiles = readDirRecursively(publicDir).map(r => r.replace(publicDir, ''))
+      for (const file of publicFiles) {
+        try {
+          fse.rmSync(join(clientDist, file))
+        } catch {}
+      }
+    }
+
+    // Copy doubly-nested /_nuxt/_nuxt files into buildAssetsDir
+    // TODO: Workaround vite issue
+    if (await isDirectory(clientDist)) {
+      const nestedAssetsPath = withoutTrailingSlash(join(clientDist, ctx.nuxt.options.app.buildAssetsDir))
+
+      if (await isDirectory(nestedAssetsPath)) {
+        await fse.copy(nestedAssetsPath, clientDist, { recursive: true })
+        await fse.remove(nestedAssetsPath)
+      }
+    }
+  })
 
   const onBuild = () => ctx.nuxt.callHook('build:resources', wpfs)
 
@@ -97,6 +130,15 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Start development server
   const viteServer = await vite.createServer(serverConfig)
   ctx.ssrServer = viteServer
+
+  // Invalidate virtual modules when templates are re-generated
+  ctx.nuxt.hook('app:templatesGenerated', () => {
+    for (const [id, mod] of viteServer.moduleGraph.idToModuleMap) {
+      if (id.startsWith('\x00virtual:')) {
+        viteServer.moduleGraph.invalidateModule(mod)
+      }
+    }
+  })
 
   // Close server on exit
   ctx.nuxt.hook('close', () => viteServer.close())
