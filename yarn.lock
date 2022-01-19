@@ -2814,7 +2814,7 @@ __metadata:
     unbuild: latest
     unplugin: ^0.3.0
     unplugin-vue2-script-setup: 0.8.3
-    vite: ^2.7.12
+    vite: ^2.7.13
     vite-plugin-vue2: ^1.9.2
     vue: ^2
     vue-router: ^3
@@ -3478,8 +3478,8 @@ __metadata:
     rollup-plugin-visualizer: ^5.5.2
     ufo: ^0.7.9
     unbuild: latest
-    vite: ^2.7.12
-    vite-node: ~0.1.21
+    vite: ^2.7.13
+    vite-node: ^0.1.23
     vue: 3.2.26
   peerDependencies:
     vue: 3.2.26
@@ -15225,10 +15225,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mlly@npm:^0.3.17":
-  version: 0.3.17
-  resolution: "mlly@npm:0.3.17"
-  checksum: 9f1b987d0fae2ff15355334b7c6b07e5d3914bc7a232f99953737d6def29b446c118abea8a8261afccdea46fdd84efd5ed0910d4fc6c372f4f4438515d477697
+"mlly@npm:^0.3.19":
+  version: 0.3.19
+  resolution: "mlly@npm:0.3.19"
+  checksum: 85d646936d5d94b6783e12257adb64ceac9ece32ccaa33d911d44f0c265a91d4f34092beb39641cd108c14a4228f56fc591af60412f65964c72561fbd244ad36
   languageName: node
   linkType: hard
 
@@ -22110,18 +22110,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:~0.1.21":
-  version: 0.1.21
-  resolution: "vite-node@npm:0.1.21"
+"vite-node@npm:^0.1.23":
+  version: 0.1.23
+  resolution: "vite-node@npm:0.1.23"
   dependencies:
     kolorist: ^1.5.1
     minimist: ^1.2.5
-    mlly: ^0.3.17
+    mlly: ^0.3.19
     pathe: ^0.2.0
-    vite: ^2.7.12
+    vite: ^2.7.13
   bin:
     vite-node: vite-node.mjs
-  checksum: 096a1c1dfcc42d085fc94efdb6d61de5a829db7803a7b161db0e3c346daa7a84600d0d682842e8bc2dea5e674257a982589e82d06a522bc78fd1b5815d20ef2c
+  checksum: ccda2d44dcf144451d63cb9905de95ed82a54a82903d4f1499a9cc5655695a0463f4204d23ce97624a1bdeb994a8985ecca7382abf421ce060a8fbc15c8d0fc6
   languageName: node
   linkType: hard
 
@@ -22157,9 +22157,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.7.12":
-  version: 2.7.12
-  resolution: "vite@npm:2.7.12"
+"vite@npm:^2.7.13":
+  version: 2.7.13
+  resolution: "vite@npm:2.7.13"
   dependencies:
     esbuild: ^0.13.12
     fsevents: ~2.3.2
@@ -22182,7 +22182,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 56d62ae8131b02891f2dbd81f26a3ca28a02bfe390f9cb4e0c2d8dc831c2e2f8264dd3c45b14c7dd48e79d83d323a35148f92729e1f3385fae04fcd691f3f985
+  checksum: 3d8780754974c5012b768b5394dce15a171e2f9e061f86517a9c934bfff02855439d411c6769efc0a1791f6c511e703e1ade8ac14a8030b0e62408af39eea456
   languageName: node
   linkType: hard
 
