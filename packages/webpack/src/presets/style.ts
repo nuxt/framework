@@ -1,4 +1,3 @@
-import { resolve } from 'pathe'
 import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
 import { fileName, WebpackConfigContext, applyPresets } from '../utils/config'

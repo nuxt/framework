@@ -3,7 +3,6 @@ import { resolve } from 'pathe'
 import webpack from 'webpack'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 
-import type { ClientOptions } from 'webpack-hot-middleware'
 import { joinURL } from 'ufo'
 import { applyPresets, WebpackConfigContext } from '../utils/config'
 import { nuxt } from '../presets/nuxt'
