@@ -9,10 +9,7 @@ import { filterInPlace } from './utils'
 export async function scanForComposables (dir: string, autoImports: AutoImport[]) {
   if (!existsSync(dir)) { return }
 
-  const files = await resolveFiles(dir, [
-    '*.{ts,js,mjs,cjs,mts,cts}',
-    '*/index.{ts,js,mjs,cjs,mts,cts}'
-  ])
+  const files = await resolveFiles(dir, ['**/*.{ts,js,mjs,cjs,mts,cts}'])
 
   await Promise.all(
     files.map(async (path) => {
