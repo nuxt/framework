@@ -52,12 +52,6 @@ export default {
         'vue-demi'
       ],
       },
-      entries: {
-        $resolve: (val, get) => [
-          ...val || [],
-          resolve(get('appDir'), 'entry.ts')
-        ]
-      },
     },
     esbuild: {
       jsxFactory: 'h',
@@ -70,11 +64,6 @@ export default {
         $resolve: (val, get) => val ?? withoutLeadingSlash(get('app').buildAssetsDir),
       },
       emptyOutDir: false,
-      rollupOptions: {
-        input: {
-          $resolve: (val, get) => val ?? resolve(get('appDir'), 'entry'),
-        }
-      }
     },
     server: {
       fs: {
@@ -82,7 +71,6 @@ export default {
         allow: {
           $resolve: (val, get) => [
             get('buildDir'),
-            get('appDir'),
             get('srcDir'),
             get('rootDir'),
             ...get('modulesDir'),

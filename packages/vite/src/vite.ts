@@ -40,15 +40,28 @@ export async function bundle (nuxt: Nuxt) {
             'abort-controller': 'unenv/runtime/mock/empty'
           }
         },
+        optimizeDeps: {
+          entries: [
+            resolve(nuxt.options.appDir, 'entry.ts')
+          ]
+        },
         css: resolveCSSOptions(nuxt),
         build: {
           rollupOptions: {
-            output: { sanitizeFileName: sanitizeFilePath }
+            output: { sanitizeFileName: sanitizeFilePath },
+            input: resolve(nuxt.options.appDir, 'entry')
           }
         },
         plugins: [
           virtual(nuxt.vfs)
-        ]
+        ],
+        server: {
+          fs: {
+            allow: [
+              nuxt.options.appDir
+            ]
+          }
+        }
       },
       nuxt.options.vite
     )
