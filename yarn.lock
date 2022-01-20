@@ -3279,19 +3279,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nuxt/webpack-builder@workspace:packages/webpack"
   dependencies:
-    "@babel/core": ^7.16.7
     "@nuxt/friendly-errors-webpack-plugin": ^2.5.2
     "@nuxt/kit": 3.0.0
     "@nuxt/schema": 3.0.0
     "@types/pify": ^5.0.1
-    "@types/terser-webpack-plugin": ^5.0.4
     "@types/webpack-bundle-analyzer": ^4.4.1
     "@types/webpack-dev-middleware": ^5.0.2
     "@types/webpack-hot-middleware": ^2.25.5
     "@types/webpack-virtual-modules": ^0
-    "@vue/babel-preset-jsx": ^1.2.4
     autoprefixer: ^10.4.2
-    babel-loader: ^8.2.3
     consola: ^2.15.3
     css-loader: ^6.5.1
     css-minimizer-webpack-plugin: ^3.4.1
@@ -4365,16 +4361,6 @@ __metadata:
     "@types/webpack": ^4
     terser: ^4.6.13
   checksum: d120ddafc8993c8861526ea93ea2668c945aa00739fc465430be8882c58df17e72e42fed0d6306f4ad6b697a68ea39ce79424370fb8a9e373f516a7ae9ba94a9
-  languageName: node
-  linkType: hard
-
-"@types/terser-webpack-plugin@npm:^5.0.4":
-  version: 5.0.4
-  resolution: "@types/terser-webpack-plugin@npm:5.0.4"
-  dependencies:
-    terser: ^5.3.8
-    webpack: ^5.1.0
-  checksum: 7b3845526d4ed7b636f7b2f8f35b5d7e45211f7a55afc85e32a66655eaf65cd193e2fec195bcdb473c0d9a5b2828798b9c23196fdc86e9cd2e9420227012f438
   languageName: node
   linkType: hard
 
@@ -20357,7 +20343,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"terser@npm:^5.0.0, terser@npm:^5.3.4, terser@npm:^5.3.8, terser@npm:^5.7.2":
+"terser@npm:^5.0.0, terser@npm:^5.3.4, terser@npm:^5.7.2":
   version: 5.10.0
   resolution: "terser@npm:5.10.0"
   dependencies:
@@ -21942,7 +21928,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5, webpack@npm:^5.1.0, webpack@npm:^5.38.1, webpack@npm:^5.66.0":
+"webpack@npm:^5, webpack@npm:^5.38.1, webpack@npm:^5.66.0":
   version: 5.66.0
   resolution: "webpack@npm:5.66.0"
   dependencies:

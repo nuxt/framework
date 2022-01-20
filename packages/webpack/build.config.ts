@@ -7,17 +7,14 @@ export default defineBuildConfig({
   ],
   dependencies: [
     '@nuxt/kit',
-    '@vue/babel-preset-jsx',
     'postcss',
     'postcss-loader',
-    'babel-loader',
     'vue-loader',
     'css-loader',
     'file-loader',
     'style-resources-loader',
     'url-loader',
     'vue-style-loader',
-    '@babel/core',
     'vue'
   ],
   externals: [

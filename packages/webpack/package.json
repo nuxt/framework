@@ -16,12 +16,9 @@
     "prepack": "unbuild"
   },
   "dependencies": {
-    "@babel/core": "^7.16.7",
     "@nuxt/friendly-errors-webpack-plugin": "^2.5.2",
     "@nuxt/kit": "3.0.0",
-    "@vue/babel-preset-jsx": "^1.2.4",
     "autoprefixer": "^10.4.2",
-    "babel-loader": "^8.2.3",
     "consola": "^2.15.3",
     "css-loader": "^6.5.1",
     "css-minimizer-webpack-plugin": "^3.4.1",
@@ -56,7 +53,6 @@
   "devDependencies": {
     "@nuxt/schema": "3.0.0",
     "@types/pify": "^5.0.1",
-    "@types/terser-webpack-plugin": "^5.0.4",
     "@types/webpack-bundle-analyzer": "^4.4.1",
     "@types/webpack-dev-middleware": "^5.0.2",
     "@types/webpack-hot-middleware": "^2.25.5",
