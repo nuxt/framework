@@ -4,6 +4,7 @@ import { findStaticImports, findExports } from 'mlly'
 
 export interface TransformMacroPluginOptions {
   macros: Record<string, string>
+  dev?: boolean
 }
 
 export const TransformMacroPlugin = createUnplugin((options: TransformMacroPluginOptions) => {
@@ -11,8 +12,8 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
     name: 'nuxt-pages-macros-transform',
     enforce: 'post',
     transformInclude (id) {
-      // We only process SFC files for macros
-      return parseURL(id).pathname.endsWith('.vue')
+      const { search, pathname } = parseURL(id)
+      return pathname.endsWith('.vue') || parseQuery(search).macro
     },
     transform (code, id) {
       const { search } = parseURL(id)
@@ -42,7 +43,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
         if (match.specifier && match._type === 'named') {
           // [webpack] Export named exports rather than the default (component)
           return code.replace(match.code, `export {${Object.values(options.macros).join(', ')}} from "${match.specifier}"`)
-        } else {
+        } else if (!options.dev) {
           // ensure we tree-shake any _other_ default exports out of the macro script
           code = code.replace(match.code, '/*#__PURE__*/ false &&')
           code += '\nexport default {}'
