@@ -14,7 +14,7 @@ interface ImportProtectionOptions {
 const escapeRE = (str: string) => str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 
 export const vueAppPatterns = (nuxt: Nuxt) => [
-  [/(^|node_modules\/)(nuxt3|nuxt)/, '`nuxt3`/`nuxt` cannot be imported directly. Instead, import runtime Nuxt composables from `#app` or /`#imports`.'],
+  [/(^|node_modules\/)(nuxt3|nuxt)/, '`nuxt3`/`nuxt` cannot be imported directly. Instead, import runtime Nuxt composables from `#app` or `#imports`.'],
   [/nuxt\.config/, 'Importing directly from a `nuxt.config` file is not allowed. Instead, use runtime config or a module.'],
   [/(^|node_modules\/)@vue\/composition-api/],
   ...nuxt.options.modules.filter(m => typeof m === 'string').map((m: string) =>
