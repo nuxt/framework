@@ -1,11 +1,14 @@
 import { existsSync } from 'fs'
-import { defineNuxtModule, addTemplate, addPlugin, templateUtils } from '@nuxt/kit'
+import { defineNuxtModule, addTemplate, addPlugin, templateUtils, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { distDir } from '../dirs'
-import { resolveLayouts, resolvePagesRoutes, addComponentToRoutes } from './utils'
+import { resolveLayouts, resolvePagesRoutes, normalizeRoutes } from './utils'
+import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
 
 export default defineNuxtModule({
-  name: 'router',
+  meta: {
+    name: 'router'
+  },
   setup (_options, nuxt) {
     const pagesDir = resolve(nuxt.options.srcDir, nuxt.options.dir.pages)
     const runtimeDir = resolve(distDir, 'pages/runtime')
@@ -39,7 +42,18 @@ export default defineNuxtModule({
       const composablesFile = resolve(runtimeDir, 'composables')
       autoImports.push({ name: 'useRouter', as: 'useRouter', from: composablesFile })
       autoImports.push({ name: 'useRoute', as: 'useRoute', from: composablesFile })
+      autoImports.push({ name: 'definePageMeta', as: 'definePageMeta', from: composablesFile })
     })
+
+    // Extract macros from pages
+    const macroOptions: TransformMacroPluginOptions = {
+      dev: nuxt.options.dev,
+      macros: {
+        definePageMeta: 'meta'
+      }
+    }
+    addVitePlugin(TransformMacroPlugin.vite(macroOptions))
+    addWebpackPlugin(TransformMacroPlugin.webpack(macroOptions))
 
     // Add router plugin
     addPlugin(resolve(runtimeDir, 'router'))
@@ -50,8 +64,8 @@ export default defineNuxtModule({
       async getContents () {
         const pages = await resolvePagesRoutes(nuxt)
         await nuxt.callHook('pages:extend', pages)
-        const serializedRoutes = addComponentToRoutes(pages)
-        return `export default ${templateUtils.serialize(serializedRoutes)}`
+        const { routes: serializedRoutes, imports } = normalizeRoutes(pages)
+        return [...imports, `export default ${templateUtils.serialize(serializedRoutes)}`].join('\n')
       }
     })
 
