@@ -16,7 +16,7 @@ export default {
         vite: '@nuxt/vite-builder',
         webpack: '@nuxt/webpack-builder',
       }
-      return map[val] || get('vite') === false ? map.webpack : map.vite
+      return map[val] || (get('vite') === false ? map.webpack : map.vite)
     },
   },
 
