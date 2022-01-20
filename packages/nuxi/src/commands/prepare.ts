@@ -1,5 +1,6 @@
 import { buildNuxt } from '@nuxt/kit'
-import { resolve } from 'pathe'
+import { relative, resolve } from 'pathe'
+import consola from 'consola'
 import { clearDir } from '../utils/fs'
 import { loadKit } from '../utils/kit'
 import { writeTypes } from '../utils/prepare'
@@ -21,5 +22,6 @@ export default defineNuxtCommand({
 
     await buildNuxt(nuxt)
     await writeTypes(nuxt)
+    consola.success('Types generated in', relative(process.cwd(), nuxt.options.buildDir))
   }
 })
