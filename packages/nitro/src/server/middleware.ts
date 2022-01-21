@@ -87,7 +87,7 @@ export function resolveMiddleware (nuxt: Nuxt) {
           extensions: ['.ts', '.mjs', '.js', '.cjs'],
           alias: nuxt.options.alias,
           base: nuxt.options.srcDir
-        }) || tryResolveModule(handle),
+        }) || tryResolveModule(handle, { paths: nuxt.options.modulesDir }),
         route
       })
     }
