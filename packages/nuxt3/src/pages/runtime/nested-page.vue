@@ -21,7 +21,7 @@ export default {
     const route = useRoute()
     const key = computed(() => {
       const source = props.childKey ?? route.meta.key
-      return source && typeof source === 'function' ? source(route) : source
+      return typeof source === 'function' ? source(route) : source
     })
     return {
       key
