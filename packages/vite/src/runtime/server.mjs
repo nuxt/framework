@@ -4,13 +4,14 @@ import { ViteNodeRunner } from 'vite-node/client'
 import { dirname, join } from 'pathe'
 
 const entry = '__NUXT_SERVER_ENTRY__'
-const serverURL = '__NUXT_SERVER_URL__'
+const url = '__NUXT_SERVER_FETCH_URL__'
+const base = '__NUXT_SERVER_BASE__'
 
 const runner = new ViteNodeRunner({
   root: process.cwd(),
-  base: '/_nuxt/', // TODO: read from config
+  base,
   async fetchModule (id) {
-    return await $fetch(serverURL, {
+    return await $fetch(url, {
       method: 'POST',
       body: { id }
     })

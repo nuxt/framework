@@ -43,10 +43,13 @@ export function viteNodeServer (ctx: ViteBuildContext): Plugin {
 export async function prepareDevServerEntry (ctx: ViteBuildContext) {
   const entryPath = resolve(ctx.nuxt.options.appDir, 'entry')
   const raw = await fse.readFile(resolve(distDir, 'runtime/server.mjs'), 'utf-8')
+  const host = ctx.nuxt.options.server.host || 'localhost'
+  const port = ctx.nuxt.options.server.port || '3000'
+  const protocol = ctx.nuxt.options.server.https ? 'https' : 'http'
   const code = raw
+    .replace('__NUXT_SERVER_FETCH_URL__', `${protocol}://${host}:${port}/__nuxt_vite_node__/`)
     .replace('__NUXT_SERVER_ENTRY__', entryPath)
-    // TODO: read host and port from server
-    .replace('__NUXT_SERVER_URL__', 'http://localhost:3000/__nuxt_vite_node__/')
+    .replace('__NUXT_SERVER_BASE__', ctx.ssrServer.config.base || '/_nuxt/')
   await fse.writeFile(
     resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'),
     code,
