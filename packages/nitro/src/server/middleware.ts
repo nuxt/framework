@@ -1,6 +1,6 @@
 import { resolve, join, extname } from 'pathe'
 import { joinURL } from 'ufo'
-import globby from 'globby'
+import { globby } from 'globby'
 import { watch } from 'chokidar'
 import { tryResolvePath } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
@@ -23,12 +23,12 @@ export interface ServerMiddleware {
   promisify?: boolean // Default is true
 }
 
-function filesToMiddleware (files: string[], baseDir: string, basePath: string, overrides?: Partial<ServerMiddleware>): ServerMiddleware[] {
+function filesToMiddleware (files: string[], baseDir: string, baseURL: string, overrides?: Partial<ServerMiddleware>): ServerMiddleware[] {
   return files.map((file) => {
     const route = joinURL(
-      basePath,
+      baseURL,
       file
-        .substr(0, file.length - extname(file).length)
+        .slice(0, file.length - extname(file).length)
         .replace(/\/index$/, '')
     )
     const handle = resolve(baseDir, file)
@@ -47,8 +47,8 @@ export function scanMiddleware (serverDir: string, onChange?: (results: ServerMi
   const apiDir = resolve(serverDir, 'api')
 
   const scan = async () => {
-    const globalFiles = await globby(pattern, { cwd: globalDir })
-    const apiFiles = await globby(pattern, { cwd: apiDir })
+    const globalFiles = await globby(pattern, { cwd: globalDir, dot: true })
+    const apiFiles = await globby(pattern, { cwd: apiDir, dot: true })
     return [
       ...filesToMiddleware(globalFiles, globalDir, '/', { route: '/' }),
       ...filesToMiddleware(apiFiles, apiDir, '/api', { lazy: true })

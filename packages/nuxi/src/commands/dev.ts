@@ -78,7 +78,7 @@ export default defineNuxtCommand({
 
       const isDirChange = ['addDir', 'unlinkDir'].includes(event)
       const isFileChange = ['add', 'unlink'].includes(event)
-      const reloadDirs = ['pages', 'components', 'composables']
+      const reloadDirs = [currentNuxt.options.dir.pages, 'components', 'composables']
 
       if (isDirChange) {
         const dir = reloadDirs.find(dir => file.endsWith(dir))
@@ -93,5 +93,8 @@ export default defineNuxtCommand({
     })
 
     await load(false)
+    if (currentNuxt) {
+      await currentNuxt.hooks.callHook('listen', listener.server, listener)
+    }
   }
 })
