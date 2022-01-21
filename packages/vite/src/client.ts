@@ -12,7 +12,7 @@ import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
-import { DynamicBasePlugin } from './plugins/dynamic-base'
+import { DynamicBasePlugin, RelativeAssetPlugin } from './plugins/dynamic-base'
 
 export async function buildClient (ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -27,7 +27,6 @@ export async function buildClient (ctx: ViteBuildContext) {
       }
     },
     build: {
-      assetsDir: ctx.nuxt.options.dev ? withoutLeadingSlash(ctx.nuxt.options.app.buildAssetsDir) : '.',
       rollupOptions: {
         output: {
           chunkFileNames: ctx.nuxt.options.dev ? undefined : '[name]-[hash].mjs',
@@ -42,6 +41,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       vuePlugin(ctx.config.vue),
       viteJsxPlugin(),
       DynamicBasePlugin.vite({ env: 'client', devAppConfig: ctx.nuxt.options.app }),
+      RelativeAssetPlugin(),
       devStyleSSRPlugin({
         rootDir: ctx.nuxt.options.rootDir,
         buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
