@@ -3275,7 +3275,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/webpack-builder@3.0.0, @nuxt/webpack-builder@workspace:packages/webpack":
+"@nuxt/webpack-builder@workspace:packages/webpack":
   version: 0.0.0-use.local
   resolution: "@nuxt/webpack-builder@workspace:packages/webpack"
   dependencies:
@@ -15454,7 +15454,6 @@ __metadata:
     "@nuxt/nitro": 3.0.0
     "@nuxt/schema": 3.0.0
     "@nuxt/vite-builder": 3.0.0
-    "@nuxt/webpack-builder": 3.0.0
     "@types/hash-sum": ^1.0.0
     "@vue/reactivity": ^3.2.27
     "@vue/shared": ^3.2.27
