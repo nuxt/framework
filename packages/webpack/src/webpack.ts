@@ -19,9 +19,57 @@ import { createWebpackConfigContext, applyPresets, getWebpackConfig } from './ut
 // TODO: Support plugins
 // const plugins: string[] = []
 
+export async function bundle (nuxt: Nuxt) {
+  await registerVirtualModules()
+
+  const webpackConfigs = [client, ...nuxt.options.ssr ? [server] : []].map((preset) => {
+    const ctx = createWebpackConfigContext(nuxt)
+    applyPresets(ctx, preset)
+    return getWebpackConfig(ctx)
+  })
+
+  await nuxt.callHook('webpack:config', webpackConfigs)
+
+  // Initialize shared MFS for dev
+  const mfs = nuxt.options.dev ? createMFS() : null
+
+  // Configure compilers
+  const compilers = webpackConfigs.map((config) => {
+    config.plugins.push(DynamicBasePlugin.webpack({
+      env: nuxt.options.dev ? 'dev' : config.name as 'client',
+      devAppConfig: nuxt.options.app,
+      globalPublicPath: '__webpack_public_path__'
+    }))
+
+    // Create compiler
+    const compiler = webpack(config)
+
+    // In dev, write files in memory FS
+    if (nuxt.options.dev) {
+      compiler.outputFileSystem = mfs
+    }
+
+    return compiler
+  })
+
+  nuxt.hook('close', async () => {
+    for (const compiler of compilers) {
+      await new Promise(resolve => compiler.close(resolve))
+    }
+  })
+
+  // Start Builds
+  if (nuxt.options.dev) {
+    return Promise.all(compilers.map(c => compile(c)))
+  }
+
+  for (const c of compilers) {
+    await compile(c)
+  }
+}
+
 async function createDevMiddleware (compiler: Compiler) {
   const nuxt = useNuxt()
-  const { name } = compiler.options
 
   consola.debug('Creating webpack middleware...')
 
@@ -39,7 +87,7 @@ async function createDevMiddleware (compiler: Compiler) {
   const hotMiddleware = pify(webpackHotMiddleware(compiler, {
     log: false,
     heartbeat: 10000,
-    path: joinURL(nuxt.options.app.baseURL, '__webpack_hmr', name),
+    path: joinURL(nuxt.options.app.baseURL, '__webpack_hmr', compiler.options.name),
     ...hotMiddlewareOptions
   }))
 
@@ -56,11 +104,6 @@ async function createDevMiddleware (compiler: Compiler) {
 
 async function compile (compiler: Compiler) {
   const nuxt = useNuxt()
-  const compilersWatching: Watching[] = []
-
-  nuxt.hook('close', async () => {
-    await Promise.all(compilersWatching.map(watching => pify(watching.close)()))
-  })
 
   const { name } = compiler.options
 
@@ -75,6 +118,12 @@ async function compile (compiler: Compiler) {
 
   // --- Dev Build ---
   if (nuxt.options.dev) {
+    const compilersWatching: Watching[] = []
+
+    nuxt.hook('close', async () => {
+      await Promise.all(compilersWatching.map(watching => pify(watching.close)()))
+    })
+
     // Client build
     if (name === 'client') {
       return new Promise((resolve, reject) => {
@@ -112,53 +161,4 @@ async function compile (compiler: Compiler) {
 
   // Await for renderer to load resources (programmatic, tests and generate)
   await nuxt.callHook('build:resources')
-}
-
-export async function bundle (nuxt: Nuxt) {
-  // Initialize shared MFS for dev
-  const mfs = nuxt.options.dev ? createMFS() : null
-
-  await registerVirtualModules()
-
-  const webpackConfigs = [client, ...nuxt.options.ssr ? [server] : []].map((preset) => {
-    const ctx = createWebpackConfigContext(nuxt)
-    applyPresets(ctx, preset)
-    return getWebpackConfig(ctx)
-  })
-
-  await nuxt.callHook('webpack:config', webpackConfigs)
-
-  // Configure compilers
-  const compilers = webpackConfigs.map((config) => {
-    config.plugins.push(DynamicBasePlugin.webpack({
-      env: nuxt.options.dev ? 'dev' : config.name as 'client',
-      devAppConfig: nuxt.options.app,
-      globalPublicPath: '__webpack_public_path__'
-    }))
-
-    // Create compiler
-    const compiler = webpack(config)
-
-    // In dev, write files in memory FS
-    if (nuxt.options.dev) {
-      compiler.outputFileSystem = mfs
-    }
-
-    return compiler
-  })
-
-  nuxt.hook('close', async () => {
-    for (const compiler of compilers) {
-      await new Promise(resolve => compiler.close(resolve))
-    }
-  })
-
-  // Start Builds
-  if (nuxt.options.dev) {
-    return Promise.all(compilers.map(c => compile(c)))
-  }
-
-  for (const c of compilers) {
-    await compile(c)
-  }
 }
