@@ -96,6 +96,12 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.hook('app:created', async () => {
     if (process.server) {
       router.push(nuxtApp.ssrContext.url)
+
+      router.afterEach((to) => {
+        if (to.fullPath !== nuxtApp.ssrContext.url) {
+          nuxtApp.ssrContext.res.setHeader('Location', to.fullPath)
+        }
+      })
     }
 
     await router.isReady()
