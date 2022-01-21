@@ -9,6 +9,7 @@ import type { Compiler, Watching } from 'webpack'
 
 import type { Nuxt } from '@nuxt/schema'
 import { joinURL } from 'ufo'
+import { useNuxt } from '@nuxt/kit'
 import { DynamicBasePlugin } from '../../vite/src/plugins/dynamic-base'
 import { createMFS } from './utils/mfs'
 import { registerVirtualModules } from './virtual-modules'
@@ -18,97 +19,106 @@ import { createWebpackConfigContext, applyPresets, getWebpackConfig } from './ut
 // TODO: Support plugins
 // const plugins: string[] = []
 
+async function createDevMiddleware (compiler: Compiler) {
+  const nuxt = useNuxt()
+  const { name } = compiler.options
+
+  consola.debug('Creating webpack middleware...')
+
+  // Create webpack dev middleware
+  const devMiddleware = pify(webpackDevMiddleware(compiler, {
+    publicPath: joinURL(nuxt.options.app.baseURL, nuxt.options.app.buildAssetsDir),
+    outputFileSystem: compiler.outputFileSystem as any,
+    stats: 'none',
+    ...nuxt.options.webpack.devMiddleware
+  })) as API<IncomingMessage, ServerResponse>
+
+  nuxt.hook('close', () => pify(devMiddleware.close)())
+
+  const { client: _client, ...hotMiddlewareOptions } = nuxt.options.webpack.hotMiddleware || {}
+  const hotMiddleware = pify(webpackHotMiddleware(compiler, {
+    log: false,
+    heartbeat: 10000,
+    path: joinURL(nuxt.options.app.baseURL, '__webpack_hmr', name),
+    ...hotMiddlewareOptions
+  }))
+
+  // Register devMiddleware on server
+  await nuxt.callHook('server:devMiddleware', async (req, res, next) => {
+    for (const mw of [devMiddleware, hotMiddleware]) {
+      await mw?.(req, res)
+    }
+    next()
+  })
+
+  return devMiddleware
+}
+
+async function compile (compiler: Compiler) {
+  const nuxt = useNuxt()
+  const compilersWatching: Watching[] = []
+
+  nuxt.hook('close', async () => {
+    await Promise.all(compilersWatching.map(watching => pify(watching.close)()))
+  })
+
+  const { name } = compiler.options
+
+  await nuxt.callHook('build:compile', { name, compiler })
+
+  // Load renderer resources after build
+  compiler.hooks.done.tap('load-resources', async (stats) => {
+    await nuxt.callHook('build:compiled', { name, compiler, stats })
+    // Reload renderer
+    await nuxt.callHook('build:resources', compiler.outputFileSystem)
+  })
+
+  // --- Dev Build ---
+  if (nuxt.options.dev) {
+    // Client build
+    if (name === 'client') {
+      return new Promise((resolve, reject) => {
+        compiler.hooks.done.tap('nuxt-dev', () => { resolve(null) })
+        compiler.hooks.failed.tap('nuxt-errorlog', (err) => { reject(err) })
+        // Start watch
+        createDevMiddleware(compiler).then((devMiddleware) => {
+          compilersWatching.push(devMiddleware.context.watching)
+        })
+      })
+    }
+
+    // Server, build and watch for changes
+    return new Promise((resolve, reject) => {
+      const watching = compiler.watch(nuxt.options.watchers.webpack, (err) => {
+        if (err) { return reject(err) }
+        resolve(null)
+      })
+
+      compilersWatching.push(watching)
+    })
+  }
+
+  // --- Production Build ---
+  const stats = await pify(compiler.run)()
+
+  if (stats.hasErrors()) {
+    // non-quiet mode: errors will be printed by webpack itself
+    const error = new Error('Nuxt build error')
+    if (nuxt.options.build.quiet === true) {
+      error.stack = stats.toString('errors-only')
+    }
+    throw error
+  }
+
+  // Await for renderer to load resources (programmatic, tests and generate)
+  await nuxt.callHook('build:resources')
+}
+
 export async function bundle (nuxt: Nuxt) {
   // Initialize shared MFS for dev
   const mfs = nuxt.options.dev ? createMFS() : null
 
   await registerVirtualModules()
-
-  const compilersWatching: Watching[] = []
-
-  async function webpackCompile (compiler: Compiler) {
-    const { name } = compiler.options
-
-    await nuxt.callHook('build:compile', { name, compiler })
-
-    // Load renderer resources after build
-    compiler.hooks.done.tap('load-resources', async (stats) => {
-      await nuxt.callHook('build:compiled', { name, compiler, stats })
-      // Reload renderer
-      await nuxt.callHook('build:resources', mfs)
-    })
-
-    // --- Dev Build ---
-    if (nuxt.options.dev) {
-      // Client build
-      if (name === 'client') {
-        return new Promise((resolve, reject) => {
-          compiler.hooks.done.tap('nuxt-dev', () => { resolve(null) })
-          compiler.hooks.failed.tap('nuxt-errorlog', (err) => { reject(err) })
-          // Start watch
-          webpackDev(compiler)
-        })
-      }
-
-      // Server, build and watch for changes
-      return new Promise((resolve, reject) => {
-        const watching = compiler.watch(nuxt.options.watchers.webpack, (err) => {
-          if (err) { return reject(err) }
-          resolve(null)
-        })
-
-        compilersWatching.push(watching)
-      })
-    }
-
-    // --- Production Build ---
-    const stats = await pify(compiler.run)()
-
-    if (stats.hasErrors()) {
-      // non-quiet mode: errors will be printed by webpack itself
-      const error = new Error('Nuxt build error')
-      if (nuxt.options.build.quiet === true) {
-        error.stack = stats.toString('errors-only')
-      }
-      throw error
-    }
-
-    // Await for renderer to load resources (programmatic, tests and generate)
-    await nuxt.callHook('build:resources')
-  }
-
-  async function webpackDev (compiler: Compiler) {
-    consola.debug('Creating webpack middleware...')
-
-    const { name } = compiler.options
-
-    // Create webpack dev middleware
-    const devMiddleware = pify(webpackDevMiddleware(compiler, {
-      publicPath: joinURL(nuxt.options.app.baseURL, nuxt.options.app.buildAssetsDir),
-      outputFileSystem: mfs as any,
-      stats: 'none',
-      ...nuxt.options.webpack.devMiddleware
-    })) as API<IncomingMessage, ServerResponse>
-
-    compilersWatching.push(devMiddleware.context.watching)
-    nuxt.hook('close', () => pify(devMiddleware.close)())
-
-    const { client: _client, ...hotMiddlewareOptions } = nuxt.options.webpack.hotMiddleware || {}
-    const hotMiddleware = pify(webpackHotMiddleware(compiler, {
-      log: false,
-      heartbeat: 10000,
-      path: joinURL(nuxt.options.app.baseURL, '__webpack_hmr', name),
-      ...hotMiddlewareOptions
-    }))
-
-    // Register devMiddleware on server
-    await nuxt.callHook('server:devMiddleware', async (req, res, next) => {
-      for (const mw of [devMiddleware, hotMiddleware]) {
-        await mw?.(req, res)
-      }
-      next()
-    })
-  }
 
   const webpackConfigs = [client, ...nuxt.options.ssr ? [server] : []].map((preset) => {
     const ctx = createWebpackConfigContext(nuxt)
@@ -141,15 +151,14 @@ export async function bundle (nuxt: Nuxt) {
     for (const compiler of compilers) {
       await new Promise(resolve => compiler.close(resolve))
     }
-    await Promise.all(compilersWatching.map(watching => pify(watching.close)()))
   })
 
   // Start Builds
   if (nuxt.options.dev) {
-    return Promise.all(compilers.map(c => webpackCompile(c)))
+    return Promise.all(compilers.map(c => compile(c)))
   }
 
   for (const c of compilers) {
-    await webpackCompile(c)
+    await compile(c)
   }
 }
