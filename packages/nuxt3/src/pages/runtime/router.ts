@@ -9,7 +9,7 @@ import {
 import NuxtNestedPage from './nested-page.vue'
 import NuxtPage from './page.vue'
 import NuxtLayout from './layout'
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
@@ -68,13 +68,12 @@ export default defineNuxtPlugin((nuxtApp) => {
     const guards = to.matched.reduce((mw, component) => {
       if (!component.meta.middleware) { return mw }
 
-      if (typeof component.meta.middleware === 'string') {
-        mw.add(component.meta.middleware)
-      }
       if (Array.isArray(component.meta.middleware)) {
         for (const guard of middleware) {
           mw.add(guard)
         }
+      } else {
+        mw.add(component.meta.middleware)
       }
       return mw
     }, new Set<string | NavigationGuard>())
@@ -85,10 +84,10 @@ export default defineNuxtPlugin((nuxtApp) => {
       if (process.dev && !mw) {
         console.warn(`Unknown middleware: ${guard}. Valid options are ${Object.keys(middleware).join(', ')}.`)
       }
-      await mw?.(to, from, (arg?: any) => { nextCalledWith = arg })
+      await callWithNuxt(nuxtApp, () => mw?.(to, from, (arg?: any) => { nextCalledWith = arg }))
 
       // Short circuit the rest of the guards if next() is called with a value
-      if (nextCalledWith) { return next(nextCalledWith) }
+      if (nextCalledWith !== undefined) { return next(nextCalledWith) }
     }
 
     next()
