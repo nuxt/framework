@@ -1,7 +1,8 @@
-export default defineNuxtMiddleware((_to, _from, next) => {
+export default defineNuxtMiddleware((to) => {
   const { $config } = useNuxtApp()
   if ($config) {
     console.log('Accessed runtime config within middleware.')
   }
-  next('/secret')
+  console.log('Heading to', to.path, 'but I think we should go somewhere else...')
+  return '/secret'
 })

@@ -7,9 +7,9 @@
 <script setup>
 definePageMeta({
   // This is an example of inline middleware
-  middleware: (_to, _from, next) => {
+  middleware: () => {
     console.log('Strictly forbidden.')
-    next(false)
+    return false
   }
 })
 </script>

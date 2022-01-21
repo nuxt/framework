@@ -13,7 +13,7 @@ import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
-import middleware from '#build/middleware'
+import middlewareImports from '#build/middleware'
 
 declare module 'vue' {
   export interface GlobalComponents {
@@ -60,37 +60,29 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   nuxtApp._route = reactive(route)
 
-  router.beforeEach(async (to, from, next) => {
-    if (!to.meta.middleware) {
-      return next()
-    }
+  router.beforeEach(async (to, from) => {
+    if (!to.meta.middleware) { return }
 
-    const guards = to.matched.reduce((mw, component) => {
+    const middlewareEntries = to.matched.reduce((mw, component) => {
       if (!component.meta.middleware) { return mw }
 
-      if (Array.isArray(component.meta.middleware)) {
-        for (const guard of middleware) {
-          mw.add(guard)
-        }
-      } else {
-        mw.add(component.meta.middleware)
+      const entries = Array.isArray(component.meta.middleware) ? component.meta.middleware : [component.meta.middleware]
+      for (const entry of entries) {
+        mw.add(entry)
       }
       return mw
     }, new Set<string | NavigationGuard>())
 
-    let nextCalledWith: any
-    for (const guard of guards) {
-      const mw = typeof guard === 'string' ? await middleware[guard]?.().then(r => r.default || r) : guard
-      if (process.dev && !mw) {
-        console.warn(`Unknown middleware: ${guard}. Valid options are ${Object.keys(middleware).join(', ')}.`)
+    for (const entry of middlewareEntries) {
+      const middleware = typeof entry === 'string' ? await middlewareImports[entry]?.().then(r => r.default || r) : entry
+
+      if (process.dev && !middleware) {
+        console.warn(`Unknown middleware: ${entry}. Valid options are ${Object.keys(middlewareImports).join(', ')}.`)
       }
-      await callWithNuxt(nuxtApp, () => mw?.(to, from, (arg?: any) => { nextCalledWith = arg }))
 
-      // Short circuit the rest of the guards if next() is called with a value
-      if (nextCalledWith !== undefined) { return next(nextCalledWith) }
+      const result = await callWithNuxt(nuxtApp, () => middleware?.(to, from))
+      if (result || result === false) { return result }
     }
-
-    next()
   })
 
   nuxtApp.hook('app:created', async () => {

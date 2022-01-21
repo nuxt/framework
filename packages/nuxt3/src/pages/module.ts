@@ -75,7 +75,7 @@ export default defineNuxtModule({
       filename: 'middleware.mjs',
       async getContents () {
         const middleware = await resolveMiddleware()
-        await nuxt.callHook('middleware:extend', middleware)
+        await nuxt.callHook('pages:middleware:extend', middleware)
         const middlewareObject = Object.fromEntries(middleware.map(mw => [mw.name, `{() => import('${mw.path}')}`]))
         return `export default ${templateUtils.serialize(middlewareObject)}`
       }

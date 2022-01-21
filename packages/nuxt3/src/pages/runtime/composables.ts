@@ -1,5 +1,5 @@
 import { ComputedRef, /* KeepAliveProps, */ Ref, TransitionProps } from 'vue'
-import type { Router, RouteLocationNormalizedLoaded, NavigationGuard } from 'vue-router'
+import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized } from 'vue-router'
 import { useNuxtApp } from '#app'
 
 export const useRouter = () => {
@@ -36,4 +36,4 @@ export const definePageMeta = (meta: PageMeta): void => {
   }
 }
 
-export const defineNuxtMiddleware = (middleware: NavigationGuard) => middleware
+export const defineNuxtMiddleware = (middleware: (to: RouteLocationNormalized, from: RouteLocationNormalized) => ReturnType<NavigationGuard>) => middleware
