@@ -225,7 +225,7 @@ export default {
    *   function () {}
    * ]
    * ```
-   * @type {(typeof import('../src/types/module').NuxtModule | string | [string, Record<string, any>])[]}
+   * @type {(typeof import('../src/types/module').NuxtModule | string | [typeof import('../src/types/module').NuxtModule | string, Record<string, any>])[]}
    * @version 2
    * @version 3
    */
