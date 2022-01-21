@@ -1,4 +1,5 @@
-import type { IncomingMessage, ServerResponse } from 'http'
+import type { Server as HttpServer, IncomingMessage, ServerResponse } from 'http'
+import type { Server as HttpsServer } from 'https'
 import type { Compiler, Configuration, Stats } from 'webpack'
 import type { TSConfig } from 'pkg-types'
 import type { ModuleContainer } from './module'
@@ -33,9 +34,10 @@ type RenderResult = {
 export type TSReference = { types: string } | { path: string }
 
 export type NuxtPage = {
-  name?: string,
-  path: string,
-  file: string,
+  name?: string
+  path: string
+  file: string
+  meta?: Record<string, any>
   children?: NuxtPage[]
 }
 
@@ -78,6 +80,7 @@ export interface NuxtHooks {
   // @nuxt/nitro
   'nitro:document': (template: { src: string, contents: string }) => HookResult
   'nitro:context': (context: any) => HookResult
+  'nitro:generate': (context: any) => HookResult
 
   // @nuxt/cli
   'generate:cache:ignore': (ignore: string[]) => HookResult
@@ -100,7 +103,7 @@ export interface NuxtHooks {
   'render:setupMiddleware': (app: any) => HookResult
   'render:errorMiddleware': (app: any) => HookResult
   'render:done': (server: Server) => HookResult
-  'listen': (listenerServer: any, listener: any) => HookResult
+  'listen': (listenerServer: HttpServer | HttpsServer, listener: any) => HookResult
   'server:nuxt:renderLoading': (req: IncomingMessage, res: ServerResponse) => HookResult
   'render:route': (url: string, result: RenderResult, context: any) => HookResult
   'render:routeDone': (url: string, result: RenderResult, context: any) => HookResult
