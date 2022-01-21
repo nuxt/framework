@@ -81,6 +81,28 @@ export default defineNuxtModule({
       }
     })
 
+    addTemplate({
+      filename: 'middleware.d.ts',
+      write: true,
+      getContents: async () => {
+        const composablesFile = resolve(runtimeDir, 'composables')
+        const middleware = await resolveMiddleware()
+        return [
+          'import type { NavigationGuard } from \'vue-router\'',
+          `export type MiddlewareKey = ${middleware.map(mw => `"${mw.name}"`).join(' | ') || 'string'}`,
+          `declare module '${composablesFile}' {`,
+          '  interface PageMeta {',
+          '    middleware?: MiddlewareKey | NavigationGuard | Array<MiddlewareKey | NavigationGuard>',
+          '  }',
+          '}'
+        ].join('\n')
+      }
+    })
+
+    nuxt.hook('prepare:types', ({ references }) => {
+      references.push({ path: resolve(nuxt.options.buildDir, 'middleware.d.ts') })
+    })
+
     // Add layouts template
     addTemplate({
       filename: 'layouts.mjs',

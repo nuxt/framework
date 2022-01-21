@@ -14,7 +14,6 @@ export interface PageMeta {
   [key: string]: any
   transition?: false | TransitionProps
   layout?: false | string | Ref<false | string> | ComputedRef<false | string>
-  middleware?: NavigationGuard | string | Array<NavigationGuard | string>
   // TODO: https://github.com/vuejs/vue-next/issues/3652
   // keepalive?: false | KeepAliveProps
 }
