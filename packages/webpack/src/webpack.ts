@@ -3,7 +3,6 @@ import pify from 'pify'
 import webpack from 'webpack'
 import webpackDevMiddleware, { API } from 'webpack-dev-middleware'
 import webpackHotMiddleware from 'webpack-hot-middleware'
-import VirtualModulesPlugin from 'webpack-virtual-modules'
 import consola from 'consola'
 
 import type { Compiler, Watching } from 'webpack'
@@ -12,6 +11,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { joinURL } from 'ufo'
 import { DynamicBasePlugin } from '../../vite/src/plugins/dynamic-base'
 import { createMFS } from './utils/mfs'
+import { registerVirtualModules } from './virtual-modules'
 import { client, server } from './configs'
 import { createWebpackConfigContext, applyPresets, getWebpackConfig } from './utils/config'
 
@@ -22,19 +22,7 @@ export async function bundle (nuxt: Nuxt) {
   // Initialize shared MFS for dev
   const mfs = nuxt.options.dev ? createMFS() : null
 
-  // Initialize virtual modules instance
-  const virtualModules = new VirtualModulesPlugin(nuxt.vfs)
-  const writeFiles = () => {
-    for (const filePath in nuxt.vfs) {
-      virtualModules.writeModule(filePath, nuxt.vfs[filePath])
-    }
-  }
-  // Workaround to initialize virtual modules
-  nuxt.hook('build:compile', ({ compiler }) => {
-    if (compiler.name === 'server') { writeFiles() }
-  })
-  // Update virtual modules when templates are updated
-  nuxt.hook('app:templatesGenerated', writeFiles)
+  await registerVirtualModules()
 
   const compilersWatching: Watching[] = []
 
@@ -96,7 +84,6 @@ export async function bundle (nuxt: Nuxt) {
 
     // Create webpack dev middleware
     const devMiddleware = pify(webpackDevMiddleware(compiler, {
-      // TODO: waiting for https://github.com/nuxt/framework/pull/2249
       publicPath: joinURL(nuxt.options.app.baseURL, nuxt.options.app.buildAssetsDir),
       outputFileSystem: mfs as any,
       stats: 'none',
@@ -133,9 +120,6 @@ export async function bundle (nuxt: Nuxt) {
 
   // Configure compilers
   const compilers = webpackConfigs.map((config) => {
-    // Support virtual modules (input)
-    config.plugins.push(virtualModules)
-
     config.plugins.push(DynamicBasePlugin.webpack({
       env: nuxt.options.dev ? 'dev' : config.name as 'client',
       devAppConfig: nuxt.options.app,
