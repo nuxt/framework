@@ -1,15 +1,13 @@
 <template>
-  <RouterView v-slot="{ Component, route }">
-    <component :is="Component" :key="getKeyFor(childKey || route.meta.key, route)" />
+  <RouterView v-slot="{ Component }">
+    <component :is="Component" :key="key" />
   </RouterView>
 </template>
 
 <script lang="ts">
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
-
-const getKeyFor = (key: string | ((route: RouteLocationNormalizedLoaded) => string), route?: RouteLocationNormalizedLoaded) => {
-  return key && typeof key === 'function' ? key(route) : key
-}
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 
 export default {
   name: 'NuxtNestedPage',
@@ -19,8 +17,15 @@ export default {
       default: null
     }
   },
-  setup () {
-    return { getKeyFor }
+  setup (props) {
+    const route = useRoute()
+    const key = computed(() => {
+      const source = props.childKey ?? route.meta.key
+      return source && typeof source === 'function' ? source(route) : source
+    })
+    return {
+      key
+    }
   }
 }
 </script>
