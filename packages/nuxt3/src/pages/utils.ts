@@ -1,7 +1,7 @@
 import { basename, extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
-import type { Nuxt, NuxtPage } from '@nuxt/schema'
-import { resolveFiles } from '@nuxt/kit'
+import type { Nuxt, NuxtMiddleware, NuxtPage } from '@nuxt/schema'
+import { resolveFiles, useNuxt } from '@nuxt/kit'
 import { kebabCase, pascalCase } from 'scule'
 
 enum SegmentParserState {
@@ -219,10 +219,7 @@ export async function resolveLayouts (nuxt: Nuxt) {
   const layoutDir = resolve(nuxt.options.srcDir, nuxt.options.dir.layouts)
   const files = await resolveFiles(layoutDir, `*{${nuxt.options.extensions.join(',')}}`)
 
-  return files.map((file) => {
-    const name = kebabCase(basename(file).replace(extname(file), '')).replace(/["']/g, '')
-    return { name, file }
-  })
+  return files.map(file => ({ name: getNameFromPath(file), file }))
 }
 
 export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = new Set()): { imports: Set<string>, routes: NuxtPage[]} {
@@ -240,4 +237,15 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
       }
     })
   }
+}
+
+export async function resolveMiddleware (): Promise<NuxtMiddleware[]> {
+  const nuxt = useNuxt()
+  const middlewareDir = resolve(nuxt.options.srcDir, nuxt.options.dir.middleware)
+  const files = await resolveFiles(middlewareDir, `*{${nuxt.options.extensions.join(',')}}`)
+  return files.map(path => ({ name: getNameFromPath(path), path }))
+}
+
+function getNameFromPath (path: string) {
+  return kebabCase(basename(path).replace(extname(path), '')).replace(/["']/g, '')
 }

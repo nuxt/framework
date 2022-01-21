@@ -3,7 +3,8 @@ import {
   createRouter,
   createWebHistory,
   createMemoryHistory,
-  RouterLink
+  RouterLink,
+  NavigationGuard
 } from 'vue-router'
 import NuxtNestedPage from './nested-page.vue'
 import NuxtPage from './page.vue'
@@ -11,6 +12,8 @@ import NuxtLayout from './layout'
 import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
+// @ts-ignore
+import middleware from '#build/middleware'
 
 declare module 'vue' {
   export interface GlobalComponents {
@@ -56,6 +59,40 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
 
   nuxtApp._route = reactive(route)
+
+  router.beforeEach(async (to, from, next) => {
+    if (!to.meta.middleware) {
+      return next()
+    }
+
+    const guards = to.matched.reduce((mw, component) => {
+      if (!component.meta.middleware) { return mw }
+
+      if (typeof component.meta.middleware === 'string') {
+        mw.add(component.meta.middleware)
+      }
+      if (Array.isArray(component.meta.middleware)) {
+        for (const guard of middleware) {
+          mw.add(guard)
+        }
+      }
+      return mw
+    }, new Set<string | NavigationGuard>())
+
+    let nextCalledWith: any
+    for (const guard of guards) {
+      const mw = typeof guard === 'string' ? await middleware[guard]?.().then(r => r.default || r) : guard
+      if (process.dev && !mw) {
+        console.warn(`Unknown middleware: ${guard}. Valid options are ${Object.keys(middleware).join(', ')}.`)
+      }
+      await mw?.(to, from, (arg?: any) => { nextCalledWith = arg })
+
+      // Short circuit the rest of the guards if next() is called with a value
+      if (nextCalledWith) { return next(nextCalledWith) }
+    }
+
+    next()
+  })
 
   nuxtApp.hook('app:created', async () => {
     if (process.server) {

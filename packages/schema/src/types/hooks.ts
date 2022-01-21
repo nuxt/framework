@@ -41,6 +41,11 @@ export type NuxtPage = {
   children?: NuxtPage[]
 }
 
+export type NuxtMiddleware = {
+  name: string
+  path: string
+}
+
 export interface NuxtHooks {
   // Kit
   'kit:compatibility': (compatibility: NuxtCompatibility, issues: NuxtCompatibilityIssues) => HookResult
@@ -51,6 +56,7 @@ export interface NuxtHooks {
   'app:templatesGenerated': (app: NuxtApp) => HookResult
   'builder:generateApp': () => HookResult
   'pages:extend': (pages: NuxtPage[]) => HookResult
+  'middleware:extend': (middleware: NuxtMiddleware[]) => HookResult
 
   // Auto imports
   'autoImports:sources': (autoImportSources: AutoImportSource[]) => HookResult

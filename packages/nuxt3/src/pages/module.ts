@@ -2,7 +2,7 @@ import { existsSync } from 'fs'
 import { defineNuxtModule, addTemplate, addPlugin, templateUtils, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { distDir } from '../dirs'
-import { resolveLayouts, resolvePagesRoutes, normalizeRoutes } from './utils'
+import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
 
 export default defineNuxtModule({
@@ -42,6 +42,7 @@ export default defineNuxtModule({
       const composablesFile = resolve(runtimeDir, 'composables')
       autoImports.push({ name: 'useRouter', as: 'useRouter', from: composablesFile })
       autoImports.push({ name: 'useRoute', as: 'useRoute', from: composablesFile })
+      autoImports.push({ name: 'defineNuxtMiddleware', as: 'defineNuxtMiddleware', from: composablesFile })
       autoImports.push({ name: 'definePageMeta', as: 'definePageMeta', from: composablesFile })
     })
 
@@ -66,6 +67,17 @@ export default defineNuxtModule({
         await nuxt.callHook('pages:extend', pages)
         const { routes: serializedRoutes, imports } = normalizeRoutes(pages)
         return [...imports, `export default ${templateUtils.serialize(serializedRoutes)}`].join('\n')
+      }
+    })
+
+    // Add middleware template
+    addTemplate({
+      filename: 'middleware.mjs',
+      async getContents () {
+        const middleware = await resolveMiddleware()
+        await nuxt.callHook('middleware:extend', middleware)
+        const middlewareObject = Object.fromEntries(middleware.map(mw => [mw.name, `{() => import('${mw.path}')}`]))
+        return `export default ${templateUtils.serialize(middlewareObject)}`
       }
     })
 

@@ -1,5 +1,5 @@
 import { ComputedRef, /* KeepAliveProps, */ Ref, TransitionProps } from 'vue'
-import type { Router, RouteLocationNormalizedLoaded } from 'vue-router'
+import type { Router, RouteLocationNormalizedLoaded, NavigationGuard } from 'vue-router'
 import { useNuxtApp } from '#app'
 
 export const useRouter = () => {
@@ -14,6 +14,7 @@ export interface PageMeta {
   [key: string]: any
   transition?: false | TransitionProps
   layout?: false | string | Ref<false | string> | ComputedRef<false | string>
+  middleware?: NavigationGuard | string | Array<NavigationGuard | string>
   // TODO: https://github.com/vuejs/vue-next/issues/3652
   // keepalive?: false | KeepAliveProps
 }
@@ -35,3 +36,5 @@ export const definePageMeta = (meta: PageMeta): void => {
     warnRuntimeUsage('definePageMeta')
   }
 }
+
+export const defineNuxtMiddleware = (middleware: NavigationGuard) => middleware
