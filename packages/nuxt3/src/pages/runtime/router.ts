@@ -13,7 +13,7 @@ import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
-import middlewareImports from '#build/middleware'
+import { globalMiddleware, namedMiddleware } from '#build/middleware'
 
 declare module 'vue' {
   export interface GlobalComponents {
@@ -64,7 +64,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     nuxtApp._processingMiddleware = true
 
     type MiddlewareDef = string | NavigationGuard
-    const middlewareEntries = new Set<MiddlewareDef>()
+    const middlewareEntries = new Set<MiddlewareDef>(globalMiddleware)
     for (const component of to.matched) {
       const componentMiddleware = component.meta.middleware as MiddlewareDef | MiddlewareDef[]
       if (!componentMiddleware) { continue }
@@ -78,10 +78,10 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
 
     for (const entry of middlewareEntries) {
-      const middleware = typeof entry === 'string' ? await middlewareImports[entry]?.().then(r => r.default || r) : entry
+      const middleware = typeof entry === 'string' ? await namedMiddleware[entry]?.().then(r => r.default || r) : entry
 
       if (process.dev && !middleware) {
-        console.warn(`Unknown middleware: ${entry}. Valid options are ${Object.keys(middlewareImports).join(', ')}.`)
+        console.warn(`Unknown middleware: ${entry}. Valid options are ${Object.keys(namedMiddleware).join(', ')}.`)
       }
 
       const result = await callWithNuxt(nuxtApp, middleware, [to, from])

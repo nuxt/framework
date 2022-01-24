@@ -227,7 +227,7 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
     imports: metaImports,
     routes: routes.map((route) => {
       const file = normalize(route.file)
-      const metaImportName = `${pascalCase(file.replace(/[^\w]/g, ''))}Meta`
+      const metaImportName = getImportName(file) + 'Meta'
       metaImports.add(`import { meta as ${metaImportName} } from '${file}?macro=true'`)
       return {
         ...route,
@@ -243,9 +243,17 @@ export async function resolveMiddleware (): Promise<NuxtMiddleware[]> {
   const nuxt = useNuxt()
   const middlewareDir = resolve(nuxt.options.srcDir, nuxt.options.dir.middleware)
   const files = await resolveFiles(middlewareDir, `*{${nuxt.options.extensions.join(',')}}`)
-  return files.map(path => ({ name: getNameFromPath(path), path }))
+  return files.map(path => ({ name: getNameFromPath(path), path, global: hasSuffix(path, '.global') }))
 }
 
 function getNameFromPath (path: string) {
-  return kebabCase(basename(path).replace(extname(path), '')).replace(/["']/g, '')
+  return kebabCase(basename(path).replace(extname(path), '')).replace(/["']/g, '').replace('.global', '')
+}
+
+function hasSuffix (path: string, suffix: string) {
+  return basename(path).replace(extname(path), '').endsWith(suffix)
+}
+
+export function getImportName (name: string) {
+  return pascalCase(name).replace(/[^\w]/g, '')
 }

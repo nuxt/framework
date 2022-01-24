@@ -44,6 +44,7 @@ export type NuxtPage = {
 export type NuxtMiddleware = {
   name: string
   path: string
+  global?: boolean
 }
 
 export interface NuxtHooks {

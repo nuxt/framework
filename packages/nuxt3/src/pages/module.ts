@@ -2,7 +2,7 @@ import { existsSync } from 'fs'
 import { defineNuxtModule, addTemplate, addPlugin, templateUtils, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { distDir } from '../dirs'
-import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware } from './utils'
+import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
 
 export default defineNuxtModule({
@@ -84,7 +84,12 @@ export default defineNuxtModule({
         const middleware = await resolveMiddleware()
         await nuxt.callHook('pages:middleware:extend', middleware)
         const middlewareObject = Object.fromEntries(middleware.map(mw => [mw.name, `{() => import('${mw.path}')}`]))
-        return `export default ${templateUtils.serialize(middlewareObject)}`
+        const globalMiddleware = middleware.filter(mw => mw.global)
+        return [
+          ...globalMiddleware.map(mw => `import ${getImportName(mw.name)} from '${mw.path}'`),
+          `export const globalMiddleware = [${globalMiddleware.map(mw => getImportName(mw.name)).join(', ')}]`,
+          `export const namedMiddleware = ${templateUtils.serialize(middlewareObject)}`
+        ].join('\n')
       }
     })
 
