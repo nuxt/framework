@@ -63,15 +63,19 @@ export default defineNuxtPlugin((nuxtApp) => {
   router.beforeEach(async (to, from) => {
     if (!to.meta.middleware) { return }
 
-    const middlewareEntries = to.matched.reduce((mw, component) => {
-      if (!component.meta.middleware) { return mw }
-
-      const entries = Array.isArray(component.meta.middleware) ? component.meta.middleware : [component.meta.middleware]
-      for (const entry of entries) {
-        mw.add(entry)
+    type MiddlewareDef = string | NavigationGuard
+    const middlewareEntries = new Set<MiddlewareDef>()
+    for (const component of to.matched) {
+      const componentMiddleware = component.meta.middleware as MiddlewareDef | MiddlewareDef[]
+      if (!componentMiddleware) { continue }
+      if (Array.isArray(componentMiddleware)) {
+        for (const entry of componentMiddleware) {
+          middlewareEntries.add(entry)
+        }
+      } else {
+        middlewareEntries.add(componentMiddleware)
       }
-      return mw
-    }, new Set<string | NavigationGuard>())
+    }
 
     for (const entry of middlewareEntries) {
       const middleware = typeof entry === 'string' ? await middlewareImports[entry]?.().then(r => r.default || r) : entry
