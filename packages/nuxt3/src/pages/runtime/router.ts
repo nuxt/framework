@@ -61,7 +61,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp._route = reactive(route)
 
   router.beforeEach(async (to, from) => {
-    if (!to.meta.middleware) { return }
+    nuxtApp._processingMiddleware = true
 
     type MiddlewareDef = string | NavigationGuard
     const middlewareEntries = new Set<MiddlewareDef>()
@@ -87,6 +87,10 @@ export default defineNuxtPlugin((nuxtApp) => {
       const result = await callWithNuxt(nuxtApp, middleware, [to, from])
       if (result || result === false) { return result }
     }
+  })
+
+  router.afterEach(() => {
+    nuxtApp._processingMiddleware = false
   })
 
   nuxtApp.hook('app:created', async () => {

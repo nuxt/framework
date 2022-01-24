@@ -1,5 +1,5 @@
 import { ComputedRef, /* KeepAliveProps, */ Ref, TransitionProps } from 'vue'
-import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized } from 'vue-router'
+import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 import { useNuxtApp } from '#app'
 
 export const useRouter = () => {
@@ -37,4 +37,22 @@ export const definePageMeta = (meta: PageMeta): void => {
   }
 }
 
-export const defineNuxtMiddleware = (middleware: (to: RouteLocationNormalized, from: RouteLocationNormalized) => ReturnType<NavigationGuard>) => middleware
+export const defineNuxtRouteMiddleware = (middleware: (to: RouteLocationNormalized, from: RouteLocationNormalized) => ReturnType<NavigationGuard>) => middleware
+
+export const navigateTo = (to: RouteLocationRaw) => {
+  try {
+    if (useNuxtApp()._processingMiddleware) {
+      return to
+    }
+  } catch {}
+  const router: Router = process.server ? useRouter() : (window as any).$nuxt.router
+  return router.push(to)
+}
+
+/** This will abort navigation within a Nuxt route middleware handler. */
+export const abortNavigation = (err?: Error | string) => {
+  if (err) {
+    throw err instanceof Error ? err : new Error(err)
+  }
+  return false
+}

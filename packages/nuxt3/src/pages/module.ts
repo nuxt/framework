@@ -40,10 +40,17 @@ export default defineNuxtModule({
 
     nuxt.hook('autoImports:extend', (autoImports) => {
       const composablesFile = resolve(runtimeDir, 'composables')
-      autoImports.push({ name: 'useRouter', as: 'useRouter', from: composablesFile })
-      autoImports.push({ name: 'useRoute', as: 'useRoute', from: composablesFile })
-      autoImports.push({ name: 'defineNuxtMiddleware', as: 'defineNuxtMiddleware', from: composablesFile })
-      autoImports.push({ name: 'definePageMeta', as: 'definePageMeta', from: composablesFile })
+      const composables = [
+        'useRouter',
+        'useRoute',
+        'defineNuxtRouteMiddleware',
+        'definePageMeta',
+        'navigateTo',
+        'abortNavigation'
+      ]
+      for (const composable of composables) {
+        autoImports.push({ name: composable, as: composable, from: composablesFile })
+      }
     })
 
     // Extract macros from pages
