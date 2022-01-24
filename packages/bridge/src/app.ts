@@ -13,7 +13,7 @@ export function setupAppBridge (_options: any) {
   // Mock `bundleBuilder.build` to support `nuxi prepare`
   if (nuxt.options._prepare) {
     nuxt.hook('builder:prepared', (builder) => {
-      builder.bundleBuilder.build = () => {}
+      builder.bundleBuilder.build = () => Promise.resolve(builder.bundleBuilder)
     })
   }
 
