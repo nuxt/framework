@@ -46,7 +46,8 @@ export default defineNuxtModule({
         'defineNuxtRouteMiddleware',
         'definePageMeta',
         'navigateTo',
-        'abortNavigation'
+        'abortNavigation',
+        'addRouteMiddleware'
       ]
       for (const composable of composables) {
         autoImports.push({ name: composable, as: composable, from: composablesFile })

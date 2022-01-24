@@ -37,7 +37,24 @@ export const definePageMeta = (meta: PageMeta): void => {
   }
 }
 
-export const defineNuxtRouteMiddleware = (middleware: (to: RouteLocationNormalized, from: RouteLocationNormalized) => ReturnType<NavigationGuard>) => middleware
+export interface RouteMiddleware {
+  (to: RouteLocationNormalized, from: RouteLocationNormalized): ReturnType<NavigationGuard>
+}
+
+export const defineNuxtRouteMiddleware = (middleware: RouteMiddleware) => middleware
+
+export interface AddRouteMiddlewareOptions {
+  global?: boolean
+}
+
+export const addRouteMiddleware = (name: string, middleware: RouteMiddleware, options: AddRouteMiddlewareOptions = {}) => {
+  const nuxtApp = useNuxtApp()
+  if (options.global) {
+    nuxtApp._middleware.global.push(middleware)
+  } else {
+    nuxtApp._middleware.named[name] = middleware
+  }
+}
 
 export const navigateTo = (to: RouteLocationRaw) => {
   try {

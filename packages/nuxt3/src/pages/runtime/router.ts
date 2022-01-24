@@ -60,11 +60,16 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   nuxtApp._route = reactive(route)
 
+  nuxtApp._middleware = nuxtApp._middleware || {
+    global: [],
+    named: {}
+  }
+
   router.beforeEach(async (to, from) => {
     nuxtApp._processingMiddleware = true
 
     type MiddlewareDef = string | NavigationGuard
-    const middlewareEntries = new Set<MiddlewareDef>(globalMiddleware)
+    const middlewareEntries = new Set<MiddlewareDef>([...globalMiddleware, ...nuxtApp._middleware.global])
     for (const component of to.matched) {
       const componentMiddleware = component.meta.middleware as MiddlewareDef | MiddlewareDef[]
       if (!componentMiddleware) { continue }
@@ -78,7 +83,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
 
     for (const entry of middlewareEntries) {
-      const middleware = typeof entry === 'string' ? await namedMiddleware[entry]?.().then(r => r.default || r) : entry
+      const middleware = typeof entry === 'string' ? nuxtApp._middleware.named[entry] || await namedMiddleware[entry]?.().then(r => r.default || r) : entry
 
       if (process.dev && !middleware) {
         console.warn(`Unknown middleware: ${entry}. Valid options are ${Object.keys(namedMiddleware).join(', ')}.`)
