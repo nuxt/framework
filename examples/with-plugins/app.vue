@@ -1,5 +1,5 @@
 <template>
   <NuxtExampleLayout example="with-plugins" show-tips>
-    <div>{{ $myPlugin.data }}</div>
+    <div>{{ $myPlugin() }}</div>
   </NuxtExampleLayout>
 </template>
