@@ -80,7 +80,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         console.warn(`Unknown middleware: ${entry}. Valid options are ${Object.keys(middlewareImports).join(', ')}.`)
       }
 
-      const result = await callWithNuxt(nuxtApp, () => middleware?.(to, from))
+      const result = await callWithNuxt(nuxtApp, middleware, [to, from])
       if (result || result === false) { return result }
     }
   })
