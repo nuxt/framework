@@ -1,5 +1,5 @@
 import virtual from '@rollup/plugin-virtual'
-import { genImport } from 'mlly'
+import { genImport } from 'knitwork'
 import { serializeImportName } from '../../utils'
 
 export interface StorageOptions {

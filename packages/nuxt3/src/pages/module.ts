@@ -1,7 +1,7 @@
 import { existsSync } from 'fs'
 import { defineNuxtModule, addTemplate, addPlugin, templateUtils, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
-import { genDynamicImport, genObjectFromRawEntries } from 'mlly'
+import { genDynamicImport, genObjectFromRawEntries } from 'knitwork'
 import { distDir } from '../dirs'
 import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'

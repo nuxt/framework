@@ -3,7 +3,7 @@ import lodashTemplate from 'lodash.template'
 import hash from 'hash-sum'
 import { camelCase } from 'scule'
 import { basename, extname } from 'pathe'
-import { genDynamicImport, genImport } from 'mlly'
+import { genDynamicImport, genImport } from 'knitwork'
 
 import type { NuxtTemplate } from '@nuxt/schema'
 

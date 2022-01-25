@@ -2,7 +2,7 @@ import { pathToFileURL } from 'url'
 import { resolve } from 'pathe'
 import { globby } from 'globby'
 import type { Plugin } from 'rollup'
-import { genDynamicImport, genObjectFromRawEntries, genImport } from 'mlly'
+import { genDynamicImport, genObjectFromRawEntries, genImport } from 'knitwork'
 import { serializeImportName } from '../../utils'
 
 const PLUGIN_NAME = 'dynamic-require'

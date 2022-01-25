@@ -1,6 +1,6 @@
 import { templateUtils } from '@nuxt/kit'
 import type { Nuxt, NuxtApp } from '@nuxt/schema'
-import { genArrayFromRaw, genDynamicImport, genExport, genImport } from 'mlly'
+import { genArrayFromRaw, genDynamicImport, genExport, genImport } from 'knitwork'
 
 import { relative } from 'pathe'
 

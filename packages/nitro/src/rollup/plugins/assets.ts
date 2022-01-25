@@ -4,7 +4,7 @@ import createEtag from 'etag'
 import mime from 'mime'
 import { resolve } from 'pathe'
 import { globby } from 'globby'
-import { genDynamicImport, genObjectFromRawEntries } from 'mlly'
+import { genDynamicImport, genObjectFromRawEntries } from 'knitwork'
 import virtual from './virtual'
 
 export interface AssetOptions {

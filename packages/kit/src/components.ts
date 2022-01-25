@@ -1,6 +1,6 @@
 import { pascalCase, kebabCase } from 'scule'
 import type { ComponentsDir, Component } from '@nuxt/schema'
-import { genDynamicImport } from 'mlly'
+import { genDynamicImport } from 'knitwork'
 import { useNuxt } from './context'
 import { assertNuxtCompatibility } from './compatibility'
 

@@ -1,7 +1,7 @@
 import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, addPluginTemplate, useNuxt } from '@nuxt/kit'
 import type { AutoImportsOptions } from '@nuxt/schema'
 import { isAbsolute, join, relative, resolve, normalize } from 'pathe'
-import { genDynamicImport } from 'mlly'
+import { genDynamicImport } from 'knitwork'
 import { TransformPlugin } from './transform'
 import { Nuxt3AutoImports } from './imports'
 import { scanForComposables } from './composables'

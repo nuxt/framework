@@ -3,7 +3,7 @@ import { relative } from 'pathe'
 import table from 'table'
 import isPrimitive from 'is-primitive'
 import { isDebug } from 'std-env'
-import { genArrayFromRaw, genDynamicImport, genImport } from 'mlly'
+import { genArrayFromRaw, genDynamicImport, genImport } from 'knitwork'
 import type { ServerMiddleware } from '../../server/middleware'
 import virtual from './virtual'
 

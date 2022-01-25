@@ -1,7 +1,7 @@
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL } from 'ufo'
 import { Component } from '@nuxt/schema'
-import { genImport } from 'mlly'
+import { genImport } from 'knitwork'
 
 interface LoaderOptions {
   getComponents(): Component[]

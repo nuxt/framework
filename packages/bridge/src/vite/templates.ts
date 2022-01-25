@@ -2,7 +2,7 @@ import hash from 'hash-sum'
 import { resolve } from 'pathe'
 
 import type { Nuxt, NuxtApp } from '@nuxt/schema'
-import { genImport, genObjectFromRawEntries } from 'mlly'
+import { genImport, genObjectFromRawEntries } from 'knitwork'
 
 type TemplateContext = {
   nuxt: Nuxt;
@@ -25,7 +25,7 @@ export const middlewareTemplate = {
         id: m.name || m.src.replace(/[\\/]/g, '/').replace(/\.(js|ts)$/, '')
       }
     })
-    return `${_middleware.map(m => genImport(m.filePath,`$${hash(m.id)}` )).join('\n')}
+    return `${_middleware.map(m => genImport(m.filePath, `$${hash(m.id)}`)).join('\n')}
 const middleware = ${genObjectFromRawEntries(_middleware.map(m => [m.id, `$${hash(m.id)}`]))}
 export default middleware`
   }

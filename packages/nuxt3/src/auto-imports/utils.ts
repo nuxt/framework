@@ -1,5 +1,5 @@
 import type { AutoImport } from '@nuxt/schema'
-import { genExport, genImport } from 'mlly'
+import { genExport, genImport } from 'knitwork'
 
 export function toImportModuleMap (autoImports: AutoImport[], isCJS = false) {
   const aliasKeyword = isCJS ? ' : ' : ' as '

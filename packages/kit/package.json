@@ -20,6 +20,7 @@
     "globby": "^13.1.0",
     "hash-sum": "^2.0.0",
     "jiti": "^1.12.9",
+    "knitwork": "^0.1.0",
     "lodash.template": "^4.5.0",
     "mlly": "^0.4.0",
     "pathe": "^0.2.0",

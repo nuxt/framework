@@ -4,7 +4,7 @@ import { builtinModules } from 'module'
 import { resolve } from 'pathe'
 import * as vite from 'vite'
 import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults } from 'externality'
-import { genDynamicImport, genObjectFromRawEntries } from 'mlly'
+import { genDynamicImport, genObjectFromRawEntries } from 'knitwork'
 import { hashId, uniq } from './utils'
 
 export interface TransformChunk {

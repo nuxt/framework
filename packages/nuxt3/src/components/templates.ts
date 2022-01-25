@@ -1,7 +1,7 @@
 
 import { relative } from 'pathe'
 import type { Component } from '@nuxt/schema'
-import { genDynamicImport, genObjectFromRawEntries } from 'mlly'
+import { genDynamicImport, genObjectFromRawEntries } from 'knitwork'
 
 export type ComponentsTemplateOptions = {
   buildDir?: string
