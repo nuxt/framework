@@ -77,7 +77,7 @@ export const navigateTo = (to: RouteLocationRaw) => {
 /** This will abort navigation within a Nuxt route middleware handler. */
 export const abortNavigation = (err?: Error | string) => {
   if (process.dev && !isProcessingMiddleware()) {
-    return console.error('abortNavigation() is only usable inside a route middleware handler.')
+    throw new Error('abortNavigation() is only usable inside a route middleware handler.')
   }
   if (err) {
     throw err instanceof Error ? err : new Error(err)
