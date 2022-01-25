@@ -18,6 +18,7 @@ export function setupNitroBridge () {
   // Handle legacy property name `assetsPath`
   nuxt.options.app.buildAssetsDir = nuxt.options.app.buildAssetsDir || nuxt.options.app.assetsPath
   nuxt.options.app.assetsPath = nuxt.options.app.buildAssetsDir
+  nuxt.options.app.baseURL = nuxt.options.app.baseURL || (nuxt.options.app as any).basePath
   // Nitro expects app config on `config.app` rather than `config._app`
   nuxt.options.publicRuntimeConfig.app = nuxt.options.publicRuntimeConfig.app || {}
   Object.assign(nuxt.options.publicRuntimeConfig.app, nuxt.options.publicRuntimeConfig._app)
@@ -113,6 +114,7 @@ export function setupNitroBridge () {
 
   // Generate mjs resources
   nuxt.hook('build:compiled', async ({ name }) => {
+    if (nuxt.options._prepare) { return }
     if (name === 'server') {
       const jsServerEntry = resolve(nuxt.options.buildDir, 'dist/server/server.js')
       await fsp.writeFile(jsServerEntry.replace(/.js$/, '.cjs'), 'module.exports = require("./server.js")', 'utf8')
@@ -144,7 +146,7 @@ export function setupNitroBridge () {
   })
 
   // nuxt prepare
-  nuxt.hook('builder:generateApp', async () => {
+  nuxt.hook('build:done', async () => {
     nitroDevContext.scannedMiddleware = await scanMiddleware(nitroDevContext._nuxt.serverDir)
     await writeTypes(nitroDevContext)
   })
@@ -154,6 +156,7 @@ export function setupNitroBridge () {
   nuxt.options.build._minifyServer = false
   nuxt.options.build.standalone = false
   nuxt.hook('build:done', async () => {
+    if (nuxt.options._prepare) { return }
     if (nuxt.options.dev) {
       await build(nitroDevContext)
     } else if (!nitroContext._nuxt.isStatic) {

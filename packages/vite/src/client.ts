@@ -5,7 +5,7 @@ import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { Connect } from 'vite'
 
-import { joinURL, withoutLeadingSlash } from 'ufo'
+import { joinURL } from 'ufo'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { analyzePlugin } from './plugins/analyze'
 import { wpfs } from './utils/wpfs'
@@ -13,9 +13,9 @@ import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 import { viteNodeServer } from './plugins/vite-node-server'
-import { DynamicBasePlugin } from './plugins/dynamic-base'
+import { DynamicBasePlugin, RelativeAssetPlugin } from './plugins/dynamic-base'
 
-export async function buildClient (ctx: ViteBuildContext) {
+export async function buildClient(ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     define: {
       'process.server': false,
@@ -28,7 +28,6 @@ export async function buildClient (ctx: ViteBuildContext) {
       }
     },
     build: {
-      assetsDir: ctx.nuxt.options.dev ? withoutLeadingSlash(ctx.nuxt.options.app.buildAssetsDir) : '.',
       rollupOptions: {
         output: {
           chunkFileNames: ctx.nuxt.options.dev ? undefined : '[name]-[hash].mjs',
@@ -43,6 +42,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       vuePlugin(ctx.config.vue),
       viteJsxPlugin(),
       DynamicBasePlugin.vite({ env: 'client', devAppConfig: ctx.nuxt.options.app }),
+      RelativeAssetPlugin(),
       devStyleSSRPlugin({
         rootDir: ctx.nuxt.options.rootDir,
         buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
