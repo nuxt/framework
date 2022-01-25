@@ -95,7 +95,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   })
 
   router.afterEach(() => {
-    nuxtApp._processingMiddleware = false
+    delete nuxtApp._processingMiddleware
   })
 
   nuxtApp.hook('app:created', async () => {
