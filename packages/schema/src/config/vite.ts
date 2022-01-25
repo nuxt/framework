@@ -61,7 +61,7 @@ export default {
     clearScreen: false,
     build: {
       assetsDir: {
-        $resolve: (val, get) => val ?? withoutLeadingSlash(get('app').buildAssetsDir),
+        $resolve: (val, get) => val ?? get('dev') ? withoutLeadingSlash(get('app').buildAssetsDir) : '.',
       },
       emptyOutDir: false,
     },
