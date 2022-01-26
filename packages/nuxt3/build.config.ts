@@ -21,7 +21,6 @@ export default defineBuildConfig({
   externals: [
     '@vue/reactivity',
     '@vue/shared',
-    'knitwork',
     '@vueuse/head',
     'vue-meta'
   ]
