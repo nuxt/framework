@@ -1,5 +1,5 @@
 import type { AutoImport } from '@nuxt/schema'
-import { genExport, genImport } from 'knitwork'
+import { genExport, genImport, genString } from 'knitwork'
 
 export function toImportModuleMap (autoImports: AutoImport[], isCJS = false) {
   const aliasKeyword = isCJS ? ' : ' : ' as '
@@ -21,7 +21,7 @@ export function toImports (autoImports: AutoImport[], isCJS = false) {
   const map = toImportModuleMap(autoImports, isCJS)
   if (isCJS) {
     return Object.entries(map)
-      .map(([name, imports]) => `const { ${Array.from(imports).join(', ')} } = require(${JSON.stringify(name)});`)
+      .map(([name, imports]) => `const { ${Array.from(imports).join(', ')} } = require(${genString(name)});`)
       .join('\n')
   } else {
     return Object.entries(map)
@@ -33,7 +33,7 @@ export function toImports (autoImports: AutoImport[], isCJS = false) {
 export function toExports (autoImports: AutoImport[]) {
   const map = toImportModuleMap(autoImports, false)
   return Object.entries(map)
-    .map(([name, imports]) => genExport(name, imports))
+    .map(([name, imports]) => genExport(name, Array.from(imports)))
     .join('\n')
 }
 
