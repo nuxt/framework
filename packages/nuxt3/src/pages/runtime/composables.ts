@@ -1,4 +1,4 @@
-import { ComputedRef, KeepAliveProps, Ref, TransitionProps } from 'vue'
+import { KeepAliveProps, TransitionProps } from 'vue'
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 import { useNuxtApp } from '#app'
 
@@ -14,7 +14,6 @@ export interface PageMeta {
   [key: string]: any
   pageTransition?: false | TransitionProps
   layoutTransition?: false | TransitionProps
-  layout?: false | string | Ref<false | string> | ComputedRef<false | string>
   key?: string | ((route: RouteLocationNormalizedLoaded) => string)
   keepalive?: false | KeepAliveProps
 }
