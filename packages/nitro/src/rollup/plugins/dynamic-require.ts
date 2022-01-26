@@ -90,7 +90,7 @@ async function getWebpackChunkMeta (src: string) {
 }
 
 function TMPL_INLINE ({ chunks }: TemplateContext) {
-  return `${chunks.map(i => genImport(i.src, { name: '*', as: i.name }))}.join('\n')}
+  return `${chunks.map(i => genImport(i.src, { name: '*', as: i.name })).join('\n')}
 const dynamicChunks = ${genObjectFromRawEntries(chunks.map(i => [i.id, i.name]))};
 
 export default function dynamicRequire(id) {
