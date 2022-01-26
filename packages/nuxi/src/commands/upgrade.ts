@@ -44,6 +44,8 @@ export default defineNuxtCommand({
       execSync(`${packageManager} install`, { stdio: 'inherit' })
     } else {
       consola.info('Upgrading nuxt...')
+      await fsp.rmdir('node_modules/.cache', { recursive: true })
+      await fsp.rmdir(nuxt.options.buildDir, { recursive: true })
       await fsp.rmdir('node_modules/.vite', { recursive: true })
       execSync(`${packageManager} ${packageManager === 'yarn' ? 'add' : 'install'} -D nuxt3@latest`, { stdio: 'inherit' })
     }
