@@ -1,5 +1,5 @@
 import virtual from '@rollup/plugin-virtual'
-import { genImport } from 'knitwork'
+import { genImport, genString } from 'knitwork'
 import { serializeImportName } from '../../utils'
 
 export interface StorageOptions {
@@ -42,7 +42,7 @@ export const storage = createStorage({})
 
 storage.mount('/assets', assets)
 
-${mounts.map(m => `storage.mount('${m.path}', ${serializeImportName(m.driver)}(${JSON.stringify(m.opts)}))`).join('\n')}
+${mounts.map(m => `storage.mount(${genString(m.path)}, ${serializeImportName(m.driver)}(${JSON.stringify(m.opts)}))`).join('\n')}
 `
   })
 }

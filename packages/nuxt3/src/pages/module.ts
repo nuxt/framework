@@ -1,7 +1,7 @@
 import { existsSync } from 'fs'
-import { defineNuxtModule, addTemplate, addPlugin, templateUtils, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
-import { genDynamicImport, genObjectFromRawEntries } from 'knitwork'
+import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
 import { distDir } from '../dirs'
 import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
@@ -74,8 +74,8 @@ export default defineNuxtModule({
       async getContents () {
         const pages = await resolvePagesRoutes(nuxt)
         await nuxt.callHook('pages:extend', pages)
-        const { routes: serializedRoutes, imports } = normalizeRoutes(pages)
-        return [...imports, `export default ${serializedRoutes}`].join('\n')
+        const { routes, imports } = normalizeRoutes(pages)
+        return [...imports, `export default ${routes}`].join('\n')
       }
     })
 
@@ -85,12 +85,12 @@ export default defineNuxtModule({
       async getContents () {
         const middleware = await resolveMiddleware()
         await nuxt.callHook('pages:middleware:extend', middleware)
-        const middlewareObject = Object.fromEntries(middleware.map(mw => [mw.name, `{() => import('${mw.path}')}`]))
+        const namedMiddleware = genObjectFromRawEntries(middleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
         const globalMiddleware = middleware.filter(mw => mw.global)
         return [
-          ...globalMiddleware.map(mw => `import ${getImportName(mw.name)} from '${mw.path}'`),
-          `export const globalMiddleware = [${globalMiddleware.map(mw => getImportName(mw.name)).join(', ')}]`,
-          `export const namedMiddleware = ${templateUtils.serialize(middlewareObject)}`
+          ...globalMiddleware.map(mw => genImport(mw.path, getImportName(mw.name))),
+          `export const globalMiddleware = ${genArrayFromRaw(globalMiddleware.map(mw => getImportName(mw.name)))}`,
+          `export const namedMiddleware = ${namedMiddleware}`
         ].join('\n')
       }
     })
@@ -103,8 +103,8 @@ export default defineNuxtModule({
         const middleware = await resolveMiddleware()
         return [
           'import type { NavigationGuard } from \'vue-router\'',
-          `export type MiddlewareKey = ${middleware.map(mw => `"${mw.name}"`).join(' | ') || 'string'}`,
-          `declare module '${composablesFile}' {`,
+          `export type MiddlewareKey = ${middleware.map(mw => genString(mw.name)).join(' | ') || 'string'}`,
+          `declare module ${genString(composablesFile)} {`,
           '  interface PageMeta {',
           '    middleware?: MiddlewareKey | NavigationGuard | Array<MiddlewareKey | NavigationGuard>',
           '  }',
@@ -121,8 +121,8 @@ export default defineNuxtModule({
         const layouts = await resolveLayouts(nuxt)
         return [
           'import { ComputedRef, Ref } from \'vue\'',
-          `export type LayoutKey = ${layouts.map(layout => `"${layout.name}"`).join(' | ') || 'string'}`,
-          `declare module '${composablesFile}' {`,
+          `export type LayoutKey = ${layouts.map(layout => genString(layout.name)).join(' | ') || 'string'}`,
+          `declare module ${genString(composablesFile)} {`,
           '  interface PageMeta {',
           '    layout?: false | LayoutKey | Ref<LayoutKey> | ComputedRef<LayoutKey>',
           '  }',
