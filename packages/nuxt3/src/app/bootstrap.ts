@@ -48,7 +48,7 @@ if (process.client) {
     await nuxt.hooks.callHook('app:created', vueApp)
     await nuxt.hooks.callHook('app:beforeMount', vueApp)
 
-    nuxt.hooks.hookOnce('page:finish', () => {
+    nuxt.hooks.hookOnce('app:finish', () => {
       nuxt.isHydrating = false
     })
 
