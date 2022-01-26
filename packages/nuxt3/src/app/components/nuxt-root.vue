@@ -1,5 +1,5 @@
 <template>
-  <Suspense @pending="onPending" @resolve="onResolve">
+  <Suspense @resolve="onResolve">
     <App />
   </Suspense>
 </template>
@@ -15,8 +15,7 @@ export default {
       console.error('[nuxt] Error in `vue:setup`. Callbacks must be synchronous.')
     }
     return {
-      onPending: () => nuxtApp.callHook('app:start'),
-      onResolve: () => nuxtApp.callHook('app:finish')
+      onResolve: () => nuxtApp.callHook('app:suspense:resolve')
     }
   }
 }
