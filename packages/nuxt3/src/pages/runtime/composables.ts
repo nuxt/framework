@@ -1,4 +1,4 @@
-import { KeepAliveProps, TransitionProps } from 'vue'
+import { KeepAliveProps, TransitionProps, UnwrapRef } from 'vue'
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 import { useNuxtApp } from '#app'
 
@@ -19,7 +19,7 @@ export interface PageMeta {
 }
 
 declare module 'vue-router' {
-  interface RouteMeta extends PageMeta {}
+  interface RouteMeta extends UnwrapRef<PageMeta> {}
 }
 
 const warnRuntimeUsage = (method: string) =>
