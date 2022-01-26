@@ -7,7 +7,6 @@ export default defineBuildConfig({
     { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm', declaration: true }
   ],
   externals: [
-    'knitwork',
     'webpack',
     'vite',
     'vue-meta'
