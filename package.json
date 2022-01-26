@@ -30,7 +30,7 @@
     "nuxt3": "workspace:./packages/nuxt3",
     "@nuxt/ui": "npm:@nuxt/ui-edge@^0.0.0-27376194.a859489",
     "unbuild": "^0.6.8",
-    "jiti": "^1.12.13"
+    "jiti": "^1.12.14"
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.0.14",

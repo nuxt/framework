@@ -12552,12 +12552,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.12.13":
-  version: 1.12.13
-  resolution: "jiti@npm:1.12.13"
+"jiti@npm:^1.12.14":
+  version: 1.12.14
+  resolution: "jiti@npm:1.12.14"
   bin:
     jiti: bin/jiti.js
-  checksum: c4eb3b67389869d0c62c2957f90b736a776f6257b554c3c8badb263c29f238983ad7a13915add441d4b5add474b93ff2addbea5d0e001f29c1ee1f1d8e88fef5
+  checksum: a27b8afc3fa6a0348c6845b31ad7cffd1b1b3b6a765304909b9a355d183bcd7918da7fb202bc1833a473b43c193dc5b457004c0f08201cfcb43047c693547a60
   languageName: node
   linkType: hard
 
