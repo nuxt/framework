@@ -220,7 +220,9 @@ export async function resolveLayouts (nuxt: Nuxt) {
   const layoutDir = resolve(nuxt.options.srcDir, nuxt.options.dir.layouts)
   const files = await resolveFiles(layoutDir, `*{${nuxt.options.extensions.join(',')}}`)
 
-  return files.map(file => ({ name: getNameFromPath(file), file }))
+  const layouts = files.map(file => ({ name: getNameFromPath(file), file }))
+  await nuxt.callHook('pages:layouts:extend', layouts)
+  return layouts
 }
 
 export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = new Set()): { imports: Set<string>, routes: NuxtPage[]} {
@@ -244,7 +246,9 @@ export async function resolveMiddleware (): Promise<NuxtMiddleware[]> {
   const nuxt = useNuxt()
   const middlewareDir = resolve(nuxt.options.srcDir, nuxt.options.dir.middleware)
   const files = await resolveFiles(middlewareDir, `*{${nuxt.options.extensions.join(',')}}`)
-  return files.map(path => ({ name: getNameFromPath(path), path, global: hasSuffix(path, '.global') }))
+  const middleware = files.map(path => ({ name: getNameFromPath(path), path, global: hasSuffix(path, '.global') }))
+  await nuxt.callHook('pages:middleware:extend', middleware)
+  return middleware
 }
 
 function getNameFromPath (path: string) {

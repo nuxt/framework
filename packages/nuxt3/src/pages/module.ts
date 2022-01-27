@@ -90,7 +90,6 @@ export default defineNuxtModule({
       filename: 'middleware.mjs',
       async getContents () {
         const middleware = await resolveMiddleware()
-        await nuxt.callHook('pages:middleware:extend', middleware)
         const globalMiddleware = middleware.filter(mw => mw.global)
         const namedMiddleware = middleware.filter(mw => !mw.global)
         const namedMiddlewareObject = Object.fromEntries(namedMiddleware.map(mw => [mw.name, `{() => import('${mw.path}')}`]))
@@ -109,7 +108,6 @@ export default defineNuxtModule({
         const composablesFile = resolve(runtimeDir, 'composables')
         const middleware = await resolveMiddleware()
         const namedMiddleware = middleware.filter(mw => !mw.global)
-        await nuxt.callHook('pages:middleware:extend', middleware)
         return [
           'import type { NavigationGuard } from \'vue-router\'',
           `export type MiddlewareKey = ${namedMiddleware.map(mw => `"${mw.name}"`).join(' | ') || 'string'}`,
@@ -128,7 +126,6 @@ export default defineNuxtModule({
       getContents: async () => {
         const composablesFile = resolve(runtimeDir, 'composables')
         const layouts = await resolveLayouts(nuxt)
-        await nuxt.callHook('pages:layouts:extend', layouts)
         return [
           'import { ComputedRef, Ref } from \'vue\'',
           `export type LayoutKey = ${layouts.map(layout => `"${layout.name}"`).join(' | ') || 'string'}`,
@@ -146,7 +143,6 @@ export default defineNuxtModule({
       filename: 'layouts.mjs',
       async getContents () {
         const layouts = await resolveLayouts(nuxt)
-        await nuxt.callHook('pages:layouts:extend', layouts)
         const layoutsObject = Object.fromEntries(layouts.map(({ name, file }) => {
           return [name, `{defineAsyncComponent({ suspensible: false, loader: () => import('${file}') })}`]
         }))
