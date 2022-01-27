@@ -229,8 +229,7 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
     routes: routes.map((route) => {
       const file = normalize(route.file)
       const metaImportName = getImportName(file) + 'Meta'
-      metaImports.add(`import { meta as ${metaImportName}import { escapeRE } from '../utils'
- } from '${file}?macro=true'`)
+      metaImports.add(`import { meta as ${metaImportName} } from '${file}?macro=true'`)
       return {
         ...route,
         children: route.children ? normalizeRoutes(route.children, metaImports).routes : [],
