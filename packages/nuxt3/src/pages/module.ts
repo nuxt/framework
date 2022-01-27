@@ -91,12 +91,13 @@ export default defineNuxtModule({
       async getContents () {
         const middleware = await resolveMiddleware()
         await nuxt.callHook('pages:middleware:extend', middleware)
-        const middlewareObject = Object.fromEntries(middleware.map(mw => [mw.name, `{() => import('${mw.path}')}`]))
         const globalMiddleware = middleware.filter(mw => mw.global)
+        const namedMiddleware = middleware.filter(mw => !mw.global)
+        const namedMiddlewareObject = Object.fromEntries(namedMiddleware.map(mw => [mw.name, `{() => import('${mw.path}')}`]))
         return [
           ...globalMiddleware.map(mw => `import ${getImportName(mw.name)} from '${mw.path}'`),
           `export const globalMiddleware = [${globalMiddleware.map(mw => getImportName(mw.name)).join(', ')}]`,
-          `export const namedMiddleware = ${templateUtils.serialize(middlewareObject)}`
+          `export const namedMiddleware = ${templateUtils.serialize(namedMiddlewareObject)}`
         ].join('\n')
       }
     })
@@ -107,10 +108,11 @@ export default defineNuxtModule({
       getContents: async () => {
         const composablesFile = resolve(runtimeDir, 'composables')
         const middleware = await resolveMiddleware()
+        const namedMiddleware = middleware.filter(mw => !mw.global)
         await nuxt.callHook('pages:middleware:extend', middleware)
         return [
           'import type { NavigationGuard } from \'vue-router\'',
-          `export type MiddlewareKey = ${middleware.map(mw => `"${mw.name}"`).join(' | ') || 'string'}`,
+          `export type MiddlewareKey = ${namedMiddleware.map(mw => `"${mw.name}"`).join(' | ') || 'string'}`,
           `declare module '${composablesFile}' {`,
           '  interface PageMeta {',
           '    middleware?: MiddlewareKey | NavigationGuard | Array<MiddlewareKey | NavigationGuard>',
