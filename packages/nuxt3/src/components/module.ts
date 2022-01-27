@@ -65,6 +65,12 @@ export default defineNuxtModule<ComponentsOptions>({
     nuxt.hook('app:templates', async (app) => {
       components = await scanComponents(componentDirs, nuxt.options.srcDir!)
       await nuxt.callHook('components:extend', components)
+
+      app.templates.push({
+        ...componentsTypeTemplate,
+        options: { components, buildDir: nuxt.options.buildDir }
+      })
+
       if (!components.length) {
         return
       }
@@ -72,11 +78,6 @@ export default defineNuxtModule<ComponentsOptions>({
       app.templates.push({
         ...componentsTemplate,
         options: { components }
-      })
-
-      app.templates.push({
-        ...componentsTypeTemplate,
-        options: { components, buildDir: nuxt.options.buildDir }
       })
 
       app.plugins.push({ src: '#build/components' })
