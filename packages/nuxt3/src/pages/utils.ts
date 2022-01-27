@@ -3,6 +3,7 @@ import { encodePath } from 'ufo'
 import type { Nuxt, NuxtMiddleware, NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
 import { kebabCase, pascalCase } from 'scule'
+import { escapeRE } from '../utils'
 
 enum SegmentParserState {
   initial,
@@ -37,7 +38,7 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
 
   for (const file of files) {
     const segments = relative(pagesDir, file)
-      .replace(new RegExp(`${extname(file)}$`), '')
+      .replace(new RegExp(`${escapeRE(extname(file))}$`), '')
       .split('/')
 
     const route: NuxtPage = {
@@ -228,7 +229,8 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
     routes: routes.map((route) => {
       const file = normalize(route.file)
       const metaImportName = getImportName(file) + 'Meta'
-      metaImports.add(`import { meta as ${metaImportName} } from '${file}?macro=true'`)
+      metaImports.add(`import { meta as ${metaImportName}import { escapeRE } from '../utils'
+ } from '${file}?macro=true'`)
       return {
         ...route,
         children: route.children ? normalizeRoutes(route.children, metaImports).routes : [],
