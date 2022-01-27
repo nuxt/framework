@@ -3,7 +3,7 @@ import { createUnplugin } from 'unplugin'
 import consola from 'consola'
 import { isAbsolute, relative, resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
-import { escapeRE } from '../../utils'
+import escapeRE from 'escape-string-regexp'
 
 const _require = createRequire(import.meta.url)
 

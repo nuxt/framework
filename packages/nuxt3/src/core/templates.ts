@@ -2,7 +2,7 @@ import { templateUtils } from '@nuxt/kit'
 import type { Nuxt, NuxtApp } from '@nuxt/schema'
 
 import { relative } from 'pathe'
-import { escapeRE } from '../utils'
+import escapeRE from 'escape-string-regexp'
 
 type TemplateContext = {
   nuxt: Nuxt;

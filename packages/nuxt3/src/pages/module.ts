@@ -1,8 +1,8 @@
 import { existsSync } from 'fs'
 import { defineNuxtModule, addTemplate, addPlugin, templateUtils, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
+import escapeRE from 'escape-string-regexp'
 import { distDir } from '../dirs'
-import { escapeRE } from '../utils'
 import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
 

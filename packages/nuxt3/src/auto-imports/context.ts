@@ -1,5 +1,5 @@
 import type { AutoImport } from '@nuxt/schema'
-import { escapeRE } from '../utils'
+import escapeRE from 'escape-string-regexp'
 
 export interface AutoImportContext {
   autoImports: AutoImport[]

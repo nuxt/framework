@@ -3,7 +3,7 @@ import { encodePath } from 'ufo'
 import type { Nuxt, NuxtMiddleware, NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
 import { kebabCase, pascalCase } from 'scule'
-import { escapeRE } from '../utils'
+import escapeRE from 'escape-string-regexp'
 
 enum SegmentParserState {
   initial,
