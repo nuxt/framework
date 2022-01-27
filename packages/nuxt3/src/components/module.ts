@@ -83,9 +83,7 @@ export default defineNuxtModule<ComponentsOptions>({
     })
 
     nuxt.hook('prepare:types', ({ references }) => {
-      if (components.length) {
-        references.push({ path: resolve(nuxt.options.buildDir, 'components.d.ts') })
-      }
+      references.push({ path: resolve(nuxt.options.buildDir, 'components.d.ts') })
     })
 
     // Watch for changes
