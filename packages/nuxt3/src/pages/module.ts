@@ -2,6 +2,7 @@ import { existsSync } from 'fs'
 import { defineNuxtModule, addTemplate, addPlugin, templateUtils, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { distDir } from '../dirs'
+import { escapeRE } from '../utils'
 import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
 
@@ -25,7 +26,13 @@ export default defineNuxtModule({
 
     // Regenerate templates when adding or removing pages
     nuxt.hook('builder:watch', async (event, path) => {
-      const pathPattern = new RegExp(`^(${nuxt.options.dir.pages}|${nuxt.options.dir.layouts})/`)
+      const dirs = [
+        nuxt.options.dir.pages,
+        nuxt.options.dir.layouts,
+        nuxt.options.dir.middleware
+      ].filter(Boolean)
+
+      const pathPattern = new RegExp(`^(${dirs.map(escapeRE).join('|')})/`)
       if (event !== 'change' && path.match(pathPattern)) {
         await nuxt.callHook('builder:generateApp')
       }
@@ -100,6 +107,7 @@ export default defineNuxtModule({
       getContents: async () => {
         const composablesFile = resolve(runtimeDir, 'composables')
         const middleware = await resolveMiddleware()
+        await nuxt.callHook('pages:middleware:extend', middleware)
         return [
           'import type { NavigationGuard } from \'vue-router\'',
           `export type MiddlewareKey = ${middleware.map(mw => `"${mw.name}"`).join(' | ') || 'string'}`,
@@ -118,6 +126,7 @@ export default defineNuxtModule({
       getContents: async () => {
         const composablesFile = resolve(runtimeDir, 'composables')
         const layouts = await resolveLayouts(nuxt)
+        await nuxt.callHook('pages:layouts:extend', layouts)
         return [
           'import { ComputedRef, Ref } from \'vue\'',
           `export type LayoutKey = ${layouts.map(layout => `"${layout.name}"`).join(' | ') || 'string'}`,
@@ -130,16 +139,12 @@ export default defineNuxtModule({
       }
     })
 
-    nuxt.hook('prepare:types', ({ references }) => {
-      references.push({ path: resolve(nuxt.options.buildDir, 'middleware.d.ts') })
-      references.push({ path: resolve(nuxt.options.buildDir, 'layouts.d.ts') })
-    })
-
     // Add layouts template
     addTemplate({
       filename: 'layouts.mjs',
       async getContents () {
         const layouts = await resolveLayouts(nuxt)
+        await nuxt.callHook('pages:layouts:extend', layouts)
         const layoutsObject = Object.fromEntries(layouts.map(({ name, file }) => {
           return [name, `{defineAsyncComponent({ suspensible: false, loader: () => import('${file}') })}`]
         }))
@@ -148,6 +153,12 @@ export default defineNuxtModule({
           `export default ${templateUtils.serialize(layoutsObject)}`
         ].join('\n')
       }
+    })
+
+    // Add declarations for middleware and layout keys
+    nuxt.hook('prepare:types', ({ references }) => {
+      references.push({ path: resolve(nuxt.options.buildDir, 'middleware.d.ts') })
+      references.push({ path: resolve(nuxt.options.buildDir, 'layouts.d.ts') })
     })
   }
 })
