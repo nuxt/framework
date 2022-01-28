@@ -2,6 +2,7 @@ import { existsSync } from 'fs'
 import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
+import escapeRE from 'escape-string-regexp'
 import { distDir } from '../dirs'
 import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
@@ -26,7 +27,13 @@ export default defineNuxtModule({
 
     // Regenerate templates when adding or removing pages
     nuxt.hook('builder:watch', async (event, path) => {
-      const pathPattern = new RegExp(`^(${nuxt.options.dir.pages}|${nuxt.options.dir.layouts})/`)
+      const dirs = [
+        nuxt.options.dir.pages,
+        nuxt.options.dir.layouts,
+        nuxt.options.dir.middleware
+      ].filter(Boolean)
+
+      const pathPattern = new RegExp(`^(${dirs.map(escapeRE).join('|')})/`)
       if (event !== 'change' && path.match(pathPattern)) {
         await nuxt.callHook('builder:generateApp')
       }
@@ -84,13 +91,13 @@ export default defineNuxtModule({
       filename: 'middleware.mjs',
       async getContents () {
         const middleware = await resolveMiddleware()
-        await nuxt.callHook('pages:middleware:extend', middleware)
-        const namedMiddleware = genObjectFromRawEntries(middleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
         const globalMiddleware = middleware.filter(mw => mw.global)
+        const namedMiddleware = middleware.filter(mw => !mw.global)
+        const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
         return [
           ...globalMiddleware.map(mw => genImport(mw.path, getImportName(mw.name))),
           `export const globalMiddleware = ${genArrayFromRaw(globalMiddleware.map(mw => getImportName(mw.name)))}`,
-          `export const namedMiddleware = ${namedMiddleware}`
+          `export const namedMiddleware = ${namedMiddlewareObject}`
         ].join('\n')
       }
     })
@@ -101,9 +108,10 @@ export default defineNuxtModule({
       getContents: async () => {
         const composablesFile = resolve(runtimeDir, 'composables')
         const middleware = await resolveMiddleware()
+        const namedMiddleware = middleware.filter(mw => !mw.global)
         return [
           'import type { NavigationGuard } from \'vue-router\'',
-          `export type MiddlewareKey = ${middleware.map(mw => genString(mw.name)).join(' | ') || 'string'}`,
+          `export type MiddlewareKey = ${namedMiddleware.map(mw => genString(mw.name)).join(' | ') || 'string'}`,
           `declare module ${genString(composablesFile)} {`,
           '  interface PageMeta {',
           '    middleware?: MiddlewareKey | NavigationGuard | Array<MiddlewareKey | NavigationGuard>',
@@ -131,11 +139,6 @@ export default defineNuxtModule({
       }
     })
 
-    nuxt.hook('prepare:types', ({ references }) => {
-      references.push({ path: resolve(nuxt.options.buildDir, 'middleware.d.ts') })
-      references.push({ path: resolve(nuxt.options.buildDir, 'layouts.d.ts') })
-    })
-
     // Add layouts template
     addTemplate({
       filename: 'layouts.mjs',
@@ -149,6 +152,12 @@ export default defineNuxtModule({
           `export default ${layoutsObject}`
         ].join('\n')
       }
+    })
+
+    // Add declarations for middleware and layout keys
+    nuxt.hook('prepare:types', ({ references }) => {
+      references.push({ path: resolve(nuxt.options.buildDir, 'middleware.d.ts') })
+      references.push({ path: resolve(nuxt.options.buildDir, 'layouts.d.ts') })
     })
   }
 })
