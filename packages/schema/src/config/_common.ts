@@ -665,7 +665,7 @@ export default {
   /**
    * Runtime config allows passing dynamic config and environment variables to the Nuxt app context.
    * 
-   * The value of this object is accessible from server only using `$config` or `usePrivateRuntimeConfig`.
+   * The value of this object is accessible from server only using `$config` or `useRuntimeConfig`.
    * It will override `publicRuntimeConfig` on the server-side.
    *
    * It should hold _private_ environment variables (that should not be exposed on the frontend).
