@@ -1,6 +1,6 @@
 <template>
   <RouterView v-slot="{ Component, route }">
-    <component :is="Component" :key="getKey(pageKey ?? childKey, route, Component)" />
+    <component :is="Component" :key="getKey(pageKey, route, Component)" />
   </RouterView>
 </template>
 
@@ -12,10 +12,6 @@ export default {
   name: 'NuxtNestedPage',
   props: {
     pageKey: {
-      type: [Function, String] as unknown as () => string | ((route: RouteLocationNormalizedLoaded) => string),
-      default: null
-    },
-    childKey: {
       type: [Function, String] as unknown as () => string | ((route: RouteLocationNormalizedLoaded) => string),
       default: null
     }
