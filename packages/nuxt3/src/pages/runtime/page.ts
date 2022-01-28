@@ -1,6 +1,8 @@
 import { Component, defineComponent, KeepAlive, h, Suspense, Transition } from 'vue'
-import { RouterView, useRoute } from 'vue-router'
+import { RouteLocationNormalizedLoaded, RouterView } from 'vue-router'
+
 import NuxtLayout from './layout'
+import { getKey } from './utils'
 import { useNuxtApp } from '#app'
 // @ts-ignore
 import layouts from '#build/layouts'
@@ -14,30 +16,38 @@ export default defineComponent({
     layout: {
       type: String,
       default: null
+    },
+    pageKey: {
+      type: [Function, String] as unknown as () => string | ((route: RouteLocationNormalizedLoaded) => string),
+      default: null
     }
   },
   setup (props) {
     const nuxtApp = useNuxtApp()
-    const route = useRoute()
 
-    return () => {
-      // We avoid rendering layout transition if there is no layout to render
-      const hasLayout = props.layout ?? route.meta.layout ?? 'default' in layouts
+    return () => h(RouterView, {}, {
+      default: ({ Component, route }: RouterViewSlotProps) => {
+        if (!Component) {
+          return null
+        }
 
-      return h(RouterView, {}, {
-        default: ({ Component }: RouterViewSlotProps) => Component &&
-        wrapIf(Transition, hasLayout && (route.meta.layoutTransition ?? defaultLayoutTransition),
+        // We avoid rendering layout transition if there is no layout to render
+        const hasLayout = props.layout ?? route.meta.layout ?? 'default' in layouts
+        const key = getKey(props.pageKey, route, Component)
+
+        return wrapIf(Transition,
+          hasLayout && (route.meta.layoutTransition ?? defaultLayoutTransition),
           wrapIf(NuxtLayout, hasLayout && { name: props.layout ?? route.meta.layout },
             wrapIf(Transition, route.meta.pageTransition ?? defaultPageTransition,
               wrapInKeepAlive(route.meta.keepalive, h(Suspense, {
                 onPending: () => nuxtApp.callHook('page:start', Component),
                 onResolve: () => nuxtApp.callHook('page:finish', Component)
-              }, { default: () => h(Component) })
+              }, { default: () => h(Component, { key }) })
               )
             )
           )).default()
-      })
-    }
+      }
+    })
   }
 })
 
