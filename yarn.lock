@@ -2815,6 +2815,7 @@ __metadata:
     "@nuxt/schema": ^3.0.0
     "@types/lodash.template": ^4
     "@types/semver": ^7
+    c12: ^0.1.0
     consola: ^2.15.3
     defu: ^5.0.1
     dotenv: ^14.3.2
@@ -6699,6 +6700,20 @@ __metadata:
   version: 3.0.0
   resolution: "bytes@npm:3.0.0"
   checksum: a2b386dd8188849a5325f58eef69c3b73c51801c08ffc6963eddc9be244089ba32d19347caf6d145c86f315ae1b1fc7061a32b0c1aa6379e6a719090287ed101
+  languageName: node
+  linkType: hard
+
+"c12@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "c12@npm:0.1.0"
+  dependencies:
+    defu: ^5.0.1
+    dotenv: ^14.3.2
+    jiti: ^1.12.14
+    mlly: ^0.4.1
+    pathe: ^0.2.0
+    rc9: ^1.2.0
+  checksum: 52c8833db4b204ebd4d4ac4d7dd23b4968383dc08ab7c7e0bd8c56ec7c715da36c2b88d496581216318f1cd8e70ccc007f6a3afa224ab9c56783a36ba797f237
   languageName: node
   linkType: hard
 
