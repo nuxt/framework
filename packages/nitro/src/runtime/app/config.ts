@@ -1,5 +1,6 @@
 import destr from 'destr'
 import defu from 'defu'
+import { snakeCase } from 'scule'
 
 // Bundled runtime config (injected by nitro)
 const _runtimeConfig = process.env.RUNTIME_CONFIG as any
@@ -7,7 +8,16 @@ const _runtimeConfig = process.env.RUNTIME_CONFIG as any
 // Allow override from process.env and deserialize
 for (const type of ['private', 'public']) {
   for (const key in _runtimeConfig[type]) {
-    _runtimeConfig[type][key] = destr(process.env[key] || _runtimeConfig[type][key])
+    // baseURL can be overridden by BASE_URL
+    const envKey = snakeCase(key).toUpperCase()
+    _runtimeConfig[type][key] = destr(process.env[envKey] || _runtimeConfig[type][key])
+    if (_runtimeConfig[type][key] && typeof _runtimeConfig[type][key] === 'object') {
+      for (const subkey in _runtimeConfig[type][key]) {
+        // key: { subKey } can be overridden by KEY_SUB_KEY`
+        const envKeyName = `${envKey}_${snakeCase(subkey).toUpperCase()}`
+        _runtimeConfig[type][key][subkey] = destr(process.env[envKeyName]) || _runtimeConfig[type][key][subkey]
+      }
+    }
   }
 }
 
