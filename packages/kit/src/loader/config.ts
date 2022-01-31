@@ -8,7 +8,7 @@ import { NuxtConfigSchema } from '@nuxt/schema'
 
 export interface LoadNuxtConfigOptions {
   /** Your project root directory (either absolute or relative to the current working directory). */
-  cwd?: string
+  rootDir?: string
 
   /** The path to your `nuxt.config` file (either absolute or relative to your project `rootDir`). */
   configFile?: string
@@ -21,9 +21,9 @@ export interface LoadNuxtConfigOptions {
 }
 
 export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<NuxtOptions> {
-  const rootDir = resolve(process.cwd(), opts.cwd || '.')
+  const rootDir = resolve(process.cwd(), opts.rootDir || '.')
 
-  const { config: nuxtConfig } = await loadConfig({
+  const { config: nuxtConfig, configFile, layers } = await loadConfig({
     cwd: rootDir,
     name: 'nuxt',
     configFile: 'nuxt.config',
@@ -32,6 +32,13 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
     globalRc: true,
     overrides: opts.config
   })
+
+  nuxtConfig.rootDir = nuxtConfig.rootDir || rootDir
+
+  nuxtConfig._nuxtConfigFile = configFile
+  nuxtConfig._nuxtConfigFiles = [configFile]
+
+  nuxtConfig.layers = layers
 
   // Resolve and apply defaults
   return applyDefaults(NuxtConfigSchema, nuxtConfig) as NuxtOptions
