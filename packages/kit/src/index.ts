@@ -10,6 +10,7 @@ export * from './loader/nuxt'
 // Utils
 export * from './build'
 export * from './compatibility'
+export * from './composables'
 export * from './components'
 export * from './context'
 export * from './pages'
