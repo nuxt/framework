@@ -1,5 +1,6 @@
 import { expect, describe, it } from 'vitest'
 import { generateRoutesFromFiles } from '../src/pages/utils'
+import { generateRouteKey } from '../src/pages/runtime/utils'
 
 describe('pages:generateRoutesFromFiles', () => {
   const pagesDir = 'pages'
@@ -190,4 +191,73 @@ describe('pages:generateRoutesFromFiles', () => {
       }
     })
   }
+})
+
+describe('pages:generateRouteKey', () => {
+  const defaultComponent = { type: {} }
+  const getRouteProps = (matchedRoute = {}) => ({
+    Component: defaultComponent,
+    route: {
+      meta: { key: 'route-meta-key' },
+      params: {
+        id: 'foo',
+        optional: 'bar',
+        array: ['a', 'b']
+      },
+      matched: [
+        {
+          components: { default: {} },
+          meta: { key: 'other-meta-key' }
+        },
+        {
+          components: { default: defaultComponent.type },
+          meta: { key: 'matched-meta-key' },
+          ...matchedRoute
+        }
+      ]
+    }
+  }) as any
+  it('should handle overrides', () => {
+    expect(generateRouteKey('key', getRouteProps())).to.equal('key')
+    expect(generateRouteKey(route => route.meta.key as string, getRouteProps())).to.equal('route-meta-key')
+    expect(generateRouteKey(false as any, getRouteProps())).to.equal(false)
+  })
+  it('should key dynamic routes without keys', () => {
+    expect(generateRouteKey(undefined, getRouteProps({
+      path: '/test/:id',
+      meta: {}
+    }))).to.equal('/test/foo')
+    expect(generateRouteKey(undefined, getRouteProps({
+      path: '/test/:id(\\d+)',
+      meta: {}
+    }))).to.equal('/test/foo')
+  })
+  it('should key dynamic routes with optional params', () => {
+    expect(generateRouteKey(undefined, getRouteProps({
+      path: '/test/:optional?',
+      meta: {}
+    }))).to.equal('/test/bar')
+    expect(generateRouteKey(undefined, getRouteProps({
+      path: '/test/:optional(\\d+)?',
+      meta: {}
+    }))).to.equal('/test/bar')
+    expect(generateRouteKey(undefined, getRouteProps({
+      path: '/test/:undefined(\\d+)?',
+      meta: {}
+    }))).to.equal('/test/')
+  })
+  it('should key dynamic routes with array params', () => {
+    expect(generateRouteKey(undefined, getRouteProps({
+      path: '/:array+',
+      meta: {}
+    }))).to.equal('/a,b')
+    expect(generateRouteKey(undefined, getRouteProps({
+      path: '/test/:array*',
+      meta: {}
+    }))).to.equal('/test/a,b')
+    expect(generateRouteKey(undefined, getRouteProps({
+      path: '/test/:other*',
+      meta: {}
+    }))).to.equal('/test/')
+  })
 })
