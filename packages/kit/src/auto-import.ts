@@ -12,7 +12,7 @@ export function addAutoImport (_autoImports: AutoImport | AutoImport[]) {
   })
 }
 
-export function addAutoImportDirs (_autoImportDirs: String | String[]) {
+export function addAutoImportDir (_autoImportDirs: String | String[]) {
   assertNuxtCompatibility({ bridge: true })
 
   useNuxt().hook('autoImports:dirs', (autoImportDirs: String[]) => {
@@ -21,7 +21,3 @@ export function addAutoImportDirs (_autoImportDirs: String | String[]) {
     }
   })
 }
-
-// alias
-export const addComposables = addAutoImport
-export const addComposablesDirs = addAutoImportDirs
