@@ -10,8 +10,7 @@ type TemplateContext = {
 }
 
 export const vueShim = {
-  filename: 'vue-shim.d.ts',
-  write: true,
+  filename: 'types/vue-shim.d.ts',
   getContents: () =>
     [
       'declare module \'*.vue\' {',
@@ -92,8 +91,7 @@ export const appViewTemplate = {
 }
 
 export const pluginsDeclaration = {
-  filename: 'plugins.d.ts',
-  write: true,
+  filename: 'types/plugins.d.ts',
   getContents: (ctx: TemplateContext) => {
     const EXTENSION_RE = new RegExp(`(?<=\\w)(${ctx.nuxt.options.extensions.map(e => escapeRE(e)).join('|')})$`, 'g')
     const tsImports = ctx.app.plugins.map(p => relative(ctx.nuxt.options.buildDir, p.src).replace(EXTENSION_RE, ''))
