@@ -113,7 +113,7 @@ function generateDts (ctx: AutoImportContext) {
     if (resolved[id]) { return resolved[id] }
     let path = resolveAlias(id, nuxt.options.alias)
     if (isAbsolute(path)) {
-      path = relative(nuxt.options.buildDir, path)
+      path = relative(join(nuxt.options.buildDir, 'types'), path)
     }
     // Remove file extension for benefit of TypeScript
     path = path.replace(/\.[a-z]+$/, '')
