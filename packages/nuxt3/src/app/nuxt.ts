@@ -20,6 +20,7 @@ export interface RuntimeNuxtHooks {
   'app:beforeMount': (app: App<Element>) => HookResult
   'app:mounted': (app: App<Element>) => HookResult
   'app:rendered': () => HookResult
+  'app:suspense:resolve': (Component?: VNode) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
   'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
@@ -123,7 +124,7 @@ export function createNuxtApp (options: CreateOptions) {
 
 export async function applyPlugin (nuxtApp: NuxtApp, plugin: Plugin) {
   if (typeof plugin !== 'function') { return }
-  const { provide } = await callWithNuxt(nuxtApp, () => plugin(nuxtApp)) || {}
+  const { provide } = await callWithNuxt(nuxtApp, plugin, [nuxtApp]) || {}
   if (provide && typeof provide === 'object') {
     for (const key in provide) {
       nuxtApp.provide(key, provide[key])
@@ -179,9 +180,9 @@ export const setNuxtAppInstance = (nuxt: NuxtApp | null) => {
  * @param nuxt A Nuxt instance
  * @param setup The function to call
  */
-export function callWithNuxt<T extends () => any> (nuxt: NuxtApp, setup: T) {
+export function callWithNuxt<T extends (...args: any[]) => any> (nuxt: NuxtApp, setup: T, args?: Parameters<T>) {
   setNuxtAppInstance(nuxt)
-  const p: ReturnType<T> = setup()
+  const p: ReturnType<T> = args ? setup(...args as Parameters<T>) : setup()
   if (process.server) {
     // Unset nuxt instance to prevent context-sharing in server-side
     setNuxtAppInstance(null)

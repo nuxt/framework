@@ -1,13 +1,14 @@
 import { resolve } from 'pathe'
 import { createHooks } from 'hookable'
 import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
-import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent } from '@nuxt/kit'
+import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import pagesModule from '../pages/module'
 import metaModule from '../meta/module'
 import componentsModule from '../components/module'
 import autoImportsModule from '../auto-imports/module'
 import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
+import { ImportProtectionPlugin, vueAppPatterns } from './plugins/import-protection'
 import { initNitro } from './nitro'
 import { addModuleTranspiles } from './modules'
 
@@ -50,6 +51,15 @@ async function initNuxt (nuxt: Nuxt) {
     }
   })
 
+  // Add import protection
+
+  const config = {
+    rootDir: nuxt.options.rootDir,
+    patterns: vueAppPatterns(nuxt)
+  }
+  addVitePlugin(ImportProtectionPlugin.vite(config))
+  addWebpackPlugin(ImportProtectionPlugin.webpack(config))
+
   // Init user modules
   await nuxt.callHook('modules:before', { nuxt } as ModuleContainer)
   const modulesToInstall = [
@@ -91,7 +101,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   // Temporary until finding better placement for each
   options.appDir = options.alias['#app'] = resolve(distDir, 'app')
   options._majorVersion = 3
-  options.buildModules.push(pagesModule, metaModule, componentsModule, autoImportsModule)
+  options._modules.push(pagesModule, metaModule, componentsModule, autoImportsModule)
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))
   options.alias['vue-demi'] = resolve(options.appDir, 'compat/vue-demi')
   options.alias['@vue/composition-api'] = resolve(options.appDir, 'compat/capi')
