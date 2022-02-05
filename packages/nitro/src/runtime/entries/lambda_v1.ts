@@ -1,8 +1,9 @@
+import type { APIGatewayProxyHandler } from 'aws-lambda'
 import '#polyfill'
 import { withQuery } from 'ufo'
 import { localCall } from '../server'
 
-export async function handler (event, context) {
+export const handler: APIGatewayProxyHandler = async function handler (event, context) {
   const r = await localCall({
     event,
     url: withQuery(event.path, event.queryStringParameters),
@@ -15,7 +16,7 @@ export async function handler (event, context) {
 
   return {
     statusCode: r.status,
-    headers: r.headers,
+    headers: Object.fromEntries(Object.entries(r.headers).map(([k, v]) => [k, Array.isArray(v) ? v.join(',') : v])),
     body: r.body.toString()
   }
 }
