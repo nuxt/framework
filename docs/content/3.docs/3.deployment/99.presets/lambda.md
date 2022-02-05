@@ -24,6 +24,10 @@ Or directly use the `NITRO_PRESET` environment variable when running `nuxt build
 NITRO_PRESET=lambda npx nuxt build
 ```
 
+::alert
+AWS Lambda [defaults to payload version v2](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html). If you need to support v1 of the AWS Lambda payload, you can use the `lambda_v1` preset.
+::
+
 ### Entrypoint
 
 When running `nuxt build` with the Lambda preset, the result will be an entry point that exports a handler function that responds to an event and returns a response.
@@ -36,5 +40,5 @@ It can be used programmatically or as part of a deployment.
 import { handler } from './.output/server'
 
 // Use programmatically
-const { statusCode, headers, body } = handler({ path: '/' })
+const { statusCode, headers, body } = handler({ rawPath: '/' })
 ```
