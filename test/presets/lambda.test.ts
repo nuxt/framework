@@ -3,8 +3,9 @@ import { describe } from 'vitest'
 import type { APIGatewayProxyEvent, APIGatewayProxyEventV2 } from 'aws-lambda'
 import { setupTest, testNitroBehavior, importModule } from './_tests'
 
-describe('nitro:preset:lambda_v1', () => {
-  const ctx = setupTest('lambda_v1')
+describe('nitro:preset:lambda', () => {
+  const ctx = setupTest('lambda')
+  // Lambda v1 paylod
   testNitroBehavior(ctx, async () => {
     const { handler } = await importModule(resolve(ctx.outDir, 'server/index.mjs'))
     return async ({ url: rawRelativeUrl, headers, method, body }) => {
@@ -24,10 +25,7 @@ describe('nitro:preset:lambda_v1', () => {
       }
     }
   })
-})
-
-describe('nitro:preset:lambda', () => {
-  const ctx = setupTest('lambda')
+  // Lambda v2 paylod
   testNitroBehavior(ctx, async () => {
     const { handler } = await importModule(resolve(ctx.outDir, 'server/index.mjs'))
     return async ({ url: rawRelativeUrl, headers, method, body }) => {

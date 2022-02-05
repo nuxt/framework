@@ -25,7 +25,7 @@ NITRO_PRESET=lambda npx nuxt build
 ```
 
 ::alert
-AWS Lambda [defaults to payload version v2](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html). If you need to support v1 of the AWS Lambda payload, you can use the `lambda_v1` preset.
+AWS Lambda [defaults to payload version v2](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html). This Nitro preset supports both v1 and v2 payloads.
 ::
 
 ### Entrypoint

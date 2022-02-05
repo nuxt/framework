@@ -3,10 +3,9 @@ import { join } from 'pathe'
 import consola from 'consola'
 import { extendPreset } from '../utils'
 import { NitroContext, NitroPreset } from '../context'
-// eslint-disable-next-line camelcase
-import { lambda_v1 } from './lambda_v1'
+import { lambda } from './lambda'
 
-export const netlify: NitroPreset = extendPreset(lambda_v1, {
+export const netlify: NitroPreset = extendPreset(lambda, {
   output: {
     dir: '{{ _nuxt.rootDir }}/.netlify/functions-internal',
     publicDir: '{{ _nuxt.rootDir }}/dist'
