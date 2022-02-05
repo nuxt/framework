@@ -13,6 +13,7 @@ describe('nitro:preset:lambda', () => {
       const url = new URL(`https://example.com${rawRelativeUrl}`)
       const queryStringParameters = Object.fromEntries(url.searchParams.entries())
       const event: Partial<APIGatewayProxyEvent> = {
+        resource: '/my/path',
         path: url.pathname,
         headers: headers || {},
         httpMethod: method || 'GET',
