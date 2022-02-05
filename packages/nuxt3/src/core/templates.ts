@@ -1,12 +1,13 @@
-import { templateUtils } from '@nuxt/kit'
-import type { Nuxt, NuxtApp } from '@nuxt/schema'
+import { normalizeModule, templateUtils } from '@nuxt/kit'
+import type { Nuxt, NuxtApp, NuxtModule } from '@nuxt/schema'
 
 import { isAbsolute, join, relative } from 'pathe'
 import escapeRE from 'escape-string-regexp'
+import { genDynamicImport, genString } from 'knitwork'
 
-type TemplateContext = {
-  nuxt: Nuxt;
-  app: NuxtApp;
+export interface TemplateContext {
+  nuxt: Nuxt
+  app: NuxtApp
 }
 
 export const vueShim = {
@@ -115,5 +116,34 @@ declare module '@vue/runtime-core' {
 
 export { }
 `
+  }
+}
+
+const adHocModules = ['router', 'pages', 'auto-imports', 'meta', 'components']
+export const schemaTemplate = {
+  filename: 'types/schema.d.ts',
+  getContents: async ({ nuxt }: TemplateContext) => {
+    const moduleInfo = await Promise.all([
+      ...nuxt.options.buildModules,
+      ...nuxt.options.modules,
+      ...nuxt.options._modules
+    ].map(async (m: string | NuxtModule) => {
+      const meta = await normalizeModule(m).then(([r]) => r.getMeta?.())
+      // Preserve path as name if module is not an npm package, for example
+      meta.name = typeof m === 'string' ? m : meta.name
+      console.log(meta)
+      return meta?.configKey && meta.name && !adHocModules.includes(meta.name) && meta
+    }))
+
+    return [
+      "import { NuxtModule } from '@nuxt/schema'",
+      "declare module '@nuxt/schema' {",
+      '  interface NuxtConfig {',
+      ...moduleInfo.filter(Boolean).map(meta =>
+      `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.name, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
+      ),
+      '  }',
+      '}'
+    ].join('\n')
   }
 }

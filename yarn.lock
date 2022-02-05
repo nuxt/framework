@@ -2657,12 +2657,14 @@ __metadata:
     defu: ^5.0.1
     destr: ^1.1.0
     enhanced-resolve: ^5.8.3
+    escape-string-regexp: ^5.0.0
     estree-walker: ^3.0.1
     externality: ^0.1.6
     fs-extra: ^10.0.0
     globby: ^13.1.1
     h3: ^0.3.9
     hash-sum: ^2.0.0
+    knitwork: ^0.1.0
     magic-string: ^0.25.7
     mlly: ^0.4.1
     murmurhash-es: ^0.1.1
@@ -13245,6 +13247,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"knitwork@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "knitwork@npm:0.1.0"
+  checksum: 36782ee8fcfb78a18684ff28ab6e829381d45a02cb8eb9efa192b3c521d9f6ff6d1ba3fbc28bdae471a9d251821ea99018a1f3e224e7b3cb62f72bbdb3a4cbd6
+  languageName: node
+  linkType: hard
+
 "kolorist@npm:^1.5.0":
   version: 1.5.1
   resolution: "kolorist@npm:1.5.1"
@@ -15275,6 +15284,7 @@ __metadata:
     hash-sum: ^2.0.0
     hookable: ^5.1.1
     ignore: ^5.2.0
+    knitwork: ^0.1.0
     mlly: ^0.4.1
     murmurhash-es: ^0.1.1
     nuxi: 3.0.0
