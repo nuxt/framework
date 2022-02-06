@@ -21,7 +21,7 @@ export const handler = async function handler (event: APIGatewayProxyEvent | API
     event,
     url,
     context,
-    headers: event.headers,
+    headers: Object.fromEntries(Object.entries(event.headers).map(([key, value]) => [key.toLowerCase(), value])),
     method,
     query: event.queryStringParameters,
     body: event.body // TODO: handle event.isBase64Encoded
