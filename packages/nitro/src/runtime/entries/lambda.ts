@@ -1,13 +1,14 @@
-import type { APIGatewayProxyEvent, APIGatewayProxyEventV2, Context } from 'aws-lambda'
+import type { APIGatewayProxyEvent, APIGatewayProxyEventHeaders, APIGatewayProxyEventV2, Context } from 'aws-lambda'
 import '#polyfill'
 import { withQuery } from 'ufo'
+import type { HeadersObject } from 'unenv/runtime/_internal/types'
 import { localCall } from '../server'
 
 export const handler = async function handler (event: APIGatewayProxyEvent | APIGatewayProxyEventV2, context: Context) {
   let url: string
   let method: string
 
-  if ('resource' in event) {
+  if ('path' in event) {
     // APIGatewayProxyEvent
     url = withQuery(event.path, event.queryStringParameters)
     method = event.httpMethod
@@ -21,7 +22,7 @@ export const handler = async function handler (event: APIGatewayProxyEvent | API
     event,
     url,
     context,
-    headers: Object.fromEntries(Object.entries(event.headers).map(([key, value]) => [key.toLowerCase(), value])),
+    headers: normalizeIncomingHeaders(event.headers),
     method,
     query: event.queryStringParameters,
     body: event.body // TODO: handle event.isBase64Encoded
@@ -29,7 +30,15 @@ export const handler = async function handler (event: APIGatewayProxyEvent | API
 
   return {
     statusCode: r.status,
-    headers: Object.fromEntries(Object.entries(r.headers).map(([k, v]) => [k, Array.isArray(v) ? v.join(',') : v])),
+    headers: normalizeOutgoingHeaders(r.headers),
     body: r.body.toString()
   }
+}
+
+function normalizeIncomingHeaders (headers: APIGatewayProxyEventHeaders) {
+  return Object.fromEntries(Object.entries(headers).map(([key, value]) => [key.toLowerCase(), value]))
+}
+
+function normalizeOutgoingHeaders (headers: HeadersObject) {
+  return Object.fromEntries(Object.entries(headers).map(([k, v]) => [k, Array.isArray(v) ? v.join(',') : v]))
 }
