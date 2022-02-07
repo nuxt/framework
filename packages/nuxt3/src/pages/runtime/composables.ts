@@ -12,10 +12,10 @@ export const useRoute = () => {
 
 export interface PageMeta {
   [key: string]: any
-  pageTransition?: false | TransitionProps
-  layoutTransition?: false | TransitionProps
-  key?: false | string | ((route: RouteLocationNormalizedLoaded) => string)
-  keepalive?: false | KeepAliveProps
+  pageTransition?: boolean | TransitionProps
+  layoutTransition?: boolean | TransitionProps
+  key?: boolean | string | ((route: RouteLocationNormalizedLoaded) => string)
+  keepalive?: boolean | KeepAliveProps
 }
 
 declare module 'vue-router' {
