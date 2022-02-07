@@ -25,7 +25,7 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
   path = normalize(path)
 
   // Fast return if the path exists
-  if (await existsSensitive(path)) {
+  if (existsSync(path)) {
     return path
   }
 
@@ -45,7 +45,7 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
 
   // Check if resolvedPath is a file
   let isDirectory = false
-  if (await existsSync(path)) {
+  if (existsSync(path)) {
     isDirectory = (await fsp.lstat(path)).isDirectory()
     if (!isDirectory) {
       return path
