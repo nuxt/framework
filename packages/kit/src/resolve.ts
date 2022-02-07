@@ -117,7 +117,7 @@ export interface Resolver {
  */
 export function createResolver (base: string | URL): Resolver {
   if (!base) {
-    base = useNuxt().options.rootDir
+    throw new Error('`base` argument is missing for createResolver(base)!')
   }
 
   base = base.toString()
