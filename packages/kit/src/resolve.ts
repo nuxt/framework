@@ -79,9 +79,9 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
 /**
  * Try to resolve first existing file in paths
  */
-export async function findPath (paths: string[]): Promise<string|null> {
+export async function findPath (paths: string[], opts?: ResolvePathOptions): Promise<string|null> {
   for (const path of paths) {
-    const rPath = await resolvePath(path)
+    const rPath = await resolvePath(path, opts)
     if (await existsSensitive(rPath)) {
       return rPath
     }
@@ -92,9 +92,10 @@ export async function findPath (paths: string[]): Promise<string|null> {
 /**
  * Resolve path aliases respecting Nuxt alias options
  */
-export function resolveAlias (path: string): string {
-  const nuxt = useNuxt()
-  const alias = nuxt.options.alias
+export function resolveAlias (path: string, alias?: Record<string, string>): string {
+  if (!alias) {
+    alias = useNuxt().options.alias
+  }
   for (const key in alias) {
     if (key === '@' && !path.startsWith('@/')) { continue } // Don't resolve @foo/bar
     if (path.startsWith(key)) {
