@@ -15,7 +15,7 @@ import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 import { viteNodeServer } from './plugins/vite-node-server'
 import { DynamicBasePlugin, RelativeAssetPlugin } from './plugins/dynamic-base'
 
-export async function buildClient(ctx: ViteBuildContext) {
+export async function buildClient (ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     define: {
       'process.server': false,
