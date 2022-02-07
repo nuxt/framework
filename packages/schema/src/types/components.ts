@@ -5,11 +5,12 @@ export interface Component {
   filePath: string
   shortPath: string
   chunkName: string
-  level: number
   prefetch: boolean
   preload: boolean
   global?: boolean
 
+  /** @deprecated */
+  level?: number
   /** @deprecated */
   import?: string
   /** @deprecated */
