@@ -1,32 +1,6 @@
 import { resolve } from 'path'
 import defu from 'defu'
-import { Nuxt, NuxtConfig } from '@nuxt/schema'
-import type { Browser, LaunchOptions } from 'playwright'
-
-export interface TestOptions {
-  testDir: string
-  fixture: string
-  configFile: string
-  rootDir: string
-  buildDir: string
-  nuxtConfig: NuxtConfig
-  build: boolean
-  setupTimeout: number
-  waitFor: number
-  browser: boolean
-  browserOptions: {
-    type: 'chromium' | 'firefox' | 'webkit'
-    launch?: LaunchOptions
-  }
-  server: boolean
-}
-
-export interface TestContext {
-  options: TestOptions
-  nuxt?: Nuxt
-  browser?: Browser
-  url?: string
-}
+import type { TestContext, TestOptions, TestRunner } from './types'
 
 let currentContext: TestContext
 
@@ -39,6 +13,8 @@ export function createTestContext (options: Partial<TestOptions>): TestContext {
     server: options.browser,
     build: options.browser || options.server,
     nuxtConfig: {},
+    // TODO: auto detect based on process.env
+    runner: <TestRunner>'vitest',
     browserOptions: {
       type: 'chromium'
     }

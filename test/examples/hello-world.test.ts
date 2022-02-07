@@ -2,13 +2,14 @@ import { fileURLToPath } from 'url'
 import { resolve } from 'path'
 import { describe, expect, it } from 'vitest'
 // TODO: Should import from @nuxt/test-utils
-import { setupVitest, $fetch } from '../../packages/test-utils/src'
+import { setup, $fetch } from '../../packages/test-utils/src'
 
 const examplesDir = fileURLToPath(new URL('../../examples', import.meta.url))
 
 describe('examples:hello-world', async () => {
-  await setupVitest({
+  await setup({
     rootDir: resolve(examplesDir, 'hello-world'),
+    runner: 'vitest',
     server: true
   })
 
