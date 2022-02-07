@@ -85,11 +85,6 @@ export default defineNuxtModule<ComponentsOptions>({
         options: { components }
       })
 
-      app.templates.push({
-        ...componentsTypeTemplate,
-        options: { components, buildDir: nuxt.options.buildDir }
-      })
-
       app.plugins.push({ src: '#build/components-client', mode: 'client' })
       app.plugins.push({ src: '#build/components-server', mode: 'server' })
     })
