@@ -108,7 +108,6 @@ export function resolveAlias (path: string, alias?: Record<string, string>): str
 }
 
 export interface Resolver {
-  readonly _base: string
   resolve(...path): string
   resolvePath(path: string, opts?: ResolvePathOptions): Promise<string>
 }
@@ -127,7 +126,6 @@ export function createResolver (base: string | URL): Resolver {
   }
 
   return {
-    _base: base,
     resolve: (...path) => resolve(base as string, ...path),
     resolvePath: (path, opts) => resolvePath(path, { cwd: base as string, ...opts })
   }
