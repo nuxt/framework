@@ -36,6 +36,7 @@ const getSPARenderer = cachedResult(async () => {
     let entryFiles = Object.values(clientManifest).filter(
       (fileValue: any) => fileValue.isEntry
     )
+    entryFiles.push(...entryFiles.flatMap((e: any) => e.dynamicImports).map(i => clientManifest[i]))
     if ('all' in clientManifest && 'initial' in clientManifest) {
       // Upgrade legacy manifest (also see normalizeClientManifest in vue-bundle-renderer)
       // https://github.com/nuxt-contrib/vue-bundle-renderer/issues/12
