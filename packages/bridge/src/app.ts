@@ -1,4 +1,4 @@
-import { useNuxt, resolveModule, addTemplate, normalizeModule } from '@nuxt/kit'
+import { useNuxt, resolveModule, addTemplate, normalizeModule, resolveAlias } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { componentsTypeTemplate } from '../../nuxt3/src/components/templates'
 import { schemaTemplate } from '../../nuxt3/src/core/templates'
@@ -50,7 +50,7 @@ export async function setupAppBridge (_options: any) {
 
     return {
       meta,
-      entryPath: typeof m === 'string' ? m : undefined
+      entryPath: typeof m === 'string' ? resolveAlias(m, nuxt.options.alias) : undefined
     }
   })))
 
