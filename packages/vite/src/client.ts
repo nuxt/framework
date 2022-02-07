@@ -72,15 +72,6 @@ export async function buildClient (ctx: ViteBuildContext) {
   }
   await ctx.nuxt.callHook('server:devMiddleware', viteMiddleware)
 
-  // Invalidate virtual modules when templates are re-generated
-  ctx.nuxt.hook('app:templatesGenerated', () => {
-    for (const [id, mod] of viteServer.moduleGraph.idToModuleMap) {
-      if (id.startsWith('\x00virtual:')) {
-        viteServer.moduleGraph.invalidateModule(mod)
-      }
-    }
-  })
-
   ctx.nuxt.hook('close', async () => {
     await viteServer.close()
   })
