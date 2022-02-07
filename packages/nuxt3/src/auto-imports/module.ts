@@ -8,12 +8,17 @@ import { toExports, toImports } from './utils'
 import { AutoImportContext, createAutoImportContext, updateAutoImportContext } from './context'
 
 export default defineNuxtModule<AutoImportsOptions>({
-  name: 'auto-imports',
-  configKey: 'autoImports',
+  meta: {
+    name: 'auto-imports',
+    configKey: 'autoImports'
+  },
   defaults: {
     sources: Nuxt3AutoImports,
     global: false,
-    dirs: []
+    dirs: [],
+    transform: {
+      exclude: undefined
+    }
   },
   async setup (options, nuxt) {
     // Allow modules extending sources
@@ -23,7 +28,7 @@ export default defineNuxtModule<AutoImportsOptions>({
     options.sources = options.sources.filter(source => source.disabled !== true)
 
     // Create a context to share state between module internals
-    const ctx = createAutoImportContext()
+    const ctx = createAutoImportContext(options)
 
     // Resolve autoimports from sources
     for (const source of options.sources) {
@@ -87,6 +92,7 @@ export default defineNuxtModule<AutoImportsOptions>({
     // Add generated types to `nuxt.d.ts`
     nuxt.hook('prepare:types', ({ references }) => {
       references.push({ path: resolve(nuxt.options.buildDir, 'auto-imports.d.ts') })
+      references.push({ path: resolve(nuxt.options.buildDir, 'imports.d.ts') })
     })
 
     // Watch composables/ directory

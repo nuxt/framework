@@ -2,6 +2,7 @@ import type { ServerResponse } from 'http'
 import { createRenderer } from 'vue-bundle-renderer'
 import devalue from '@nuxt/devalue'
 import { privateConfig, publicConfig } from './config'
+import { buildAssetsURL } from './paths'
 // @ts-ignore
 import htmlTemplate from '#build/views/document.template.mjs'
 
@@ -10,9 +11,7 @@ const NUXT_NO_SSR = process.env.NUXT_NO_SSR
 const PAYLOAD_JS = '/payload.js'
 
 const getClientManifest = cachedImport(() => import('#build/dist/server/client.manifest.mjs'))
-const getSSRApp = cachedImport(() => import('#build/dist/server/server.mjs'))
-
-const publicPath = (publicConfig.app && publicConfig.app.assetsPath) || process.env.PUBLIC_PATH || '/_nuxt'
+const getSSRApp = !process.env.NUXT_NO_SSR && cachedImport(() => import('#build/dist/server/server.mjs'))
 
 const getSSRRenderer = cachedResult(async () => {
   // Load client manifest
@@ -23,7 +22,7 @@ const getSSRRenderer = cachedResult(async () => {
   if (!createSSRApp) { throw new Error('Server bundle is not available') }
   // Create renderer
   const { renderToString } = await import('#nitro-renderer')
-  return createRenderer((createSSRApp), { clientManifest, renderToString, publicPath }).renderToString
+  return createRenderer((createSSRApp), { clientManifest, renderToString, publicPath: buildAssetsURL() }).renderToString
 })
 
 const getSPARenderer = cachedResult(async () => {
@@ -33,14 +32,32 @@ const getSPARenderer = cachedResult(async () => {
       serverRendered: false,
       config: publicConfig
     }
+
+    let entryFiles = Object.values(clientManifest).filter(
+      (fileValue: any) => fileValue.isEntry
+    )
+    if ('all' in clientManifest && 'initial' in clientManifest) {
+      // Upgrade legacy manifest (also see normalizeClientManifest in vue-bundle-renderer)
+      // https://github.com/nuxt-contrib/vue-bundle-renderer/issues/12
+      entryFiles = clientManifest.initial.map(file => ({ file }))
+    }
+
     return {
       html: '<div id="__nuxt"></div>',
       renderResourceHints: () => '',
-      renderStyles: () => '',
-      renderScripts: () => clientManifest.initial.map((s) => {
-        const isMJS = !s.endsWith('.js')
-        return `<script ${isMJS ? 'type="module"' : ''} src="${publicPath}${s}"></script>`
-      }).join('')
+      renderStyles: () =>
+        entryFiles
+          .flatMap(({ css }) => css)
+          .filter(css => css != null)
+          .map(file => `<link rel="stylesheet" href="${buildAssetsURL(file)}">`)
+          .join(''),
+      renderScripts: () =>
+        entryFiles
+          .map(({ file }) => {
+            const isMJS = !file.endsWith('.js')
+            return `<script ${isMJS ? 'type="module"' : ''} src="${buildAssetsURL(file)}"></script>`
+          })
+          .join('')
     }
   }
 })
@@ -57,7 +74,7 @@ export async function renderMiddleware (req, res: ServerResponse) {
   let isPayloadReq = false
   if (url.startsWith(STATIC_ASSETS_BASE) && url.endsWith(PAYLOAD_JS)) {
     isPayloadReq = true
-    url = url.substr(STATIC_ASSETS_BASE.length, url.length - STATIC_ASSETS_BASE.length - PAYLOAD_JS.length) || '/'
+    url = url.slice(STATIC_ASSETS_BASE.length, url.length - PAYLOAD_JS.length) || '/'
   }
 
   // Initialize ssr context

@@ -1,9 +1,14 @@
-import { getCurrentInstance } from 'vue'
+import { computed, getCurrentInstance } from 'vue'
 import * as Components from './components'
 import { useMeta } from './composables'
 import { defineNuxtPlugin } from '#app'
 // @ts-ignore
 import metaConfig from '#build/meta.config.mjs'
+
+type MetaComponents = typeof Components
+declare module 'vue' {
+  export interface GlobalComponents extends MetaComponents {}
+}
 
 export default defineNuxtPlugin((nuxtApp) => {
   useMeta(metaConfig.globalMeta)
@@ -14,7 +19,11 @@ export default defineNuxtPlugin((nuxtApp) => {
       const options = instance?.type || /* nuxt2 */ instance?.proxy?.$options
       if (!options || !('head' in options)) { return }
 
-      useMeta(options.head)
+      const source = typeof options.head === 'function'
+        ? computed(() => options.head(nuxtApp))
+        : options.head
+
+      useMeta(source)
     }
   })
 

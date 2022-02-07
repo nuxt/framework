@@ -1,16 +1,23 @@
 import type { AutoImport } from '@nuxt/schema'
+import escapeRE from 'escape-string-regexp'
 
 export interface AutoImportContext {
   autoImports: AutoImport[]
   matchRE: RegExp
+  transform: {
+    exclude: RegExp[]
+  }
   map: Map<string, AutoImport>
 }
 
-export function createAutoImportContext (): AutoImportContext {
+export function createAutoImportContext (opts): AutoImportContext {
   return {
     autoImports: [],
     map: new Map(),
-    matchRE: /__never__/
+    matchRE: /__never__/,
+    transform: {
+      exclude: opts.transform.exclude || [/node_modules/]
+    }
   }
 }
 
@@ -30,7 +37,7 @@ export function updateAutoImportContext (ctx: AutoImportContext) {
   ctx.autoImports = ctx.autoImports.filter(i => i.disabled !== true)
 
   // Create regex
-  ctx.matchRE = new RegExp(`\\b(${ctx.autoImports.map(i => i.as).join('|')})\\b`, 'g')
+  ctx.matchRE = new RegExp(`\\b(${ctx.autoImports.map(i => escapeRE(i.as)).join('|')})\\b`, 'g')
 
   // Create map
   ctx.map.clear()

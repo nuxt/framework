@@ -1,5 +1,6 @@
 import { pathToFileURL } from 'url'
 import { existsSync } from 'fs'
+import { builtinModules } from 'module'
 import { resolve } from 'pathe'
 import * as vite from 'vite'
 import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults } from 'externality'
@@ -69,9 +70,15 @@ async function transformRequest (opts: TransformOptions, id: string) {
     }
   }
 
-  if (await isExternal(opts, id)) {
+  // Vite will add ?v=123 to bypass browser cache
+  // Remove for externals
+  const withoutVersionQuery = id.replace(/\?v=\w+$/, '')
+  if (await isExternal(opts, withoutVersionQuery)) {
+    const path = builtinModules.includes(withoutVersionQuery.split('node:').pop())
+      ? withoutVersionQuery
+      : pathToFileURL(withoutVersionQuery)
     return {
-      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${(pathToFileURL(id))}').then(r => { exports.default = r.default; ssrExportAll(r) }).catch(e => { console.error(e); throw new Error('[vite dev] Error loading external "${id}".') })`,
+      code: `(global, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) => import('${path}').then(r => { exports.default = r.default; ssrExportAll(r) }).catch(e => { console.error(e); throw new Error('[vite dev] Error loading external "${id}".') })`,
       deps: [],
       dynamicDeps: []
     }
@@ -80,7 +87,7 @@ async function transformRequest (opts: TransformOptions, id: string) {
   // Transform
   const res: SSRTransformResult = await opts.viteServer.transformRequest(id, { ssr: true }).catch((err) => {
     // eslint-disable-next-line no-console
-    console.warn(`[SSR] Error transforming ${id}: ${err}`)
+    console.warn(`[SSR] Error transforming ${id}:`, err)
     // console.error(err)
   }) as SSRTransformResult || { code: '', map: {}, deps: [], dynamicDeps: [] }
 

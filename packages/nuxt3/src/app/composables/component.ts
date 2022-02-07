@@ -1,5 +1,4 @@
-import { toRefs } from '@vue/reactivity'
-import { defineComponent, getCurrentInstance } from 'vue'
+import { defineComponent, getCurrentInstance, reactive, toRefs } from 'vue'
 import type { DefineComponent } from 'vue'
 import { useRoute } from 'vue-router'
 import type { LegacyContext } from '../compat/legacy-app'
@@ -15,7 +14,11 @@ async function runLegacyAsyncData (res: Record<string, any> | Promise<Record<str
   const { fetchKey } = vm.proxy.$options
   const key = typeof fetchKey === 'function' ? fetchKey(() => '') : fetchKey || route.fullPath
   const { data } = await useAsyncData(`options:asyncdata:${key}`, () => fn(nuxt._legacyContext))
-  Object.assign(await res, toRefs(data))
+  if (data.value && typeof data.value === 'object') {
+    Object.assign(await res, toRefs(reactive(data.value)))
+  } else if (process.dev) {
+    console.warn('[nuxt] asyncData should return an object', data)
+  }
 }
 
 export const defineNuxtComponent: typeof defineComponent =

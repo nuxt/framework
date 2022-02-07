@@ -1,6 +1,7 @@
 import { resolve } from 'pathe'
 import * as vite from 'vite'
 import consola from 'consola'
+import { withoutLeadingSlash } from 'ufo'
 import { distDir } from '../dirs'
 import { warmupViteServer } from '../../../vite/src/utils/warmup'
 import { buildClient } from './client'
@@ -21,12 +22,15 @@ async function bundle (nuxt: Nuxt, builder: any) {
     nuxt,
     builder,
     config: vite.mergeConfig(
-      nuxt.options.vite || {},
       {
         root: nuxt.options.rootDir,
         mode: nuxt.options.dev ? 'development' : 'production',
         logLevel: 'warn',
         define: {
+          'process.static': nuxt.options.target === 'static',
+          'process.env.NODE_ENV': JSON.stringify(nuxt.options.dev ? 'development' : 'production'),
+          'process.mode': JSON.stringify(nuxt.options.dev ? 'development' : 'production'),
+          'process.target': JSON.stringify(nuxt.options.target),
           'process.dev': nuxt.options.dev
         },
         resolve: {
@@ -70,6 +74,7 @@ async function bundle (nuxt: Nuxt, builder: any) {
         publicDir: resolve(nuxt.options.srcDir, nuxt.options.dir.static),
         clearScreen: false,
         build: {
+          assetsDir: withoutLeadingSlash(nuxt.options.app.buildAssetsDir),
           emptyOutDir: false
         },
         plugins: [
@@ -79,7 +84,8 @@ async function bundle (nuxt: Nuxt, builder: any) {
           jsxPlugin(),
           defaultExportPlugin()
         ]
-      } as ViteOptions
+      } as ViteOptions,
+      nuxt.options.vite || {}
     )
   }
 

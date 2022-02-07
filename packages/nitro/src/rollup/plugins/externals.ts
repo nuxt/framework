@@ -10,6 +10,8 @@ export interface NodeExternalsOptions {
   trace?: boolean
   traceOptions?: NodeFileTraceOptions
   moduleDirectories?: string[]
+  /** additional packages to include in `.output/server/node_modules` */
+  traceInclude?: string[]
 }
 
 export function externals (opts: NodeExternalsOptions): Plugin {
@@ -37,8 +39,9 @@ export function externals (opts: NodeExternalsOptions): Plugin {
       // Normalize from node_modules
       const _id = id.split('node_modules/').pop()
 
+      const externalPath = opts.external.find(i => _id.startsWith(i) || id.startsWith(i))
       // Skip checks if is an explicit external
-      if (!opts.external.find(i => _id.startsWith(i) || id.startsWith(i))) {
+      if (!externalPath) {
         // Resolve relative paths and exceptions
         // Ensure to take absolute and relative id
         if (_id.startsWith('.') || opts.inline.find(i => _id.startsWith(i) || id.startsWith(i))) {
@@ -48,6 +51,9 @@ export function externals (opts: NodeExternalsOptions): Plugin {
         if (/\.(ts|wasm|json)$/.test(_id)) {
           return null
         }
+      // Check for subpaths
+      } else if (opts.inline.find(i => i.startsWith(externalPath) && (_id.startsWith(i) || id.startsWith(i)))) {
+        return null
       }
 
       // Track externals
@@ -67,6 +73,12 @@ export function externals (opts: NodeExternalsOptions): Plugin {
     },
     async buildEnd () {
       if (opts.trace !== false) {
+        for (const pkgName of opts.traceInclude || []) {
+          const path = await this.resolve(pkgName)
+          if (path?.id) {
+            trackedExternals.add(path.id)
+          }
+        }
         const tracedFiles = await nodeFileTrace(Array.from(trackedExternals), opts.traceOptions)
           .then(r => Array.from(r.fileList).map(f => resolve(opts.traceOptions.base, f)))
           .then(r => r.filter(file => file.includes('node_modules')))

@@ -14,7 +14,8 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
       'useState',
       'useFetch',
       'useLazyFetch',
-      'useCookie'
+      'useCookie',
+      'useRequestHeaders'
     ]
   },
   // #meta
@@ -22,14 +23,6 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
     from: '#meta',
     names: [
       'useMeta'
-    ]
-  },
-  // vue-router
-  {
-    from: 'vue-router',
-    names: [
-      'useRoute',
-      'useRouter'
     ]
   },
   // vue-demi (mocked)
@@ -45,11 +38,7 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
     from: 'vue',
     names: [
       // <script setup>
-      'defineEmits',
-      'defineExpose',
-      'defineProps',
       'withCtx',
-      'withDefaults',
       'withDirectives',
       'withKeys',
       'withMemo',
@@ -85,7 +74,6 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
       'shallowReactive',
       'shallowReadonly',
       'shallowRef',
-      'stop',
       'toRaw',
       'toRef',
       'toRefs',
@@ -93,6 +81,7 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
       'unref',
       'watch',
       'watchEffect',
+      'isShallow',
 
       // effect
       'effect',

@@ -10,8 +10,10 @@ const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val ==
 const isDirectory = (p: string) => { try { return statSync(p).isDirectory() } catch (_e) { return false } }
 
 export default defineNuxtModule<ComponentsOptions>({
-  name: 'components',
-  configKey: 'components',
+  meta: {
+    name: 'components',
+    configKey: 'components'
+  },
   defaults: {
     dirs: ['~/components']
   },
@@ -47,6 +49,7 @@ export default defineNuxtModule<ComponentsOptions>({
           ignore: [
             '**/*.stories.{js,ts,jsx,tsx}', // ignore storybook files
             '**/*{M,.m,-m}ixin.{js,ts,jsx,tsx}', // ignore mixins
+            '**/*.{spec,test}.{js,ts,jsx,tsx}', // ignore tests
             '**/*.d.ts', // .d.ts files
             // TODO: support nuxt ignore patterns
             ...(dirOptions.ignore || [])
@@ -62,6 +65,12 @@ export default defineNuxtModule<ComponentsOptions>({
     nuxt.hook('app:templates', async (app) => {
       components = await scanComponents(componentDirs, nuxt.options.srcDir!)
       await nuxt.callHook('components:extend', components)
+
+      app.templates.push({
+        ...componentsTypeTemplate,
+        options: { components, buildDir: nuxt.options.buildDir }
+      })
+
       if (!components.length) {
         return
       }
@@ -86,9 +95,7 @@ export default defineNuxtModule<ComponentsOptions>({
     })
 
     nuxt.hook('prepare:types', ({ references }) => {
-      if (components.length) {
-        references.push({ path: resolve(nuxt.options.buildDir, 'components.d.ts') })
-      }
+      references.push({ path: resolve(nuxt.options.buildDir, 'components.d.ts') })
     })
 
     // Watch for changes

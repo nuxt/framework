@@ -2,7 +2,6 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   declaration: true,
-  emitCJS: false,
   entries: [
     {
       input: 'src/config/index',
@@ -27,6 +26,6 @@ export default defineBuildConfig({
     'vite',
     // Implicit
     '@vue/compiler-core',
-    '@vue/shared ',
+    '@vue/shared'
   ]
 })

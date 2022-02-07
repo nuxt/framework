@@ -1,8 +1,8 @@
 import { resolve, join, extname } from 'pathe'
 import { joinURL } from 'ufo'
-import globby from 'globby'
+import { globby } from 'globby'
 import { watch } from 'chokidar'
-import { tryResolvePath } from '@nuxt/kit'
+import { tryResolveModule, tryResolvePath } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { Middleware } from 'h3'
 
@@ -23,12 +23,12 @@ export interface ServerMiddleware {
   promisify?: boolean // Default is true
 }
 
-function filesToMiddleware (files: string[], baseDir: string, basePath: string, overrides?: Partial<ServerMiddleware>): ServerMiddleware[] {
+function filesToMiddleware (files: string[], baseDir: string, baseURL: string, overrides?: Partial<ServerMiddleware>): ServerMiddleware[] {
   return files.map((file) => {
     const route = joinURL(
-      basePath,
+      baseURL,
       file
-        .substr(0, file.length - extname(file).length)
+        .slice(0, file.length - extname(file).length)
         .replace(/\/index$/, '')
     )
     const handle = resolve(baseDir, file)
@@ -47,8 +47,8 @@ export function scanMiddleware (serverDir: string, onChange?: (results: ServerMi
   const apiDir = resolve(serverDir, 'api')
 
   const scan = async () => {
-    const globalFiles = await globby(pattern, { cwd: globalDir })
-    const apiFiles = await globby(pattern, { cwd: apiDir })
+    const globalFiles = await globby(pattern, { cwd: globalDir, dot: true })
+    const apiFiles = await globby(pattern, { cwd: apiDir, dot: true })
     return [
       ...filesToMiddleware(globalFiles, globalDir, '/', { route: '/' }),
       ...filesToMiddleware(apiFiles, apiDir, '/api', { lazy: true })
@@ -73,7 +73,7 @@ export function resolveMiddleware (nuxt: Nuxt) {
   const legacyMiddleware: ServerMiddleware[] = []
 
   for (let m of nuxt.options.serverMiddleware) {
-    if (typeof m === 'string') { m = { handler: m } }
+    if (typeof m === 'string' || typeof m === 'function' /* legacy middleware */) { m = { handler: m } }
     const route = m.path || m.route || '/'
     const handle = m.handler || m.handle
     if (typeof handle !== 'string' || typeof route !== 'string') {
@@ -87,7 +87,7 @@ export function resolveMiddleware (nuxt: Nuxt) {
           extensions: ['.ts', '.mjs', '.js', '.cjs'],
           alias: nuxt.options.alias,
           base: nuxt.options.srcDir
-        }),
+        }) || tryResolveModule(handle, { paths: nuxt.options.modulesDir }),
         route
       })
     }

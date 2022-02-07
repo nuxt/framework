@@ -5,10 +5,12 @@ import { middlewareTemplate, storeTemplate } from './templates'
 import type { ViteOptions } from './types'
 
 export default defineNuxtModule<ViteOptions>({
-  name: 'nuxt-bridge:vite',
+  meta: {
+    name: 'nuxt-bridge:vite',
+    version,
+    configKey: 'vite'
+  },
   defaults: {},
-  version,
-  configKey: 'vite',
   setup (viteOptions, nuxt) {
     nuxt.options.cli.badgeMessages.push(`⚡  Vite Mode Enabled (v${version})`)
     // eslint-disable-next-line no-console
@@ -43,6 +45,7 @@ export default defineNuxtModule<ViteOptions>({
     addPluginTemplate(middlewareTemplate)
 
     nuxt.hook('builder:prepared', async (builder) => {
+      if (nuxt.options._prepare) { return }
       builder.bundleBuilder.close()
       delete builder.bundleBuilder
       const { ViteBuilder } = await import('./vite')

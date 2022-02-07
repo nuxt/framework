@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import { addPluginTemplate, useNuxt } from '@nuxt/kit'
 import { stringifyQuery } from 'ufo'
 import { resolve } from 'pathe'
-import { build, generate, prepare, getNitroContext, NitroContext, createDevServer, wpfs, resolveMiddleware } from '@nuxt/nitro'
+import { build, generate, prepare, getNitroContext, NitroContext, createDevServer, wpfs, resolveMiddleware, scanMiddleware, writeTypes } from '@nuxt/nitro'
 import { AsyncLoadingPlugin } from './async-loading'
 import { distDir } from './dirs'
 
@@ -14,6 +14,14 @@ export function setupNitroBridge () {
   if (!nuxt.options.dev && nuxt.options.target === 'static' && !nuxt.options._prepare && !nuxt.options._export && !nuxt.options._legacyGenerate) {
     throw new Error('[nitro] Please use `nuxt generate` for static target')
   }
+
+  // Handle legacy property name `assetsPath`
+  nuxt.options.app.buildAssetsDir = nuxt.options.app.buildAssetsDir || nuxt.options.app.assetsPath
+  nuxt.options.app.assetsPath = nuxt.options.app.buildAssetsDir
+  nuxt.options.app.baseURL = nuxt.options.app.baseURL || (nuxt.options.app as any).basePath
+  // Nitro expects app config on `config.app` rather than `config._app`
+  nuxt.options.publicRuntimeConfig.app = nuxt.options.publicRuntimeConfig.app || {}
+  Object.assign(nuxt.options.publicRuntimeConfig.app, nuxt.options.publicRuntimeConfig._app)
 
   // Disable loading-screen
   // @ts-ignore
@@ -38,10 +46,19 @@ export function setupNitroBridge () {
   nuxt.addHooks(nitroContext.nuxtHooks)
   nuxt.hook('close', () => nitroContext._internal.hooks.callHook('close'))
   nitroContext._internal.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
+  nitroContext._internal.hooks.hook('nitro:generate', ctx => nuxt.callHook('nitro:generate', ctx))
 
   nuxt.addHooks(nitroDevContext.nuxtHooks)
   nuxt.hook('close', () => nitroDevContext._internal.hooks.callHook('close'))
   nitroDevContext._internal.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
+
+  // Use custom document template if provided
+  if (nuxt.options.appTemplatePath) {
+    nuxt.hook('nitro:document', async (template) => {
+      template.src = nuxt.options.appTemplatePath
+      template.contents = await fsp.readFile(nuxt.options.appTemplatePath, 'utf-8')
+    })
+  }
 
   // Expose process.env.NITRO_PRESET
   nuxt.options.env.NITRO_PRESET = nitroContext.preset
@@ -98,6 +115,7 @@ export function setupNitroBridge () {
 
   // Generate mjs resources
   nuxt.hook('build:compiled', async ({ name }) => {
+    if (nuxt.options._prepare) { return }
     if (name === 'server') {
       const jsServerEntry = resolve(nuxt.options.buildDir, 'dist/server/server.js')
       await fsp.writeFile(jsServerEntry.replace(/.js$/, '.cjs'), 'module.exports = require("./server.js")', 'utf8')
@@ -128,11 +146,18 @@ export function setupNitroBridge () {
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'nitro.d.ts') })
   })
 
+  // nuxt prepare
+  nuxt.hook('build:done', async () => {
+    nitroDevContext.scannedMiddleware = await scanMiddleware(nitroDevContext._nuxt.serverDir)
+    await writeTypes(nitroDevContext)
+  })
+
   // nuxt build/dev
   // @ts-ignore
   nuxt.options.build._minifyServer = false
   nuxt.options.build.standalone = false
   nuxt.hook('build:done', async () => {
+    if (nuxt.options._prepare) { return }
     if (nuxt.options.dev) {
       await build(nitroDevContext)
     } else if (!nitroContext._nuxt.isStatic) {
@@ -142,7 +167,7 @@ export function setupNitroBridge () {
     }
   })
 
-  // nude dev
+  // nuxt dev
   if (nuxt.options.dev) {
     nitroDevContext._internal.hooks.hook('nitro:compiled', () => { nuxt.server.watch() })
     nuxt.hook('build:compile', ({ compiler }) => { compiler.outputFileSystem = wpfs })

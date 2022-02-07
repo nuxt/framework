@@ -51,8 +51,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     build: {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
-      assetsDir: ctx.nuxt.options.app.assetsPath.replace(/^\/|\/$/, ''),
-      ssr: true,
+      ssr: ctx.nuxt.options.ssr ?? true,
       ssrManifest: true,
       rollupOptions: {
         input: resolve(ctx.nuxt.options.buildDir, 'server.js'),
@@ -91,6 +90,15 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Start development server
   const viteServer = await vite.createServer(serverConfig)
   ctx.nuxt.hook('close', () => viteServer.close())
+
+  // Invalidate virtual modules when templates are re-generated
+  ctx.nuxt.hook('app:templatesGenerated', () => {
+    for (const [id, mod] of viteServer.moduleGraph.idToModuleMap) {
+      if (id.startsWith('\x00virtual:')) {
+        viteServer.moduleGraph.invalidateModule(mod)
+      }
+    }
+  })
 
   // Initialize plugins
   await viteServer.pluginContainer.buildStart({})

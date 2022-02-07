@@ -1,4 +1,5 @@
-import type { IncomingMessage, ServerResponse } from 'http'
+import type { Server as HttpServer, IncomingMessage, ServerResponse } from 'http'
+import type { Server as HttpsServer } from 'https'
 import type { Compiler, Configuration, Stats } from 'webpack'
 import type { TSConfig } from 'pkg-types'
 import type { ModuleContainer } from './module'
@@ -6,6 +7,7 @@ import type { NuxtTemplate, Nuxt, NuxtApp } from './nuxt'
 import type { AutoImport, AutoImportSource } from './imports'
 import type { NuxtConfig, NuxtOptions } from './config'
 import type { Component, ComponentsDir, ScanDir, ComponentsOptions } from './components'
+import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
 
 type HookResult = Promise<void> | void
 
@@ -32,19 +34,36 @@ type RenderResult = {
 export type TSReference = { types: string } | { path: string }
 
 export type NuxtPage = {
-  name?: string,
-  path: string,
-  file: string,
+  name?: string
+  path: string
+  file: string
+  meta?: Record<string, any>
   children?: NuxtPage[]
 }
 
+export type NuxtMiddleware = {
+  name: string
+  path: string
+  global?: boolean
+}
+
+export type NuxtLayout = {
+  name: string
+  file: string
+}
+
 export interface NuxtHooks {
+  // Kit
+  'kit:compatibility': (compatibility: NuxtCompatibility, issues: NuxtCompatibilityIssues) => HookResult
+
   // nuxt3
   'app:resolve': (app: NuxtApp) => HookResult
   'app:templates': (app: NuxtApp) => HookResult
   'app:templatesGenerated': (app: NuxtApp) => HookResult
   'builder:generateApp': () => HookResult
   'pages:extend': (pages: NuxtPage[]) => HookResult
+  'pages:middleware:extend': (middleware: NuxtMiddleware[]) => HookResult
+  'pages:layouts:extend': (layouts: NuxtLayout[]) => HookResult
 
   // Auto imports
   'autoImports:sources': (autoImportSources: AutoImportSource[]) => HookResult
@@ -74,6 +93,7 @@ export interface NuxtHooks {
   // @nuxt/nitro
   'nitro:document': (template: { src: string, contents: string }) => HookResult
   'nitro:context': (context: any) => HookResult
+  'nitro:generate': (context: any) => HookResult
 
   // @nuxt/cli
   'generate:cache:ignore': (ignore: string[]) => HookResult
@@ -96,7 +116,7 @@ export interface NuxtHooks {
   'render:setupMiddleware': (app: any) => HookResult
   'render:errorMiddleware': (app: any) => HookResult
   'render:done': (server: Server) => HookResult
-  'listen': (listenerServer: any, listener: any) => HookResult
+  'listen': (listenerServer: HttpServer | HttpsServer, listener: any) => HookResult
   'server:nuxt:renderLoading': (req: IncomingMessage, res: ServerResponse) => HookResult
   'render:route': (url: string, result: RenderResult, context: any) => HookResult
   'render:routeDone': (url: string, result: RenderResult, context: any) => HookResult

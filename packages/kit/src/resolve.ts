@@ -1,6 +1,6 @@
 import { existsSync, lstatSync, readdirSync } from 'fs'
 import { basename, dirname, resolve, join } from 'pathe'
-import globby from 'globby'
+import { globby } from 'globby'
 
 export interface ResolveOptions {
   /**
@@ -85,9 +85,9 @@ function existsSyncSensitive (path: string, files?: string[]) {
  */
 export function resolveAlias (path: string, alias: ResolveOptions['alias']) {
   for (const key in alias) {
-    if (key === '@') { continue } // Don't resolve @foo/bar
+    if (key === '@' && !path.startsWith('@/')) { continue } // Don't resolve @foo/bar
     if (path.startsWith(key)) {
-      path = alias[key] + path.substr(key.length)
+      path = alias[key] + path.slice(key.length)
     }
   }
   return path
@@ -104,7 +104,7 @@ export function tryResolvePath (path: string, opts: ResolveOptions = {}) {
   }
 }
 
-export async function resolveFiles (path: string, pattern: string) {
+export async function resolveFiles (path: string, pattern: string | string[]) {
   const files = await globby(pattern, {
     cwd: path,
     followSymbolicLinks: true

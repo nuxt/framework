@@ -1,6 +1,7 @@
 import { resolve } from 'pathe'
-import { wpfs, getNitroContext, createDevServer, resolveMiddleware, build, prepare, generate } from '@nuxt/nitro'
+import { wpfs, getNitroContext, createDevServer, resolveMiddleware, build, prepare, generate, writeTypes, scanMiddleware } from '@nuxt/nitro'
 import type { Nuxt } from '@nuxt/schema'
+import { ImportProtectionPlugin } from './plugins/import-protection'
 
 export function initNitro (nuxt: Nuxt) {
   // Create contexts
@@ -20,11 +21,23 @@ export function initNitro (nuxt: Nuxt) {
   nuxt.hooks.addHooks(nitroContext.nuxtHooks)
   nuxt.hook('close', () => nitroContext._internal.hooks.callHook('close'))
   nitroContext._internal.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
+  nitroContext._internal.hooks.hook('nitro:generate', ctx => nuxt.callHook('nitro:generate', ctx))
 
   // @ts-ignore
   nuxt.hooks.addHooks(nitroDevContext.nuxtHooks)
   nuxt.hook('close', () => nitroDevContext._internal.hooks.callHook('close'))
   nitroDevContext._internal.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
+
+  // Register nuxt3 protection patterns
+  nitroDevContext._internal.hooks.hook('nitro:rollup:before', (ctx) => {
+    ctx.rollupConfig.plugins.push(ImportProtectionPlugin.rollup({
+      rootDir: nuxt.options.rootDir,
+      patterns: [
+        ...['#app', /^#build(\/|$)/]
+          .map(p => [p, 'Vue app aliases are not allowed in server routes.']) as [RegExp | string, string][]
+      ]
+    }))
+  })
 
   // Add typed route responses
   nuxt.hook('prepare:types', (opts) => {
@@ -61,6 +74,11 @@ export function initNitro (nuxt: Nuxt) {
       await generate(nitroContext)
       await build(nitroContext)
     }
+  })
+
+  nuxt.hook('builder:generateApp', async () => {
+    nitroDevContext.scannedMiddleware = await scanMiddleware(nitroDevContext._nuxt.serverDir)
+    await writeTypes(nitroDevContext)
   })
 
   // nuxt dev

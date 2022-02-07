@@ -1,12 +1,12 @@
 import { createRequire } from 'module'
-import { relative, dirname, join, resolve } from 'pathe'
+import { relative, dirname, resolve } from 'pathe'
 import fse from 'fs-extra'
 import jiti from 'jiti'
 import defu from 'defu'
 import { mergeHooks } from 'hookable'
 import consola from 'consola'
 import chalk from 'chalk'
-import dotProp from 'dot-prop'
+import { getProperty } from 'dot-prop'
 import type { NitroPreset, NitroInput } from '../context'
 
 export function hl (str: string) {
@@ -20,9 +20,9 @@ export function prettyPath (p: string, highlight = true) {
 
 export function compileTemplate (contents: string) {
   return (params: Record<string, any>) => contents.replace(/{{ ?([\w.]+) ?}}/g, (_, match) => {
-    const val = dotProp.get(params, match)
+    const val = getProperty(params, match)
     if (!val) {
-      consola.warn(`cannot resolve template param '${match}' in ${contents.substr(0, 20)}`)
+      consola.warn(`cannot resolve template param '${match}' in ${contents.slice(0, 20)}`)
     }
     return val as string || `${match}`
   })
@@ -51,18 +51,22 @@ export async function writeFile (file: string, contents: string, log = false) {
   }
 }
 
-export function resolvePath (nitroContext: NitroInput, path: string | ((nitroContext: NitroInput) => string), resolveBase: string = ''): string {
-  if (typeof path === 'function') {
-    path = path(nitroContext)
+export function evalTemplate (ctx, input: string | ((ctx) => string)): string {
+  if (typeof input === 'function') {
+    input = input(ctx)
   }
-
-  if (typeof path !== 'string') {
-    throw new TypeError('Invalid path: ' + path)
+  if (typeof input !== 'string') {
+    throw new TypeError('Invalid template: ' + input)
   }
+  return compileTemplate(input)(ctx)
+}
 
-  path = compileTemplate(path)(nitroContext)
+export function resolvePath (nitroContext: NitroInput, input: string | ((nitroContext: NitroInput) => string), resolveBase: string = ''): string {
+  return resolve(resolveBase, evalTemplate(nitroContext, input))
+}
 
-  return resolve(resolveBase, path)
+export function replaceAll (input: string, from: string, to: string) {
+  return input.replace(new RegExp(from, 'g'), to)
 }
 
 export function detectTarget () {
@@ -147,12 +151,4 @@ export function readPackageJson (
     }
     throw error
   }
-}
-
-export function readDirRecursively (dir: string) {
-  return fse.readdirSync(dir).reduce((files, file) => {
-    const name = join(dir, file)
-    const isDirectory = fse.statSync(name).isDirectory()
-    return isDirectory ? [...files, ...readDirRecursively(name)] : [...files, name]
-  }, [])
 }

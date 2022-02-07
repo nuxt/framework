@@ -1,5 +1,5 @@
 import { isCI, isTest } from 'std-env'
-import { hasProtocol } from 'ufo'
+import { normalizeURL, withTrailingSlash } from 'ufo'
 
 export default {
   /**
@@ -153,13 +153,9 @@ export default {
    * }
    * ```
    * @version 2
-   * @version 3
    */
   publicPath: {
-    $resolve: (val, get) => {
-      if (hasProtocol(val, true) && get('dev')) { val = null }
-      return (val || '/_nuxt/').replace(/([^/])$/, '$1/')
-    }
+    $resolve: (val, get) => val ? withTrailingSlash(normalizeURL(val)) : get('app.buildAssetsDir')
   },
 
   /**
@@ -440,7 +436,7 @@ export default {
    * Each item in transpile can be a package name, a function, a string or regex object matching the
    * dependency's file name.
    *
-   * Tou can also use a function to conditionally transpile, the function will receive a object ({ isDev, isServer, isClient, isModern, isLegacy }).
+   * You can also use a function to conditionally transpile. The function will receive an object ({ isDev, isServer, isClient, isModern, isLegacy }).
    *
    * @example
    * ```js

@@ -5,9 +5,13 @@ declare module '#storage' {
 
 declare module '#assets' {
   export interface AssetMeta { type?: string, etag?: string, mtime?: string }
-  export function readAsset<T = any> (id: string): Promise<T>
-  export function statAsset (id: string): Promise<AssetMeta>
-  export function getKeys() : Promise<string[]>
+
+  export const assets: {
+    getKeys(): Promise<string[]>
+    hasItem(id: string): Promise<boolean>
+    getItem<T = any> (id: string): Promise<T>
+    getMeta(id: string): Promise<AssetMeta>
+  }
 }
 
 declare module '#config' {
@@ -16,4 +20,12 @@ declare module '#config' {
   export const publicConfig: PublicRuntimeConfig
   const runtimeConfig: PrivateRuntimeConfig & PublicRuntimeConfig
   export default runtimeConfig
+}
+
+declare module '#paths' {
+  export const baseURL: () => string
+  export const buildAssetsDir: () => string
+
+  export const buildAssetsURL: (...path: string[]) => string
+  export const publicAssetsURL: (...path: string[]) => string
 }

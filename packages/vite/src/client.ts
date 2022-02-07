@@ -5,12 +5,14 @@ import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { Connect } from 'vite'
 
+import { joinURL } from 'ufo'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { analyzePlugin } from './plugins/analyze'
 import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
+import { DynamicBasePlugin, RelativeAssetPlugin } from './plugins/dynamic-base'
 
 export async function buildClient (ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -38,7 +40,12 @@ export async function buildClient (ctx: ViteBuildContext) {
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'client'),
       vuePlugin(ctx.config.vue),
       viteJsxPlugin(),
-      devStyleSSRPlugin(ctx.nuxt.options.rootDir)
+      DynamicBasePlugin.vite({ env: 'client', devAppConfig: ctx.nuxt.options.app }),
+      RelativeAssetPlugin(),
+      devStyleSSRPlugin({
+        rootDir: ctx.nuxt.options.rootDir,
+        buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
+      })
     ],
     server: {
       middlewareMode: true

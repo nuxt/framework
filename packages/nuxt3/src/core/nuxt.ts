@@ -1,13 +1,14 @@
 import { resolve } from 'pathe'
 import { createHooks } from 'hookable'
 import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
-import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent } from '@nuxt/kit'
+import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import pagesModule from '../pages/module'
 import metaModule from '../meta/module'
 import componentsModule from '../components/module'
 import autoImportsModule from '../auto-imports/module'
 import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
+import { ImportProtectionPlugin, vueAppPatterns } from './plugins/import-protection'
 import { initNitro } from './nitro'
 import { addModuleTranspiles } from './modules'
 
@@ -44,7 +45,20 @@ async function initNuxt (nuxt: Nuxt) {
   nuxt.hook('prepare:types', (opts) => {
     opts.references.push({ types: 'nuxt3' })
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'plugins.d.ts') })
+    // Add vue shim
+    if (nuxt.options.typescript.shim) {
+      opts.references.push({ path: resolve(nuxt.options.buildDir, 'vue-shim.d.ts') })
+    }
   })
+
+  // Add import protection
+
+  const config = {
+    rootDir: nuxt.options.rootDir,
+    patterns: vueAppPatterns(nuxt)
+  }
+  addVitePlugin(ImportProtectionPlugin.vite(config))
+  addWebpackPlugin(ImportProtectionPlugin.webpack(config))
 
   // Init user modules
   await nuxt.callHook('modules:before', { nuxt } as ModuleContainer)
@@ -67,7 +81,11 @@ async function initNuxt (nuxt: Nuxt) {
   })
 
   for (const m of modulesToInstall) {
-    await installModule(nuxt, m)
+    if (Array.isArray(m)) {
+      await installModule(m[0], m[1], nuxt)
+    } else {
+      await installModule(m, {}, nuxt)
+    }
   }
 
   await nuxt.callHook('modules:done', { nuxt } as ModuleContainer)
@@ -83,7 +101,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   // Temporary until finding better placement for each
   options.appDir = options.alias['#app'] = resolve(distDir, 'app')
   options._majorVersion = 3
-  options.buildModules.push(pagesModule, metaModule, componentsModule, autoImportsModule)
+  options._modules.push(pagesModule, metaModule, componentsModule, autoImportsModule)
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))
   options.alias['vue-demi'] = resolve(options.appDir, 'compat/vue-demi')
   options.alias['@vue/composition-api'] = resolve(options.appDir, 'compat/capi')
