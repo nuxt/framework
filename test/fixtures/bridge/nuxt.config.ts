@@ -13,6 +13,7 @@ export default defineNuxtConfig({
       }
     }
   ],
+  modules: ['@nuxtjs/partytown'],
   buildDir: process.env.NITRO_BUILD_DIR,
   plugins: ['~/plugins/setup.js'],
   nitro: {

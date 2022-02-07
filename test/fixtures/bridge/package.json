@@ -12,5 +12,8 @@
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
+  },
+  "dependencies": {
+    "@nuxtjs/partytown": "^1.1.0"
   }
 }

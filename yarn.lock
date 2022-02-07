@@ -1377,6 +1377,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@builder.io/partytown@npm:^0.3.1":
+  version: 0.3.1
+  resolution: "@builder.io/partytown@npm:0.3.1"
+  bin:
+    partytown: bin/partytown.cjs
+  checksum: 03e5e7e04083826b3acbe52e4474e455a9942d6d05a4fe4efe3f7d8324f7d3653ed71849802a22a0a5334e08b2e98dd6e3276bfb4ec18135ffdb58894545902b
+  languageName: node
+  linkType: hard
+
 "@cloudflare/kv-asset-handler@npm:^0.2.0":
   version: 0.2.0
   resolution: "@cloudflare/kv-asset-handler@npm:0.2.0"
@@ -2914,6 +2923,29 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@nuxt/kit@npm:@nuxt/kit-edge@^3.0.0-27398533.8edd481":
+  version: 3.0.0-27403901.b3e9cf6
+  resolution: "@nuxt/kit-edge@npm:3.0.0-27403901.b3e9cf6"
+  dependencies:
+    "@nuxt/schema": "npm:@nuxt/schema-edge@3.0.0-27403901.b3e9cf6"
+    c12: ^0.1.1
+    consola: ^2.15.3
+    defu: ^5.0.1
+    globby: ^13.1.1
+    hash-sum: ^2.0.0
+    jiti: ^1.12.15
+    lodash.template: ^4.5.0
+    mlly: ^0.4.1
+    pathe: ^0.2.0
+    pkg-types: ^0.3.2
+    scule: ^0.2.1
+    semver: ^7.3.5
+    unctx: ^1.0.2
+    untyped: ^0.3.0
+  checksum: c43951860adc689b0f8c2614b9b4779fda037d5ac763ea6f1307aeff6bd343567d0415f20166423578ac30017043668e405207f0e04c3b2b56cb396766510558
+  languageName: node
+  linkType: hard
+
 "@nuxt/kit@npm:@nuxt/kit-edge@latest":
   version: 3.0.0-27403830.c1148d4
   resolution: "@nuxt/kit-edge@npm:3.0.0-27403830.c1148d4"
@@ -3082,6 +3114,22 @@ __metadata:
     std-env: ^3.0.1
     ufo: ^0.7.9
   checksum: d9731fa8cf735d9935a2ca97a83668304d623bfcb72d7b3e0bb78075a402d05c344993ab3f1f1649f28205b117ff06e1d711b2de74e8a12ab779380d1f31f26f
+  languageName: node
+  linkType: hard
+
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27403901.b3e9cf6":
+  version: 3.0.0-27403901.b3e9cf6
+  resolution: "@nuxt/schema-edge@npm:3.0.0-27403901.b3e9cf6"
+  dependencies:
+    c12: ^0.1.1
+    create-require: ^1.1.1
+    defu: ^5.0.1
+    jiti: ^1.12.15
+    pathe: ^0.2.0
+    scule: ^0.2.1
+    std-env: ^3.0.1
+    ufo: ^0.7.9
+  checksum: ee65bfd1c471911c74559c7735f53ea972db764aebf771f71a4a7a2e9c3a07dd13227e7d827d27cb19b9e0dd923aab8a0834e6dd1d0c4237dc53a582025366e1
   languageName: node
   linkType: hard
 
@@ -3553,6 +3601,19 @@ __metadata:
   peerDependencies:
     eslint: ^8.1.0
   checksum: 0b918ec601b2baf9f50a8a2928cac9735fc35fa8ea8caf434986858d1ab7550e96bf26cc4c619e1e41677acc292c0fdbc9c4381152b135b36eea90c51936225b
+  languageName: node
+  linkType: hard
+
+"@nuxtjs/partytown@npm:^1.1.0, @nuxtjs/partytown@npm:latest":
+  version: 1.1.0
+  resolution: "@nuxtjs/partytown@npm:1.1.0"
+  dependencies:
+    "@builder.io/partytown": ^0.3.1
+    "@nuxt/kit": "npm:@nuxt/kit-edge@^3.0.0-27398533.8edd481"
+    knitwork: ^0.1.0
+    serve-static: ^1.14.2
+    ufo: ^0.7.10
+  checksum: 44248c54cce9ffd08fb39b42dc62a51d5ca548f0a265f4e59cd1c8980d36fc864c533514b09482e22ebf2f1f019ba97cb244d2577390e7fd9e8e9ad792ec079e
   languageName: node
   linkType: hard
 
@@ -10668,6 +10729,7 @@ __metadata:
   resolution: "fixture-basic@workspace:test/fixtures/bridge"
   dependencies:
     "@nuxt/bridge": "*"
+    "@nuxtjs/partytown": ^1.1.0
     nuxt-edge: latest
     vue: ^2
   languageName: unknown
@@ -14959,6 +15021,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxt-playground@workspace:playground"
   dependencies:
+    "@nuxtjs/partytown": latest
     nuxt3: latest
   languageName: unknown
   linkType: soft
@@ -20295,6 +20358,13 @@ __metadata:
   version: 1.0.6
   resolution: "uc.micro@npm:1.0.6"
   checksum: 6898bb556319a38e9cf175e3628689347bd26fec15fc6b29fa38e0045af63075ff3fea4cf1fdba9db46c9f0cbf07f2348cd8844889dd31ebd288c29fe0d27e7a
+  languageName: node
+  linkType: hard
+
+"ufo@npm:^0.7.10":
+  version: 0.7.10
+  resolution: "ufo@npm:0.7.10"
+  checksum: 2a013149b603b912ff5fef79f08c243f805806069191c2ac1e6a1660b3b4d86d5a22550e1889c2e8f27ef5cea2345147fe70c689a13420e157ce18e9837e8812
   languageName: node
   linkType: hard
 

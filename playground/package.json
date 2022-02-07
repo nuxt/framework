@@ -8,5 +8,8 @@
     "dev": "nuxi dev",
     "build": "nuxi build",
     "start": "nuxi preview"
+  },
+  "dependencies": {
+    "@nuxtjs/partytown": "latest"
   }
 }

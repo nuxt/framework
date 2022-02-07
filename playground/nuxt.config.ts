@@ -2,6 +2,7 @@ import { defineNuxtConfig } from 'nuxt3'
 
 export default defineNuxtConfig({
   modules: [
-    '@nuxt/ui'
+    '@nuxt/ui',
+    '@nuxtjs/partytown'
   ]
 })

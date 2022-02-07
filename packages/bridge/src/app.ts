@@ -49,8 +49,8 @@ export async function setupAppBridge (_options: any) {
     const meta = await normalizeModule(m).then(([m]) => m.getMeta?.())
 
     return {
-      ...meta || {},
-      name: typeof m === 'string' ? m : meta?.name
+      meta,
+      entryPath: typeof m === 'string' ? m : undefined
     }
   })))
 
