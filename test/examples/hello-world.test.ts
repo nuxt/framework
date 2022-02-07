@@ -6,13 +6,13 @@ import { setup, $fetch } from '../../packages/test-utils/src'
 
 const examplesDir = fileURLToPath(new URL('../../examples', import.meta.url))
 
-describe('examples:hello-world', async () => {
-  await setup({
-    rootDir: resolve(examplesDir, 'hello-world'),
-    runner: 'vitest',
-    server: true
-  })
+await setup({
+  rootDir: resolve(examplesDir, 'hello-world'),
+  runner: 'vitest',
+  server: true
+})
 
+describe('examples:hello-world', () => {
   it('Render hello world test', async () => {
     expect(await $fetch('/')).to.contain('Hello Nuxt 3!')
   })

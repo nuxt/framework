@@ -24,7 +24,7 @@
     "test:bridge:webpack": "TEST_BRIDGE=1 yarn test:presets",
     "test:bridge:vite": "TEST_BRIDGE_VITE=1 TEST_BRIDGE=1 yarn test:presets",
     "test:unit": "vitest packages",
-    "test:utils": "vitest test/examples --silent",
+    "test:utils": "vitest run test/examples",
     "version": "yarn && git add yarn.lock"
   },
   "resolutions": {
@@ -55,7 +55,7 @@
     "pathe": "^0.2.0",
     "typescript": "^4.5.5",
     "unbuild": "^0.6.9",
-    "vitest": "^0.2.6",
+    "vitest": "^0.2.7",
     "vue-router": "next"
   },
   "packageManager": "yarn@3.1.1",
