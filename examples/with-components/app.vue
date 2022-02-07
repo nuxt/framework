@@ -7,10 +7,6 @@
       <!-- Auto Imported Components -->
       <HelloWorld class="text-2xl" />
       <Nuxt3 class="text-2xl" />
-      <ClientAndServer style="color: red">
-        <div>[Slot]</div>
-      </ClientAndServer>
-      <JustClient />
       <ParentFolderHello class="mt-6" />
       <ClientAndServer style="color: red">
         <div>[Slot]</div>
