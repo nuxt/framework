@@ -1,6 +1,7 @@
 import { useNuxt, resolveModule, addTemplate } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { componentsTypeTemplate } from '../../nuxt3/src/components/templates'
+import { schemaTemplate } from '../../nuxt3/src/core/templates'
 import { distDir } from './dirs'
 
 export function setupAppBridge (_options: any) {
@@ -36,6 +37,12 @@ export function setupAppBridge (_options: any) {
   })
   nuxt.hook('prepare:types', ({ references }) => {
     references.push({ path: resolve(nuxt.options.buildDir, 'types/components.d.ts') })
+  })
+
+  // Augment schema with module types
+  addTemplate({
+    ...schemaTemplate,
+    src: ''
   })
 
   // Alias vue to have identical vue3 exports

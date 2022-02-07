@@ -128,10 +128,9 @@ export const schemaTemplate = {
       ...nuxt.options.modules,
       ...nuxt.options._modules
     ].map(async (m: string | NuxtModule) => {
-      const meta = await normalizeModule(m).then(([r]) => r.getMeta?.())
+      const meta = await normalizeModule(m).then(([r]) => r.getMeta?.() || {} as Record<string, any>)
       // Preserve path as name if module is not an npm package, for example
       meta.name = typeof m === 'string' ? m : meta.name
-      console.log(meta)
       return meta?.configKey && meta.name && !adHocModules.includes(meta.name) && meta
     }))
 
