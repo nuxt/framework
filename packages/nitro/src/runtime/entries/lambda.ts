@@ -4,19 +4,9 @@ import { withQuery } from 'ufo'
 import type { HeadersObject } from 'unenv/runtime/_internal/types'
 import { localCall } from '../server'
 
-export const handler = async function handler (event: APIGatewayProxyEvent | APIGatewayProxyEventV2, context: Context) {
-  let url: string
-  let method: string
-
-  if ('path' in event) {
-    // APIGatewayProxyEvent
-    url = withQuery(event.path, event.queryStringParameters)
-    method = event.httpMethod
-  } else {
-    // APIGatewayProxyEventV2
-    url = withQuery(event.rawPath, event.queryStringParameters)
-    method = event.requestContext.http.method
-  }
+export const handler = async function handler (event: APIGatewayProxyEvent & APIGatewayProxyEventV2, context: Context) {
+  const url = withQuery(event.path || event.rawPath, event.queryStringParameters)
+  const method = event.httpMethod || event.requestContext?.http?.method || 'get'
 
   const r = await localCall({
     event,
@@ -36,7 +26,7 @@ export const handler = async function handler (event: APIGatewayProxyEvent | API
 }
 
 function normalizeIncomingHeaders (headers: APIGatewayProxyEventHeaders) {
-  return Object.fromEntries(Object.entries(headers).map(([key, value]) => [key.toLowerCase(), value]))
+  return Object.fromEntries(Object.entries(headers).map(([key, value]) => [key.toLowerCase(), value as string]))
 }
 
 function normalizeOutgoingHeaders (headers: HeadersObject) {
