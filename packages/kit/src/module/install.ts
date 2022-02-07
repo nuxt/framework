@@ -32,10 +32,16 @@ export async function normalizeModule (nuxtModule: string | NuxtModule, inlineOp
 }
 
 /** Installs a module on a Nuxt instance. */
-export async function installModule (nuxtModule: string | NuxtModule, inlineOptions?: any, _nuxt?: Nuxt) {
+export async function installModule (moduleToInstall: string | NuxtModule, inlineOptions?: any, _nuxt?: Nuxt) {
   const nuxt = useNuxt()
-  ;[nuxtModule, inlineOptions] = await normalizeModule(nuxtModule, inlineOptions)
+  const [nuxtModule, options] = await normalizeModule(moduleToInstall, inlineOptions)
 
   // Call module
-  await nuxtModule.call(useModuleContainer(), inlineOptions, nuxt)
+  await nuxtModule.call(useModuleContainer(), options, nuxt)
+
+  nuxt.options._installedModules = nuxt.options._installedModules || []
+  nuxt.options._installedModules.push({
+    meta: await nuxtModule.getMeta?.(),
+    entryPath: typeof moduleToInstall === 'string' ? moduleToInstall : undefined
+  })
 }

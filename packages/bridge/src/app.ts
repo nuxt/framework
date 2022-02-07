@@ -1,10 +1,10 @@
-import { useNuxt, resolveModule, addTemplate } from '@nuxt/kit'
+import { useNuxt, resolveModule, addTemplate, normalizeModule } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { componentsTypeTemplate } from '../../nuxt3/src/components/templates'
 import { schemaTemplate } from '../../nuxt3/src/core/templates'
 import { distDir } from './dirs'
 
-export function setupAppBridge (_options: any) {
+export async function setupAppBridge (_options: any) {
   const nuxt = useNuxt()
 
   // Setup aliases
@@ -38,6 +38,21 @@ export function setupAppBridge (_options: any) {
   nuxt.hook('prepare:types', ({ references }) => {
     references.push({ path: resolve(nuxt.options.buildDir, 'types/components.d.ts') })
   })
+
+  // Add module metadata to nuxt.options._installedModules
+  nuxt.options._installedModules = nuxt.options._installedModules || []
+  nuxt.options._installedModules.push(...await Promise.all([
+    ...nuxt.options.buildModules,
+    ...nuxt.options.modules,
+    ...nuxt.options._modules
+  ].map(async (m) => {
+    const meta = await normalizeModule(m).then(([m]) => m.getMeta?.())
+
+    return {
+      ...meta || {},
+      name: typeof m === 'string' ? m : meta?.name
+    }
+  })))
 
   // Augment schema with module types
   addTemplate(schemaTemplate)

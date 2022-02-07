@@ -1,5 +1,5 @@
-import { normalizeModule, templateUtils } from '@nuxt/kit'
-import type { Nuxt, NuxtApp, NuxtModule } from '@nuxt/schema'
+import { templateUtils } from '@nuxt/kit'
+import type { Nuxt, NuxtApp } from '@nuxt/schema'
 
 import { isAbsolute, join, relative } from 'pathe'
 import escapeRE from 'escape-string-regexp'
@@ -122,17 +122,11 @@ export { }
 const adHocModules = ['router', 'pages', 'auto-imports', 'meta', 'components']
 export const schemaTemplate = {
   filename: 'types/schema.d.ts',
-  getContents: async ({ nuxt }: TemplateContext) => {
-    const moduleInfo = await Promise.all([
-      ...nuxt.options.buildModules,
-      ...nuxt.options.modules,
-      ...nuxt.options._modules
-    ].map(async (m: string | NuxtModule) => {
-      const meta = await normalizeModule(m).then(([r]) => r.getMeta?.() || {} as Record<string, any>)
-      // Preserve path as name if module is not an npm package, for example
-      meta.name = typeof m === 'string' ? m : meta.name
-      return meta?.configKey && meta.name && !adHocModules.includes(meta.name) && meta
-    }))
+  getContents: ({ nuxt }: TemplateContext) => {
+    const moduleInfo = nuxt.options._installedModules.map(m => ({
+      ...m.meta || {},
+      name: m.entryPath || m.meta?.name
+    })).filter(m => m.configKey && m.name && !adHocModules.includes(m.name))
 
     return [
       "import { NuxtModule } from '@nuxt/schema'",
