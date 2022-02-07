@@ -7,6 +7,19 @@ import defu from 'defu'
 
 export default {
   /**
+   * Extend nested configurations from multiple local or remoted sources
+   *
+   * Value should be either a string or array of strings pointing to source directories or config path relative to current config.
+   *
+   * You can use `github:`, `gitlab:`, `bitbucket:` or `https://` to extend from a remote git repository.
+   *
+   * @typedef {string|string[]}
+   *
+   * @version 3
+   */
+  extends: null,
+
+  /**
    * Define the workspace directory of your application.
    *
    * This property can be overwritten (for example, running `nuxt ./my-app/`
@@ -665,23 +678,22 @@ export default {
 
   /**
    * Runtime config allows passing dynamic config and environment variables to the Nuxt app context.
-   *
-   * It is added to the Nuxt payload so there is no need to rebuild to update your configuration in
-   * development or if your application is served by the Nuxt server. (For static sites you will still
-   * need to regenerate your site to see changes.)
-   *
-   * The value of this object is accessible from server only using `$config`.
-   *
+   * 
+   * The value of this object is accessible from server only using `$config` or `useRuntimeConfig`.
    * It will override `publicRuntimeConfig` on the server-side.
    *
    * It should hold _private_ environment variables (that should not be exposed on the frontend).
    * This could include a reference to your API secret tokens.
+   * 
+   * Values are automatically replaced by matching env variables at runtime, e.g. setting an environment
+   * variable `API_SECRET=my-api-key` would overwrite the value in the example below.
+   * Note that the env variable has to be named exactly the same as the config key.
    *
    * @example
    * ```js
    * export default {
    *   privateRuntimeConfig: {
-   *     apiSecret: process.env.API_SECRET
+   *     API_SECRET: '' // Default to an empty string, automatically loaded at runtime using process.env.API_SECRET
    *   }
    * }
    * ```
@@ -693,20 +705,21 @@ export default {
 
   /**
    * Runtime config allows passing dynamic config and environment variables to the Nuxt app context.
-   *
-   * It is added to the Nuxt payload so there is no need to rebuild to update your configuration in
-   * development or if your application is served by the Nuxt server. (For static sites you will still
-   * need to regenerate your site to see changes.)
-   *
-   * The value of this object is accessible from both client and server using `$config`. It should hold env
-   * variables that are _public_ as they will be accessible on the frontend. This could include a
+   * 
+   * The value of this object is accessible from both client and server using `$config` or `useRuntimeConfig`.
+   * 
+   * It should hold env variables that are _public_ as they will be accessible on the frontend. This could include a
    * reference to your public URL.
+   *
+   * Values are automatically replaced by matching env variables at runtime, e.g. setting an environment
+   * variable `BASE_URL=https://some-other-url.org` would overwrite the value in the example below.
+   * Note that the env variable has to be named exactly the same as the config key.
    *
    * @example
    * ```js
    * export default {
    *   publicRuntimeConfig: {
-   *     baseURL: process.env.BASE_URL || 'https://nuxtjs.org'
+   *     BASE_URL: 'https://nuxtjs.org'
    *   }
    * }
    * ```

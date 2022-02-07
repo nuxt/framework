@@ -8,7 +8,7 @@ import { genDynamicImport, genObjectFromRawEntries } from 'knitwork'
 import virtual from './virtual'
 
 export interface AssetOptions {
-  inline: Boolean
+  inline: boolean
   dirs: {
     [assetdir: string]: {
       dir: string
@@ -18,10 +18,10 @@ export interface AssetOptions {
 }
 
 interface Asset {
-  fsPath: string,
+  fsPath: string
   meta: {
-    type?: string,
-    etag?: string,
+    type?: string
+    etag?: string
     mtime?: string
   }
 }
