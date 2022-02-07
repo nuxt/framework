@@ -1,10 +1,11 @@
-import { useNuxt, resolveModule, addTemplate, normalizeModule, resolveAlias } from '@nuxt/kit'
+import { useNuxt, resolveModule, addTemplate, resolveAlias } from '@nuxt/kit'
+import { NuxtModule } from '@nuxt/schema'
 import { resolve } from 'pathe'
 import { componentsTypeTemplate } from '../../nuxt3/src/components/templates'
 import { schemaTemplate } from '../../nuxt3/src/core/templates'
 import { distDir } from './dirs'
 
-export async function setupAppBridge (_options: any) {
+export function setupAppBridge (_options: any) {
   const nuxt = useNuxt()
 
   // Setup aliases
@@ -39,23 +40,14 @@ export async function setupAppBridge (_options: any) {
     references.push({ path: resolve(nuxt.options.buildDir, 'types/components.d.ts') })
   })
 
-  // Add module metadata to nuxt.options._installedModules
-  nuxt.options._installedModules = nuxt.options._installedModules || []
-  nuxt.options._installedModules.push(...await Promise.all([
-    ...nuxt.options.buildModules,
-    ...nuxt.options.modules,
-    ...nuxt.options._modules
-  ].map(async (m) => {
-    const meta = await normalizeModule(m).then(([m]) => m.getMeta?.())
-
-    return {
-      meta,
-      entryPath: typeof m === 'string' ? resolveAlias(m, nuxt.options.alias) : undefined
-    }
-  })))
-
   // Augment schema with module types
-  addTemplate(schemaTemplate)
+  nuxt.hook('modules:done', async (container: any) => {
+    nuxt.options._installedModules = await Promise.all(Object.values(container.requiredModules).map(async (m: { src: string, handler: NuxtModule }) => ({
+      meta: await m.handler.getMeta?.(),
+      entryPath: resolveAlias(m.src, nuxt.options.alias)
+    })))
+    addTemplate(schemaTemplate)
+  })
 
   // Alias vue to have identical vue3 exports
   nuxt.options.alias['vue2-bridge'] = resolve(distDir, 'runtime/vue2-bridge.mjs')

@@ -4,7 +4,7 @@ import { resolveModule, requireModule, importModule } from '../internal/cjs'
 import { resolveAlias } from '../resolve'
 import { useModuleContainer } from './container'
 
-export async function normalizeModule (nuxtModule: string | NuxtModule, inlineOptions?: any) {
+async function normalizeModule (nuxtModule: string | NuxtModule, inlineOptions?: any) {
   const nuxt = useNuxt()
 
   // Detect if `installModule` used with older signuture (nuxt, nuxtModule)
