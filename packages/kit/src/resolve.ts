@@ -69,7 +69,7 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
   }
 
   // Try to resolve as module id
-  const resolveModulePath = tryResolveModule(_path, { paths: modulesDir })
+  const resolveModulePath = tryResolveModule(_path, { paths: [cwd, ...modulesDir] })
   if (resolveModulePath) {
     return resolveModulePath
   }
