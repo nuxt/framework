@@ -17,7 +17,7 @@ async function normalizeModule (nuxtModule: string | NuxtModule, inlineOptions?:
 
   // Import if input is string
   if (typeof nuxtModule === 'string') {
-    const _src = resolveModule(resolveAlias(nuxtModule, nuxt.options.alias), { paths: nuxt.options.modulesDir })
+    const _src = resolveModule(resolveAlias(nuxtModule), { paths: nuxt.options.modulesDir })
     // TODO: also check with type: 'module' in closest `package.json`
     const isESM = _src.endsWith('.mjs')
     nuxtModule = isESM ? await importModule(_src) : requireModule(_src)
