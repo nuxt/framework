@@ -40,10 +40,7 @@ export function setupAppBridge (_options: any) {
   })
 
   // Augment schema with module types
-  addTemplate({
-    ...schemaTemplate,
-    src: ''
-  })
+  addTemplate(schemaTemplate)
 
   // Alias vue to have identical vue3 exports
   nuxt.options.alias['vue2-bridge'] = resolve(distDir, 'runtime/vue2-bridge.mjs')
