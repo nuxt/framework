@@ -9,6 +9,7 @@ export async function listen () {
   const port = await getPort({})
   ctx.url = 'http://localhost:' + port
   execa('node', [
+    // @ts-expect-error TODO: TS2339: Property 'nitro' does not exist on type 'NuxtOptions'
     resolve(ctx.nuxt.options.nitro.output.dir, 'server/index.mjs')
   ], {
     env: {

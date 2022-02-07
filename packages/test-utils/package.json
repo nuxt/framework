@@ -4,23 +4,27 @@
   "repository": "nuxt/framework",
   "license": "MIT",
   "type": "module",
-  "types": "./dist/index.d.ts",
   "exports": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
     "prepack": "unbuild"
   },
-  "devDependencies": {
-    "@nuxt/schema": "3.0.0",
-    "playwright": "^1.18.0",
-    "unbuild": "latest"
-  },
   "dependencies": {
     "@nuxt/kit": "3.0.0",
+    "@nuxt/schema": "3.0.0",
+    "defu": "^5.0.1",
+    "execa": "^6.0.0",
     "get-port-please": "^2.2.0",
+    "jiti": "^1.12.15",
     "ohmyfetch": "^0.4.15"
+  },
+  "devDependencies": {
+    "playwright": "^1.18.0",
+    "unbuild": "latest",
+    "vitest": "^0.2.7"
   },
   "peerDependencies": {
     "vue": "3.2.29"

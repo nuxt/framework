@@ -3240,10 +3240,14 @@ __metadata:
   dependencies:
     "@nuxt/kit": 3.0.0
     "@nuxt/schema": 3.0.0
+    defu: ^5.0.1
+    execa: ^6.0.0
     get-port-please: ^2.2.0
+    jiti: ^1.12.15
     ohmyfetch: ^0.4.15
     playwright: ^1.18.0
     unbuild: latest
+    vitest: ^0.2.7
   peerDependencies:
     vue: 3.2.29
   languageName: unknown
@@ -21388,6 +21392,37 @@ __metadata:
   bin:
     vitest: vitest.mjs
   checksum: 0a7a100dbd867892651481a6bf4c46b07c3c26520f395c779e1d47714616ea303163c15af418aae09d930824370ed1f68ef4d65c9d1e62dd25a271361f41ec9b
+  languageName: node
+  linkType: hard
+
+"vitest@npm:^0.2.7":
+  version: 0.2.7
+  resolution: "vitest@npm:0.2.7"
+  dependencies:
+    "@types/chai": ^4.3.0
+    "@types/chai-subset": ^1.3.3
+    chai: ^4.3.6
+    local-pkg: ^0.4.1
+    tinypool: ^0.1.1
+    tinyspy: ^0.2.10
+    vite: ">=2.7.13"
+  peerDependencies:
+    "@vitest/ui": "*"
+    c8: "*"
+    happy-dom: "*"
+    jsdom: "*"
+  peerDependenciesMeta:
+    "@vitest/ui":
+      optional: true
+    c8:
+      optional: true
+    happy-dom:
+      optional: true
+    jsdom:
+      optional: true
+  bin:
+    vitest: vitest.mjs
+  checksum: 32f757f868c607eac0cf0e4160a371b1f32f50a306680b03a39dc9dafede025ec662ce11fb6176bca740cf97eb08e156253a62010bf6199677fad4aefada6779
   languageName: node
   linkType: hard
 

@@ -1,4 +1,4 @@
-import { Nuxt, NuxtConfig } from '@nuxt/schema'
+import type { Nuxt, NuxtConfig } from '@nuxt/schema'
 import type { Browser, LaunchOptions } from 'playwright'
 
 export type TestRunner = 'vitest' | 'jest'

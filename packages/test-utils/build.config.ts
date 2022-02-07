@@ -8,5 +8,8 @@ export default defineBuildConfig({
   dependencies: [
   ],
   externals: [
+    'vitest',
+    'playwright',
+    'playwright-core'
   ]
 })
