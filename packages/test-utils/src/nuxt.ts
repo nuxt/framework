@@ -3,7 +3,8 @@ import { resolve } from 'path'
 import * as _kit from '@nuxt/kit'
 import { useTestContext } from './context'
 
-const kit = _kit.default || _kit
+// @ts-ignore type cast
+const kit: typeof _kit = _kit.default || _kit
 
 const isNuxtApp = (dir: string) => {
   return existsSync(dir) && (
