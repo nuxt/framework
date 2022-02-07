@@ -38,7 +38,6 @@ export async function buildServer (ctx: ViteBuildContext) {
       }
     },
     ssr: {
-      external: ['#config'],
       noExternal: [
         ...ctx.nuxt.options.build.transpile,
         // TODO: Use externality for production (rollup) build
@@ -61,6 +60,7 @@ export async function buildServer (ctx: ViteBuildContext) {
           preferConst: true,
           format: 'module'
         },
+        external: ['#config'],
         onwarn (warning, rollupWarn) {
           if (!['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
             rollupWarn(warning)

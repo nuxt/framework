@@ -7,6 +7,19 @@ import defu from 'defu'
 
 export default {
   /**
+   * Extend nested configurations from multiple local or remoted sources
+   *
+   * Value should be either a string or array of strings pointing to source directories or config path relative to current config.
+   *
+   * You can use `github:`, `gitlab:`, `bitbucket:` or `https://` to extend from a remote git repository.
+   *
+   * @typedef {string|string[]}
+   *
+   * @version 3
+   */
+  extends: null,
+
+  /**
    * Define the workspace directory of your application.
    *
    * This property can be overwritten (for example, running `nuxt ./my-app/`
@@ -433,6 +446,7 @@ export default {
     layouts: 'layouts',
     /**
      * The middleware directory, each file of which will be auto-registered as a Nuxt middleware.
+     * @version 3
      * @version 2
      */
     middleware: 'middleware',
