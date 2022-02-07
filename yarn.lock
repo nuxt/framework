@@ -2610,8 +2610,8 @@ __metadata:
     unplugin-vue2-script-setup: 0.9.1
     vite: ^2.7.13
     vite-plugin-vue2: ^1.9.3
-    vue: ^2
-    vue-router: ^3
+    vue: ^3
+    vue-router: ^4
     vue-template-compiler: ^2.6.14
   bin:
     nuxi: ./bin/nuxt.mjs
@@ -21077,14 +21077,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-router@npm:^3, vue-router@npm:^3.5.1, vue-router@npm:^3.5.3":
+"vue-router@npm:^3.5.1, vue-router@npm:^3.5.3":
   version: 3.5.3
   resolution: "vue-router@npm:3.5.3"
   checksum: 7b2cc0d41ff2a8ec3da45761f29e14d0998119f47e4887f54e17eb534f7b4823acb778302891b0aa3a10c62ae8ba999393d7891cc08d36f02ea87aa268e2a36c
   languageName: node
   linkType: hard
 
-"vue-router@npm:^4.0.12, vue-router@npm:next":
+"vue-router@npm:^4, vue-router@npm:^4.0.12, vue-router@npm:next":
   version: 4.0.12
   resolution: "vue-router@npm:4.0.12"
   dependencies:
@@ -21138,7 +21138,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:3.2.30, vue@npm:^3.2.30":
+"vue@npm:3.2.30, vue@npm:^3, vue@npm:^3.2.30":
   version: 3.2.30
   resolution: "vue@npm:3.2.30"
   dependencies:
