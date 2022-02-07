@@ -125,7 +125,7 @@ export const schemaTemplate = {
   getContents: ({ nuxt }: TemplateContext) => {
     const moduleInfo = nuxt.options._installedModules.map(m => ({
       ...m.meta || {},
-      name: m.entryPath || m.meta?.name
+      importName: m.entryPath || m.meta?.name
     })).filter(m => m.configKey && m.name && !adHocModules.includes(m.name))
 
     return [
@@ -133,7 +133,7 @@ export const schemaTemplate = {
       "declare module '@nuxt/schema' {",
       '  interface NuxtConfig {',
       ...moduleInfo.filter(Boolean).map(meta =>
-      `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.name, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
+      `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
       ),
       '  }',
       '}'
