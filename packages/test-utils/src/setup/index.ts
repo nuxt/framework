@@ -23,7 +23,7 @@ export function createTest (options: Partial<TestOptions>): TestHooks {
   }
 
   const afterAll = async () => {
-    if (ctx.nuxt) {
+    if (ctx.nuxt && ctx.nuxt.options.dev) {
       await ctx.nuxt.close()
     }
     if (ctx.browser) {
