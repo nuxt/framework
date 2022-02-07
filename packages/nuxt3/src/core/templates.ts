@@ -1,10 +1,9 @@
 import { templateUtils } from '@nuxt/kit'
 import type { Nuxt, NuxtApp } from '@nuxt/schema'
-import { genArrayFromRaw, genDynamicImport, genExport, genImport } from 'knitwork'
+import { genArrayFromRaw, genDynamicImport, genExport, genImport, genString } from 'knitwork'
 
 import { isAbsolute, join, relative } from 'pathe'
 import escapeRE from 'escape-string-regexp'
-import { genDynamicImport, genString } from 'knitwork'
 
 export interface TemplateContext {
   nuxt: Nuxt
