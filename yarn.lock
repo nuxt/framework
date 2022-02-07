@@ -20361,14 +20361,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ufo@npm:^0.7.10":
-  version: 0.7.10
-  resolution: "ufo@npm:0.7.10"
-  checksum: 2a013149b603b912ff5fef79f08c243f805806069191c2ac1e6a1660b3b4d86d5a22550e1889c2e8f27ef5cea2345147fe70c689a13420e157ce18e9837e8812
-  languageName: node
-  linkType: hard
-
-"ufo@npm:^0.7.4, ufo@npm:^0.7.9":
+"ufo@npm:^0.7.10, ufo@npm:^0.7.4, ufo@npm:^0.7.9":
   version: 0.7.10
   resolution: "ufo@npm:0.7.10"
   checksum: 2a013149b603b912ff5fef79f08c243f805806069191c2ac1e6a1660b3b4d86d5a22550e1889c2e8f27ef5cea2345147fe70c689a13420e157ce18e9837e8812
