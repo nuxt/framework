@@ -4,16 +4,23 @@ import { globby } from 'globby'
 import { useNuxt } from './context'
 import { tryResolveModule } from '.'
 
+export interface ResolvePathOptions {
+  /** Base for resolving paths from. Default is Nuxt rootDir. */
+  cwd?: string
+
+  /** An object of aliases. Default is Nuxt configured aliases. */
+  alias?: Record<string, string>
+
+  /** The file extensions to try. Default is Nuxt configured extensions. */
+  extensions?: string[]
+}
+
 /**
  * Resolve full path to a file or directory respecting Nuxt alias and extensions options
  *
- * Relative paths are resolved to the rootDir
  * If path could not be resolved, normalized input path will be returned
- *
- * @param path Unresolved path to a file or directory
- * @returns {Promise<string>} Normalized resolved path
  */
-export async function resolvePath (path: string): Promise<string> {
+export async function resolvePath (path: string, opts: ResolvePathOptions = {}): Promise<string> {
   // Always normalize input
   path = normalize(path)
 
@@ -24,13 +31,16 @@ export async function resolvePath (path: string): Promise<string> {
 
   // Use current nuxt options
   const nuxt = useNuxt()
+  const cwd = opts.cwd || nuxt.options.rootDir
+  const extensions = opts.extensions || nuxt.options.extensions
+  const modulesDir = nuxt.options.modulesDir
 
   // Resolve aliases
   path = resolveAlias(path)
 
-  // Resolve relative to rootDir
+  // Resolve relative to cwd
   if (!isAbsolute(path)) {
-    path = resolve(nuxt.options.rootDir, path)
+    path = resolve(cwd, path)
   }
 
   // Check if resolvedPath is a file
@@ -43,7 +53,7 @@ export async function resolvePath (path: string): Promise<string> {
   }
 
   // Check possible extensions
-  for (const ext of nuxt.options.extensions) {
+  for (const ext of extensions) {
     // path.[ext]
     const pathWithExt = path + ext
     if (!isDirectory && existsSync(pathWithExt)) {
@@ -57,7 +67,7 @@ export async function resolvePath (path: string): Promise<string> {
   }
 
   // Try to resolve as module id
-  const resolveModulePath = tryResolveModule(path, { paths: nuxt.options.modulesDir })
+  const resolveModulePath = tryResolveModule(path, { paths: modulesDir })
   if (resolveModulePath) {
     return resolveModulePath
   }
@@ -68,8 +78,6 @@ export async function resolvePath (path: string): Promise<string> {
 
 /**
  * Try to resolve first existing file in paths
- *
- * @param paths Possible search paths
  */
 export async function findPath (paths: string[]): Promise<string|null> {
   for (const path of paths) {
@@ -83,8 +91,6 @@ export async function findPath (paths: string[]): Promise<string|null> {
 
 /**
  * Resolve path aliases respecting Nuxt alias options
- *
- * @param path Input path
  */
 export function resolveAlias (path: string): string {
   const nuxt = useNuxt()
@@ -107,9 +113,6 @@ async function existsSensitive (path: string) {
 }
 
 export async function resolveFiles (path: string, pattern: string | string[]) {
-  const files = await globby(pattern, {
-    cwd: path,
-    followSymbolicLinks: true
-  })
+  const files = await globby(pattern, { cwd: path, followSymbolicLinks: true })
   return files.map(p => resolve(path, p))
 }
