@@ -69,8 +69,8 @@
     "@types/node-fetch": "^3.0.2",
     "nuxt": "^2",
     "unbuild": "latest",
-    "vue": "^2",
-    "vue-router": "^3"
+    "vue": "^3",
+    "vue-router": "^4"
   },
   "engines": {
     "node": "^14.16.0 || ^16.11.0 || ^17.0.0"
