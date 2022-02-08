@@ -66,17 +66,12 @@ export default defineNuxtModule<AutoImportsOptions>({
     }
 
     const regenerateAutoImports = async () => {
-      ctx.autoImports = []
       // Resolve autoimports from sources
-      for (const source of options.sources) {
-        for (const importName of source.names) {
-          if (typeof importName === 'string') {
-            ctx.autoImports.push({ name: importName, as: importName, from: source.from })
-          } else {
-            ctx.autoImports.push({ name: importName.name, as: importName.as || importName.name, from: source.from })
-          }
-        }
-      }
+      ctx.autoImports = options.sources.flatMap(source => source.names.map(
+        importName => typeof importName === 'string'
+          ? { name: importName, as: importName, from: source.from }
+          : { name: importName.name, as: importName.as || importName.name, from: source.from }
+      ))
       // Scan composables/
       for (const composablesDir of composablesDirs) {
         await scanForComposables(composablesDir, ctx.autoImports)
