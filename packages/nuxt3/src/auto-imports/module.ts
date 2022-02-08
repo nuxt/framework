@@ -31,17 +31,6 @@ export default defineNuxtModule<AutoImportsOptions>({
     // Create a context to share state between module internals
     const ctx = createAutoImportContext(options)
 
-    // Resolve autoimports from sources
-    for (const source of options.sources) {
-      for (const importName of source.names) {
-        if (typeof importName === 'string') {
-          ctx.autoImports.push({ name: importName, as: importName, from: source.from })
-        } else {
-          ctx.autoImports.push({ name: importName.name, as: importName.as || importName.name, from: source.from })
-        }
-      }
-    }
-
     // composables/ dirs
     let composablesDirs = [
       join(nuxt.options.srcDir, 'composables'),
@@ -76,7 +65,18 @@ export default defineNuxtModule<AutoImportsOptions>({
       addWebpackPlugin(TransformPlugin.webpack(ctx))
     }
 
-    const updateAutoImports = async () => {
+    const regenerateAutoImports = async () => {
+      ctx.autoImports = []
+      // Resolve autoimports from sources
+      for (const source of options.sources) {
+        for (const importName of source.names) {
+          if (typeof importName === 'string') {
+            ctx.autoImports.push({ name: importName, as: importName, from: source.from })
+          } else {
+            ctx.autoImports.push({ name: importName.name, as: importName.as || importName.name, from: source.from })
+          }
+        }
+      }
       // Scan composables/
       for (const composablesDir of composablesDirs) {
         await scanForComposables(composablesDir, ctx.autoImports)
@@ -86,7 +86,8 @@ export default defineNuxtModule<AutoImportsOptions>({
       // Update context
       updateAutoImportContext(ctx)
     }
-    await updateAutoImports()
+
+    await regenerateAutoImports()
 
     // Generate types
     addDeclarationTemplates(ctx)
@@ -101,7 +102,7 @@ export default defineNuxtModule<AutoImportsOptions>({
     nuxt.hook('builder:watch', async (_, path) => {
       const _resolved = resolve(nuxt.options.srcDir, path)
       if (composablesDirs.find(dir => _resolved.startsWith(dir))) {
-        await updateAutoImports()
+        await regenerateAutoImports()
         await nuxt.callHook('builder:generateApp')
       }
     })
