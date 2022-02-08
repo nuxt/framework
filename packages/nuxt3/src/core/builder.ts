@@ -48,8 +48,9 @@ function watch (nuxt: Nuxt) {
 }
 
 async function bundle (nuxt: Nuxt) {
-  const builder = nuxt.options.build.builder
-  const { bundle } = typeof builder === 'string' ? await import(builder) : builder
+  const { bundle } = typeof nuxt.options.builder === 'string'
+    ? await import(nuxt.options.builder)
+    : nuxt.options.builder
   try {
     return bundle(nuxt)
   } catch (error) {
