@@ -19,9 +19,10 @@
     "unbuild": "latest"
   },
   "dependencies": {
+    "c12": "^0.1.1",
     "create-require": "^1.1.1",
     "defu": "^5.0.1",
-    "jiti": "^1.12.9",
+    "jiti": "^1.12.15",
     "pathe": "^0.2.0",
     "postcss-import-resolver": "^2.0.0",
     "scule": "^0.2.1",

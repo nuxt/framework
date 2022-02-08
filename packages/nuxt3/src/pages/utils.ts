@@ -1,8 +1,10 @@
 import { basename, extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
-import type { Nuxt, NuxtPage } from '@nuxt/schema'
-import { resolveFiles } from '@nuxt/kit'
+import type { Nuxt, NuxtMiddleware, NuxtPage } from '@nuxt/schema'
+import { resolveFiles, useNuxt } from '@nuxt/kit'
 import { kebabCase, pascalCase } from 'scule'
+import { genImport, genDynamicImport, genArrayFromRaw } from 'knitwork'
+import escapeRE from 'escape-string-regexp'
 
 enum SegmentParserState {
   initial,
@@ -37,7 +39,7 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
 
   for (const file of files) {
     const segments = relative(pagesDir, file)
-      .replace(new RegExp(`${extname(file)}$`), '')
+      .replace(new RegExp(`${escapeRE(extname(file))}$`), '')
       .split('/')
 
     const route: NuxtPage = {
@@ -219,25 +221,45 @@ export async function resolveLayouts (nuxt: Nuxt) {
   const layoutDir = resolve(nuxt.options.srcDir, nuxt.options.dir.layouts)
   const files = await resolveFiles(layoutDir, `*{${nuxt.options.extensions.join(',')}}`)
 
-  return files.map((file) => {
-    const name = kebabCase(basename(file).replace(extname(file), '')).replace(/["']/g, '')
-    return { name, file }
-  })
+  const layouts = files.map(file => ({ name: getNameFromPath(file), file }))
+  await nuxt.callHook('pages:layouts:extend', layouts)
+  return layouts
 }
 
-export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = new Set()): { imports: Set<string>, routes: NuxtPage[]} {
+export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = new Set()): { imports: Set<string>, routes: string } {
   return {
     imports: metaImports,
-    routes: routes.map((route) => {
+    routes: genArrayFromRaw(routes.map((route) => {
       const file = normalize(route.file)
-      const metaImportName = `${pascalCase(file.replace(/[^\w]/g, ''))}Meta`
-      metaImports.add(`import { meta as ${metaImportName} } from '${file}?macro=true'`)
+      const metaImportName = getImportName(file) + 'Meta'
+      metaImports.add(genImport(`${file}?macro=true`, [{ name: 'meta', as: metaImportName }]))
       return {
-        ...route,
+        ...Object.fromEntries(Object.entries(route).map(([key, value]) => [key, JSON.stringify(value)])),
         children: route.children ? normalizeRoutes(route.children, metaImports).routes : [],
-        meta: route.meta || `{${metaImportName}}` as any,
-        component: `{() => import('${file}')}`
+        meta: route.meta ? JSON.stringify(route.meta) : metaImportName,
+        component: genDynamicImport(file)
       }
-    })
+    }))
   }
+}
+
+export async function resolveMiddleware (): Promise<NuxtMiddleware[]> {
+  const nuxt = useNuxt()
+  const middlewareDir = resolve(nuxt.options.srcDir, nuxt.options.dir.middleware)
+  const files = await resolveFiles(middlewareDir, `*{${nuxt.options.extensions.join(',')}}`)
+  const middleware = files.map(path => ({ name: getNameFromPath(path), path, global: hasSuffix(path, '.global') }))
+  await nuxt.callHook('pages:middleware:extend', middleware)
+  return middleware
+}
+
+function getNameFromPath (path: string) {
+  return kebabCase(basename(path).replace(extname(path), '')).replace(/["']/g, '').replace('.global', '')
+}
+
+function hasSuffix (path: string, suffix: string) {
+  return basename(path).replace(extname(path), '').endsWith(suffix)
+}
+
+export function getImportName (name: string) {
+  return pascalCase(name).replace(/[^\w]/g, '')
 }

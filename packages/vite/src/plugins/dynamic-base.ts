@@ -1,4 +1,5 @@
 import { createUnplugin } from 'unplugin'
+import escapeRE from 'escape-string-regexp'
 import type { Plugin } from 'vite'
 
 interface DynamicBasePluginOptions {
@@ -6,8 +7,6 @@ interface DynamicBasePluginOptions {
   devAppConfig?: Record<string, any>
   globalPublicPath?: string
 }
-
-const escapeRE = (str: string) => str.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
 
 export const RelativeAssetPlugin = function (): Plugin {
   return {
@@ -18,12 +17,13 @@ export const RelativeAssetPlugin = function (): Plugin {
 
       for (const file in bundle) {
         const asset = bundle[file]
-        if (asset.type === 'asset') {
+        if (asset.type === 'asset' && typeof asset.source === 'string' && asset.fileName.endsWith('.css')) {
           const depth = file.split('/').length - 1
           const assetBase = depth === 0 ? '.' : Array.from({ length: depth }).map(() => '..').join('/')
-          asset.source = asset.source.toString().replace(assetRE, r => r.replace(/\/__NUXT_BASE__/g, assetBase))
           const publicBase = Array.from({ length: depth + 1 }).map(() => '..').join('/')
-          asset.source = asset.source.toString().replace(/\/__NUXT_BASE__/g, publicBase)
+          asset.source = asset.source
+            .replace(assetRE, r => r.replace(/\/__NUXT_BASE__/g, assetBase))
+            .replace(/\/__NUXT_BASE__/g, publicBase)
         }
       }
     }

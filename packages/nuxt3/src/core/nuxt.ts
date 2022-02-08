@@ -44,10 +44,10 @@ async function initNuxt (nuxt: Nuxt) {
   // Add nuxt3 types
   nuxt.hook('prepare:types', (opts) => {
     opts.references.push({ types: 'nuxt3' })
-    opts.references.push({ path: resolve(nuxt.options.buildDir, 'plugins.d.ts') })
+    opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/plugins.d.ts') })
     // Add vue shim
     if (nuxt.options.typescript.shim) {
-      opts.references.push({ path: resolve(nuxt.options.buildDir, 'vue-shim.d.ts') })
+      opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/vue-shim.d.ts') })
     }
   })
 
@@ -101,7 +101,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   // Temporary until finding better placement for each
   options.appDir = options.alias['#app'] = resolve(distDir, 'app')
   options._majorVersion = 3
-  options.buildModules.push(pagesModule, metaModule, componentsModule, autoImportsModule)
+  options._modules.push(pagesModule, metaModule, componentsModule, autoImportsModule)
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))
   options.alias['vue-demi'] = resolve(options.appDir, 'compat/vue-demi')
   options.alias['@vue/composition-api'] = resolve(options.appDir, 'compat/capi')
