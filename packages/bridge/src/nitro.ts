@@ -216,15 +216,13 @@ function createNuxt2DevServer (nitroContext: NitroContext) {
     if (!listener) {
       throw new Error('There is no server listener to call `server.renderRoute()`')
     }
-    const r = await fetch(joinURL(listener.url, route), {
+    const res = await fetch(joinURL(listener.url, route), {
       headers: { 'nuxt-render-context': stringifyQuery(renderContext) }
     })
 
-    const html = await r.text()
+    const html = await res.text()
 
-    if (r.status === 500) {
-      return { html, error: r.statusText }
-    }
+    if (!res.ok) { return { html, error: res.statusText } }
 
     return { html }
   }
