@@ -121,7 +121,7 @@ async function compile (compiler: Compiler) {
     const compilersWatching: Watching[] = []
 
     nuxt.hook('close', async () => {
-      await Promise.all(compilersWatching.map(watching => pify(watching.close)()))
+      await Promise.all(compilersWatching.map(watching => pify(watching.close.bind(watching))()))
     })
 
     // Client build
