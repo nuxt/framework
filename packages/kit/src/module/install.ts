@@ -4,6 +4,23 @@ import { resolveModule, requireModule, importModule } from '../internal/cjs'
 import { resolveAlias } from '../resolve'
 import { useModuleContainer } from './container'
 
+/** Installs a module on a Nuxt instance. */
+export async function installModule (moduleToInstall: string | NuxtModule, _inlineOptions?: any, _nuxt?: Nuxt) {
+  const nuxt = useNuxt()
+  const { nuxtModule, inlineOptions } = await normalizeModule(moduleToInstall, _inlineOptions)
+
+  // Call module
+  await nuxtModule.call(useModuleContainer(), inlineOptions, nuxt)
+
+  nuxt.options._installedModules = nuxt.options._installedModules || []
+  nuxt.options._installedModules.push({
+    meta: await nuxtModule.getMeta?.(),
+    entryPath: typeof moduleToInstall === 'string' ? resolveAlias(moduleToInstall, nuxt.options.alias) : undefined
+  })
+}
+
+// --- Internal ---
+
 async function normalizeModule (nuxtModule: string | NuxtModule, inlineOptions?: any) {
   const nuxt = useNuxt()
 
@@ -28,20 +45,5 @@ async function normalizeModule (nuxtModule: string | NuxtModule, inlineOptions?:
     throw new TypeError('Nuxt module should be a function: ' + nuxtModule)
   }
 
-  return [nuxtModule, inlineOptions] as [NuxtModule<any>, undefined | Record<string, any>]
-}
-
-/** Installs a module on a Nuxt instance. */
-export async function installModule (moduleToInstall: string | NuxtModule, inlineOptions?: any, _nuxt?: Nuxt) {
-  const nuxt = useNuxt()
-  const [nuxtModule, options] = await normalizeModule(moduleToInstall, inlineOptions)
-
-  // Call module
-  await nuxtModule.call(useModuleContainer(), options, nuxt)
-
-  nuxt.options._installedModules = nuxt.options._installedModules || []
-  nuxt.options._installedModules.push({
-    meta: await nuxtModule.getMeta?.(),
-    entryPath: typeof moduleToInstall === 'string' ? resolveAlias(moduleToInstall, nuxt.options.alias) : undefined
-  })
+  return { nuxtModule, inlineOptions } as { nuxtModule: NuxtModule<any>, inlineOptions: undefined | Record<string, any> }
 }
