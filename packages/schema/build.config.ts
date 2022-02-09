@@ -9,7 +9,7 @@ export default defineBuildConfig({
       name: 'config',
       builder: 'untyped',
       defaults: {
-        rootDir: '/project/'
+        rootDir: '/path/to/your/app/'
       }
     },
     'src/index'

@@ -506,9 +506,6 @@ export default {
    * @note Within a webpack context (image sources, CSS - but not JavaScript) you _must_ access
    * your alias by prefixing it with `~`.
    *
-   * @note If you are using TypeScript and want to use the alias you define within
-   * your TypeScript files, you will need to add the aliases to your `paths` object within `tsconfig.json` .
-   *
    * @example
    * ```js
    * import { resolve } from 'pathe'
