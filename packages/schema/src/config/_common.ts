@@ -506,6 +506,8 @@ export default {
    * @note Within a webpack context (image sources, CSS - but not JavaScript) you _must_ access
    * your alias by prefixing it with `~`.
    *
+   * @note These aliases will be automatically added to the generated `.nuxt/tsconfig.json` .
+   *
    * @example
    * ```js
    * import { resolve } from 'pathe'
