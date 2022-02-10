@@ -68,6 +68,14 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
   }
 })
 
+const starts = {
+  '{': '}',
+  '[': ']',
+  '(': ')',
+  '<': '>',
+  '"': '"',
+  "'": "'"
+}
 
 function extractObject (code: string) {
   // Strip comments
