@@ -45,7 +45,6 @@
     "eslint": "^8.8.0",
     "eslint-plugin-jsdoc": "^37.8.2",
     "execa": "^6.0.0",
-    "get-port-please": "^2.3.0",
     "globby": "^13.1.1",
     "jiti": "^1.12.15",
     "lerna": "^4.0.0",
