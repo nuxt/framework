@@ -13,7 +13,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
     enforce: 'post',
     transformInclude (id) {
       const { search, pathname } = parseURL(id)
-      return pathname.endsWith('.vue') || parseQuery(search).macro
+      return pathname.endsWith('.vue') || !!parseQuery(search).macro
     },
     transform (code, id) {
       const originalCode = code
