@@ -41,7 +41,7 @@ export function initNitro (nuxt: Nuxt) {
 
   // Add typed route responses
   nuxt.hook('prepare:types', (opts) => {
-    opts.references.push({ path: resolve(nuxt.options.buildDir, 'nitro.d.ts') })
+    opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/nitro.d.ts') })
   })
 
   // Add nitro client plugin (to inject $fetch helper)
@@ -59,7 +59,7 @@ export function initNitro (nuxt: Nuxt) {
     await nuxt.callHook('nitro:context', nitroDevContext)
 
     // Resolve middleware
-    const { middleware, legacyMiddleware } = resolveMiddleware(nuxt)
+    const { middleware, legacyMiddleware } = await resolveMiddleware(nuxt)
     nuxt.server.setLegacyMiddleware(legacyMiddleware)
     nitroContext.middleware.push(...middleware)
     nitroDevContext.middleware.push(...middleware)

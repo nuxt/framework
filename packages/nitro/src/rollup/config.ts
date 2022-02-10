@@ -18,6 +18,7 @@ import devalue from '@nuxt/devalue'
 
 import type { Preset } from 'unenv'
 import { sanitizeFilePath } from 'mlly'
+import { genImport } from 'knitwork'
 import { NitroContext } from '../context'
 import { resolvePath } from '../utils'
 import { pkgDir } from '../dirs'
@@ -155,7 +156,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
     values: {
       'process.env.NODE_ENV': nitroContext._nuxt.dev ? '"development"' : '"production"',
       'typeof window': '"undefined"',
-      'global.': 'globalThis.',
+      ...Object.fromEntries([';', '(', '{', '}', ' ', '\t', '\n'].map(d => [`${d}global.`, `${d}globalThis.`])),
       'process.server': 'true',
       'process.client': 'false',
       'process.env.NUXT_NO_SSR': JSON.stringify(!nitroContext._nuxt.ssr),
@@ -215,7 +216,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
 
   // Polyfill
   rollupConfig.plugins.push(virtual({
-    '#polyfill': env.polyfill.map(p => `import '${p}';`).join('\n')
+    '#polyfill': env.polyfill.map(p => genImport(p)).join('\n')
   }))
 
   // https://github.com/rollup/plugins/tree/master/packages/alias

@@ -2,7 +2,11 @@
   "extends": [
     "@nuxtjs"
   ],
+  "ignorePaths": [
+    "**/bridge/**"
+  ],
   "ignoreDeps": [
+    "vitest",
     "docus",
     "@docus/app",
     "@docus/github",

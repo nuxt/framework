@@ -44,11 +44,13 @@ async function initNuxt (nuxt: Nuxt) {
   // Add nuxt3 types
   nuxt.hook('prepare:types', (opts) => {
     opts.references.push({ types: 'nuxt3' })
-    opts.references.push({ path: resolve(nuxt.options.buildDir, 'plugins.d.ts') })
+    opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/plugins.d.ts') })
     // Add vue shim
     if (nuxt.options.typescript.shim) {
-      opts.references.push({ path: resolve(nuxt.options.buildDir, 'vue-shim.d.ts') })
+      opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/vue-shim.d.ts') })
     }
+    // Add module augmentations directly to NuxtConfig
+    opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/schema.d.ts') })
   })
 
   // Add import protection
@@ -82,9 +84,9 @@ async function initNuxt (nuxt: Nuxt) {
 
   for (const m of modulesToInstall) {
     if (Array.isArray(m)) {
-      await installModule(m[0], m[1], nuxt)
+      await installModule(m[0], m[1])
     } else {
-      await installModule(m, {}, nuxt)
+      await installModule(m, {})
     }
   }
 
