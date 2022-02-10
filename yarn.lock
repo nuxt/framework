@@ -3186,7 +3186,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/ui@npm:@nuxt/ui-edge@^0.0.0-27376194.a859489":
+"@nuxt/ui@npm:@nuxt/ui-edge@latest":
   version: 0.0.0-27376194.a859489
   resolution: "@nuxt/ui-edge@npm:0.0.0-27376194.a859489"
   dependencies:
@@ -14456,8 +14456,8 @@ __metadata:
   linkType: hard
 
 "nitropack@npm:nitropack-edge@latest":
-  version: 0.0.0-27408171.17c3c60
-  resolution: "nitropack-edge@npm:0.0.0-27408171.17c3c60"
+  version: 0.0.0-27408562.5d3ca2f
+  resolution: "nitropack-edge@npm:0.0.0-27408562.5d3ca2f"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@netlify/functions": ^0.11.0
@@ -14518,7 +14518,7 @@ __metadata:
   bin:
     nitro: ./dist/cli.mjs
     nitropack: ./dist/cli.mjs
-  checksum: 2d36c5bab7795e224bb17f9a67f108fb11795455a09314a96667203fbce605e7ed2cde7f88447136f4dc0fd79752f666bc83f55a5f74063dd8329e35014760db
+  checksum: 525586f69228de053f7b7513acaf7fde635ca0b1c74325f907a07510c535791d061811e97601484fcd62792db84aa394c2c7693166cc4f63c0e11b3431ceb4d3
   languageName: node
   linkType: hard
 
