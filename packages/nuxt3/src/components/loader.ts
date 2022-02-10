@@ -43,5 +43,7 @@ function transform (content: string, components: Component[]) {
     return full
   })
 
+  if (!imports || newContent === content) { return }
+
   return `${imports}\n${newContent}`
 }
