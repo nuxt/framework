@@ -11231,6 +11231,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"get-port-please@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "get-port-please@npm:2.3.0"
+  dependencies:
+    fs-memo: ^1.2.0
+  checksum: ae361940392d44a3157f9256e366ea4f979202d7c52a7d323eebc0cbe24e32b1b196405be0b06af1d898db0f6d36b859479489f849e7ee698aefa9db1110c292
+  languageName: node
+  linkType: hard
+
 "get-port@npm:^5.1.1":
   version: 5.1.1
   resolution: "get-port@npm:5.1.1"
@@ -15069,6 +15078,7 @@ __metadata:
     eslint: ^8.8.0
     eslint-plugin-jsdoc: ^37.8.2
     execa: ^6.0.0
+    get-port-please: ^2.3.0
     globby: ^13.1.1
     jiti: ^1.12.15
     lerna: ^4.0.0
