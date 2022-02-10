@@ -14440,6 +14440,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nitropack@link:../nitropack::locator=nuxt-framework%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "nitropack@link:../nitropack::locator=nuxt-framework%40workspace%3A."
+  languageName: node
+  linkType: soft
+
 "no-case@npm:^2.2.0":
   version: 2.3.2
   resolution: "no-case@npm:2.3.2"
@@ -15119,6 +15125,7 @@ __metadata:
     knitwork: ^0.1.0
     mlly: ^0.4.2
     murmurhash-es: ^0.1.1
+    nitropack: "npm:nitropack-edge@latest"
     nuxi: 3.0.0
     ohmyfetch: ^0.4.15
     pathe: ^0.2.0

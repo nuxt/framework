@@ -30,6 +30,7 @@
     "nuxt3": "workspace:./packages/nuxt3",
     "@nuxt/ui": "npm:@nuxt/ui-edge@^0.0.0-27376194.a859489",
     "unbuild": "^0.6.9",
+    "nitropack": "link:../nitropack",
     "jiti": "^1.12.15"
   },
   "devDependencies": {
