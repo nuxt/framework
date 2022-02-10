@@ -13,6 +13,16 @@ const server = cert && key ? new HttpsServer({ key, cert }, handle) : new HttpSe
 const port = (destr(process.env.NUXT_PORT || process.env.PORT) || 3000) as number
 const hostname = process.env.NUXT_HOST || process.env.HOST || 'localhost'
 
+if (process.env.NITRO_TIMEOUT) {
+  server.timeout = destr(process.env.NITRO_TIMEOUT) as number
+}
+if (process.env.NITRO_KEEP_ALIVE_TIMEOUT) {
+  server.keepAliveTimeout = destr(process.env.NITRO_KEEP_ALIVE_TIMEOUT) as number
+}
+if (process.env.NITRO_HEADERS_TIMEOUT) {
+  server.headersTimeout = destr(process.env.NITRO_HEADERS_TIMEOUT) as number
+}
+
 // @ts-ignore
 server.listen(port, hostname, (err) => {
   if (err) {
