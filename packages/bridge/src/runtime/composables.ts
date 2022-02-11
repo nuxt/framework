@@ -2,7 +2,7 @@ import { getCurrentInstance, onBeforeUnmount, isRef, watch, reactive, toRef, isR
 import type { CombinedVueInstance } from 'vue/types/vue'
 import type { MetaInfo } from 'vue-meta'
 import type VueRouter from 'vue-router'
-import type { Route } from 'vue-router'
+import type { Location, Route } from 'vue-router'
 import type { RuntimeConfig } from '@nuxt/schema'
 import { useNuxtApp } from './app'
 
@@ -180,3 +180,11 @@ export const abortNavigation = (err?: Error | string) => {
   }
   return false
 }
+
+type RouteMiddlewareReturn = void | Error | string | Location | boolean
+
+export interface RouteMiddleware {
+  (to: Route, from: Route): RouteMiddlewareReturn | Promise<RouteMiddlewareReturn>
+}
+
+export const defineNuxtRouteMiddleware = (middleware: RouteMiddleware) => middleware

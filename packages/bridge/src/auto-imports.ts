@@ -33,6 +33,7 @@ export async function setupAutoImports () {
     autoImports.push({ name: 'addRouteMiddleware', as: 'addRouteMiddleware', from: '#app' })
     autoImports.push({ name: 'navigateTo', as: 'navigateTo', from: '#app' })
     autoImports.push({ name: 'abortNavigation', as: 'abortNavigation', from: '#app' })
+    autoImports.push({ name: 'defineNuxtRouteMiddleware', as: 'defineNuxtRouteMiddleware', from: '#app' })
 
     // Add bridge-only auto-imports
     autoImports.push({ name: 'useNuxt2Meta', as: 'useNuxt2Meta', from: '#app' })
