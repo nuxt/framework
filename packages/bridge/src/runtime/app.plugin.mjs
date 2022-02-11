@@ -48,7 +48,7 @@ export default async (ctx, inject) => {
   nuxtApp.hook = nuxtApp.hooks.hook
   nuxtApp.callHook = nuxtApp.hooks.callHook
 
-  const middleware = await import('#build/middleware')
+  const middleware = await import('#build/middleware').then(r => r.default)
   nuxtApp._middleware = nuxtApp._middleware || {
     global: [],
     named: middleware
