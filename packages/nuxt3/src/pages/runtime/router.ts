@@ -8,7 +8,7 @@ import {
 } from 'vue-router'
 import NuxtPage from './page'
 import NuxtLayout from './layout'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { callWithNuxtAsync, defineNuxtPlugin, useRuntimeConfig } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
@@ -92,7 +92,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         console.warn(`Unknown middleware: ${entry}. Valid options are ${Object.keys(namedMiddleware).join(', ')}.`)
       }
 
-      const result = await callWithNuxt(nuxtApp, middleware, [to, from])
+      const result = await callWithNuxtAsync(nuxtApp, middleware, [to, from])
       if (result || result === false) { return result }
     }
   })
