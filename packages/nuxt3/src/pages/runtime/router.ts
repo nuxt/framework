@@ -105,7 +105,12 @@ export default defineNuxtPlugin((nuxtApp) => {
     if (process.server) {
       router.push(nuxtApp.ssrContext.url)
 
-      router.afterEach((to) => {
+      router.afterEach((to, from, failure) => {
+        if (failure) {
+          // TODO: https://github.com/nuxt/framework/discussions/559
+          nuxtApp.ssrContext.res.statusCode = 401
+          nuxtApp.ssrContext.res.end()
+        }
         if (to.fullPath !== nuxtApp.ssrContext.url) {
           nuxtApp.ssrContext.res.setHeader('Location', to.fullPath)
         }
