@@ -12,10 +12,10 @@ export const useRoute = () => {
 
 export interface PageMeta {
   [key: string]: any
-  pageTransition?: false | TransitionProps
-  layoutTransition?: false | TransitionProps
-  key?: string | ((route: RouteLocationNormalizedLoaded) => string)
-  keepalive?: false | KeepAliveProps
+  pageTransition?: boolean | TransitionProps
+  layoutTransition?: boolean | TransitionProps
+  key?: false | string | ((route: RouteLocationNormalizedLoaded) => string)
+  keepalive?: boolean | KeepAliveProps
 }
 
 declare module 'vue-router' {
@@ -25,7 +25,7 @@ declare module 'vue-router' {
 const warnRuntimeUsage = (method: string) =>
   console.warn(
     `${method}() is a compiler-hint helper that is only usable inside ` +
-      '<script setup> of a single file component. Its arguments should be ' +
+      'the script block of a single file component. Its arguments should be ' +
       'compiled away and passing it at runtime has no effect.'
   )
 
