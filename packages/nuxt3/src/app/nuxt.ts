@@ -191,6 +191,22 @@ export function callWithNuxt<T extends (...args: any[]) => any> (nuxt: NuxtApp, 
 }
 
 /**
+ * Async version of callWithNuxt
+ *
+ * @param nuxt A Nuxt instance
+ * @param setup The function to call
+ */
+export async function callWithNuxtAsync<T extends (...args: any[]) => any> (nuxt: NuxtApp, setup: T, args?: Parameters<T>) {
+  setNuxtAppInstance(nuxt)
+  const p: ReturnType<T> =  args ? await setup(...args as Parameters<T>) : await setup()
+  if (process.server) {
+    // Unset nuxt instance to prevent context-sharing in server-side
+    setNuxtAppInstance(null)
+  }
+  return p
+}
+
+/**
  * Returns the current Nuxt instance.
  */
 export function useNuxtApp (): NuxtApp {
