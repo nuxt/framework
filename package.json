@@ -23,7 +23,7 @@
     "test:presets": "vitest test/presets",
     "test:bridge:webpack": "TEST_BRIDGE=1 yarn test:presets",
     "test:bridge:vite": "TEST_BRIDGE_VITE=1 TEST_BRIDGE=1 yarn test:presets",
-    "test:types": "cd test/fixtures/basic && npx nuxi prepare && npx vue-tsc --noEmit",
+    "test:types": "yarn run nuxi prepare test/fixtures/basic && cd test/fixtures/basic && npx vue-tsc --noEmit",
     "test:unit": "vitest packages",
     "version": "yarn && git add yarn.lock"
   },
