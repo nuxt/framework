@@ -107,7 +107,6 @@ export default defineNuxtPlugin((nuxtApp) => {
 
       router.afterEach((to, from, failure) => {
         if (failure) {
-          // TODO: https://github.com/nuxt/framework/discussions/559
           nuxtApp.ssrContext.res.statusCode = 401
           nuxtApp.ssrContext.res.end()
         }
