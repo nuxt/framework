@@ -93,6 +93,11 @@ export default defineNuxtPlugin((nuxtApp) => {
       }
 
       const result = await callWithNuxt(nuxtApp, middleware, [to, from])
+      if (process.server) {
+        if (result === false || result instanceof Error) {
+          throw result || new Error(`Route navigation aborted: ${nuxtApp.ssrContext.url}`)
+        }
+      }
       if (result || result === false) { return result }
     }
   })
@@ -105,24 +110,25 @@ export default defineNuxtPlugin((nuxtApp) => {
     if (process.server) {
       router.push(nuxtApp.ssrContext.url)
 
-      router.afterEach((to, from, failure) => {
-        if (failure) {
-          nuxtApp.ssrContext.res.statusCode = 401
-          nuxtApp.ssrContext.res.end()
-        }
+      router.afterEach((to) => {
         if (to.fullPath !== nuxtApp.ssrContext.url) {
           nuxtApp.ssrContext.res.setHeader('Location', to.fullPath)
         }
       })
     }
 
-    await router.isReady()
+    try {
+      await router.isReady()
 
-    const is404 = router.currentRoute.value.matched.length === 0
-    if (process.server && is404) {
-      const error = new Error(`Page not found: ${nuxtApp.ssrContext.url}`)
-      // @ts-ignore
-      error.statusCode = 404
+      const is404 = router.currentRoute.value.matched.length === 0
+      if (process.server && is404) {
+        const error = new Error(`Page not found: ${nuxtApp.ssrContext.url}`)
+        // @ts-ignore
+        error.statusCode = 404
+        nuxtApp.ssrContext.error = error
+      }
+    } catch (error) {
+      error.statusCode = error.statusCode || 500
       nuxtApp.ssrContext.error = error
     }
   })
