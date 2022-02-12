@@ -3,7 +3,9 @@ import type { Nuxt, NuxtApp } from '@nuxt/schema'
 import { genArrayFromRaw, genDynamicImport, genExport, genImport, genString } from 'knitwork'
 
 import { isAbsolute, join, relative } from 'pathe'
+import { resolveSchema, generateTypes } from 'untyped'
 import escapeRE from 'escape-string-regexp'
+import { deleteSchemaDefaults, normalizeUntypedOutput, withDescription } from './template-utils'
 
 export interface TemplateContext {
   nuxt: Nuxt
@@ -128,6 +130,25 @@ export const schemaTemplate = {
       `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
       ),
       '  }',
+      normalizeUntypedOutput(
+        generateTypes(
+          deleteSchemaDefaults(
+            resolveSchema(nuxt.options.publicRuntimeConfig)
+          ),
+          'PublicRuntimeConfig'
+        )
+      ),
+      normalizeUntypedOutput(
+        generateTypes(
+          deleteSchemaDefaults(
+            withDescription(
+              resolveSchema(nuxt.options.privateRuntimeConfig),
+              'This value is only accessible from server-side.'
+            )
+          ),
+          'PrivateRuntimeConfig'
+        )
+      ),
       '}'
     ].join('\n')
   }
