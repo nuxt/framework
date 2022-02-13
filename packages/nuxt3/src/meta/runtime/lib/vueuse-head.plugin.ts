@@ -7,6 +7,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   const head = createHead()
 
   nuxtApp.vueApp.use(head)
+  nuxtApp.hook('app:mounted', () => watchEffect(() => head.updateDOM()))
 
   nuxtApp._useMeta = (meta: MetaObject) => {
     const headObj = ref(meta as any)
@@ -14,22 +15,11 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     if (process.server) { return }
 
-    if (nuxtApp.isHydrating) {
-      nuxtApp.hook('app:mounted', () => watchEffect(() => {
-        head.updateDOM()
-      }))
-    } else {
-      watchEffect(() => {
-        head.updateDOM()
-      })
-    }
-
     const vm = getCurrentInstance()
     if (!vm) { return }
 
     onBeforeUnmount(() => {
       head.removeHeadObjs(headObj)
-      head.updateDOM()
     })
   }
 
