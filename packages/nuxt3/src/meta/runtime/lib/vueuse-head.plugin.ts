@@ -1,5 +1,5 @@
 import { createHead, renderHeadToString } from '@vueuse/head'
-import { ref, watchEffect, onBeforeUnmount, getCurrentInstance, nextTick } from 'vue'
+import { ref, watchEffect, onBeforeUnmount, getCurrentInstance } from 'vue'
 import type { MetaObject } from '..'
 import { defineNuxtPlugin } from '#app'
 
@@ -14,11 +14,15 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     if (process.server) { return }
 
-    nextTick(() =>
+    if (nuxtApp.isHydrating) {
+      nuxtApp.hook('app:mounted', () => watchEffect(() => {
+        head.updateDOM()
+      }))
+    } else {
       watchEffect(() => {
         head.updateDOM()
       })
-    )
+    }
 
     const vm = getCurrentInstance()
     if (!vm) { return }
