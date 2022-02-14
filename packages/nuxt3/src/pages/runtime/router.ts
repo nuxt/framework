@@ -6,6 +6,7 @@ import {
   RouterLink,
   NavigationGuard
 } from 'vue-router'
+import { createError } from 'h3'
 import NuxtPage from './page'
 import NuxtLayout from './layout'
 import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig } from '#app'
@@ -95,7 +96,11 @@ export default defineNuxtPlugin((nuxtApp) => {
       const result = await callWithNuxt(nuxtApp, middleware, [to, from])
       if (process.server) {
         if (result === false || result instanceof Error) {
-          throw result || new Error(`Route navigation aborted: ${nuxtApp.ssrContext.url}`)
+          const error = result || createError({
+            statusMessage: `Route navigation aborted: ${nuxtApp.ssrContext.url}`
+          })
+          nuxtApp.ssrContext.error = error
+          throw error
         }
       }
       if (result || result === false) { return result }
@@ -128,7 +133,6 @@ export default defineNuxtPlugin((nuxtApp) => {
         nuxtApp.ssrContext.error = error
       }
     } catch (error) {
-      error.statusCode = error.statusCode || 500
       nuxtApp.ssrContext.error = error
     }
   })
