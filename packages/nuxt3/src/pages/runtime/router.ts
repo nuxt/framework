@@ -127,10 +127,10 @@ export default defineNuxtPlugin((nuxtApp) => {
 
       const is404 = router.currentRoute.value.matched.length === 0
       if (process.server && is404) {
-        const error = new Error(`Page not found: ${nuxtApp.ssrContext.url}`)
-        // @ts-ignore
-        error.statusCode = 404
-        nuxtApp.ssrContext.error = error
+        throw createError({
+          statusCode: 404,
+          statusMessage: `Page not found: ${nuxtApp.ssrContext.url}`
+        })
       }
     } catch (error) {
       nuxtApp.ssrContext.error = error
