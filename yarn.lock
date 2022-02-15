@@ -2646,7 +2646,7 @@ __metadata:
     unbuild: latest
     unplugin: ^0.3.2
     unplugin-vue2-script-setup: 0.9.2
-    vite: ^2.7.13
+    vite: ^2.8.2
     vite-plugin-vue2: ^1.9.3
     vue: ^2
     vue-router: ^3
