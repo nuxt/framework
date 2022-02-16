@@ -2,6 +2,7 @@ import { resolve, normalize } from 'pathe'
 import TimeFixPlugin from 'time-fix-plugin'
 import WebpackBar from 'webpackbar'
 import webpack from 'webpack'
+import { logger } from '@nuxt/kit'
 import FriendlyErrorsWebpackPlugin from '@nuxt/friendly-errors-webpack-plugin'
 import escapeRegExp from 'escape-string-regexp'
 import { joinURL } from 'ufo'
@@ -92,7 +93,7 @@ function basePlugins (ctx: WebpackConfigContext) {
         if (state.hasErrors) {
           nuxt.callHook('bundler:error')
         } else {
-          nuxt.logger.success(`${state.name} ${state.message}`)
+          logger.success(`${state.name} ${state.message}`)
         }
       },
       allDone: () => {

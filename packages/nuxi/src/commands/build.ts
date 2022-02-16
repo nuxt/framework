@@ -1,5 +1,5 @@
 import { resolve } from 'pathe'
-
+import consola from 'consola'
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
 import { clearDir } from '../utils/fs'
@@ -24,7 +24,7 @@ export default defineNuxtCommand({
     await writeTypes(nuxt)
 
     nuxt.hook('build:error', (err) => {
-      nuxt.logger.error('Nuxt Build Error:', err)
+      consola.error('Nuxt Build Error:', err)
       process.exit(1)
     })
 

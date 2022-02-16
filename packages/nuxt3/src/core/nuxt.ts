@@ -2,7 +2,6 @@ import { resolve } from 'pathe'
 import { createHooks } from 'hookable'
 import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
 import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
-import Consola from 'consola'
 import pagesModule from '../pages/module'
 import metaModule from '../meta/module'
 import componentsModule from '../components/module'
@@ -24,10 +23,7 @@ export function createNuxt (options: NuxtOptions): Nuxt {
     hook: hooks.hook,
     ready: () => initNuxt(nuxt),
     close: () => Promise.resolve(hooks.callHook('close', nuxt)),
-    vfs: {},
-    logger: Consola.create({
-      level: options.logLevel
-    })
+    vfs: {}
   }
 
   return nuxt

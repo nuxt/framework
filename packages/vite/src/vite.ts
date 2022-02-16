@@ -2,6 +2,7 @@ import * as vite from 'vite'
 import { resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
+import { logger } from '@nuxt/kit'
 import type { Options } from '@vitejs/plugin-vue'
 import { sanitizeFilePath } from 'mlly'
 import { joinURL, withoutLeadingSlash } from 'ufo'
@@ -125,9 +126,9 @@ export async function bundle (nuxt: Nuxt) {
     })
 
     const start = Date.now()
-    warmupViteServer(server, ['/entry.mjs'], nuxt.logger)
-      .then(() => nuxt.logger.info(`Vite warmed up in ${Date.now() - start}ms`))
-      .catch(nuxt.logger.error)
+    warmupViteServer(server, ['/entry.mjs'])
+      .then(() => logger.info(`Vite warmed up in ${Date.now() - start}ms`))
+      .catch(logger.error)
   })
 
   await buildClient(ctx)

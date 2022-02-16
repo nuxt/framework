@@ -1,7 +1,7 @@
 import { promises as fsp } from 'fs'
 import defu from 'defu'
 import { applyDefaults } from 'untyped'
-import consola from 'consola'
+import { logger } from '@nuxt/kit'
 import { dirname } from 'pathe'
 import type { Nuxt, NuxtTemplate, NuxtModule, ModuleOptions, ModuleDefinition } from '@nuxt/schema'
 import { useNuxt, nuxtCtx } from '../context'
@@ -17,7 +17,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
   if (typeof definition === 'function') {
     // @ts-ignore
     definition = definition(useNuxt())
-    consola.warn('Module definition as function is deprecated and will be removed in the future versions', definition)
+    logger.warn('Module definition as function is deprecated and will be removed in the future versions', definition)
   }
 
   // Normalize definition and meta
@@ -61,7 +61,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
     if (definition.meta.compatibility) {
       const issues = await checkNuxtCompatibility(definition.meta.compatibility, nuxt)
       if (issues.length) {
-        consola.warn(`Module \`${definition.meta.name}\` is disabled due to incompatibility issues:\n${issues.toString()}`)
+        logger.warn(`Module \`${definition.meta.name}\` is disabled due to incompatibility issues:\n${issues.toString()}`)
         return
       }
     }

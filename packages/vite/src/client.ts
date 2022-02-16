@@ -3,7 +3,7 @@ import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { Connect } from 'vite'
-
+import { logger } from '@nuxt/kit'
 import { joinURL } from 'ufo'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { analyzePlugin } from './plugins/analyze'
@@ -79,7 +79,7 @@ export async function buildClient (ctx: ViteBuildContext) {
     const start = Date.now()
     await vite.build(clientConfig)
     await ctx.nuxt.callHook('build:resources', wpfs)
-    ctx.nuxt.logger.info(`Client built in ${Date.now() - start}ms`)
+    logger.info(`Client built in ${Date.now() - start}ms`)
   }
 
   await writeManifest(ctx)

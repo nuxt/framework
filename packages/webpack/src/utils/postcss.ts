@@ -1,10 +1,9 @@
 import fs from 'fs'
 import { resolve } from 'pathe'
-import type { Consola } from 'consola'
+import { logger, requireModule } from '@nuxt/kit'
 import { createCommonJS } from 'mlly'
 import { defaults, merge, cloneDeep } from 'lodash-es'
 import createResolver from 'postcss-import-resolver'
-import { requireModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 
 const isPureObject = obj => obj !== null && !Array.isArray(obj) && typeof obj === 'object'
@@ -30,7 +29,7 @@ export const orderPresets = {
 }
 
 let _postcssConfigFileWarningShown
-function postcssConfigFileWarning (logger: Consola) {
+function postcssConfigFileWarning () {
   if (_postcssConfigFileWarningShown) {
     return
   }
@@ -115,7 +114,7 @@ export class PostcssConfig {
       ]) {
         const configFile = resolve(dir, file)
         if (fs.existsSync(configFile)) {
-          postcssConfigFileWarning(this.nuxt.logger)
+          postcssConfigFileWarning()
           return configFile
         }
       }

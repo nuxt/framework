@@ -1,7 +1,6 @@
 import type { Hookable } from 'hookable'
 import type { NuxtHooks } from './hooks'
 import type { NuxtOptions } from './config'
-import type { Consola } from 'consola'
 
 export interface Nuxt {
   // Private fields
@@ -16,8 +15,6 @@ export interface Nuxt {
 
   ready: () => Promise<void>
   close: () => Promise<void>
-
-  logger: Consola
 
   /** The production or development server */
   server?: any
@@ -61,4 +58,4 @@ export interface NuxtApp {
 }
 
 type _TemplatePlugin = NuxtPlugin & NuxtTemplate
-export interface NuxtPluginTemplate extends _TemplatePlugin {}
+export interface NuxtPluginTemplate extends _TemplatePlugin { }

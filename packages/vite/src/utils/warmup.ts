@@ -1,7 +1,7 @@
-import type { Consola } from 'consola'
+import { logger } from '@nuxt/kit'
 import type { ViteDevServer } from 'vite'
 
-export async function warmupViteServer (server: ViteDevServer, entries: string[], logger: Consola) {
+export async function warmupViteServer (server: ViteDevServer, entries: string[]) {
   const warmedUrls = new Set<String>()
 
   const warmup = async (url: string) => {

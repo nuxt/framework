@@ -738,12 +738,5 @@ export default {
    */
   publicRuntimeConfig: {
     $resolve: (val: Record<string, any> = {}, get) => ({ ...val, app: defu(val.app, get('app')) })
-  },
-
-  /**
-   * Log level of Nuxt logs.
-   *
-   * @version 3
-   */
-  logLevel: isTest ? 1 : 3
+  }
 }
