@@ -41,7 +41,7 @@ export default defineNuxtCommand({
         const message = `${reason ? reason + '. ' : ''}${isRestart ? 'Restarting' : 'Starting'} nuxt...`
         server.setApp(createLoadingHandler(message))
         if (isRestart) {
-          currentNuxt?.logger.info(message)
+          consola.info(message)
         }
         if (currentNuxt) {
           await currentNuxt.close()

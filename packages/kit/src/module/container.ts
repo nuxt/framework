@@ -1,6 +1,6 @@
 import { parse, relative } from 'pathe'
 import type { Nuxt, NuxtPluginTemplate, NuxtTemplate, ModuleContainer } from '@nuxt/schema'
-import { logger } from '@nuxt/kit'
+import { logger } from '../logger'
 import { chainFn } from '../internal/task'
 import { addTemplate } from '../template'
 import { addServerMiddleware } from '../server'
