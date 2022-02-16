@@ -13,6 +13,7 @@ describe('API routes', () => {
   it('generates types for routes', () => {
     expectTypeOf($fetch('/api/hello')).toMatchTypeOf<Promise<string>>()
     expectTypeOf($fetch('/api/hey')).toMatchTypeOf<Promise<{ foo:string, baz: string }>>()
+    expectTypeOf($fetch('/api/other')).toMatchTypeOf<Promise<unknown>>()
     expectTypeOf($fetch<TestResponse>('/test')).toMatchTypeOf<Promise<TestResponse>>()
   })
 
