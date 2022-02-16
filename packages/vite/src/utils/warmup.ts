@@ -1,7 +1,7 @@
-import consola from 'consola'
+import type { Consola } from 'consola'
 import type { ViteDevServer } from 'vite'
 
-export async function warmupViteServer (server: ViteDevServer, entries: string[]) {
+export async function warmupViteServer (server: ViteDevServer, entries: string[], logger: Consola) {
   const warmedUrls = new Set<String>()
 
   const warmup = async (url: string) => {
@@ -10,7 +10,7 @@ export async function warmupViteServer (server: ViteDevServer, entries: string[]
     try {
       await server.transformRequest(url)
     } catch (e) {
-      consola.debug('Warmup for %s failed with: %s', url, e)
+      logger.debug('Warmup for %s failed with: %s', url, e)
     }
     const deps = Array.from(server.moduleGraph.urlToModuleMap.get(url)?.importedModules || [])
     await Promise.all(deps.map(m => warmup(m.url)))

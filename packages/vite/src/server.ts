@@ -4,7 +4,6 @@ import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import fse from 'fs-extra'
 import pDebounce from 'p-debounce'
-import consola from 'consola'
 import { resolveModule } from '@nuxt/kit'
 import { withoutTrailingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
@@ -117,10 +116,10 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Production build
   if (!ctx.nuxt.options.dev) {
     const start = Date.now()
-    consola.info('Building server...')
+    ctx.nuxt.logger.info('Building server...')
     await vite.build(serverConfig)
     await onBuild()
-    consola.success(`Server built in ${Date.now() - start}ms`)
+    ctx.nuxt.logger.success(`Server built in ${Date.now() - start}ms`)
     return
   }
 
@@ -147,7 +146,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     // Have CSS in the manifest to prevent FOUC on dev SSR
     await writeManifest(ctx, ids.filter(isCSS).map(i => i.slice(1)))
     const time = (Date.now() - start)
-    consola.success(`Vite server built in ${time}ms`)
+    ctx.nuxt.logger.success(`Vite server built in ${time}ms`)
     await onBuild()
   }
   const doBuild = pDebounce(_doBuild, 100)

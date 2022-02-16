@@ -1,4 +1,3 @@
-import consola from 'consola'
 import { cloneDeep } from 'lodash-es'
 import type { Configuration } from 'webpack'
 import type { Nuxt } from '@nuxt/schema'
@@ -51,7 +50,7 @@ export function fileName (ctx: WebpackConfigContext, key: string) {
   if (typeof fileName === 'string' && options.dev) {
     const hash = /\[(chunkhash|contenthash|hash)(?::(\d+))?]/.exec(fileName)
     if (hash) {
-      consola.warn(`Notice: Please do not use ${hash[1]} in dev mode to prevent memory leak`)
+      ctx.nuxt.logger.warn(`Notice: Please do not use ${hash[1]} in dev mode to prevent memory leak`)
     }
   }
 
@@ -78,7 +77,7 @@ export function getWebpackConfig (ctx: WebpackConfigContext): Configuration {
     const { devtool } = extendedConfig
     if (typeof devtool === 'string' && pragma.test(devtool)) {
       extendedConfig.devtool = devtool.replace(pragma, '')
-      consola.warn(`devtool has been normalized to ${extendedConfig.devtool} as webpack documented value`)
+      ctx.nuxt.logger.warn(`devtool has been normalized to ${extendedConfig.devtool} as webpack documented value`)
     }
 
     return extendedConfig

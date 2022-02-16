@@ -57,7 +57,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
       nuxt.options._requiredModules[uniqueKey] = true
     }
 
-    // Check compatibility contraints
+    // Check compatibility constraints
     if (definition.meta.compatibility) {
       const issues = await checkNuxtCompatibility(definition.meta.compatibility, nuxt)
       if (issues.length) {

@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { resolve } from 'pathe'
-import consola from 'consola'
+import type { Consola } from 'consola'
 import { createCommonJS } from 'mlly'
 import { defaults, merge, cloneDeep } from 'lodash-es'
 import createResolver from 'postcss-import-resolver'
@@ -30,11 +30,11 @@ export const orderPresets = {
 }
 
 let _postcssConfigFileWarningShown
-function postcssConfigFileWarning () {
+function postcssConfigFileWarning (logger: Consola) {
   if (_postcssConfigFileWarningShown) {
     return
   }
-  consola.warn('Please use `build.postcss` in your nuxt.config.js instead of an external config file. Support for such files will be removed in Nuxt 3 as they remove all defaults set by Nuxt and can cause severe problems with features like alias resolving inside your CSS.')
+  logger.warn('Please use `build.postcss` in your nuxt.config.js instead of an external config file. Support for such files will be removed in Nuxt 3 as they remove all defaults set by Nuxt and can cause severe problems with features like alias resolving inside your CSS.')
   _postcssConfigFileWarningShown = true
 }
 
@@ -115,7 +115,7 @@ export class PostcssConfig {
       ]) {
         const configFile = resolve(dir, file)
         if (fs.existsSync(configFile)) {
-          postcssConfigFileWarning()
+          postcssConfigFileWarning(this.nuxt.logger)
           return configFile
         }
       }

@@ -1,6 +1,5 @@
 import * as vite from 'vite'
 import { resolve } from 'pathe'
-import consola from 'consola'
 import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
 import type { Options } from '@vitejs/plugin-vue'
@@ -126,9 +125,9 @@ export async function bundle (nuxt: Nuxt) {
     })
 
     const start = Date.now()
-    warmupViteServer(server, ['/entry.mjs']).then(() => {
-      consola.info(`Vite warmed up in ${Date.now() - start}ms`)
-    }).catch(consola.error)
+    warmupViteServer(server, ['/entry.mjs'], nuxt.logger)
+      .then(() => nuxt.logger.info(`Vite warmed up in ${Date.now() - start}ms`))
+      .catch(nuxt.logger.error)
   })
 
   await buildClient(ctx)
