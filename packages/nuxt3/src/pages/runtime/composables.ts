@@ -71,7 +71,7 @@ export const navigateTo = (to: RouteLocationRaw) => {
   if (isProcessingMiddleware()) {
     return to
   }
-  const router: Router = process.server ? useRouter() : (window as any).$nuxt.config?.globalProperties.$router || (window as any).$nuxt.context?.app.router
+  const router: Router = process.server ? useRouter() : (window as any).$nuxt.config?.globalProperties.$router
   return router.push(to)
 }
 
