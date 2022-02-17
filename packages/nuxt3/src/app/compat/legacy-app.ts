@@ -48,8 +48,8 @@ export interface LegacyContext {
   /** TODO: */
   next?: (err?: any) => any
   error (params: any): void
-  redirect (status: number, path: string, query?: Route['query']): void
-  redirect (path: string, query?: Route['query']): void
+  redirect (status: number, path: string, query?: RouteLocationNormalized['query']): void
+  redirect (path: string, query?: RouteLocationNormalized['query']): void
   redirect (location: Location): void
   redirect (status: number, location: Location): void
   ssrContext?: {
