@@ -200,8 +200,8 @@ export const legacyPlugin = (nuxtApp: NuxtApp) => {
 
   if (process.client) {
     nuxtApp.hook('app:created', () => {
-      window[`$${nuxtApp.globalName}`] = new Proxy(nuxtApp.vueApp as LegacyApp, {
-        get (legacyApp, p: keyof LegacyApp) {
+      const legacyApp = new Proxy(nuxtApp.vueApp as LegacyApp, {
+        get (source, p: keyof LegacyApp) {
           if (p === '$router') {
             return nuxtApp.$router
           }
@@ -209,9 +209,10 @@ export const legacyPlugin = (nuxtApp: NuxtApp) => {
           if (['$root', 'constructor'].includes(p)) {
             return legacyApp
           }
-          return legacyApp[p]
+          return source[p]
         }
       })
+      window[`$${nuxtApp.globalName}`] = legacyApp
     })
   }
 }
