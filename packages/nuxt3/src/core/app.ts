@@ -67,6 +67,8 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Resolve plugins
   app.plugins = [
+    resolve(nuxt.options.appDir, 'plugins/router'),
+    resolve(nuxt.options.appDir, 'plugins/middleware'),
     ...nuxt.options.plugins,
     ...await resolveFiles(nuxt.options.srcDir, [
       'plugins/*.{ts,js,mjs,cjs,mts,cts}',

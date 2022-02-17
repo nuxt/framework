@@ -1,10 +1,11 @@
 import { existsSync } from 'fs'
-import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { defineNuxtModule, addTemplate, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
-import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
+import { genDynamicImport, genString, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
 import { distDir } from '../dirs'
-import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
+import { resolveMiddleware } from '../core/utils'
+import { resolveLayouts, resolvePagesRoutes, normalizeRoutes } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
 
 export default defineNuxtModule({
@@ -44,22 +45,14 @@ export default defineNuxtModule({
       if (app.mainComponent.includes('nuxt-welcome')) {
         app.mainComponent = resolve(runtimeDir, 'app.vue')
       }
+      // Remove universal router in favour of vue-router
+      const universalRouterPlugin = resolve(nuxt.options.appDir, 'plugins/router')
+      app.plugins.splice(app.plugins.findIndex(p => typeof p === 'object' && p.src === universalRouterPlugin), 1)
+      app.plugins.unshift({ src: resolve(runtimeDir, 'router'), mode: 'all' })
     })
 
     nuxt.hook('autoImports:extend', (autoImports) => {
-      const composablesFile = resolve(runtimeDir, 'composables')
-      const composables = [
-        'useRouter',
-        'useRoute',
-        'defineNuxtRouteMiddleware',
-        'definePageMeta',
-        'navigateTo',
-        'abortNavigation',
-        'addRouteMiddleware'
-      ]
-      for (const composable of composables) {
-        autoImports.push({ name: composable, as: composable, from: composablesFile })
-      }
+      autoImports.push({ name: 'definePageMeta', as: 'definePageMeta', from: resolve(runtimeDir, 'composables') })
     })
 
     // Extract macros from pages
@@ -72,9 +65,6 @@ export default defineNuxtModule({
     addVitePlugin(TransformMacroPlugin.vite(macroOptions))
     addWebpackPlugin(TransformMacroPlugin.webpack(macroOptions))
 
-    // Add router plugin
-    addPlugin(resolve(runtimeDir, 'router'))
-
     // Add routes template
     addTemplate({
       filename: 'routes.mjs',
@@ -83,22 +73,6 @@ export default defineNuxtModule({
         await nuxt.callHook('pages:extend', pages)
         const { routes, imports } = normalizeRoutes(pages)
         return [...imports, `export default ${routes}`].join('\n')
-      }
-    })
-
-    // Add middleware template
-    addTemplate({
-      filename: 'middleware.mjs',
-      async getContents () {
-        const middleware = await resolveMiddleware()
-        const globalMiddleware = middleware.filter(mw => mw.global)
-        const namedMiddleware = middleware.filter(mw => !mw.global)
-        const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
-        return [
-          ...globalMiddleware.map(mw => genImport(mw.path, getImportName(mw.name))),
-          `export const globalMiddleware = ${genArrayFromRaw(globalMiddleware.map(mw => getImportName(mw.name)))}`,
-          `export const namedMiddleware = ${namedMiddlewareObject}`
-        ].join('\n')
       }
     })
 

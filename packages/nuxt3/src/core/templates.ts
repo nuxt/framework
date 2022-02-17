@@ -1,9 +1,10 @@
 import { templateUtils } from '@nuxt/kit'
 import type { Nuxt, NuxtApp } from '@nuxt/schema'
-import { genArrayFromRaw, genDynamicImport, genExport, genImport, genString } from 'knitwork'
-
+import { genArrayFromRaw, genDynamicImport, genExport, genImport, genObjectFromRawEntries, genString } from 'knitwork'
 import { isAbsolute, join, relative } from 'pathe'
 import escapeRE from 'escape-string-regexp'
+
+import { getImportName, resolveMiddleware } from './utils'
 
 export interface TemplateContext {
   nuxt: Nuxt
@@ -129,6 +130,22 @@ export const schemaTemplate = {
       ),
       '  }',
       '}'
+    ].join('\n')
+  }
+}
+
+// Add middleware template
+export const middlewareTemplate = {
+  filename: 'middleware.mjs',
+  async getContents () {
+    const middleware = await resolveMiddleware()
+    const globalMiddleware = middleware.filter(mw => mw.global)
+    const namedMiddleware = middleware.filter(mw => !mw.global)
+    const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
+    return [
+      ...globalMiddleware.map(mw => genImport(mw.path, getImportName(mw.name))),
+      `export const globalMiddleware = ${genArrayFromRaw(globalMiddleware.map(mw => getImportName(mw.name)))}`,
+      `export const namedMiddleware = ${namedMiddlewareObject}`
     ].join('\n')
   }
 }

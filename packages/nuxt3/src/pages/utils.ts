@@ -1,10 +1,10 @@
-import { basename, extname, normalize, relative, resolve } from 'pathe'
+import { extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
-import type { Nuxt, NuxtMiddleware, NuxtPage } from '@nuxt/schema'
-import { resolveFiles, useNuxt } from '@nuxt/kit'
-import { kebabCase, pascalCase } from 'scule'
+import type { Nuxt, NuxtPage } from '@nuxt/schema'
+import { resolveFiles } from '@nuxt/kit'
 import { genImport, genDynamicImport, genArrayFromRaw } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
+import { getImportName, getNameFromPath } from '../core/utils'
 
 enum SegmentParserState {
   initial,
@@ -241,25 +241,4 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
       }
     }))
   }
-}
-
-export async function resolveMiddleware (): Promise<NuxtMiddleware[]> {
-  const nuxt = useNuxt()
-  const middlewareDir = resolve(nuxt.options.srcDir, nuxt.options.dir.middleware)
-  const files = await resolveFiles(middlewareDir, `*{${nuxt.options.extensions.join(',')}}`)
-  const middleware = files.map(path => ({ name: getNameFromPath(path), path, global: hasSuffix(path, '.global') }))
-  await nuxt.callHook('pages:middleware:extend', middleware)
-  return middleware
-}
-
-function getNameFromPath (path: string) {
-  return kebabCase(basename(path).replace(extname(path), '')).replace(/["']/g, '').replace('.global', '')
-}
-
-function hasSuffix (path: string, suffix: string) {
-  return basename(path).replace(extname(path), '').endsWith(suffix)
-}
-
-export function getImportName (name: string) {
-  return pascalCase(name).replace(/[^\w]/g, '')
 }
