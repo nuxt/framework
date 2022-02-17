@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'http'
 import type { App } from 'vue'
 import type { Component } from '@vue/runtime-core'
 import mockContext from 'unenv/runtime/mock/proxy'
-import type { RouteLocationNormalized } from 'vue-router'
+import type { RouteLocationNormalized, Router } from 'vue-router'
 import { NuxtApp, useRuntimeConfig } from '../nuxt'
 
 type Store = any
@@ -10,6 +10,7 @@ type Store = any
 export type LegacyApp = App<Element> & {
   $root: LegacyApp
   constructor: LegacyApp
+  $router?: Router
 }
 
 export interface LegacyContext {
@@ -201,6 +202,9 @@ export const legacyPlugin = (nuxtApp: NuxtApp) => {
     nuxtApp.hook('app:created', () => {
       window[`$${nuxtApp.globalName}`] = new Proxy(nuxtApp.vueApp as LegacyApp, {
         get (legacyApp, p: keyof LegacyApp) {
+          if (p === '$router') {
+            return nuxtApp.$router
+          }
           // TODO: https://github.com/nuxt/framework/issues/244
           if (['$root', 'constructor'].includes(p)) {
             return legacyApp
