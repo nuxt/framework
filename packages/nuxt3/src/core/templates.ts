@@ -37,7 +37,7 @@ export const rootComponentTemplate = {
 
 export const cssTemplate = {
   filename: 'css.mjs',
-  getContents: (ctx: TemplateContext) => ctx.nuxt.options.css.map(i => genImport(i.src || i)).join('\n')
+  getContents: (ctx: TemplateContext) => ctx.nuxt.options.css.map(i => genImport(i)).join('\n')
 }
 
 export const clientPluginTemplate = {

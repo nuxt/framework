@@ -25,11 +25,10 @@
     "@nuxt/schema": "3.0.0",
     "@nuxt/vite-builder": "3.0.0",
     "@nuxt/webpack-builder": "3.0.0",
-    "@vue/reactivity": "^3.2.30",
-    "@vue/shared": "^3.2.30",
+    "@vue/reactivity": "^3.2.31",
+    "@vue/shared": "^3.2.31",
     "@vueuse/head": "^0.7.5",
     "chokidar": "^3.5.3",
-    "consola": "^2.15.3",
     "cookie-es": "^0.5.0",
     "defu": "^5.0.1",
     "destr": "^1.1.0",
@@ -51,7 +50,7 @@
     "ufo": "^0.7.9",
     "unplugin": "^0.3.2",
     "untyped": "^0.3.0",
-    "vue": "^3.2.30",
+    "vue": "^3.2.31",
     "vue-router": "^4.0.12"
   },
   "devDependencies": {
