@@ -29,7 +29,7 @@ export default {
   analyze: {
     $resolve: (val, get) => {
       if(val !== true) {
-        return val
+        return val ?? false
       }
       const rootDir = get('rootDir')
       return {
