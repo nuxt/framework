@@ -2,9 +2,9 @@ import type { IncomingMessage, ServerResponse } from 'http'
 import type { App } from 'vue'
 import type { Component } from '@vue/runtime-core'
 import mockContext from 'unenv/runtime/mock/proxy'
+import type { RouteLocationNormalized } from 'vue-router'
 import { NuxtApp, useRuntimeConfig } from '../nuxt'
 
-type Route = any
 type Store = any
 
 export type LegacyApp = App<Element> & {
@@ -28,12 +28,12 @@ export interface LegacyContext {
   // -> unsupported
   store: Store
   // vue-router integration
-  route: Route
-  params: Route['params']
-  query: Route['query']
+  route: RouteLocationNormalized
+  params: RouteLocationNormalized['params']
+  query: RouteLocationNormalized['query']
   base: string /** TODO: */
   payload: any /** TODO: */
-  from: Route /** TODO: */
+  from: RouteLocationNormalized /** TODO: */
   // -> nuxt.payload.data
   nuxtState: Record<string, any>
   // TODO: needs app implementation
@@ -205,6 +205,10 @@ export const legacyPlugin = (nuxtApp: NuxtApp) => {
       // @ts-ignore
       // TODO: https://github.com/nuxt/framework/issues/244
       legacyApp.constructor = legacyApp
+      if ('$router' in nuxtApp) {
+        // @ts-ignore
+        legacyApp.$router = nuxtApp.$router
+      }
 
       window[`$${nuxtApp.globalName}`] = legacyApp
     })
