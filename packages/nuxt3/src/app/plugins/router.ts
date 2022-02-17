@@ -83,7 +83,7 @@ interface Router {
   removeRoute: (name: string) => void
 }
 
-export default defineNuxtPlugin<{ route: Route, router: Router }>(async (nuxtApp) => {
+export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   const routes = []
 
   const hooks: { [key in keyof RouterHooks]: RouterHooks[key][] } = {
