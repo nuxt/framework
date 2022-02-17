@@ -199,18 +199,15 @@ export const legacyPlugin = (nuxtApp: NuxtApp) => {
 
   if (process.client) {
     nuxtApp.hook('app:created', () => {
-      const legacyApp = { ...nuxtApp.vueApp } as LegacyApp
-      legacyApp.$root = legacyApp
-
-      // @ts-ignore
-      // TODO: https://github.com/nuxt/framework/issues/244
-      legacyApp.constructor = legacyApp
-      if ('$router' in nuxtApp) {
-        // @ts-ignore
-        legacyApp.$router = nuxtApp.$router
-      }
-
-      window[`$${nuxtApp.globalName}`] = legacyApp
+      window[`$${nuxtApp.globalName}`] = new Proxy(nuxtApp.vueApp as LegacyApp, {
+        get (legacyApp, p: keyof LegacyApp) {
+          // TODO: https://github.com/nuxt/framework/issues/244
+          if (['$root', 'constructor'].includes(p)) {
+            return legacyApp
+          }
+          return legacyApp[p]
+        }
+      })
     })
   }
 }
