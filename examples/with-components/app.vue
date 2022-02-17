@@ -6,6 +6,7 @@
     <div>
       <!-- Auto Imported Components -->
       <HelloWorld class="text-2xl" />
+      <CustomComponent />
       <Nuxt3 class="text-2xl" />
       <ParentFolderHello class="mt-6" />
     </div>
