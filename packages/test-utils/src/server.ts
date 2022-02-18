@@ -22,7 +22,6 @@ export async function listen () {
   const ctx = useTestContext()
   const host = process.env.HOST || '0.0.0.0'
   const port = await getPort({ host, random: true })
-  console.log({ port })
 
   ctx.url = 'http://localhost:' + port
   execa('node', [
