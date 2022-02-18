@@ -1,5 +1,5 @@
 import { DefineComponent, reactive, h } from 'vue'
-import { joinURL, parseURL, parseQuery } from 'ufo'
+import { parseURL, parseQuery } from 'ufo'
 import { NuxtApp } from '@nuxt/schema'
 import { createError } from 'h3'
 import { defineNuxtPlugin } from '..'
@@ -34,7 +34,7 @@ interface Route {
 }
 
 function getRouteFromPath (fullPath: string) {
-  const url = parseURL(fullPath)
+  const url = parseURL(fullPath.toString())
   return {
     path: url.pathname,
     fullPath,
@@ -105,19 +105,14 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   async function navigateTo (url: string, replace?: boolean): Promise<void> {
     try {
       // Resolve route
-      const to = getRouteFromPath(joinURL('/', String(url)))
+      const to = getRouteFromPath(url)
       // Run beforeEach hooks
       for (const middleware of hooks['navigate:before']) {
-        try {
-          const result = await middleware(to, route)
-          // Cancel navigation
-          if (result === false || result instanceof Error) { return }
-          // Redirect
-          if (result) { return navigateTo(result) }
-        } catch {
-          // Cancel navigation
-          return
-        }
+        const result = await middleware(to, route)
+        // Cancel navigation
+        if (result === false || result instanceof Error) { return }
+        // Redirect
+        if (result) { return navigateTo(result, true) }
       }
       // Perform navigation
       Object.assign(route, to)
