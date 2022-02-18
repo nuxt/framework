@@ -74,10 +74,10 @@ interface Router {
   go: (delta: number) => void
   forward: () => void
   // Guards
-  beforeResolve: (guard: RouteGuard) => () => void
-  beforeEach: (guard: RouteGuard) => () => void
-  afterEach: (guard: (to: Route, from: Route) => void | Promise<void>) => () => void
-  onError: (handler: (err: any) => void | Promise<void>) => () => void
+  beforeResolve: (guard: RouterHooks['resolve:before']) => () => void
+  beforeEach: (guard: RouterHooks['navigate:before']) => () => void
+  afterEach: (guard: RouterHooks['navigate:after']) => () => void
+  onError: (handler: RouterHooks['error']) => () => void
   // Routes
   resolve: (url: string) => Route
   addRoute: (parentName: string, route: Route) => void
@@ -90,8 +90,8 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   const routes = []
 
   const hooks: { [key in keyof RouterHooks]: RouterHooks[key][] } = {
-    'resolve:before': [],
     'navigate:before': [],
+    'resolve:before': [],
     'navigate:after': [],
     error: []
   }
@@ -113,6 +113,10 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
         if (result === false || result instanceof Error) { return }
         // Redirect
         if (result) { return navigateTo(result, true) }
+      }
+
+      for (const handler of hooks['resolve:before']) {
+        await handler(to, route)
       }
       // Perform navigation
       Object.assign(route, to)
@@ -143,10 +147,10 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
     go: (delta: number) => window.history.go(delta),
     forward: () => window.history.go(1),
     // Guards
-    beforeResolve: (guard: RouteGuard) => registerHook('resolve:before', guard),
-    beforeEach: (guard: RouteGuard) => registerHook('navigate:before', guard),
-    afterEach: (guard: (to: Route, from: Route) => void | Promise<void>) => registerHook('navigate:after', guard),
-    onError: (handler: (err: any) => void | Promise<void>) => registerHook('error', handler),
+    beforeResolve: (guard: RouterHooks['resolve:before']) => registerHook('resolve:before', guard),
+    beforeEach: (guard: RouterHooks['navigate:before']) => registerHook('navigate:before', guard),
+    afterEach: (guard: RouterHooks['navigate:after']) => registerHook('navigate:after', guard),
+    onError: (handler: RouterHooks['error']) => registerHook('error', handler),
     // Routes
     resolve: getRouteFromPath,
     addRoute: (parentName: string, route: Route) => { routes.push(route) },
