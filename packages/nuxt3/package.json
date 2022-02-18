@@ -25,6 +25,9 @@
     "#pages": "./dist/pages/runtime/index.mjs"
   },
   "files": [
+    "app.d.ts",
+    "meta.d.ts",
+    "pages.d.ts",
     "bin",
     "types.d.ts",
     "dist"
