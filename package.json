@@ -27,7 +27,7 @@
   },
   "resolutions": {
     "@nuxt/ui": "npm:@nuxt/ui-edge@latest",
-    "jiti": "^1.12.15",
+    "jiti": "^1.13.0",
     "nitropack-dev": "link:../nitropack",
     "nuxt3": "workspace:./packages/nuxt3",
     "unbuild": "^0.6.9"
@@ -47,7 +47,7 @@
     "execa": "^6.1.0",
     "expect-type": "^0.13.0",
     "globby": "^13.1.1",
-    "jiti": "^1.12.15",
+    "jiti": "^1.13.0",
     "lerna": "^4.0.0",
     "markdownlint-cli": "^0.31.1",
     "miniflare": "^1.4.1",
