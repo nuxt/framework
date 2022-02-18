@@ -1,10 +1,16 @@
 <script setup lang="ts">
 const route = useRoute()
+const timer = useState('timer', () => 0)
 </script>
 
 <template>
   <NuxtExampleLayout example="with-universal-router">
-    A page
+    A page...
+    <br>
+
+    <template v-if="timer">
+      Processing navigation in {{ timer }} seconds
+    </template>
 
     <template #nav>
       <nav class="flex align-center gap-4 p-4">
