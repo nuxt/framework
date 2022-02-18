@@ -102,7 +102,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   }
 
   const route: Route = reactive(getRouteFromPath(process.client ? window.location.href : nuxtApp.ssrContext.url))
-  async function navigateTo (url: string, replace?: boolean): Promise<void> {
+  async function handleNavigation (url: string, replace?: boolean): Promise<void> {
     try {
       // Resolve route
       const to = getRouteFromPath(url)
@@ -112,7 +112,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
         // Cancel navigation
         if (result === false || result instanceof Error) { return }
         // Redirect
-        if (result) { return navigateTo(result, true) }
+        if (result) { return handleNavigation(result, true) }
       }
 
       for (const handler of hooks['resolve:before']) {
@@ -141,8 +141,8 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
     options: {},
     install: () => Promise.resolve(),
     // Navigation
-    push: (url: string) => navigateTo(url, false),
-    replace: (url: string) => navigateTo(url, true),
+    push: (url: string) => handleNavigation(url, false),
+    replace: (url: string) => handleNavigation(url, true),
     back: () => window.history.go(-1),
     go: (delta: number) => window.history.go(delta),
     forward: () => window.history.go(1),
