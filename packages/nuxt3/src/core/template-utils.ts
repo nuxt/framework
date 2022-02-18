@@ -4,23 +4,20 @@ export const deleteSchemaDefaults = (schema: Schema) => {
   if (schema.type === 'object') {
     for (const key of Object.keys(schema.properties)) {
       delete schema.properties[key].default
-    }
-
-    if (schema.properties) {
-      for (const key of Object.keys(schema.properties)) {
-        deleteSchemaDefaults(schema.properties[key])
-      }
+      deleteSchemaDefaults(schema.properties[key])
     }
   }
 
   return schema
 }
 
-export const withDescription = (schema: Schema, description: string) => {
+export const withLastLevelDescription = (schema: Schema, description: string) => {
   if (schema.type === 'object') {
     for (const key of Object.keys(schema.properties)) {
-      schema.properties[key].description = description
+      withLastLevelDescription(schema.properties[key], description)
     }
+  } else {
+    schema.description = description
   }
 
   return schema

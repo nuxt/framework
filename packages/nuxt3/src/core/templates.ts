@@ -5,7 +5,7 @@ import { genArrayFromRaw, genDynamicImport, genExport, genImport, genString } fr
 import { isAbsolute, join, relative } from 'pathe'
 import { resolveSchema, generateTypes } from 'untyped'
 import escapeRE from 'escape-string-regexp'
-import { deleteSchemaDefaults, normalizeUntypedOutput, withDescription } from './template-utils'
+import { deleteSchemaDefaults, normalizeUntypedOutput, withLastLevelDescription } from './template-utils'
 
 export interface TemplateContext {
   nuxt: Nuxt
@@ -141,7 +141,7 @@ export const schemaTemplate = {
       normalizeUntypedOutput(
         generateTypes(
           deleteSchemaDefaults(
-            withDescription(
+            withLastLevelDescription(
               resolveSchema(nuxt.options.privateRuntimeConfig),
               'This value is only accessible from server-side.'
             )
