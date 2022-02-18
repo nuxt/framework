@@ -1,11 +1,19 @@
 import { computed, reactive, shallowRef } from 'vue'
-import { createRouter, createWebHistory, createMemoryHistory, RouterLink } from 'vue-router'
+import {
+  createRouter,
+  createWebHistory,
+  createMemoryHistory,
+  RouterLink,
+  NavigationGuard
+} from 'vue-router'
 import { createError } from 'h3'
 import NuxtPage from './page'
 import NuxtLayout from './layout'
-import { defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, NuxtApp } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
+// @ts-ignore
+import { globalMiddleware, namedMiddleware } from '#build/middleware'
 
 declare module 'vue' {
   export interface GlobalComponents {
@@ -55,7 +63,55 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   nuxtApp._route = reactive(route)
 
-  nuxtApp.hooks.hookOnce('app:created', async () => {
+  nuxtApp._middleware = nuxtApp._middleware || {
+    global: [],
+    named: {}
+  }
+
+  router.beforeEach(async (to, from) => {
+    to.meta = reactive(to.meta)
+    nuxtApp._processingMiddleware = true
+
+    type MiddlewareDef = string | NavigationGuard
+    const middlewareEntries = new Set<MiddlewareDef>([...globalMiddleware, ...nuxtApp._middleware.global])
+    for (const component of to.matched) {
+      const componentMiddleware = component.meta.middleware as MiddlewareDef | MiddlewareDef[]
+      if (!componentMiddleware) { continue }
+      if (Array.isArray(componentMiddleware)) {
+        for (const entry of componentMiddleware) {
+          middlewareEntries.add(entry)
+        }
+      } else {
+        middlewareEntries.add(componentMiddleware)
+      }
+    }
+
+    for (const entry of middlewareEntries) {
+      const middleware = typeof entry === 'string' ? nuxtApp._middleware.named[entry] || await namedMiddleware[entry]?.().then(r => r.default || r) : entry
+
+      if (process.dev && !middleware) {
+        console.warn(`Unknown middleware: ${entry}. Valid options are ${Object.keys(namedMiddleware).join(', ')}.`)
+      }
+
+      const result = await callWithNuxt(nuxtApp as NuxtApp, middleware, [to, from])
+      if (process.server) {
+        if (result === false || result instanceof Error) {
+          const error = result || createError({
+            statusMessage: `Route navigation aborted: ${nuxtApp.ssrContext.url}`
+          })
+          nuxtApp.ssrContext.error = error
+          throw error
+        }
+      }
+      if (result || result === false) { return result }
+    }
+  })
+
+  router.afterEach(() => {
+    delete nuxtApp._processingMiddleware
+  })
+
+  nuxtApp.hook('app:created', async () => {
     if (process.server) {
       router.push(nuxtApp.ssrContext.url)
 

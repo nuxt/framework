@@ -1,6 +1,9 @@
 import { DefineComponent, reactive, h } from 'vue'
 import { joinURL, parseURL, parseQuery } from 'ufo'
+import { NuxtApp } from '@nuxt/schema'
+import { createError } from 'h3'
 import { defineNuxtPlugin } from '..'
+import { callWithNuxt } from '../nuxt'
 
 declare module 'vue' {
   export interface GlobalComponents {
@@ -170,6 +173,38 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   }
 
   nuxtApp._route = route
+
+  // Handle middleware
+  nuxtApp._middleware = nuxtApp._middleware || {
+    global: [],
+    named: {}
+  }
+
+  router.beforeEach(async (to, from) => {
+    to.meta = reactive(to.meta || {})
+    nuxtApp._processingMiddleware = true
+
+    type MiddlewareDef = string | RouteGuard
+    const middlewareEntries = new Set<MiddlewareDef>(nuxtApp._middleware.global)
+
+    for (const middleware of middlewareEntries) {
+      const result = await callWithNuxt(nuxtApp as NuxtApp, middleware, [to, from])
+      if (process.server) {
+        if (result === false || result instanceof Error) {
+          const error = result || createError({
+            statusMessage: `Route navigation aborted: ${nuxtApp.ssrContext.url}`
+          })
+          nuxtApp.ssrContext.error = error
+          throw error
+        }
+      }
+      if (result || result === false) { return result }
+    }
+  })
+
+  router.afterEach(() => {
+    delete nuxtApp._processingMiddleware
+  })
 
   nuxtApp.vueApp.component('NuxtLink', {
     functional: true,
