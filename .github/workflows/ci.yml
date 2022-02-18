@@ -51,8 +51,11 @@ jobs:
       - name: Install dependencies
         run: yarn --immutable
 
-      - name: Build
-        run: yarn build
+      # - name: Build
+      #   run: yarn build
+
+      - name: Stub
+        run: yarn stub
 
       - name: Test (unit)
         run: yarn test:unit
@@ -81,8 +84,11 @@ jobs:
       - name: Install dependencies
         run: yarn --immutable
 
-      - name: Build
-        run: yarn build
+      # - name: Build
+      #   run: yarn build
+
+      - name: Stub
+        run: yarn stub
 
       - name: Test (fixtures)
         run: yarn test:fixtures:webpack
