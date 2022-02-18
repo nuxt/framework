@@ -3277,7 +3277,7 @@ __metadata:
     ohmyfetch: ^0.4.15
     playwright: ^1.19.1
     unbuild: latest
-    vitest: ^0.3.6
+    vitest: ^0.4.1
   peerDependencies:
     vue: 3.2.31
   languageName: unknown
@@ -15585,7 +15585,7 @@ __metadata:
     pathe: ^0.2.0
     typescript: ^4.5.5
     unbuild: ^0.6.9
-    vitest: ^0.3.6
+    vitest: ^0.4.1
     vue-router: next
     vue-tsc: ^0.31.4
   languageName: unknown
@@ -20774,10 +20774,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinyspy@npm:^0.2.10":
-  version: 0.2.10
-  resolution: "tinyspy@npm:0.2.10"
-  checksum: 7c4d89f603f5e12b335f5a97811b11712a6cc44565c2d1c1d76ccf6a0cb9c2b0ca8b7eb84f6cdabd0a49149fb9dababaefadab43bec6d8252dfc797a205f48bd
+"tinyspy@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "tinyspy@npm:0.3.0"
+  checksum: 8776bc6b29d190195c12a0769f8e9f0ae7756ff4a8de070b181a5962fc17fdffb1b95043501f7970cea007d4ddf41559c5b376576c8d244ccf35d04a49e664fb
   languageName: node
   linkType: hard
 
@@ -21756,16 +21756,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.3.6":
-  version: 0.3.6
-  resolution: "vitest@npm:0.3.6"
+"vitest@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "vitest@npm:0.4.1"
   dependencies:
     "@types/chai": ^4.3.0
     "@types/chai-subset": ^1.3.3
     chai: ^4.3.6
     local-pkg: ^0.4.1
     tinypool: ^0.1.2
-    tinyspy: ^0.2.10
+    tinyspy: ^0.3.0
     vite: ^2.8.2
   peerDependencies:
     "@vitest/ui": "*"
@@ -21783,7 +21783,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 3079f19837384b96c74825fbd4e7dc48b018f48d9317665aad193c7339a438d7e5c47e4f7f1b121de162a9dbbb80a40df5ec3fc9f17321560de1c667b056e74e
+  checksum: f350464cd674612151ea6e63fd37401156ff9d3fafd3f663595beb1dbe19658fb1f7f345253250f3a9c5dff7febf8fc3284f94d46ed167f37141bd609d424e05
   languageName: node
   linkType: hard
 
