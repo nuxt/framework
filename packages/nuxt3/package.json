@@ -13,10 +13,6 @@
   "exports": {
     ".": "./dist/index.mjs",
     "./app": "./dist/app/index.mjs",
-    "./meta": "./dist/meta/runtime/index.mjs",
-    "./meta/*": "./dist/meta/runtime/*.mjs",
-    "./pages": "./dist/pages/runtime/index.mjs",
-    "./pages/*": "./dist/pages/runtime/*.mjs",
     "./package.json": "./package.json"
   },
   "imports": {
@@ -26,8 +22,6 @@
   },
   "files": [
     "app.d.ts",
-    "meta.d.ts",
-    "pages.d.ts",
     "bin",
     "types.d.ts",
     "dist"
