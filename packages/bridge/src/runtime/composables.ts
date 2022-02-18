@@ -209,6 +209,6 @@ export const addRouteMiddleware: AddRouteMiddleware = (name: string | RouteMiddl
   if (options.global || typeof name === 'function') {
     nuxtApp._middleware.global.push(typeof name === 'function' ? name : middleware)
   } else {
-    nuxtApp._middleware.named[name] = middleware
+    nuxtApp._middleware.named[name] = convertToLegacyMiddleware(middleware)
   }
 }
