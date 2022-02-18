@@ -19,9 +19,8 @@
     "example:build": "yarn workspace example-$0 build",
     "lint": "eslint --ext .vue,.ts,.js,.mjs .",
     "lint:docs": "./node_modules/.bin/markdownlint ./",
-    "test": "yarn vitest",
+    "test": "JITI_ESM_RESOLVE=1 yarn vitest",
     "test:types": "yarn run nuxi prepare test/fixtures/basic && cd test/fixtures/basic && npx vue-tsc --noEmit",
-    "test:unit": "vitest packages",
     "version": "yarn && git add yarn.lock"
   },
   "resolutions": {

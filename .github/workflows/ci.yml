@@ -57,45 +57,15 @@ jobs:
       - name: Test (unit)
         run: yarn test:unit
 
-      - name: Test (presets)
-        run: yarn test:presets
+      - name: Test (fixtures)
+        run: yarn test
 
       - name: Test (types)
         run: yarn test:types
 
-  test-bridge:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        node: [14]
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node }}
-          cache: 'yarn'
-          cache-dependency-path: |
-            yarn.lock
-
-      - name: Install dependencies
-        run: yarn --immutable
-
-      - name: Build
-        run: yarn build
-
-      - name: Test with webpack
-        run: yarn test:bridge:webpack
-
-      - name: Test with vite
-        run: yarn test:bridge:vite
-
   build-release:
     needs:
       - test
-      - test-bridge
       - lint
     runs-on: ${{ matrix.os }}
 
