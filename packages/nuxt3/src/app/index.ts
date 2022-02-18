@@ -1,3 +1,5 @@
+/// <reference path="types/augments.d.ts" />
+
 export * from './nuxt'
 export * from './composables'
 

@@ -1,4 +1,4 @@
-import { useState } from '#app'
+import { useState } from 'nuxt3/app'
 
 export function useA () {
   return 'a'

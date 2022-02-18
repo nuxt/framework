@@ -104,7 +104,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   const options = await loadNuxtConfig(opts)
 
   // Temporary until finding better placement for each
-  options.appDir = options.alias['#app'] = resolve(distDir, 'app')
+  options.appDir = options.alias['nuxt3/app'] /* for framework playground */ = options.alias['#app'] = resolve(distDir, 'app')
   options._majorVersion = 3
   options._modules.push(pagesModule, metaModule, componentsModule, autoImportsModule)
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))
