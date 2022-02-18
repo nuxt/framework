@@ -15,8 +15,9 @@ export default defineNuxtModule({
     const pagesDir = resolve(nuxt.options.srcDir, nuxt.options.dir.pages)
     const runtimeDir = resolve(distDir, 'pages/runtime')
 
-    // Disable module if pages dir do not exists
+    // Disable module (and use universal router) if pages dir do not exists
     if (!existsSync(pagesDir)) {
+      addPlugin(resolve(distDir, 'app/plugins/router'))
       return
     }
 
@@ -44,9 +45,6 @@ export default defineNuxtModule({
       if (app.mainComponent.includes('nuxt-welcome')) {
         app.mainComponent = resolve(runtimeDir, 'app.vue')
       }
-      // Remove universal router in favour of vue-router
-      const universalRouterPlugin = resolve(nuxt.options.appDir, 'plugins/router')
-      app.plugins.splice(app.plugins.findIndex(p => typeof p === 'object' && p.src === universalRouterPlugin), 1)
     })
 
     nuxt.hook('autoImports:extend', (autoImports) => {
