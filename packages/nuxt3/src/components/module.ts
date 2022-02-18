@@ -29,11 +29,10 @@ export default defineNuxtModule<ComponentsOptions>({
         return dir.map(dir => normalizeDirs(dir, cwd)).flat().sort(compareDirByPathLength)
       }
       if (dir === true || dir === undefined) {
-        return [{ global: componentOptions.global, path: resolve(cwd, 'components') }]
+        return [{ path: resolve(cwd, 'components') }]
       }
       if (typeof dir === 'string') {
         return {
-          global: componentOptions.global,
           path: resolve(cwd, resolveAlias(dir, {
             ...nuxt.options.alias,
             '~': cwd
@@ -69,6 +68,7 @@ export default defineNuxtModule<ComponentsOptions>({
         }
 
         return {
+          global: componentOptions.global,
           ...dirOptions,
           // TODO: https://github.com/nuxt/framework/pull/251
           enabled: true,
