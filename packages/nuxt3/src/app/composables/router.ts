@@ -2,7 +2,7 @@ import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocat
 import { useNuxtApp } from '#app'
 
 export const useRouter = () => {
-  return useNuxtApp().$router as Router
+  return useNuxtApp()?.$router as Router
 }
 
 export const useRoute = () => {
