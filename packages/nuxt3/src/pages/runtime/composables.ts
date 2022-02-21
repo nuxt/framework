@@ -25,7 +25,7 @@ declare module 'vue-router' {
 const warnRuntimeUsage = (method: string) =>
   console.warn(
     `${method}() is a compiler-hint helper that is only usable inside ` +
-      '<script setup> of a single file component. Its arguments should be ' +
+      'the script block of a single file component. Its arguments should be ' +
       'compiled away and passing it at runtime has no effect.'
   )
 
@@ -60,7 +60,10 @@ const isProcessingMiddleware = () => {
     if (useNuxtApp()._processingMiddleware) {
       return true
     }
-  } catch {}
+  } catch {
+    // Within an async middleware
+    return true
+  }
   return false
 }
 
@@ -68,7 +71,7 @@ export const navigateTo = (to: RouteLocationRaw) => {
   if (isProcessingMiddleware()) {
     return to
   }
-  const router: Router = process.server ? useRouter() : (window as any).$nuxt.router
+  const router: Router = process.server ? useRouter() : (window as any).$nuxt.$router
   return router.push(to)
 }
 

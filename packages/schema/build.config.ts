@@ -9,7 +9,7 @@ export default defineBuildConfig({
       name: 'config',
       builder: 'untyped',
       defaults: {
-        rootDir: '/project/'
+        rootDir: '/<rootDir>/'
       }
     },
     'src/index'
@@ -24,6 +24,7 @@ export default defineBuildConfig({
     'webpack-bundle-analyzer',
     'rollup-plugin-visualizer',
     'vite',
+    'consola',
     // Implicit
     '@vue/compiler-core',
     '@vue/shared'

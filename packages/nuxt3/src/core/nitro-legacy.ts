@@ -59,7 +59,7 @@ export function initNitro (nuxt: Nuxt) {
     await nuxt.callHook('nitro:context', nitroDevContext)
 
     // Resolve middleware
-    const { middleware, legacyMiddleware } = resolveMiddleware(nuxt)
+    const { middleware, legacyMiddleware } = await resolveMiddleware(nuxt)
     nuxt.server.setLegacyMiddleware(legacyMiddleware)
     nitroContext.middleware.push(...middleware)
     nitroDevContext.middleware.push(...middleware)
@@ -76,7 +76,7 @@ export function initNitro (nuxt: Nuxt) {
     }
   })
 
-  nuxt.hook('builder:generateApp', async () => {
+  nuxt.hook('build:before', async () => {
     nitroDevContext.scannedMiddleware = await scanMiddleware(nitroDevContext._nuxt.serverDir)
     await writeTypes(nitroDevContext)
   })
