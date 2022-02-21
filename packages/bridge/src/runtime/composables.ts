@@ -2,8 +2,9 @@ import { getCurrentInstance, onBeforeUnmount, isRef, watch, reactive, toRef, isR
 import type { CombinedVueInstance } from 'vue/types/vue'
 import type { MetaInfo } from 'vue-meta'
 import type VueRouter from 'vue-router'
-import type { Route } from 'vue-router'
+import type { Location, Route } from 'vue-router'
 import type { RuntimeConfig } from '@nuxt/schema'
+import defu from 'defu'
 import { useNuxtApp } from './app'
 
 export { useLazyAsyncData } from './asyncData'
@@ -90,35 +91,124 @@ type AugmentedComponent = CombinedVueInstance<Vue, object, object, object, Recor
   $metaInfo?: MetaInfo
 }
 
+/** internal */
+function metaInfoFromOptions (metaOptions: Reffed<MetaInfo> | (() => Reffed<MetaInfo>)) {
+  return metaOptions instanceof Function ? metaOptions : () => metaOptions
+}
+
 export const useNuxt2Meta = (metaOptions: Reffed<MetaInfo> | (() => Reffed<MetaInfo>)) => {
-  const vm = getCurrentInstance()!.proxy as AugmentedComponent
-  const meta = vm.$meta()
-  const $root = vm.$root
+  let vm: AugmentedComponent | null = null
+  try {
+    vm = getCurrentInstance()!.proxy as AugmentedComponent
+    const meta = vm.$meta()
+    const $root = vm.$root
 
-  if (!vm._vueMeta) {
-    vm._vueMeta = true
+    if (!vm._vueMeta) {
+      vm._vueMeta = true
 
-    let parent = vm.$parent as AugmentedComponent
-    while (parent && parent !== $root) {
-      if (parent._vueMeta === undefined) {
-        parent._vueMeta = false
+      let parent = vm.$parent as AugmentedComponent
+      while (parent && parent !== $root) {
+        if (parent._vueMeta === undefined) {
+          parent._vueMeta = false
+        }
+        parent = parent.$parent
       }
-      parent = parent.$parent
+    }
+    // @ts-ignore
+    vm.$options.head = vm.$options.head || {}
+
+    const unwatch = watch(metaInfoFromOptions(metaOptions), (metaInfo: MetaInfo) => {
+      vm.$metaInfo = {
+        ...vm.$metaInfo || {},
+        ...unwrap(metaInfo)
+      }
+      if (process.client) {
+        meta.refresh()
+      }
+    }, { immediate: true, deep: true })
+
+    onBeforeUnmount(unwatch)
+  } catch {
+    const app = (useNuxtApp().nuxt2Context as any).app
+    if (typeof app.head === 'function') {
+      const originalHead = app.head
+      app.head = function () {
+        const head = originalHead.call(this) || {}
+        return defu(unwrap(metaInfoFromOptions(metaOptions)()), head)
+      }
+    } else {
+      app.head = defu(unwrap(metaInfoFromOptions(metaOptions)()), app.head)
     }
   }
-  // @ts-ignore
-  vm.$options.head = vm.$options.head || {}
+}
 
-  const metaSource = metaOptions instanceof Function ? metaOptions : () => metaOptions
-  const unwatch = watch(metaSource, (metaInfo: MetaInfo) => {
-    vm.$metaInfo = {
-      ...vm.$metaInfo || {},
-      ...unwrap(metaInfo)
-    }
-    if (process.client) {
-      meta.refresh()
-    }
-  }, { immediate: true, deep: true })
+export interface AddRouteMiddlewareOptions {
+  global?: boolean
+}
 
-  onBeforeUnmount(unwatch)
+/** internal */
+function convertToLegacyMiddleware (middleware) {
+  return async (ctx: any) => {
+    const result = await middleware(ctx.route, ctx.from)
+    if (result instanceof Error) {
+      return ctx.error(result)
+    }
+    if (result) {
+      return ctx.redirect(result)
+    }
+    return result
+  }
+}
+
+const isProcessingMiddleware = () => {
+  try {
+    if (useNuxtApp()._processingMiddleware) {
+      return true
+    }
+  } catch {
+    // Within an async middleware
+    return true
+  }
+  return false
+}
+
+export const navigateTo = (to: Route) => {
+  if (isProcessingMiddleware()) {
+    return to
+  }
+  const router: VueRouter = process.server ? useRouter() : (window as any).$nuxt.$router
+  return router.push(to)
+}
+
+/** This will abort navigation within a Nuxt route middleware handler. */
+export const abortNavigation = (err?: Error | string) => {
+  if (process.dev && !isProcessingMiddleware()) {
+    throw new Error('abortNavigation() is only usable inside a route middleware handler.')
+  }
+  if (err) {
+    throw err instanceof Error ? err : new Error(err)
+  }
+  return false
+}
+
+type RouteMiddlewareReturn = void | Error | string | Location | boolean
+
+export interface RouteMiddleware {
+  (to: Route, from: Route): RouteMiddlewareReturn | Promise<RouteMiddlewareReturn>
+}
+
+export const defineNuxtRouteMiddleware = (middleware: RouteMiddleware) => middleware
+
+interface AddRouteMiddleware {
+  (name: string, middleware: RouteMiddleware, options?: AddRouteMiddlewareOptions): void
+  (middleware: RouteMiddleware): void
+}
+
+export const addRouteMiddleware: AddRouteMiddleware = (name: string | RouteMiddleware, middleware?: RouteMiddleware, options: AddRouteMiddlewareOptions = {}) => {
+  const nuxtApp = useNuxtApp()
+  if (options.global || typeof name === 'function') {
+    nuxtApp._middleware.global.push(typeof name === 'function' ? name : middleware)
+  } else {
+    nuxtApp._middleware.named[name] = convertToLegacyMiddleware(middleware)
+  }
 }

@@ -6,9 +6,10 @@ import {
   RouterLink,
   NavigationGuard
 } from 'vue-router'
+import { createError } from 'h3'
 import NuxtPage from './page'
 import NuxtLayout from './layout'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, NuxtApp } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
@@ -92,7 +93,16 @@ export default defineNuxtPlugin((nuxtApp) => {
         console.warn(`Unknown middleware: ${entry}. Valid options are ${Object.keys(namedMiddleware).join(', ')}.`)
       }
 
-      const result = await callWithNuxt(nuxtApp, middleware, [to, from])
+      const result = await callWithNuxt(nuxtApp as NuxtApp, middleware, [to, from])
+      if (process.server) {
+        if (result === false || result instanceof Error) {
+          const error = result || createError({
+            statusMessage: `Route navigation aborted: ${nuxtApp.ssrContext.url}`
+          })
+          nuxtApp.ssrContext.error = error
+          throw error
+        }
+      }
       if (result || result === false) { return result }
     }
   })
@@ -108,17 +118,23 @@ export default defineNuxtPlugin((nuxtApp) => {
       router.afterEach((to) => {
         if (to.fullPath !== nuxtApp.ssrContext.url) {
           nuxtApp.ssrContext.res.setHeader('Location', to.fullPath)
+          nuxtApp.ssrContext.res.statusCode = 301
+          nuxtApp.ssrContext.res.end()
         }
       })
     }
 
-    await router.isReady()
+    try {
+      await router.isReady()
 
-    const is404 = router.currentRoute.value.matched.length === 0
-    if (process.server && is404) {
-      const error = new Error(`Page not found: ${nuxtApp.ssrContext.url}`)
-      // @ts-ignore
-      error.statusCode = 404
+      const is404 = router.currentRoute.value.matched.length === 0
+      if (process.server && is404) {
+        throw createError({
+          statusCode: 404,
+          statusMessage: `Page not found: ${nuxtApp.ssrContext.url}`
+        })
+      }
+    } catch (error) {
       nuxtApp.ssrContext.error = error
     }
   })

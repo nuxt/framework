@@ -10,6 +10,8 @@ export function setupAppBridge (_options: any) {
 
   // Setup aliases
   nuxt.options.alias['#app'] = resolve(distDir, 'runtime/index.mjs')
+  nuxt.options.alias['nuxt3/app'] = nuxt.options.alias['#app']
+  nuxt.options.alias['nuxt/app'] = nuxt.options.alias['#app']
   nuxt.options.alias['#build'] = nuxt.options.buildDir
 
   // Mock `bundleBuilder.build` to support `nuxi prepare`
@@ -47,6 +49,10 @@ export function setupAppBridge (_options: any) {
       entryPath: resolveAlias(m.src, nuxt.options.alias)
     })))
     addTemplate(schemaTemplate)
+  })
+  nuxt.hook('prepare:types', ({ references }) => {
+    // Add module augmentations directly to NuxtConfig
+    references.push({ path: resolve(nuxt.options.buildDir, 'types/schema.d.ts') })
   })
 
   // Alias vue to have identical vue3 exports
