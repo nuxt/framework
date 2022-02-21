@@ -11,7 +11,6 @@ import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
-import { viteNodeServer } from './plugins/vite-node-server'
 import { DynamicBasePlugin, RelativeAssetPlugin } from './plugins/dynamic-base'
 
 export async function buildClient (ctx: ViteBuildContext) {
@@ -45,8 +44,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       devStyleSSRPlugin({
         rootDir: ctx.nuxt.options.rootDir,
         buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
-      }),
-      ctx.nuxt.options.dev ? viteNodeServer(ctx) : null
+      })
     ],
     server: {
       middlewareMode: true

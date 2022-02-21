@@ -1,43 +1,42 @@
 import { IncomingMessage } from 'http'
-import type { Plugin } from 'vite'
 import { ViteNodeServer } from 'vite-node/server'
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
-import { ViteBuildContext } from '../index'
-import { distDir } from '../dirs'
+import { addServerMiddleware } from '@nuxt/kit'
+import { distDir } from './dirs'
+import type { ViteBuildContext } from './vite'
 
-export function viteNodeServer (ctx: ViteBuildContext): Plugin {
-  return {
-    name: 'nuxt:vite-node-server',
-    enforce: 'pre',
-    configureServer (server) {
-      let node: ViteNodeServer | undefined
-      server.middlewares.use('/__nuxt_vite_node__', async (req, res, next) => {
-        if (!node && ctx.ssrServer) {
-          node = new ViteNodeServer(ctx.ssrServer, {
-            deps: {
-              inline: [
-                ...ctx.nuxt.options.build.transpile as string[]
-              ]
-            }
-          })
-        }
-        if (!node) {
-          return next()
-        }
+export function registerViteNodeMiddleware (ctx: ViteBuildContext) {
+  let viteNode: ViteNodeServer | undefined
+  addServerMiddleware({
+    route: '/__nuxt_vite_node__/',
+    handle: async (req, res, next) => {
+      console.log('vite-node-middleware', { url: req.url })
+      if (!viteNode && ctx.ssrServer) {
+        viteNode = new ViteNodeServer(ctx.ssrServer, {
+          deps: {
+            inline: [
+              ...ctx.nuxt.options.build.transpile as string[]
+            ]
+          }
+        })
+      }
+      if (!viteNode) {
+        return next()
+      }
 
-        const body = await getBodyJson(req) || {}
-        const { id } = body
-        if (!id) {
-          res.statusCode = 400
-          res.end()
-        } else {
-          res.write(JSON.stringify(await node.fetchModule(id)))
-          res.end()
-        }
-      })
+      const body = await getBodyJson(req) || {}
+      const { id } = body
+      if (!id) {
+        res.statusCode = 400
+        res.end()
+      } else {
+        console.log({ id })
+        res.write(JSON.stringify(await viteNode.fetchModule(id)))
+        res.end()
+      }
     }
-  }
+  })
 }
 
 export async function prepareDevServerEntry (ctx: ViteBuildContext) {
