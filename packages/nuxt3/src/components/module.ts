@@ -1,6 +1,6 @@
 import { statSync } from 'fs'
 import { resolve, basename } from 'pathe'
-import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin, addTemplate, addPlugin } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { componentsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
@@ -90,26 +90,23 @@ export default defineNuxtModule<ComponentsOptions>({
       nuxt.options.build!.transpile!.push(...componentDirs.filter(dir => dir.transpile).map(dir => dir.path))
     })
 
+    addTemplate({
+      ...componentsTypeTemplate,
+      options: { components, buildDir: nuxt.options.buildDir }
+    })
+
+    addTemplate({
+      ...componentsTemplate,
+      options: { components }
+    })
+
+    addPlugin({ src: '#build/components' })
+
     // Scan components and add to plugin
-    nuxt.hook('app:templates', async (app) => {
+    nuxt.hook('app:templates', async () => {
       components = await scanComponents(componentDirs, nuxt.options.srcDir!)
       await nuxt.callHook('components:extend', components)
-
-      app.templates.push({
-        ...componentsTypeTemplate,
-        options: { components, buildDir: nuxt.options.buildDir }
-      })
-
-      if (!components.length) {
-        return
-      }
-
-      app.templates.push({
-        ...componentsTemplate,
-        options: { components }
-      })
-
-      app.plugins.push({ src: '#build/components' })
+      await nuxt.callHook('builder:generateApp')
     })
 
     nuxt.hook('prepare:types', ({ references }) => {
