@@ -18,7 +18,7 @@ export default defineNuxtModule<ComponentsOptions>({
     configKey: 'components'
   },
   defaults: {
-    dirs: ['~/components']
+    dirs: []
   },
   setup (componentOptions, nuxt) {
     let componentDirs = []
