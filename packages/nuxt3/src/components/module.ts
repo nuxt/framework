@@ -39,6 +39,15 @@ export default defineNuxtModule<ComponentsOptions>({
           }))
         }
       }
+      if (dir && typeof dir === 'object') {
+        return {
+          ...dir,
+          path: resolve(cwd, resolveAlias(dir.path, {
+            ...nuxt.options.alias,
+            '~': cwd
+          }))
+        }
+      }
       return []
     }
 
