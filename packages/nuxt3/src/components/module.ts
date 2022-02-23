@@ -22,7 +22,7 @@ export default defineNuxtModule<ComponentsOptions>({
   },
   setup (componentOptions, nuxt) {
     let componentDirs = []
-    let components: Component[] = []
+    const components: Component[] = []
 
     const normalizeDirs = (dir: any, cwd: string) => {
       if (Array.isArray(dir)) {
@@ -90,21 +90,23 @@ export default defineNuxtModule<ComponentsOptions>({
       nuxt.options.build!.transpile!.push(...componentDirs.filter(dir => dir.transpile).map(dir => dir.path))
     })
 
+    const options = { components, buildDir: nuxt.options.buildDir }
+
     addTemplate({
       ...componentsTypeTemplate,
-      options: { components, buildDir: nuxt.options.buildDir }
+      options
     })
 
     addTemplate({
       ...componentsTemplate,
-      options: { components }
+      options
     })
 
     addPlugin({ src: '#build/components' })
 
     // Scan components and add to plugin
     nuxt.hook('app:templates', async () => {
-      components = await scanComponents(componentDirs, nuxt.options.srcDir!)
+      options.components = await scanComponents(componentDirs, nuxt.options.srcDir!)
       await nuxt.callHook('components:extend', components)
       await nuxt.callHook('builder:generateApp')
     })
