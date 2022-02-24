@@ -3,7 +3,8 @@ import { defineBuildConfig } from 'unbuild'
 export default defineBuildConfig({
   declaration: true,
   entries: [
-    'src/index'
+    'src/index',
+    'src/runners/vitest'
   ],
   dependencies: [
   ],
