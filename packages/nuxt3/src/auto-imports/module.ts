@@ -3,7 +3,7 @@ import { isAbsolute, join, relative, resolve, normalize } from 'pathe'
 import { createUnimport, Import, Preset, toImports, Unimport } from 'unimport'
 import { AutoImportsOptions } from '@nuxt/schema'
 import { TransformPlugin } from './transform'
-import { Nuxt3AutoImports } from './presets'
+import { defaultPresets } from './presets'
 import { scanForComposables } from './composables'
 
 export default defineNuxtModule<Partial<AutoImportsOptions>>({
@@ -12,7 +12,7 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     configKey: 'autoImports'
   },
   defaults: {
-    presets: Nuxt3AutoImports,
+    presets: defaultPresets,
     global: false,
     imports: [],
     dirs: [],
@@ -34,7 +34,7 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
 
     // Create a context to share state between module internals
     const ctx = createUnimport({
-      presets: Nuxt3AutoImports,
+      presets: defaultPresets,
       imports: options.imports
     })
 
