@@ -7,7 +7,23 @@ describe('fixtures:basic', async () => {
     rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
     server: true
   })
-  it('Render hello world', async () => {
-    expect(await $fetch('/')).to.contain('Hello Nuxt 3!')
+
+  describe('render index.html', async () => {
+    const index = await $fetch('/')
+    it('should render text', () => {
+      expect(index).toContain('Hello Nuxt 3!')
+    })
+    it('should render <Head> components', () => {
+      expect(index).toContain('<title>Basic fixture</title>')
+    })
+    it('should runtime config', () => {
+      expect(index).toContain('Config: 123')
+    })
+    it('should import components', () => {
+      expect(index).toContain('This is a custom component with a named export.')
+    })
+    // it('snapshot', () => {
+    //   expect(index).toMatchInlineSnapshot()
+    // })
   })
 })
