@@ -617,5 +617,11 @@ export default {
    * Set to true to scan files within symlinks in the build (such as within `pages/`).
    * @version 2
    */
-  followSymlinks: false
+
+  followSymlinks: false,
+  /**
+   * Set to true to generate an async entry (for module federation support).
+   * @version 3
+   */
+  asyncEntry: false
 }
