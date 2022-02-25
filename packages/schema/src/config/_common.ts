@@ -1,5 +1,5 @@
 import { join, resolve } from 'pathe'
-import { isDevelopment } from 'std-env'
+import { isDevelopment, isTest } from 'std-env'
 import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
@@ -7,7 +7,7 @@ import defu from 'defu'
 
 export default {
   /**
-   * Extend nested configurations from multiple local or remoted sources
+   * Extend nested configurations from multiple local or remote sources
    *
    * Value should be either a string or array of strings pointing to source directories or config path relative to current config.
    *
@@ -151,7 +151,7 @@ export default {
   createRequire: {
     $resolve: (val: any) => {
       val = process.env.NUXT_CREATE_REQUIRE || val ||
-        (typeof jest !== 'undefined' ? 'native' : 'jiti')
+        (typeof globalThis.jest !== 'undefined' ? 'native' : 'jiti')
       if (val === 'jiti') {
         return p => jiti(typeof p === 'string' ? p : p.filename)
       }
@@ -287,6 +287,14 @@ export default {
    *  @private
    */
   _modules: [],
+
+  /**
+   * Installed module metadata
+   *
+   * @version 3
+   * @private
+  */
+  _installedModules: [],
 
   /**
    * Allows customizing the global ID used in the main HTML template as well as the main
@@ -498,8 +506,9 @@ export default {
    * @note Within a webpack context (image sources, CSS - but not JavaScript) you _must_ access
    * your alias by prefixing it with `~`.
    *
-   * @note If you are using TypeScript and want to use the alias you define within
-   * your TypeScript files, you will need to add the aliases to your `paths` object within `tsconfig.json` .
+   * @note These aliases will be automatically added to the generated `.nuxt/tsconfig.json` so you can get full
+   * type support and path auto-complete. In case you need to extend options provided by `./.nuxt/tsconfig.json`
+   * further, make sure to add them here or within the `typescript.tsConfig` property in `nuxt.config`.
    *
    * @example
    * ```js
@@ -678,13 +687,13 @@ export default {
 
   /**
    * Runtime config allows passing dynamic config and environment variables to the Nuxt app context.
-   * 
+   *
    * The value of this object is accessible from server only using `$config` or `useRuntimeConfig`.
    * It will override `publicRuntimeConfig` on the server-side.
    *
    * It should hold _private_ environment variables (that should not be exposed on the frontend).
    * This could include a reference to your API secret tokens.
-   * 
+   *
    * Values are automatically replaced by matching env variables at runtime, e.g. setting an environment
    * variable `API_SECRET=my-api-key` would overwrite the value in the example below.
    * Note that the env variable has to be named exactly the same as the config key.
@@ -705,9 +714,9 @@ export default {
 
   /**
    * Runtime config allows passing dynamic config and environment variables to the Nuxt app context.
-   * 
+   *
    * The value of this object is accessible from both client and server using `$config` or `useRuntimeConfig`.
-   * 
+   *
    * It should hold env variables that are _public_ as they will be accessible on the frontend. This could include a
    * reference to your public URL.
    *
@@ -728,6 +737,6 @@ export default {
    * @version 3
    */
   publicRuntimeConfig: {
-    $resolve: (val = {}, get) => ({ ...val, app: defu(val.app, get('app')) })
-  },
+    $resolve: (val: Record<string, any> = {}, get) => ({ ...val, app: defu(val.app, get('app')) })
+  }
 }

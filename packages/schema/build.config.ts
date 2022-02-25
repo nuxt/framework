@@ -9,7 +9,7 @@ export default defineBuildConfig({
       name: 'config',
       builder: 'untyped',
       defaults: {
-        rootDir: '/project/',
+        rootDir: '/<rootDir>/',
         vite: {
           base: '/'
         }
@@ -33,6 +33,7 @@ export default defineBuildConfig({
     'webpack-dev-middleware',
     'webpack-hot-middleware',
     'postcss',
+    'consola',
     // Implicit
     '@vue/compiler-core',
     '@vue/shared'

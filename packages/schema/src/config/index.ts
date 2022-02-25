@@ -14,6 +14,8 @@ import postcss from './postcss'
 import typescript from './typescript'
 import vite from './vite'
 import webpack from './webpack'
+import nitro from './nitro'
+import experimental from './experimental'
 
 /*
 TODO for top level normalizations: (nuxt2)
@@ -38,16 +40,19 @@ export default {
   ..._app,
   ..._common,
   ..._internal,
-  ...build,
   ...postcss,
   ...typescript,
   ...vite,
   ...webpack,
+  ...nitro,
   // Legacy
+  ...build,
   messages,
   render,
   router,
   server,
   cli,
   generate,
+  typescript,
+  experimental,
 }

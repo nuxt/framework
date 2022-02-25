@@ -9,6 +9,33 @@ on:
       - main
 
 jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [14]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      - name: Build
+        run: yarn build
+
+      - name: Cache dist
+        uses: actions/cache@v2
+        with:
+          path: packages/*/dist
+          key: ${{ matrix.os }}-node-v${{ matrix.node }}-${{ github.sha }}
+
   lint:
     runs-on: ${{ matrix.os }}
 
@@ -19,7 +46,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
@@ -33,7 +60,7 @@ jobs:
       - name: Lint (docs)
         run: yarn lint:docs
 
-  test:
+  test-fixtures:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -43,7 +70,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
@@ -51,16 +78,16 @@ jobs:
       - name: Install dependencies
         run: yarn --immutable
 
-      - name: Build
-        run: yarn build
+      - name: Stub
+        run: yarn stub
 
       - name: Test (unit)
         run: yarn test:unit
 
-      - name: Test (presets)
-        run: yarn test:presets
+      - name: Test (fixtures)
+        run: yarn test:fixtures
 
-  test-bridge:
+  test-fixtures-webpack:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -70,30 +97,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
-          cache-dependency-path: |
-            yarn.lock
 
       - name: Install dependencies
         run: yarn --immutable
 
-      - name: Build
-        run: yarn build
+      - name: Stub
+        run: yarn stub
 
-      - name: Test with webpack
-        run: yarn test:bridge:webpack
+      - name: Test (fixtures)
+        run: yarn test:fixtures:webpack
 
-      - name: Test with vite
-        run: yarn test:bridge:vite
-
-  build-release:
+  test-types:
     needs:
-      - test
-      - test-bridge
-      - lint
+      - build
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -103,7 +123,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
@@ -111,8 +131,44 @@ jobs:
       - name: Install dependencies
         run: yarn --immutable
 
-      - name: Build
-        run: yarn build
+      - name: Restore dist cache
+        uses: actions/cache@v2
+        with:
+          path: packages/*/dist
+          key: ${{ matrix.os }}-node-v${{ matrix.node }}-${{ github.sha }}
+
+      - name: Test (types)
+        run: yarn test:types
+
+  build-release:
+    needs:
+      - lint
+      - build
+      - test-fixtures
+      - test-fixtures-webpack
+      - test-types
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [14]
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn --immutable
+
+      - name: Restore dist cache
+        uses: actions/cache@v2
+        with:
+          path: packages/*/dist
+          key: ${{ matrix.os }}-node-v${{ matrix.node }}-${{ github.sha }}
 
       - name: Release Edge
         if: |

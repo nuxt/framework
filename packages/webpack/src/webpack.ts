@@ -3,13 +3,11 @@ import pify from 'pify'
 import webpack from 'webpack'
 import webpackDevMiddleware, { API } from 'webpack-dev-middleware'
 import webpackHotMiddleware from 'webpack-hot-middleware'
-import consola from 'consola'
-
 import type { Compiler, Watching } from 'webpack'
 
 import type { Nuxt } from '@nuxt/schema'
 import { joinURL } from 'ufo'
-import { useNuxt } from '@nuxt/kit'
+import { logger, useNuxt } from '@nuxt/kit'
 import { DynamicBasePlugin } from '../../vite/src/plugins/dynamic-base'
 import { createMFS } from './utils/mfs'
 import { registerVirtualModules } from './virtual-modules'
@@ -71,7 +69,7 @@ export async function bundle (nuxt: Nuxt) {
 async function createDevMiddleware (compiler: Compiler) {
   const nuxt = useNuxt()
 
-  consola.debug('Creating webpack middleware...')
+  logger.debug('Creating webpack middleware...')
 
   // Create webpack dev middleware
   const devMiddleware = pify(webpackDevMiddleware(compiler, {

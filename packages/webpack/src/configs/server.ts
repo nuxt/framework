@@ -38,6 +38,7 @@ function serverStandalone (ctx: WebpackConfigContext) {
   const inline = [
     'src/',
     '#app',
+    'nuxt3',
     '!',
     '-!',
     '~',
@@ -55,7 +56,7 @@ function serverStandalone (ctx: WebpackConfigContext) {
     if (
       request[0] === '.' ||
       isAbsolute(request) ||
-      inline.find(prefix => request.startsWith(prefix)) ||
+      inline.find(prefix => typeof prefix === 'string' && request.startsWith(prefix)) ||
       assetPattern.test(request)
     ) {
       // console.log('Inline', request)

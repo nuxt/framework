@@ -1,10 +1,11 @@
 import * as vite from 'vite'
 import { resolve } from 'pathe'
-import consola from 'consola'
 import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
+import { logger } from '@nuxt/kit'
 import type { Options } from '@vitejs/plugin-vue'
 import { sanitizeFilePath } from 'mlly'
+import { getPort } from 'get-port-please'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
@@ -22,6 +23,13 @@ export interface ViteBuildContext {
 }
 
 export async function bundle (nuxt: Nuxt) {
+  // TODO: After nitropack refactor, try if we can resuse the same server port as Nuxt
+  const hmrPortDefault = 24678 // Vite's default HMR port
+  const hmrPort = await getPort({
+    port: hmrPortDefault,
+    ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
+  })
+
   const ctx: ViteBuildContext = {
     nuxt,
     config: vite.mergeConfig(
@@ -34,7 +42,7 @@ export async function bundle (nuxt: Nuxt) {
             // will be filled in client/server configs
             '#build/plugins': '',
             '#build': nuxt.options.buildDir,
-            '/entry.mjs': resolve(nuxt.options.appDir, 'entry'),
+            '/entry.mjs': resolve(nuxt.options.appDir, nuxt.options.experimental.asyncEntry ? 'entry.async' : 'entry'),
             'web-streams-polyfill/ponyfill/es2018': 'unenv/runtime/mock/empty',
             // Cannot destructure property 'AbortController' of ..
             'abort-controller': 'unenv/runtime/mock/empty'
@@ -56,6 +64,10 @@ export async function bundle (nuxt: Nuxt) {
           virtual(nuxt.vfs)
         ],
         server: {
+          hmr: {
+            clientPort: hmrPort,
+            port: hmrPort
+          },
           fs: {
             allow: [
               nuxt.options.appDir
@@ -80,9 +92,9 @@ export async function bundle (nuxt: Nuxt) {
     })
 
     const start = Date.now()
-    warmupViteServer(server, ['/entry.mjs']).then(() => {
-      consola.info(`Vite warmed up in ${Date.now() - start}ms`)
-    }).catch(consola.error)
+    warmupViteServer(server, ['/entry.mjs'])
+      .then(() => logger.info(`Vite warmed up in ${Date.now() - start}ms`))
+      .catch(logger.error)
   })
 
   await buildClient(ctx)

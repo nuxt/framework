@@ -1,8 +1,8 @@
 import { promises as fsp } from 'fs'
 import fetch from 'node-fetch'
 import { addPluginTemplate, useNuxt } from '@nuxt/kit'
-import { stringifyQuery } from 'ufo'
-import { resolve } from 'pathe'
+import { joinURL, stringifyQuery } from 'ufo'
+import { resolve, join } from 'pathe'
 import { build, generate, prepare, getNitroContext, NitroContext, createDevServer, wpfs, resolveMiddleware, scanMiddleware, writeTypes } from '@nuxt/nitro'
 import { AsyncLoadingPlugin } from './async-loading'
 import { distDir } from './dirs'
@@ -28,6 +28,15 @@ export function setupNitroBridge () {
   nuxt.options.build.loadingScreen = false
   // @ts-ignore
   nuxt.options.build.indicator = false
+
+  if (nuxt.options.build.analyze === true) {
+    const { rootDir } = nuxt.options
+    nuxt.options.build.analyze = {
+      template: 'treemap',
+      projectRoot: rootDir,
+      filename: join(rootDir, '.nuxt/stats', '{name}.html')
+    }
+  }
 
   // Create contexts
   const nitroOptions = (nuxt.options as any).nitro || {}
@@ -216,9 +225,13 @@ function createNuxt2DevServer (nitroContext: NitroContext) {
     if (!listener) {
       throw new Error('There is no server listener to call `server.renderRoute()`')
     }
-    const html = await fetch(listener.url + route, {
+    const res = await fetch(joinURL(listener.url, route), {
       headers: { 'nuxt-render-context': stringifyQuery(renderContext) }
-    }).then(r => r.text())
+    })
+
+    const html = await res.text()
+
+    if (!res.ok) { return { html, error: res.statusText } }
 
     return { html }
   }

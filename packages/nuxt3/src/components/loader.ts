@@ -8,7 +8,7 @@ interface LoaderOptions {
 }
 
 export const loaderPlugin = createUnplugin((options: LoaderOptions) => ({
-  name: 'nuxt-components-loader',
+  name: 'nuxt:components-loader',
   enforce: 'post',
   transformInclude (id) {
     const { pathname, search } = parseURL(id)
@@ -37,12 +37,14 @@ function transform (content: string, components: Component[]) {
     if (component) {
       const identifier = map.get(component) || `__nuxt_component_${num++}`
       map.set(component, identifier)
-      imports += genImport(component.filePath, identifier)
+      imports += genImport(component.filePath, [{ name: component.export, as: identifier }])
       return ` ${identifier}`
     }
     // no matched
     return full
   })
+
+  if (!imports || newContent === content) { return }
 
   return `${imports}\n${newContent}`
 }
