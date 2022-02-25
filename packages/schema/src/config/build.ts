@@ -1,3 +1,4 @@
+import defu from 'defu'
 import { join } from 'pathe'
 import { isCI, isTest } from 'std-env'
 import { normalizeURL, withTrailingSlash } from 'ufo'
@@ -479,8 +480,13 @@ export default {
     postcss: {
       execute: undefined,
       postcssOptions: {
-        config: undefined,
-        plugins: undefined
+        $resolve: (val, get) => {
+          // Ensure we return the same object in `build.postcss.postcssOptions as `postcss`
+          // so modules which modify the configuration continue to work.
+          const postcssOptions = get('postcss')
+          Object.assign(postcssOptions, defu(postcssOptions, val))
+          return postcssOptions
+        }
       },
       sourceMap: undefined,
       implementation: undefined,
