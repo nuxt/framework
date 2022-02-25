@@ -29,7 +29,7 @@ export interface TestContext {
   nuxt?: Nuxt
   browser?: Browser
   url?: string
-  listenProcess?: ExecaChildProcess
+  serverProcess?: ExecaChildProcess
 }
 
 export interface TestHooks {

@@ -23,8 +23,8 @@ export function createTest (options: Partial<TestOptions>): TestHooks {
   }
 
   const afterAll = async () => {
-    if (ctx.listenProcess) {
-      ctx.listenProcess.kill()
+    if (ctx.serverProcess) {
+      ctx.serverProcess.kill()
     }
     if (ctx.nuxt && ctx.nuxt.options.dev) {
       await ctx.nuxt.close()
