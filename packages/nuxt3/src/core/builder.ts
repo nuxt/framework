@@ -1,5 +1,6 @@
 import chokidar from 'chokidar'
 import type { Nuxt } from '@nuxt/schema'
+import { tryImportModule } from '@nuxt/kit'
 import { createApp, generateApp } from './app'
 
 export async function build (nuxt: Nuxt) {
@@ -49,7 +50,7 @@ function watch (nuxt: Nuxt) {
 
 async function bundle (nuxt: Nuxt) {
   const { bundle } = typeof nuxt.options.builder === 'string'
-    ? await import(nuxt.options.builder)
+    ? await tryImportModule(nuxt.options.builder, { paths: nuxt.options.rootDir })
     : nuxt.options.builder
   try {
     return bundle(nuxt)
