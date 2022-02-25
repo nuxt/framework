@@ -9,10 +9,8 @@ export default defineNuxtCommand({
     description: 'Run tests'
   },
   async invoke (argv) {
-    process.env.NODE_ENV = process.env.NODE_ENV || 'production'
+    process.env.NODE_ENV = process.env.NODE_ENV || 'test'
     const rootDir = process.cwd()
-
-    consola.warn('`nuxt test` is expiremental')
 
     const { loadNuxtConfig } = await loadKit(rootDir)
     const config = await loadNuxtConfig({ rootDir })
@@ -27,7 +25,7 @@ export default defineNuxtCommand({
     } catch (e) {
       consola.error(e)
       consola.warn('`@nuxt/test-utils` is missing. Run `npm i -D @nuxt/test-utils` or `yarn add -D @nuxt/test-utils` to install')
-      return
+      return process.exit(1)
     }
     await start(config, argv)
   }
