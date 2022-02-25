@@ -60,7 +60,7 @@ export const getPostcssConfig = (nuxt: Nuxt) => {
     return false
   }
 
-  const configFile = nuxt.options.webpack.postcss.postcssOptions?.config
+  const configFile = nuxt.options.postcss?.config
   if (configFile) {
     return {
       postcssOptions: {
@@ -70,7 +70,7 @@ export const getPostcssConfig = (nuxt: Nuxt) => {
     }
   }
 
-  let postcssOptions = cloneDeep(nuxt.options.webpack.postcss.postcssOptions)
+  let postcssOptions = cloneDeep(nuxt.options.postcss)
   // Apply default plugins
   if (isPureObject(postcssOptions)) {
     if (Array.isArray(postcssOptions.plugins)) {

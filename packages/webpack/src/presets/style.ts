@@ -120,7 +120,7 @@ function createCssLoadersRule (ctx: WebpackConfigContext, cssLoaderOptions) {
 function createPostcssLoadersRule (ctx: WebpackConfigContext) {
   const { options, nuxt } = ctx
 
-  if (!options.webpack.postcss) { return }
+  if (!options.postcss) { return }
 
   const config = getPostcssConfig(nuxt)
 
