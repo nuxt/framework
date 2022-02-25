@@ -17,7 +17,7 @@ export async function listen () {
       NODE_ENV: 'test'
     }
   })
-  await waitForPort(port)
+  await waitForPort(port, { retries: 8 })
 }
 
 export function fetch (path: string, options?: any) {
