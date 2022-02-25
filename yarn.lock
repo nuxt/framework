@@ -3273,7 +3273,7 @@ __metadata:
     "@nuxt/schema": 3.0.0
     defu: ^5.0.1
     execa: ^6.1.0
-    get-port-please: ^2.4.1
+    get-port-please: ^2.4.2
     jiti: ^1.13.0
     ohmyfetch: ^0.4.15
     playwright: ^1.19.2
@@ -3387,7 +3387,7 @@ __metadata:
     escape-string-regexp: ^5.0.0
     externality: ^0.1.6
     fs-extra: ^10.0.1
-    get-port-please: ^2.4.1
+    get-port-please: ^2.4.2
     knitwork: ^0.1.0
     magic-string: ^0.25.7
     mlly: ^0.4.3
@@ -11634,12 +11634,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-port-please@npm:^2.4.1":
-  version: 2.4.1
-  resolution: "get-port-please@npm:2.4.1"
+"get-port-please@npm:^2.4.2":
+  version: 2.4.2
+  resolution: "get-port-please@npm:2.4.2"
   dependencies:
     fs-memo: ^1.2.0
-  checksum: d1b19b2d647da99803d1b5efe530e94cab692db5f77d25c41e0274374588a10c28637deec89417c3519f1bf45f87bebdfd311f7c4b8884dab2a1f91e56a2e834
+  checksum: b07596e4a0958d6a393f962177ed7d061b69b8f466a6f4f101154eff4918ffa3eac42602350dbd2aa6483dc2c9eb689d63580f8336018d2b5cb98c284b08a4d5
   languageName: node
   linkType: hard
 
