@@ -17,7 +17,7 @@ const logEnd = id => { const t = end(_s[id]); delete _s[id]; metrics.push([id, t
 ${TIMING} = { start, end, metrics, logStart, logEnd };
 `)
 
-const HELPERIMPORT = 'import ./timing.js;'
+const HELPERIMPORT = "import './timing.js';"
 
 export function timing (_opts: Options = {}): Plugin {
   return {
