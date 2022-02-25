@@ -8,22 +8,30 @@ describe('fixtures:basic', async () => {
     server: true
   })
 
-  describe('render index.html', async () => {
+  it('server api', async () => {
+    expect(await $fetch('/api/hello')).toBe('Hello API')
+    expect(await $fetch('/api/hey')).toEqual({
+      foo: 'bar',
+      baz: 'qux'
+    })
+  })
+
+  it('render index.html', async () => {
     const index = await $fetch('/')
-    it('should render text', () => {
-      expect(index).toContain('Hello Nuxt 3!')
-    })
-    it('should render <Head> components', () => {
-      expect(index).toContain('<title>Basic fixture</title>')
-    })
-    it('should runtime config', () => {
-      expect(index).toContain('Config: 123')
-    })
-    it('should import components', () => {
-      expect(index).toContain('This is a custom component with a named export.')
-    })
-    // it('snapshot', () => {
-    //   expect(index).toMatchInlineSnapshot()
-    // })
+
+    // Snapshot
+    // expect(index).toMatchInlineSnapshot()
+
+    // should render text
+    expect(index).toContain('Hello Nuxt 3!')
+    // should render <Head> components
+    expect(index).toContain('<title>Basic fixture</title>')
+    // should inject runtime config
+    expect(index).toContain('RuntimeConfig: 123')
+    // should import components
+    expect(index).toContain('This is a custom component with a named export.')
+    // composables auto import
+    expect(index).toContain('auto imported from ~/components/foo.ts')
+    expect(index).toContain('auto imported from ~/components/useBar.ts')
   })
 })
