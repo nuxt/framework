@@ -618,10 +618,5 @@ export default {
    * @version 2
    */
 
-  followSymlinks: false,
-  /**
-   * Set to true to generate an async entry (for module federation support).
-   * @version 3
-   */
-  asyncEntry: false
+  followSymlinks: false
 }

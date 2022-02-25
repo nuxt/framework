@@ -50,7 +50,7 @@ export async function bundle (nuxt: Nuxt) {
             // will be filled in client/server configs
             '#build/plugins': '',
             '#build': nuxt.options.buildDir,
-            '/entry.mjs': resolve(nuxt.options.appDir, nuxt.options.dev || !nuxt.options.build.asyncEntry ? 'entry' : 'bootstrap'),
+            '/entry.mjs': resolve(nuxt.options.appDir, nuxt.options.dev || !nuxt.options.experimental.asyncEntry ? 'entry' : 'entry.async'),
             'web-streams-polyfill/ponyfill/es2018': 'unenv/runtime/mock/empty',
             // Cannot destructure property 'AbortController' of ..
             'abort-controller': 'unenv/runtime/mock/empty'
