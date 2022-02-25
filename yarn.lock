@@ -3007,6 +3007,7 @@ __metadata:
     semver: ^7.3.5
     unbuild: latest
     unctx: ^1.0.2
+    unimport: 0.0.4
     untyped: ^0.3.0
   languageName: unknown
   linkType: soft
@@ -3167,6 +3168,7 @@ __metadata:
     std-env: ^3.0.1
     ufo: ^0.7.9
     unbuild: latest
+    unimport: 0.0.4
   languageName: unknown
   linkType: soft
 
@@ -15644,6 +15646,7 @@ __metadata:
     scule: ^0.2.1
     ufo: ^0.7.9
     unbuild: latest
+    unimport: 0.0.4
     unplugin: ^0.3.2
     vue: ^3.2.31
     vue-meta: next
@@ -21334,6 +21337,20 @@ __metadata:
   version: 2.0.0
   resolution: "unicode-property-aliases-ecmascript@npm:2.0.0"
   checksum: dda4d39128cbbede2ac60fbb85493d979ec65913b8a486bf7cb7a375a2346fa48cbf9dc6f1ae23376e7e8e684c2b411434891e151e865a661b40a85407db51d0
+  languageName: node
+  linkType: hard
+
+"unimport@npm:0.0.4":
+  version: 0.0.4
+  resolution: "unimport@npm:0.0.4"
+  dependencies:
+    "@rollup/pluginutils": ^4.1.2
+    escape-string-regexp: ^5.0.0
+    local-pkg: ^0.4.1
+    magic-string: ^0.25.7
+    mlly: ^0.4.3
+    unplugin: ^0.3.2
+  checksum: 58208856dfb273e6fb56d823c9c5c2f94c81717ca21a5bb271956dbc6e9ee956db769d0769eb32886955212d98e54bcfb47624861ce975fe79f4c95e1e72c71b
   languageName: node
   linkType: hard
 

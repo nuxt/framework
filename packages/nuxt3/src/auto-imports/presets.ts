@@ -1,10 +1,10 @@
-import type { AutoImportSource } from '@nuxt/schema'
+import { defineUnimportPreset } from 'unimport'
 
-export const Nuxt3AutoImports: AutoImportSource[] = [
+export const Nuxt3AutoImports = [
   // #app
-  {
+  defineUnimportPreset({
     from: '#app',
-    names: [
+    imports: [
       'useAsyncData',
       'useLazyAsyncData',
       'defineNuxtComponent',
@@ -23,26 +23,26 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
       'abortNavigation',
       'addRouteMiddleware'
     ]
-  },
+  }),
   // #meta
-  {
+  defineUnimportPreset({
     from: '#meta',
-    names: [
+    imports: [
       'useMeta'
     ]
-  },
+  }),
   // vue-demi (mocked)
-  {
+  defineUnimportPreset({
     from: 'vue-demi',
-    names: [
+    imports: [
       'isVue2',
       'isVue3'
     ]
-  },
+  }),
   // vue
-  {
+  defineUnimportPreset({
     from: 'vue',
-    names: [
+    imports: [
       // <script setup>
       'withCtx',
       'withDirectives',
@@ -109,5 +109,5 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
       'useSlots',
       'useTransitionState'
     ] as Array<keyof typeof import('vue')>
-  }
+  })
 ]
