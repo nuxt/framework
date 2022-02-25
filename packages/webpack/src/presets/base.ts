@@ -23,7 +23,7 @@ function baseConfig (ctx: WebpackConfigContext) {
 
   ctx.config = {
     name: ctx.name,
-    entry: { app: [options.experimental.asyncEntry ? resolve(options.appDir, 'entry.async') : resolve(options.appDir, 'entry')] },
+    entry: { app: [resolve(options.appDir,  options.experimental.asyncEntry? 'entry.async' : 'entry') ] },
     module: { rules: [] },
     plugins: [],
     externals: [],
