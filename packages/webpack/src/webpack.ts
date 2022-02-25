@@ -79,7 +79,7 @@ async function createDevMiddleware (compiler: Compiler) {
     ...nuxt.options.webpack.devMiddleware
   })) as API<IncomingMessage, ServerResponse>
 
-  nuxt.hook('close', () => pify(devMiddleware.close)())
+  nuxt.hook('close', () => pify(devMiddleware.close.bind(devMiddleware))())
 
   const { client: _client, ...hotMiddlewareOptions } = nuxt.options.webpack.hotMiddleware || {}
   const hotMiddleware = pify(webpackHotMiddleware(compiler, {
@@ -146,7 +146,7 @@ async function compile (compiler: Compiler) {
   }
 
   // --- Production Build ---
-  const stats = await pify(compiler.run)()
+  const stats = await new Promise<webpack.Stats>((resolve, reject) => compiler.run((err, stats) => err ? reject(err) : resolve(stats)))
 
   if (stats.hasErrors()) {
     // non-quiet mode: errors will be printed by webpack itself
