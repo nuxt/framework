@@ -1,6 +1,6 @@
 import { statSync } from 'fs'
 import { resolve, basename } from 'pathe'
-import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin, addTemplate, addPlugin } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin, addTemplate, addPluginTemplate } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { componentsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
@@ -106,12 +106,10 @@ export default defineNuxtModule<ComponentsOptions>({
       options
     })
 
-    addTemplate({
+    addPluginTemplate({
       ...componentsTemplate,
       options
     })
-
-    addPlugin({ src: '#build/components' })
 
     // Scan components and add to plugin
     nuxt.hook('app:templates', async () => {
@@ -135,7 +133,7 @@ export default defineNuxtModule<ComponentsOptions>({
       }
     })
 
-    const loaderOptions = { getComponents: () => components }
+    const loaderOptions = { getComponents: () => options.components }
     addWebpackPlugin(loaderPlugin.webpack(loaderOptions))
     addVitePlugin(loaderPlugin.vite(loaderOptions))
   }
