@@ -21,7 +21,14 @@ export default defineNuxtCommand({
     consola.info('Starting Vitest...')
 
     // TODO: prompt auto install if test-utils is not installed
-    const { default: start } = await import('@nuxt/test-utils/vitest')
+    let start: typeof import('@nuxt/test-utils/vitest')['default'] | undefined
+    try {
+      start = await import('@nuxt/test-utils/vitest').then(m => m.default)
+    } catch (e) {
+      consola.error(e)
+      consola.warn('`@nuxt/test-utils` is missing. Run `npm i -D @nuxt/test-utils` or `yarn add -D @nuxt/test-utils` to install')
+      return
+    }
     await start(config, argv)
   }
 })
