@@ -53,6 +53,5 @@ export default {
   server,
   cli,
   generate,
-  typescript,
   experimental,
 }
