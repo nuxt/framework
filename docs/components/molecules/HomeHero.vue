@@ -40,7 +40,7 @@
           "
         >
           <SectionButton
-            :href="primary.url"
+            :to="primary.url"
             :aria-label="primary.text"
             size="lg"
             class="dark:bg-sky-black dark:hover:bg-sky-darker hover:bg-cloud-surface"
@@ -61,16 +61,8 @@ export default {
     primary: {
       type: Object,
       default: () => ({
-        text: 'Star on GitHub',
-        url: 'https://github.com',
-        icon: 'IconGitHub'
-      })
-    },
-    secondary: {
-      type: Object,
-      default: () => ({
-        text: 'Getting started',
-        url: '/docs'
+        text: 'Get started',
+        url: '/getting-started'
       })
     }
   }

@@ -8,9 +8,8 @@ description: 'Build your next application with Vue 3 and experience hybrid rende
 ::HomeHero
 ---
 primary:
-  text: Star on GitHub
-  url: https://github.com/nuxt/framework
-  icon: IconGitHub
+  text: Get started
+  url: /getting-started
 ---
 
 #title
@@ -21,7 +20,7 @@ Build your next application with Vue 3 and experience hybrid rendering, powerful
 Nuxt 3 is an open source framework making web development simple and powerful.
 
 #secondary-button
-:button-link[Get started]{ href="/getting-started" size="medium" aria-label="Get started" }
+:button-link[Play online]{ href="https://stackblitz.com/github/nuxt/starter/tree/v3?terminal=dev" blank size="medium" aria-label="Play online" }
 ::
 
 ::home-features{.dark:bg-secondary-darkest .bg-gray-50}
