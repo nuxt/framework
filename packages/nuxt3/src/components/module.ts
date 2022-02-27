@@ -114,7 +114,7 @@ export default defineNuxtModule<ComponentsOptions>({
     // Scan components and add to plugin
     nuxt.hook('app:templates', async () => {
       options.components = await scanComponents(componentDirs, nuxt.options.srcDir!)
-      await nuxt.callHook('components:extend', components)
+      await nuxt.callHook('components:extend', options.components)
       await nuxt.callHook('builder:generateApp')
     })
 
