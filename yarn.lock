@@ -14037,6 +14037,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"magic-string-extra@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "magic-string-extra@npm:0.1.0"
+  dependencies:
+    magic-string: ^0.25.7
+  checksum: 875f7f976f77d9bf697af46541420ffe5c9d5dca93f6d181aac7d875466bc3f8abf72b05f914a55ccf0abed75523362fd1882c3d407a920b280f72ed3b45e499
+  languageName: node
+  linkType: hard
+
 "magic-string@npm:^0.25.7":
   version: 0.25.7
   resolution: "magic-string@npm:0.25.7"
@@ -15697,7 +15706,7 @@ __metadata:
     hookable: ^5.1.1
     ignore: ^5.2.0
     knitwork: ^0.1.0
-    magic-string: ^0.25.7
+    magic-string-extra: ^0.1.0
     mlly: ^0.4.3
     murmurhash-es: ^0.1.1
     nitropack: "npm:nitropack-edge@latest"

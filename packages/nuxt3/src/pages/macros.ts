@@ -1,7 +1,7 @@
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL, withQuery } from 'ufo'
 import { findStaticImports, findExports } from 'mlly'
-import MagicString from 'magic-string'
+import MagicString from 'magic-string-extra'
 
 export interface TransformMacroPluginOptions {
   macros: Record<string, string>
@@ -17,7 +17,6 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       return pathname.endsWith('.vue') || !!parseQuery(search).macro
     },
     transform (code, id) {
-      let changed = false
       const s = new MagicString(code)
       const { search } = parseURL(id)
 
@@ -26,19 +25,12 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       for (const macro in options.macros) {
         const match = code.match(new RegExp(`\\b${macro}\\s*\\(\\s*`))
         if (match?.[0]) {
-          changed = true
           s.overwrite(match.index, match.index + match[0].length, `/*#__PURE__*/ false && ${match[0]}`)
         }
       }
 
       if (!parseQuery(search).macro) {
-        if (changed) {
-          return {
-            code: s.toString(),
-            map: s.generateMap({ hires: true })
-          }
-        }
-        return null
+        return s.toRollupResult(true, { source: id, includeContent: true })
       }
 
       // [webpack] Re-export any imports from script blocks in the components
@@ -47,10 +39,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       if (scriptImport) {
         const specifier = withQuery(scriptImport.specifier.replace('?macro=true', ''), { macro: 'true' })
         s.overwrite(0, code.length, `export { meta } from "${specifier}"`)
-        return {
-          code: s.toString(),
-          map: s.generateMap()
-        }
+        return s.toRollupResult(true, { source: id, includeContent: true })
       }
 
       const currentExports = findExports(code)
@@ -61,12 +50,8 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
         if (match.specifier && match._type === 'named') {
           // [webpack] Export named exports rather than the default (component)
           s.overwrite(match.start, match.end, `export {${Object.values(options.macros).join(', ')}} from "${match.specifier}"`)
-          return {
-            code: s.toString(),
-            map: s.generateMap()
-          }
+          return s.toRollupResult(true, { source: id, includeContent: true })
         } else if (!options.dev) {
-          changed = true
           // ensure we tree-shake any _other_ default exports out of the macro script
           s.overwrite(match.start, match.end, '/*#__PURE__*/ false &&')
           s.append('\nexport default {}')
@@ -82,16 +67,10 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
         const { 0: match, index = 0 } = code.match(new RegExp(`\\b${macro}\\s*\\(\\s*`)) || {} as RegExpMatchArray
         const macroContent = match ? extractObject(code.slice(index + match.length)) : 'undefined'
 
-        changed = true
         s.append(`\nexport const ${options.macros[macro]} = ${macroContent}`)
       }
 
-      if (changed) {
-        return {
-          code: s.toString(),
-          map: s.generateMap()
-        }
-      }
+      return s.toRollupResult(true, { source: id, includeContent: true })
     }
   }
 })
