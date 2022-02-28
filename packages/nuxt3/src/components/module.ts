@@ -1,6 +1,6 @@
 import { statSync } from 'fs'
 import { resolve, basename } from 'pathe'
-import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin, addTemplate, addPluginTemplate, isIgnored } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin, addTemplate, addPluginTemplate } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { componentsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
@@ -77,7 +77,6 @@ export default defineNuxtModule<ComponentsOptions>({
         }
 
         return {
-          ignoreFile: isIgnored,
           global: componentOptions.global,
           ...dirOptions,
           // TODO: https://github.com/nuxt/framework/pull/251
