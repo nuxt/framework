@@ -3,7 +3,6 @@ import { applyDefaults } from 'untyped'
 import { loadConfig, DotenvOptions } from 'c12'
 import type { NuxtOptions } from '@nuxt/schema'
 import { NuxtConfigSchema } from '@nuxt/schema'
-import { resolveAlias } from '../resolve'
 // TODO
 // import { tryResolveModule, requireModule, scanRequireTree } from '../internal/cjs'
 
