@@ -1,5 +1,5 @@
 import { join, resolve } from 'pathe'
-import { isDevelopment, isTest } from 'std-env'
+import { isDevelopment } from 'std-env'
 import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
