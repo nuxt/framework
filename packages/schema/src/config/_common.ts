@@ -593,7 +593,6 @@ export default {
       '**/*.stories.{js,ts,jsx,tsx}', // ignore storybook files
       '**/*.{spec,test}.{js,ts,jsx,tsx}', // ignore tests
       '.output',
-      'node_modules',
       get('ignorePrefix') && `**/${get('ignorePrefix')}*.*`
     ].concat(val).filter(Boolean)
   },

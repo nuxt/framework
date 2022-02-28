@@ -34,6 +34,10 @@ export interface ScanDir {
    */
   ignore?: string[]
   /**
+   * Function to filter files - for more control than the `ignore` pattern.
+   */
+  ignoreFile?: (pathname: string) => boolean
+  /**
    * Prefix all matched components.
    */
   prefix?: string

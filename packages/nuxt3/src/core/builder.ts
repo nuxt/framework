@@ -39,7 +39,8 @@ function watch (nuxt: Nuxt) {
     ignoreInitial: true,
     ignored: [
       shouldIgnoreFile,
-      '.nuxt'
+      '.nuxt',
+      'node_modules'
     ]
   })
   const watchHook = (event, path) => nuxt.callHook('builder:watch', event, path)

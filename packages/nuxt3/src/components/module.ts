@@ -1,6 +1,6 @@
 import { statSync } from 'fs'
 import { resolve, basename } from 'pathe'
-import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin, addTemplate, addPluginTemplate } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin, addTemplate, addPluginTemplate, useIgnore } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { componentsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
@@ -62,6 +62,7 @@ export default defineNuxtModule<ComponentsOptions>({
 
       await nuxt.callHook('components:dirs', allDirs)
 
+      const { shouldIgnoreFile } = useIgnore()
       componentDirs = allDirs.filter(isPureObjectOrString).map((dir) => {
         const dirOptions: ComponentsDir = typeof dir === 'object' ? dir : { path: dir }
         const dirPath = resolveAlias(dirOptions.path)
@@ -77,6 +78,7 @@ export default defineNuxtModule<ComponentsOptions>({
         }
 
         return {
+          ignoreFile: shouldIgnoreFile,
           global: componentOptions.global,
           ...dirOptions,
           // TODO: https://github.com/nuxt/framework/pull/251
