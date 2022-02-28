@@ -45,16 +45,20 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
     enforce: 'post',
     transform (code, id) {
       const s = new MagicString(code)
+      let injectUtils = false
+
       if (options.globalPublicPath && id.includes('entry.ts')) {
-        s.prepend(`import { joinURL } from "ufo";${options.globalPublicPath} = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);`)
+        injectUtils = true
+        s.prepend(`${options.globalPublicPath} = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);`)
       }
 
       const assetId = code.match(VITE_ASSET_RE)
       if (assetId) {
-        s.overwrite(0, code.length, `import { joinURL } from "ufo";export default joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir, "${assetId[1]}".replace("/__NUXT_BASE__", ""));`)
+        injectUtils = true
+        s.overwrite(0, code.length, `export default joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir, "${assetId[1]}".replace("/__NUXT_BASE__", ""));`)
       }
 
-      if (code.includes('NUXT_BASE') && !code.includes('const NUXT_BASE =')) {
+      if (injectUtils || (code.includes('NUXT_BASE') && !code.includes('const NUXT_BASE ='))) {
         s.prepend('const NUXT_BASE = NUXT_CONFIG.app.cdnURL || NUXT_CONFIG.app.baseURL;')
 
         if (options.env === 'dev') {
@@ -70,11 +74,11 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
         // Define vite base path as buildAssetsUrl (i.e. including _nuxt/)
         const match = code.match(/const base = ['"]\/__NUXT_BASE__\/['"]/)
         if (match?.[0]) {
+          injectUtils = true
           s.overwrite(
             match.index,
             match.index + match[0].length,
-            'import { joinURL } from "ufo";' +
-          'const base = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);'
+            'const base = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);'
           )
         }
       }
@@ -87,6 +91,10 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
         const delimiterRE = new RegExp(`${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g')
         /* eslint-disable-next-line no-template-curly-in-string */
         replace(s, delimiterRE, '`$1${NUXT_BASE}$2`')
+      }
+
+      if (injectUtils) {
+        s.prepend('import { joinURL } from "ufo";\n')
       }
 
       if (code === s.toString()) {
