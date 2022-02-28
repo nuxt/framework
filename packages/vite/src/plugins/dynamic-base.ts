@@ -93,7 +93,7 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
         s.prepend('import { joinURL } from "ufo";\n')
       }
 
-      return s.toRollupResult()
+      return s.toRollupResult(true, { source: id, includeContent: true })
     }
   }
 })
