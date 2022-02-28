@@ -3,27 +3,18 @@ import ignore, { Ignore } from 'ignore'
 import { join, relative } from 'pathe'
 import { useNuxt } from './context'
 
-export interface NuxtIgnore {
-  shouldIgnoreFile: (pathname: string) => boolean
-}
-
 /**
  * Return a filter function to filter an array of paths
  */
-export function useIgnore (nuxt = useNuxt()): NuxtIgnore {
+export function isIgnored (pathname: string): boolean {
+  const nuxt = useNuxt()
   nuxt._ignore = nuxt._ignore || createIgnore()
 
-  const shouldIgnoreFile = (pathname: string) => {
-    const relativePath = relative(nuxt.options.rootDir, pathname)
-    if (relativePath.startsWith('..')) {
-      return false
-    }
-    return relativePath && nuxt._ignore.ignores(relativePath)
+  const relativePath = relative(nuxt.options.rootDir, pathname)
+  if (relativePath.startsWith('..')) {
+    return false
   }
-
-  return {
-    shouldIgnoreFile
-  }
+  return relativePath && nuxt._ignore.ignores(relativePath)
 }
 
 // --- Internal ---

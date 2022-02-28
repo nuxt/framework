@@ -4,7 +4,7 @@ import { basename, dirname, resolve, join, normalize, isAbsolute } from 'pathe'
 import { globby } from 'globby'
 import { useNuxt } from './context'
 import { tryResolveModule } from './internal/cjs'
-import { useIgnore } from './ignore'
+import { isIgnored } from './ignore'
 
 export interface ResolvePathOptions {
   /** Base for resolving paths from. Default is Nuxt rootDir. */
@@ -141,7 +141,6 @@ async function existsSensitive (path: string) {
 }
 
 export async function resolveFiles (path: string, pattern: string | string[]) {
-  const { shouldIgnoreFile } = useIgnore()
   const files = await globby(pattern, { cwd: path, followSymbolicLinks: true })
-  return files.filter(p => !shouldIgnoreFile(p)).map(p => resolve(path, p))
+  return files.filter(p => !isIgnored(p)).map(p => resolve(path, p))
 }
