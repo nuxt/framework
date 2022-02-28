@@ -1,7 +1,7 @@
 import { createUnplugin } from 'unplugin'
 import escapeRE from 'escape-string-regexp'
 import type { Plugin } from 'vite'
-import MagicString from 'magic-string'
+import MagicString from 'magic-string-extra'
 
 interface DynamicBasePluginOptions {
   env: 'dev' | 'server' | 'client'
@@ -71,63 +71,29 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
       }
 
       if (id === 'vite/preload-helper') {
+        injectUtils = true
         // Define vite base path as buildAssetsUrl (i.e. including _nuxt/)
-        const match = code.match(/const base = ['"]\/__NUXT_BASE__\/['"]/)
-        if (match?.[0]) {
-          injectUtils = true
-          s.overwrite(
-            match.index,
-            match.index + match[0].length,
-            'const base = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);'
-          )
-        }
+        code.replace(
+          /const base = ['"]\/__NUXT_BASE__\/['"]/,
+          'const base = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);'
+        )
       }
 
       // Sanitize imports
-      replace(s, /from *['"]\/__NUXT_BASE__(\/[^'"]*)['"]/g, 'from "$1"')
+      s.replace(/from *['"]\/__NUXT_BASE__(\/[^'"]*)['"]/g, 'from "$1"')
 
       // Dynamically compute string URLs featuring baseURL
       for (const delimiter of ['`', '"', "'"]) {
         const delimiterRE = new RegExp(`${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g')
         /* eslint-disable-next-line no-template-curly-in-string */
-        replace(s, delimiterRE, '`$1${NUXT_BASE}$2`')
+        s.replace(delimiterRE, '`$1${NUXT_BASE}$2`')
       }
 
       if (injectUtils) {
         s.prepend('import { joinURL } from "ufo";\n')
       }
 
-      if (code === s.toString()) {
-        return
-      }
-      return {
-        code: s.toString(),
-        map: s.generateMap()
-      }
+      return s.toRollupResult()
     }
   }
 })
-
-function replace (s: MagicString, regex: RegExp | string, replacement: string | ((substring: string, ...args: any[]) => string)) {
-  function getReplacement (match: RegExpMatchArray) {
-    if (typeof replacement === 'string') {
-      return replacement.replace(/\$(\d+)/g, (_, i) => match[+i])
-    } else {
-      return replacement(...match as unknown as [string])
-    }
-  }
-  if (typeof regex !== 'string' && regex.global) {
-    const matches = Array.from(s.original.matchAll(regex))
-    matches.forEach((match) => {
-      if (match.index != null) {
-        s.overwrite(match.index, match.index + match[0].length, getReplacement(match))
-      }
-    })
-  } else {
-    const match = s.original.match(regex)
-    if (match?.index != null) {
-      s.overwrite(match.index, match.index + match[0].length, getReplacement(match))
-    }
-  }
-  return s
-}
