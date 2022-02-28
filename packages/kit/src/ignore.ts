@@ -8,26 +8,20 @@ import { useNuxt } from './context'
  */
 export function isIgnored (pathname: string): boolean {
   const nuxt = useNuxt()
-  nuxt._ignore = nuxt._ignore || createIgnore()
+
+  if (!nuxt._ignore) {
+    nuxt._ignore = ignore(nuxt.options.ignoreOptions)
+    nuxt._ignore.add(nuxt.options.ignore)
+
+    const nuxtignoreFile = join(nuxt.options.rootDir, '.nuxtignore')
+    if (existsSync(nuxtignoreFile)) {
+      nuxt._ignore.add(readFileSync(nuxtignoreFile, 'utf-8'))
+    }
+  }
 
   const relativePath = relative(nuxt.options.rootDir, pathname)
   if (relativePath.startsWith('..')) {
     return false
   }
   return relativePath && nuxt._ignore.ignores(relativePath)
-}
-
-// --- Internal ---
-function createIgnore (): Ignore {
-  const nuxt = useNuxt()
-
-  const manager = ignore(nuxt.options.ignoreOptions)
-  manager.add(nuxt.options.ignore)
-
-  const nuxtignoreFile = join(nuxt.options.rootDir, '.nuxtignore')
-  if (existsSync(nuxtignoreFile)) {
-    manager.add(readFileSync(nuxtignoreFile, 'utf-8'))
-  }
-
-  return manager
 }
