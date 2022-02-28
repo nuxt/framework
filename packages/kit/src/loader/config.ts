@@ -3,6 +3,7 @@ import { applyDefaults } from 'untyped'
 import { loadConfig, DotenvOptions } from 'c12'
 import type { NuxtOptions } from '@nuxt/schema'
 import { NuxtConfigSchema } from '@nuxt/schema'
+import { resolveAlias } from '../resolve'
 // TODO
 // import { tryResolveModule, requireModule, scanRequireTree } from '../internal/cjs'
 
@@ -37,6 +38,18 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
 
   nuxtConfig._nuxtConfigFile = configFile
   nuxtConfig._nuxtConfigFiles = [configFile]
+
+  // Resolve `rootDir` & `srcDir` of layers
+  for (const layer of layers) {
+    layer.config.rootDir = layer.cwd
+    layer.config.srcDir = layer.config.srcDir
+      ? resolve(layer.cwd, resolveAlias(layer.config.srcDir, {
+        ...layer.config.alias,
+        '~': layer.cwd
+      }))
+      : layer.cwd
+  }
+
   nuxtConfig._extends = layers
 
   // Resolve and apply defaults
