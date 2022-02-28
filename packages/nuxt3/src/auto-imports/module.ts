@@ -81,8 +81,6 @@ export default defineNuxtModule<AutoImportsOptions>({
         await scanForComposables(composablesDir, ctx.autoImports)
       }
 
-      console.log(ctx.autoImports.slice(-5))
-
       // Allow modules extending
       await nuxt.callHook('autoImports:extend', ctx.autoImports)
       // Update context
