@@ -15697,6 +15697,7 @@ __metadata:
     hookable: ^5.1.1
     ignore: ^5.2.0
     knitwork: ^0.1.0
+    magic-string: ^0.25.7
     mlly: ^0.4.3
     murmurhash-es: ^0.1.1
     nitropack: "npm:nitropack-edge@latest"
