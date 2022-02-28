@@ -17,7 +17,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       return pathname.endsWith('.vue') || !!parseQuery(search).macro
     },
     transform (code, id) {
-      const s = new MagicString(code)
+      const s = new MagicString(code, { sourcemapOptions: { source: id, includeContent: true } })
       const { search } = parseURL(id)
 
       // Tree-shake out any runtime references to the macro.
@@ -30,7 +30,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       }
 
       if (!parseQuery(search).macro) {
-        return s.toRollupResult(true, { source: id, includeContent: true })
+        return s.toRollupResult()
       }
 
       // [webpack] Re-export any imports from script blocks in the components
@@ -39,7 +39,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       if (scriptImport) {
         const specifier = withQuery(scriptImport.specifier.replace('?macro=true', ''), { macro: 'true' })
         s.overwrite(0, code.length, `export { meta } from "${specifier}"`)
-        return s.toRollupResult(true, { source: id, includeContent: true })
+        return s.toRollupResult()
       }
 
       const currentExports = findExports(code)
@@ -50,7 +50,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
         if (match.specifier && match._type === 'named') {
           // [webpack] Export named exports rather than the default (component)
           s.overwrite(match.start, match.end, `export {${Object.values(options.macros).join(', ')}} from "${match.specifier}"`)
-          return s.toRollupResult(true, { source: id, includeContent: true })
+          return s.toRollupResult()
         } else if (!options.dev) {
           // ensure we tree-shake any _other_ default exports out of the macro script
           s.overwrite(match.start, match.end, '/*#__PURE__*/ false &&')
@@ -70,7 +70,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
         s.append(`\nexport const ${options.macros[macro]} = ${macroContent}`)
       }
 
-      return s.toRollupResult(true, { source: id, includeContent: true })
+      return s.toRollupResult()
     }
   }
 })
