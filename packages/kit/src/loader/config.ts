@@ -41,13 +41,8 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
 
   // Resolve `rootDir` & `srcDir` of layers
   for (const layer of layers) {
-    layer.config.rootDir = layer.cwd
-    layer.config.srcDir = layer.config.srcDir
-      ? resolve(layer.cwd, resolveAlias(layer.config.srcDir, {
-        ...layer.config.alias,
-        '~': layer.cwd
-      }))
-      : layer.cwd
+    layer.config.rootDir = layer.config.rootDir ?? layer.cwd
+    layer.config.srcDir = resolve(layer.config.rootDir, layer.config.srcDir)
   }
 
   nuxtConfig._extends = layers
