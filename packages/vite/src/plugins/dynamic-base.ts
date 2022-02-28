@@ -1,6 +1,7 @@
 import { createUnplugin } from 'unplugin'
 import escapeRE from 'escape-string-regexp'
 import type { Plugin } from 'vite'
+import MagicString from 'magic-string'
 
 interface DynamicBasePluginOptions {
   env: 'dev' | 'server' | 'client'
@@ -42,51 +43,83 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
       return null
     },
     enforce: 'post',
-    transform (original, id) {
-      let code = original
+    transform (code, id) {
+      const s = new MagicString(code)
       if (options.globalPublicPath && id.includes('entry.ts')) {
-        code = 'import { joinURL } from "ufo";' +
-          `${options.globalPublicPath} = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);` + code
+        s.prepend(`import { joinURL } from "ufo";${options.globalPublicPath} = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);`)
       }
 
       const assetId = code.match(VITE_ASSET_RE)
       if (assetId) {
-        code = 'import { joinURL } from "ufo";' +
-          `export default joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir, "${assetId[1]}".replace("/__NUXT_BASE__", ""));`
+        s.overwrite(0, code.length, `import { joinURL } from "ufo";export default joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir, "${assetId[1]}".replace("/__NUXT_BASE__", ""));`)
       }
 
       if (code.includes('NUXT_BASE') && !code.includes('const NUXT_BASE =')) {
-        code = 'const NUXT_BASE = NUXT_CONFIG.app.cdnURL || NUXT_CONFIG.app.baseURL;' + code
+        s.prepend('const NUXT_BASE = NUXT_CONFIG.app.cdnURL || NUXT_CONFIG.app.baseURL;')
 
         if (options.env === 'dev') {
-          code = `const NUXT_CONFIG = { app: ${JSON.stringify(options.devAppConfig)} };` + code
+          s.prepend(`const NUXT_CONFIG = { app: ${JSON.stringify(options.devAppConfig)} };`)
         } else if (options.env === 'server') {
-          code = 'import NUXT_CONFIG from "#config";' + code
+          s.prepend('import NUXT_CONFIG from "#config";')
         } else {
-          code = 'const NUXT_CONFIG = __NUXT__.config;' + code
+          s.prepend('const NUXT_CONFIG = __NUXT__.config;')
         }
       }
 
       if (id === 'vite/preload-helper') {
         // Define vite base path as buildAssetsUrl (i.e. including _nuxt/)
-        code = code.replace(
-          /const base = ['"]\/__NUXT_BASE__\/['"]/,
-          'import { joinURL } from "ufo";' +
-          'const base = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);')
+        const match = code.match(/const base = ['"]\/__NUXT_BASE__\/['"]/)
+        if (match?.[0]) {
+          s.overwrite(
+            match.index,
+            match.index + match[0].length,
+            'import { joinURL } from "ufo";' +
+          'const base = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);'
+          )
+        }
       }
 
       // Sanitize imports
-      code = code.replace(/from *['"]\/__NUXT_BASE__(\/[^'"]*)['"]/g, 'from "$1"')
+      replace(s, /from *['"]\/__NUXT_BASE__(\/[^'"]*)['"]/g, 'from "$1"')
 
       // Dynamically compute string URLs featuring baseURL
       for (const delimiter of ['`', '"', "'"]) {
         const delimiterRE = new RegExp(`${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g')
         /* eslint-disable-next-line no-template-curly-in-string */
-        code = code.replace(delimiterRE, '`$1${NUXT_BASE}$2`')
+        replace(s, delimiterRE, '`$1${NUXT_BASE}$2`')
       }
 
-      if (code === original) { return }
-      return code
+      if (code === s.toString()) {
+        return
+      }
+      return {
+        code: s.toString(),
+        map: s.generateMap()
+      }
     }
   }
 })
+
+function replace (s: MagicString, regex: RegExp | string, replacement: string | ((substring: string, ...args: any[]) => string)) {
+  function getReplacement (match: RegExpMatchArray) {
+    if (typeof replacement === 'string') {
+      return replacement.replace(/\$(\d+)/g, (_, i) => match[+i])
+    } else {
+      return replacement(...match as unknown as [string])
+    }
+  }
+  if (typeof regex !== 'string' && regex.global) {
+    const matches = Array.from(s.original.matchAll(regex))
+    matches.forEach((match) => {
+      if (match.index != null) {
+        s.overwrite(match.index, match.index + match[0].length, getReplacement(match))
+      }
+    })
+  } else {
+    const match = s.original.match(regex)
+    if (match?.index != null) {
+      s.overwrite(match.index, match.index + match[0].length, getReplacement(match))
+    }
+  }
+  return s
+}
