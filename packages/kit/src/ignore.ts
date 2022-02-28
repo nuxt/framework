@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'fs'
-import ignore, { Ignore } from 'ignore'
+import ignore from 'ignore'
 import { join, relative } from 'pathe'
 import { useNuxt } from './context'
 
