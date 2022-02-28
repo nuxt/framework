@@ -2,6 +2,7 @@ import { basename, extname, join, dirname, relative } from 'pathe'
 import { globby } from 'globby'
 import { pascalCase, splitByCase } from 'scule'
 import type { Component, ComponentsDir } from '@nuxt/schema'
+import { useIgnore } from '@nuxt/kit'
 
 // vue@2 src/shared/util.js
 // TODO: update to vue3?
@@ -27,6 +28,8 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
   // All scanned paths
   const scannedPaths: string[] = []
 
+  const { shouldIgnoreFile } = useIgnore()
+
   for (const dir of dirs) {
     // A map from resolved path to component name (used for making duplicate warning message)
     const resolvedNames = new Map<string, string>()
@@ -34,7 +37,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
     for (const _file of await globby(dir.pattern!, { cwd: dir.path, ignore: dir.ignore })) {
       const filePath = join(dir.path, _file)
 
-      if (scannedPaths.find(d => filePath.startsWith(d))) {
+      if (scannedPaths.find(d => filePath.startsWith(d)) || shouldIgnoreFile(filePath)) {
         continue
       }
 

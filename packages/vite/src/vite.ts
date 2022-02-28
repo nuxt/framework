@@ -2,7 +2,7 @@ import * as vite from 'vite'
 import { resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
-import { logger } from '@nuxt/kit'
+import { logger, useIgnore } from '@nuxt/kit'
 import type { Options } from '@vitejs/plugin-vue'
 import { sanitizeFilePath } from 'mlly'
 import { getPort } from 'get-port-please'
@@ -29,6 +29,7 @@ export async function bundle (nuxt: Nuxt) {
     port: hmrPortDefault,
     ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
   })
+  const { shouldIgnoreFile } = useIgnore()
 
   const ctx: ViteBuildContext = {
     nuxt,
@@ -64,6 +65,9 @@ export async function bundle (nuxt: Nuxt) {
           virtual(nuxt.vfs)
         ],
         server: {
+          watch: {
+            ignored: shouldIgnoreFile
+          },
           hmr: {
             clientPort: hmrPort,
             port: hmrPort

@@ -570,6 +570,7 @@ export default {
    * }
    * ```
    * @version 2
+   * @version 3
    */
   ignoreOptions: undefined,
 
@@ -577,6 +578,7 @@ export default {
    * Any file in `pages/`, `layouts/`, `middleware/` or `store/` will be ignored during
    * building if its filename starts with the prefix specified by `ignorePrefix`.
    * @version 2
+   * @version 3
    */
   ignorePrefix: '-',
 
@@ -584,11 +586,14 @@ export default {
    * More customizable than `ignorePrefix`: all files matching glob patterns specified
    * inside the `ignore` array will be ignored in building.
    * @version 2
+   * @version 3
    */
   ignore: {
     $resolve: (val, get) => [
-      '**/*.test.*',
-      '**/*.spec.*',
+      '**/*.stories.{js,ts,jsx,tsx}', // ignore storybook files
+      '**/*.{spec,test}.{js,ts,jsx,tsx}', // ignore tests
+      '.output',
+      'node_modules',
       get('ignorePrefix') && `**/${get('ignorePrefix')}*.*`
     ].concat(val).filter(Boolean)
   },

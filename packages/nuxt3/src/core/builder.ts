@@ -1,6 +1,6 @@
 import chokidar from 'chokidar'
 import type { Nuxt } from '@nuxt/schema'
-import { tryImportModule } from '@nuxt/kit'
+import { useIgnore, tryImportModule } from '@nuxt/kit'
 import { createApp, generateApp } from './app'
 
 export async function build (nuxt: Nuxt) {
@@ -32,14 +32,14 @@ export async function build (nuxt: Nuxt) {
 }
 
 function watch (nuxt: Nuxt) {
+  const { shouldIgnoreFile } = useIgnore()
   const watcher = chokidar.watch(nuxt.options.srcDir, {
     ...nuxt.options.watchers.chokidar,
     cwd: nuxt.options.srcDir,
     ignoreInitial: true,
     ignored: [
-      '.nuxt',
-      '.output',
-      'node_modules'
+      shouldIgnoreFile,
+      '.nuxt'
     ]
   })
   const watchHook = (event, path) => nuxt.callHook('builder:watch', event, path)
