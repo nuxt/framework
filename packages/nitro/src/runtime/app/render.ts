@@ -109,8 +109,6 @@ export async function renderMiddleware (req, res: ServerResponse) {
     rendered = await renderToString(ssrContext)
   }
 
-  ssrContext.payload.errors = ssrContext.errors.map(serializeError)
-
   if (ssrContext.redirected || res.writableEnded) {
     return
   }
@@ -121,6 +119,8 @@ export async function renderMiddleware (req, res: ServerResponse) {
 
   // TODO: nuxt3 should not reuse `nuxt` property for different purpose!
   const payload = ssrContext.payload /* nuxt 3 */ || ssrContext.nuxt /* nuxt 2 */
+
+  payload.errors = ssrContext.errors.map(serializeError)
 
   if (process.env.NUXT_FULL_STATIC) {
     payload.staticAssetsBase = STATIC_ASSETS_BASE
