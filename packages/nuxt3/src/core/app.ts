@@ -67,7 +67,7 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Resolve error component
   if (!app.errorComponent) {
-    app.errorComponent = await findPath(['~/error']) || resolve(nuxt.options.appDir, 'components/nuxt-error.vue')
+    app.errorComponent = (await findPath(['~/error'])) || resolve(nuxt.options.appDir, 'components/nuxt-error.vue')
   }
 
   // Resolve plugins
