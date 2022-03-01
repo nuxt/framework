@@ -56,12 +56,6 @@ if (process.client) {
     })
 
     if (window.__NUXT__.errors.length) {
-      nuxt.hooks.hookOnce('app:error:handled', async () => {
-        await applyPlugins(nuxt, plugins)
-        await nuxt.hooks.callHook('app:created', vueApp)
-        await nuxt.hooks.callHook('app:beforeMount', vueApp)
-        await nuxt.hooks.callHook('app:mounted', vueApp)
-      })
       if (process.dev) {
         console.groupCollapsed('Nuxt SSR errors', window.__NUXT__.errors.length)
         window.__NUXT__.errors.forEach((err) => {
@@ -69,19 +63,19 @@ if (process.client) {
         })
         console.groupEnd()
       }
-      // Skip user code
-      vueApp.mount('#__nuxt')
-      return await nextTick()
     }
 
     try {
       await applyPlugins(nuxt, plugins)
+    } catch (err) {
+      nuxt.hooks.hookOnce('app:error:handled', () => applyPlugins(nuxt, plugins))
+      await nuxt.callHook('app:error', err, nuxt)
+    }
 
+    try {
       await nuxt.hooks.callHook('app:created', vueApp)
       await nuxt.hooks.callHook('app:beforeMount', vueApp)
-
       vueApp.mount('#__nuxt')
-
       await nuxt.hooks.callHook('app:mounted', vueApp)
       await nextTick()
     } catch (err) {
