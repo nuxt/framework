@@ -57,6 +57,13 @@ if (process.client) {
 
     if (window.__NUXT__.errors.length) {
       nuxt.hooks.hookOnce('app:error:handled', () => applyPlugins(nuxt, plugins))
+      if (process.dev) {
+        console.groupCollapsed('Nuxt SSR errors', window.__NUXT__.errors.length)
+        window.__NUXT__.errors.forEach((err) => {
+          console.error(err)
+        })
+        console.groupEnd()
+      }
       // Skip user code
       vueApp.mount('#__nuxt')
       return await nextTick()
