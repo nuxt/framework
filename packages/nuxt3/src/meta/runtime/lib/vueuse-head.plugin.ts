@@ -8,15 +8,21 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   nuxtApp.vueApp.use(head)
 
+  let headReady = false
+  nuxtApp.hooks.hookOnce('app:mounted', () => {
+    watchEffect(() => { head.updateDOM() })
+    headReady = true
+  })
+
   nuxtApp._useMeta = (meta: MetaObject) => {
     const headObj = ref(meta as any)
     head.addHeadObjs(headObj)
 
     if (process.server) { return }
 
-    watchEffect(() => {
-      head.updateDOM()
-    })
+    if (headReady) {
+      watchEffect(() => { head.updateDOM() })
+    }
 
     const vm = getCurrentInstance()
     if (!vm) { return }

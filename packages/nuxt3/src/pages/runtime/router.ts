@@ -6,10 +6,10 @@ import {
   RouterLink,
   NavigationGuard
 } from 'vue-router'
-import NuxtNestedPage from './nested-page.vue'
+import { createError } from 'h3'
 import NuxtPage from './page'
 import NuxtLayout from './layout'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, NuxtApp } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
@@ -17,20 +17,23 @@ import { globalMiddleware, namedMiddleware } from '#build/middleware'
 
 declare module 'vue' {
   export interface GlobalComponents {
-    NuxtNestedPage: typeof NuxtNestedPage
     NuxtPage: typeof NuxtPage
     NuxtLayout: typeof NuxtLayout
     NuxtLink: typeof RouterLink
+    /** @deprecated */
+    NuxtNestedPage: typeof NuxtPage
+    /** @deprecated */
+    NuxtChild: typeof NuxtPage
   }
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.component('NuxtNestedPage', NuxtNestedPage)
   nuxtApp.vueApp.component('NuxtPage', NuxtPage)
   nuxtApp.vueApp.component('NuxtLayout', NuxtLayout)
   nuxtApp.vueApp.component('NuxtLink', RouterLink)
   // TODO: remove before release - present for backwards compatibility & intentionally undocumented
-  nuxtApp.vueApp.component('NuxtChild', NuxtNestedPage)
+  nuxtApp.vueApp.component('NuxtNestedPage', NuxtPage)
+  nuxtApp.vueApp.component('NuxtChild', NuxtPage)
 
   const { baseURL } = useRuntimeConfig().app
   const routerHistory = process.client
@@ -90,7 +93,14 @@ export default defineNuxtPlugin((nuxtApp) => {
         console.warn(`Unknown middleware: ${entry}. Valid options are ${Object.keys(namedMiddleware).join(', ')}.`)
       }
 
-      const result = await callWithNuxt(nuxtApp, middleware, [to, from])
+      const result = await callWithNuxt(nuxtApp as NuxtApp, middleware, [to, from])
+      if (process.server) {
+        if (result === false || result instanceof Error) {
+          return result || createError({
+            statusMessage: `Route navigation aborted: ${nuxtApp.ssrContext.url}`
+          })
+        }
+      }
       if (result || result === false) { return result }
     }
   })
@@ -106,17 +116,23 @@ export default defineNuxtPlugin((nuxtApp) => {
       router.afterEach((to) => {
         if (to.fullPath !== nuxtApp.ssrContext.url) {
           nuxtApp.ssrContext.res.setHeader('Location', to.fullPath)
+          nuxtApp.ssrContext.res.statusCode = 301
+          nuxtApp.ssrContext.res.end()
         }
       })
     }
 
-    await router.isReady()
+    try {
+      await router.isReady()
 
-    const is404 = router.currentRoute.value.matched.length === 0
-    if (process.server && is404) {
-      const error = new Error(`Page not found: ${nuxtApp.ssrContext.url}`)
-      // @ts-ignore
-      error.statusCode = 404
+      const is404 = router.currentRoute.value.matched.length === 0
+      if (process.server && is404) {
+        throw createError({
+          statusCode: 404,
+          statusMessage: `Page not found: ${nuxtApp.ssrContext.url}`
+        })
+      }
+    } catch (error) {
       nuxtApp.ssrContext.error = error
     }
   })

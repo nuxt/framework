@@ -2,10 +2,9 @@ import { join, resolve, normalize } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
+import { logger, resolveModule } from '@nuxt/kit'
 import fse from 'fs-extra'
 import pDebounce from 'p-debounce'
-import consola from 'consola'
-import { resolveModule } from '@nuxt/kit'
 import { withoutTrailingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
@@ -47,8 +46,7 @@ export async function buildServer (ctx: ViteBuildContext) {
         /\.(es|esm|esm-browser|esm-bundler).js$/,
         '/__vue-jsx',
         '#app',
-        /nuxt3\/dist/,
-        /nuxt3\/src/,
+        'nuxt3',
         /@nuxt\/nitro\/dist/,
         /@nuxt\/nitro\/src/
       ]
@@ -117,10 +115,10 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Production build
   if (!ctx.nuxt.options.dev) {
     const start = Date.now()
-    consola.info('Building server...')
+    logger.info('Building server...')
     await vite.build(serverConfig)
     await onBuild()
-    consola.success(`Server built in ${Date.now() - start}ms`)
+    logger.success(`Server built in ${Date.now() - start}ms`)
     return
   }
 
@@ -131,15 +129,7 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   // Start development server
   const viteServer = await vite.createServer(serverConfig)
-
-  // Invalidate virtual modules when templates are re-generated
-  ctx.nuxt.hook('app:templatesGenerated', () => {
-    for (const [id, mod] of viteServer.moduleGraph.idToModuleMap) {
-      if (id.startsWith('\x00virtual:')) {
-        viteServer.moduleGraph.invalidateModule(mod)
-      }
-    }
-  })
+  await ctx.nuxt.callHook('vite:serverCreated', viteServer)
 
   // Close server on exit
   ctx.nuxt.hook('close', () => viteServer.close())
@@ -155,7 +145,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     // Have CSS in the manifest to prevent FOUC on dev SSR
     await writeManifest(ctx, ids.filter(isCSS).map(i => i.slice(1)))
     const time = (Date.now() - start)
-    consola.success(`Vite server built in ${time}ms`)
+    logger.success(`Vite server built in ${time}ms`)
     await onBuild()
   }
   const doBuild = pDebounce(_doBuild, 100)

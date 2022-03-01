@@ -1,7 +1,8 @@
 import { existsSync, promises as fsp } from 'fs'
 import { resolve } from 'pathe'
-import consola from 'consola'
+import { logger } from '@nuxt/kit'
 import { joinURL } from 'ufo'
+import { genString } from 'knitwork'
 import { extendPreset, prettyPath } from '../utils'
 import { NitroPreset, NitroContext, NitroInput } from '../context'
 import { worker } from './worker'
@@ -13,7 +14,7 @@ export const browser: NitroPreset = extendPreset(worker, (input: NitroInput) => 
   const script = `<script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
-    navigator.serviceWorker.register('${joinURL(baseURL, 'sw.js')}');
+    navigator.serviceWorker.register(${genString(joinURL(baseURL, 'sw.js'))});
   });
 }
 </script>`
@@ -27,7 +28,7 @@ if ('serviceWorker' in navigator) {
   <link rel="prefetch" href="${joinURL(baseURL, '_server/index.mjs')}">
   <script>
   async function register () {
-    const registration = await navigator.serviceWorker.register('${joinURL(baseURL, 'sw.js')}')
+    const registration = await navigator.serviceWorker.register(${genString(joinURL(baseURL, 'sw.js'))})
     await navigator.serviceWorker.ready
     registration.active.addEventListener('statechange', (event) => {
       if (event.target.state === 'activated') {
@@ -64,7 +65,7 @@ if ('serviceWorker' in navigator) {
         tmpl.contents = tmpl.contents.replace('</body>', script + '</body>')
       },
       async 'nitro:compiled' ({ output }: NitroContext) {
-        await fsp.writeFile(resolve(output.publicDir, 'sw.js'), `self.importScripts('${joinURL(baseURL, '_server/index.mjs')}');`, 'utf8')
+        await fsp.writeFile(resolve(output.publicDir, 'sw.js'), `self.importScripts(${genString(joinURL(baseURL, '_server/index.mjs'))});`, 'utf8')
 
         // Temp fix
         if (!existsSync(resolve(output.publicDir, 'index.html'))) {
@@ -76,7 +77,7 @@ if ('serviceWorker' in navigator) {
         if (!existsSync(resolve(output.publicDir, '404.html'))) {
           await fsp.writeFile(resolve(output.publicDir, '404.html'), html, 'utf8')
         }
-        consola.info('Ready to deploy to static hosting:', prettyPath(output.publicDir as string))
+        logger.info('Ready to deploy to static hosting:', prettyPath(output.publicDir as string))
       }
     }
   }

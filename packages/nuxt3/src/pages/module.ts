@@ -1,6 +1,7 @@
 import { existsSync } from 'fs'
-import { defineNuxtModule, addTemplate, addPlugin, templateUtils, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import { resolve } from 'pathe'
+import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
 import { distDir } from '../dirs'
 import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
@@ -14,8 +15,9 @@ export default defineNuxtModule({
     const pagesDir = resolve(nuxt.options.srcDir, nuxt.options.dir.pages)
     const runtimeDir = resolve(distDir, 'pages/runtime')
 
-    // Disable module if pages dir do not exists
+    // Disable module (and use universal router) if pages dir do not exists
     if (!existsSync(pagesDir)) {
+      addPlugin(resolve(distDir, 'app/plugins/router'))
       return
     }
 
@@ -46,19 +48,7 @@ export default defineNuxtModule({
     })
 
     nuxt.hook('autoImports:extend', (autoImports) => {
-      const composablesFile = resolve(runtimeDir, 'composables')
-      const composables = [
-        'useRouter',
-        'useRoute',
-        'defineNuxtRouteMiddleware',
-        'definePageMeta',
-        'navigateTo',
-        'abortNavigation',
-        'addRouteMiddleware'
-      ]
-      for (const composable of composables) {
-        autoImports.push({ name: composable, as: composable, from: composablesFile })
-      }
+      autoImports.push({ name: 'definePageMeta', as: 'definePageMeta', from: resolve(runtimeDir, 'composables') })
     })
 
     // Extract macros from pages
@@ -80,8 +70,8 @@ export default defineNuxtModule({
       async getContents () {
         const pages = await resolvePagesRoutes(nuxt)
         await nuxt.callHook('pages:extend', pages)
-        const { routes: serializedRoutes, imports } = normalizeRoutes(pages)
-        return [...imports, `export default ${templateUtils.serialize(serializedRoutes)}`].join('\n')
+        const { routes, imports } = normalizeRoutes(pages)
+        return [...imports, `export default ${routes}`].join('\n')
       }
     })
 
@@ -92,11 +82,11 @@ export default defineNuxtModule({
         const middleware = await resolveMiddleware()
         const globalMiddleware = middleware.filter(mw => mw.global)
         const namedMiddleware = middleware.filter(mw => !mw.global)
-        const namedMiddlewareObject = Object.fromEntries(namedMiddleware.map(mw => [mw.name, `{() => import('${mw.path}')}`]))
+        const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
         return [
-          ...globalMiddleware.map(mw => `import ${getImportName(mw.name)} from '${mw.path}'`),
-          `export const globalMiddleware = [${globalMiddleware.map(mw => getImportName(mw.name)).join(', ')}]`,
-          `export const namedMiddleware = ${templateUtils.serialize(namedMiddlewareObject)}`
+          ...globalMiddleware.map(mw => genImport(mw.path, getImportName(mw.name))),
+          `export const globalMiddleware = ${genArrayFromRaw(globalMiddleware.map(mw => getImportName(mw.name)))}`,
+          `export const namedMiddleware = ${namedMiddlewareObject}`
         ].join('\n')
       }
     })
@@ -109,8 +99,8 @@ export default defineNuxtModule({
         const namedMiddleware = middleware.filter(mw => !mw.global)
         return [
           'import type { NavigationGuard } from \'vue-router\'',
-          `export type MiddlewareKey = ${namedMiddleware.map(mw => `"${mw.name}"`).join(' | ') || 'string'}`,
-          `declare module '${composablesFile}' {`,
+          `export type MiddlewareKey = ${namedMiddleware.map(mw => genString(mw.name)).join(' | ') || 'string'}`,
+          `declare module ${genString(composablesFile)} {`,
           '  interface PageMeta {',
           '    middleware?: MiddlewareKey | NavigationGuard | Array<MiddlewareKey | NavigationGuard>',
           '  }',
@@ -126,8 +116,8 @@ export default defineNuxtModule({
         const layouts = await resolveLayouts(nuxt)
         return [
           'import { ComputedRef, Ref } from \'vue\'',
-          `export type LayoutKey = ${layouts.map(layout => `"${layout.name}"`).join(' | ') || 'string'}`,
-          `declare module '${composablesFile}' {`,
+          `export type LayoutKey = ${layouts.map(layout => genString(layout.name)).join(' | ') || 'string'}`,
+          `declare module ${genString(composablesFile)} {`,
           '  interface PageMeta {',
           '    layout?: false | LayoutKey | Ref<LayoutKey> | ComputedRef<LayoutKey>',
           '  }',
@@ -141,12 +131,12 @@ export default defineNuxtModule({
       filename: 'layouts.mjs',
       async getContents () {
         const layouts = await resolveLayouts(nuxt)
-        const layoutsObject = Object.fromEntries(layouts.map(({ name, file }) => {
-          return [name, `{defineAsyncComponent({ suspensible: false, loader: () => import('${file}') })}`]
+        const layoutsObject = genObjectFromRawEntries(layouts.map(({ name, file }) => {
+          return [name, `defineAsyncComponent({ suspensible: false, loader: ${genDynamicImport(file)} })`]
         }))
         return [
           'import { defineAsyncComponent } from \'vue\'',
-          `export default ${templateUtils.serialize(layoutsObject)}`
+          `export default ${layoutsObject}`
         ].join('\n')
       }
     })

@@ -1,12 +1,13 @@
 import { templateUtils } from '@nuxt/kit'
 import type { Nuxt, NuxtApp } from '@nuxt/schema'
+import { genArrayFromRaw, genDynamicImport, genExport, genImport, genString } from 'knitwork'
 
 import { isAbsolute, join, relative } from 'pathe'
 import escapeRE from 'escape-string-regexp'
 
-type TemplateContext = {
-  nuxt: Nuxt;
-  app: NuxtApp;
+export interface TemplateContext {
+  nuxt: Nuxt
+  app: NuxtApp
 }
 
 export const vueShim = {
@@ -24,23 +25,17 @@ export const vueShim = {
 // TODO: Use an alias
 export const appComponentTemplate = {
   filename: 'app-component.mjs',
-  getContents (ctx: TemplateContext) {
-    return `export { default } from '${ctx.app.mainComponent}'`
-  }
+  getContents: (ctx: TemplateContext) => genExport(ctx.app.mainComponent, ['default'])
 }
 // TODO: Use an alias
 export const rootComponentTemplate = {
   filename: 'root-component.mjs',
-  getContents (ctx: TemplateContext) {
-    return `export { default } from '${ctx.app.rootComponent}'`
-  }
+  getContents: (ctx: TemplateContext) => genExport(ctx.app.rootComponent, ['default'])
 }
 
 export const cssTemplate = {
   filename: 'css.mjs',
-  getContents (ctx: TemplateContext) {
-    return ctx.nuxt.options.css.map(i => `import '${i.src || i}';`).join('\n')
-  }
+  getContents: (ctx: TemplateContext) => ctx.nuxt.options.css.map(i => genImport(i)).join('\n')
 }
 
 export const clientPluginTemplate = {
@@ -49,9 +44,7 @@ export const clientPluginTemplate = {
     const clientPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'server')
     return [
       templateUtils.importSources(clientPlugins.map(p => p.src)),
-      'export default [',
-      clientPlugins.map(p => templateUtils.importName(p.src)).join(',\n  '),
-      ']'
+      `export default ${genArrayFromRaw(clientPlugins.map(p => templateUtils.importName(p.src)))}`
     ].join('\n')
   }
 }
@@ -63,10 +56,10 @@ export const serverPluginTemplate = {
     return [
       "import preload from '#app/plugins/preload.server'",
       templateUtils.importSources(serverPlugins.map(p => p.src)),
-      'export default [',
-      '  preload,',
-      serverPlugins.map(p => templateUtils.importName(p.src)).join(',\n  '),
-      ']'
+      `export default ${genArrayFromRaw([
+        'preload',
+        ...serverPlugins.map(p => templateUtils.importName(p.src))
+      ])}`
     ].join('\n')
   }
 }
@@ -103,7 +96,7 @@ type Decorate<T extends Record<string, any>> = { [K in keyof T as K extends stri
 
 type InjectionType<A extends Plugin> = A extends Plugin<infer T> ? Decorate<T> : unknown
 
-type NuxtAppInjections = \n  ${tsImports.map(p => `InjectionType<typeof import('${p}').default>`).join(' &\n  ')}
+type NuxtAppInjections = \n  ${tsImports.map(p => `InjectionType<typeof ${genDynamicImport(p, { wrapper: false })}.default>`).join(' &\n  ')}
 
 declare module '#app' {
   interface NuxtApp extends NuxtAppInjections { }
@@ -115,5 +108,27 @@ declare module '@vue/runtime-core' {
 
 export { }
 `
+  }
+}
+
+const adHocModules = ['router', 'pages', 'auto-imports', 'meta', 'components']
+export const schemaTemplate = {
+  filename: 'types/schema.d.ts',
+  getContents: ({ nuxt }: TemplateContext) => {
+    const moduleInfo = nuxt.options._installedModules.map(m => ({
+      ...m.meta || {},
+      importName: m.entryPath || m.meta?.name
+    })).filter(m => m.configKey && m.name && !adHocModules.includes(m.name))
+
+    return [
+      "import { NuxtModule } from '@nuxt/schema'",
+      "declare module '@nuxt/schema' {",
+      '  interface NuxtConfig {',
+      ...moduleInfo.filter(Boolean).map(meta =>
+      `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
+      ),
+      '  }',
+      '}'
+    ].join('\n')
   }
 }

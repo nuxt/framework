@@ -9,7 +9,7 @@ const ImportRewrites = {
   vue: '@vue/composition-api'
 }
 
-export async function setupAutoImports () {
+export function setupAutoImports () {
   const nuxt = useNuxt()
 
   nuxt.hook('autoImports:extend', (autoImports) => {
@@ -27,13 +27,9 @@ export async function setupAutoImports () {
       }
     }
 
-    // Add auto-imports that are added by ad-hoc modules in nuxt 3
-    autoImports.push({ name: 'useRouter', as: 'useRouter', from: '#app' })
-    autoImports.push({ name: 'useRoute', as: 'useRoute', from: '#app' })
-
     // Add bridge-only auto-imports
     autoImports.push({ name: 'useNuxt2Meta', as: 'useNuxt2Meta', from: '#app' })
   })
 
-  await installModule(autoImports)
+  nuxt.hook('modules:done', () => installModule(autoImports))
 }

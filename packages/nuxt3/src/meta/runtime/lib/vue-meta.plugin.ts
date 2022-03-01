@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { createMetaManager } from 'vue-meta'
-import type { MetaObject } from '../types'
+import type { MetaObject } from '..'
 import { defineNuxtPlugin } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -30,7 +30,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         headAttrs: nuxtApp.ssrContext.teleports.headAttrs || '',
         bodyAttrs: nuxtApp.ssrContext.teleports.bodyAttrs || '',
         headTags: nuxtApp.ssrContext.teleports.head || '',
-        bodyPrepend: nuxtApp.ssrContext.teleports['body-prepend'] || '',
+        bodyScriptsPrepend: nuxtApp.ssrContext.teleports['body-prepend'] || '',
         bodyScripts: nuxtApp.ssrContext.teleports.body || ''
       }
     }
