@@ -56,7 +56,12 @@ if (process.client) {
     })
 
     if (window.__NUXT__.errors.length) {
-      nuxt.hooks.hookOnce('app:error:handled', () => applyPlugins(nuxt, plugins))
+      nuxt.hooks.hookOnce('app:error:handled', async () => {
+        await applyPlugins(nuxt, plugins)
+        await nuxt.hooks.callHook('app:created', vueApp)
+        await nuxt.hooks.callHook('app:beforeMount', vueApp)
+        await nuxt.hooks.callHook('app:mounted', vueApp)
+      })
       if (process.dev) {
         console.groupCollapsed('Nuxt SSR errors', window.__NUXT__.errors.length)
         window.__NUXT__.errors.forEach((err) => {
