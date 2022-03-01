@@ -55,14 +55,12 @@ if (process.client) {
       nuxt.isHydrating = false
     })
 
-    if (window.__NUXT__.errors.length) {
-      if (process.dev) {
-        console.groupCollapsed('Nuxt SSR errors', window.__NUXT__.errors.length)
-        window.__NUXT__.errors.forEach((err) => {
-          console.error(err)
-        })
-        console.groupEnd()
-      }
+    const errors = window.__NUXT__.errors
+
+    if (errors.length && process.dev) {
+      console.groupCollapsed('Nuxt SSR errors', errors.length)
+      errors.forEach(console.error)
+      console.groupEnd()
     }
 
     try {
@@ -70,6 +68,7 @@ if (process.client) {
     } catch (err) {
       nuxt.hooks.hookOnce('app:error:handled', () => applyPlugins(nuxt, plugins))
       await nuxt.callHook('app:error', err, nuxt)
+      errors.push(err)
     }
 
     try {
@@ -80,6 +79,7 @@ if (process.client) {
       await nextTick()
     } catch (err) {
       await nuxt.callHook('app:error', err, nuxt)
+      errors.push(err)
     }
   }
 
