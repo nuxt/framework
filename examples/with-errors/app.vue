@@ -8,6 +8,9 @@ if ('mounted' in route.query) {
     throw new Error('error in mounted')
   })
 }
+function triggerError () {
+  throw new Error('manually triggered error')
+}
 </script>
 
 <template>
@@ -17,9 +20,9 @@ if ('mounted' in route.query) {
         <NuxtLink to="/" class="n-link-base">
           Home
         </NuxtLink>
-        <NuxtLink to="/about" class="n-link-base">
-          About
-        </NuxtLink>
+        <button class="n-link-base" @click="triggerError">
+          Trigger error
+        </button>
       </nav>
     </template>
 

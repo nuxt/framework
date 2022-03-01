@@ -18,6 +18,10 @@ if (process.server) {
     vueApp.component('App', AppComponent)
 
     const nuxt = createNuxtApp({ vueApp, ssrContext })
+    if (ssrContext.errors.length) {
+      // Skip user code
+      return vueApp
+    }
     try {
       await applyPlugins(nuxt, plugins)
 
@@ -25,7 +29,7 @@ if (process.server) {
 
       return vueApp
     } catch (err) {
-      ssrContext.error = err
+      ssrContext.errors.push(err)
       await nuxt.callHook('app:error', err, nuxt)
     }
   }
@@ -47,15 +51,22 @@ if (process.client) {
 
     const nuxt = createNuxtApp({ vueApp })
 
+    nuxt.hooks.hookOnce('app:suspense:resolve', () => {
+      nuxt.isHydrating = false
+    })
+
+    if (window.__NUXT__.errors.length) {
+      nuxt.hooks.hookOnce('app:error:handled', () => applyPlugins(nuxt, plugins))
+      // Skip user code
+      vueApp.mount('#__nuxt')
+      return await nextTick()
+    }
+
     try {
       await applyPlugins(nuxt, plugins)
 
       await nuxt.hooks.callHook('app:created', vueApp)
       await nuxt.hooks.callHook('app:beforeMount', vueApp)
-
-      nuxt.hooks.hookOnce('app:suspense:resolve', () => {
-        nuxt.isHydrating = false
-      })
 
       vueApp.mount('#__nuxt')
 

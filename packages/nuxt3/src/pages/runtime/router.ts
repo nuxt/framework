@@ -133,7 +133,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         })
       }
     } catch (error) {
-      nuxtApp.ssrContext.error = error
+      nuxtApp.ssrContext.errors.push(error)
     }
   })
 

@@ -69,6 +69,16 @@ function renderToString (ssrContext) {
   return getRenderer().then(renderToString => renderToString(ssrContext))
 }
 
+function serializeError (err: any) {
+  return Object.fromEntries([
+    ['stack', process.env.NODE_ENV === 'development' ? err.stack : undefined],
+    ['statusCode', err.statusCode],
+    ['statusMessage', err.statusMessage],
+    ['data', err.data],
+    ['message', err.message || err.toString()]
+  ].filter(([_key, value]) => !!value))
+}
+
 export async function renderMiddleware (req, res: ServerResponse) {
   let url = req.url
 
@@ -86,16 +96,20 @@ export async function renderMiddleware (req, res: ServerResponse) {
     res,
     runtimeConfig: { private: privateConfig, public: publicConfig },
     noSSR: req.spa || req.headers['x-nuxt-no-ssr'],
+    errors: [],
     ...(req.context || {})
   }
 
   // Render app
-  const rendered = await renderToString(ssrContext)
+  let rendered = await renderToString(ssrContext)
 
   // Handle errors
-  if (ssrContext.error) {
-    throw ssrContext.error
+  if (ssrContext.errors.length) {
+    // Render error page instead
+    rendered = await renderToString(ssrContext)
   }
+
+  ssrContext.payload.errors = ssrContext.errors.map(serializeError)
 
   if (ssrContext.redirected || res.writableEnded) {
     return
