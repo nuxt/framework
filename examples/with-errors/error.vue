@@ -15,9 +15,7 @@
 const props = defineProps({
   errors: Array
 })
-const emit = defineEmits<{
-  (event: 'errorHandled', redirect?: string): void
-}>()
+const emit = defineEmits<{(event: 'errorHandled', redirect?: string): void}>()
 
 const handleError = () => emit('errorHandled', '/')
 
