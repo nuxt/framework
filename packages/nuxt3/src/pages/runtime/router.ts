@@ -13,6 +13,8 @@ import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, NuxtApp } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
+import routerOptions from '#build/router-options'
+// @ts-ignore
 import { globalMiddleware, namedMiddleware } from '#build/middleware'
 
 declare module 'vue' {
@@ -41,6 +43,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     : createMemoryHistory(baseURL)
 
   const router = createRouter({
+    ...routerOptions,
     history: routerHistory,
     routes
   })

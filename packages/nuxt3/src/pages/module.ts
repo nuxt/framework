@@ -21,6 +21,10 @@ export default defineNuxtModule({
       return
     }
 
+    // Check for custom router options
+    const routerOptionsFile = join(nuxt.options.srcDir, "router.options.ts");
+    const isRouterOptionsFileExists = existsSync(routerOptionsFile);
+
     // Add $router types
     nuxt.hook('prepare:types', ({ references }) => {
       references.push({ types: 'vue-router' })
@@ -74,6 +78,16 @@ export default defineNuxtModule({
         return [...imports, `export default ${routes}`].join('\n')
       }
     })
+
+    // Add router options template
+    addTemplate({
+      filename: "router-options.mjs",
+      src: isRouterOptionsFileExists ? routerOptionsFile : null,
+      getContents: isRouterOptionsFileExists ? null : async () => {
+        const routerOptions = genObjectFromRawEntries(Object.entries(baseRouterOptions).map(([key, value]) => [key, JSON.stringify(value)]));
+        return `export default ${routerOptions}`;
+      }
+    });
 
     // Add middleware template
     addTemplate({
