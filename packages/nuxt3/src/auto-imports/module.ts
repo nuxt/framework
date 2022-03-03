@@ -59,7 +59,6 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
       // Add all imports to globalThis in development mode
       addPluginTemplate({
         filename: 'auto-imports.mjs',
-        src: '',
         getContents: () => {
           const imports = ctx.getImports()
           const importStatement = toImports(imports)
