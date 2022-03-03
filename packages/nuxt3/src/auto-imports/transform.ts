@@ -31,14 +31,14 @@ export const TransformPlugin = createUnplugin(({ ctx, options }: {ctx: Unimport,
         return true
       }
     },
-    async transform (_code) {
+    async transform (_code, id) {
       const { code, s } = await ctx.injectImports(_code)
       if (code === _code) {
         return
       }
       return {
         code,
-        map: s.generateMap()
+        map: s.generateMap({ source: id, includeContent: true })
       }
     }
   }
