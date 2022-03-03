@@ -20,7 +20,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       const s = new MagicString(code)
       const { search } = parseURL(id)
 
-      function returnResult () {
+      function result () {
         if (s.hasChanged()) {
           return { code: s.toString(), map: s.generateMap({ source: id, includeContent: true }) }
         }
@@ -36,7 +36,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       }
 
       if (!parseQuery(search).macro) {
-        return returnResult()
+        return result()
       }
 
       // [webpack] Re-export any imports from script blocks in the components
@@ -45,7 +45,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       if (scriptImport) {
         const specifier = withQuery(scriptImport.specifier.replace('?macro=true', ''), { macro: 'true' })
         s.overwrite(0, code.length, `export { meta } from "${specifier}"`)
-        return returnResult()
+        return result()
       }
 
       const currentExports = findExports(code)
@@ -56,7 +56,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
         if (match.specifier && match._type === 'named') {
           // [webpack] Export named exports rather than the default (component)
           s.overwrite(match.start, match.end, `export {${Object.values(options.macros).join(', ')}} from "${match.specifier}"`)
-          return returnResult()
+          return result()
         } else if (!options.dev) {
           // ensure we tree-shake any _other_ default exports out of the macro script
           s.overwrite(match.start, match.end, '/*#__PURE__*/ false &&')
@@ -76,7 +76,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
         s.append(`\nexport const ${options.macros[macro]} = ${macroContent}`)
       }
 
-      return returnResult()
+      return result()
     }
   }
 })
