@@ -1,14 +1,12 @@
-import { Unimport, Import } from 'unimport'
+import { Import } from 'unimport'
 import { useNuxt } from './context'
 import { assertNuxtCompatibility } from './compatibility'
 
 export function addAutoImport (imports: Import | Import[]) {
   assertNuxtCompatibility({ bridge: true })
 
-  useNuxt().hook('autoImports:extend', (ctx: Unimport) => {
-    ctx.modifyDynamicImports((dynamicImports) => {
-      dynamicImports.push(...(Array.isArray(imports) ? imports : [imports]))
-    })
+  useNuxt().hook('autoImports:extend', (autoImports) => {
+    autoImports.push(...(Array.isArray(imports) ? imports : [imports]))
   })
 }
 

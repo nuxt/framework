@@ -4,7 +4,7 @@ import type { Compiler, Configuration, Stats } from 'webpack'
 import type { TSConfig } from 'pkg-types'
 import type { ModuleContainer } from './module'
 import type { NuxtTemplate, Nuxt, NuxtApp } from './nuxt'
-import type { Unimport, Preset as ImportPreset } from 'unimport'
+import type { Preset as ImportPreset, Import } from 'unimport'
 import type { NuxtConfig, NuxtOptions } from './config'
 import type { Component, ComponentsDir, ScanDir, ComponentsOptions } from './components'
 import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
@@ -67,7 +67,7 @@ export interface NuxtHooks {
 
   // Auto imports
   'autoImports:sources': (presets: ImportPreset[]) => HookResult
-  'autoImports:extend': (ctx: Unimport) => HookResult
+  'autoImports:extend': (imports: Import[]) => HookResult
   'autoImports:dirs': (dirs: string[]) => HookResult
 
   // Components

@@ -78,7 +78,9 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
         await scanForComposables(composablesDir, ctx)
       }
       // Allow modules extending
-      await nuxt.callHook('autoImports:extend', ctx)
+      await ctx.modifyDynamicImports(async (imports) => {
+        await nuxt.callHook('autoImports:extend', imports)
+      })
     }
 
     await regenerateAutoImports()
