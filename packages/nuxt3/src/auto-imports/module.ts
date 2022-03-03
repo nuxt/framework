@@ -1,7 +1,7 @@
-import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, useNuxt, addPluginTemplate } from '@nuxt/kit'
+import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, useNuxt, addPluginTemplate, logger } from '@nuxt/kit'
 import { isAbsolute, join, relative, resolve, normalize } from 'pathe'
 import { createUnimport, Import, Preset, toImports, Unimport } from 'unimport'
-import { AutoImportsOptions } from '@nuxt/schema'
+import { AutoImportsOptions, ImportPresetWithDeperection } from '@nuxt/schema'
 import { TransformPlugin } from './transform'
 import { defaultPresets } from './presets'
 import { scanForComposables } from './composables'
@@ -22,11 +22,13 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
   },
   async setup (options, nuxt) {
     // Allow modules extending sources
-    await nuxt.callHook('autoImports:sources', options.presets as Preset[])
+    await nuxt.callHook('autoImports:sources', options.presets as ImportPresetWithDeperection[])
 
-    options.presets.forEach((i) => {
-      // @ts-expect-error support legacy API
-      if (typeof i !== 'string' && i.names && !i.imports) { i.imports = i.names }
+    options.presets.forEach((i: ImportPresetWithDeperection) => {
+      if (typeof i !== 'string' && i.names && !i.imports) {
+        i.imports = i.names
+        logger.warn('auto-imports: presets.names is deprecated, use presets.imports instead')
+      }
     })
 
     // Filter disabled sources

@@ -52,6 +52,13 @@ export type NuxtLayout = {
   file: string
 }
 
+export interface ImportPresetWithDeperection extends ImportPreset {
+  /**
+   * @deprecated renamed to `imports`
+   */
+  names?: string[]
+}
+
 export interface NuxtHooks {
   // Kit
   'kit:compatibility': (compatibility: NuxtCompatibility, issues: NuxtCompatibilityIssues) => HookResult
@@ -66,7 +73,7 @@ export interface NuxtHooks {
   'pages:layouts:extend': (layouts: NuxtLayout[]) => HookResult
 
   // Auto imports
-  'autoImports:sources': (presets: ImportPreset[]) => HookResult
+  'autoImports:sources': (presets: ImportPresetWithDeperection[]) => HookResult
   'autoImports:extend': (imports: Import[]) => HookResult
   'autoImports:dirs': (dirs: string[]) => HookResult
 
