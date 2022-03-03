@@ -21,10 +21,6 @@ export default defineNuxtModule({
       return
     }
 
-    // Check for custom router options
-    const routerOptionsFile = join(nuxt.options.srcDir, "router.options.ts");
-    const isRouterOptionsFileExists = existsSync(routerOptionsFile);
-
     // Add $router types
     nuxt.hook('prepare:types', ({ references }) => {
       references.push({ types: 'vue-router' })
@@ -82,10 +78,20 @@ export default defineNuxtModule({
     // Add router options template
     addTemplate({
       filename: "router-options.mjs",
-      src: isRouterOptionsFileExists ? routerOptionsFile : null,
-      getContents: isRouterOptionsFileExists ? null : async () => {
-        const routerOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router).map(([key, value]) => [key, JSON.stringify(value)]));
-        return `export default ${routerOptions}`;
+      getContents: async () => {
+        // Check for router options
+        const routerOptionsFile = await resolvePath("~/app/router.options", {extensions: ['.ts', '.js', '.mjs', '.cjs', '.mts', '.cts']});
+        const isRouterOptionsFileExists = existsSync(routerOptionsFile);
+        const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router).map(([key, value]) => [key, JSON.stringify(value)]));
+
+        return [
+          isRouterOptionsFileExists ? genImport(routerOptionsFile, 'routerOptions') : '',
+          `const configRouterOptions = ${configRouterOptions}`,
+          'export default {',
+          '...configRouterOptions,',
+          isRouterOptionsFileExists ? '...routerOptions' : '',
+          '}',
+        ].join("\n");
       }
     });
 
