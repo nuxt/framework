@@ -50,5 +50,10 @@ function transform (code: string, id: string, components: Component[]) {
     s.prepend(imports + '\n')
   }
 
-  return s.toRollupResult(true, { source: id, includeContent: true })
+  if (s.hasChanged()) {
+    return {
+      code: s.toString(),
+      map: s.generateMap({ source: id, includeContent: true })
+    }
+  }
 }
