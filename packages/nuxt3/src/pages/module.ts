@@ -84,7 +84,7 @@ export default defineNuxtModule({
       filename: "router-options.mjs",
       src: isRouterOptionsFileExists ? routerOptionsFile : null,
       getContents: isRouterOptionsFileExists ? null : async () => {
-        const routerOptions = genObjectFromRawEntries(Object.entries(baseRouterOptions).map(([key, value]) => [key, JSON.stringify(value)]));
+        const routerOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router).map(([key, value]) => [key, JSON.stringify(value)]));
         return `export default ${routerOptions}`;
       }
     });
