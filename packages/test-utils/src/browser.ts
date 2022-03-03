@@ -7,7 +7,7 @@ export async function createBrowser () {
 
   let playwright: typeof import('playwright')
   try {
-    playwright = await import('playwright')
+    playwright = await import(String('playwright'))
   } catch {
     /* istanbul ignore next */
     throw new Error(`
