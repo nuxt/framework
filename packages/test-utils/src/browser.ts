@@ -7,6 +7,8 @@ export async function createBrowser () {
 
   let playwright: typeof import('playwright')
   try {
+    // Workround for https://github.com/nuxt/framework/issues/3470
+    // TODO: Remove when upstream issue resolved
     playwright = await import(String('playwright'))
   } catch {
     /* istanbul ignore next */
