@@ -96,17 +96,20 @@ export async function renderMiddleware (req, res: ServerResponse) {
     res,
     runtimeConfig: { private: privateConfig, public: publicConfig },
     noSSR: req.spa || req.headers['x-nuxt-no-ssr'],
-    errors: [],
     ...(req.context || {})
   }
 
   // Render app
   let rendered = await renderToString(ssrContext)
 
+  // TODO: nuxt3 should not reuse `nuxt` property for different purpose!
+  const payload = ssrContext.payload /* nuxt 3 */ || ssrContext.nuxt /* nuxt 2 */
+
   // Handle errors
-  if (ssrContext.errors.length) {
+  if (ssrContext.error) {
     // Render error page instead
     rendered = await renderToString(ssrContext)
+    payload.state._error = ssrContext.error
   }
 
   if (ssrContext.redirected || res.writableEnded) {
@@ -116,11 +119,6 @@ export async function renderMiddleware (req, res: ServerResponse) {
   if (ssrContext.nuxt.hooks) {
     await ssrContext.nuxt.hooks.callHook('app:rendered')
   }
-
-  // TODO: nuxt3 should not reuse `nuxt` property for different purpose!
-  const payload = ssrContext.payload /* nuxt 3 */ || ssrContext.nuxt /* nuxt 2 */
-
-  payload.errors = ssrContext.errors.map(serializeError)
 
   if (process.env.NUXT_FULL_STATIC) {
     payload.staticAssetsBase = STATIC_ASSETS_BASE

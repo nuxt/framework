@@ -1,5 +1,5 @@
 import { createSSRApp, createApp, nextTick } from 'vue'
-import { createNuxtApp, applyPlugins, normalizePlugins, CreateOptions } from '#app'
+import { createNuxtApp, applyPlugins, normalizePlugins, CreateOptions, useState } from '#app'
 import '#build/css'
 // @ts-ignore
 import _plugins from '#build/plugins'
@@ -18,7 +18,7 @@ if (process.server) {
     vueApp.component('App', AppComponent)
 
     const nuxt = createNuxtApp({ vueApp, ssrContext })
-    if (ssrContext.errors.length) {
+    if (ssrContext.error) {
       // Skip user code
       return vueApp
     }
@@ -29,7 +29,7 @@ if (process.server) {
 
       return vueApp
     } catch (err) {
-      ssrContext.errors.push(err)
+      ssrContext.error = err
       await nuxt.callHook('app:error', err, nuxt)
     }
   }
@@ -55,20 +55,12 @@ if (process.client) {
       nuxt.isHydrating = false
     })
 
-    const errors = window.__NUXT__.errors
-
-    if (errors.length && process.dev) {
-      console.groupCollapsed('Nuxt SSR errors', errors.length)
-      errors.forEach(console.error)
-      console.groupEnd()
-    }
-
     try {
       await applyPlugins(nuxt, plugins)
     } catch (err) {
       nuxt.hooks.hookOnce('app:error:handled', () => applyPlugins(nuxt, plugins))
       await nuxt.callHook('app:error', err, nuxt)
-      errors.push(err)
+      window.__NUXT__._error = err
     }
 
     try {
@@ -79,7 +71,7 @@ if (process.client) {
       await nextTick()
     } catch (err) {
       await nuxt.callHook('app:error', err, nuxt)
-      errors.push(err)
+      window.__NUXT__._error = err
     }
   }
 

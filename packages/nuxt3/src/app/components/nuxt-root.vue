@@ -1,6 +1,6 @@
 <template>
   <Suspense @resolve="onResolve">
-    <ErrorComponent v-if="errors.length" :errors="errors" @errorHandled="clearErrors" />
+    <ErrorComponent v-if="error" :error="error" @errorHandled="clearError" />
     <App v-else />
   </Suspense>
 </template>
@@ -21,25 +21,25 @@ if (process.dev && results && results.some(i => i && 'then' in i)) {
 }
 
 // error handling
-const errors = ref(process.server ? nuxtApp.ssrContext.errors : window.__NUXT__.errors)
+const error = ref(process.server ? nuxtApp.ssrContext.error : window.__NUXT__.state._error)
 onErrorCaptured((err, target) => {
   const results = nuxtApp.hooks.callHookWith(hooks => hooks.map(hook => hook(err, target)), 'vue:error')
   if (process.dev && results && results.some(i => i && 'then' in i)) {
     console.error('[nuxt] Error in `vue:error`. Callbacks must be synchronous.')
   }
   if (process.server && nuxtApp.ssrContext) {
-    nuxtApp.ssrContext.errors.push(err)
+    nuxtApp.ssrContext.error = err
   }
   if (process.client) {
-    errors.value.push(err)
+    error.value = err
   }
 })
 
-async function clearErrors (redirect?: string) {
+async function clearError (redirect?: string) {
   await nuxtApp.callHook('app:error:handled')
   if (redirect) {
     await nuxtApp.$router.replace(redirect)
   }
-  errors.value = []
+  error.value = null
 }
 </script>

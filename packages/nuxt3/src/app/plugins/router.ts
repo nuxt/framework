@@ -196,7 +196,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
           const error = result || createError({
             statusMessage: `Route navigation aborted: ${nuxtApp.ssrContext.url}`
           })
-          nuxtApp.ssrContext.errors.push(error)
+          nuxtApp.ssrContext.error = error
         }
       }
       if (result || result === false) { return result }

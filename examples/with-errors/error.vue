@@ -13,11 +13,11 @@
 
 <script setup lang="ts">
 const props = defineProps({
-  errors: Array
+  error: Object
 })
 const emit = defineEmits<{(event: 'errorHandled', redirect?: string): void}>()
 
 const handleError = () => emit('errorHandled', '/')
 
-const err = props.errors[0] as any
+const err = props.error
 </script>

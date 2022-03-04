@@ -7,10 +7,10 @@
 import { error500, errorDev, error404 } from '@nuxt/design'
 
 const props = defineProps({
-  errors: Array
+  error: Object
 })
 
-const err = props.errors[0] as any
+const err = props.error
 const handler = err.statusCode === 404 ? error404 : process.dev ? errorDev : error500
 const html = handler({
   description: err.message,
