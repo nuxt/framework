@@ -1,6 +1,6 @@
 import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, useNuxt, addPluginTemplate, logger } from '@nuxt/kit'
 import { isAbsolute, join, relative, resolve, normalize } from 'pathe'
-import { createUnimport, Import, Preset, toImports, Unimport } from 'unimport'
+import { createUnimport, Import, toImports, Unimport } from 'unimport'
 import { AutoImportsOptions, ImportPresetWithDeperection } from '@nuxt/schema'
 import { TransformPlugin } from './transform'
 import { defaultPresets } from './presets'
