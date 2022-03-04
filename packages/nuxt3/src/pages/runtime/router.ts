@@ -96,9 +96,11 @@ export default defineNuxtPlugin((nuxtApp) => {
       const result = await callWithNuxt(nuxtApp as NuxtApp, middleware, [to, from])
       if (process.server) {
         if (result === false || result instanceof Error) {
-          return result || createError({
+          const error = result || createError({
             statusMessage: `Route navigation aborted: ${nuxtApp.ssrContext.url}`
           })
+          nuxtApp.ssrContext.error = error
+          return error
         }
       }
       if (result || result === false) { return result }
@@ -133,7 +135,9 @@ export default defineNuxtPlugin((nuxtApp) => {
         })
       }
     } catch (error) {
-      nuxtApp.ssrContext.error = error
+      if (process.server) {
+        nuxtApp.ssrContext.error = error
+      }
     }
   })
 

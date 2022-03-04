@@ -13,6 +13,7 @@ const app = createApp({
   onError: handleError
 })
 
+app.use('/_error', () => import('../app/render').then(e => e.renderMiddleware), { lazy: true })
 app.use(timingMiddleware)
 app.use(serverMiddleware)
 app.use(() => import('../app/render').then(e => e.renderMiddleware), { lazy: true })

@@ -69,18 +69,10 @@ function renderToString (ssrContext) {
   return getRenderer().then(renderToString => renderToString(ssrContext))
 }
 
-function serializeError (err: any) {
-  return Object.fromEntries([
-    ['stack', process.env.NODE_ENV === 'development' ? err.stack : undefined],
-    ['statusCode', err.statusCode],
-    ['statusMessage', err.statusMessage],
-    ['data', err.data],
-    ['message', err.message || err.toString()]
-  ].filter(([_key, value]) => !!value))
-}
-
 export async function renderMiddleware (req, res: ServerResponse) {
-  let url = req.url
+  // Whether we're rendering an error page
+  const isErrorHandler = req.method === 'GET' && req.body
+  let url = isErrorHandler ? req.body.url : req.url
 
   // payload.json request detection
   let isPayloadReq = false
@@ -96,21 +88,30 @@ export async function renderMiddleware (req, res: ServerResponse) {
     res,
     runtimeConfig: { private: privateConfig, public: publicConfig },
     noSSR: req.spa || req.headers['x-nuxt-no-ssr'],
+    error: isErrorHandler ? req.body.error : undefined,
     ...(req.context || {})
   }
 
   // Render app
-  let rendered = await renderToString(ssrContext)
+  const rendered = await renderToString(ssrContext).catch((e) => {
+    if (!isErrorHandler) { throw e }
+  })
+
+  // If we error on rendering error page, we bail out and directly return to the error handler
+  if (!rendered) { return }
+
+  // Handle errors
+  const error = ssrContext.error /* nuxt 3 */ || ssrContext.nuxt?.error /* nuxt 2 */
+  if (error && !isErrorHandler) {
+    // trigger a re-render by onError handler
+    throw error
+  }
 
   // TODO: nuxt3 should not reuse `nuxt` property for different purpose!
   const payload = ssrContext.payload /* nuxt 3 */ || ssrContext.nuxt /* nuxt 2 */
 
-  // Handle errors
-  if (ssrContext.error) {
-    // Render error page instead
-    rendered = await renderToString(ssrContext)
-    payload.state._error = ssrContext.error
-  }
+  // Pass error to the client
+  payload.error = error
 
   if (ssrContext.redirected || res.writableEnded) {
     return
@@ -133,8 +134,7 @@ export async function renderMiddleware (req, res: ServerResponse) {
     res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   }
 
-  const error = ssrContext.nuxt && ssrContext.nuxt.error
-  res.statusCode = error ? error.statusCode : 200
+  res.statusCode = error ? error.statusCode || 500 : res.statusCode || 200
   res.end(data, 'utf-8')
 }
 

@@ -21,7 +21,7 @@ if (process.dev && results && results.some(i => i && 'then' in i)) {
 }
 
 // error handling
-const error = ref(process.server ? nuxtApp.ssrContext.error : window.__NUXT__.state._error)
+const error = ref(process.server ? nuxtApp.ssrContext.error : nuxtApp.payload.error)
 onErrorCaptured((err, target) => {
   const results = nuxtApp.hooks.callHookWith(hooks => hooks.map(hook => hook(err, target)), 'vue:error')
   if (process.dev && results && results.some(i => i && 'then' in i)) {

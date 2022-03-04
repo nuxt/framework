@@ -60,7 +60,7 @@ if (process.client) {
     } catch (err) {
       nuxt.hooks.hookOnce('app:error:handled', () => applyPlugins(nuxt, plugins))
       await nuxt.callHook('app:error', err, nuxt)
-      window.__NUXT__._error = err
+      nuxt.payload.error = err
     }
 
     try {
@@ -71,7 +71,7 @@ if (process.client) {
       await nextTick()
     } catch (err) {
       await nuxt.callHook('app:error', err, nuxt)
-      window.__NUXT__._error = err
+      nuxt.payload.error = err
     }
   }
 
