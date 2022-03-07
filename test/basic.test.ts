@@ -37,12 +37,14 @@ describe('fixtures:basic', async () => {
       // should render <Head> components
       expect(html).toContain('<title>Basic fixture</title>')
       // should inject runtime config
-      expect(html).toContain('RuntimeConfig: 123')
+      expect(html).toContain('RuntimeConfig | testConfig: 123')
+      // composables auto import
+      expect(html).toContain('Composable | foo: auto imported from ~/components/foo.ts')
+      expect(html).toContain('Composable | bar: auto imported from ~/components/useBar.ts')
+      // plugins
+      expect(html).toContain('Plugin | myPlugin: Injected by my-plugin')
       // should import components
       expect(html).toContain('This is a custom component with a named export.')
-      // composables auto import
-      expect(html).toContain('auto imported from ~/components/foo.ts')
-      expect(html).toContain('auto imported from ~/components/useBar.ts')
     })
 
     it('render 404', async () => {
