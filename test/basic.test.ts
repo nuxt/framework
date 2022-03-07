@@ -82,4 +82,36 @@ describe('fixtures:basic', async () => {
       expect(html).toContain('group: admin')
     })
   })
+
+  describe('middleware', () => {
+    it('should redirect to index with global middleware', async () => {
+      const html = await $fetch('/redirect/')
+
+      // Snapshot
+      // expect(html).toMatchInlineSnapshot()
+
+      expect(html).toContain('Hello Nuxt 3!')
+    })
+
+    it('should inject auth', async () => {
+      const html = await $fetch('/auth')
+
+      // Snapshot
+      // expect(html).toMatchInlineSnapshot()
+
+      expect(html).toContain('auth.vue')
+      expect(html).toContain('auth: Injected by injectAuth middleware')
+    })
+
+    it('should not inject auth', async () => {
+      const html = await $fetch('/no-auth')
+
+      // Snapshot
+      // expect(html).toMatchInlineSnapshot()
+
+      expect(html).toContain('no-auth.vue')
+      expect(html).toContain('auth: ')
+      expect(html).not.toContain('Injected by injectAuth middleware')
+    })
+  })
 })
