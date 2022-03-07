@@ -1,5 +1,5 @@
 import { createSSRApp, createApp, nextTick } from 'vue'
-import { createNuxtApp, applyPlugins, normalizePlugins, CreateOptions, useState } from '#app'
+import { createNuxtApp, applyPlugins, normalizePlugins, CreateOptions } from '#app'
 import '#build/css'
 // @ts-ignore
 import _plugins from '#build/plugins'
