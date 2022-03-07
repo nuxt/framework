@@ -83,7 +83,7 @@ describe('fixtures:basic', async () => {
     })
   })
 
-  describe('middleware', () => {
+  describe('middlewares', () => {
     it('should redirect to index with global middleware', async () => {
       const html = await $fetch('/redirect/')
 
@@ -112,6 +112,18 @@ describe('fixtures:basic', async () => {
       expect(html).toContain('no-auth.vue')
       expect(html).toContain('auth: ')
       expect(html).not.toContain('Injected by injectAuth middleware')
+    })
+  })
+
+  describe('layouts', () => {
+    it('should apply custom layout', async () => {
+      const html = await $fetch('/with-layout')
+
+      // Snapshot
+      // expect(html).toMatchInlineSnapshot()
+
+      expect(html).toContain('with-layout.vue')
+      expect(html).toContain('Custom Layout:')
     })
   })
 })
