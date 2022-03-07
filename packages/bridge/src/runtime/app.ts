@@ -79,19 +79,14 @@ interface Plugin {
 }
 
 export function defineNuxtPlugin (plugin: Plugin): (ctx: Context, inject: (id: string, value: any) => void) => void {
-  return (ctx, inject) => {
-    function handleResult (r: void | { provide?: Record<string, any> }) {
-      if (r && r.provide) {
-        for (const key in r.provide) {
-          inject(key, r.provide[key])
-        }
+  return async (ctx, inject) => {
+    const result = await callWithNuxt(ctx.$_nuxtApp, plugin, [ctx.$_nuxtApp])
+    if (result && result.provide) {
+      for (const key in result.provide) {
+        inject(key, result.provide[key])
       }
     }
-    const result = callWithNuxt(ctx.$_nuxtApp, plugin, [ctx.$_nuxtApp])
-    if (result instanceof Promise) {
-      return result.then(handleResult)
-    }
-    return handleResult(result)
+    return result
   }
 }
 
