@@ -2,7 +2,7 @@ import { installModule, useNuxt } from '@nuxt/kit'
 import * as CompositionApi from '@vue/composition-api'
 import autoImports from '../../nuxt3/src/auto-imports/module'
 
-const UnsupportedImports = new Set(['useAsyncData', 'useFetch'])
+const UnsupportedImports = new Set(['useAsyncData', 'useFetch', 'useError', 'throwError', 'clearError'])
 const CapiHelpers = new Set(Object.keys(CompositionApi))
 
 const ImportRewrites = {

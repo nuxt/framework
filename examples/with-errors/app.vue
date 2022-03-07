@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { throwError } from '#app'
 const route = useRoute()
 if ('setup' in route.query) {
   throw new Error('error in setup')
@@ -20,8 +21,17 @@ function triggerError () {
         <NuxtLink to="/" class="n-link-base">
           Home
         </NuxtLink>
+        <NuxtLink to="/404" class="n-link-base">
+          404
+        </NuxtLink>
+        <NuxtLink to="/?middleware" class="n-link-base">
+          Middleware
+        </NuxtLink>
+        <button class="n-link-base" @click="throwError">
+          Trigger fatal error
+        </button>
         <button class="n-link-base" @click="triggerError">
-          Trigger error
+          Trigger non-fatal error
         </button>
       </nav>
     </template>

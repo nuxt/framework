@@ -29,7 +29,7 @@ if (process.server) {
 
       return vueApp
     } catch (err) {
-      ssrContext.error = err
+      ssrContext.error = ssrContext.error || err
       await nuxt.callHook('app:error', err, nuxt)
     }
   }

@@ -21,7 +21,10 @@ export const Nuxt3AutoImports: AutoImportSource[] = [
       'defineNuxtRouteMiddleware',
       'navigateTo',
       'abortNavigation',
-      'addRouteMiddleware'
+      'addRouteMiddleware',
+      'throwError',
+      'clearError',
+      'useError'
     ]
   },
   // #meta

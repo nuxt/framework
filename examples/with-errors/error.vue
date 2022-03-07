@@ -1,23 +1,20 @@
 <template>
   <div class="relative font-sans" n="green6">
     <div class="container max-w-200 mx-auto py-10 px-4">
-      <h1>{{ err.message }}</h1>
+      <h1>{{ error.message }}</h1>
       There was an error 😱
 
       <button @click="handleError">
-        Clear errors
+        Clear error
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
+defineProps({
   error: Object
 })
-const emit = defineEmits<{(event: 'errorHandled', redirect?: string): void}>()
 
-const handleError = () => emit('errorHandled', '/')
-
-const err = props.error
+const handleError = () => clearError('/')
 </script>

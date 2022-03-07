@@ -9,7 +9,7 @@ import {
 import { createError } from 'h3'
 import NuxtPage from './page'
 import NuxtLayout from './layout'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, NuxtApp } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, NuxtApp, throwError } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
@@ -99,8 +99,7 @@ export default defineNuxtPlugin((nuxtApp) => {
           const error = result || createError({
             statusMessage: `Route navigation aborted: ${nuxtApp.ssrContext.url}`
           })
-          nuxtApp.ssrContext.error = error
-          return error
+          return callWithNuxt(nuxtApp, throwError, [error])
         }
       }
       if (result || result === false) { return result }
@@ -112,6 +111,15 @@ export default defineNuxtPlugin((nuxtApp) => {
   })
 
   nuxtApp.hook('app:created', async () => {
+    router.afterEach((to) => {
+      if (to.matched.length === 0) {
+        callWithNuxt(nuxtApp, throwError, [createError({
+          statusCode: 404,
+          statusMessage: `Page not found: ${to.fullPath}`
+        })])
+      }
+    })
+
     if (process.server) {
       router.push(nuxtApp.ssrContext.url)
 
@@ -126,18 +134,8 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     try {
       await router.isReady()
-
-      const is404 = router.currentRoute.value.matched.length === 0
-      if (process.server && is404) {
-        throw createError({
-          statusCode: 404,
-          statusMessage: `Page not found: ${nuxtApp.ssrContext.url}`
-        })
-      }
     } catch (error) {
-      if (process.server) {
-        nuxtApp.ssrContext.error = error
-      }
+      callWithNuxt(nuxtApp, throwError, [error])
     }
   })
 

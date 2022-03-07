@@ -4,6 +4,7 @@ import { NuxtApp } from '@nuxt/schema'
 import { createError } from 'h3'
 import { defineNuxtPlugin } from '..'
 import { callWithNuxt } from '../nuxt'
+import { throwError } from '#app'
 
 declare module 'vue' {
   export interface GlobalComponents {
@@ -196,7 +197,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
           const error = result || createError({
             statusMessage: `Route navigation aborted: ${nuxtApp.ssrContext.url}`
           })
-          nuxtApp.ssrContext.error = error
+          return callWithNuxt(nuxtApp, throwError, [error])
         }
       }
       if (result || result === false) { return result }
