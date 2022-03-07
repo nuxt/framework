@@ -1,15 +1,9 @@
-import { DefineComponent, reactive, h } from 'vue'
+import { reactive } from 'vue'
 import { parseURL, parseQuery } from 'ufo'
 import { NuxtApp } from '@nuxt/schema'
 import { createError } from 'h3'
 import { defineNuxtPlugin } from '..'
 import { callWithNuxt } from '../nuxt'
-
-declare module 'vue' {
-  export interface GlobalComponents {
-    NuxtLink: DefineComponent<{ to: String }>
-  }
-}
 
 interface Route {
     /** Percentage encoded pathname section of the URL. */
@@ -206,12 +200,6 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
 
   router.afterEach(() => {
     delete nuxtApp._processingMiddleware
-  })
-
-  nuxtApp.vueApp.component('NuxtLink', {
-    functional: true,
-    props: { to: String },
-    setup: (props, { slots }) => () => h('a', { href: props.to, onClick: (e) => { e.preventDefault(); router.push(props.to) } }, slots)
   })
 
   if (process.server) {
