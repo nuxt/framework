@@ -10,6 +10,7 @@ const isExternalURL = (url: string): boolean => {
   /**
    * @see Regex101 expression: {@link https://regex101.com/r/1y7iod/1}
    */
+  // TODO: Use `ufo.hasProtocol` when issue fixed https://github.com/unjs/ufo/issues/45
   return !/^\/(?!\/)/.test(url)
 }
 
