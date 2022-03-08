@@ -59,5 +59,5 @@ export interface NuxtApp {
   templates: NuxtTemplate[]
 }
 
-type _TemplatePlugin = Partial<NuxtPlugin> & NuxtTemplate
+type _TemplatePlugin = Omit<NuxtPlugin, 'src'> & NuxtTemplate
 export interface NuxtPluginTemplate extends _TemplatePlugin { }
