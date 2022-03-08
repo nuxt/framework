@@ -60,8 +60,8 @@ describe('app--defineNuxtLink:to', () => {
     consoleWarnSpy.mockRestore()
   })
 
-  it('throws when `to` and `href` props are empty', () => {
-    expect(() => nuxtLink()).toThrowError(/NuxtLink/)
+  it('defaults to `null`', () => {
+    expect(nuxtLink().props.href).toBe(null)
   })
 })
 

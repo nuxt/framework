@@ -165,13 +165,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
       const to = computed<string | RouteLocationRaw>(() => {
         checkPropConflicts(props, 'to', 'href')
 
-        if (props.to) {
-          return props.to
-        } else if (props.href) {
-          return props.href
-        }
-
-        throw new Error('[NuxtLink] Either `to` or `href` props are required.')
+        return props.to || props.href || '' // Defaults to empty string (won't render any `href` attribute)
       })
 
       // Resolving link type
@@ -223,7 +217,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
           // External props
 
           // Resolves `to` value if it's a route location object
-          const href = typeof to.value === 'object' ? router?.resolve(to.value).href : to.value
+          const href = typeof to.value === 'object' ? router?.resolve(to.value).href : to.value || null // converts `""` to `null` to prevent the attribute from being added as empty (`href=""`)
 
           // Resolves `target` value
           const target = props.target || null
