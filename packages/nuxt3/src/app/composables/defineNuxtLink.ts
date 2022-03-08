@@ -65,15 +65,17 @@ export type NuxtLinkProps = {
   custom?: boolean;
 };
 
-const checkPropConflicts = (props: NuxtLinkProps, main: string, sub: string): void => {
-  if (props[main] !== undefined && props[sub] !== undefined) {
-    console.warn(`[NuxtLink] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
-  }
-}
-
 export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
+  const componentName = options.componentName || DEFAULT_COMPONENT_NAME
+
+  const checkPropConflicts = (props: NuxtLinkProps, main: string, sub: string): void => {
+    if (props[main] !== undefined && props[sub] !== undefined) {
+      console.warn(`[${componentName}] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
+    }
+  }
+
   return defineComponent({
-    name: options.componentName || DEFAULT_COMPONENT_NAME,
+    name: componentName,
     props: {
       // Routing
       to: {
@@ -175,11 +177,11 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
           // If Vue Router is not enabled then all links are considered external
 
           if (typeof to.value === 'object') {
-            throw new TypeError('[NuxtLink] Route location object cannot be resolved by `<NuxtLink />` when vue-router is disabled (no pages).')
+            throw new TypeError(`[${componentName}] Route location object cannot be resolved by \`<${componentName} />\` when vue-router is disabled (no pages).`)
           }
 
           if (props.external !== undefined) {
-            console.warn('[NuxtLink] `external` prop have no effect when Vue Router is not enabled.')
+            console.warn(`[${componentName}] \`external\` prop have no effect when Vue Router is not enabled.`)
           }
 
           return true
