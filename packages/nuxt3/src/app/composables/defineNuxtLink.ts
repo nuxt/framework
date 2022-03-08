@@ -204,46 +204,6 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
         return isExternalURL(to.value)
       })
 
-      // Resolving props for internal links of attributes for external ones
-      const propsOrAttributes = computed<{
-        to: string | RouteLocationRaw;
-        activeClass?: string;
-        exactActiveClass?: string;
-        replace?: boolean;
-        ariaCurrentValue?: string;
-      } | {
-        href: string | null;
-        target: string | null;
-        rel: string | null;
-      }>(() => {
-        if (isExternal.value) {
-          // External props
-
-          // Resolves `to` value if it's a route location object
-          const href = typeof to.value === 'object' ? router?.resolve(to.value).href : to.value || null // converts `""` to `null` to prevent the attribute from being added as empty (`href=""`)
-
-          // Resolves `target` value
-          const target = props.target || null
-
-          // Resolves `rel`
-          checkPropConflicts(props, 'noRel', 'rel')
-          const rel = props.noRel
-            ? null
-            : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, DEFAULT_EXTERNAL_REL_ATTRIBUTE) || null // converts `""` to `null` to prevent the attribute from being added as empty (`rel=""`)
-
-          return { href, target, rel }
-        }
-
-        // Internal props
-        return {
-          to: to.value,
-          activeClass: props.activeClass || options.activeClass,
-          exactActiveClass: props.exactActiveClass || options.exactActiveClass,
-          replace: props.replace,
-          ariaCurrentValue: props.ariaCurrentValue
-        }
-      })
-
       // TODO: Just resolved for now, requires prefetching implementation
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const shouldPrefetch = computed<boolean>(() => {
@@ -261,11 +221,35 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const prefetchedClass = computed<string | null>(() => null)
 
+      // TODO: Handle `custom` prop
       return () => {
-        // TODO: Handle `custom` prop
+        if (isExternal.value) {
+          // Attributes
+
+          // Resolves `to` value if it's a route location object
+          const href = typeof to.value === 'object' ? router?.resolve(to.value).href : to.value || null // converts `""` to `null` to prevent the attribute from being added as empty (`href=""`)
+
+          // Resolves `target` value
+          const target = props.target || null
+
+          // Resolves `rel`
+          checkPropConflicts(props, 'noRel', 'rel')
+          const rel = props.noRel
+            ? null
+            : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, DEFAULT_EXTERNAL_REL_ATTRIBUTE) || null // converts `""` to `null` to prevent the attribute from being added as empty (`rel=""`)
+
+          return h('a', { href, rel, target }, slots.default())
+        }
+
         return h(
-          isExternal.value ? 'a' : resolveComponent('RouterLink'),
-          propsOrAttributes.value,
+          resolveComponent('RouterLink'),
+          {
+            to: to.value,
+            activeClass: props.activeClass || options.activeClass,
+            exactActiveClass: props.exactActiveClass || options.exactActiveClass,
+            replace: props.replace,
+            ariaCurrentValue: props.ariaCurrentValue
+          },
           // TODO: Slot API
           slots.default()
         )
