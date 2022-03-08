@@ -65,23 +65,22 @@ describe('app--defineNuxtLink:to', () => {
   })
 })
 
-describe('app--defineNuxtLink:type', () => {
+describe('app--defineNuxtLink:isExternal', () => {
   describe('vue-router disabled', () => {
     beforeEach(() => {
       disableVueRouter()
     })
 
-    it('always resolves `external`', () => {
+    it('always returns `true`', () => {
       expect(nuxtLink({ to: '/to' }).type).toBe(EXTERNAL)
       expect(nuxtLink({ to: 'https://nuxtjs.org' }).type).toBe(EXTERNAL)
     })
 
-    it('ignores `external` and `internal` props warn', () => {
+    it('ignores `external` prop and warns', () => {
       const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn())
 
       expect(nuxtLink({ to: '/to', external: true }).type).toBe(EXTERNAL)
-      expect(nuxtLink({ to: '/to', internal: true }).type).toBe(EXTERNAL)
-      expect(consoleWarnSpy).toHaveBeenCalledTimes(2)
+      expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
 
       consoleWarnSpy.mockRestore()
     })
@@ -96,7 +95,7 @@ describe('app--defineNuxtLink:type', () => {
       enableVueRouter()
     })
 
-    it('resolves based on `to` value', () => {
+    it('returns based on `to` value', () => {
       // Internal
       expect(nuxtLink({ to: '/foo' }).type).toBe(INTERNAL)
       expect(nuxtLink({ to: '/foo/bar' }).type).toBe(INTERNAL)
@@ -109,7 +108,7 @@ describe('app--defineNuxtLink:type', () => {
       expect(nuxtLink({ to: 'mailto:hello@nuxtlabs.com' }).type).toBe(EXTERNAL)
     })
 
-    it('resolves to `internal` when `to` is a route location object', () => {
+    it('returns `false` when `to` is a route location object', () => {
       expect(nuxtLink({ to: { to: '/to' } as RouteLocationRaw }).type).toBe(INTERNAL)
     })
 
@@ -118,28 +117,7 @@ describe('app--defineNuxtLink:type', () => {
       expect(nuxtLink({ to: '/to', external: false }).type).toBe(INTERNAL)
     })
 
-    it('honors `internal` prop', () => {
-      expect(nuxtLink({ to: '/to', internal: true }).type).toBe(INTERNAL)
-      expect(nuxtLink({ to: '/to', internal: false }).type).toBe(EXTERNAL)
-    })
-
-    it('honors `external` prop and warns about `internal` prop conflict', () => {
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn())
-
-      expect(nuxtLink({ to: '/to', external: true, internal: true }).type).toBe(EXTERNAL)
-      expect(nuxtLink({ to: '/to', external: false, internal: false }).type).toBe(INTERNAL)
-      expect(consoleWarnSpy).toHaveBeenCalledTimes(2)
-
-      consoleWarnSpy.mockRestore()
-    })
-
-    it('resolves to `external` when using the `blank` prop', () => {
-      expect(nuxtLink({ to: '/foo', blank: true }).type).toBe(EXTERNAL)
-      expect(nuxtLink({ to: '/foo/bar', blank: true }).type).toBe(EXTERNAL)
-      expect(nuxtLink({ to: '/foo/bar?baz=qux', blank: true }).type).toBe(EXTERNAL)
-    })
-
-    it('resolves to `external` when using the `target` prop', () => {
+    it('returns `true` when using the `target` prop', () => {
       expect(nuxtLink({ to: '/foo', target: '_blank' }).type).toBe(EXTERNAL)
       expect(nuxtLink({ to: '/foo/bar', target: '_blank' }).type).toBe(EXTERNAL)
       expect(nuxtLink({ to: '/foo/bar?baz=qux', target: '_blank' }).type).toBe(EXTERNAL)
@@ -152,7 +130,61 @@ describe('app--defineNuxtLink:propsOrAttributes', () => {
     enableVueRouter()
   })
 
-  describe('type is `internal`', () => {
+  describe('`isExternal` is `true`', () => {
+    describe('href', () => {
+      it('forwards `to` value', () => {
+        expect(nuxtLink({ to: 'https://nuxtjs.org' }).props.href).toBe('https://nuxtjs.org')
+      })
+
+      it('resolves route location object', () => {
+        expect(nuxtLink({ to: { to: '/to' } as RouteLocationRaw, external: true }).props.href).toBe('/to')
+      })
+    })
+
+    describe('target', () => {
+      it('forwards `target` prop', () => {
+        expect(nuxtLink({ to: 'https://nuxtjs.org', target: '_blank' }).props.target).toBe('_blank')
+        expect(nuxtLink({ to: 'https://nuxtjs.org', target: null }).props.target).toBe(null)
+      })
+
+      it('defaults to `null`', () => {
+        expect(nuxtLink({ to: 'https://nuxtjs.org' }).props.target).toBe(null)
+      })
+    })
+
+    describe('rel', () => {
+      it('uses framework\'s default', () => {
+        expect(nuxtLink({ to: 'https://nuxtjs.org' }).props.rel).toBe('noopener noreferrer')
+      })
+
+      it('uses user\'s default', () => {
+        expect(nuxtLink({ to: 'https://nuxtjs.org' }, { externalRelAttribute: 'foo' }).props.rel).toBe('foo')
+        expect(nuxtLink({ to: 'https://nuxtjs.org' }, { externalRelAttribute: null }).props.rel).toBe(null)
+      })
+
+      it('uses and favors `rel` prop', () => {
+        expect(nuxtLink({ to: 'https://nuxtjs.org', rel: 'foo' }).props.rel).toBe('foo')
+        expect(nuxtLink({ to: 'https://nuxtjs.org', rel: 'foo' }, { externalRelAttribute: 'bar' }).props.rel).toBe('foo')
+        expect(nuxtLink({ to: 'https://nuxtjs.org', rel: null }, { externalRelAttribute: 'bar' }).props.rel).toBe(null)
+      })
+
+      it('honors `noRel` prop', () => {
+        expect(nuxtLink({ to: 'https://nuxtjs.org', noRel: true }).props.rel).toBe(null)
+        expect(nuxtLink({ to: 'https://nuxtjs.org', noRel: false }).props.rel).toBe('noopener noreferrer')
+      })
+
+      it('honors `noRel` prop and warns about `rel` prop conflict', () => {
+        const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn())
+
+        expect(nuxtLink({ to: 'https://nuxtjs.org', noRel: true, rel: 'foo' }).props.rel).toBe(null)
+        expect(consoleWarnSpy).toHaveBeenCalledOnce()
+
+        consoleWarnSpy.mockRestore()
+      })
+    })
+  })
+
+  describe('`isExternal` is `false`', () => {
     describe('to', () => {
       it('forwards `to` prop', () => {
         expect(nuxtLink({ to: '/to' }).props.to).toBe('/to')
@@ -161,11 +193,11 @@ describe('app--defineNuxtLink:propsOrAttributes', () => {
     })
 
     describe('activeClass', () => {
-      it('uses default', () => {
+      it('uses framework\'s default', () => {
         expect(nuxtLink({ to: '/to' }).props.activeClass).toBe(undefined)
       })
 
-      it('uses define provided default', () => {
+      it('uses user\'s default', () => {
         expect(nuxtLink({ to: '/to' }, { activeClass: 'activeClass' }).props.activeClass).toBe('activeClass')
       })
 
@@ -176,11 +208,11 @@ describe('app--defineNuxtLink:propsOrAttributes', () => {
     })
 
     describe('exactActiveClass', () => {
-      it('uses default', () => {
+      it('uses framework\'s default', () => {
         expect(nuxtLink({ to: '/to' }).props.exactActiveClass).toBe(undefined)
       })
 
-      it('uses define provided default', () => {
+      it('uses user\'s default', () => {
         expect(nuxtLink({ to: '/to' }, { exactActiveClass: 'exactActiveClass' }).props.exactActiveClass).toBe('exactActiveClass')
       })
 
@@ -201,55 +233,6 @@ describe('app--defineNuxtLink:propsOrAttributes', () => {
       it('forwards `ariaCurrentValue` prop', () => {
         expect(nuxtLink({ to: '/to', ariaCurrentValue: 'page' }).props.ariaCurrentValue).toBe('page')
         expect(nuxtLink({ to: '/to', ariaCurrentValue: 'step' }).props.ariaCurrentValue).toBe('step')
-      })
-    })
-  })
-
-  describe('type is `external`', () => {
-    describe('href', () => {
-      it('forwards `to` value', () => {
-        expect(nuxtLink({ to: 'https://nuxtjs.org' }).props.href).toBe('https://nuxtjs.org')
-      })
-
-      it('resolves route location object', () => {
-        expect(nuxtLink({ to: { to: '/to' } as RouteLocationRaw, external: true }).props.href).toBe('/to')
-      })
-    })
-
-    describe('target', () => {
-      it('forwards `target` prop', () => {
-        expect(nuxtLink({ to: 'https://nuxtjs.org', target: '_blank' }).props.target).toBe('_blank')
-        expect(nuxtLink({ to: 'https://nuxtjs.org', target: null }).props.target).toBe(null)
-      })
-
-      it('resolves to `"_blank"` when `blank` prop is used', () => {
-        expect(nuxtLink({ to: 'https://nuxtjs.org', blank: true }).props.target).toBe('_blank')
-      })
-
-      it('forwards `target` prop and warns about `blank` prop conflict', () => {
-        const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn())
-
-        expect(nuxtLink({ to: 'https://nuxtjs.org', target: '_self', blank: true }).props.target).toBe('_self')
-        expect(consoleWarnSpy).toHaveBeenCalledOnce()
-
-        consoleWarnSpy.mockRestore()
-      })
-    })
-
-    describe('rel', () => {
-      it('uses default', () => {
-        expect(nuxtLink({ to: 'https://nuxtjs.org' }).props.rel).toBe('noopener noreferrer')
-      })
-
-      it('uses define provided default', () => {
-        expect(nuxtLink({ to: 'https://nuxtjs.org' }, { externalRelAttribute: 'foo' }).props.rel).toBe('foo')
-        expect(nuxtLink({ to: 'https://nuxtjs.org' }, { externalRelAttribute: null }).props.rel).toBe(null)
-      })
-
-      it('uses and favors `rel` prop', () => {
-        expect(nuxtLink({ to: 'https://nuxtjs.org', rel: 'foo' }).props.rel).toBe('foo')
-        expect(nuxtLink({ to: 'https://nuxtjs.org', rel: 'foo' }, { externalRelAttribute: 'bar' }).props.rel).toBe('foo')
-        expect(nuxtLink({ to: 'https://nuxtjs.org', rel: null }, { externalRelAttribute: 'bar' }).props.rel).toBe(null)
       })
     })
   })

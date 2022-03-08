@@ -6,17 +6,11 @@ import { useRouter } from '#app'
 /**
  * Determines if a URL is internal or external. This does not detect all relative URLs as internal, such as `about` or `./about`. This function assumes relative URLs start with a "/"`.
  */
-const isInternalURL = (url: string): boolean => {
+const isExternalURL = (url: string): boolean => {
   /**
    * @see Regex101 expression: {@link https://regex101.com/r/1y7iod/1}
    */
-  const isInternal = /^\/(?!\/)/.test(url)
-  /**
-   * @see Regex101 expression: {@link https://regex101.com/r/RnUseS/1}
-   */
-  const isSpecialLink = !isInternal && !/^https?:\/\//i.test(url)
-
-  return isInternal && !isSpecialLink
+  return !/^\/(?!\/)/.test(url)
 }
 
 const firstNonUndefined = <T>(...args: T[]): T => {
@@ -25,10 +19,6 @@ const firstNonUndefined = <T>(...args: T[]): T => {
       return arg
     }
   }
-}
-
-const warnPropConflict = (main: string, sub: string): void => {
-  console.warn(`[NuxtLink] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
 }
 
 const DEFAULT_PREFETCH_LINKS = true
@@ -48,9 +38,9 @@ export type NuxtLinkProps = {
   href?: string | RouteLocationRaw;
 
   // Attributes
-  blank?: boolean;
   target?: string;
-  rel?: string | null;
+  rel?: string;
+  noRel?: boolean;
 
   // Prefetching
   prefetch?: boolean;
@@ -67,11 +57,16 @@ export type NuxtLinkProps = {
 
   // Edge cases handling
   external?: boolean;
-  internal?: boolean;
 
   // Slot API
   custom?: boolean;
 };
+
+const checkPropConflicts = (props: NuxtLinkProps, main: string, sub: string): void => {
+  if (props[main] !== undefined && props[sub] !== undefined) {
+    console.warn(`[NuxtLink] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
+  }
+}
 
 export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
   return defineComponent({
@@ -90,18 +85,18 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
       },
 
       // Attributes
-      blank: {
-        type: Boolean as PropType<boolean>,
-        default: undefined,
-        required: false
-      },
       target: {
         type: String as PropType<string>,
         default: undefined,
         required: false
       },
       rel: {
-        type: String as PropType<string | null>,
+        type: String as PropType<string>,
+        default: undefined,
+        required: false
+      },
+      noRel: {
+        type: Boolean as PropType<boolean>,
         default: undefined,
         required: false
       },
@@ -153,11 +148,6 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
         default: undefined,
         required: false
       },
-      internal: {
-        type: Boolean as PropType<boolean>,
-        default: undefined,
-        required: false
-      },
 
       // Slot API
       custom: {
@@ -171,50 +161,48 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
 
       // Resolving `to` value from `to` and `href` props
       const to = computed<string | RouteLocationRaw>(() => {
+        checkPropConflicts(props, 'to', 'href')
+
         if (props.to) {
-          if (props.href) {
-            warnPropConflict('to', 'href')
-          }
           return props.to
         } else if (props.href) {
           return props.href
-        } else {
-          throw new Error('[NuxtLink] Missing `to` prop.')
         }
+
+        throw new Error('[NuxtLink] Either `to` or `href` props are required.')
       })
 
       // Resolving link type
-      const type = computed<'internal' | 'external'>(() => {
+      const isExternal = computed<boolean>(() => {
         if (!router) {
           // If Vue Router is not enabled then all links are considered external
+
           if (typeof to.value === 'object') {
-            throw new TypeError('[NuxtLink] Vue Router is not enabled, therefore route location object cannot be handled by `<NuxtLink />`.')
+            throw new TypeError('[NuxtLink] Route location object cannot be resolved by `<NuxtLink />` when vue-router is disabled (no pages).')
           }
 
-          if (props.external !== undefined || props.internal !== undefined) {
-            console.warn('[NuxtLink] `external` and `internal` props have no effect when Vue Router is not enabled.')
+          if (props.external !== undefined) {
+            console.warn('[NuxtLink] `external` prop have no effect when Vue Router is not enabled.')
           }
 
-          return 'external'
-        } else if (props.external !== undefined) {
+          return true
+        }
+
+        // If Vue Router is enabled, then check if link is internal or external
+
+        if (props.external !== undefined) {
           // Else if `external` prop is used
-          if (props.internal !== undefined) {
-            warnPropConflict('external', 'internal')
-          }
-          return props.external ? 'external' : 'internal'
-        } else if (props.internal !== undefined) {
-          // Else if `internal` prop is used
-          return props.internal ? 'internal' : 'external'
-        } else if (props.blank || props.target) {
+          return props.external
+        } else if (props.target) {
           // Else if the `blank` or `target` props are truthy, then link is considered external
-          return 'external'
+          return true
         } else if (typeof to.value === 'object') {
           // Else if `to` is a route object then it's an internal link
-          return 'internal'
-        } else {
-          // Else check if `to` is an internal URL
-          return isInternalURL(to.value) ? 'internal' : 'external'
+          return false
         }
+
+        // Else check if `to` is an external URL
+        return isExternalURL(to.value)
       })
 
       // Resolving props for internal links of attributes for external ones
@@ -229,45 +217,36 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
         target: string | null;
         rel: string | null;
       }>(() => {
-        if (type.value === 'internal') {
-          // Internal props
-          return {
-            to: to.value,
-            activeClass: props.activeClass || options.activeClass,
-            exactActiveClass: props.exactActiveClass || options.exactActiveClass,
-            replace: props.replace,
-            ariaCurrentValue: props.ariaCurrentValue
-          }
-        } else {
+        if (isExternal.value) {
           // External props
 
           // Resolves `to` value if it's a route location object
           const href = typeof to.value === 'object' ? router?.resolve(to.value).href : to.value
 
           // Resolves `target` value
-          let target = null
-          if (props.target !== undefined) {
-            target = props.target
-          } else if (props.blank) {
-            target = '_blank'
-          }
-          if (props.blank !== undefined && props.target !== undefined) {
-            warnPropConflict('target', 'blank')
-          }
+          const target = props.target || null
 
           // Resolves `rel`
-          const rel = firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, DEFAULT_EXTERNAL_REL_ATTRIBUTE)
+          checkPropConflicts(props, 'noRel', 'rel')
+          const rel = props.noRel ? null : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, DEFAULT_EXTERNAL_REL_ATTRIBUTE)
 
           return { href, target, rel }
+        }
+
+        // Internal props
+        return {
+          to: to.value,
+          activeClass: props.activeClass || options.activeClass,
+          exactActiveClass: props.exactActiveClass || options.exactActiveClass,
+          replace: props.replace,
+          ariaCurrentValue: props.ariaCurrentValue
         }
       })
 
       // TODO: Just resolved for now, requires prefetching implementation
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const shouldPrefetch = computed<Boolean>(() => {
-        if (props.prefetch !== undefined && props.noPrefetch !== undefined) {
-          warnPropConflict('prefetch', 'noPrefetch')
-        }
+      const shouldPrefetch = computed<boolean>(() => {
+        checkPropConflicts(props, 'prefetch', 'noPrefetch')
 
         return firstNonUndefined(
           props.prefetch,
@@ -284,7 +263,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
       return () => {
         // TODO: Handle `custom` prop
         return h(
-          type.value === 'internal' ? resolveComponent('RouterLink') : 'a',
+          isExternal.value ? 'a' : resolveComponent('RouterLink'),
           propsOrAttributes.value,
           // TODO: Slot API
           slots.default()
