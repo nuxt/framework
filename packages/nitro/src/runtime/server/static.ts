@@ -19,7 +19,7 @@ export default async function serveStatic (req, res) {
   let asset: string
 
   for (const _id of [id, decodedId, id + '/index.html', decodedId + '/index.html']) {
-    const _asset = getAsset(id)
+    const _asset = getAsset(_id)
     if (_asset) {
       asset = _asset
       id = _id
