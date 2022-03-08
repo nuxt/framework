@@ -199,7 +199,6 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
         } else if (props.external !== undefined) {
           // Else if `external` prop is used
           if (props.internal !== undefined) {
-            console.log({ e: props.external, i: props.internal })
             warnPropConflict('external', 'internal')
           }
           return props.external ? 'external' : 'internal'
