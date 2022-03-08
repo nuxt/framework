@@ -228,7 +228,9 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
 
           // Resolves `rel`
           checkPropConflicts(props, 'noRel', 'rel')
-          const rel = props.noRel ? null : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, DEFAULT_EXTERNAL_REL_ATTRIBUTE)
+          const rel = props.noRel
+            ? null
+            : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, DEFAULT_EXTERNAL_REL_ATTRIBUTE) || null // converts `""` to `null` to prevent the attribute from being added as empty (`rel=""`)
 
           return { href, target, rel }
         }

@@ -166,6 +166,7 @@ describe('app--defineNuxtLink:propsOrAttributes', () => {
         expect(nuxtLink({ to: 'https://nuxtjs.org', rel: 'foo' }).props.rel).toBe('foo')
         expect(nuxtLink({ to: 'https://nuxtjs.org', rel: 'foo' }, { externalRelAttribute: 'bar' }).props.rel).toBe('foo')
         expect(nuxtLink({ to: 'https://nuxtjs.org', rel: null }, { externalRelAttribute: 'bar' }).props.rel).toBe(null)
+        expect(nuxtLink({ to: 'https://nuxtjs.org', rel: '' }, { externalRelAttribute: 'bar' }).props.rel).toBe(null)
       })
 
       it('honors `noRel` prop', () => {
