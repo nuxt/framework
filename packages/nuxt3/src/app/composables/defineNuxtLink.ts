@@ -1,4 +1,4 @@
-import { defineComponent, h, resolveComponent, PropType, computed } from 'vue'
+import { defineComponent, h, resolveComponent, PropType, computed, ConcreteComponent } from 'vue'
 import { RouteLocationRaw, Router } from 'vue-router'
 
 import { useRouter } from '#app'
@@ -72,6 +72,14 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
     if (props[main] !== undefined && props[sub] !== undefined) {
       console.warn(`[${componentName}] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
     }
+  }
+
+  let RouterLink: ConcreteComponent
+  const getRouterLink = (): ConcreteComponent => {
+    if (!RouterLink) {
+      RouterLink = resolveComponent('RouterLink') as ConcreteComponent
+    }
+    return RouterLink
   }
 
   return defineComponent({
@@ -242,7 +250,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
         }
 
         return h(
-          resolveComponent('RouterLink'),
+          getRouterLink(),
           {
             to: to.value,
             activeClass: props.activeClass || options.activeClass,
