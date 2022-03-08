@@ -21,10 +21,12 @@ const firstNonUndefined = <T>(...args: T[]): T => {
   }
 }
 
+const DEFAULT_COMPONENT_NAME = 'NuxtLink'
 const DEFAULT_PREFETCH_LINKS = true
 const DEFAULT_EXTERNAL_REL_ATTRIBUTE = 'noopener noreferrer'
 
 export type DefineNuxtLinkOptions = {
+  componentName?: string;
   prefetchLinks?: boolean;
   externalRelAttribute?: string | null;
   activeClass?: string;
@@ -70,7 +72,7 @@ const checkPropConflicts = (props: NuxtLinkProps, main: string, sub: string): vo
 
 export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
   return defineComponent({
-    name: 'NuxtLink',
+    name: options.componentName || DEFAULT_COMPONENT_NAME,
     props: {
       // Routing
       to: {
