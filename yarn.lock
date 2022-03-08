@@ -13762,7 +13762,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"magic-string@npm:^0.26.1":
+"magic-string@npm:^0.26.0, magic-string@npm:^0.26.1":
   version: 0.26.1
   resolution: "magic-string@npm:0.26.1"
   dependencies:
@@ -19037,7 +19037,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.58.0, rollup@npm:^2.59.0, rollup@npm:^2.66.1, rollup@npm:^2.70.0":
+"rollup@npm:^2.58.0, rollup@npm:^2.59.0, rollup@npm:^2.66.1, rollup@npm:^2.68.0, rollup@npm:^2.70.0":
   version: 2.70.0
   resolution: "rollup@npm:2.70.0"
   dependencies:
