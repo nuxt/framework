@@ -1,7 +1,7 @@
 import { defineComponent, h, resolveComponent, PropType, computed } from 'vue'
 import { RouteLocationRaw, Router } from 'vue-router'
 
-import { useNuxtApp } from '#app'
+import { useRouter } from '#app'
 
 /**
  * Determines if a URL is internal or external. This does not detect all relative URLs as internal, such as `about` or `./about`. This function assumes relative URLs start with a "/"`.
@@ -28,7 +28,7 @@ const firstNonUndefined = <T>(...args: T[]): T => {
 }
 
 const warnPropConflict = (main: string, sub: string): void => {
-  console.warn(`[nuxt-link] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
+  console.warn(`[NuxtLink] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
 }
 
 const DEFAULT_PREFETCH_LINKS = true
@@ -167,7 +167,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
       }
     },
     setup (props, { slots }) {
-      const router = useNuxtApp()?.$router as Router | undefined
+      const router = useRouter() as Router | undefined
 
       // Resolving `to` value from `to` and `href` props
       const to = computed<string | RouteLocationRaw>(() => {
@@ -179,7 +179,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
         } else if (props.href) {
           return props.href
         } else {
-          throw new Error('[nuxt-link] Missing `to` prop.')
+          throw new Error('[NuxtLink] Missing `to` prop.')
         }
       })
 
@@ -188,11 +188,11 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
         if (!router) {
           // If Vue Router is not enabled then all links are considered external
           if (typeof to.value === 'object') {
-            throw new TypeError('[nuxt-link] Vue Router is not enabled, therefore route location object cannot be handled by `<NuxtLink />`.')
+            throw new TypeError('[NuxtLink] Vue Router is not enabled, therefore route location object cannot be handled by `<NuxtLink />`.')
           }
 
           if (props.external !== undefined || props.internal !== undefined) {
-            console.warn('[nuxt-link] `external` and `internal` props have no effect when Vue Router is not enabled.')
+            console.warn('[NuxtLink] `external` and `internal` props have no effect when Vue Router is not enabled.')
           }
 
           return 'external'
