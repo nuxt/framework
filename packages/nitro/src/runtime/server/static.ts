@@ -15,16 +15,15 @@ export default async function serveStatic (req, res) {
   }
 
   let id = withLeadingSlash(withoutTrailingSlash(parseURL(req.url).pathname))
-  let asset = getAsset(id)
+  const decodedId = decodeURIComponent(id)
+  let asset: string
 
-  const alternatives = [decodeURIComponent(id), id + '/index.html', decodeURIComponent(id) + '/index.html']
-
-  while (!asset && alternatives.length) {
-    const _id = alternatives.shift()
+  for (const _id of [id, decodedId, id + '/index.html', decodedId + '/index.html']) {
     const _asset = getAsset(id)
     if (_asset) {
       asset = _asset
       id = _id
+      break
     }
   }
 
