@@ -30,7 +30,7 @@ if (process.server) {
       return vueApp
     } catch (err) {
       ssrContext.error = ssrContext.error || err
-      await nuxt.callHook('app:error', err, nuxt)
+      await nuxt.callHook('app:error', err)
     }
   }
 }
@@ -59,7 +59,7 @@ if (process.client) {
       await applyPlugins(nuxt, plugins)
     } catch (err) {
       nuxt.hooks.hookOnce('app:error:cleared', () => applyPlugins(nuxt, plugins))
-      await nuxt.callHook('app:error', err, nuxt)
+      await nuxt.callHook('app:error', err)
       nuxt.payload.error = nuxt.payload.error || err
     }
 
@@ -70,7 +70,7 @@ if (process.client) {
       await nuxt.hooks.callHook('app:mounted', vueApp)
       await nextTick()
     } catch (err) {
-      await nuxt.callHook('app:error', err, nuxt)
+      await nuxt.callHook('app:error', err)
       nuxt.payload.error = nuxt.payload.error || err
     }
   }

@@ -12,7 +12,7 @@ export const throwError = (_err: string | Error) => {
   if (process.server) {
     nuxtApp.ssrContext.error = nuxtApp.ssrContext.error || err
   } else {
-    nuxtApp.callHook('app:error', err, nuxtApp)
+    nuxtApp.callHook('app:error', err)
     error.value = error.value || err
   }
 

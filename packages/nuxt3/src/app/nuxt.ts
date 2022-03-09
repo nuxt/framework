@@ -21,7 +21,7 @@ export interface RuntimeNuxtHooks {
   'app:mounted': (app: App<Element>) => HookResult
   'app:rendered': () => HookResult
   'app:suspense:resolve': (Component?: VNode) => HookResult
-  'app:error': (err: any, nuxt: NuxtApp) => HookResult
+  'app:error': (err: any) => HookResult
   'app:error:cleared': (options: { redirect?: string }) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
