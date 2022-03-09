@@ -7,6 +7,12 @@
       <button @click="handleError">
         Clear error
       </button>
+      <NuxtLink to="/404">
+        Trigger another error
+      </NuxtLink>
+      <NuxtLink to="/">
+        Navigate home
+      </NuxtLink>
     </div>
   </div>
 </template>

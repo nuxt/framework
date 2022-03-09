@@ -9,7 +9,7 @@ import {
 import { createError } from 'h3'
 import NuxtPage from './page'
 import NuxtLayout from './layout'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, NuxtApp, throwError } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, NuxtApp, throwError, clearError } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
@@ -85,6 +85,9 @@ export default defineNuxtPlugin((nuxtApp) => {
         middlewareEntries.add(componentMiddleware)
       }
     }
+
+    // Clear any existing errors
+    callWithNuxt(nuxtApp as NuxtApp, clearError)
 
     for (const entry of middlewareEntries) {
       const middleware = typeof entry === 'string' ? nuxtApp._middleware.named[entry] || await namedMiddleware[entry]?.().then(r => r.default || r) : entry

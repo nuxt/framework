@@ -4,7 +4,7 @@ import { NuxtApp } from '@nuxt/schema'
 import { createError } from 'h3'
 import { defineNuxtPlugin } from '..'
 import { callWithNuxt } from '../nuxt'
-import { throwError } from '#app'
+import { clearError, throwError } from '#app'
 
 declare module 'vue' {
   export interface GlobalComponents {
@@ -107,6 +107,8 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
     try {
       // Resolve route
       const to = getRouteFromPath(url)
+      // Clear any existing errors
+      callWithNuxt(nuxtApp as NuxtApp, clearError)
       // Run beforeEach hooks
       for (const middleware of hooks['navigate:before']) {
         const result = await middleware(to, route)
