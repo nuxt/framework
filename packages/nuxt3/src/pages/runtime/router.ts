@@ -86,8 +86,10 @@ export default defineNuxtPlugin((nuxtApp) => {
       }
     }
 
-    // Clear any existing errors
-    callWithNuxt(nuxtApp as NuxtApp, clearError)
+    if (process.client) {
+      // Clear any existing errors
+      callWithNuxt(nuxtApp as NuxtApp, clearError)
+    }
 
     for (const entry of middlewareEntries) {
       const middleware = typeof entry === 'string' ? nuxtApp._middleware.named[entry] || await namedMiddleware[entry]?.().then(r => r.default || r) : entry

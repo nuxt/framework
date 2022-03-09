@@ -107,8 +107,12 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
     try {
       // Resolve route
       const to = getRouteFromPath(url)
+
+      if (process.client) {
       // Clear any existing errors
-      callWithNuxt(nuxtApp as NuxtApp, clearError)
+        callWithNuxt(nuxtApp as NuxtApp, clearError)
+      }
+
       // Run beforeEach hooks
       for (const middleware of hooks['navigate:before']) {
         const result = await middleware(to, route)
