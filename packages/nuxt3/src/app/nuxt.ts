@@ -136,8 +136,14 @@ export async function applyPlugin (nuxtApp: NuxtApp, plugin: Plugin) {
 }
 
 export async function applyPlugins (nuxtApp: NuxtApp, plugins: Plugin[]) {
-  for (const plugin of plugins) {
-    await applyPlugin(nuxtApp, plugin)
+  for (const [index, plugin] of plugins.entries()) {
+    try {
+      await applyPlugin(nuxtApp, plugin)
+    } catch (e) {
+      // Track which plugin failed so we can re-run it after error is handled
+      e.index = index
+      throw e
+    }
   }
 }
 
