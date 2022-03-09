@@ -1,6 +1,7 @@
 import type { ServerResponse } from 'http'
 import { createRenderer } from 'vue-bundle-renderer'
 import devalue from '@nuxt/devalue'
+import { useBody, useQuery } from 'h3'
 import { privateConfig, publicConfig } from './config'
 import { buildAssetsURL } from './paths'
 // @ts-ignore
@@ -71,8 +72,8 @@ function renderToString (ssrContext) {
 
 export async function renderMiddleware (req, res: ServerResponse) {
   // Whether we're rendering an error page
-  const isErrorHandler = '__ERROR__' in req.headers
-  let url = isErrorHandler ? req.headers.__ERROR__.url : req.url
+  const errorPayload = req.url.startsWith('/__error') ? useQuery(req) : null
+  let url = errorPayload?.url || req.url
 
   // payload.json request detection
   let isPayloadReq = false
@@ -88,13 +89,13 @@ export async function renderMiddleware (req, res: ServerResponse) {
     res,
     runtimeConfig: { private: privateConfig, public: publicConfig },
     noSSR: req.spa || req.headers['x-nuxt-no-ssr'],
-    error: isErrorHandler ? req.headers.__ERROR__.error : undefined,
-    ...(req.context || {})
+    ...(req.context || {}),
+    error: errorPayload?.error ? JSON.parse(errorPayload.error as string) : null
   }
 
   // Render app
   const rendered = await renderToString(ssrContext).catch((e) => {
-    if (!isErrorHandler) { throw e }
+    if (!errorPayload) { throw e }
   })
 
   // If we error on rendering error page, we bail out and directly return to the error handler
@@ -102,7 +103,7 @@ export async function renderMiddleware (req, res: ServerResponse) {
 
   // Handle errors
   const error = ssrContext.error /* nuxt 3 */ || ssrContext.nuxt?.error /* nuxt 2 */
-  if (error && !isErrorHandler) {
+  if (error && !errorPayload) {
     // trigger a re-render by onError handler
     throw error
   }
@@ -130,7 +131,7 @@ export async function renderMiddleware (req, res: ServerResponse) {
     res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   }
 
-  res.statusCode = error ? error.statusCode || 500 : res.statusCode || 200
+  res.statusCode = error && !errorPayload ? error.statusCode || 500 : res.statusCode || 200
   res.end(data, 'utf-8')
 }
 

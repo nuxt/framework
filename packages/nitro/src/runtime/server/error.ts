@@ -1,7 +1,7 @@
 // import ansiHTML from 'ansi-html'
 import type { IncomingMessage, ServerResponse } from 'http'
-import { error500, error404, errorDev } from '@nuxt/design'
-import { localCall } from '.'
+import { withQuery } from 'ufo'
+import { $fetch } from '.'
 const cwd = process.cwd()
 
 const hasReqHeader = (req, header, includes) => req.headers[header] && req.headers[header].toLowerCase().includes(includes)
@@ -58,17 +58,17 @@ export async function handleError (error, req: IncomingMessage, res: ServerRespo
   }
 
   // HTML response
-  const fallbackTemplate = is404 ? error404 : (isDev ? errorDev : error500)
-  const { body: html } = await localCall({
-    url: '/_error',
-    headers: {
-      ...req.headers,
-      __ERROR__: {
-        url: req.url,
-        error: errorObject
-      }
-    }
+  const url = withQuery('/__internal/__error', {
+    url: req.url,
+    error: JSON.stringify(errorObject)
   })
+  const html = await $fetch(url, {
+    headers: req.headers as any
+  }).catch(async () => {
+    const fallbackTemplate = await import('@nuxt/design').then(r => is404 ? r.error404 : (isDev ? r.errorDev : r.error500))
+    return fallbackTemplate(errorObject)
+  })
+
   res.setHeader('Content-Type', 'text/html;charset=UTF-8')
-  res.end(html || fallbackTemplate(errorObject))
+  res.end(html)
 }
