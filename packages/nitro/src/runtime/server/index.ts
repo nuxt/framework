@@ -15,7 +15,7 @@ const app = createApp({
 
 const renderMiddleware = lazyHandle(() => import('../app/render').then(e => e.renderMiddleware))
 
-app.use('/__internal', renderMiddleware)
+app.use('/_nitro', renderMiddleware)
 app.use(timingMiddleware)
 app.use(serverMiddleware)
 app.use(renderMiddleware)

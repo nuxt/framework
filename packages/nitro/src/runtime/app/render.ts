@@ -72,8 +72,8 @@ function renderToString (ssrContext) {
 
 export async function renderMiddleware (req, res: ServerResponse) {
   // Whether we're rendering an error page
-  const errorPayload = req.url.startsWith('/__error') ? useQuery(req) : null
-  let url = errorPayload?.url || req.url
+  const ssrError = req.url.startsWith('/__error') ? useQuery(req) : null
+  let url = ssrError?.url || req.url
 
   // payload.json request detection
   let isPayloadReq = false
@@ -90,12 +90,12 @@ export async function renderMiddleware (req, res: ServerResponse) {
     runtimeConfig: { private: privateConfig, public: publicConfig },
     noSSR: req.spa || req.headers['x-nuxt-no-ssr'],
     ...(req.context || {}),
-    error: errorPayload?.error ? JSON.parse(errorPayload.error as string) : null
+    error: ssrError
   }
 
   // Render app
   const rendered = await renderToString(ssrContext).catch((e) => {
-    if (!errorPayload) { throw e }
+    if (!ssrError) { throw e }
   })
 
   // If we error on rendering error page, we bail out and directly return to the error handler
@@ -103,7 +103,7 @@ export async function renderMiddleware (req, res: ServerResponse) {
 
   // Handle errors
   const error = ssrContext.error /* nuxt 3 */ || ssrContext.nuxt?.error /* nuxt 2 */
-  if (error && !errorPayload) {
+  if (error && !ssrError) {
     // trigger a re-render by onError handler
     throw error
   }
@@ -131,7 +131,7 @@ export async function renderMiddleware (req, res: ServerResponse) {
     res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   }
 
-  res.statusCode = error && !errorPayload ? error.statusCode || 500 : res.statusCode || 200
+  res.statusCode = error && !ssrError ? error.statusCode || 500 : res.statusCode || 200
   res.end(data, 'utf-8')
 }
 
