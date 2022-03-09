@@ -86,9 +86,9 @@ export default defineNuxtPlugin((nuxtApp) => {
       }
     }
 
-    if (process.client) {
+    if (process.client && !nuxtApp.isHydrating) {
       // Clear any existing errors
-      callWithNuxt(nuxtApp as NuxtApp, clearError)
+      await callWithNuxt(nuxtApp as NuxtApp, clearError)
     }
 
     for (const entry of middlewareEntries) {

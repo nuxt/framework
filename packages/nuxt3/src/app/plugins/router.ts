@@ -108,9 +108,9 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
       // Resolve route
       const to = getRouteFromPath(url)
 
-      if (process.client) {
+      if (process.client && !nuxtApp.isHydrating) {
       // Clear any existing errors
-        callWithNuxt(nuxtApp as NuxtApp, clearError)
+        await callWithNuxt(nuxtApp as NuxtApp, clearError)
       }
 
       // Run beforeEach hooks
