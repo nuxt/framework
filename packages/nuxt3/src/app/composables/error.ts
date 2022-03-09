@@ -2,7 +2,7 @@ import { useNuxtApp, useState } from '#app'
 
 export const useError = () => {
   const nuxtApp = useNuxtApp()
-  return useState('_error', () => process.server ? nuxtApp.ssrContext.error : nuxtApp.payload.error)
+  return useState('error', () => process.server ? nuxtApp.ssrContext.error : nuxtApp.payload.error)
 }
 
 export const throwError = (_err: string | Error) => {
