@@ -134,6 +134,7 @@ export const schemaTemplate = {
           interfaceName: 'PublicRuntimeConfig',
           addExport: false,
           addDefaults: false,
+          allowExtraKeys: true,
           indentation: 2
         }),
       generateTypes(resolveSchema(nuxt.options.privateRuntimeConfig), {
@@ -141,6 +142,7 @@ export const schemaTemplate = {
         addExport: false,
         addDefaults: false,
         indentation: 2,
+        allowExtraKeys: true,
         defaultDescrption: 'This value is only accessible from server-side.'
       }),
       '}'
