@@ -22,7 +22,7 @@ export const throwError = (_err: string | Error) => {
 export const clearError = async (redirect?: string) => {
   const nuxtApp = useNuxtApp()
   const error = useError()
-  nuxtApp.callHook('app:error:handled')
+  nuxtApp.callHook('app:error:cleared', redirect)
   if (redirect) {
     await nuxtApp.$router.replace(redirect)
   }

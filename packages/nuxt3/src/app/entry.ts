@@ -58,7 +58,7 @@ if (process.client) {
     try {
       await applyPlugins(nuxt, plugins)
     } catch (err) {
-      nuxt.hooks.hookOnce('app:error:handled', () => applyPlugins(nuxt, plugins))
+      nuxt.hooks.hookOnce('app:error:cleared', () => applyPlugins(nuxt, plugins))
       await nuxt.callHook('app:error', err, nuxt)
       nuxt.payload.error = nuxt.payload.error || err
     }
