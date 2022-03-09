@@ -71,8 +71,8 @@ function renderToString (ssrContext) {
 
 export async function renderMiddleware (req, res: ServerResponse) {
   // Whether we're rendering an error page
-  const isErrorHandler = req.method === 'GET' && req.body
-  let url = isErrorHandler ? req.body.url : req.url
+  const isErrorHandler = '__ERROR__' in req.headers
+  let url = isErrorHandler ? req.headers.__ERROR__.url : req.url
 
   // payload.json request detection
   let isPayloadReq = false
@@ -88,7 +88,7 @@ export async function renderMiddleware (req, res: ServerResponse) {
     res,
     runtimeConfig: { private: privateConfig, public: publicConfig },
     noSSR: req.spa || req.headers['x-nuxt-no-ssr'],
-    error: isErrorHandler ? req.body.error : undefined,
+    error: isErrorHandler ? req.headers.__ERROR__.error : undefined,
     ...(req.context || {})
   }
 

@@ -61,8 +61,13 @@ export async function handleError (error, req: IncomingMessage, res: ServerRespo
   const fallbackTemplate = is404 ? error404 : (isDev ? errorDev : error500)
   const { body: html } = await localCall({
     url: '/_error',
-    headers: req.headers,
-    body: { url: req.url, error: errorObject }
+    headers: {
+      ...req.headers,
+      __ERROR__: {
+        url: req.url,
+        error: errorObject
+      }
+    }
   })
   res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   res.end(html || fallbackTemplate(errorObject))
