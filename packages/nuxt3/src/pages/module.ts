@@ -1,5 +1,5 @@
 import { existsSync } from 'fs'
-import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin, findPath } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
@@ -77,23 +77,21 @@ export default defineNuxtModule({
 
     // Add router options template
     addTemplate({
-      filename: "router-options.mjs",
+      filename: 'router.options.mjs',
       getContents: async () => {
         // Check for router options
-        const routerOptionsFile = await resolvePath("~/app/router.options", {extensions: ['.ts', '.js', '.mjs', '.cjs', '.mts', '.cts']});
-        const isRouterOptionsFileExists = existsSync(routerOptionsFile);
-        const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router).map(([key, value]) => [key, JSON.stringify(value)]));
-
+        const routerOptionsFile = await findPath(['~/app/router.options', '~/App/router.options'])
+        const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router).map(([key, value]) => [key, JSON.stringify(value)]))
         return [
-          isRouterOptionsFileExists ? genImport(routerOptionsFile, 'routerOptions') : '',
+          routerOptionsFile ? genImport(routerOptionsFile, 'routerOptions') : '',
           `const configRouterOptions = ${configRouterOptions}`,
           'export default {',
           '...configRouterOptions,',
-          isRouterOptionsFileExists ? '...routerOptions' : '',
-          '}',
-        ].join("\n");
+          routerOptionsFile ? '...routerOptions' : '',
+          '}'
+        ].join('\n')
       }
-    });
+    })
 
     // Add middleware template
     addTemplate({
