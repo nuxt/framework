@@ -56,7 +56,7 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
 export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   // Resolve main (app.vue)
   if (!app.mainComponent) {
-    app.mainComponent = await findPath(['~/App', '~/app'], {}, 'file')
+    app.mainComponent = await findPath(['~/App', '~/app'])
   }
   if (!app.mainComponent) {
     app.mainComponent = resolve(nuxt.options.appDir, 'components/nuxt-welcome.vue')
