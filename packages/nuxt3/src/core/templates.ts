@@ -5,7 +5,6 @@ import { genArrayFromRaw, genDynamicImport, genExport, genImport, genString } fr
 import { isAbsolute, join, relative } from 'pathe'
 import { resolveSchema, generateTypes } from 'untyped'
 import escapeRE from 'escape-string-regexp'
-import { deleteSchemaDefaults, normalizeUntypedOutput, withLastLevelDescription } from './template-utils'
 
 export interface TemplateContext {
   nuxt: Nuxt
@@ -130,25 +129,20 @@ export const schemaTemplate = {
       `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
       ),
       '  }',
-      normalizeUntypedOutput(
-        generateTypes(
-          deleteSchemaDefaults(
-            resolveSchema(nuxt.options.publicRuntimeConfig)
-          ),
-          'PublicRuntimeConfig'
-        )
-      ),
-      normalizeUntypedOutput(
-        generateTypes(
-          deleteSchemaDefaults(
-            withLastLevelDescription(
-              resolveSchema(nuxt.options.privateRuntimeConfig),
-              'This value is only accessible from server-side.'
-            )
-          ),
-          'PrivateRuntimeConfig'
-        )
-      ),
+      generateTypes(resolveSchema(nuxt.options.publicRuntimeConfig),
+        {
+          interfaceName: 'PublicRuntimeConfig',
+          addExport: false,
+          addDefaults: false,
+          indentation: 2
+        }),
+      generateTypes(resolveSchema(nuxt.options.privateRuntimeConfig), {
+        interfaceName: 'PrivateRuntimeConfig',
+        addExport: false,
+        addDefaults: false,
+        indentation: 2,
+        defaultDescrption: 'This value is only accessible from server-side.'
+      }),
       '}'
     ].join('\n')
   }
