@@ -16,5 +16,5 @@ defineProps({
   error: Object
 })
 
-const handleError = () => clearError('/')
+const handleError = () => clearError({ redirect: '/' })
 </script>
