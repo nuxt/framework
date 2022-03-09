@@ -1,6 +1,6 @@
 import { statSync } from 'fs'
 import { resolve, basename } from 'pathe'
-import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias, addVitePlugin, addWebpackPlugin, addTemplate, addPluginTemplate } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { componentsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
@@ -18,11 +18,11 @@ export default defineNuxtModule<ComponentsOptions>({
     configKey: 'components'
   },
   defaults: {
-    dirs: ['~/components']
+    dirs: []
   },
   setup (componentOptions, nuxt) {
     let componentDirs = []
-    let components: Component[] = []
+    const components: Component[] = []
 
     const normalizeDirs = (dir: any, cwd: string) => {
       if (Array.isArray(dir)) {
@@ -34,6 +34,15 @@ export default defineNuxtModule<ComponentsOptions>({
       if (typeof dir === 'string') {
         return {
           path: resolve(cwd, resolveAlias(dir, {
+            ...nuxt.options.alias,
+            '~': cwd
+          }))
+        }
+      }
+      if (dir && typeof dir === 'object') {
+        return {
+          ...dir,
+          path: resolve(cwd, resolveAlias(dir.path, {
             ...nuxt.options.alias,
             '~': cwd
           }))
@@ -76,11 +85,8 @@ export default defineNuxtModule<ComponentsOptions>({
           extensions,
           pattern: dirOptions.pattern || `**/*.{${extensions.join(',')},}`,
           ignore: [
-            '**/*.stories.{js,ts,jsx,tsx}', // ignore storybook files
             '**/*{M,.m,-m}ixin.{js,ts,jsx,tsx}', // ignore mixins
-            '**/*.{spec,test}.{js,ts,jsx,tsx}', // ignore tests
             '**/*.d.ts', // .d.ts files
-            // TODO: support nuxt ignore patterns
             ...(dirOptions.ignore || [])
           ],
           transpile: (transpile === 'auto' ? dirPath.includes('node_modules') : transpile)
@@ -90,26 +96,22 @@ export default defineNuxtModule<ComponentsOptions>({
       nuxt.options.build!.transpile!.push(...componentDirs.filter(dir => dir.transpile).map(dir => dir.path))
     })
 
+    const options = { components, buildDir: nuxt.options.buildDir }
+
+    addTemplate({
+      ...componentsTypeTemplate,
+      options
+    })
+
+    addPluginTemplate({
+      ...componentsTemplate,
+      options
+    })
+
     // Scan components and add to plugin
-    nuxt.hook('app:templates', async (app) => {
-      components = await scanComponents(componentDirs, nuxt.options.srcDir!)
-      await nuxt.callHook('components:extend', components)
-
-      app.templates.push({
-        ...componentsTypeTemplate,
-        options: { components, buildDir: nuxt.options.buildDir }
-      })
-
-      if (!components.length) {
-        return
-      }
-
-      app.templates.push({
-        ...componentsTemplate,
-        options: { components }
-      })
-
-      app.plugins.push({ src: '#build/components' })
+    nuxt.hook('app:templates', async () => {
+      options.components = await scanComponents(componentDirs, nuxt.options.srcDir!)
+      await nuxt.callHook('components:extend', options.components)
     })
 
     nuxt.hook('prepare:types', ({ references }) => {
@@ -127,7 +129,7 @@ export default defineNuxtModule<ComponentsOptions>({
       }
     })
 
-    const loaderOptions = { getComponents: () => components }
+    const loaderOptions = { getComponents: () => options.components }
     addWebpackPlugin(loaderPlugin.webpack(loaderOptions))
     addVitePlugin(loaderPlugin.vite(loaderOptions))
   }
