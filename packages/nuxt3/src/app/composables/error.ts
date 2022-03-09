@@ -9,10 +9,10 @@ export const throwError = (_err: string | Error) => {
   const nuxtApp = useNuxtApp()
   const error = useError()
   const err = typeof _err === 'string' ? new Error(_err) : _err
+  nuxtApp.callHook('app:error', err)
   if (process.server) {
     nuxtApp.ssrContext.error = nuxtApp.ssrContext.error || err
   } else {
-    nuxtApp.callHook('app:error', err)
     error.value = error.value || err
   }
 
