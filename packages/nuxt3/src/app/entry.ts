@@ -18,20 +18,16 @@ if (process.server) {
     vueApp.component('App', AppComponent)
 
     const nuxt = createNuxtApp({ vueApp, ssrContext })
-    if (ssrContext.error) {
-      // Skip user code
-      return vueApp
-    }
+
     try {
       await applyPlugins(nuxt, plugins)
-
       await nuxt.hooks.callHook('app:created', vueApp)
-
-      return vueApp
     } catch (err) {
       await nuxt.callHook('app:error', err)
       ssrContext.error = ssrContext.error || err
     }
+
+    return vueApp
   }
 }
 
