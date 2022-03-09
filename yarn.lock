@@ -2985,7 +2985,7 @@ __metadata:
     semver: ^7.3.5
     unbuild: latest
     unctx: ^1.0.2
-    untyped: ^0.3.0
+    untyped: ^0.4.0
   languageName: unknown
   linkType: soft
 
@@ -21387,6 +21387,13 @@ __metadata:
   version: 0.3.0
   resolution: "untyped@npm:0.3.0"
   checksum: f907032a4aee6db1564f799366c037a53a2b249fd7c418a0c3ce712e2fef01ea77f0f1296a95e7c21550283d09f598a0ba2c8801126eee7efb66afb6fe8819e0
+  languageName: node
+  linkType: hard
+
+"untyped@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "untyped@npm:0.4.0"
+  checksum: f2557963fb93c2a055e18c3b0d06bcab2e1539c024824946053ded03e275a062c8540e1f00d90c12e5fc3f78c75a46e11ac83d83ac827b2113868489855e791f
   languageName: node
   linkType: hard
 
