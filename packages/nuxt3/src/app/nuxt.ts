@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { getCurrentInstance, reactive } from 'vue'
-import type { App, ComponentInternalInstance, VNode } from 'vue'
+import type { App, onErrorCaptured, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import type { RuntimeConfig } from '@nuxt/schema'
 import { legacyPlugin, LegacyContext } from './compat/legacy-app'
@@ -27,7 +27,7 @@ export interface RuntimeNuxtHooks {
   'page:finish': (Component?: VNode) => HookResult
   'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
   'vue:setup': () => void
-  'vue:error': (err: Error, target?: ComponentInternalInstance) => HookResult
+  'vue:error': (...args: Parameters<Parameters<typeof onErrorCaptured>[0]>) => HookResult
 }
 
 interface _NuxtApp {

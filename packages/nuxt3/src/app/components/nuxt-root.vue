@@ -22,11 +22,8 @@ if (process.dev && results && results.some(i => i && 'then' in i)) {
 
 // error handling
 const error = useError()
-onErrorCaptured((err, target) => {
-  const results = nuxtApp.hooks.callHookWith(hooks => hooks.map(hook => hook(err, target)), 'vue:error')
-  if (process.dev && results && results.some(i => i && 'then' in i)) {
-    console.error('[nuxt] Error in `vue:error`. Callbacks must be synchronous.')
-  }
+onErrorCaptured((err, target, info) => {
+  nuxtApp.hooks.callHook('vue:error', err, target, info)
   if (process.server) {
     callWithNuxt(nuxtApp, throwError, [err])
   }
