@@ -82,11 +82,14 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
 /**
  * Try to resolve first existing file in paths
  */
-export async function findPath (paths: string[], opts?: ResolvePathOptions): Promise<string|null> {
+export async function findPath (paths: string[], opts?: ResolvePathOptions, pathType?: string): Promise<string|null> {
   for (const path of paths) {
     const rPath = await resolvePath(path, opts)
     if (await existsSensitive(rPath)) {
-      return rPath
+      const isDirectory = (await fsp.lstat(rPath)).isDirectory()
+      if (!pathType || (pathType === 'dir' && isDirectory) || (pathType === 'file' && !isDirectory)) {
+        return rPath
+      }
     }
   }
   return null
