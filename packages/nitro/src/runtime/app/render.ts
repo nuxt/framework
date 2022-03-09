@@ -1,7 +1,7 @@
 import type { ServerResponse } from 'http'
 import { createRenderer } from 'vue-bundle-renderer'
 import devalue from '@nuxt/devalue'
-import { useBody, useQuery } from 'h3'
+import { useQuery } from 'h3'
 import { privateConfig, publicConfig } from './config'
 import { buildAssetsURL } from './paths'
 // @ts-ignore
