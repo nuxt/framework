@@ -1,6 +1,5 @@
 // import ansiHTML from 'ansi-html'
 import type { IncomingMessage, ServerResponse } from 'http'
-import { error404, error500, errorDev } from '@nuxt/design'
 import { withQuery } from 'ufo'
 import { $fetch } from '.'
 const cwd = process.cwd()
@@ -38,10 +37,7 @@ export async function handleError (error, req: IncomingMessage, res: ServerRespo
     statusMessage: error.statusMessage ?? is404 ? 'Page Not Found' : 'Internal Server Error',
     message: error.message || error.toString(),
     description: isDev && !is404
-      ? `
-    <h1>${error.message}</h1>
-    <pre>${stack.map(i => `<span class="stack${i.internal ? ' internal' : ''}">${i.text}</span>`).join('\n')}</pre>
-    `
+      ? `<pre>${stack.map(i => `<span class="stack${i.internal ? ' internal' : ''}">${i.text}</span>`).join('\n')}</pre>`
       : ''
   }
 
@@ -61,10 +57,7 @@ export async function handleError (error, req: IncomingMessage, res: ServerRespo
 
   // HTML response
   const url = withQuery('/_nitro/__error', errorObject)
-  const html = await $fetch(url).catch(() => {
-    const fallbackTemplate = is404 ? error404 : (isDev ? errorDev : error500)
-    return fallbackTemplate(errorObject)
-  })
+  const html = await $fetch(url).catch(() => errorObject.statusMessage)
 
   res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   res.end(html)

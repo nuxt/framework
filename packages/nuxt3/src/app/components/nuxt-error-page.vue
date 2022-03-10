@@ -1,21 +1,20 @@
 <template>
-  <!-- eslint-disable-next-line vue/no-v-html -->
-  <div v-html="html" />
+  <ErrorTemplate v-bind="{ statusCode, statusMessage, description, stack }" />
 </template>
 
 <script setup lang="ts">
-import { error500, errorDev, error404 } from '@nuxt/design'
+import Error404 from '@nuxt/ui-templates/templates/error-404.vue'
+import Error500 from '@nuxt/ui-templates/templates/error-500.vue'
+import ErrorDev from '@nuxt/ui-templates/templates/error-dev.vue'
 
 const props = defineProps({
   error: Object
 })
 
 const error = props.error
-const is404 = Number(error.statusCode) === 404
-const handler = is404 ? error404 : process.dev ? errorDev : error500
 
 // TODO: extract to a separate utility
-const stack = (error.stack || '')
+const stacktrace = (error.stack || '')
   .split('\n')
   .splice(1)
   .map((line) => {
@@ -29,19 +28,15 @@ const stack = (error.stack || '')
           line.includes('internal') ||
           line.includes('new Promise')
     }
-  })
+  }).map(i => `<span class="stack${i.internal ? ' internal' : ''}">${i.text}</span>`).join('\n')
 
-const statusMessage = error.statusMessage ?? error.message ?? error.toString() ?? (is404 ? 'Page Not Found' : 'Internal Server Error')
-const description = error.description || (is404
-  ? 'Sorry, the page you are looking for could not be found.'
-  : process.dev && `
-    <h1>${statusMessage}</h1>
-    <pre>${stack.map(i => `<span class="stack${i.internal ? ' internal' : ''}">${i.text}</span>`).join('\n')}</pre>
-    `)
+// Error page props
+const statusCode = String(error.statusCode || 500)
+const is404 = statusCode === '404'
 
-const html = handler({
-  statusMessage,
-  description,
-  statusCode: error.statusCode || 500
-})
+const statusMessage = error.statusMessage ?? is404 ? 'Page Not Found' : 'Internal Server Error'
+const description = error.message || error.toString()
+const stack = process.dev && !is404 ? error.description || `<pre>${stacktrace}</pre>` : undefined
+
+const ErrorTemplate = is404 ? Error404 : process.dev ? ErrorDev : Error500
 </script>
