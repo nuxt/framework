@@ -131,7 +131,7 @@ export async function renderMiddleware (req, res: ServerResponse) {
     res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   }
 
-  res.statusCode = error && !ssrError ? error.statusCode || 500 : res.statusCode || 200
+  res.statusCode = res.statusCode || 200
   res.end(data, 'utf-8')
 }
 
