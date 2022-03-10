@@ -9,7 +9,7 @@ import { withoutTrailingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
-import { prepareDevServerEntry, registerViteNodeMiddleware } from './vite-node'
+import { prepareDevServerEntry } from './vite-node'
 import { DynamicBasePlugin } from './plugins/dynamic-base'
 import { isCSS, isDirectory, readDirRecursively } from './utils'
 import { bundleRequest } from './dev-bundler'
@@ -143,7 +143,6 @@ export async function buildServer (ctx: ViteBuildContext) {
   await viteServer.pluginContainer.buildStart({})
 
   if (USE_VITE_NODE) {
-    registerViteNodeMiddleware(ctx)
     await prepareDevServerEntry(ctx)
   } else {
     // TODO: @antfu remove when vite-node is stable

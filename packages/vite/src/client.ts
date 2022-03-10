@@ -12,6 +12,7 @@ import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 import { DynamicBasePlugin, RelativeAssetPlugin } from './plugins/dynamic-base'
+import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -44,7 +45,8 @@ export async function buildClient (ctx: ViteBuildContext) {
       devStyleSSRPlugin({
         rootDir: ctx.nuxt.options.rootDir,
         buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
-      })
+      }),
+      viteNodePlugin(ctx)
     ],
     server: {
       middlewareMode: true
