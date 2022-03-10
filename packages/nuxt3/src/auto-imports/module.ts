@@ -45,6 +45,15 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
       join(nuxt.options.srcDir, 'composables'),
       ...options.dirs
     ]
+
+    // Extend with layers
+    for (const layer of nuxt.options._extends) {
+      composablesDirs.push(resolve(layer.config.srcDir, 'composables'))
+      for (const dir of (layer.config.autoImports?.dirs ?? [])) {
+        composablesDirs.push(resolve(layer.config.srcDir, dir))
+      }
+    }
+
     await nuxt.callHook('autoImports:dirs', composablesDirs)
     composablesDirs = composablesDirs.map(dir => normalize(dir))
 
@@ -76,9 +85,7 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
 
     const regenerateAutoImports = async () => {
       // Scan composables/
-      for (const composablesDir of composablesDirs) {
-        await scanForComposables(composablesDir, ctx)
-      }
+      await scanForComposables(composablesDirs, ctx)
       // Allow modules extending
       await ctx.modifyDynamicImports(async (imports) => {
         await nuxt.callHook('autoImports:extend', imports)
@@ -100,15 +107,21 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     nuxt.hook('builder:watch', async (_, path) => {
       const _resolved = resolve(nuxt.options.srcDir, path)
       if (composablesDirs.find(dir => _resolved.startsWith(dir))) {
-        await regenerateAutoImports()
         await nuxt.callHook('builder:generateApp')
       }
+    })
+
+    nuxt.hook('builder:generateApp', async () => {
+      await regenerateAutoImports()
     })
   }
 })
 
 function addDeclarationTemplates (ctx: Unimport) {
   const nuxt = useNuxt()
+
+  // Remove file extension for benefit of TypeScript
+  const stripExtension = (path: string) => path.replace(/\.[a-z]+$/, '')
 
   const resolved = {}
   const r = ({ from }: Import) => {
@@ -119,8 +132,8 @@ function addDeclarationTemplates (ctx: Unimport) {
     if (isAbsolute(path)) {
       path = relative(join(nuxt.options.buildDir, 'types'), path)
     }
-    // Remove file extension for benefit of TypeScript
-    path = path.replace(/\.[a-z]+$/, '')
+
+    path = stripExtension(path)
     resolved[from] = path
     return path
   }
