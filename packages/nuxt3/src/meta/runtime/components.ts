@@ -153,7 +153,6 @@ export const Meta = defineComponent({
     charset: String,
     content: String,
     httpEquiv: String,
-    key: String,
     name: String
   },
   setup: setupForUseMeta(meta => ({
@@ -194,7 +193,7 @@ export const Style = defineComponent({
 // <head>
 export const Head = defineComponent({
   name: 'Head',
-  setup: (_props, ctx) => ctx.slots.default
+  setup: (_props, ctx) => () => ctx.slots.default?.()
 })
 
 // <html>

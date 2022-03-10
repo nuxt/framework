@@ -1,6 +1,6 @@
 import { statSync } from 'fs'
-import { resolve } from 'pathe'
-import { defineNuxtModule, resolveAlias } from '@nuxt/kit'
+import { resolve, basename } from 'pathe'
+import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate, addPlugin } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { componentsTypeTemplate, componentsClientTemplate, componentsServerTemplate } from './templates'
 import { scanComponents } from './scan'
@@ -8,6 +8,9 @@ import { loaderPlugin } from './loader'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
 const isDirectory = (p: string) => { try { return statSync(p).isDirectory() } catch (_e) { return false } }
+function compareDirByPathLength ({ path: pathA }, { path: pathB }) {
+  return pathB.split(/[\\/]/).filter(Boolean).length - pathA.split(/[\\/]/).filter(Boolean).length
+}
 
 export default defineNuxtModule<ComponentsOptions>({
   meta: {
@@ -15,31 +18,66 @@ export default defineNuxtModule<ComponentsOptions>({
     configKey: 'components'
   },
   defaults: {
-    dirs: ['~/components']
+    dirs: []
   },
-  setup (options, nuxt) {
+  setup (componentOptions, nuxt) {
     let componentDirs = []
-    let components: Component[] = []
+    const components: Component[] = []
+
+    const normalizeDirs = (dir: any, cwd: string) => {
+      if (Array.isArray(dir)) {
+        return dir.map(dir => normalizeDirs(dir, cwd)).flat().sort(compareDirByPathLength)
+      }
+      if (dir === true || dir === undefined) {
+        return [{ path: resolve(cwd, 'components') }]
+      }
+      if (typeof dir === 'string') {
+        return {
+          path: resolve(cwd, resolveAlias(dir, {
+            ...nuxt.options.alias,
+            '~': cwd
+          }))
+        }
+      }
+      if (dir && typeof dir === 'object') {
+        return {
+          ...dir,
+          path: resolve(cwd, resolveAlias(dir.path, {
+            ...nuxt.options.alias,
+            '~': cwd
+          }))
+        }
+      }
+      return []
+    }
 
     // Resolve dirs
     nuxt.hook('app:resolve', async () => {
-      await nuxt.callHook('components:dirs', options.dirs)
+      const allDirs = [
+        ...normalizeDirs(componentOptions.dirs, nuxt.options.srcDir),
+        ...nuxt.options._extends
+          .map(layer => normalizeDirs(layer.config.components, layer.cwd))
+          .flat()
+      ]
 
-      componentDirs = options.dirs.filter(isPureObjectOrString).map((dir) => {
+      await nuxt.callHook('components:dirs', allDirs)
+
+      componentDirs = allDirs.filter(isPureObjectOrString).map((dir) => {
         const dirOptions: ComponentsDir = typeof dir === 'object' ? dir : { path: dir }
-        const dirPath = resolveAlias(dirOptions.path, nuxt.options.alias)
+        const dirPath = resolveAlias(dirOptions.path)
         const transpile = typeof dirOptions.transpile === 'boolean' ? dirOptions.transpile : 'auto'
         const extensions = (dirOptions.extensions || nuxt.options.extensions).map(e => e.replace(/^\./g, ''))
 
         dirOptions.level = Number(dirOptions.level || 0)
 
         const present = isDirectory(dirPath)
-        if (!present && dirOptions.path !== '~/components') {
+        if (!present && basename(dirOptions.path) !== 'components') {
           // eslint-disable-next-line no-console
           console.warn('Components directory not found: `' + dirPath + '`')
         }
 
         return {
+          global: componentOptions.global,
           ...dirOptions,
           // TODO: https://github.com/nuxt/framework/pull/251
           enabled: true,
@@ -47,11 +85,8 @@ export default defineNuxtModule<ComponentsOptions>({
           extensions,
           pattern: dirOptions.pattern || `**/*.{${extensions.join(',')},}`,
           ignore: [
-            '**/*.stories.{js,ts,jsx,tsx}', // ignore storybook files
             '**/*{M,.m,-m}ixin.{js,ts,jsx,tsx}', // ignore mixins
-            '**/*.{spec,test}.{js,ts,jsx,tsx}', // ignore tests
             '**/*.d.ts', // .d.ts files
-            // TODO: support nuxt ignore patterns
             ...(dirOptions.ignore || [])
           ],
           transpile: (transpile === 'auto' ? dirPath.includes('node_modules') : transpile)
@@ -61,32 +96,28 @@ export default defineNuxtModule<ComponentsOptions>({
       nuxt.options.build!.transpile!.push(...componentDirs.filter(dir => dir.transpile).map(dir => dir.path))
     })
 
+    const options = { components, buildDir: nuxt.options.buildDir }
+
+    addTemplate({
+      ...componentsTypeTemplate,
+      options
+    })
+    addPluginTemplate({
+      ...componentsClientTemplate,
+      options
+    })
+    addPluginTemplate({
+      ...componentsServerTemplate,
+      options
+    })
+
+    addPlugin({ src: '#build/components-client', mode: 'client' })
+    addPlugin({ src: '#build/components-server', mode: 'server' })
+
     // Scan components and add to plugin
-    nuxt.hook('app:templates', async (app) => {
-      components = await scanComponents(componentDirs, nuxt.options.srcDir!)
-      await nuxt.callHook('components:extend', components)
-
-      app.templates.push({
-        ...componentsTypeTemplate,
-        options: { components, buildDir: nuxt.options.buildDir }
-      })
-
-      if (!components.length) {
-        return
-      }
-
-      app.templates.push({
-        ...componentsClientTemplate,
-        options: { components }
-      })
-
-      app.templates.push({
-        ...componentsServerTemplate,
-        options: { components }
-      })
-
-      app.plugins.push({ src: '#build/components-client', mode: 'client' })
-      app.plugins.push({ src: '#build/components-server', mode: 'server' })
+    nuxt.hook('app:templates', async () => {
+      options.components = await scanComponents(componentDirs, nuxt.options.srcDir!)
+      await nuxt.callHook('components:extend', options.components)
     })
 
     nuxt.hook('prepare:types', ({ references }) => {
@@ -104,7 +135,7 @@ export default defineNuxtModule<ComponentsOptions>({
       }
     })
 
-    const getComponents = () => components
+    const getComponents = () => options.components
 
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       config.plugins = config.plugins || []

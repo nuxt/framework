@@ -10,7 +10,18 @@
     "nuxi": "./bin/nuxt.mjs",
     "nuxt": "./bin/nuxt.mjs"
   },
+  "exports": {
+    ".": "./dist/index.mjs",
+    "./app": "./dist/app/index.mjs",
+    "./package.json": "./package.json"
+  },
+  "imports": {
+    "#app": "./dist/app/index.mjs",
+    "#meta": "./dist/meta/runtime/index.mjs",
+    "#pages": "./dist/pages/runtime/index.mjs"
+  },
   "files": [
+    "app.d.ts",
     "bin",
     "types.d.ts",
     "dist"
@@ -24,33 +35,36 @@
     "@nuxt/nitro": "3.0.0",
     "@nuxt/schema": "3.0.0",
     "@nuxt/vite-builder": "3.0.0",
-    "@nuxt/webpack-builder": "3.0.0",
-    "@vue/reactivity": "^3.2.30",
-    "@vue/shared": "^3.2.30",
+    "@vue/reactivity": "^3.2.31",
+    "@vue/shared": "^3.2.31",
     "@vueuse/head": "^0.7.5",
     "chokidar": "^3.5.3",
-    "consola": "^2.15.3",
     "cookie-es": "^0.5.0",
     "defu": "^5.0.1",
     "destr": "^1.1.0",
     "escape-string-regexp": "^5.0.0",
+    "fs-extra": "^10.0.1",
     "globby": "^13.1.1",
     "h3": "^0.3.9",
     "hash-sum": "^2.0.0",
     "hookable": "^5.1.1",
-    "ignore": "^5.2.0",
-    "mlly": "^0.4.1",
+    "knitwork": "^0.1.1",
+    "magic-string": "^0.26.1",
+    "mlly": "^0.4.3",
     "murmurhash-es": "^0.1.1",
+    "nitropack": "npm:nitropack-edge@latest",
     "nuxi": "3.0.0",
     "ohmyfetch": "^0.4.15",
     "pathe": "^0.2.0",
     "scule": "^0.2.1",
-    "ufo": "^0.7.9",
-    "unplugin": "^0.3.2",
-    "vue": "^3.2.30",
-    "vue-router": "^4.0.12"
+    "ufo": "^0.7.11",
+    "unplugin": "^0.4.0",
+    "untyped": "^0.4.2",
+    "vue": "^3.2.31",
+    "vue-router": "^4.0.13"
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
     "@types/hash-sum": "^1.0.0",
     "unbuild": "latest",
     "vue-meta": "next"

@@ -38,6 +38,7 @@ function serverStandalone (ctx: WebpackConfigContext) {
   const inline = [
     'src/',
     '#app',
+    'nuxt3',
     '!',
     '-!',
     '~',
@@ -55,7 +56,7 @@ function serverStandalone (ctx: WebpackConfigContext) {
     if (
       request[0] === '.' ||
       isAbsolute(request) ||
-      inline.find(prefix => request.startsWith(prefix)) ||
+      inline.find(prefix => typeof prefix === 'string' && request.startsWith(prefix)) ||
       assetPattern.test(request)
     ) {
       // console.log('Inline', request)
@@ -70,10 +71,10 @@ function serverPlugins (ctx: WebpackConfigContext) {
   const { config, options } = ctx
 
   // Server polyfills
-  if (options.build.serverURLPolyfill) {
+  if (options.webpack.serverURLPolyfill) {
     config.plugins.push(new webpack.ProvidePlugin({
-      URL: [options.build.serverURLPolyfill, 'URL'],
-      URLSearchParams: [options.build.serverURLPolyfill, 'URLSearchParams']
+      URL: [options.webpack.serverURLPolyfill, 'URL'],
+      URLSearchParams: [options.webpack.serverURLPolyfill, 'URLSearchParams']
     }))
   }
 }

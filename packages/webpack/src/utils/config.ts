@@ -1,28 +1,26 @@
-import consola from 'consola'
 import { cloneDeep } from 'lodash-es'
 import type { Configuration } from 'webpack'
 import type { Nuxt } from '@nuxt/schema'
+import { logger } from '@nuxt/kit'
 
 export interface WebpackConfigContext extends ReturnType<typeof createWebpackConfigContext>{ }
 
 type WebpackConfigPreset = (ctx: WebpackConfigContext, options?: object) => void
 type WebpackConfigPresetItem = WebpackConfigPreset | [WebpackConfigPreset, any]
 
-export function createWebpackConfigContext ({ nuxt }) {
+export function createWebpackConfigContext (nuxt: Nuxt) {
   return {
-    nuxt: nuxt as Nuxt,
-    options: nuxt.options as Nuxt['options'],
+    nuxt,
+    options: nuxt.options,
     config: {} as Configuration,
 
     name: 'base',
     isDev: nuxt.options.dev,
     isServer: false,
     isClient: false,
-    isModern: undefined, // TODO
-    isLegacy: false,
 
     alias: {} as Configuration['resolve']['alias'],
-    transpile: [] as any[]
+    transpile: [] as RegExp[]
   }
 }
 
@@ -42,7 +40,7 @@ export function applyPresets (ctx: WebpackConfigContext, presets: WebpackConfigP
 export function fileName (ctx: WebpackConfigContext, key: string) {
   const { options } = ctx
 
-  let fileName = options.build.filenames[key]
+  let fileName = options.webpack.filenames[key]
 
   if (typeof fileName === 'function') {
     fileName = fileName(ctx)
@@ -51,7 +49,7 @@ export function fileName (ctx: WebpackConfigContext, key: string) {
   if (typeof fileName === 'string' && options.dev) {
     const hash = /\[(chunkhash|contenthash|hash)(?::(\d+))?]/.exec(fileName)
     if (hash) {
-      consola.warn(`Notice: Please do not use ${hash[1]} in dev mode to prevent memory leak`)
+      logger.warn(`Notice: Please do not use ${hash[1]} in dev mode to prevent memory leak`)
     }
   }
 
@@ -78,7 +76,7 @@ export function getWebpackConfig (ctx: WebpackConfigContext): Configuration {
     const { devtool } = extendedConfig
     if (typeof devtool === 'string' && pragma.test(devtool)) {
       extendedConfig.devtool = devtool.replace(pragma, '')
-      consola.warn(`devtool has been normalized to ${extendedConfig.devtool} as webpack documented value`)
+      logger.warn(`devtool has been normalized to ${extendedConfig.devtool} as webpack documented value`)
     }
 
     return extendedConfig

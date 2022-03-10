@@ -41,6 +41,9 @@ export default defineNuxtModule({
       nuxtCtx.set(nuxt)
     }
 
+    // Mock _extends
+    nuxt.options._extends = nuxt.options._extends || []
+
     if (opts.nitro) {
       await setupNitroBridge()
     }
@@ -61,7 +64,7 @@ export default defineNuxtModule({
     }
     if (opts.vite) {
       const viteModule = await import('./vite/module').then(r => r.default || r) as NuxtModule
-      await installModule(viteModule)
+      nuxt.hook('modules:done', () => installModule(viteModule))
     }
     if (opts.postcss8) {
       await installModule(_require.resolve('@nuxt/postcss8'))

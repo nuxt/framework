@@ -13,11 +13,13 @@ export * from './build'
 export * from './compatibility'
 export * from './components'
 export * from './context'
+export * from './ignore'
 export * from './pages'
 export * from './plugin'
 export * from './resolve'
 export * from './server'
 export * from './template'
+export * from './logger'
 
 // Internal Utils
 // TODO

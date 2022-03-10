@@ -1,11 +1,13 @@
 import { promises as fsp } from 'fs'
 import fetch from 'node-fetch'
+import fse from 'fs-extra'
 import { addPluginTemplate, useNuxt } from '@nuxt/kit'
-import { stringifyQuery } from 'ufo'
-import { resolve } from 'pathe'
+import { joinURL, stringifyQuery, withoutTrailingSlash } from 'ufo'
+import { resolve, join } from 'pathe'
 import { build, generate, prepare, getNitroContext, NitroContext, createDevServer, wpfs, resolveMiddleware, scanMiddleware, writeTypes } from '@nuxt/nitro'
 import { AsyncLoadingPlugin } from './async-loading'
 import { distDir } from './dirs'
+import { isDirectory, readDirRecursively } from './vite/utils/fs'
 
 export function setupNitroBridge () {
   const nuxt = useNuxt()
@@ -28,6 +30,15 @@ export function setupNitroBridge () {
   nuxt.options.build.loadingScreen = false
   // @ts-ignore
   nuxt.options.build.indicator = false
+
+  if (nuxt.options.build.analyze === true) {
+    const { rootDir } = nuxt.options
+    nuxt.options.build.analyze = {
+      template: 'treemap',
+      projectRoot: rootDir,
+      filename: join(rootDir, '.nuxt/stats', '{name}.html')
+    }
+  }
 
   // Create contexts
   const nitroOptions = (nuxt.options as any).nitro || {}
@@ -59,6 +70,36 @@ export function setupNitroBridge () {
       template.contents = await fsp.readFile(nuxt.options.appTemplatePath, 'utf-8')
     })
   }
+
+  async function updateViteBase () {
+    const clientDist = resolve(nuxt.options.buildDir, 'dist/client')
+
+    // Remove public files that have been duplicated into buildAssetsDir
+    // TODO: Add option to configure this behaviour in vite
+    const publicDir = join(nuxt.options.srcDir, nuxt.options.dir.static)
+    let publicFiles: string[] = []
+    if (await isDirectory(publicDir)) {
+      publicFiles = readDirRecursively(publicDir).map(r => r.replace(publicDir, ''))
+      for (const file of publicFiles) {
+        try {
+          fse.rmSync(join(clientDist, file))
+        } catch {}
+      }
+    }
+
+    // Copy doubly-nested /_nuxt/_nuxt files into buildAssetsDir
+    // TODO: Workaround vite issue
+    if (await isDirectory(clientDist)) {
+      const nestedAssetsPath = withoutTrailingSlash(join(clientDist, nuxt.options.app.buildAssetsDir))
+
+      if (await isDirectory(nestedAssetsPath)) {
+        await fse.copy(nestedAssetsPath, clientDist, { recursive: true })
+        await fse.remove(nestedAssetsPath)
+      }
+    }
+  }
+  nuxt.hook('nitro:generate', updateViteBase)
+  nuxt.hook('generate:before', updateViteBase)
 
   // Expose process.env.NITRO_PRESET
   nuxt.options.env.NITRO_PRESET = nitroContext.preset
@@ -133,7 +174,7 @@ export function setupNitroBridge () {
     await nuxt.callHook('nitro:context', nitroDevContext)
 
     // Resolve middleware
-    const { middleware, legacyMiddleware } = resolveMiddleware(nuxt)
+    const { middleware, legacyMiddleware } = await resolveMiddleware(nuxt)
     if (nuxt.server) {
       nuxt.server.setLegacyMiddleware(legacyMiddleware)
     }
@@ -216,9 +257,13 @@ function createNuxt2DevServer (nitroContext: NitroContext) {
     if (!listener) {
       throw new Error('There is no server listener to call `server.renderRoute()`')
     }
-    const html = await fetch(listener.url + route, {
+    const res = await fetch(joinURL(listener.url, route), {
       headers: { 'nuxt-render-context': stringifyQuery(renderContext) }
-    }).then(r => r.text())
+    })
+
+    const html = await res.text()
+
+    if (!res.ok) { return { html, error: res.statusText } }
 
     return { html }
   }

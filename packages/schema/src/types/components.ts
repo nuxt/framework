@@ -7,7 +7,6 @@ export interface Component {
   filePath: string
   shortPath: string
   chunkName: string
-  level: number
   prefetch: boolean
   preload: boolean
   global?: boolean
@@ -20,6 +19,8 @@ export interface Component {
     client?: string
   }
 
+  /** @deprecated */
+  level?: number
   /** @deprecated */
   import?: string
   /** @deprecated */
@@ -56,6 +57,7 @@ export interface ScanDir {
   enabled?: boolean
   /**
    * Level is used to define a hint when overwriting the components which have the same name in two different directories.
+   * @deprecated Not used by Nuxt 3 anymore
    */
   level?: number
   /**
@@ -100,5 +102,16 @@ export interface ComponentsDir extends ScanDir {
 
 export interface ComponentsOptions {
   dirs: (string | ComponentsDir)[]
+  /**
+   * The default value for whether to globally register components.
+   *
+   * When components are registered globally, they will still be directly imported where used,
+   * but they can also be used dynamically, for example `<component :is="`icon-${myIcon}`">`.
+   *
+   * This can be overridden by an individual component directory entry.
+   *
+   * @default false
+   */
+  global?: boolean
   loader?: boolean
 }

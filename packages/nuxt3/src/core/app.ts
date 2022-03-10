@@ -1,8 +1,8 @@
 import { promises as fsp } from 'fs'
 import { dirname, resolve } from 'pathe'
 import defu from 'defu'
-import type { Nuxt, NuxtApp } from '@nuxt/schema'
-import { tryResolvePath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils } from '@nuxt/kit'
+import type { Nuxt, NuxtApp, NuxtPlugin } from '@nuxt/schema'
+import { findPath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils } from '@nuxt/kit'
 
 import * as defaultTemplates from './templates'
 
@@ -54,15 +54,9 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
 }
 
 export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
-  const resolveOptions = {
-    base: nuxt.options.srcDir,
-    alias: nuxt.options.alias,
-    extensions: nuxt.options.extensions
-  }
-
   // Resolve main (app.vue)
   if (!app.mainComponent) {
-    app.mainComponent = tryResolvePath('~/App', resolveOptions) || tryResolvePath('~/app', resolveOptions)
+    app.mainComponent = await findPath(['~/App', '~/app'])
   }
   if (!app.mainComponent) {
     app.mainComponent = resolve(nuxt.options.appDir, 'components/nuxt-welcome.vue')
@@ -72,13 +66,15 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   app.rootComponent = resolve(nuxt.options.appDir, 'components/nuxt-root.vue')
 
   // Resolve plugins
-  app.plugins = [
-    ...nuxt.options.plugins,
-    ...await resolveFiles(nuxt.options.srcDir, [
-      'plugins/*.{ts,js,mjs,cjs,mts,cts}',
-      'plugins/*/index.*{ts,js,mjs,cjs,mts,cts}'
-    ])
-  ].map(plugin => normalizePlugin(plugin))
+  for (const config of [...nuxt.options._extends.map(layer => layer.config), nuxt.options]) {
+    app.plugins.push(...[
+      ...config.plugins ?? [],
+      ...await resolveFiles(config.srcDir, [
+        'plugins/*.{ts,js,mjs,cjs,mts,cts}',
+        'plugins/*/index.*{ts,js,mjs,cjs,mts,cts}'
+      ])
+    ].map(plugin => normalizePlugin(plugin as NuxtPlugin)))
+  }
 
   // Extend app
   await nuxt.callHook('app:resolve', app)

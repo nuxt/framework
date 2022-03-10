@@ -2,6 +2,7 @@ import { basename, extname, join, dirname, relative } from 'pathe'
 import { globby } from 'globby'
 import { pascalCase, splitByCase } from 'scule'
 import type { ScanDir, Component, ComponentsDir, ComponentEnv } from '@nuxt/schema'
+import { isIgnored } from '@nuxt/kit'
 
 export function sortDirsByPathLength ({ path: pathA }: ScanDir, { path: pathB }: ScanDir): number {
   return pathB.split(/[\\/]/).filter(Boolean).length - pathA.split(/[\\/]/).filter(Boolean).length
@@ -9,7 +10,7 @@ export function sortDirsByPathLength ({ path: pathA }: ScanDir, { path: pathB }:
 
 // vue@2 src/shared/util.js
 // TODO: update to vue3?
-function hyphenate (str: string):string {
+function hyphenate (str: string): string {
   return str.replace(/\B([A-Z])/g, '-$1').toLowerCase()
 }
 
@@ -50,7 +51,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
     for (const _file of await globby(dir.pattern!, { cwd: dir.path, ignore: dir.ignore })) {
       const filePath = join(dir.path, _file)
 
-      if (scannedPaths.find(d => filePath.startsWith(d))) {
+      if (scannedPaths.find(d => filePath.startsWith(d)) || isIgnored(filePath)) {
         continue
       }
 
@@ -117,7 +118,6 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
         shortPath,
         export: 'default',
         global: dir.global,
-        level: Number(dir.level),
         prefetch: Boolean(dir.prefetch),
         preload: Boolean(dir.preload)
       }
