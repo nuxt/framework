@@ -59,6 +59,7 @@ export default function (nuxtApp) {
 
 export const componentsClientTemplate = {
   filename: 'components-client.mjs',
+  mode: 'client' as const,
   getContents ({ options }: { options: ComponentsTemplateOptions }) {
     return getComponentTemplate(options.components, 'client')
   }
@@ -66,6 +67,7 @@ export const componentsClientTemplate = {
 
 export const componentsServerTemplate = {
   filename: 'components-server.mjs',
+  mode: 'server' as const,
   getContents ({ options }: { options: ComponentsTemplateOptions }) {
     return getComponentTemplate(options.components, 'server')
   }

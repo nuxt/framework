@@ -42,7 +42,7 @@ function transform (code: string, id: string, components: Component[], mode: 'se
     if (component) {
       const identifier = map.get(component) || `__nuxt_component_${num++}`
       map.set(component, identifier)
-      imports += genImport(getComponentPath(component), [{ name: component.export, as: identifier }])
+      imports += genImport(getComponentPath(component, mode), [{ name: component.export, as: identifier }])
       if (component.envPaths) {
         hasEnvComponents = true
         return ` wrapClientOnly(${identifier}, '${mode}')`

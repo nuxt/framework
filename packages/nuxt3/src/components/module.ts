@@ -1,6 +1,6 @@
 import { statSync } from 'fs'
 import { resolve, basename } from 'pathe'
-import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate, addPlugin } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { componentsTypeTemplate, componentsClientTemplate, componentsServerTemplate } from './templates'
 import { scanComponents } from './scan'
@@ -110,9 +110,6 @@ export default defineNuxtModule<ComponentsOptions>({
       ...componentsServerTemplate,
       options
     })
-
-    addPlugin({ src: '#build/components-client', mode: 'client' })
-    addPlugin({ src: '#build/components-server', mode: 'server' })
 
     // Scan components and add to plugin
     nuxt.hook('app:templates', async () => {
