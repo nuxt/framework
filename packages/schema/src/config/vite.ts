@@ -45,12 +45,18 @@ export default {
       },
     },
     optimizeDeps: {
+      include: {
+        $resolve: (val, get) => [
+          ...val || [],
+          'cookie'
+        ]
+      },
       exclude: {
         $resolve: (val, get) => [
           ...val || [],
-        ...get('build.transpile').filter(i => typeof i === 'string'),
-        'vue-demi'
-      ],
+          ...get('build.transpile').filter(i => typeof i === 'string'),
+          'vue-demi'
+        ],
       },
     },
     esbuild: {
