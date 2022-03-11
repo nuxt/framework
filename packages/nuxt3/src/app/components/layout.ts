@@ -1,6 +1,5 @@
 import { defineComponent, isRef, Ref, Transition } from 'vue'
-import { useRoute } from 'vue-router'
-import { wrapIf } from './utils'
+import { useRoute, wrapIf } from '#app'
 // @ts-ignore
 import layouts from '#build/layouts'
 

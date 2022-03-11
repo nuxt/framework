@@ -4,7 +4,8 @@ import { resolve } from 'pathe'
 import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
 import { distDir } from '../dirs'
-import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
+import { resolveLayouts } from '../core/utils'
+import { resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
 
 export default defineNuxtModule({
@@ -113,7 +114,7 @@ export default defineNuxtModule({
       filename: 'types/layouts.d.ts',
       getContents: async () => {
         const composablesFile = resolve(runtimeDir, 'composables')
-        const layouts = await resolveLayouts(nuxt)
+        const layouts = await resolveLayouts()
         return [
           'import { ComputedRef, Ref } from \'vue\'',
           `export type LayoutKey = ${layouts.map(layout => genString(layout.name)).join(' | ') || 'string'}`,
@@ -126,22 +127,7 @@ export default defineNuxtModule({
       }
     })
 
-    // Add layouts template
-    addTemplate({
-      filename: 'layouts.mjs',
-      async getContents () {
-        const layouts = await resolveLayouts(nuxt)
-        const layoutsObject = genObjectFromRawEntries(layouts.map(({ name, file }) => {
-          return [name, `defineAsyncComponent({ suspensible: false, loader: ${genDynamicImport(file)} })`]
-        }))
-        return [
-          'import { defineAsyncComponent } from \'vue\'',
-          `export default ${layoutsObject}`
-        ].join('\n')
-      }
-    })
-
-    // Add declarations for middleware and layout keys
+    // Add declarations for middleware keys
     nuxt.hook('prepare:types', ({ references }) => {
       references.push({ path: resolve(nuxt.options.buildDir, 'types/middleware.d.ts') })
       references.push({ path: resolve(nuxt.options.buildDir, 'types/layouts.d.ts') })

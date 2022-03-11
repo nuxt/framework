@@ -1,8 +1,8 @@
 import { defineComponent, h, Suspense, Transition } from 'vue'
 import { RouteLocationNormalizedLoaded, RouterView } from 'vue-router'
 
-import { generateRouteKey, RouterViewSlotProps, wrapIf, wrapInKeepAlive } from './utils'
-import { useNuxtApp } from '#app'
+import { generateRouteKey, RouterViewSlotProps, wrapInKeepAlive } from './utils'
+import { useNuxtApp, wrapIf } from '#app'
 
 export default defineComponent({
   name: 'NuxtPage',
