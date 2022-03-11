@@ -15,9 +15,6 @@ import { isCSS, isDirectory, readDirRecursively } from './utils'
 import { bundleRequest } from './dev-bundler'
 import { writeManifest } from './manifest'
 
-// TODO: use option
-const USE_VITE_NODE = true
-
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -142,10 +139,10 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Initialize plugins
   await viteServer.pluginContainer.buildStart({})
 
-  if (USE_VITE_NODE) {
+  if (ctx.nuxt.options.experimental.viteNode) {
+    logger.info('Using experimental vite-node server...')
     await prepareDevServerEntry(ctx)
   } else {
-    // TODO: @antfu remove when vite-node is stable
     // Build and watch
     const _doBuild = async () => {
       const start = Date.now()
