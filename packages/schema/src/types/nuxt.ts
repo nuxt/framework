@@ -1,6 +1,6 @@
 import type { Hookable } from 'hookable'
 import type { Ignore } from 'ignore'
-import type { NuxtHooks } from './hooks'
+import type { NuxtHooks, NuxtLayout } from './hooks'
 import type { NuxtOptions } from './config'
 
 export interface Nuxt {
@@ -48,11 +48,6 @@ export interface NuxtPlugin {
   ssr?: boolean
   src: string
   mode?: 'all' | 'server' | 'client'
-}
-
-export interface NuxtLayout {
-  name: string
-  file: string
 }
 
 export interface NuxtApp {
