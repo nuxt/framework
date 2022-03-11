@@ -53,11 +53,12 @@ export interface NuxtPlugin {
 export interface NuxtApp {
   mainComponent?: string
   rootComponent?: string
+  errorComponent?: string
   dir: string
   extensions: string[]
   plugins: NuxtPlugin[]
   templates: NuxtTemplate[]
 }
 
-type _TemplatePlugin = NuxtPlugin & NuxtTemplate
+type _TemplatePlugin = Omit<NuxtPlugin, 'src'> & NuxtTemplate
 export interface NuxtPluginTemplate extends _TemplatePlugin { }
