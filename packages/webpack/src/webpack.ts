@@ -72,32 +72,33 @@ async function createDevMiddleware (compiler: Compiler) {
   logger.debug('Creating webpack middleware...')
 
   // Create webpack dev middleware
-  const devMiddleware = pify(webpackDevMiddleware(compiler, {
-    publicPath: joinURL(nuxt.options.app.baseURL, nuxt.options.app.buildAssetsDir),
-    outputFileSystem: compiler.outputFileSystem as any,
-    stats: 'none',
-    ...nuxt.options.webpack.devMiddleware
-  })) as API<IncomingMessage, ServerResponse>
-
-  nuxt.hook('close', () => pify(devMiddleware.close.bind(devMiddleware))())
+  const devMiddleware = {
+    middleware: pify(webpackDevMiddleware(compiler, {
+      publicPath: joinURL(nuxt.options.app.baseURL, nuxt.options.app.buildAssetsDir),
+      outputFileSystem: compiler.outputFileSystem as any,
+      stats: 'none',
+      ...nuxt.options.webpack.devMiddleware
+    })) as API<IncomingMessage, ServerResponse>
+  }
 
   const { client: _client, ...hotMiddlewareOptions } = nuxt.options.webpack.hotMiddleware || {}
-  const hotMiddleware = pify(webpackHotMiddleware(compiler, {
-    log: false,
-    heartbeat: 10000,
-    path: joinURL(nuxt.options.app.baseURL, '__webpack_hmr', compiler.options.name),
-    ...hotMiddlewareOptions
-  }))
-
-  const middleware = {
-    devMiddleware,
-    hotMiddleware
+  const hotMiddleware = {
+    middleware: pify(webpackHotMiddleware(compiler, {
+      log: false,
+      heartbeat: 10000,
+      path: joinURL(nuxt.options.app.baseURL, '__webpack_hmr', compiler.options.name),
+      ...hotMiddlewareOptions
+    }))
   }
-  await nuxt.callHook('webpack:middleware', middleware)
+
+  await nuxt.callHook('webpack:devMiddleware', devMiddleware)
+  await nuxt.callHook('webpack:hotMiddleware', hotMiddleware)
+
+  nuxt.hook('close', () => pify(devMiddleware.middleware.close.bind(devMiddleware))())
 
   // Register devMiddleware on server
   await nuxt.callHook('server:devMiddleware', async (req, res, next) => {
-    for (const mw of [middleware.devMiddleware, middleware.hotMiddleware]) {
+    for (const mw of [devMiddleware.middleware, hotMiddleware.middleware]) {
       await mw?.(req, res)
     }
     next()
@@ -135,7 +136,7 @@ async function compile (compiler: Compiler) {
         compiler.hooks.failed.tap('nuxt-errorlog', (err) => { reject(err) })
         // Start watch
         createDevMiddleware(compiler).then((devMiddleware) => {
-          compilersWatching.push(devMiddleware.context.watching)
+          compilersWatching.push(devMiddleware.middleware.context.watching)
         })
       })
     }
