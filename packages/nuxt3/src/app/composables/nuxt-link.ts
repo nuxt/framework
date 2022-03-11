@@ -14,13 +14,7 @@ const isExternalURL = (url: string): boolean => {
   return !/^\/(?!\/)/.test(url)
 }
 
-const firstNonUndefined = <T>(...args: T[]): T => {
-  for (const arg of args) {
-    if (arg !== undefined) {
-      return arg
-    }
-  }
-}
+const firstNonUndefined = <T>(...args: T[]): T => args.find(arg => arg !== undefined)
 
 const DEFAULT_PREFETCH_LINKS = true
 const DEFAULT_EXTERNAL_REL_ATTRIBUTE = 'noopener noreferrer'
@@ -173,7 +167,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions) {
       const to = computed<string | RouteLocationRaw>(() => {
         checkPropConflicts(props, 'to', 'href')
 
-        return props.to || props.href || '' // Defaults to empty string (won't render any `href` attribute)
+        return props.to ?? props.href ?? '' // Defaults to empty string (won't render any `href` attribute)
       })
 
       // Resolving link type

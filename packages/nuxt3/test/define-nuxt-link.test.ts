@@ -1,7 +1,7 @@
 import { expect, describe, it, vi } from 'vitest'
 import { RouteLocationRaw } from 'vue-router'
-import { defineNuxtLink } from '../src/app/composables/defineNuxtLink'
-import type { DefineNuxtLinkOptions, NuxtLinkProps } from '../src/app/composables/defineNuxtLink'
+import { defineNuxtLink } from '../src/app/composables/nuxt-link'
+import type { DefineNuxtLinkOptions, NuxtLinkProps } from '../src/app/composables/nuxt-link'
 
 // Mocks `h()`
 vi.mock('vue', async () => {
@@ -25,9 +25,9 @@ const INTERNAL = 'RouterLink'
 // Renders a `<NuxtLink />`
 const nuxtLink = (
   props: NuxtLinkProps = {},
-  defineNuxtLinkOptions: DefineNuxtLinkOptions = {}
+  defineNuxtLinkOptions: Partial<DefineNuxtLinkOptions> = {}
 ): { type: string, props: Record<string, unknown>, slots: unknown } => {
-  const component = defineNuxtLink(defineNuxtLinkOptions)
+  const component = defineNuxtLink({ componentName: 'NuxtLink', ...defineNuxtLinkOptions })
 
   const [type, _props, slots] = (component.setup as unknown as (props: NuxtLinkProps, context: { slots: Record<string, () => unknown> }) =>
     () => [string, Record<string, unknown>, unknown])(props, { slots: { default: () => null } })()
@@ -35,7 +35,7 @@ const nuxtLink = (
   return { type, props: _props, slots }
 }
 
-describe('app--defineNuxtLink:to', () => {
+describe('define-nuxt-link:to', () => {
   it('renders link with `to` prop', () => {
     expect(nuxtLink({ to: '/to' }).props.to).toBe('/to')
   })
@@ -58,7 +58,7 @@ describe('app--defineNuxtLink:to', () => {
   })
 })
 
-describe('app--defineNuxtLink:isExternal', () => {
+describe('define-nuxt-link:isExternal', () => {
   it('returns based on `to` value', () => {
     // Internal
     expect(nuxtLink({ to: '/foo' }).type).toBe(INTERNAL)
@@ -88,7 +88,7 @@ describe('app--defineNuxtLink:isExternal', () => {
   })
 })
 
-describe('app--defineNuxtLink:propsOrAttributes', () => {
+describe('define-nuxt-link:propsOrAttributes', () => {
   describe('`isExternal` is `true`', () => {
     describe('href', () => {
       it('forwards `to` value', () => {
