@@ -89,9 +89,15 @@ async function createDevMiddleware (compiler: Compiler) {
     ...hotMiddlewareOptions
   }))
 
+  const middleware = {
+    devMiddleware,
+    hotMiddleware
+  }
+  await nuxt.callHook('webpack:middleware', middleware)
+
   // Register devMiddleware on server
   await nuxt.callHook('server:devMiddleware', async (req, res, next) => {
-    for (const mw of [devMiddleware, hotMiddleware]) {
+    for (const mw of [middleware.devMiddleware, middleware.hotMiddleware]) {
       await mw?.(req, res)
     }
     next()
