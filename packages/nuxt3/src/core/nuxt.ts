@@ -85,6 +85,7 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: resolve(nuxt.options.appDir, 'components/client-only')
   })
 
+  // TODO: Make sure internal `<NuxtLink />` could be overwritten by user as per examples/nuxt-link-
   // Add <NuxtLink>
   addComponent({
     name: 'NuxtLink',

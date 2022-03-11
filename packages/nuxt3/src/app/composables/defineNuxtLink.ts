@@ -1,4 +1,4 @@
-import { defineComponent, h, resolveComponent, PropType, computed, ConcreteComponent } from 'vue'
+import { defineComponent, h, resolveComponent, PropType, computed, ConcreteComponent, DefineComponent } from 'vue'
 import { RouteLocationRaw, Router } from 'vue-router'
 
 import { useRouter } from '#app'
@@ -247,5 +247,5 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
         )
       }
     }
-  })
+  }) as unknown as DefineComponent<NuxtLinkProps>
 }
