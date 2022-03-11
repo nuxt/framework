@@ -4,6 +4,7 @@ import { NuxtApp } from '@nuxt/schema'
 import { createError } from 'h3'
 import { defineNuxtPlugin } from '..'
 import { callWithNuxt } from '../nuxt'
+import { clearError, throwError } from '#app'
 
 interface Route {
     /** Percentage encoded pathname section of the URL. */
@@ -100,6 +101,12 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
     try {
       // Resolve route
       const to = getRouteFromPath(url)
+
+      if (process.client && !nuxtApp.isHydrating) {
+      // Clear any existing errors
+        await callWithNuxt(nuxtApp as NuxtApp, clearError)
+      }
+
       // Run beforeEach hooks
       for (const middleware of hooks['navigate:before']) {
         const result = await middleware(to, route)
@@ -190,8 +197,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
           const error = result || createError({
             statusMessage: `Route navigation aborted: ${nuxtApp.ssrContext.url}`
           })
-          nuxtApp.ssrContext.error = error
-          throw error
+          return callWithNuxt(nuxtApp, throwError, [error])
         }
       }
       if (result || result === false) { return result }
