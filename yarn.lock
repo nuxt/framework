@@ -10553,6 +10553,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-with-test@workspace:examples/with-test":
+  version: 0.0.0-use.local
+  resolution: "example-with-test@workspace:examples/with-test"
+  dependencies:
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-with-universal-router@workspace:examples/with-universal-router":
   version: 0.0.0-use.local
   resolution: "example-with-universal-router@workspace:examples/with-universal-router"

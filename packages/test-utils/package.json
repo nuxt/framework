@@ -4,17 +4,7 @@
   "repository": "nuxt/framework",
   "license": "MIT",
   "type": "module",
-  "exports": {
-    ".": "./dist/index.mjs",
-    "./vitest": "./dist/vitest.mjs"
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "./dist/*"
-      ]
-    }
-  },
+  "exports": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"

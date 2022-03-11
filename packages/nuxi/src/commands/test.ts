@@ -1,5 +1,4 @@
-import consola from 'consola'
-import { loadKit } from '../utils/kit'
+import { resolve } from 'pathe'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -8,25 +7,24 @@ export default defineNuxtCommand({
     usage: 'npx nuxi test',
     description: 'Run tests'
   },
-  async invoke (argv) {
+  async invoke (args) {
     process.env.NODE_ENV = process.env.NODE_ENV || 'test'
-    const rootDir = process.cwd()
-
-    const { loadNuxtConfig } = await loadKit(rootDir)
-    const config = await loadNuxtConfig({ rootDir })
-
-    // TODO: support Jest and other runners
-    consola.info('Starting Vitest...')
-
-    // TODO: prompt auto install if test-utils is not installed
-    let start: typeof import('@nuxt/test-utils/vitest')['default'] | undefined
-    try {
-      start = await import('@nuxt/test-utils/vitest').then(m => m.start)
-    } catch (e) {
-      consola.error(e)
-      consola.warn('`@nuxt/test-utils` is missing. Run `npm i -D @nuxt/test-utils` or `yarn add -D @nuxt/test-utils` to install')
-      return process.exit(1)
-    }
-    await start(config, argv)
+    const rootDir = resolve(args._[0] || '.')
+    const { runTests } = await importTestUtils()
+    console.log({ rootDir })
+    await runTests({
+      rootDir
+    })
   }
 })
+
+async function importTestUtils (): Promise<typeof import('@nuxt/test-utils')> {
+  let err
+  for (const pkg of ['@nuxt/test-utils-edge', '@nuxt/test-utils']) {
+    try {
+      return await import(pkg)
+    } catch (_err) { err = _err }
+  }
+  console.error(err)
+  throw new Error('`@nuxt/test-utils-edge` seems missing. Run `npm i -D @nuxt/test-utils-edge` or `yarn add -D @nuxt/test-utils-edge` to install.')
+}
