@@ -60,7 +60,7 @@ export type NuxtLinkProps = {
 
 export function defineNuxtLink (options: DefineNuxtLinkOptions) {
   const checkPropConflicts = (props: NuxtLinkProps, main: string, sub: string): void => {
-    if (props[main] !== undefined && props[sub] !== undefined) {
+    if (process.dev && props[main] !== undefined && props[sub] !== undefined) {
       console.warn(`[${options.componentName}] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
     }
   }

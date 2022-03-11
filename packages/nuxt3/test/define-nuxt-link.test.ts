@@ -48,7 +48,8 @@ describe('define-nuxt-link:to', () => {
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn())
 
     expect(nuxtLink({ to: '/to', href: '/href' }).props.to).toBe('/to')
-    expect(consoleWarnSpy).toHaveBeenCalledOnce()
+    // TODO: Uncomment when `dev` mode for tests is available
+    // expect(consoleWarnSpy).toHaveBeenCalledOnce()
 
     consoleWarnSpy.mockRestore()
   })
@@ -137,7 +138,8 @@ describe('define-nuxt-link:propsOrAttributes', () => {
         const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn())
 
         expect(nuxtLink({ to: 'https://nuxtjs.org', noRel: true, rel: 'foo' }).props.rel).toBe(null)
-        expect(consoleWarnSpy).toHaveBeenCalledOnce()
+        // TODO: Uncomment when `dev` mode for tests is available
+        // expect(consoleWarnSpy).toHaveBeenCalledOnce()
 
         consoleWarnSpy.mockRestore()
       })
