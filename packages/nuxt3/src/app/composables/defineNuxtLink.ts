@@ -259,7 +259,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
             ariaCurrentValue: props.ariaCurrentValue
           },
           // TODO: Slot API
-          slots.default()
+          slots.default
         )
       }
     }
