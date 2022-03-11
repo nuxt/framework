@@ -1,5 +1,6 @@
 import { defineComponent, isRef, Ref, Transition } from 'vue'
-import { useRoute, wrapIf } from '#app'
+import { _wrapIf } from './utils'
+import { useRoute } from '#app'
 // @ts-ignore
 import layouts from '#build/layouts'
 
@@ -24,8 +25,8 @@ export default defineComponent({
       }
 
       // We avoid rendering layout transition if there is no layout to render
-      return wrapIf(Transition, hasLayout && (route.meta.layoutTransition ?? defaultLayoutTransition),
-        wrapIf(layouts[layout], hasLayout, context.slots)
+      return _wrapIf(Transition, hasLayout && (route.meta.layoutTransition ?? defaultLayoutTransition),
+        _wrapIf(layouts[layout], hasLayout, context.slots)
       ).default()
     }
   }

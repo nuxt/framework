@@ -12,6 +12,6 @@ const Fragment = {
  *
  * @private
  */
-export const wrapIf = (component: Component, props: any, slots: any) => {
+export const _wrapIf = (component: Component, props: any, slots: any) => {
   return { default: () => props ? h(component, props === true ? {} : props, slots) : h(Fragment, {}, slots) }
 }

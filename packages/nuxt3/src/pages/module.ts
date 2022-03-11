@@ -4,7 +4,6 @@ import { resolve } from 'pathe'
 import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
 import { distDir } from '../dirs'
-import { resolveLayouts } from '../core/utils'
 import { resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
 
@@ -112,12 +111,11 @@ export default defineNuxtModule({
 
     addTemplate({
       filename: 'types/layouts.d.ts',
-      getContents: async () => {
+      getContents: ({ app }) => {
         const composablesFile = resolve(runtimeDir, 'composables')
-        const layouts = await resolveLayouts()
         return [
           'import { ComputedRef, Ref } from \'vue\'',
-          `export type LayoutKey = ${layouts.map(layout => genString(layout.name)).join(' | ') || 'string'}`,
+          `export type LayoutKey = ${app.layouts.map(layout => genString(layout.name)).join(' | ') || 'string'}`,
           `declare module ${genString(composablesFile)} {`,
           '  interface PageMeta {',
           '    layout?: false | LayoutKey | Ref<LayoutKey> | ComputedRef<LayoutKey>',

@@ -50,6 +50,11 @@ export interface NuxtPlugin {
   mode?: 'all' | 'server' | 'client'
 }
 
+export interface NuxtLayout {
+  name: string
+  file: string
+}
+
 export interface NuxtApp {
   mainComponent?: string
   rootComponent?: string
@@ -57,6 +62,7 @@ export interface NuxtApp {
   dir: string
   extensions: string[]
   plugins: NuxtPlugin[]
+  layouts: NuxtLayout[]
   templates: NuxtTemplate[]
 }
 

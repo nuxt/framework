@@ -65,12 +65,12 @@ export interface NuxtHooks {
 
   // nuxt3
   'app:resolve': (app: NuxtApp) => HookResult
+  'app:layouts:extend': (layouts: NuxtLayout[]) => HookResult
   'app:templates': (app: NuxtApp) => HookResult
   'app:templatesGenerated': (app: NuxtApp) => HookResult
   'builder:generateApp': () => HookResult
   'pages:extend': (pages: NuxtPage[]) => HookResult
   'pages:middleware:extend': (middleware: NuxtMiddleware[]) => HookResult
-  'pages:layouts:extend': (layouts: NuxtLayout[]) => HookResult
 
   // Auto imports
   'autoImports:sources': (presets: ImportPresetWithDeperection[]) => HookResult

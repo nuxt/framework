@@ -1,8 +1,9 @@
 import { promises as fsp } from 'fs'
-import { dirname, resolve } from 'pathe'
+import { dirname, resolve, basename, extname } from 'pathe'
 import defu from 'defu'
+import { kebabCase } from 'scule'
 import type { Nuxt, NuxtApp, NuxtPlugin } from '@nuxt/schema'
-import { findPath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils, tryResolveModule } from '@nuxt/kit'
+import { findPath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils, tryResolveModule, useNuxt } from '@nuxt/kit'
 
 import * as defaultTemplates from './templates'
 
@@ -27,6 +28,9 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Normalize templates
   app.templates = app.templates.map(tmpl => normalizeTemplate(tmpl))
+
+  // Add layouts
+  app.layouts = await resolveLayouts()
 
   // Compile templates into vfs
   const templateContext = { utils: templateUtils, nuxt, app }
@@ -83,4 +87,18 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Extend app
   await nuxt.callHook('app:resolve', app)
+}
+
+export async function resolveLayouts () {
+  const nuxt = useNuxt()
+  const layoutDir = resolve(nuxt.options.srcDir, nuxt.options.dir.layouts)
+  const files = await resolveFiles(layoutDir, `*{${nuxt.options.extensions.join(',')}}`)
+
+  const layouts = files.map(file => ({ name: getNameFromPath(file), file }))
+  await nuxt.callHook('app:layouts:extend', layouts)
+  return layouts
+}
+
+function getNameFromPath (path: string) {
+  return kebabCase(basename(path).replace(extname(path), '')).replace(/["']/g, '')
 }

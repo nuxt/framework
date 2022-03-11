@@ -1,11 +1,10 @@
 import { templateUtils } from '@nuxt/kit'
-import type { Nuxt, NuxtApp } from '@nuxt/schema'
+import type { Nuxt, NuxtApp, NuxtTemplate } from '@nuxt/schema'
 import { genArrayFromRaw, genDynamicImport, genExport, genImport, genObjectFromRawEntries, genString } from 'knitwork'
 
-import { isAbsolute, join, relative, resolve } from 'pathe'
+import { isAbsolute, join, relative } from 'pathe'
 import { resolveSchema, generateTypes } from 'untyped'
 import escapeRE from 'escape-string-regexp'
-import { resolveLayouts } from './utils'
 
 export interface TemplateContext {
   nuxt: Nuxt
@@ -157,11 +156,10 @@ export const schemaTemplate = {
 }
 
 // Add layouts template
-export const layoutTemplate = {
+export const layoutTemplate: NuxtTemplate = {
   filename: 'layouts.mjs',
-  async getContents () {
-    const layouts = await resolveLayouts()
-    const layoutsObject = genObjectFromRawEntries(layouts.map(({ name, file }) => {
+  getContents ({ app }) {
+    const layoutsObject = genObjectFromRawEntries(app.layouts.map(({ name, file }) => {
       return [name, `defineAsyncComponent({ suspensible: false, loader: ${genDynamicImport(file)} })`]
     }))
     return [
