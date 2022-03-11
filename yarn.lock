@@ -10516,6 +10516,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-nuxt-link-overwrite@workspace:examples/nuxt-link-overwrite":
+  version: 0.0.0-use.local
+  resolution: "example-nuxt-link-overwrite@workspace:examples/nuxt-link-overwrite"
+  dependencies:
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-nuxt-link-pages@workspace:examples/nuxt-link-pages":
   version: 0.0.0-use.local
   resolution: "example-nuxt-link-pages@workspace:examples/nuxt-link-pages"
