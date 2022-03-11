@@ -2892,13 +2892,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/design@npm:0.1.5, @nuxt/design@npm:^0.1.5":
-  version: 0.1.5
-  resolution: "@nuxt/design@npm:0.1.5"
-  checksum: 1e75ba0c7e9519754d185133e1bc97d2056201b2c6ad99a9196ffb94e787a4ee9fa2a64b1dd868febece5b3370c8a50388033b65455edc939fe67bcc1f4bbe8b
-  languageName: node
-  linkType: hard
-
 "@nuxt/devalue@npm:^1.2.5":
   version: 1.2.5
   resolution: "@nuxt/devalue@npm:1.2.5"
@@ -2986,6 +2979,7 @@ __metadata:
     semver: ^7.3.5
     unbuild: latest
     unctx: ^1.0.2
+    unimport: 0.0.8
     untyped: ^0.4.2
   languageName: unknown
   linkType: soft
@@ -3034,10 +3028,10 @@ __metadata:
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@netlify/functions": ^1.0.0
-    "@nuxt/design": 0.1.5
     "@nuxt/devalue": ^2.0.0
     "@nuxt/kit": 3.0.0
     "@nuxt/schema": 3.0.0
+    "@nuxt/ui-templates": "npm:@nuxt/ui-templates-edge@latest"
     "@rollup/plugin-alias": ^3.1.9
     "@rollup/plugin-commonjs": ^21.0.2
     "@rollup/plugin-inject": ^4.0.4
@@ -3148,6 +3142,7 @@ __metadata:
     std-env: ^3.0.1
     ufo: ^0.7.11
     unbuild: latest
+    unimport: 0.0.5
   languageName: unknown
   linkType: soft
 
@@ -3289,6 +3284,13 @@ __metadata:
     "@types/webpack-hot-middleware": 2.25.4
     sass-loader: 10.1.1
   checksum: 4195d528fdd93d23879ff7009bc30e4c5bde4851f204c679a761c958c3c46af41c85183f321513c6223f9d8fe24a26459c45e2dc271f7f88a54a015e61465604
+  languageName: node
+  linkType: hard
+
+"@nuxt/ui-templates@npm:@nuxt/ui-templates-edge@latest":
+  version: 0.0.0-27449202.0cb54cc
+  resolution: "@nuxt/ui-templates-edge@npm:0.0.0-27449202.0cb54cc"
+  checksum: bbc709d35bf1c586bc604835caf8b6000e4cab22ad56d71d231a7d4e987ab8dd33a9adbba11af684f70826007ad3094480f38524160bf7c6f1a9dc1fcb375f79
   languageName: node
   linkType: hard
 
@@ -10569,6 +10571,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-with-errors@workspace:examples/with-errors":
+  version: 0.0.0-use.local
+  resolution: "example-with-errors@workspace:examples/with-errors"
+  dependencies:
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-with-layouts@workspace:examples/with-layouts":
   version: 0.0.0-use.local
   resolution: "example-with-layouts@workspace:examples/with-layouts"
@@ -13830,6 +13841,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"magic-string@npm:^0.26.0":
+  version: 0.26.0
+  resolution: "magic-string@npm:0.26.0"
+  dependencies:
+    sourcemap-codec: ^1.4.8
+  checksum: 2065de79cdbb76fe1b073244d51a2094cabf317e95a4ce385d7ddbe1d1f16b864c0f2a1ae514872251e64edc44bf56c8bb6a7dbe5eff9c9c236f877bcdfec9f9
+  languageName: node
+  linkType: hard
+
 "magic-string@npm:^0.26.1":
   version: 0.26.1
   resolution: "magic-string@npm:0.26.1"
@@ -15359,9 +15379,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxi@workspace:packages/nuxi"
   dependencies:
-    "@nuxt/design": 0.1.5
     "@nuxt/kit": 3.0.0
     "@nuxt/schema": 3.0.0
+    "@nuxt/ui-templates": "npm:@nuxt/ui-templates-edge@latest"
     "@types/clear": ^0
     "@types/mri": ^1.1.1
     "@types/rimraf": ^3
@@ -15466,10 +15486,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxt3@workspace:packages/nuxt3"
   dependencies:
-    "@nuxt/design": ^0.1.5
     "@nuxt/kit": 3.0.0
     "@nuxt/nitro": 3.0.0
     "@nuxt/schema": 3.0.0
+    "@nuxt/ui-templates": "npm:@nuxt/ui-templates-edge@latest"
     "@nuxt/vite-builder": 3.0.0
     "@types/fs-extra": ^9.0.13
     "@types/hash-sum": ^1.0.0
@@ -15497,6 +15517,7 @@ __metadata:
     scule: ^0.2.1
     ufo: ^0.7.11
     unbuild: latest
+    unimport: 0.0.8
     unplugin: ^0.4.0
     untyped: ^0.4.2
     vue: ^3.2.31
@@ -21185,6 +21206,34 @@ __metadata:
   languageName: node
   linkType: hard
 
+"unimport@npm:0.0.5":
+  version: 0.0.5
+  resolution: "unimport@npm:0.0.5"
+  dependencies:
+    "@rollup/pluginutils": ^4.1.2
+    escape-string-regexp: ^5.0.0
+    local-pkg: ^0.4.1
+    magic-string: ^0.26.0
+    mlly: ^0.4.3
+    unplugin: ^0.3.3
+  checksum: 6514320ff1771f699dc6c69b7a7086fe6a62ca1ece7a4877798e89964bf3b9b2450631266a49dfa5785ba8939e4f30517333e4639ecf44e97077fb3128a946d5
+  languageName: node
+  linkType: hard
+
+"unimport@npm:0.0.8":
+  version: 0.0.8
+  resolution: "unimport@npm:0.0.8"
+  dependencies:
+    "@rollup/pluginutils": ^4.1.2
+    escape-string-regexp: ^5.0.0
+    local-pkg: ^0.4.1
+    magic-string: ^0.26.0
+    mlly: ^0.4.3
+    unplugin: ^0.3.3
+  checksum: ac6e2ef860b274c28093117c23071aaa35f484f88ff23cd25a4f4d114c24e72969f46f729b26023546ffdc1016ef42e5fc399d14389c0c0374f4a74b17ff1955
+  languageName: node
+  linkType: hard
+
 "union-value@npm:^1.0.0":
   version: 1.0.1
   resolution: "union-value@npm:1.0.1"
@@ -21304,7 +21353,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin@npm:^0.3.0, unplugin@npm:^0.3.2":
+"unplugin@npm:^0.3.0, unplugin@npm:^0.3.2, unplugin@npm:^0.3.3":
   version: 0.3.3
   resolution: "unplugin@npm:0.3.3"
   dependencies:
