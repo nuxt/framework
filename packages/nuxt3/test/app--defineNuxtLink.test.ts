@@ -1,4 +1,4 @@
-import { expect, describe, it, vi, beforeEach } from 'vitest'
+import { expect, describe, it, vi } from 'vitest'
 import { RouteLocationRaw } from 'vue-router'
 import { defineNuxtLink } from '../src/app/composables/defineNuxtLink'
 import type { DefineNuxtLinkOptions, NuxtLinkProps } from '../src/app/composables/defineNuxtLink'
