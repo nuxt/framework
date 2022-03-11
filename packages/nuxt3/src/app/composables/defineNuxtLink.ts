@@ -181,22 +181,6 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
 
       // Resolving link type
       const isExternal = computed<boolean>(() => {
-        if (!router) {
-          // If Vue Router is not enabled then all links are considered external
-
-          if (typeof to.value === 'object') {
-            throw new TypeError(`[${componentName}] Route location object cannot be resolved by \`<${componentName} />\` when vue-router is disabled (no pages).`)
-          }
-
-          if (props.external !== undefined) {
-            console.warn(`[${componentName}] \`external\` prop have no effect when Vue Router is not enabled.`)
-          }
-
-          return true
-        }
-
-        // If Vue Router is enabled, then check if link is internal or external
-
         if (props.external !== undefined) {
           // Else if `external` prop is used
           return props.external
@@ -235,7 +219,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
           // Attributes
 
           // Resolves `to` value if it's a route location object
-          const href = typeof to.value === 'object' ? router?.resolve(to.value).href : to.value || null // converts `""` to `null` to prevent the attribute from being added as empty (`href=""`)
+          const href = typeof to.value === 'object' ? router.resolve(to.value)?.href ?? null : to.value || null // converts `""` to `null` to prevent the attribute from being added as empty (`href=""`)
 
           // Resolves `target` value
           const target = props.target || null

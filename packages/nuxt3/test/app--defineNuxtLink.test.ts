@@ -14,11 +14,8 @@ vi.mock('vue', async () => {
 })
 
 // Mocks Nuxt `useRouter()`
-let hasVueRouter = false
-const enableVueRouter = () => { hasVueRouter = true }
-const disableVueRouter = () => { hasVueRouter = false }
 vi.mock('#app', () => ({
-  useRouter: () => hasVueRouter ? ({ resolve: ({ to }: { to: string }) => ({ href: to }) }) : undefined
+  useRouter: () => ({ resolve: ({ to }: { to: string }) => ({ href: to }) })
 }))
 
 // Helpers for test lisibility
@@ -39,22 +36,18 @@ const nuxtLink = (
 }
 
 describe('app--defineNuxtLink:to', () => {
-  beforeEach(() => {
-    disableVueRouter()
-  })
-
   it('renders link with `to` prop', () => {
-    expect(nuxtLink({ to: '/to' }).props.href).toBe('/to')
+    expect(nuxtLink({ to: '/to' }).props.to).toBe('/to')
   })
 
   it('renders link with `href` prop', () => {
-    expect(nuxtLink({ href: '/href' }).props.href).toBe('/href')
+    expect(nuxtLink({ href: '/href' }).props.to).toBe('/href')
   })
 
   it('renders link with `to` prop and warns about `href` prop conflict', () => {
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn())
 
-    expect(nuxtLink({ to: '/to', href: '/href' }).props.href).toBe('/to')
+    expect(nuxtLink({ to: '/to', href: '/href' }).props.to).toBe('/to')
     expect(consoleWarnSpy).toHaveBeenCalledOnce()
 
     consoleWarnSpy.mockRestore()
@@ -66,70 +59,36 @@ describe('app--defineNuxtLink:to', () => {
 })
 
 describe('app--defineNuxtLink:isExternal', () => {
-  describe('vue-router disabled', () => {
-    beforeEach(() => {
-      disableVueRouter()
-    })
+  it('returns based on `to` value', () => {
+    // Internal
+    expect(nuxtLink({ to: '/foo' }).type).toBe(INTERNAL)
+    expect(nuxtLink({ to: '/foo/bar' }).type).toBe(INTERNAL)
+    expect(nuxtLink({ to: '/foo/bar?baz=qux' }).type).toBe(INTERNAL)
 
-    it('always returns `true`', () => {
-      expect(nuxtLink({ to: '/to' }).type).toBe(EXTERNAL)
-      expect(nuxtLink({ to: 'https://nuxtjs.org' }).type).toBe(EXTERNAL)
-    })
-
-    it('ignores `external` prop and warns', () => {
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn())
-
-      expect(nuxtLink({ to: '/to', external: true }).type).toBe(EXTERNAL)
-      expect(consoleWarnSpy).toHaveBeenCalledTimes(1)
-
-      consoleWarnSpy.mockRestore()
-    })
-
-    it('throws when used with a route location object', () => {
-      expect(() => nuxtLink({ to: { to: '/to' } as RouteLocationRaw })).toThrowError(/NuxtLink/)
-    })
+    // External
+    expect(nuxtLink({ to: 'https://nuxtjs.org' }).type).toBe(EXTERNAL)
+    expect(nuxtLink({ to: '//nuxtjs.org' }).type).toBe(EXTERNAL)
+    expect(nuxtLink({ to: 'tel:0123456789' }).type).toBe(EXTERNAL)
+    expect(nuxtLink({ to: 'mailto:hello@nuxtlabs.com' }).type).toBe(EXTERNAL)
   })
 
-  describe('vue-router ensabled', () => {
-    beforeEach(() => {
-      enableVueRouter()
-    })
+  it('returns `false` when `to` is a route location object', () => {
+    expect(nuxtLink({ to: { to: '/to' } as RouteLocationRaw }).type).toBe(INTERNAL)
+  })
 
-    it('returns based on `to` value', () => {
-      // Internal
-      expect(nuxtLink({ to: '/foo' }).type).toBe(INTERNAL)
-      expect(nuxtLink({ to: '/foo/bar' }).type).toBe(INTERNAL)
-      expect(nuxtLink({ to: '/foo/bar?baz=qux' }).type).toBe(INTERNAL)
+  it('honors `external` prop', () => {
+    expect(nuxtLink({ to: '/to', external: true }).type).toBe(EXTERNAL)
+    expect(nuxtLink({ to: '/to', external: false }).type).toBe(INTERNAL)
+  })
 
-      // External
-      expect(nuxtLink({ to: 'https://nuxtjs.org' }).type).toBe(EXTERNAL)
-      expect(nuxtLink({ to: '//nuxtjs.org' }).type).toBe(EXTERNAL)
-      expect(nuxtLink({ to: 'tel:0123456789' }).type).toBe(EXTERNAL)
-      expect(nuxtLink({ to: 'mailto:hello@nuxtlabs.com' }).type).toBe(EXTERNAL)
-    })
-
-    it('returns `false` when `to` is a route location object', () => {
-      expect(nuxtLink({ to: { to: '/to' } as RouteLocationRaw }).type).toBe(INTERNAL)
-    })
-
-    it('honors `external` prop', () => {
-      expect(nuxtLink({ to: '/to', external: true }).type).toBe(EXTERNAL)
-      expect(nuxtLink({ to: '/to', external: false }).type).toBe(INTERNAL)
-    })
-
-    it('returns `true` when using the `target` prop', () => {
-      expect(nuxtLink({ to: '/foo', target: '_blank' }).type).toBe(EXTERNAL)
-      expect(nuxtLink({ to: '/foo/bar', target: '_blank' }).type).toBe(EXTERNAL)
-      expect(nuxtLink({ to: '/foo/bar?baz=qux', target: '_blank' }).type).toBe(EXTERNAL)
-    })
+  it('returns `true` when using the `target` prop', () => {
+    expect(nuxtLink({ to: '/foo', target: '_blank' }).type).toBe(EXTERNAL)
+    expect(nuxtLink({ to: '/foo/bar', target: '_blank' }).type).toBe(EXTERNAL)
+    expect(nuxtLink({ to: '/foo/bar?baz=qux', target: '_blank' }).type).toBe(EXTERNAL)
   })
 })
 
 describe('app--defineNuxtLink:propsOrAttributes', () => {
-  beforeEach(() => {
-    enableVueRouter()
-  })
-
   describe('`isExternal` is `true`', () => {
     describe('href', () => {
       it('forwards `to` value', () => {
