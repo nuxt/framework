@@ -167,7 +167,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions) {
       const to = computed<string | RouteLocationRaw>(() => {
         checkPropConflicts(props, 'to', 'href')
 
-        return props.to ?? props.href ?? '' // Defaults to empty string (won't render any `href` attribute)
+        return (props.to ?? props.href) || '' // Defaults to empty string (won't render any `href` attribute)
       })
 
       // Resolving link type
