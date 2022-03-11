@@ -1,5 +1,5 @@
 export default defineNuxtLink({
-  // componentName: 'NuxtLink',
+  componentName: 'MyNuxtLink',
   prefetchLinks: true,
   externalRelAttribute: '',
   activeClass: 'active',

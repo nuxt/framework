@@ -1,11 +1,11 @@
 <template>
   <div>
-    <NuxtLink to="https://nuxtjs.org">
+    <MyNuxtLink to="https://nuxtjs.org">
       This link has no default `rel` attribute
-    </NuxtLink>
-    <NuxtLink to="/">
+    </MyNuxtLink>
+    <MyNuxtLink to="/">
       This link has the `.active` class and therefore is styled red
-    </NuxtLink>
+    </MyNuxtLink>
   </div>
 </template>
 
@@ -13,7 +13,8 @@
 a {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 3rem;
-  padding: 10rem;
+  padding: 1rem 10rem;
+  display: block;
 }
 
 .active {

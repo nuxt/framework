@@ -1,3 +1,3 @@
 import { defineNuxtLink } from '#app'
 
-export default defineNuxtLink()
+export default defineNuxtLink({ componentName: 'NuxtLink' })

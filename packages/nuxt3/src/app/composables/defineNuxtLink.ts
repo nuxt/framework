@@ -22,12 +22,11 @@ const firstNonUndefined = <T>(...args: T[]): T => {
   }
 }
 
-const DEFAULT_COMPONENT_NAME = 'NuxtLink'
 const DEFAULT_PREFETCH_LINKS = true
 const DEFAULT_EXTERNAL_REL_ATTRIBUTE = 'noopener noreferrer'
 
 export type DefineNuxtLinkOptions = {
-  componentName?: string;
+  componentName: string;
   prefetchLinks?: boolean;
   externalRelAttribute?: string | null;
   activeClass?: string;
@@ -65,12 +64,10 @@ export type NuxtLinkProps = {
   custom?: boolean;
 };
 
-export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
-  const componentName = options.componentName || DEFAULT_COMPONENT_NAME
-
+export function defineNuxtLink (options: DefineNuxtLinkOptions) {
   const checkPropConflicts = (props: NuxtLinkProps, main: string, sub: string): void => {
     if (props[main] !== undefined && props[sub] !== undefined) {
-      console.warn(`[${componentName}] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
+      console.warn(`[${options.componentName}] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
     }
   }
 
@@ -83,7 +80,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions = {}) {
   }
 
   return defineComponent({
-    name: componentName,
+    name: options.componentName,
     props: {
       // Routing
       to: {
