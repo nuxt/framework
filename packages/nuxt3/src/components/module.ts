@@ -59,6 +59,9 @@ export default defineNuxtModule<ComponentsOptions>({
           .map(layer => normalizeDirs(layer.config.components, layer.cwd))
           .flat()
       ]
+      console.log('componentOptions', componentOptions)
+      nuxt.options._extends.forEach(layer => console.log('layer', layer.config.components))
+      console.log('allDirs', allDirs)
 
       await nuxt.callHook('components:dirs', allDirs)
 

@@ -10482,6 +10482,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-extends-components-bug@workspace:examples/extends-components-bug":
+  version: 0.0.0-use.local
+  resolution: "example-extends-components-bug@workspace:examples/extends-components-bug"
+  dependencies:
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-hello-world@workspace:examples/hello-world":
   version: 0.0.0-use.local
   resolution: "example-hello-world@workspace:examples/hello-world"
