@@ -29,9 +29,6 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
   // Normalize templates
   app.templates = app.templates.map(tmpl => normalizeTemplate(tmpl))
 
-  // Add layouts
-  app.layouts = await resolveLayouts()
-
   // Compile templates into vfs
   const templateContext = { utils: templateUtils, nuxt, app }
   await Promise.all(app.templates.map(async (template) => {
@@ -74,6 +71,14 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
     app.errorComponent = (await findPath(['~/error'])) || resolve(nuxt.options.appDir, 'components/nuxt-error-page.vue')
   }
 
+  // Resolve layouts
+  app.layouts = []
+  for (const config of [...nuxt.options._extends.map(layer => layer.config), nuxt.options]) {
+    app.layouts.push(...[
+      ...await resolveFiles(config.srcDir, `${config.dir.layouts}/*{${config.extensions.join(',')}}`)
+    ].map(file => ({ name: getNameFromPath(file), file })))
+  }
+
   // Resolve plugins
   app.plugins = []
   for (const config of [...nuxt.options._extends.map(layer => layer.config), nuxt.options]) {
@@ -88,16 +93,6 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Extend app
   await nuxt.callHook('app:resolve', app)
-}
-
-export async function resolveLayouts () {
-  const nuxt = useNuxt()
-  const layoutDir = resolve(nuxt.options.srcDir, nuxt.options.dir.layouts)
-  const files = await resolveFiles(layoutDir, `*{${nuxt.options.extensions.join(',')}}`)
-
-  const layouts = files.map(file => ({ name: getNameFromPath(file), file }))
-  await nuxt.callHook('app:layouts:extend', layouts)
-  return layouts
 }
 
 function getNameFromPath (path: string) {

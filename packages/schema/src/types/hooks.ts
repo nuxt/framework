@@ -65,7 +65,6 @@ export interface NuxtHooks {
 
   // nuxt3
   'app:resolve': (app: NuxtApp) => HookResult
-  'app:layouts:extend': (layouts: NuxtLayout[]) => HookResult
   'app:templates': (app: NuxtApp) => HookResult
   'app:templatesGenerated': (app: NuxtApp) => HookResult
   'builder:generateApp': () => HookResult
