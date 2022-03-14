@@ -182,3 +182,5 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
     }
   }) as unknown as DefineComponent<NuxtLinkProps>
 }
+
+export default defineNuxtLink({ componentName: 'NuxtLink' })

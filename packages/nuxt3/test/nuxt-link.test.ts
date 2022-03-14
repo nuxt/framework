@@ -1,7 +1,6 @@
 import { expect, describe, it, vi } from 'vitest'
 import { RouteLocationRaw } from 'vue-router'
-import { defineNuxtLink } from '../src/app/composables/nuxt-link'
-import type { NuxtLinkOptions, NuxtLinkProps } from '../src/app/composables/nuxt-link'
+import { NuxtLinkOptions, NuxtLinkProps, defineNuxtLink } from '../src/app/components/nuxt-link'
 
 // Mocks `h()`
 vi.mock('vue', async () => {
