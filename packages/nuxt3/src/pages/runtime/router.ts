@@ -7,7 +7,6 @@ import {
 } from 'vue-router'
 import { createError } from 'h3'
 import NuxtPage from './page'
-import NuxtLayout from './layout'
 import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, NuxtApp, throwError, clearError } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
@@ -17,7 +16,6 @@ import { globalMiddleware, namedMiddleware } from '#build/middleware'
 declare module 'vue' {
   export interface GlobalComponents {
     NuxtPage: typeof NuxtPage
-    NuxtLayout: typeof NuxtLayout
     /** @deprecated */
     NuxtNestedPage: typeof NuxtPage
     /** @deprecated */
@@ -27,7 +25,6 @@ declare module 'vue' {
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('NuxtPage', NuxtPage)
-  nuxtApp.vueApp.component('NuxtLayout', NuxtLayout)
   // TODO: remove before release - present for backwards compatibility & intentionally undocumented
   nuxtApp.vueApp.component('NuxtNestedPage', NuxtPage)
   nuxtApp.vueApp.component('NuxtChild', NuxtPage)
