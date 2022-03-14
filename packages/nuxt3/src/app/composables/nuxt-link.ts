@@ -16,7 +16,6 @@ const isExternalURL = (url: string): boolean => {
 
 const firstNonUndefined = <T>(...args: T[]): T => args.find(arg => arg !== undefined)
 
-const DEFAULT_PREFETCH_LINKS = true
 const DEFAULT_EXTERNAL_REL_ATTRIBUTE = 'noopener noreferrer'
 
 export type DefineNuxtLinkOptions = {
@@ -45,7 +44,6 @@ export type NuxtLinkProps = {
   // Styling
   activeClass?: string;
   exactActiveClass?: string;
-  prefetchedClass?: string;
 
   // Vue Router's `<RouterLink>` additional props
   replace?: boolean;
@@ -186,23 +184,6 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions) {
         // Else check if `to` is an external URL
         return isExternalURL(to.value)
       })
-
-      // TODO: Just resolved for now, requires prefetching implementation
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const shouldPrefetch = computed<boolean>(() => {
-        checkPropConflicts(props, 'prefetch', 'noPrefetch')
-
-        return firstNonUndefined(
-          props.prefetch,
-          // `noPrefetch` needs to be inverted
-          props.noPrefetch !== undefined ? !props.noPrefetch : undefined,
-          options.prefetchLinks,
-          DEFAULT_PREFETCH_LINKS
-        )
-      })
-      // TODO: Update when prefetching is implemented
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const prefetchedClass = computed<string | null>(() => null)
 
       // TODO: Handle `custom` prop
       return () => {
