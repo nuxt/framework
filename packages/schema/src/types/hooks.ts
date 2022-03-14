@@ -142,6 +142,8 @@ export interface NuxtHooks {
 
   // @nuxt/webpack
   'webpack:config': (webpackConfigs: Configuration[]) => HookResult
+  'webpack:devMiddleware': (middleware: (req: IncomingMessage, res: ServerResponse, next: (err?: any) => any) => any) => HookResult
+  'webpack:hotMiddleware': (middleware: (req: IncomingMessage, res: ServerResponse, next: (err?: any) => any) => any) => HookResult
   'build:compile': (options: { name: string, compiler: Compiler }) => HookResult
   'build:compiled': (options: { name: string, compiler: Compiler, stats: Stats }) => HookResult
   'build:resources': (mfs?: Compiler['outputFileSystem']) => HookResult
@@ -181,7 +183,7 @@ export interface NuxtHooks {
   // vite
   'vite:extend': (viteBuildContext: { nuxt: Nuxt, config: any }) => HookResult
   'vite:extendConfig': (viteInlineConfig: any, env: { isClient: boolean, isServer: boolean }) => HookResult
-  'vite:serverCreated': (viteServer: any) => HookResult
+  'vite:serverCreated': (viteServer: any, env: { isClient: boolean, isServer: boolean }) => HookResult
 }
 
 export type NuxtHookName = keyof NuxtHooks
