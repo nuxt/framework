@@ -115,7 +115,7 @@ export default defineNuxtModule({
         const composablesFile = resolve(runtimeDir, 'composables')
         return [
           'import { ComputedRef, Ref } from \'vue\'',
-          `export type LayoutKey = ${app.layouts.map(layout => genString(layout.name)).join(' | ') || 'string'}`,
+          `export type LayoutKey = ${Object.keys(app.layouts).map(name => genString(name)).join(' | ') || 'string'}`,
           `declare module ${genString(composablesFile)} {`,
           '  interface PageMeta {',
           '    layout?: false | LayoutKey | Ref<LayoutKey> | ComputedRef<LayoutKey>',

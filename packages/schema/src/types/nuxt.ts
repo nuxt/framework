@@ -57,7 +57,7 @@ export interface NuxtApp {
   dir: string
   extensions: string[]
   plugins: NuxtPlugin[]
-  layouts: NuxtLayout[]
+  layouts: Record<string, NuxtLayout>
   templates: NuxtTemplate[]
 }
 

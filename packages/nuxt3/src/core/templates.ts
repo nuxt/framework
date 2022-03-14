@@ -159,7 +159,7 @@ export const schemaTemplate = {
 export const layoutTemplate: NuxtTemplate = {
   filename: 'layouts.mjs',
   getContents ({ app }) {
-    const layoutsObject = genObjectFromRawEntries(app.layouts.map(({ name, file }) => {
+    const layoutsObject = genObjectFromRawEntries(Object.values(app.layouts).map(({ name, file }) => {
       return [name, `defineAsyncComponent({ suspensible: false, loader: ${genDynamicImport(file)} })`]
     }))
     return [
