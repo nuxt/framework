@@ -1,7 +1,7 @@
 import { expect, describe, it, vi } from 'vitest'
 import { RouteLocationRaw } from 'vue-router'
 import { defineNuxtLink } from '../src/app/composables/nuxt-link'
-import type { DefineNuxtLinkOptions, NuxtLinkProps } from '../src/app/composables/nuxt-link'
+import type { NuxtLinkOptions, NuxtLinkProps } from '../src/app/composables/nuxt-link'
 
 // Mocks `h()`
 vi.mock('vue', async () => {
@@ -25,9 +25,9 @@ const INTERNAL = 'RouterLink'
 // Renders a `<NuxtLink />`
 const nuxtLink = (
   props: NuxtLinkProps = {},
-  defineNuxtLinkOptions: Partial<DefineNuxtLinkOptions> = {}
+  NuxtLinkOptions: Partial<NuxtLinkOptions> = {}
 ): { type: string, props: Record<string, unknown>, slots: unknown } => {
-  const component = defineNuxtLink({ componentName: 'NuxtLink', ...defineNuxtLinkOptions })
+  const component = defineNuxtLink({ componentName: 'NuxtLink', ...NuxtLinkOptions })
 
   const [type, _props, slots] = (component.setup as unknown as (props: NuxtLinkProps, context: { slots: Record<string, () => unknown> }) =>
     () => [string, Record<string, unknown>, unknown])(props, { slots: { default: () => null } })()
@@ -35,7 +35,7 @@ const nuxtLink = (
   return { type, props: _props, slots }
 }
 
-describe('define-nuxt-link:to', () => {
+describe('nuxt-link:to', () => {
   it('renders link with `to` prop', () => {
     expect(nuxtLink({ to: '/to' }).props.to).toBe('/to')
   })
@@ -59,7 +59,7 @@ describe('define-nuxt-link:to', () => {
   })
 })
 
-describe('define-nuxt-link:isExternal', () => {
+describe('nuxt-link:isExternal', () => {
   it('returns based on `to` value', () => {
     // Internal
     expect(nuxtLink({ to: '/foo' }).type).toBe(INTERNAL)
@@ -89,7 +89,7 @@ describe('define-nuxt-link:isExternal', () => {
   })
 })
 
-describe('define-nuxt-link:propsOrAttributes', () => {
+describe('nuxt-link:propsOrAttributes', () => {
   describe('`isExternal` is `true`', () => {
     describe('href', () => {
       it('forwards `to` value', () => {

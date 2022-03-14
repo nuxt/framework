@@ -1,4 +1,4 @@
-import { defineComponent, h, resolveComponent, PropType, computed, ConcreteComponent, DefineComponent } from 'vue'
+import { defineComponent, h, resolveComponent, PropType, computed, DefineComponent } from 'vue'
 import { RouteLocationRaw, Router } from 'vue-router'
 
 import { useRouter } from '#app'
@@ -7,28 +7,23 @@ const firstNonUndefined = <T>(...args: T[]): T => args.find(arg => arg !== undef
 
 const DEFAULT_EXTERNAL_REL_ATTRIBUTE = 'noopener noreferrer'
 
-export type DefineNuxtLinkOptions = {
-  componentName: string;
-  prefetchLinks?: boolean;
+export type NuxtLinkOptions = {
+  componentName?: string;
   externalRelAttribute?: string | null;
   activeClass?: string;
   exactActiveClass?: string;
-  prefetchedClass?: string;
 }
 
 export type NuxtLinkProps = {
   // Routing
   to?: string | RouteLocationRaw;
   href?: string | RouteLocationRaw;
+  external?: boolean;
 
   // Attributes
   target?: string;
   rel?: string;
   noRel?: boolean;
-
-  // Prefetching
-  prefetch?: boolean;
-  noPrefetch?: boolean;
 
   // Styling
   activeClass?: string;
@@ -37,31 +32,19 @@ export type NuxtLinkProps = {
   // Vue Router's `<RouterLink>` additional props
   replace?: boolean;
   ariaCurrentValue?: string;
-
-  // Edge cases handling
-  external?: boolean;
-
-  // Slot API
-  custom?: boolean;
 };
 
-export function defineNuxtLink (options: DefineNuxtLinkOptions) {
+export function defineNuxtLink (options: NuxtLinkOptions) {
+  const componentName = options.componentName || 'NuxtLink'
+
   const checkPropConflicts = (props: NuxtLinkProps, main: string, sub: string): void => {
     if (process.dev && props[main] !== undefined && props[sub] !== undefined) {
-      console.warn(`[${options.componentName}] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
+      console.warn(`[${componentName}] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
     }
-  }
-
-  let RouterLink: ConcreteComponent
-  const getRouterLink = (): ConcreteComponent => {
-    if (!RouterLink) {
-      RouterLink = resolveComponent('RouterLink') as ConcreteComponent
-    }
-    return RouterLink
   }
 
   return defineComponent({
-    name: options.componentName,
+    name: componentName,
     props: {
       // Routing
       to: {
@@ -99,11 +82,6 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions) {
         required: false
       },
       exactActiveClass: {
-        type: String as PropType<string>,
-        default: undefined,
-        required: false
-      },
-      prefetchedClass: {
         type: String as PropType<string>,
         default: undefined,
         required: false
@@ -168,38 +146,38 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions) {
         return !/^\/(?!\/)/.test(to.value)
       })
 
-      // TODO: Handle `custom` prop
       return () => {
-        if (isExternal.value) {
-          // Attributes
-
-          // Resolves `to` value if it's a route location object
-          const href = typeof to.value === 'object' ? router.resolve(to.value)?.href ?? null : to.value || null // converts `'''` to `null` to prevent the attribute from being added as empty (`href=""`)
-
-          // Resolves `target` value
-          const target = props.target || null
-
-          // Resolves `rel`
-          checkPropConflicts(props, 'noRel', 'rel')
-          const rel = props.noRel
-            ? null
-            : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, DEFAULT_EXTERNAL_REL_ATTRIBUTE) || null // converts `""` to `null` to prevent the attribute from being added as empty (`rel=""`)
-
-          return h('a', { href, rel, target }, slots.default())
+        if (!isExternal.value) {
+          // Internal link
+          return h(
+            resolveComponent('RouterLink'),
+            {
+              to: to.value,
+              activeClass: props.activeClass || options.activeClass,
+              exactActiveClass: props.exactActiveClass || options.exactActiveClass,
+              replace: props.replace,
+              ariaCurrentValue: props.ariaCurrentValue
+            },
+            // TODO: Slot API
+            slots.default
+          )
         }
 
-        return h(
-          getRouterLink(),
-          {
-            to: to.value,
-            activeClass: props.activeClass || options.activeClass,
-            exactActiveClass: props.exactActiveClass || options.exactActiveClass,
-            replace: props.replace,
-            ariaCurrentValue: props.ariaCurrentValue
-          },
-          // TODO: Slot API
-          slots.default
-        )
+        // Resolves `to` value if it's a route location object
+        // converts `'''` to `null` to prevent the attribute from being added as empty (`href=""`)
+        const href = typeof to.value === 'object' ? router.resolve(to.value)?.href ?? null : to.value || null
+
+        // Resolves `target` value
+        const target = props.target || null
+
+        // Resolves `rel`
+        checkPropConflicts(props, 'noRel', 'rel')
+        const rel = props.noRel
+          ? null
+          // converts `""` to `null` to prevent the attribute from being added as empty (`rel=""`)
+          : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, DEFAULT_EXTERNAL_REL_ATTRIBUTE) || null
+
+        return h('a', { href, rel, target }, slots.default())
       }
     }
   }) as unknown as DefineComponent<NuxtLinkProps>
