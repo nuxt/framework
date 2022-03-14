@@ -1,8 +1,9 @@
 import { promises as fsp } from 'fs'
-import { dirname, resolve } from 'pathe'
+import { dirname, resolve, basename, extname } from 'pathe'
 import defu from 'defu'
+import { kebabCase } from 'scule'
 import type { Nuxt, NuxtApp, NuxtPlugin } from '@nuxt/schema'
-import { findPath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils } from '@nuxt/kit'
+import { findPath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils, tryResolveModule } from '@nuxt/kit'
 
 import * as defaultTemplates from './templates'
 
@@ -59,13 +60,29 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
     app.mainComponent = await findPath(['~/App', '~/app'])
   }
   if (!app.mainComponent) {
-    app.mainComponent = resolve(nuxt.options.appDir, 'components/nuxt-welcome.vue')
+    app.mainComponent = tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')
   }
 
   // Default root component
   app.rootComponent = resolve(nuxt.options.appDir, 'components/nuxt-root.vue')
 
+  // Resolve error component
+  if (!app.errorComponent) {
+    app.errorComponent = (await findPath(['~/error'])) || resolve(nuxt.options.appDir, 'components/nuxt-error-page.vue')
+  }
+
+  // Resolve layouts
+  app.layouts = {}
+  for (const config of [nuxt.options, ...nuxt.options._extends.map(layer => layer.config)]) {
+    const layoutFiles = await resolveFiles(config.srcDir, `${config.dir?.layouts || 'layouts'}/*{${nuxt.options.extensions.join(',')}}`)
+    for (const file of layoutFiles) {
+      const name = getNameFromPath(file)
+      app.layouts[name] = app.layouts[name] || { name, file }
+    }
+  }
+
   // Resolve plugins
+  app.plugins = []
   for (const config of [...nuxt.options._extends.map(layer => layer.config), nuxt.options]) {
     app.plugins.push(...[
       ...config.plugins ?? [],
@@ -78,4 +95,8 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Extend app
   await nuxt.callHook('app:resolve', app)
+}
+
+function getNameFromPath (path: string) {
+  return kebabCase(basename(path).replace(extname(path), '')).replace(/["']/g, '')
 }

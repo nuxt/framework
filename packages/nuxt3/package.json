@@ -30,10 +30,10 @@
     "prepack": "unbuild"
   },
   "dependencies": {
-    "@nuxt/design": "^0.1.5",
     "@nuxt/kit": "3.0.0",
     "@nuxt/nitro": "3.0.0",
     "@nuxt/schema": "3.0.0",
+    "@nuxt/ui-templates": "npm:@nuxt/ui-templates-edge@latest",
     "@nuxt/vite-builder": "3.0.0",
     "@vue/reactivity": "^3.2.31",
     "@vue/shared": "^3.2.31",
@@ -45,7 +45,7 @@
     "escape-string-regexp": "^5.0.0",
     "fs-extra": "^10.0.1",
     "globby": "^13.1.1",
-    "h3": "^0.3.9",
+    "h3": "^0.4.1",
     "hash-sum": "^2.0.0",
     "hookable": "^5.1.1",
     "knitwork": "^0.1.1",
@@ -58,10 +58,11 @@
     "pathe": "^0.2.0",
     "scule": "^0.2.1",
     "ufo": "^0.7.11",
+    "unimport": "0.0.8",
     "unplugin": "^0.4.0",
     "untyped": "^0.4.2",
     "vue": "^3.2.31",
-    "vue-router": "^4.0.13"
+    "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",

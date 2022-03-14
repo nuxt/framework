@@ -1,7 +1,7 @@
 import { resolve } from 'pathe'
 import { createHooks } from 'hookable'
 import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
-import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule } from '@nuxt/kit'
 // Temporary until finding better placement
 /* eslint-disable import/no-restricted-paths */
 import pagesModule from '../pages/module'
@@ -76,13 +76,24 @@ async function initNuxt (nuxt: Nuxt) {
   // Add <NuxtWelcome>
   addComponent({
     name: 'NuxtWelcome',
-    filePath: resolve(nuxt.options.appDir, 'components/nuxt-welcome.vue')
+    filePath: tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')
+  })
+
+  addComponent({
+    name: 'NuxtLayout',
+    filePath: resolve(nuxt.options.appDir, 'components/layout')
   })
 
   // Add <ClientOnly>
   addComponent({
     name: 'ClientOnly',
     filePath: resolve(nuxt.options.appDir, 'components/client-only')
+  })
+
+  // Add <NuxtLink>
+  addComponent({
+    name: 'NuxtLink',
+    filePath: resolve(nuxt.options.appDir, 'components/nuxt-link')
   })
 
   for (const m of modulesToInstall) {
@@ -108,6 +119,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   options._majorVersion = 3
   options._modules.push(pagesModule, metaModule, componentsModule, autoImportsModule)
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))
+  options.build.transpile.push('@nuxt/ui-templates')
   options.alias['vue-demi'] = resolve(options.appDir, 'compat/vue-demi')
   options.alias['@vue/composition-api'] = resolve(options.appDir, 'compat/capi')
 
