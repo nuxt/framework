@@ -175,7 +175,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions) {
         if (props.external !== undefined) {
           // Else if `external` prop is used
           return props.external
-        } else if (props.target) {
+        } else if (props.target && props.target !== '_self') {
           // Else if the `blank` or `target` props are truthy, then link is considered external
           return true
         } else if (typeof to.value === 'object') {
