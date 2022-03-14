@@ -3,17 +3,6 @@ import { RouteLocationRaw, Router } from 'vue-router'
 
 import { useRouter } from '#app'
 
-/**
- * Determines if a URL is internal or external. This does not detect all relative URLs as internal, such as `about` or `./about`. This function assumes relative URLs start with a "/"`.
- */
-const isExternalURL = (url: string): boolean => {
-  /**
-   * @see Regex101 expression: {@link https://regex101.com/r/1y7iod/1}
-   */
-  // TODO: Use `ufo.hasProtocol` when issue fixed https://github.com/unjs/ufo/issues/45
-  return !/^\/(?!\/)/.test(url)
-}
-
 const firstNonUndefined = <T>(...args: T[]): T => args.find(arg => arg !== undefined)
 
 const DEFAULT_EXTERNAL_REL_ATTRIBUTE = 'noopener noreferrer'
@@ -103,18 +92,6 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions) {
         required: false
       },
 
-      // Prefetching
-      prefetch: {
-        type: Boolean as PropType<boolean>,
-        default: undefined,
-        required: false
-      },
-      noPrefetch: {
-        type: Boolean as PropType<boolean>,
-        default: undefined,
-        required: false
-      },
-
       // Styling
       activeClass: {
         type: String as PropType<string>,
@@ -170,19 +147,25 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions) {
 
       // Resolving link type
       const isExternal = computed<boolean>(() => {
-        if (props.external !== undefined) {
-          // Else if `external` prop is used
-          return props.external
-        } else if (props.target && props.target !== '_self') {
-          // Else if the `blank` or `target` props are truthy, then link is considered external
+        // External prop is explictly set
+        if (props.external) {
           return true
-        } else if (typeof to.value === 'object') {
-          // Else if `to` is a route object then it's an internal link
+        }
+
+        // When `target` prop is set, link is external
+        if (props.target && props.target !== '_self') {
+          return true
+        }
+
+        // When `to` is a route object then it's an internal link
+        if (typeof to.value === 'object') {
           return false
         }
 
-        // Else check if `to` is an external URL
-        return isExternalURL(to.value)
+        // Directly check if `to` is an external URL with Regex
+        // Regex101 expression: {@link https://regex101.com/r/1y7iod/1}
+        // TODO: Use `ufo.hasProtocol` when issue fixed https://github.com/unjs/ufo/issues/45
+        return !/^\/(?!\/)/.test(to.value)
       })
 
       // TODO: Handle `custom` prop
@@ -191,7 +174,7 @@ export function defineNuxtLink (options: DefineNuxtLinkOptions) {
           // Attributes
 
           // Resolves `to` value if it's a route location object
-          const href = typeof to.value === 'object' ? router.resolve(to.value)?.href ?? null : to.value || null // converts `""` to `null` to prevent the attribute from being added as empty (`href=""`)
+          const href = typeof to.value === 'object' ? router.resolve(to.value)?.href ?? null : to.value || null // converts `'''` to `null` to prevent the attribute from being added as empty (`href=""`)
 
           // Resolves `target` value
           const target = props.target || null
