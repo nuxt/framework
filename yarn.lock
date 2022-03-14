@@ -10817,18 +10817,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"example-nuxt-link-pages@workspace:examples/nuxt-link-pages":
-  version: 0.0.0-use.local
-  resolution: "example-nuxt-link-pages@workspace:examples/nuxt-link-pages"
-  dependencies:
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
 "example-nuxt-link@workspace:examples/nuxt-link":
   version: 0.0.0-use.local
   resolution: "example-nuxt-link@workspace:examples/nuxt-link"
   dependencies:
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
     nuxt3: latest
   languageName: unknown
   linkType: soft
