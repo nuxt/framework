@@ -81,7 +81,8 @@ export default defineNuxtModule({
       getContents: async () => {
         // Check for router options
         const routerOptionsFile = await findPath('~/app/router.options')
-        const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router).map(([key, value]) => [key, genString(value)]))
+        const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router.options)
+          .map(([key, value]) => [key, genString(value as string)]))
         return [
           routerOptionsFile ? genImport(routerOptionsFile, 'routerOptions') : '',
           `const configRouterOptions = ${configRouterOptions}`,
