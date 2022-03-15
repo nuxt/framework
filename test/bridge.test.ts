@@ -10,5 +10,10 @@ describe('fixtures:bridge', async () => {
 
   it('Render hello world', async () => {
     expect(await $fetch('/')).to.contain('Hello Vue 2!')
+  describe('navigate', () => {
+    it('should redirect to index with navigateTo', async () => {
+      const html = await $fetch('/navigate-to/')
+      expect(html).toContain('Hello Vue 2!')
+    })
   })
 })
