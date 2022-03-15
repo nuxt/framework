@@ -217,15 +217,6 @@ function prepareRoutes (routes: NuxtPage[], parent?: NuxtPage) {
   return routes
 }
 
-export async function resolveLayouts (nuxt: Nuxt) {
-  const layoutDir = resolve(nuxt.options.srcDir, nuxt.options.dir.layouts)
-  const files = await resolveFiles(layoutDir, `*{${nuxt.options.extensions.join(',')}}`)
-
-  const layouts = files.map(file => ({ name: getNameFromPath(file), file }))
-  await nuxt.callHook('pages:layouts:extend', layouts)
-  return layouts
-}
-
 export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = new Set()): { imports: Set<string>, routes: string } {
   return {
     imports: metaImports,
@@ -236,7 +227,7 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
       return {
         ...Object.fromEntries(Object.entries(route).map(([key, value]) => [key, JSON.stringify(value)])),
         children: route.children ? normalizeRoutes(route.children, metaImports).routes : [],
-        meta: route.meta ? JSON.stringify(route.meta) : metaImportName,
+        meta: route.meta ? `{...(${metaImportName} || {}), ...${JSON.stringify(route.meta)}}` : metaImportName,
         component: genDynamicImport(file)
       }
     }))
