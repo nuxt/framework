@@ -10560,6 +10560,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-experiment-suspense@workspace:examples/experiment-suspense":
+  version: 0.0.0-use.local
+  resolution: "example-experiment-suspense@workspace:examples/experiment-suspense"
+  dependencies:
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-hello-world@workspace:examples/hello-world":
   version: 0.0.0-use.local
   resolution: "example-hello-world@workspace:examples/hello-world"
