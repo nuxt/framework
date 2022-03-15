@@ -8,8 +8,8 @@ export default {
    *
    * For more control, you can use `app/router.optionts.ts` file.
    *
-   * @see [documentation](https://router.vuejs.org/api/#history)
-   * @type {import('vue-router').CompilerOptions}
+   * @see [documentation](https://router.vuejs.org/api/#routeroptions)
+   * @type {import('vue-router').RouterOptions}
    *
    * @version 3
    */
