@@ -56,7 +56,7 @@
     "ohmyfetch": "^0.4.15",
     "ora": "^6.1.0",
     "pathe": "^0.2.0",
-    "perfect-debounce": "^0.1.1",
+    "perfect-debounce": "^0.1.2",
     "pkg-types": "^0.3.2",
     "pretty-bytes": "^6.0.0",
     "rollup": "^2.70.1",

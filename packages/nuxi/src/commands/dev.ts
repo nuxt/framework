@@ -69,7 +69,7 @@ export default defineNuxtCommand({
 
     // Watch for config changes
     // TODO: Watcher service, modules, and requireTree
-    const dLoad = debounce(load, 100)
+    const dLoad = debounce(load)
     const watcher = chokidar.watch([rootDir], { ignoreInitial: true, depth: 1 })
     watcher.on('all', (event, file) => {
       if (!currentNuxt) { return }

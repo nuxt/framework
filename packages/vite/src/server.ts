@@ -154,7 +154,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       logger.success(`Vite server built in ${time}ms`)
       await onBuild()
     }
-    const doBuild = debounce(_doBuild, 100)
+    const doBuild = debounce(_doBuild)
 
     // Initial build
     await _doBuild()

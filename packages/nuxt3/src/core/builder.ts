@@ -6,7 +6,7 @@ import { createApp, generateApp as _generateApp } from './app'
 
 export async function build (nuxt: Nuxt) {
   const app = createApp(nuxt)
-  const generateApp = debounce(() => _generateApp(nuxt, app), 25, { leading: true })
+  const generateApp = debounce(() => _generateApp(nuxt, app), undefined, { leading: true })
   await generateApp()
 
   if (nuxt.options.dev) {
@@ -48,7 +48,7 @@ function watch (nuxt: Nuxt) {
     ]
   })
 
-  const watchHook = debounce((event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir', path: string) => nuxt.callHook('builder:watch', event, path), 100)
+  const watchHook = debounce((event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir', path: string) => nuxt.callHook('builder:watch', event, path))
   watcher.on('all', watchHook)
   nuxt.hook('close', () => watcher.close())
   return watcher

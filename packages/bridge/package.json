@@ -47,7 +47,7 @@
     "node-fetch": "^3.2.3",
     "nuxi": "3.0.0",
     "pathe": "^0.2.0",
-    "perfect-debounce": "^0.1.1",
+    "perfect-debounce": "^0.1.2",
     "postcss": "^8",
     "postcss-import": "^14.0.2",
     "postcss-import-resolver": "^2.0.0",
