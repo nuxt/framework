@@ -48,7 +48,7 @@ function watch (nuxt: Nuxt) {
     ]
   })
 
-  const watchHook = debounce((event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir', path: string) => nuxt.callHook('builder:watch', event, path), 25, { leading: true })
+  const watchHook = debounce((event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir', path: string) => nuxt.callHook('builder:watch', event, path), 100)
   watcher.on('all', watchHook)
   nuxt.hook('close', () => watcher.close())
   return watcher
