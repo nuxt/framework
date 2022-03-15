@@ -8,8 +8,12 @@ describe('fixtures:bridge', async () => {
     server: true
   })
 
-  it('Render hello world', async () => {
-    expect(await $fetch('/')).to.contain('Hello Vue 2!')
+  describe('pages', () => {
+    it('render hello world', async () => {
+      expect(await $fetch('/')).to.contain('Hello Vue 2!')
+    })
+  })
+
   describe('navigate', () => {
     it('should redirect to index with navigateTo', async () => {
       const html = await $fetch('/navigate-to/')
