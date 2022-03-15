@@ -176,8 +176,8 @@ export const navigateTo = (to: Route) => {
   if (isProcessingMiddleware()) {
     return to
   }
-  const router: VueRouter = process.server ? useRouter() : (window as any).$nuxt.$router
   return router.push(to)
+  const router = useRouter()
 }
 
 /** This will abort navigation within a Nuxt route middleware handler. */

@@ -49,8 +49,8 @@ export const navigateTo = (to: RouteLocationRaw) => {
   if (isProcessingMiddleware()) {
     return to
   }
-  const router: Router = process.server ? useRouter() : (window as any).$nuxt.$router
   return router.push(to)
+  const router = useRouter()
 }
 
 /** This will abort navigation within a Nuxt route middleware handler. */
