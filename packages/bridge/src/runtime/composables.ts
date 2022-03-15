@@ -172,12 +172,26 @@ const isProcessingMiddleware = () => {
   return false
 }
 
-export const navigateTo = (to: Route) => {
+export interface NavigateToOptions {
+  replace?: boolean
+}
+
+export const navigateTo = (to: Route, options: NavigateToOptions = {}) => {
   if (isProcessingMiddleware()) {
     return to
   }
-  return router.push(to)
   const router = useRouter()
+  const { ssrContext } = useNuxtApp()
+  if (process.server && ssrContext) {
+    // Server-side redirection using h3 res from ssrContext
+    const { res } = ssrContext
+    const { route } = router.resolve(to)
+    res.writeHead(302, { Location: route.path })
+    return res.end()
+  } else {
+    // Client-side redirection using vue-router
+    return options.replace ? router.replace(to) : router.push(to)
+  }
 }
 
 /** This will abort navigation within a Nuxt route middleware handler. */
