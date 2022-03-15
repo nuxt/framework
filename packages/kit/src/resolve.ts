@@ -59,7 +59,7 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
   for (const ext of extensions) {
     // path.[ext]
     const pathWithExt = path + ext
-    if (!isDirectory && existsSync(pathWithExt)) {
+    if (existsSync(pathWithExt)) {
       return pathWithExt
     }
     // path/index.[ext]
@@ -82,7 +82,10 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
 /**
  * Try to resolve first existing file in paths
  */
-export async function findPath (paths: string[], opts?: ResolvePathOptions, pathType: 'file' | 'dir' = 'file'): Promise<string|null> {
+export async function findPath (paths: string|string[], opts?: ResolvePathOptions, pathType: 'file' | 'dir' = 'file'): Promise<string|null> {
+  if (!Array.isArray(paths)) {
+    paths = [paths]
+  }
   for (const path of paths) {
     const rPath = await resolvePath(path, opts)
     if (await existsSensitive(rPath)) {
