@@ -2747,6 +2747,7 @@ __metadata:
     semver: ^7.3.5
     ufo: ^0.7.11
     unbuild: latest
+    unimport: ^0.1.0
     unplugin: ^0.5.2
     unplugin-vue2-script-setup: ^0.10.0
     untyped: ^0.4.3
@@ -15799,6 +15800,7 @@ __metadata:
     nitropack: "npm:nitropack-edge@latest"
     nuxi: 3.0.0
     ohmyfetch: ^0.4.15
+    p-debounce: ^4.0.0
     pathe: ^0.2.0
     scule: ^0.2.1
     ufo: ^0.7.11
