@@ -87,6 +87,9 @@ jobs:
       - name: Test (fixtures)
         run: yarn test:fixtures
 
+      - name: Test Dev (fixtures)
+        run: yarn test:fixtures:dev
+
   test-fixtures-webpack:
     runs-on: ${{ matrix.os }}
 

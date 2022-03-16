@@ -5,7 +5,8 @@ import { setup, $fetch } from '@nuxt/test-utils'
 describe('fixtures:basic', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
-    server: true
+    server: true,
+    dev: !!process.env.TEST_DEV
   })
 
   describe('server api', () => {
