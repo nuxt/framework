@@ -79,10 +79,27 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')
   })
 
+  addComponent({
+    name: 'NuxtLayout',
+    filePath: resolve(nuxt.options.appDir, 'components/layout')
+  })
+
+  // Add <NuxtErrorBoundary>
+  addComponent({
+    name: 'NuxtErrorBoundary',
+    filePath: resolve(nuxt.options.appDir, 'components/nuxt-error-boundary')
+  })
+
   // Add <ClientOnly>
   addComponent({
     name: 'ClientOnly',
     filePath: resolve(nuxt.options.appDir, 'components/client-only')
+  })
+
+  // Add <NuxtLink>
+  addComponent({
+    name: 'NuxtLink',
+    filePath: resolve(nuxt.options.appDir, 'components/nuxt-link')
   })
 
   for (const m of modulesToInstall) {
