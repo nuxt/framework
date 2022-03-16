@@ -9,7 +9,7 @@ export default {
    * For more control, you can use `app/router.optionts.ts` file.
    *
    * @see [documentation](https://router.vuejs.org/api/#routeroptions)
-   * @type {Pick<import('vue-router').RouterOptions, 'linkActiveClass' | 'linkExactActiveClass' | 'end' | 'sensitive' | 'strict'>}
+   * @type {import('../src/types/router').RouterConfigOptions}
    *
    * @version 3
    */
