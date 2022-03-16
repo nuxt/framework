@@ -82,16 +82,19 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   }
 
   // Resolve plugins
-  app.plugins = []
+  app.plugins = [
+    ...nuxt.options.plugins.map(normalizePlugin)
+  ]
   for (const config of nuxt.options._layers.map(layer => layer.config)) {
     app.plugins.push(...[
-      ...config.plugins ?? [],
+      ...(config.plugins || []),
       ...await resolveFiles(config.srcDir, [
         'plugins/*.{ts,js,mjs,cjs,mts,cts}',
         'plugins/*/index.*{ts,js,mjs,cjs,mts,cts}'
       ])
     ].map(plugin => normalizePlugin(plugin as NuxtPlugin)))
   }
+  app.plugins = uniqueBy(app.plugins, 'src')
 
   // Extend app
   await nuxt.callHook('app:resolve', app)
@@ -99,4 +102,16 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
 function getNameFromPath (path: string) {
   return kebabCase(basename(path).replace(extname(path), '')).replace(/["']/g, '')
+}
+
+function uniqueBy (arr: any[], uniqueKey: string) {
+  const seen = new Set<string>()
+  const res = []
+  for (const i of arr) {
+    const key = i[uniqueKey]
+    if (seen.has(key)) { continue }
+    res.push(i)
+    seen.add(key)
+  }
+  return res
 }
