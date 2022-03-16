@@ -1,5 +1,6 @@
 import { defineComponent, h, resolveComponent, PropType, computed, DefineComponent } from 'vue'
 import { RouteLocationRaw, Router } from 'vue-router'
+import { hasProtocol } from 'ufo'
 
 import { useRouter } from '#app'
 
@@ -140,10 +141,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
           return false
         }
 
-        // Directly check if `to` is an external URL with Regex
-        // Regex101 expression: {@link https://regex101.com/r/1y7iod/1}
-        // TODO: Use `ufo.hasProtocol` when issue fixed https://github.com/unjs/ufo/issues/45
-        return !/^\/(?!\/)/.test(to.value)
+        return to.value === '' || hasProtocol(to.value, true)
       })
 
       return () => {
@@ -172,10 +170,10 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
 
         // Resolves `rel`
         checkPropConflicts(props, 'noRel', 'rel')
-        const rel = props.noRel
+        const rel = (props.noRel)
           ? null
           // converts `""` to `null` to prevent the attribute from being added as empty (`rel=""`)
-          : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, DEFAULT_EXTERNAL_REL_ATTRIBUTE) || null
+          : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, href ? DEFAULT_EXTERNAL_REL_ATTRIBUTE : '') || null
 
         return h('a', { href, rel, target }, slots.default())
       }
