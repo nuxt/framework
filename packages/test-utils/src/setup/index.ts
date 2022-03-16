@@ -3,6 +3,7 @@ import { loadFixture, buildFixture } from '../nuxt'
 import { listen } from '../server'
 import { createBrowser } from '../browser'
 import type { TestHooks, TestOptions } from '../types'
+import { startDevServer } from '../dev'
 import setupJest from './jest'
 import setupVitest from './vitest'
 
@@ -35,16 +36,20 @@ export function createTest (options: Partial<TestOptions>): TestHooks {
   }
 
   const setup = async () => {
-    if (ctx.options.fixture) {
-      await loadFixture()
-    }
+    if (ctx.options.dev) {
+      await startDevServer()
+    } else {
+      if (ctx.options.fixture) {
+        await loadFixture()
+      }
 
-    if (ctx.options.build) {
-      await buildFixture()
-    }
+      if (ctx.options.build) {
+        await buildFixture()
+      }
 
-    if (ctx.options.server) {
-      await listen()
+      if (ctx.options.server) {
+        await listen()
+      }
     }
 
     if (ctx.options.waitFor) {

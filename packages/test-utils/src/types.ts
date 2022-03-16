@@ -22,6 +22,7 @@ export interface TestOptions {
     launch?: LaunchOptions
   }
   server: boolean
+  dev: boolean
 }
 
 export interface TestContext {
