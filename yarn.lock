@@ -2914,7 +2914,7 @@ __metadata:
     "@nuxt/schema": ^3.0.0
     "@types/lodash.template": ^4
     "@types/semver": ^7
-    c12: ^0.1.4
+    c12: ^0.2.2
     consola: ^2.15.3
     defu: ^5.0.1
     globby: ^13.1.1
@@ -3084,7 +3084,7 @@ __metadata:
   dependencies:
     "@types/lodash.template": ^4
     "@types/semver": ^7
-    c12: ^0.1.4
+    c12: ^0.2.2
     create-require: ^1.1.1
     defu: ^5.0.1
     jiti: ^1.13.0
@@ -4944,10 +4944,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/reset@npm:0.28.2, @unocss/reset@npm:^0.28.1, @unocss/reset@npm:^0.28.2":
+"@unocss/reset@npm:0.28.2, @unocss/reset@npm:^0.28.1":
   version: 0.28.2
   resolution: "@unocss/reset@npm:0.28.2"
   checksum: 02ec692e45629515f438abb19da7da1c9b0843450717b25976f4a929e61d32ee2ec9e6f2ebbdb7a92e86bd488ab93cea83a9967f4e56177c25f7853453cd40fb
+  languageName: node
+  linkType: hard
+
+"@unocss/reset@npm:^0.29.0":
+  version: 0.29.0
+  resolution: "@unocss/reset@npm:0.29.0"
+  checksum: 40e1922662bdde24f6cb483cf742065bc446fc86978d17da6e0df38fc8ef8882bc4066fa0fed0506bc5f229f2683a985a00a3933387c2716268d8219dd6bc101
   languageName: node
   linkType: hard
 
@@ -7051,6 +7058,21 @@ __metadata:
     pathe: ^0.2.0
     rc9: ^1.2.0
   checksum: befcf5137a29c5df460dd6f6f5663f4a95c9da0800c002ca14696fcb5569eef6cc3dea26f3937e5ea7b2f9b9dd7dad612eb06272f2accaae72bec93a8d424a10
+  languageName: node
+  linkType: hard
+
+"c12@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "c12@npm:0.2.2"
+  dependencies:
+    defu: ^5.0.1
+    dotenv: ^14.3.2
+    gittar: ^0.1.1
+    jiti: ^1.12.14
+    mlly: ^0.4.1
+    pathe: ^0.2.0
+    rc9: ^1.2.0
+  checksum: d4be7f69b7c25703224b3c7df39b3122b0250b67c6cf84390655f9e33d55ed4706d67ebdd42873c37970c58a29b4fbe89f86afd99f5cbd452bf0f42ce637bc31
   languageName: node
   linkType: hard
 
@@ -15385,7 +15407,7 @@ __metadata:
     "@types/jsdom": ^16
     "@types/node": ^16.11.26
     "@types/object-hash": ^2
-    "@unocss/reset": ^0.28.2
+    "@unocss/reset": ^0.29.0
     esbuild: ^0.14.27
     eslint: ^8.11.0
     eslint-plugin-jsdoc: ^38.0.4
