@@ -11,7 +11,6 @@ export default defineNuxtCommand({
     process.env.NODE_ENV = process.env.NODE_ENV || 'test'
     const rootDir = resolve(args._[0] || '.')
     const { runTests } = await importTestUtils()
-    console.log({ rootDir })
     await runTests({
       rootDir
     })
