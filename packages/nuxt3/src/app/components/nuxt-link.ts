@@ -142,7 +142,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
         }
 
         // Directly check if `to` is an external URL by checking protocol
-        return hasProtocol(to.value)
+        return hasProtocol(to.value, true)
       })
 
       return () => {
