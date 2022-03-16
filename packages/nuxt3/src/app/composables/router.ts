@@ -50,7 +50,7 @@ export interface NavigateToOptions {
   replace?: boolean
 }
 
-export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}): Promise<void | NavigationFailure | void> | RouteLocationRaw => {
+export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}): Promise<void | NavigationFailure> | RouteLocationRaw => {
   if (isProcessingMiddleware()) {
     return to
   }
