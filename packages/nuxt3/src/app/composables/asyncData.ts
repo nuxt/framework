@@ -137,9 +137,12 @@ export function useAsyncData<
       asyncData.refresh()
     }
     if (options.watch) {
-      watch(options.watch, () => {
+      const unwatch = watch(options.watch, () => {
         asyncData.refresh()
       })
+      if (instance) {
+        onUnmounted(() => unwatch())
+      }
     }
   }
 
