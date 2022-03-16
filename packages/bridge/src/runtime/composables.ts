@@ -4,6 +4,7 @@ import type { MetaInfo } from 'vue-meta'
 import type VueRouter from 'vue-router'
 import type { Location, Route } from 'vue-router'
 import type { RuntimeConfig } from '@nuxt/schema'
+import { sendRedirect } from 'h3'
 import defu from 'defu'
 import { useNuxtApp } from './app'
 
@@ -183,10 +184,9 @@ export const navigateTo = (to: Route, options: NavigateToOptions = {}) => {
   const router = useRouter()
   if (process.server && useNuxtApp().ssrContext) {
     // Server-side redirection using h3 res from ssrContext
-    const { res } = useNuxtApp().ssrContext
-    const { route } = router.resolve(to)
-    res.writeHead(302, { Location: route.fullPath })
-    return res.end()
+    const res = useNuxtApp().ssrContext?.res
+    const redirectLocation = router.resolve(to).route.fullPath
+    return sendRedirect(res, redirectLocation)
   }
   // Client-side redirection using vue-router
   return options.replace ? router.replace(to) : router.push(to)
