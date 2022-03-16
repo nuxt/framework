@@ -73,7 +73,7 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Resolve layouts
   app.layouts = {}
-  for (const config of [nuxt.options, ...nuxt.options._extends.map(layer => layer.config)]) {
+  for (const config of [nuxt.options, ...nuxt.options._layers.map(layer => layer.config)]) {
     const layoutFiles = await resolveFiles(config.srcDir, `${config.dir?.layouts || 'layouts'}/*{${nuxt.options.extensions.join(',')}}`)
     for (const file of layoutFiles) {
       const name = getNameFromPath(file)
@@ -83,7 +83,7 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Resolve plugins
   app.plugins = []
-  for (const config of [...nuxt.options._extends.map(layer => layer.config), nuxt.options]) {
+  for (const config of [...nuxt.options._layers.map(layer => layer.config), nuxt.options]) {
     app.plugins.push(...[
       ...config.plugins ?? [],
       ...await resolveFiles(config.srcDir, [

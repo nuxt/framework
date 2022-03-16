@@ -44,7 +44,7 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
     layer.config.srcDir = resolve(layer.config.rootDir, layer.config.srcDir)
   }
 
-  nuxtConfig._extends = layers
+  nuxtConfig._layers = layers
 
   // Resolve and apply defaults
   return applyDefaults(NuxtConfigSchema, nuxtConfig) as NuxtOptions
