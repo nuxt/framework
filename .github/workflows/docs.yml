@@ -3,14 +3,14 @@ name: Docs
 on:
   push:
     paths:
-      - "docs/**"
-      - ".github/workflows/docs.yml"
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
     branches:
       - main
   pull_request:
     paths:
-      - "docs/**"
-      - ".github/workflows/docs.yml"
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
     branches:
       - main
 
@@ -28,7 +28,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: "yarn"
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn --immutable

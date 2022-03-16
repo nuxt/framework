@@ -3,12 +3,12 @@ name: CI
 on:
   push:
     paths-ignore:
-      - "docs/**"
+      - 'docs/**'
     branches:
       - main
   pull_request:
     paths-ignore:
-      - "docs/**"
+      - 'docs/**'
     branches:
       - main
 
@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: "yarn"
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn --immutable
@@ -53,7 +53,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: "yarn"
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn --immutable
@@ -74,7 +74,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: "yarn"
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn --immutable
@@ -101,7 +101,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: "yarn"
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn --immutable
@@ -127,7 +127,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: "yarn"
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn --immutable
@@ -165,7 +165,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: "yarn"
+          cache: 'yarn'
 
       - name: Install dependencies
         run: yarn --immutable
