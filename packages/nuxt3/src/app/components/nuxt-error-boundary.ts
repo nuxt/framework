@@ -1,5 +1,5 @@
-import { defineComponent, ref, onErrorCaptured, onBeforeUnmount } from 'vue'
-import { useNuxtApp, useRouter } from '#app'
+import { defineComponent, ref, onErrorCaptured } from 'vue'
+import { useNuxtApp } from '#app'
 
 export default defineComponent({
   setup (_props, { slots, emit }) {
@@ -15,9 +15,6 @@ export default defineComponent({
     })
 
     const clearError = () => { error.value = null }
-    const unregister = useRouter().afterEach(clearError)
-    onBeforeUnmount(unregister)
-
     return () => error.value ? slots.error?.({ error, clearError }) : slots.default?.()
   }
 })
