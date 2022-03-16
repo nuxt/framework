@@ -46,9 +46,9 @@ const firstRender = ref(true)
           <BoundaryTest />
         </div>
       </div>
-      <template #error="{ error, clearError }">
+      <template #error="{ error }">
         Here's a deliberately triggered error: {{ error }}
-        <button @click="firstRender = false; clearError()">
+        <button @click="firstRender = false; error = null">
           Clear error
         </button>
       </template>
