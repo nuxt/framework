@@ -39,16 +39,17 @@ export default defineNuxtModule<ComponentsOptions>({
           }))
         }
       }
-      if (dir && typeof dir === 'object') {
-        return {
-          ...dir,
-          path: resolve(cwd, resolveAlias(dir.path, {
-            ...nuxt.options.alias,
-            '~': cwd
-          }))
-        }
+      if (!dir) {
+        return []
       }
-      return []
+      const dirs = (dir.dirs || [dir]).filter(_dir => _dir.path)
+      return dirs.map(_dir => ({
+        ..._dir,
+        path: resolve(cwd, resolveAlias(_dir.path, {
+          ...nuxt.options.alias,
+          '~': cwd
+        }))
+      }))
     }
 
     // Resolve dirs
