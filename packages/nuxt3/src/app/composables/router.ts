@@ -60,10 +60,9 @@ export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}
     const { fullPath } = router.resolve(to)
     res.writeHead(302, { Location: fullPath })
     return res.end()
-  } else {
-    // Client-side redirection using vue-router
-    return options.replace ? router.replace(to) : router.push(to)
   }
+  // Client-side redirection using vue-router
+  return options.replace ? router.replace(to) : router.push(to)
 }
 
 /** This will abort navigation within a Nuxt route middleware handler. */
