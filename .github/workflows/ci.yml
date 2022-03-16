@@ -2,9 +2,13 @@ name: CI
 
 on:
   push:
+    paths-ignore:
+      - "docs/**"
     branches:
       - main
   pull_request:
+    paths-ignore:
+      - "docs/**"
     branches:
       - main
 
@@ -56,9 +60,6 @@ jobs:
 
       - name: Lint
         run: yarn lint
-
-      - name: Lint (docs)
-        run: yarn lint:docs
 
   test-fixtures:
     runs-on: ${{ matrix.os }}
