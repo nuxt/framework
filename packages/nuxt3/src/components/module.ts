@@ -53,12 +53,10 @@ export default defineNuxtModule<ComponentsOptions>({
 
     // Resolve dirs
     nuxt.hook('app:resolve', async () => {
-      const allDirs = [
-        ...normalizeDirs(componentOptions.dirs, nuxt.options.srcDir),
-        ...nuxt.options._layers
-          .map(layer => normalizeDirs(layer.config.components, layer.cwd))
-          .flat()
-      ]
+      // components/ dirs from all layers
+      const allDirs = nuxt.options._layers
+        .map(layer => normalizeDirs(layer.config.components, layer.cwd))
+        .flat()
 
       await nuxt.callHook('components:dirs', allDirs)
 
