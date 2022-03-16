@@ -23,7 +23,7 @@
     "test:fixtures:dev": "TEST_DEV=true yarn test:fixtures",
     "test:fixtures:webpack": "TEST_WITH_WEBPACK=1 yarn test:fixtures",
     "test:types": "yarn run nuxi prepare test/fixtures/basic && cd test/fixtures/basic && npx vue-tsc --noEmit",
-    "test:unit": "JITI_ESM_RESOLVE=1 yarn vitest packages",
+    "test:unit": "JITI_ESM_RESOLVE=1 yarn vitest --dir packages",
     "version": "yarn && git add yarn.lock"
   },
   "resolutions": {
