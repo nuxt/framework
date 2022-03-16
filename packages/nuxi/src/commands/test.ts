@@ -21,7 +21,12 @@ async function importTestUtils (): Promise<typeof import('@nuxt/test-utils')> {
   let err
   for (const pkg of ['@nuxt/test-utils-edge', '@nuxt/test-utils']) {
     try {
-      return await import(pkg)
+      const exports = await import(pkg)
+      // Detect old @nuxt/test-utils
+      if (!exports.runTests) {
+        throw new Error('Invalid version of `@nuxt/test-utils` is installed!')
+      }
+      return exports
     } catch (_err) { err = _err }
   }
   console.error(err)
