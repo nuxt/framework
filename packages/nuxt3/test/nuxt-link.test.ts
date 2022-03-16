@@ -53,8 +53,8 @@ describe('nuxt-link:to', () => {
     consoleWarnSpy.mockRestore()
   })
 
-  it('defaults to `null`', () => {
-    expect(nuxtLink().props.href).toBe(null)
+  it('defaults to `undefined`', () => {
+    expect(nuxtLink().props.href).toBe(undefined)
   })
 })
 
