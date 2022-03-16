@@ -181,12 +181,11 @@ export const navigateTo = (to: Route, options: NavigateToOptions = {}) => {
     return to
   }
   const router = useRouter()
-  const { ssrContext } = useNuxtApp()
-  if (process.server && ssrContext) {
+  if (process.server && useNuxtApp().ssrContext) {
     // Server-side redirection using h3 res from ssrContext
-    const { res } = ssrContext
+    const { res } = useNuxtApp().ssrContext
     const { route } = router.resolve(to)
-    res.writeHead(302, { Location: route.path })
+    res.writeHead(302, { Location: route.fullPath })
     return res.end()
   } else {
     // Client-side redirection using vue-router
