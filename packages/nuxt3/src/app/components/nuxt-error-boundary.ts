@@ -14,7 +14,6 @@ export default defineComponent({
       }
     })
 
-    const clearError = () => { error.value = null }
-    return () => error.value ? slots.error?.({ error, clearError }) : slots.default?.()
+    return () => error.value ? slots.error?.({ error }) : slots.default?.()
   }
 })
