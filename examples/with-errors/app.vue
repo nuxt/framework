@@ -12,7 +12,6 @@ if ('mounted' in route.query) {
 function triggerError () {
   throw new Error('manually triggered error')
 }
-const firstRender = ref(true)
 </script>
 
 <template>
@@ -40,19 +39,7 @@ const firstRender = ref(true)
       </nav>
     </template>
 
-    <NuxtErrorBoundary>
-      <div v-if="$route.path === '/' && firstRender">
-        <div>
-          <BoundaryTest />
-        </div>
-      </div>
-      <template #error="{ error }">
-        Here's a deliberately triggered error: {{ error }}
-        <button @click="firstRender = false; error = null">
-          Clear error
-        </button>
-      </template>
-    </NuxtErrorBoundary>
+    <FaultyComponent />
 
     <template #footer>
       <div class="text-center p-4 op-50">

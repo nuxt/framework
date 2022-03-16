@@ -1,5 +1,5 @@
 <script setup>
-throw new Error('Deliberate error in <BoundaryTest>')
+throw new Error('Deliberate error by <ThrowError>')
 </script>
 
 <template>
