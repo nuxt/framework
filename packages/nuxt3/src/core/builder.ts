@@ -1,23 +1,28 @@
 import chokidar from 'chokidar'
 import type { Nuxt } from '@nuxt/schema'
 import { isIgnored, tryImportModule } from '@nuxt/kit'
-import { createApp, generateApp } from './app'
+import { debounce } from 'perfect-debounce'
+import { createApp, generateApp as _generateApp } from './app'
 
 export async function build (nuxt: Nuxt) {
   const app = createApp(nuxt)
-  await generateApp(nuxt, app)
+  const generateApp = debounce(() => _generateApp(nuxt, app), undefined, { leading: true })
+  await generateApp()
 
   if (nuxt.options.dev) {
     watch(nuxt)
     nuxt.hook('builder:watch', async (event, path) => {
-      if (event !== 'change' && /app|plugins/i.test(path)) {
+      if (event !== 'change' && /app|error|plugins/i.test(path)) {
         if (path.match(/app/i)) {
           app.mainComponent = null
         }
-        await generateApp(nuxt, app)
+        if (path.match(/error/i)) {
+          app.errorComponent = null
+        }
+        await generateApp()
       }
     })
-    nuxt.hook('builder:generateApp', () => generateApp(nuxt, app))
+    nuxt.hook('builder:generateApp', generateApp)
   }
 
   await nuxt.callHook('build:before', { nuxt }, nuxt.options.build)
@@ -42,7 +47,8 @@ function watch (nuxt: Nuxt) {
       'node_modules'
     ]
   })
-  const watchHook = (event, path) => nuxt.callHook('builder:watch', event, path)
+
+  const watchHook = debounce((event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir', path: string) => nuxt.callHook('builder:watch', event, path))
   watcher.on('all', watchHook)
   nuxt.hook('close', () => watcher.close())
   return watcher

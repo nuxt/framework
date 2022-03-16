@@ -4,7 +4,7 @@ import type { Compiler, Configuration, Stats } from 'webpack'
 import type { TSConfig } from 'pkg-types'
 import type { ModuleContainer } from './module'
 import type { NuxtTemplate, Nuxt, NuxtApp } from './nuxt'
-import type { AutoImport, AutoImportSource } from './imports'
+import type { Preset as ImportPreset, Import } from 'unimport'
 import type { NuxtConfig, NuxtOptions } from './config'
 import type { Component, ComponentsDir, ScanDir, ComponentsOptions } from './components'
 import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
@@ -52,6 +52,13 @@ export type NuxtLayout = {
   file: string
 }
 
+export interface ImportPresetWithDeperection extends ImportPreset {
+  /**
+   * @deprecated renamed to `imports`
+   */
+  names?: string[]
+}
+
 export interface NuxtHooks {
   // Kit
   'kit:compatibility': (compatibility: NuxtCompatibility, issues: NuxtCompatibilityIssues) => HookResult
@@ -63,11 +70,10 @@ export interface NuxtHooks {
   'builder:generateApp': () => HookResult
   'pages:extend': (pages: NuxtPage[]) => HookResult
   'pages:middleware:extend': (middleware: NuxtMiddleware[]) => HookResult
-  'pages:layouts:extend': (layouts: NuxtLayout[]) => HookResult
 
   // Auto imports
-  'autoImports:sources': (autoImportSources: AutoImportSource[]) => HookResult
-  'autoImports:extend': (autoImports: AutoImport[]) => HookResult
+  'autoImports:sources': (presets: ImportPresetWithDeperection[]) => HookResult
+  'autoImports:extend': (imports: Import[]) => HookResult
   'autoImports:dirs': (dirs: string[]) => HookResult
 
   // Components
@@ -136,6 +142,8 @@ export interface NuxtHooks {
 
   // @nuxt/webpack
   'webpack:config': (webpackConfigs: Configuration[]) => HookResult
+  'webpack:devMiddleware': (middleware: (req: IncomingMessage, res: ServerResponse, next: (err?: any) => any) => any) => HookResult
+  'webpack:hotMiddleware': (middleware: (req: IncomingMessage, res: ServerResponse, next: (err?: any) => any) => any) => HookResult
   'build:compile': (options: { name: string, compiler: Compiler }) => HookResult
   'build:compiled': (options: { name: string, compiler: Compiler, stats: Stats }) => HookResult
   'build:resources': (mfs?: Compiler['outputFileSystem']) => HookResult
@@ -175,7 +183,7 @@ export interface NuxtHooks {
   // vite
   'vite:extend': (viteBuildContext: { nuxt: Nuxt, config: any }) => HookResult
   'vite:extendConfig': (viteInlineConfig: any, env: { isClient: boolean, isServer: boolean }) => HookResult
-  'vite:serverCreated': (viteServer: any) => HookResult
+  'vite:serverCreated': (viteServer: any, env: { isClient: boolean, isServer: boolean }) => HookResult
 }
 
 export type NuxtHookName = keyof NuxtHooks

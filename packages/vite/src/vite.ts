@@ -20,6 +20,8 @@ export interface ViteOptions extends InlineConfig {
 export interface ViteBuildContext {
   nuxt: Nuxt
   config: ViteOptions
+  clientServer?: vite.ViteDevServer
+  ssrServer?: vite.ViteDevServer
 }
 
 export async function bundle (nuxt: Nuxt) {
@@ -84,7 +86,7 @@ export async function bundle (nuxt: Nuxt) {
 
   await nuxt.callHook('vite:extend', ctx)
 
-  nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer) => {
+  nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer, env) => {
     // Invalidate virtual modules when templates are re-generated
     ctx.nuxt.hook('app:templatesGenerated', () => {
       for (const [id, mod] of server.moduleGraph.idToModuleMap) {
@@ -96,7 +98,7 @@ export async function bundle (nuxt: Nuxt) {
 
     const start = Date.now()
     warmupViteServer(server, ['/entry.mjs'])
-      .then(() => logger.info(`Vite warmed up in ${Date.now() - start}ms`))
+      .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
       .catch(logger.error)
   })
 
