@@ -16,7 +16,12 @@ export async function runTests (opts: RunTestOptions) {
   const { startVitest } = await import('vitest/dist/node.js')
   const succeeded = await startVitest(
     [] /* argv */,
-    { root: opts.rootDir },
+    // Vitest options
+    {
+      root: opts.rootDir,
+      run: true
+    },
+    // Vite options
     {
       esbuild: {
         tsconfigRaw: '{}'
