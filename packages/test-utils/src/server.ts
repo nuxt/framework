@@ -10,7 +10,7 @@ export async function startServer () {
   const port = await getRandomPort()
   ctx.url = 'http://localhost:' + port
   if (ctx.options.dev) {
-    await ctx.nuxt.server.listen(port)
+    ctx.listener = await ctx.nuxt.server.listen(port)
     await waitForPort(port, { retries: 8 })
     for (let i = 0; i < 50; i++) {
       await new Promise(resolve => setTimeout(resolve, 100))
@@ -39,6 +39,9 @@ export async function stopServer () {
   const ctx = useTestContext()
   if (ctx.serverProcess) {
     await ctx.serverProcess.kill()
+  }
+  if (ctx.listener) {
+    await ctx.listener.close()
   }
 }
 
