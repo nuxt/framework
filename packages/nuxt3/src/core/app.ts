@@ -67,7 +67,6 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   if (!app.rootComponent) {
     app.rootComponent = await findPath(['~/app.root', resolve(nuxt.options.appDir, 'components/nuxt-root.vue')])
   }
-  console.log('Root', app.rootComponent)
 
   // Resolve error component
   if (!app.errorComponent) {
