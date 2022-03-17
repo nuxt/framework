@@ -1,17 +1,16 @@
-<script setup>
-const version = 2 + 1
-</script>
-
 <template>
-  <div class="hello">
-    Hello Nuxt {{ version }}!
+  <div>
+    <Navbar />
+    <h1 v-if="$route.path === '/'">
+      Home
+    </h1>
+    <Mountain v-else/>
   </div>
 </template>
 
-<style scoped>
-.hello {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 3rem;
-  padding: 10rem;
+<style>
+body {
+  background-color: aquamarine;
+  font-family: sans-serif;
 }
 </style>

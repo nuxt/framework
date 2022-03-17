@@ -1,5 +1,5 @@
 <template>
-  <Suspense @resolve="onResolve">
+  <Suspense @pending="onPending" @resolve="onResolve">
     <ErrorComponent v-if="error" :error="error" />
     <App v-else />
   </Suspense>
@@ -12,6 +12,7 @@ import { callWithNuxt, throwError, useError, useNuxtApp } from '#app'
 import ErrorComponent from '#build/error-component.mjs'
 
 const nuxtApp = useNuxtApp()
+const onPending = () => nuxtApp.callHook('app:suspense:pending')
 const onResolve = () => nuxtApp.callHook('app:suspense:resolve')
 
 // vue:setup hook

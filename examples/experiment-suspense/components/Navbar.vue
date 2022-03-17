@@ -2,7 +2,8 @@
 const links = [
   ['Home', '/'],
   ['Everest', '/mount-everest'],
-  ['Aconcagua', '/aconcagua']
+  ['Aconcagua', '/aconcagua'],
+  ['404', '/404']
 ]
 const route = useRoute()
 </script>
