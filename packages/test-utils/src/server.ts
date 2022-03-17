@@ -22,7 +22,8 @@ export async function startServer () {
   await waitForPort(port, { retries: 8 })
 }
 
-export async function stopServer (ctx = useTestContext()) {
+export async function stopServer () {
+ctx = useTestContext()
   if (ctx.serverProcess) {
     await ctx.serverProcess.kill()
   }
