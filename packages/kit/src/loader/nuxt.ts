@@ -25,9 +25,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   opts.overrides = opts.overrides || opts.config || {}
 
   // Apply dev as config override
-  if (opts.dev) {
-    opts.overrides.dev = true
-  }
+  opts.overrides.dev = !!opts.dev
 
   const nearestNuxtPkg = await Promise.all(['nuxt3', 'nuxt-edge', 'nuxt']
     .map(pkg => resolvePackageJSON(pkg, { url: opts.cwd }).catch(() => null)))
