@@ -1,3 +1,4 @@
+import { pathToFileURL } from 'url'
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL, withQuery } from 'ufo'
 import { findStaticImports, findExports } from 'mlly'
@@ -13,12 +14,13 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
     name: 'nuxt:pages-macros-transform',
     enforce: 'post',
     transformInclude (id) {
-      const { search, pathname } = parseURL(id)
+      if (!id || id.startsWith('\x00')) { return }
+      const { pathname, search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
       return pathname.endsWith('.vue') || !!parseQuery(search).macro
     },
     transform (code, id) {
       const s = new MagicString(code)
-      const { search } = parseURL(id)
+      const { search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
 
       function result () {
         if (s.hasChanged()) {

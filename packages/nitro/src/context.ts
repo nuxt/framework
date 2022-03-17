@@ -83,7 +83,10 @@ export interface NitroContext {
   _internal: {
     runtimeDir: string
     hooks: Hookable<NitroHooks>
-  }
+  },
+  _layers: Array<{
+    serverDir: string
+  }>
 }
 
 type DeepPartial<T> = T extends Record<string, any> ? { [P in keyof T]?: DeepPartial<T[P]> | T[P] } : T
@@ -154,7 +157,10 @@ export function getNitroContext (nuxtOptions: NuxtOptions, input: NitroInput): N
     _internal: {
       runtimeDir,
       hooks: createHooks<NitroHooks>()
-    }
+    },
+    _layers: nuxtOptions._layers.map(layer => ({
+      serverDir: resolve(layer.config.srcDir, (layer.config.dir as any)?.server || 'server')
+    }))
   }
 
   defaults.preset = input.preset || process.env.NITRO_PRESET || detectTarget() || 'server'

@@ -4,7 +4,7 @@ import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import { logger, resolveModule } from '@nuxt/kit'
 import fse from 'fs-extra'
-import pDebounce from 'p-debounce'
+import { debounce } from 'perfect-debounce'
 import { withoutTrailingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
@@ -131,7 +131,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   const viteServer = await vite.createServer(serverConfig)
   ctx.ssrServer = viteServer
 
-  await ctx.nuxt.callHook('vite:serverCreated', viteServer)
+  await ctx.nuxt.callHook('vite:serverCreated', viteServer, { isClient: false, isServer: true })
 
   // Close server on exit
   ctx.nuxt.hook('close', () => viteServer.close())
@@ -140,7 +140,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   await viteServer.pluginContainer.buildStart({})
 
   if (ctx.nuxt.options.experimental.viteNode) {
-    logger.info('Using experimental vite-node server...')
+    logger.info('Vite server using experimental `vite-node`...')
     await prepareDevServerEntry(ctx)
   } else {
     // Build and watch
@@ -154,7 +154,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       logger.success(`Vite server built in ${time}ms`)
       await onBuild()
     }
-    const doBuild = pDebounce(_doBuild, 100)
+    const doBuild = debounce(_doBuild)
 
     // Initial build
     await _doBuild()

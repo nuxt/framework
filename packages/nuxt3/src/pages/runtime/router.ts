@@ -3,23 +3,21 @@ import {
   createRouter,
   createWebHistory,
   createMemoryHistory,
-  RouterLink,
   NavigationGuard
 } from 'vue-router'
 import { createError } from 'h3'
 import NuxtPage from './page'
-import NuxtLayout from './layout'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, NuxtApp, throwError, clearError } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, throwError, clearError } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
+// @ts-ignore
+import routerOptions from '#build/router.options'
 // @ts-ignore
 import { globalMiddleware, namedMiddleware } from '#build/middleware'
 
 declare module 'vue' {
   export interface GlobalComponents {
     NuxtPage: typeof NuxtPage
-    NuxtLayout: typeof NuxtLayout
-    NuxtLink: typeof RouterLink
     /** @deprecated */
     NuxtNestedPage: typeof NuxtPage
     /** @deprecated */
@@ -29,8 +27,6 @@ declare module 'vue' {
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('NuxtPage', NuxtPage)
-  nuxtApp.vueApp.component('NuxtLayout', NuxtLayout)
-  nuxtApp.vueApp.component('NuxtLink', RouterLink)
   // TODO: remove before release - present for backwards compatibility & intentionally undocumented
   nuxtApp.vueApp.component('NuxtNestedPage', NuxtPage)
   nuxtApp.vueApp.component('NuxtChild', NuxtPage)
@@ -41,6 +37,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     : createMemoryHistory(baseURL)
 
   const router = createRouter({
+    ...routerOptions,
     history: routerHistory,
     routes
   })
@@ -88,7 +85,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     if (process.client && !nuxtApp.isHydrating) {
       // Clear any existing errors
-      await callWithNuxt(nuxtApp as NuxtApp, clearError)
+      await callWithNuxt(nuxtApp, clearError)
     }
 
     for (const entry of middlewareEntries) {
@@ -98,7 +95,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         console.warn(`Unknown middleware: ${entry}. Valid options are ${Object.keys(namedMiddleware).join(', ')}.`)
       }
 
-      const result = await callWithNuxt(nuxtApp as NuxtApp, middleware, [to, from])
+      const result = await callWithNuxt(nuxtApp, middleware, [to, from])
       if (process.server) {
         if (result === false || result instanceof Error) {
           const error = result || createError({
