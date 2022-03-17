@@ -23,7 +23,7 @@ export function useFetch<
   request: Ref<ReqT> | ReqT | (() => ReqT),
   opts: UseFetchOptions<_ResT, Transform, PickKeys> = {}
 ) {
-  const key = opts.key || '_f' + hash([request, opts])
+  const key = '$f_' + (opts.key || hash([request, opts]))
   const _request = computed<FetchRequest>(() => {
     let r = request
     if (typeof r === 'function') {
