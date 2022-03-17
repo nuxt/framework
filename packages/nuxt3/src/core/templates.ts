@@ -168,3 +168,36 @@ export const layoutTemplate: NuxtTemplate = {
     ].join('\n')
   }
 }
+
+export const clientConfigTemplate: NuxtTemplate = {
+  filename: 'client-config.mjs',
+  getContents: () => [
+    'export const privateRuntimeConfig = __NUXT__.config;',
+    'export const publicRuntimeConfig = __NUXT__.config;',
+    'export default __NUXT__.config;'
+  ].join('\n')
+}
+
+export const publicPathTemplate: NuxtTemplate = {
+  filename: 'dynamic-paths.mjs',
+  getContents ({ nuxt }) {
+    return [
+      'import { joinURL } from \'ufo\'',
+      'import config from \'#config\'',
+
+      nuxt.options.dev
+        ? `const appConfig = ${JSON.stringify(nuxt.options.app)}`
+        : 'const appConfig = config.app',
+
+      'export const NUXT_BASE_URL = () => appConfig.baseURL',
+      'export const NUXT_BUILD_ASSETS_DIR = () => appConfig.buildAssetsDir',
+
+      'export const NUXT_BUILD_ASSETS_URL = (...path) => joinURL(NUXT_PUBLIC_ASSETS_URL(), NUXT_BUILD_ASSETS_DIR(), ...path)',
+
+      'export const NUXT_PUBLIC_ASSETS_URL = (...path) => {',
+      '  const publicBase = appConfig.cdnURL || appConfig.baseURL',
+      '  return path.length ? joinURL(publicBase, ...path) : publicBase',
+      '}'
+    ].join('\n')
+  }
+}

@@ -1,3 +1,4 @@
+import '#build/dynamic-paths.mjs'
 import { createSSRApp, createApp, nextTick } from 'vue'
 import { createNuxtApp, applyPlugins, normalizePlugins, CreateOptions } from '#app'
 import '#build/css'

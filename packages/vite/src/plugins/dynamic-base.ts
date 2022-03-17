@@ -45,35 +45,29 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
     enforce: 'post',
     transform (code, id) {
       const s = new MagicString(code)
-      let injectUtils = false
 
-      if (options.globalPublicPath && id.includes('entry.ts')) {
-        injectUtils = true
-        s.prepend(`${options.globalPublicPath} = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);\n`)
+      if (options.globalPublicPath && id.includes('dynamic-paths.mjs')) {
+        s.append(`${options.globalPublicPath} = NUXT_BUILD_ASSETS_URL();\n`)
       }
 
       const assetId = code.match(VITE_ASSET_RE)
       if (assetId) {
-        injectUtils = true
-        s.overwrite(0, code.length, `export default joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir, "${assetId[1]}".replace("/__NUXT_BASE__", ""));`)
+        s.overwrite(0, code.length,
+          [
+            'import { NUXT_BUILD_ASSETS_URL } from \'#build/dynamic-paths.mjs\';',
+            `export default NUXT_BUILD_ASSETS_URL("${assetId[1]}".replace("/__NUXT_BASE__", ""));`
+          ].join('\n')
+        )
       }
 
-      if (injectUtils || (code.includes('NUXT_BASE') && !code.includes('const NUXT_BASE ='))) {
-        s.prepend('const NUXT_BASE = NUXT_CONFIG.app.cdnURL || NUXT_CONFIG.app.baseURL;\n')
-
-        if (options.env === 'dev') {
-          s.prepend(`const NUXT_CONFIG = { app: ${JSON.stringify(options.devAppConfig)} };\n`)
-        } else if (options.env === 'server') {
-          s.prepend('import NUXT_CONFIG from "#config";\n')
-        } else {
-          s.prepend('const NUXT_CONFIG = __NUXT__.config;\n')
-        }
+      if (!id.includes('dynamic-paths.mjs') && code.includes('NUXT_BASE') && !code.includes('import { NUXT_BASE_URL }')) {
+        s.prepend('import { NUXT_BASE_URL, NUXT_PUBLIC_ASSETS_URL } from \'#build/dynamic-paths.mjs\';\n')
       }
 
       if (id === 'vite/preload-helper') {
-        injectUtils = true
         // Define vite base path as buildAssetsUrl (i.e. including _nuxt/)
-        s.replace(/const base = ['"]\/__NUXT_BASE__\/['"]/, 'const base = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir)')
+        s.prepend('import { NUXT_BUILD_ASSETS_DIR } from \'#build/dynamic-paths.mjs\';\n')
+        s.replace(/const base = ['"]\/__NUXT_BASE__\/['"]/, 'const base = NUXT_BUILD_ASSETS_DIR()')
       }
 
       // Sanitize imports
@@ -83,11 +77,7 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
       for (const delimiter of ['`', '"', "'"]) {
         const delimiterRE = new RegExp(`(?<!const base = )${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g')
         /* eslint-disable-next-line no-template-curly-in-string */
-        s.replace(delimiterRE, '`$1${NUXT_BASE}$2`')
-      }
-
-      if (injectUtils) {
-        s.prepend('import { joinURL } from "ufo";\n')
+        s.replace(delimiterRE, '`$1${NUXT_PUBLIC_ASSETS_URL()}$2`')
       }
 
       if (s.hasChanged()) {
