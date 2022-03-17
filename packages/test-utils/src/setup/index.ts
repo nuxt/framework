@@ -1,6 +1,6 @@
 import { createTestContext, setTestContext } from '../context'
 import { loadFixture, buildFixture } from '../nuxt'
-import { listen } from '../server'
+import { startServer, stopServer } from '../server'
 import { createBrowser } from '../browser'
 import type { TestHooks, TestOptions } from '../types'
 import setupJest from './jest'
@@ -24,7 +24,7 @@ export function createTest (options: Partial<TestOptions>): TestHooks {
 
   const afterAll = async () => {
     if (ctx.serverProcess) {
-      ctx.serverProcess.kill()
+      stopServer()
     }
     if (ctx.nuxt && ctx.nuxt.options.dev) {
       await ctx.nuxt.close()
@@ -44,7 +44,7 @@ export function createTest (options: Partial<TestOptions>): TestHooks {
     }
 
     if (ctx.options.server) {
-      await listen()
+      await startServer()
     }
 
     if (ctx.options.waitFor) {
