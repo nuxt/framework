@@ -35,3 +35,15 @@ export function setTestContext (context: TestContext): TestContext {
   currentContext = context
   return currentContext
 }
+
+export async function teardownContext (ctx: TestContext) {
+  if (ctx.serverProcess) {
+    ctx.serverProcess.kill()
+  }
+  if (ctx.nuxt && ctx.nuxt.options.dev) {
+    await ctx.nuxt.close()
+  }
+  if (ctx.browser) {
+    await ctx.browser.close()
+  }
+}

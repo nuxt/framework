@@ -1,4 +1,4 @@
-import { createTestContext, setTestContext } from '../context'
+import { createTestContext, setTestContext, teardownContext } from '../context'
 import { loadFixture, buildFixture } from '../nuxt'
 import { listen } from '../server'
 import { createBrowser } from '../browser'
@@ -23,15 +23,7 @@ export function createTest (options: Partial<TestOptions>): TestHooks {
   }
 
   const afterAll = async () => {
-    if (ctx.serverProcess) {
-      ctx.serverProcess.kill()
-    }
-    if (ctx.nuxt && ctx.nuxt.options.dev) {
-      await ctx.nuxt.close()
-    }
-    if (ctx.browser) {
-      await ctx.browser.close()
-    }
+    await teardownContext(ctx)
   }
 
   const setup = async () => {
@@ -66,9 +58,7 @@ export function createTest (options: Partial<TestOptions>): TestHooks {
 }
 
 export async function setup (options: Partial<TestOptions>) {
-  const hooks = createTest(options)
+  const setupFn = setupMaps[options.runner || 'vitest']
 
-  const setupFn = setupMaps[hooks.ctx.options.runner]
-
-  await setupFn(hooks)
+  await setupFn(() => createTest(options))
 }

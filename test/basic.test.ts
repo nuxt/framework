@@ -18,6 +18,7 @@ describe('fixtures:basic', async () => {
     })
 
     it('should preserve states', async () => {
+      await $fetch('/api/counter?reset')
       expect(await $fetch('/api/counter')).toEqual({ count: 0 })
       expect(await $fetch('/api/counter')).toEqual({ count: 1 })
       expect(await $fetch('/api/counter')).toEqual({ count: 2 })
