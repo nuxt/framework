@@ -24,7 +24,7 @@ export async function startServer () {
     ctx.serverProcess = execa('node', [
       resolve(ctx.nuxt.options.nitro.output.dir, 'server/index.mjs')
     ], {
-      stdout: 'inherit',
+      stdio: 'inherit',
       env: {
         ...process.env,
         PORT: String(port),
