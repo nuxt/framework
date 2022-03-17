@@ -24,6 +24,11 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   opts.cwd = opts.cwd || opts.rootDir
   opts.overrides = opts.overrides || opts.config || {}
 
+  // Apply dev as config override
+  if (opts.dev) {
+    opts.overrides.dev = true
+  }
+
   const nearestNuxtPkg = await Promise.all(['nuxt3', 'nuxt-edge', 'nuxt']
     .map(pkg => resolvePackageJSON(pkg, { url: opts.cwd }).catch(() => null)))
     .then(r => r.filter(Boolean).sort((a, b) => b.length - a.length)[0])
