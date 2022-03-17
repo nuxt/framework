@@ -26,7 +26,7 @@ export async function listen (options: ListenOptions = {}) {
   await waitForPort(port, { retries: 8 })
 }
 
-export function terminateServerProcess () {
+export function stopServer () {
   const ctx = useTestContext()
   if (ctx.serverProcess) {
     ctx.serverProcess.kill()
@@ -34,7 +34,7 @@ export function terminateServerProcess () {
 }
 
 export async function restartServer (options: ListenOptions = {}) {
-  terminateServerProcess()
+  stopServer()
   await listen(options)
 }
 
