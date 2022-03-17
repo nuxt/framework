@@ -7,5 +7,5 @@ export default defineNuxtConfig({
   experimental: {
     reactivityTransform: true
   }
-  // builder: 'weppack'
+  // builder: 'webpack'
 })
