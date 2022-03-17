@@ -11,18 +11,18 @@ export interface LoadNuxtOptions extends LoadNuxtConfigOptions {
   ready?: boolean
 
   /** @deprecated Use cwd option */
-  rootDir: LoadNuxtConfigOptions['cwd']
+  rootDir?: LoadNuxtConfigOptions['cwd']
 
   /** @deprecated use overrides option */
   config?: LoadNuxtConfigOptions['overrides']
 }
 
 export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
-  const resolveOpts: RequireModuleOptions = { paths: opts.cwd }
-
   // Backward compatibility
   opts.cwd = opts.cwd || opts.rootDir
   opts.overrides = opts.overrides || opts.config || {}
+
+  const resolveOpts: RequireModuleOptions = { paths: opts.cwd }
 
   // Apply dev as config override
   opts.overrides.dev = !!opts.dev
