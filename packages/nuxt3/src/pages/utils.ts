@@ -1,6 +1,6 @@
 import { basename, extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
-import type { Nuxt, NuxtMiddleware, NuxtPage } from '@nuxt/schema'
+import { NuxtConfigSchema, Nuxt, NuxtMiddleware, NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
 import { kebabCase, pascalCase } from 'scule'
 import { genImport, genDynamicImport, genArrayFromRaw } from 'knitwork'
@@ -25,13 +25,26 @@ interface SegmentToken {
 }
 
 export async function resolvePagesRoutes (nuxt: Nuxt) {
-  const pagesDir = resolve(nuxt.options.srcDir, nuxt.options.dir.pages)
-  const files = await resolveFiles(pagesDir, `**/*{${nuxt.options.extensions.join(',')}}`)
+  // Route layers priority (Low to High):
+  // Extended Layer (1) < Extended Layer (2) < ... < Extended Layer (N-1) < Extended Layer (N) < Local layer
+  // Therefore, we make the local layer last
+  const routeLayers = [...nuxt.options._layers.splice(1), nuxt.options._layers[0]]
 
-  // Sort to make sure parent are listed first
-  files.sort()
+  const pagesDirs = routeLayers.map(
+    ({ config }) => resolve(config.srcDir, config.dir?.pages ?? NuxtConfigSchema.dir.pages)
+  )
 
-  return generateRoutesFromFiles(files, pagesDir)
+  const allRoutes = (await Promise.all(
+    pagesDirs.map(async (dir) => {
+      const files = await resolveFiles(dir, `**/*{${nuxt.options.extensions.join(',')}}`)
+      // Sort to make sure parent are listed first
+      files.sort()
+      return generateRoutesFromFiles(files, dir)
+    })
+  )).flat()
+
+  // Map will returns unique routes using last duplicated route name
+  return [...new Map(allRoutes.map(route => [route.name, route])).values()]
 }
 
 export function generateRoutesFromFiles (files: string[], pagesDir: string): NuxtPage[] {

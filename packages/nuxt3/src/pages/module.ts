@@ -1,5 +1,6 @@
 import { existsSync } from 'fs'
 import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin, findPath } from '@nuxt/kit'
+import { NuxtConfigSchema } from '@nuxt/schema'
 import { resolve } from 'pathe'
 import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
@@ -12,11 +13,14 @@ export default defineNuxtModule({
     name: 'router'
   },
   setup (_options, nuxt) {
-    const pagesDir = resolve(nuxt.options.srcDir, nuxt.options.dir.pages)
+    const pagesDirs = nuxt.options._layers.map(
+      ({ config }) => resolve(config.srcDir, config.dir?.pages ?? NuxtConfigSchema.dir.pages)
+    )
+
     const runtimeDir = resolve(distDir, 'pages/runtime')
 
     // Disable module (and use universal router) if pages dir do not exists
-    if (!existsSync(pagesDir)) {
+    if (!pagesDirs.some(dir => existsSync(dir))) {
       addPlugin(resolve(distDir, 'app/plugins/router'))
       return
     }
