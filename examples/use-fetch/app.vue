@@ -1,6 +1,6 @@
 <script setup>
 const count = ref(1)
-const { data } = await useFetch(() => `/api/hello/${count.value}`, { params: { count: count.value } })
+const { data } = await useFetch(() => `/api/hello/${count.value}`, { params: { token: 123 } })
 </script>
 
 <template>
