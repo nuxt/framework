@@ -57,7 +57,3 @@ export function useLazyFetch<
 ) {
   return useFetch(url, { ...opts, lazy: true })
 }
-
-function generateKey (keys) {
-  return '$f' + murmurHashV3(JSON.stringify(keys))
-}
