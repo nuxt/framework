@@ -15,7 +15,7 @@ export async function startDevServer () {
 
   const stdout = new Writable({
     write (data, encoding, callback) {
-      console.log({ out: data.toString() })
+      // console.log({ out: data.toString() })
       if (data.toString().includes('Nitro built')) {
         serverReadyResolve()
       }
