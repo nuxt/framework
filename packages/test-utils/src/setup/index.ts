@@ -24,7 +24,9 @@ export function createTest (options: Partial<TestOptions>): TestHooks {
 
   const afterAll = async () => {
     if (ctx.serverProcess) {
-      await stopServer(ctx)
+      setTestContext(ctx)
+      await stopServer()
+      setTestContext(undefined)
     }
     if (ctx.nuxt && ctx.nuxt.options.dev) {
       await ctx.nuxt.close()
