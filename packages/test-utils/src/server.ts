@@ -23,7 +23,7 @@ export async function startServer () {
 }
 
 export async function stopServer () {
-ctx = useTestContext()
+  ctx = useTestContext()
   if (ctx.serverProcess) {
     await ctx.serverProcess.kill()
   }
