@@ -46,9 +46,9 @@ const logout = () => {
     <template #tips>
       <div>
         This demo showcases using the
-        <NLink href="https://v3.nuxtjs.org/docs/usage/cookies" target="_blank">
+        <NuxtLink to="https://v3.nuxtjs.org/docs/usage/cookies" target="_blank">
           useCookie
-        </NLink>
+        </NuxtLink>
         API to persist small amounts of data that can be used both client-side and server-side.
       </div>
     </template>
