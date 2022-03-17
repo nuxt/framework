@@ -6,9 +6,9 @@ import { useTestContext } from './context'
 
 export async function startServer () {
   const ctx = useTestContext()
+  await stopServer()
   const port = await getRandomPort()
   ctx.url = 'http://localhost:' + port
-  await stopServer()
   ctx.serverProcess = execa('node', [
     // @ts-ignore
     resolve(ctx.nuxt.options.nitro.output.dir, 'server/index.mjs')
