@@ -14,6 +14,7 @@ export function createTestContext (options: Partial<TestOptions>): TestContext {
     server: options.browser,
     build: options.browser || options.server,
     nuxtConfig: {},
+    env: {},
     // TODO: auto detect based on process.env
     runner: <TestRunner>'vitest',
     browserOptions: {

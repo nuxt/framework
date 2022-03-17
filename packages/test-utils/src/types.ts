@@ -17,6 +17,7 @@ export interface TestOptions {
   browser: boolean
   runner: TestRunner
   logLevel: number
+  env: Record<string, string>
   browserOptions: {
     type: 'chromium' | 'firefox' | 'webkit'
     launch?: LaunchOptions
