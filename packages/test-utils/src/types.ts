@@ -12,6 +12,7 @@ export interface TestOptions {
   buildDir: string
   nuxtConfig: NuxtConfig
   build: boolean
+  dev: boolean
   setupTimeout: number
   waitFor: number
   browser: boolean

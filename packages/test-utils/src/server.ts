@@ -8,16 +8,29 @@ export async function listen () {
   const ctx = useTestContext()
   const port = await getRandomPort()
   ctx.url = 'http://localhost:' + port
-  ctx.serverProcess = execa('node', [
-    // @ts-ignore
-    resolve(ctx.nuxt.options.nitro.output.dir, 'server/index.mjs')
-  ], {
-    env: {
-      PORT: String(port),
-      NODE_ENV: 'test'
+  if (ctx.options.dev) {
+    await ctx.nuxt.server.listen(port)
+    await waitForPort(port, { retries: 8 })
+    for (let i = 0; i < 50; i++) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+      const res = await $fetch('/')
+      if (!res.includes('__NUXT_LOADING__')) {
+        return
+      }
     }
-  })
-  await waitForPort(port, { retries: 8 })
+    throw new Error('Timeout waiting for dev server!')
+  } else {
+    ctx.serverProcess = execa('node', [
+      resolve(ctx.nuxt.options.nitro.output.dir, 'server/index.mjs')
+    ], {
+      stdout: 'inherit',
+      env: {
+        PORT: String(port),
+        NODE_ENV: 'test'
+      }
+    })
+    await waitForPort(port, { retries: 8 })
+  }
 }
 
 export function fetch (path: string, options?: any) {
