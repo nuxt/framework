@@ -9,5 +9,11 @@ export default {
    * Use vite-node for on-demand server chunk loading
    * @version 3
    */
-  viteNode: process.env.EXPERIMENTAL_VITE_NODE ? true : false
+  viteNode: process.env.EXPERIMENTAL_VITE_NODE ? true : false,
+
+  /**
+   * Enable Vue's reactivity transfrom: https://vuejs.org/guide/extras/reactivity-transform.html
+   * @version 3
+   */
+  reactivityTransform: false
 }
