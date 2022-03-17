@@ -4,11 +4,7 @@ import { getRandomPort, waitForPort } from 'get-port-please'
 import { fetch as _fetch, $fetch as _$fetch, FetchOptions } from 'ohmyfetch'
 import { useTestContext } from './context'
 
-export interface ServerOptions {
-  env?: Record<string, string>
-}
-
-export async function startServer (options: ServerOptions = {}) {
+export async function startServer () {
   const ctx = useTestContext()
   const port = await getRandomPort()
   ctx.url = 'http://localhost:' + port
@@ -18,8 +14,7 @@ export async function startServer (options: ServerOptions = {}) {
     resolve(ctx.nuxt.options.nitro.output.dir, 'server/index.mjs')
   ], {
     env: {
-      ...ctx.options.env || {},
-      ...options.env || {},
+      ...process.env,
       PORT: String(port),
       NODE_ENV: 'test'
     }
