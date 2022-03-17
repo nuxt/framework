@@ -10,7 +10,7 @@ export function createTestContext (options: Partial<TestOptions>): TestContext {
     fixture: 'fixture',
     configFile: 'nuxt.config',
     setupTimeout: 60000,
-    dev: !!JSON.parse(process.env.NUXT_TEST_DEV || 'true'),
+    dev: !!JSON.parse(process.env.NUXT_TEST_DEV || 'false'),
     logLevel: 1,
     server: options.browser,
     build: options.browser || options.server,
