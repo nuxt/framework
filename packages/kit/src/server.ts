@@ -1,9 +1,10 @@
 import { useNuxt } from './context'
 import { IncomingMessage, ServerResponse } from 'http'
+import { Middleware } from 'h3'
 
 export interface ServerMiddleware {
-  path: string,
-  handler: (req: IncomingMessage, res: ServerResponse) => void
+  path?: string,
+  handler: Middleware | string
 }
 
 /** Adds a new server middleware to the end of the server middleware array. */
