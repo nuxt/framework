@@ -1,6 +1,6 @@
 import chokidar from 'chokidar'
 import type { Nuxt } from '@nuxt/schema'
-import { isIgnored, tryImportModule } from '@nuxt/kit'
+import { importModule, isIgnored } from '@nuxt/kit'
 import { debounce } from 'perfect-debounce'
 import { createApp, generateApp as _generateApp } from './app'
 
@@ -57,16 +57,19 @@ function watch (nuxt: Nuxt) {
 async function bundle (nuxt: Nuxt) {
   try {
     const { bundle } = typeof nuxt.options.builder === 'string'
-      ? await tryImportModule(nuxt.options.builder, { paths: nuxt.options.rootDir }) || {}
+      ? await importModule(nuxt.options.builder, { paths: nuxt.options.rootDir })
       : nuxt.options.builder
-
-    if (!bundle) {
-      throw new Error(`[nuxt] Could not load \`${nuxt.options.builder}\`. Is it in your project dependencies?`)
-    }
 
     return bundle(nuxt)
   } catch (error) {
     await nuxt.callHook('build:error', error)
+
+    if (error.toString().includes('Cannot find module \'@nuxt/webpack-builder\'')) {
+      throw new Error([
+        'Could not load `@nuxt/webpack-builder`. You may need to add it to your project dependencies, following the steps in `https://github.com/nuxt/framework/pull/2812`.'
+      ].join('\n'))
+    }
+
     throw error
   }
 }
