@@ -119,7 +119,9 @@ function baseAlias (ctx: WebpackConfigContext) {
     ...ctx.alias
   }
   if (ctx.isClient) {
-    ctx.alias['#config'] = resolve(ctx.nuxt.options.buildDir, 'client-config.mjs')
+    ctx.alias['#_config'] = resolve(ctx.nuxt.options.buildDir, 'config.client.mjs')
+  } else {
+    ctx.alias['#_config'] = resolve(ctx.nuxt.options.buildDir, 'config.server.mjs')
   }
 }
 

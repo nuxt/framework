@@ -170,11 +170,15 @@ export const layoutTemplate: NuxtTemplate = {
 }
 
 export const clientConfigTemplate: NuxtTemplate = {
-  filename: 'client-config.mjs',
+  filename: 'config.client.mjs',
+  getContents: () => 'export default __NUXT__.config'
+}
+
+export const serverConfigTemplate: NuxtTemplate = {
+  filename: 'config.server.mjs',
   getContents: () => [
-    'export const privateConfig = __NUXT__.config',
-    'export const publicConfig = __NUXT__.config',
-    'export default __NUXT__.config'
+    'import config from \'#config\'',
+    'export default config'
   ].join('\n')
 }
 
@@ -183,7 +187,7 @@ export const publicPathTemplate: NuxtTemplate = {
   getContents ({ nuxt }) {
     return [
       'import { joinURL } from \'ufo\'',
-      'import config from \'#config\'',
+      'import config from \'#_config\'',
 
       nuxt.options.dev
         ? `const appConfig = ${JSON.stringify(nuxt.options.app)}`
