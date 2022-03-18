@@ -24,11 +24,13 @@ interface SegmentToken {
   value: string
 }
 
-export async function resolvePagesRoutes (nuxt: Nuxt) {
+export async function resolvePagesRoutes (): Promise<NuxtPage[]> {
+  const nuxt = useNuxt()
+
   // Route layers priority (Low to High):
   // Extended Layer (1) < Extended Layer (2) < ... < Extended Layer (N-1) < Extended Layer (N) < Local layer
   // Therefore, we make the local layer last
-  const routeLayers = [...nuxt.options._layers.splice(1), nuxt.options._layers[0]]
+  const routeLayers = [...nuxt.options._layers.slice(1), nuxt.options._layers[0]]
 
   const pagesDirs = routeLayers.map(
     ({ config }) => resolve(config.srcDir, config.dir?.pages ?? NuxtConfigSchema.dir.pages)
@@ -249,11 +251,25 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
 
 export async function resolveMiddleware (): Promise<NuxtMiddleware[]> {
   const nuxt = useNuxt()
-  const middlewareDir = resolve(nuxt.options.srcDir, nuxt.options.dir.middleware)
-  const files = await resolveFiles(middlewareDir, `*{${nuxt.options.extensions.join(',')}}`)
-  const middleware = files.map(path => ({ name: getNameFromPath(path), path, global: hasSuffix(path, '.global') }))
-  await nuxt.callHook('pages:middleware:extend', middleware)
-  return middleware
+
+  // Route layers priority (Low to High):
+  // Extended Layer (1) < Extended Layer (2) < ... < Extended Layer (N-1) < Extended Layer (N) < Local layer
+  // Therefore, we make the local layer last
+  const middlewareLayers = [...nuxt.options._layers.slice(1), nuxt.options._layers[0]]
+
+  const middlewareDirs = middlewareLayers.map(
+    ({ config }) => resolve(config.srcDir, config.dir?.middleware ?? NuxtConfigSchema.dir.middleware)
+  )
+
+  const allMiddlewares = (await Promise.all(
+    middlewareDirs.map(async (dir) => {
+      const files = await resolveFiles(dir, `*{${nuxt.options.extensions.join(',')}}`)
+      return files.map(path => ({ name: getNameFromPath(path), path, global: hasSuffix(path, '.global') }))
+    })
+  )).flat()
+
+  // Map will returns unique middlewares using last duplicated middleware name
+  return [...new Map(allMiddlewares.map(middleware => [middleware.name, middleware])).values()]
 }
 
 function getNameFromPath (path: string) {

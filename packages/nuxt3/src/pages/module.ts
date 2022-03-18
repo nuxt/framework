@@ -72,9 +72,10 @@ export default defineNuxtModule({
     addTemplate({
       filename: 'routes.mjs',
       async getContents () {
-        const pages = await resolvePagesRoutes(nuxt)
+        const pages = await resolvePagesRoutes()
         await nuxt.callHook('pages:extend', pages)
         const { routes, imports } = normalizeRoutes(pages)
+        console.log(routes)
         return [...imports, `export default ${routes}`].join('\n')
       }
     })
@@ -103,6 +104,7 @@ export default defineNuxtModule({
       filename: 'middleware.mjs',
       async getContents () {
         const middleware = await resolveMiddleware()
+        await nuxt.callHook('pages:middleware:extend', middleware)
         const globalMiddleware = middleware.filter(mw => mw.global)
         const namedMiddleware = middleware.filter(mw => !mw.global)
         const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
