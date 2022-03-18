@@ -4,6 +4,7 @@ import { parseQuery, parseURL } from 'ufo'
 import { Component } from '@nuxt/schema'
 import { genImport } from 'knitwork'
 import MagicString from 'magic-string'
+import { pascalCase } from 'scule'
 
 interface LoaderOptions {
   getComponents(): Component[]
@@ -24,8 +25,9 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => ({
   }
 }))
 
-function findComponent (components: Component[], name:string) {
-  return components.find(({ pascalName, kebabName }) => [pascalName, kebabName].includes(name))
+function findComponent (components: Component[], name: string) {
+  const id = pascalCase(name)
+  return components.find(component => id === component.pascalName)
 }
 
 function transform (code: string, id: string, components: Component[]) {
