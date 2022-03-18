@@ -47,27 +47,27 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
       const s = new MagicString(code)
 
       if (options.globalPublicPath && id.includes('dynamic-paths.mjs')) {
-        s.append(`${options.globalPublicPath} = NUXT_BUILD_ASSETS_URL();\n`)
+        s.append(`${options.globalPublicPath} = __buildAssetsURL();\n`)
       }
 
       const assetId = code.match(VITE_ASSET_RE)
       if (assetId) {
         s.overwrite(0, code.length,
           [
-            'import { NUXT_BUILD_ASSETS_URL } from \'#build/dynamic-paths.mjs\';',
-            `export default NUXT_BUILD_ASSETS_URL("${assetId[1]}".replace("/__NUXT_BASE__", ""));`
+            'import { __buildAssetsURL } from \'#build/dynamic-paths.mjs\';',
+            `export default __buildAssetsURL("${assetId[1]}".replace("/__NUXT_BASE__", ""));`
           ].join('\n')
         )
       }
 
-      if (!id.includes('dynamic-paths.mjs') && code.includes('NUXT_BASE') && !code.includes('import { NUXT_BASE_URL }')) {
-        s.prepend('import { NUXT_BASE_URL, NUXT_PUBLIC_ASSETS_URL } from \'#build/dynamic-paths.mjs\';\n')
+      if (!id.includes('dynamic-paths.mjs') && code.includes('NUXT_BASE') && !code.includes('import { __baseURL }')) {
+        s.prepend('import { __baseURL, __publicAssetsURL } from \'#build/dynamic-paths.mjs\';\n')
       }
 
       if (id === 'vite/preload-helper') {
         // Define vite base path as buildAssetsUrl (i.e. including _nuxt/)
-        s.prepend('import { NUXT_BUILD_ASSETS_DIR } from \'#build/dynamic-paths.mjs\';\n')
-        s.replace(/const base = ['"]\/__NUXT_BASE__\/['"]/, 'const base = NUXT_BUILD_ASSETS_DIR()')
+        s.prepend('import { __buildAssetsDir } from \'#build/dynamic-paths.mjs\';\n')
+        s.replace(/const base = ['"]\/__NUXT_BASE__\/['"]/, 'const base = __buildAssetsDir()')
       }
 
       // Sanitize imports
@@ -77,7 +77,7 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
       for (const delimiter of ['`', '"', "'"]) {
         const delimiterRE = new RegExp(`(?<!const base = )${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g')
         /* eslint-disable-next-line no-template-curly-in-string */
-        s.replace(delimiterRE, '`$1${NUXT_PUBLIC_ASSETS_URL()}$2`')
+        s.replace(delimiterRE, '`$1${__publicAssetsURL()}$2`')
       }
 
       if (s.hasChanged()) {
