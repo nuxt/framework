@@ -55,10 +55,15 @@ function watch (nuxt: Nuxt) {
 }
 
 async function bundle (nuxt: Nuxt) {
-  const { bundle } = typeof nuxt.options.builder === 'string'
-    ? await tryImportModule(nuxt.options.builder, { paths: nuxt.options.rootDir })
-    : nuxt.options.builder
   try {
+    const { bundle } = typeof nuxt.options.builder === 'string'
+      ? await tryImportModule(nuxt.options.builder, { paths: nuxt.options.rootDir }) || {}
+      : nuxt.options.builder
+
+    if (!bundle) {
+      throw new Error(`[nuxt] Could not load \`${nuxt.options.builder}\`. Is it in your project dependencies?`)
+    }
+
     return bundle(nuxt)
   } catch (error) {
     await nuxt.callHook('build:error', error)
