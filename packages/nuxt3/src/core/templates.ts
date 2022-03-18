@@ -172,9 +172,9 @@ export const layoutTemplate: NuxtTemplate = {
 export const clientConfigTemplate: NuxtTemplate = {
   filename: 'client-config.mjs',
   getContents: () => [
-    'export const privateRuntimeConfig = __NUXT__.config;',
-    'export const publicRuntimeConfig = __NUXT__.config;',
-    'export default __NUXT__.config;'
+    'export const privateConfig = __NUXT__.config',
+    'export const publicConfig = __NUXT__.config',
+    'export default __NUXT__.config'
   ].join('\n')
 }
 
