@@ -27,12 +27,12 @@ interface SegmentToken {
 export async function resolvePagesRoutes (): Promise<NuxtPage[]> {
   const nuxt = useNuxt()
 
-  // Route layers priority (Low to High):
+  // Page layers priority (Low to High):
   // Extended Layer (1) < Extended Layer (2) < ... < Extended Layer (N-1) < Extended Layer (N) < Local layer
   // Therefore, we make the local layer last
-  const routeLayers = [...nuxt.options._layers.slice(1), nuxt.options._layers[0]]
+  const pageLayers = [...nuxt.options._layers.slice(1), nuxt.options._layers[0]]
 
-  const pagesDirs = routeLayers.map(
+  const pagesDirs = pageLayers.map(
     ({ config }) => resolve(config.srcDir, config.dir?.pages ?? NuxtConfigSchema.dir.pages)
   )
 
