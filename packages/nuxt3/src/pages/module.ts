@@ -17,13 +17,13 @@ export default defineNuxtModule({
       ({ config }) => resolve(config.srcDir, config.dir?.pages ?? NuxtConfigSchema.dir.pages)
     )
 
-    const runtimeDir = resolve(distDir, 'pages/runtime')
-
     // Disable module (and use universal router) if pages dir do not exists
     if (!pagesDirs.some(dir => existsSync(dir))) {
       addPlugin(resolve(distDir, 'app/plugins/router'))
       return
     }
+
+    const runtimeDir = resolve(distDir, 'pages/runtime')
 
     // Add $router types
     nuxt.hook('prepare:types', ({ references }) => {
