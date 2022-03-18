@@ -30,7 +30,7 @@ function findComponent (components: Component[], name:string) {
 
 function transform (code: string, id: string, components: Component[]) {
   let num = 0
-  let imports = ''
+  const imports = new Set<string>()
   const map = new Map<Component, string>()
   const s = new MagicString(code)
 
@@ -40,15 +40,15 @@ function transform (code: string, id: string, components: Component[]) {
     if (component) {
       const identifier = map.get(component) || `__nuxt_component_${num++}`
       map.set(component, identifier)
-      imports += genImport(component.filePath, [{ name: component.export, as: identifier }])
+      imports.add(genImport(component.filePath, [{ name: component.export, as: identifier }]))
       return ` ${identifier}`
     }
     // no matched
     return full
   })
 
-  if (imports) {
-    s.prepend(imports + '\n')
+  if (imports.size) {
+    s.prepend([...imports, ''].join('\n'))
   }
 
   if (s.hasChanged()) {
