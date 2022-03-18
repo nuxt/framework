@@ -189,12 +189,12 @@ export const publicPathTemplate: NuxtTemplate = {
         ? `const appConfig = ${JSON.stringify(nuxt.options.app)}`
         : 'const appConfig = config.app',
 
-      'export const __baseURL = () => appConfig.baseURL',
-      'export const __buildAssetsDir = () => appConfig.buildAssetsDir',
+      'export const baseURL = () => appConfig.baseURL',
+      'export const buildAssetsDir = () => appConfig.buildAssetsDir',
 
-      'export const __buildAssetsURL = (...path) => joinURL(__publicAssetsURL(), __buildAssetsDir(), ...path)',
+      'export const buildAssetsURL = (...path) => joinURL(publicAssetsURL(), buildAssetsDir(), ...path)',
 
-      'export const __publicAssetsURL = (...path) => {',
+      'export const publicAssetsURL = (...path) => {',
       '  const publicBase = appConfig.cdnURL || appConfig.baseURL',
       '  return path.length ? joinURL(publicBase, ...path) : publicBase',
       '}'
