@@ -75,7 +75,6 @@ export default defineNuxtModule({
         const pages = await resolvePagesRoutes()
         await nuxt.callHook('pages:extend', pages)
         const { routes, imports } = normalizeRoutes(pages)
-        console.log(routes)
         return [...imports, `export default ${routes}`].join('\n')
       }
     })
