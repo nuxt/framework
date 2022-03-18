@@ -26,7 +26,7 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => ({
 }))
 
 function findComponent (components: Component[], name: string) {
-  const id = pascalCase(name)
+  const id = pascalCase(name).replace(/["']/g, '')
   return components.find(component => id === component.pascalName)
 }
 
