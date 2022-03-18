@@ -171,7 +171,7 @@ export const layoutTemplate: NuxtTemplate = {
 
 export const clientConfigTemplate: NuxtTemplate = {
   filename: 'config.client.mjs',
-  getContents: () => 'export default __NUXT__.config'
+  getContents: () => 'export default window?.__NUXT__?.config || {}'
 }
 
 export const serverConfigTemplate: NuxtTemplate = {
