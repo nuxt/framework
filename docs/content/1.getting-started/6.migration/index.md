@@ -1,11 +1,16 @@
-# Migration
+# Migrating to Nuxt 3
 
 Nuxt 3 migration guide. Work in progress 🚧
 
 ## Nuxt 2 to Nuxt 3
 
-At the moment, there is no Nuxt 2 to Nuxt 3 migration guide nor is it recommended due to potentially more changes coming.
-We are working to provide a stable migration guide and tooling to make it as smooth as possible. Please check [Bridge](/getting-started/bridge) for the alternative.
+There is now a release candidate available for Nuxt 3, but that does not mean that it is not still in active development.
+
+However, it is now possible to migrate to Nuxt 3.
+
+::alert{type=info}
+If you want to use Nuxt 3 features in Nuxt 2, check out [how to get started with Bridge](/getting-started/bridge).
+::
 
 Some features have been dropped from Nuxt 2, some are yet to be implemented for Nuxt 3 and some are new in Nuxt 3 (and Bridge).
 
