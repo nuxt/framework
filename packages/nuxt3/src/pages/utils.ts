@@ -1,6 +1,6 @@
 import { basename, extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
-import { NuxtConfigSchema, Nuxt, NuxtMiddleware, NuxtPage } from '@nuxt/schema'
+import { NuxtConfigSchema, NuxtMiddleware, NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
 import { kebabCase, pascalCase } from 'scule'
 import { genImport, genDynamicImport, genArrayFromRaw } from 'knitwork'
