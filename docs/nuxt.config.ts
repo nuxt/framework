@@ -1,11 +1,12 @@
-import { resolve } from 'path'
-import { withDocus } from '@docus/app'
+import { defineNuxtConfig } from 'nuxt3'
+import preset from './utils/preset'
 
-export default withDocus({
-  /**
-   * Has to specify rootDir as we use nuxt-extend
-   */
-  rootDir: __dirname,
+export default defineNuxtConfig({
+  publicRuntimeConfig: {
+    plausible: {
+      domain: process.env.PLAUSIBLE_DOMAIN
+    }
+  },
   head: {
     titleTemplate: 'Nuxt 3 - %s',
     link: [
@@ -57,25 +58,62 @@ export default withDocus({
   loading: {
     color: '#00DC82'
   },
-  css: [resolve(__dirname, './assets/nuxt.css')],
-  windicss: {
-    root: resolve(__dirname),
-    config: resolve(__dirname, 'windi.config.js')
+  /**
+   * Components
+   */
+  components: [
+    {
+      prefix: '',
+      path: './components/docs',
+      global: true
+    },
+    {
+      prefix: '',
+      path: './components/icons',
+      global: true
+    },
+    {
+      prefix: '',
+      path: './components/globals',
+      global: true
+    },
+    {
+      prefix: '',
+      path: './components/content',
+      global: true
+    }
+  ],
+  ui: {
+    colors: {
+      primary: 'blue',
+      gray: 'zinc'
+    },
+    preset,
+    tailwindcss: {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: '"RoobertPRO", sans-serif'
+          }
+        }
+      }
+    }
+  },
+  tailwindcss: {
+    config: {
+      plugins: [
+        require('@tailwindcss/typography')
+      ],
+      content: ['utils/preset.ts'],
+      safelist: [24, 36, 48, 60, 72, 84, 96, 108, 120].map(number => `pl-[${number}px]`)
+    }
   },
   /**
    * Modules
    */
-  buildModules: [
-    '@nuxt/typescript-build',
-    '@docus/github',
+  modules: [
+    '@nuxt/content',
+    '@nuxthq/ui',
     'vue-plausible'
-  ],
-  plugins: [
-    '~/plugins/mq'
-  ],
-  publicRuntimeConfig: {
-    plausible: {
-      domain: process.env.PLAUSIBLE_DOMAIN
-    }
-  }
+  ]
 })

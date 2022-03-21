@@ -2,27 +2,26 @@
   "name": "docs",
   "private": true,
   "scripts": {
-    "dev": "yarn gendocs && nuxt dev",
-    "build": "yarn gendocs && nuxt generate --force-build",
+    "dev": "yarn gendocs && nuxi dev",
+    "build": "yarn gendocs && nuxi build",
     "build:ci": "./scripts/make-schema.sh && yarn build",
-    "gendocs": "jiti ./scripts/gen-docs.ts"
+    "gendocs": "jiti ./scripts/gen-docs.ts",
+    "lint": "eslint --ext .ts,.js,.vue ."
   },
   "devDependencies": {
-    "@docus/app": "1.3.5",
-    "@docus/github": "1.0.4",
-    "@docus/social-image": "1.0.3",
-    "@docus/theme": "1.2.2",
-    "@nuxt/typescript-build": "^2.1.0",
-    "fs-extra": "^10.0.1",
-    "jiti": "^1.13.0",
-    "pathe": "^0.2.0",
-    "rimraf": "^3.0.2",
-    "scule": "^0.2.1",
-    "untyped": "^0.4.3",
-    "vue-mq": "^1.0.1",
+    "@nuxt/content": "npm:@nuxt/content-edge@latest",
+    "@nuxthq/ui": "npm:@nuxthq/ui-edge@latest",
+    "@nuxtjs/eslint-config-typescript": "^9.0.0",
+    "@tailwindcss/typography": "^0.5.2",
+    "eslint": "^8.11.0",
+    "nuxt3": "latest",
+    "pathe": "latest",
+    "scule": "latest",
+    "typescript": "^4.6.2",
+    "untyped": "latest",
     "vue-plausible": "^1.3.1"
   },
   "dependencies": {
-    "three": "^0.138.3"
+    "@vueuse/motion": "2.0.0-beta.12"
   }
 }

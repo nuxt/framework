@@ -1,4 +1,14 @@
 {
+  "root": true,
+  "extends": [
+    "@nuxtjs/eslint-config-typescript"
+  ],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "off"
+    ],
+    "vue/multi-word-component-names": 0
+  },
   "settings": {
     "import/ignore": [
       "vue"

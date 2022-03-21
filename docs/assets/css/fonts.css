@@ -1,0 +1,84 @@
+/* `font-light` */
+@font-face {
+  font-family: "RoobertPRO";
+  src: url("/fonts/RoobertPRO-Light.woff2") format("woff2"),
+       url("/fonts/RoobertPRO-Light.woff") format("woff");
+  font-weight: 300;
+}
+@font-face {
+  font-family: "RoobertPRO";
+  src: url("/fonts/RoobertPRO-LightItalic.woff2") format("woff2"),
+       url("/fonts/RoobertPRO-LightItalic.woff") format("woff");
+  font-weight: 300;
+  font-style: italic;
+}
+/* `font-normal` */
+@font-face {
+  font-family: "RoobertPRO";
+  src: url("/fonts/RoobertPRO-Regular.woff2") format("woff2"),
+       url("/fonts/RoobertPRO-Regular.woff") format("woff");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "RoobertPRO";
+  src: url("/fonts/RoobertPRO-RegularItalic.woff2") format("woff2"),
+       url("/fonts/RoobertPRO-RegularItalic.woff") format("woff");
+  font-weight: 400;
+  font-style: italic;
+}
+/* `font-medium */
+@font-face {
+  font-family: "RoobertPRO";
+  src: url("/fonts/RoobertPRO-Medium.woff2") format("woff2"),
+       url("/fonts/RoobertPRO-Medium.woff") format("woff");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "RoobertPRO";
+  src: url("/fonts/RoobertPRO-MediumItalic.woff2") format("woff2"),
+       url("/fonts/RoobertPRO-MediumItalic.woff") format("woff");
+  font-weight: 500;
+  font-style: italic;
+}
+/* `font-semibold` */
+@font-face {
+  font-family: "RoobertPRO";
+  src: url("/fonts/RoobertPRO-SemiBold.woff2") format("woff2"),
+       url("/fonts/RoobertPRO-SemiBold.woff") format("woff");
+  font-weight: 600;
+}
+@font-face {
+  font-family: "RoobertPRO";
+  src: url("/fonts/RoobertPRO-SemiBoldItalic.woff2") format("woff2"),
+       url("/fonts/RoobertPRO-SemiBoldItalic.woff") format("woff");
+  font-weight: 600;
+  font-style: italic;
+}
+/* `font-bold` */
+@font-face {
+  font-family: "RoobertPRO";
+  src: url("/fonts/RoobertPRO-Bold.woff2") format("woff2"),
+       url("/fonts/RoobertPRO-Bold.woff") format("woff");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "RoobertPRO";
+  src: url("/fonts/RoobertPRO-BoldItalic.woff2") format("woff2"),
+       url("/fonts/RoobertPRO-BoldItalic.woff") format("woff");
+  font-weight: 700;
+  font-style: italic;
+}
+/* `font-extrabold` */
+@font-face {
+  font-family: "RoobertPRO";
+  src: url("/fonts/RoobertPRO-Heavy.woff2") format("woff2"),
+       url("/fonts/RoobertPRO-Heavy.woff") format("woff");
+  font-weight: 800;
+}
+@font-face {
+  font-family: "RoobertPRO";
+  src: url("/fonts/RoobertPRO-HeavyItalic.woff2") format("woff2"),
+       url("/fonts/RoobertPRO-HeavyItalic.woff") format("woff");
+  font-weight: 800;
+  font-style: italic;
+}
