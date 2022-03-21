@@ -124,7 +124,6 @@ Your module should work even if it's only added to [`buildModules`](/docs/direct
 Continue reading about Nuxt 3 modules in the [Modules guide](/docs/advanced/modules).
 ::
 
-
 ### Use TypeScript (optional)
 
 While it is not essential, most of the Nuxt ecosystem is shifting to use TypeScript, so it is highly recommended to consider migration.
