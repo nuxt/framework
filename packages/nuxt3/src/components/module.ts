@@ -24,21 +24,16 @@ export default defineNuxtModule<ComponentsOptions>({
     let componentDirs = []
     const components: Component[] = []
 
-    const normalizeDirs = (dir: any, srcDir: string) => {
+    const normalizeDirs = (dir: any, cwd: string) => {
       if (Array.isArray(dir)) {
-        return dir.map(dir => normalizeDirs(dir, srcDir)).flat().sort(compareDirByPathLength)
+        return dir.map(dir => normalizeDirs(dir, cwd)).flat().sort(compareDirByPathLength)
       }
       if (dir === true || dir === undefined) {
-        return [{ path: resolve(srcDir, 'components') }]
+        return [{ path: resolve(cwd, 'components') }]
       }
-      const resolveComponentsDir = (dir: string) => resolve(srcDir, resolveAlias(dir, {
-        ...nuxt.options.alias,
-        '@': srcDir,
-        '~': srcDir
-      }))
       if (typeof dir === 'string') {
         return {
-          path: resolveComponentsDir(dir)
+          path: resolve(cwd, resolveAlias(dir))
         }
       }
       if (!dir) {
@@ -47,7 +42,7 @@ export default defineNuxtModule<ComponentsOptions>({
       const dirs = (dir.dirs || [dir]).map(dir => typeof dir === 'string' ? { path: dir } : dir).filter(_dir => _dir.path)
       return dirs.map(_dir => ({
         ..._dir,
-        path: resolveComponentsDir(_dir.path)
+        path: resolve(cwd, resolveAlias(_dir.path))
       }))
     }
 
