@@ -1,13 +1,13 @@
 <template>
   <ULink
-    :to="link.to"
+    :to="link.slug"
     class="u-text-gray-500 hover:u-text-gray-900"
     active-class="font-semibold u-text-gray-900"
     inactive-class="font-medium"
     exact
   >
     <span class="inline-block py-1">
-      {{ link.label }}
+      {{ link.title }}
     </span>
   </ULink>
 </template>

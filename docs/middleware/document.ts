@@ -14,7 +14,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const document = useState<any>('document')
 
   try {
-    await getContentDocument(currentPage.value.id).then(doc => (document.value = doc) && console.log(doc))
+    await getContentDocument(currentPage.value.id).then(doc => (document.value = doc))
   } catch (e) {
     console.log(e)
   }

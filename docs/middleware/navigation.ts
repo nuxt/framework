@@ -3,9 +3,9 @@ import type { NavItem } from '@nuxt/content/dist/runtime/types'
 import { findElement, isDocument } from '../utils/navigation'
 import { defineNuxtRouteMiddleware } from '#imports'
 
-export default defineNuxtRouteMiddleware(async to => {
+export default defineNuxtRouteMiddleware(async (to) => {
   // TODO: Fix this upstream
-  if (!to.path || to.fullPath.startsWith('/api') || to.fullPath.endsWith('.ico')) return
+  if (!to.path || to.fullPath.startsWith('/api') || to.fullPath.endsWith('.ico')) { return }
 
   const withContentBase = (url: string) => withBase(url, '/api/' + useRuntimeConfig().content.basePath)
 
@@ -15,15 +15,22 @@ export default defineNuxtRouteMiddleware(async to => {
 
   const breadcrumb = useState<any>('navigation-breadcrumb')
 
-  const previous = useState<any>('navigation-previous')
-
-  const currentDirectory = useState('navigation-current-directory')
+  // Get first level of navigation
+  const level = to.path.split('/')[1]
 
   let redirect: NavItem
 
   try {
-    redirect = await $fetch<NavItem[]>(withContentBase('/navigation')).then(nav => {
-      // console.log('==================================================================')
+    redirect = await $fetch<NavItem[]>(withContentBase('/navigation'), {
+      method: 'POST',
+      body: {
+        where: {
+          slug: {
+            $contains: '/' + level
+          }
+        }
+      }
+    }).then((nav) => {
       let redirection: NavItem
 
       navigation.value = nav
@@ -32,7 +39,7 @@ export default defineNuxtRouteMiddleware(async to => {
         // Find current page
         const id = currentPage.value && currentPage.value.id ? currentPage.value.id : to.path
 
-        const { tree, found } = findElement(
+        const { tree } = findElement(
           nav,
           id,
           [],
@@ -40,27 +47,13 @@ export default defineNuxtRouteMiddleware(async to => {
         )
 
         // Breadcrumb
-        if (tree) breadcrumb.value = tree
-        else breadcrumb.value = []
-
-        // Previous node
-        if (breadcrumb.value && breadcrumb.value.length) {
-          previous.value = breadcrumb.value[breadcrumb.value.length - 1]
-        } else {
-          previous.value = undefined
-        }
-
-        // console.log({ tree, found })
+        if (tree) { breadcrumb.value = tree } else { breadcrumb.value = [] }
       }
 
-      // console.log('==================================================================')
-
-      if (redirection) return redirection
+      if (redirection) { return redirection }
     })
   } catch (e) {
     // eslint-disable-next-line no-console
     console.log(e)
   }
-
-  if (redirect) return redirect.slug
 })

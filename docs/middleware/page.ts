@@ -1,7 +1,7 @@
 import { useContentQuery, defineNuxtRouteMiddleware } from '#imports'
 
-export default defineNuxtRouteMiddleware(async to => {
-  if (!to.path || to.fullPath.startsWith('/api') || to.fullPath.endsWith('.ico')) return
+export default defineNuxtRouteMiddleware(async (to) => {
+  if (!to.path || to.fullPath.startsWith('/api') || to.fullPath.endsWith('.ico')) { return }
 
   const currentPage = useState<any>('current-page')
 
@@ -28,7 +28,7 @@ export default defineNuxtRouteMiddleware(async to => {
         return
       }
 
-      console.log(page)
+      console.log(surround)
 
       previousPage.value = surround[0]
 
@@ -37,8 +37,8 @@ export default defineNuxtRouteMiddleware(async to => {
       currentPage.value = page
 
       // @ts-ignore - Set layout on next route from content
-      if (currentPage.value.layout) to.meta.layout = currentPage.value.layout
-      if (!currentPage.value.layout) to.meta.layout = 'default'
+      if (currentPage.value.layout) { to.meta.layout = currentPage.value.layout }
+      if (!currentPage.value.layout) { to.meta.layout = 'default' }
     })
   } catch (e) {
     console.log(e)

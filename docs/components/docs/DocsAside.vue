@@ -19,4 +19,6 @@ defineProps({
     default: () => []
   }
 })
+
+const { navigation: links } = useContentNavigation()
 </script>

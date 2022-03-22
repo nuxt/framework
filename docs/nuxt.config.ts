@@ -81,6 +81,11 @@ export default defineNuxtConfig({
       prefix: '',
       path: './components/content',
       global: true
+    },
+    {
+      path: '/node_modules/nuxt3/dist/app/components/nuxt-link.mjs',
+      path: '',
+      global: true
     }
   ],
   ui: {
@@ -106,6 +111,12 @@ export default defineNuxtConfig({
       ],
       content: ['utils/preset.ts'],
       safelist: [24, 36, 48, 60, 72, 84, 96, 108, 120].map(number => `pl-[${number}px]`)
+    }
+  },
+  content: {
+    highlight: {
+      theme: 'one-dark-pro',
+      preload: ['json', 'js', 'ts', 'html', 'css', 'vue']
     }
   },
   /**

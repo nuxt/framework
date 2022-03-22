@@ -13,8 +13,6 @@ export default defineNuxtPlugin(() => {
 
   const previous = useState<any>('previous-page')
 
-  const directory = useState<any>('navigation-current-directory')
-
   const breadcrumb = useState<any[]>('navigation-breadcrumb')
 
   const index = computed(() => findIndex(navigation.value))
@@ -32,7 +30,6 @@ export default defineNuxtPlugin(() => {
       index,
       breadcrumb,
       navigation,
-      directory,
       next,
       previous,
       find,

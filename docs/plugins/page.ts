@@ -15,15 +15,6 @@ export default defineNuxtPlugin(() => {
 
   const type = computed(() => document.value?.meta?.type)
 
-
-  const fetchDocument = async ({ key }: { key: string }) => {
-    if (key !== currentPage.value.id || !key) { return }
-
-    const query = await getContentDocument(currentPage.value.id)
-
-    document.value = query
-  }
-
   const fetchPage = async () => {
     const query = useContentQuery()
 
@@ -51,11 +42,25 @@ export default defineNuxtPlugin(() => {
     })
   }
 
+  const fetchDocument = async ({ key }: { key: string }) => {
+    if (key !== current.value.id || !key) { return }
+
+    const query = await getContentDocument(current.value.id)
+
+    document.value = query
+  }
+
+  const fetch = async ({ key }: { key: string }) => {
+    await fetchPage()
+    await fetchDocument({ key })
+  }
+
   const provide = {
     page: {
+      document,
       current,
-      next,
-      previous
+      toc,
+      type
     }
   }
 

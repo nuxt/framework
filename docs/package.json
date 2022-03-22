@@ -6,6 +6,7 @@
     "build": "yarn gendocs && nuxi build",
     "build:ci": "./scripts/make-schema.sh && yarn build",
     "gendocs": "jiti ./scripts/gen-docs.ts",
+    "start": "nuxi preview",
     "lint": "eslint --ext .ts,.js,.vue ."
   },
   "devDependencies": {

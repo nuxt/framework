@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { document, type } = useContentDocument()
+const { document, type } = useContentPage()
 </script>
 
 <template>
