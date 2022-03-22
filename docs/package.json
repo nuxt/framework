@@ -1,9 +1,6 @@
 {
-  "name": "docs",
+  "name": "nuxt-docs",
   "private": true,
-  "engines": {
-    "node": ">=14.19.1"
-  },
   "scripts": {
     "dev": "yarn gendocs && nuxi dev",
     "build": "yarn gendocs && nuxi build",
@@ -23,9 +20,7 @@
     "scule": "latest",
     "typescript": "^4.6.2",
     "untyped": "latest",
-    "vue-plausible": "^1.3.1"
-  },
-  "dependencies": {
+    "vue-plausible": "^1.3.1",
     "@vueuse/motion": "2.0.0-beta.12"
   }
 }
