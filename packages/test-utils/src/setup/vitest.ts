@@ -11,11 +11,11 @@ export default async function setupVitest (create: (() => TestHooks)) {
     vitest.beforeAll(hooks.setup, 60000)
   }
   if (!vitest.isWatchMode()) {
-    vitest.afterAll(hooks.afterAll)
+    vitest.afterAll(hooks.teardown)
   }
 
-  vitest.beforeEach(hooks.beforeEach)
-  vitest.afterEach(hooks.afterEach)
+  vitest.beforeEach(hooks.restoreContext)
+  vitest.afterEach(hooks.unsetContext)
 
   return hooks
 }

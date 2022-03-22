@@ -7,11 +7,11 @@ export default function setupJest (create: (() => TestHooks)) {
   // @ts-expect-error jest types
   test('setup', hooks.setup, 60000)
   // @ts-expect-error jest types
-  beforeEach(hooks.beforeEach)
+  beforeEach(hooks.restoreContext)
   // @ts-expect-error jest types
-  afterEach(hooks.afterEach)
+  afterEach(hooks.unsetContext)
   // @ts-expect-error jest types
-  afterAll(hooks.afterAll)
+  afterAll(hooks.teardown)
 
   return hooks
 }

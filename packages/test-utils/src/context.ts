@@ -1,7 +1,6 @@
 import { resolve } from 'path'
 import defu from 'defu'
 import type { TestContext, TestOptions, TestRunner } from './types'
-import { stopServer } from './server'
 
 let currentContext: TestContext
 
@@ -36,20 +35,6 @@ export function useTestContext (): TestContext {
 export function setTestContext (context: TestContext): TestContext {
   currentContext = context
   return currentContext
-}
-
-export async function teardownContext (ctx: TestContext) {
-  if (ctx.serverProcess) {
-    setTestContext(ctx)
-    await stopServer()
-    setTestContext(undefined)
-  }
-  if (ctx.nuxt && ctx.nuxt.options.dev) {
-    await ctx.nuxt.close()
-  }
-  if (ctx.browser) {
-    await ctx.browser.close()
-  }
 }
 
 export function isDev () {

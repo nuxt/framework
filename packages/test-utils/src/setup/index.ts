@@ -1,6 +1,6 @@
-import { createTestContext, setTestContext, teardownContext } from '../context'
+import { createTestContext, setTestContext } from '../context'
 import { loadFixture, buildFixture } from '../nuxt'
-import { startServer } from '../server'
+import { startServer, stopServer } from '../server'
 import { createBrowser } from '../browser'
 import type { TestHooks, TestOptions } from '../types'
 import setupJest from './jest'
@@ -14,16 +14,26 @@ export const setupMaps = {
 export function createTest (options: Partial<TestOptions>): TestHooks {
   const ctx = createTestContext(options)
 
-  const beforeEach = () => {
+  const restoreContext = () => {
     setTestContext(ctx)
   }
 
-  const afterEach = () => {
+  const unsetContext = () => {
     setTestContext(undefined)
   }
 
-  const afterAll = async () => {
-    await teardownContext(ctx)
+  const teardown = async () => {
+    if (ctx.serverProcess) {
+      setTestContext(ctx)
+      await stopServer()
+      setTestContext(undefined)
+    }
+    if (ctx.nuxt && ctx.nuxt.options.dev) {
+      await ctx.nuxt.close()
+    }
+    if (ctx.browser) {
+      await ctx.browser.close()
+    }
   }
 
   const setup = async () => {
@@ -49,9 +59,9 @@ export function createTest (options: Partial<TestOptions>): TestHooks {
   }
 
   return {
-    beforeEach,
-    afterEach,
-    afterAll,
+    restoreContext,
+    unsetContext,
+    teardown,
     setup,
     ctx
   }

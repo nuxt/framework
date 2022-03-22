@@ -36,9 +36,9 @@ export interface TestContext {
 }
 
 export interface TestHooks {
-  beforeEach: () => void
-  afterEach: () => void
-  afterAll: () => void
   setup: () => void
+  teardown: () => void
+  unsetContext: () => void
+  restoreContext: () => void
   ctx: TestContext
 }
