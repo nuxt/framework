@@ -11031,6 +11031,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"fixture-extends@workspace:test/fixtures/extends":
+  version: 0.0.0-use.local
+  resolution: "fixture-extends@workspace:test/fixtures/extends"
+  languageName: unknown
+  linkType: soft
+
 "flat-cache@npm:^3.0.4":
   version: 3.0.4
   resolution: "flat-cache@npm:3.0.4"
