@@ -174,16 +174,8 @@ export const clientConfigTemplate: NuxtTemplate = {
   getContents: () => 'export default window?.__NUXT__?.config || {}'
 }
 
-export const serverConfigTemplate: NuxtTemplate = {
-  filename: 'config.server.mjs',
-  getContents: () => [
-    'import config from \'#config\'',
-    'export default config'
-  ].join('\n')
-}
-
 export const publicPathTemplate: NuxtTemplate = {
-  filename: 'dynamic-paths.mjs',
+  filename: 'paths.mjs',
   getContents ({ nuxt }) {
     return [
       'import { joinURL } from \'ufo\'',

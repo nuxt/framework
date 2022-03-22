@@ -46,7 +46,7 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
     transform (code, id) {
       const s = new MagicString(code)
 
-      if (options.globalPublicPath && id.includes('dynamic-paths.mjs')) {
+      if (options.globalPublicPath && id.includes('paths.mjs') && code.includes('const appConfig = ')) {
         s.append(`${options.globalPublicPath} = buildAssetsURL();\n`)
       }
 
@@ -54,19 +54,19 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
       if (assetId) {
         s.overwrite(0, code.length,
           [
-            'import { buildAssetsURL } from \'#build/dynamic-paths.mjs\';',
+            'import { buildAssetsURL } from \'#build/paths.mjs\';',
             `export default buildAssetsURL("${assetId[1]}".replace("/__NUXT_BASE__", ""));`
           ].join('\n')
         )
       }
 
-      if (!id.includes('dynamic-paths.mjs') && code.includes('NUXT_BASE') && !code.includes('import { publicAssetsURL as __publicAssetsURL }')) {
-        s.prepend('import { publicAssetsURL as __publicAssetsURL } from \'#build/dynamic-paths.mjs\';\n')
+      if (!id.includes('paths.mjs') && code.includes('NUXT_BASE') && !code.includes('import { publicAssetsURL as __publicAssetsURL }')) {
+        s.prepend('import { publicAssetsURL as __publicAssetsURL } from \'#build/paths.mjs\';\n')
       }
 
       if (id === 'vite/preload-helper') {
         // Define vite base path as buildAssetsUrl (i.e. including _nuxt/)
-        s.prepend('import { buildAssetsDir } from \'#build/dynamic-paths.mjs\';\n')
+        s.prepend('import { buildAssetsDir } from \'#build/paths.mjs\';\n')
         s.replace(/const base = ['"]\/__NUXT_BASE__\/['"]/, 'const base = buildAssetsDir()')
       }
 

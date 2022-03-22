@@ -1,4 +1,5 @@
-import '#build/dynamic-paths.mjs'
+// We set __webpack_public_path via this import with webpack builder
+import '#build/paths.mjs'
 import { createSSRApp, createApp, nextTick } from 'vue'
 import { createNuxtApp, applyPlugins, normalizePlugins, CreateOptions } from '#app'
 import '#build/css'

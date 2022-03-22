@@ -30,7 +30,6 @@ export async function buildServer (ctx: ViteBuildContext) {
     resolve: {
       alias: {
         '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/server'),
-        '#_config': resolve(ctx.nuxt.options.buildDir, 'config.server.mjs'),
         // Alias vue
         'vue/server-renderer': _resolve('vue/server-renderer'),
         'vue/compiler-sfc': _resolve('vue/compiler-sfc'),
@@ -41,6 +40,8 @@ export async function buildServer (ctx: ViteBuildContext) {
       }
     },
     ssr: {
+      // Private nitro alias: packages/nitro/src/rollup/config.ts#L234
+      external: ['#_config'],
       noExternal: [
         ...ctx.nuxt.options.build.transpile,
         // TODO: Use externality for production (rollup) build
