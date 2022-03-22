@@ -6,7 +6,7 @@ import { loadKit } from '../utils/kit'
 export default defineNuxtCommand({
   meta: {
     name: 'add',
-    usage: 'npx nuxi add endpoint test',
+    usage: 'npx nuxi add endpoint|plugin <name>',
     description: ''
   },
   async invoke(args) {
