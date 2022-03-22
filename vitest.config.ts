@@ -8,5 +8,8 @@ export default defineConfig({
   },
   test: {
     isolate: false
+  },
+  esbuild: {
+    tsconfigRaw: '{}'
   }
 })
