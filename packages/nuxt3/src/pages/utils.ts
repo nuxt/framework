@@ -1,6 +1,6 @@
 import { basename, extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
-import { NuxtConfigSchema, NuxtMiddleware, NuxtPage } from '@nuxt/schema'
+import { NuxtMiddleware, NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
 import { kebabCase, pascalCase } from 'scule'
 import { genImport, genDynamicImport, genArrayFromRaw } from 'knitwork'
@@ -27,13 +27,8 @@ interface SegmentToken {
 export async function resolvePagesRoutes (): Promise<NuxtPage[]> {
   const nuxt = useNuxt()
 
-  // Page layers priority (Low to High):
-  // Extended Layer (1) < Extended Layer (2) < ... < Extended Layer (N-1) < Extended Layer (N) < Local layer
-  // Therefore, we make the local layer last
-  const pageLayers = [...nuxt.options._layers.slice(1), nuxt.options._layers[0]]
-
-  const pagesDirs = pageLayers.map(
-    ({ config }) => resolve(config.srcDir, config.dir?.pages ?? NuxtConfigSchema.dir.pages)
+  const pagesDirs = nuxt.options._layers.map(
+    layer => resolve(layer.config.srcDir, layer.config.dir?.pages || 'pages')
   )
 
   const allRoutes = (await Promise.all(
@@ -45,8 +40,7 @@ export async function resolvePagesRoutes (): Promise<NuxtPage[]> {
     })
   )).flat()
 
-  // Map will returns unique routes using last duplicated route name
-  return [...new Map(allRoutes.map(route => [route.name, route])).values()]
+  return uniqueBy(allRoutes, 'name')
 }
 
 export function generateRoutesFromFiles (files: string[], pagesDir: string): NuxtPage[] {
@@ -252,13 +246,8 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
 export async function resolveMiddleware (): Promise<NuxtMiddleware[]> {
   const nuxt = useNuxt()
 
-  // Route layers priority (Low to High):
-  // Extended Layer (1) < Extended Layer (2) < ... < Extended Layer (N-1) < Extended Layer (N) < Local layer
-  // Therefore, we make the local layer last
-  const middlewareLayers = [...nuxt.options._layers.slice(1), nuxt.options._layers[0]]
-
-  const middlewareDirs = middlewareLayers.map(
-    ({ config }) => resolve(config.srcDir, config.dir?.middleware ?? NuxtConfigSchema.dir.middleware)
+  const middlewareDirs = nuxt.options._layers.map(
+    layer => resolve(layer.config.srcDir, layer.config.dir?.middleware || 'middleware')
   )
 
   const allMiddlewares = (await Promise.all(
@@ -268,8 +257,7 @@ export async function resolveMiddleware (): Promise<NuxtMiddleware[]> {
     })
   )).flat()
 
-  // Map will returns unique middlewares using last duplicated middleware name
-  return [...new Map(allMiddlewares.map(middleware => [middleware.name, middleware])).values()]
+  return uniqueBy(allMiddlewares, 'name')
 }
 
 function getNameFromPath (path: string) {
@@ -282,4 +270,17 @@ function hasSuffix (path: string, suffix: string) {
 
 export function getImportName (name: string) {
   return pascalCase(name).replace(/[^\w]/g, '')
+}
+
+function uniqueBy (arr: any[], key: string) {
+  const res = []
+  const keys = new Set<string>()
+  for (const item of arr) {
+    if (keys.has(item[key])) {
+      continue
+    }
+    keys.add(item[key])
+    res.push(item)
+  }
+  return res
 }
