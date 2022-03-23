@@ -4,7 +4,7 @@ const timer = useState('timer', () => 0)
 </script>
 
 <template>
-  <NuxtExampleLayout example="with-universal-router">
+  <NuxtExampleLayout show-tips example="with-universal-router">
     A page...
     <br>
 
@@ -29,6 +29,14 @@ const timer = useState('timer', () => 0)
     <template #footer>
       <div class="text-center p-4 op-50">
         Current route: <code>{{ route.path }}</code>
+      </div>
+    </template>
+
+    <template #tips>
+      <div>
+        <p>
+          Without a <code>pages/</code> directory, Vue-router won't be imported. This example demonstrates Nuxt Universal router capabilities to perform various route-based actions without it.
+        </p>
       </div>
     </template>
   </NuxtExampleLayout>
