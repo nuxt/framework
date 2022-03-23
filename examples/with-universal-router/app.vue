@@ -35,7 +35,7 @@ const timer = useState('timer', () => 0)
     <template #tips>
       <div>
         <p>
-          Without a <code>pages/</code> directory, Vue-router won't be imported. This example demonstrates Nuxt Universal router capabilities to perform various route-based actions without it.
+          This example demonstrates Nuxt universal routing utilities without depending on `pages/` and `vue-router`.
         </p>
       </div>
     </template>
