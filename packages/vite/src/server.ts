@@ -40,6 +40,8 @@ export async function buildServer (ctx: ViteBuildContext) {
       }
     },
     ssr: {
+      // Private nitro alias: packages/nitro/src/rollup/config.ts#L234
+      external: ['#_config'],
       noExternal: [
         ...ctx.nuxt.options.build.transpile,
         // TODO: Use externality for production (rollup) build
@@ -60,7 +62,6 @@ export async function buildServer (ctx: ViteBuildContext) {
           preferConst: true,
           format: 'module'
         },
-        external: ['#config'],
         onwarn (warning, rollupWarn) {
           if (!['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
             rollupWarn(warning)
