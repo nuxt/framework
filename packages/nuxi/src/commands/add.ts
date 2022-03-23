@@ -1,7 +1,7 @@
-import { defineNuxtCommand } from "./index";
 import { existsSync, promises as fsp, readdirSync } from 'fs'
 import { resolve } from 'pathe'
 import { loadKit } from '../utils/kit'
+import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
   meta: {
@@ -9,10 +9,10 @@ export default defineNuxtCommand({
     usage: 'npx nuxi add api|plugin|component|composable|middleware|layout|page <name> [rootDir]',
     description: 'Create new components, plugins, composables by using handy CLI commands'
   },
-  async invoke(args) {
+  async invoke (args) {
     const rootDir = resolve(args.rootDir || '.')
     const schematic = args._[0]
-    const name = args._[1];
+    const name = args._[1]
 
     const { loadNuxt } = await loadKit(rootDir)
     const nuxt = await loadNuxt({ rootDir, config: { _export: true } })
@@ -83,16 +83,16 @@ export default defineNuxtCommand({
 
     const schema = templates[schematic]
 
-    if (!schema) throw new Error('Schematic was not found. Pleasy try one of the schematics described in the docs')
+    if (!schema) { throw new Error('Schematic was not found. Pleasy try one of the schematics described in the docs') }
 
-    const { path, template, fileExtension, fileName } = schema;
+    const { path, template, fileExtension, fileName } = schema
 
     await writeTemplate(path, template, fileExtension, fileName)
   }
 })
 
-async function writeTemplate(path: string, template: string, fileExtension: string, fileName: string) {
-  if(!(existsSync(path) && readdirSync(path).length)) {
+async function writeTemplate (path: string, template: string, fileExtension: string, fileName: string) {
+  if (!(existsSync(path) && readdirSync(path).length)) {
     await fsp.mkdir(path, { recursive: true })
   }
 
