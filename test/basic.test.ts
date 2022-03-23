@@ -172,12 +172,12 @@ describe('extends support', () => {
   })
 
   describe('components', () => {
-    it('extends foo/components/ExtendsFoo.vue', async () => {
+    it('extends foo/components/ExtendsFoo', async () => {
       const html = await $fetch('/foo')
       expect(html).toContain('Extended component from foo')
     })
 
-    it('extends bar/components/ExtendsOverride.vue over foo/components/ExtendsOverride.vue', async () => {
+    it('extends bar/components/ExtendsOverride over foo/components/ExtendsOverride', async () => {
       const html = await $fetch('/override')
       expect(html).toContain('Extended component from bar')
     })
