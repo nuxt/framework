@@ -185,13 +185,13 @@ describe('extends support', () => {
 
   describe('middlewares', () => {
     it('extends foo/middleware/foo', async () => {
-      const html = await $fetch('/with-middleware')
-      expect(html).toContain('Injected by extended middleware')
+      const html = await $fetch('/foo')
+      expect(html).toContain('Middleware | foo: Injected by extended middleware')
     })
 
     it('extends bar/middleware/override over foo/middleware/override', async () => {
-      const html = await $fetch('/with-middleware-override')
-      expect(html).toContain('Injected by extended middleware from bar')
+      const html = await $fetch('/override')
+      expect(html).toContain('Middleware | override: Injected by extended middleware from bar')
     })
   })
 
