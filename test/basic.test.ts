@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'url'
 import { describe, expect, it } from 'vitest'
-import { setup, $fetch, startServer } from '@nuxt/test-utils'
+import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
@@ -206,6 +206,17 @@ describe('extends support', () => {
     it('extends foo/plugins/foo', async () => {
       const html = await $fetch('/foo')
       expect(html).toContain('Plugin | foo: String generated from foo plugin!')
+    })
+  })
+
+  describe('server', () => {
+    it('extends foo/server/api/foo', async () => {
+      expect(await $fetch('/api/foo')).toBe('foo')
+    })
+
+    it('extends foo/server/middleware/foo', async () => {
+      const { headers } = await fetch('/')
+      expect(headers.get('injected-header')).toEqual('foo')
     })
   })
 })
