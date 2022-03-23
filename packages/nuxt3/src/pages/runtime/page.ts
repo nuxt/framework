@@ -1,4 +1,4 @@
-import { defineComponent, h, Suspense, Transition } from 'vue'
+import { defineComponent, h, Suspense, Transition, nextTick } from 'vue'
 import { RouteLocationNormalizedLoaded, RouterView } from 'vue-router'
 
 import { generateRouteKey, RouterViewSlotProps, wrapInKeepAlive } from './utils'
@@ -15,10 +15,6 @@ export default defineComponent({
   },
   setup (props) {
     const nuxtApp = useNuxtApp()
-
-    function hasTransition (routeProps: RouterViewSlotProps) {
-      return routeProps.route.meta.pageTransition !== false
-    }
 
     function getTransitionProps (routeProps: RouterViewSlotProps) {
       const metaTransition = routeProps.route.meta.pageTransition
@@ -47,10 +43,7 @@ export default defineComponent({
             wrapInKeepAlive(routeProps.route.meta.keepalive, h(Suspense, {
               onPending: () => nuxtApp.callHook('page:start', routeProps.Component),
               onResolve: () => {
-                nuxtApp.callHook('page:finish', routeProps.Component)
-                if (!hasTransition(routeProps)) {
-                  nuxtApp.callHook('page:transition:finish', routeProps.Component)
-                }
+                nextTick(() => nuxtApp.callHook('page:finish', routeProps.Component))
               }
             }, { default: () => h(routeProps.Component, { key: generateRouteKey(props.pageKey, routeProps) } as {}) }))).default()
       })
