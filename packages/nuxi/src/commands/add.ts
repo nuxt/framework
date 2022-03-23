@@ -81,7 +81,11 @@ export default defineNuxtCommand({
       }
     }
 
-    const { path, template, fileExtension, fileName } = templates[schematic]
+    const schema = templates[schematic]
+
+    if (!schema) throw new Error('Schematic was not found. Pleasy try one of the schematics described in the docs')
+
+    const { path, template, fileExtension, fileName } = schema;
 
     await writeTemplate(path, template, fileExtension, fileName)
   }
