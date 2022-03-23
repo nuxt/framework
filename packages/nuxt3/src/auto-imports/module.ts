@@ -36,7 +36,7 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
 
     // Create a context to share state between module internals
     const ctx = createUnimport({
-      presets: defaultPresets,
+      presets: options.presets,
       imports: options.imports
     })
 
