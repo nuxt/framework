@@ -1,3 +1,3 @@
 <template>
-  <div>Hello from extended component of foo!</div>
+  <div>Extended component from foo</div>
 </template>

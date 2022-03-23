@@ -1,6 +1,3 @@
 <template>
-  <div>
-    <div>Extended layout from bar</div>
-    <NuxtPage />
-  </div>
+  <div>This layout should be overriden by bar</div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>Hello from extended default layout of foo!</div>
+    <div>Extended layout from foo</div>
     <NuxtPage />
   </div>
 </template>

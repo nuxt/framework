@@ -160,8 +160,8 @@ describe('extends support', () => {
   describe('layouts & pages', () => {
     it('extends foo/layouts/default & foo/pages/index', async () => {
       const html = await $fetch('/foo')
-      expect(html).toContain('Hello from extended default layout of foo!')
-      expect(html).toContain('Hello from extended page of foo!')
+      expect(html).toContain('Extended layout from foo')
+      expect(html).toContain('Extended page from foo')
     })
 
     it('extends [bar/layouts/override & bar/pages/override] over [foo/layouts/override & foo/pages/override]', async () => {
@@ -174,7 +174,7 @@ describe('extends support', () => {
   describe('components', () => {
     it('extends foo/components/ExtendsFoo.vue', async () => {
       const html = await $fetch('/foo')
-      expect(html).toContain('Hello from extended component of foo!')
+      expect(html).toContain('Extended component from foo')
     })
 
     it('extends bar/components/ExtendsOverride.vue over foo/components/ExtendsOverride.vue', async () => {
@@ -186,7 +186,7 @@ describe('extends support', () => {
   describe('middlewares', () => {
     it('extends foo/middleware/foo', async () => {
       const html = await $fetch('/foo')
-      expect(html).toContain('Middleware | foo: Injected by extended middleware')
+      expect(html).toContain('Middleware | foo: Injected by extended middleware from foo')
     })
 
     it('extends bar/middleware/override over foo/middleware/override', async () => {

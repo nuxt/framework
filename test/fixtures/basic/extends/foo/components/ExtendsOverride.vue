@@ -1,3 +1,3 @@
 <template>
-  <div>Extended component from foo</div>
+  <div>This component should be overriden by bar</div>
 </template>
