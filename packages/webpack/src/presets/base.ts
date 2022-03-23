@@ -21,9 +21,11 @@ export function base (ctx: WebpackConfigContext) {
 function baseConfig (ctx: WebpackConfigContext) {
   const { options } = ctx
 
+  const asyncEntry = options.experimental.asyncEntry || options.experimental.viteNode
+
   ctx.config = {
     name: ctx.name,
-    entry: { app: [resolve(options.appDir, options.experimental.asyncEntry ? 'entry.async' : 'entry')] },
+    entry: { app: [resolve(options.appDir, asyncEntry ? 'entry.async' : 'entry')] },
     module: { rules: [] },
     plugins: [],
     externals: [],
