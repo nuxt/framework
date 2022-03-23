@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'url'
 import { describe, expect, it } from 'vitest'
-import { setup, $fetch } from '@nuxt/test-utils'
+import { setup, $fetch, isDev } from '@nuxt/test-utils'
 
 describe('fixtures:basic', async () => {
   await setup({
@@ -47,15 +47,17 @@ describe('fixtures:basic', async () => {
       expect(html).toContain('This is a custom component with a named export.')
     })
 
-    it('render 404', async () => {
-      const html = await $fetch('/not-found')
+    if (!isDev()) {
+      it('render 404', async () => {
+        const html = await $fetch('/not-found')
 
-      // Snapshot
-      // expect(html).toMatchInlineSnapshot()
+        // Snapshot
+        // expect(html).toMatchInlineSnapshot()
 
-      expect(html).toContain('[...slug].vue')
-      expect(html).toContain('404 at not-found')
-    })
+        expect(html).toContain('[...slug].vue')
+        expect(html).toContain('404 at not-found')
+      })
+    }
 
     it('/nested/[foo]/[bar].vue', async () => {
       const html = await $fetch('/nested/one/two')
