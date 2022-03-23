@@ -1,3 +1,6 @@
+---
+navigation.collapse: true
+---
 # Migrating to Nuxt 3
 
 Nuxt 3 migration guide. Work in progress 🚧
