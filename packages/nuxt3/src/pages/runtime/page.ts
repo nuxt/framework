@@ -16,14 +16,43 @@ export default defineComponent({
   setup (props) {
     const nuxtApp = useNuxtApp()
 
+    function hasTransition (routeProps: RouterViewSlotProps) {
+      return routeProps.route.meta.pageTransition !== false
+    }
+
+    function getTransitionProps (routeProps: RouterViewSlotProps) {
+      const metaTransition = routeProps.route.meta.pageTransition
+      const onAfterLeave = () => {
+        nuxtApp.callHook('page:transition:finish', routeProps.Component)
+      }
+
+      if (typeof metaTransition === 'boolean') {
+        return metaTransition && {
+          ...defaultPageTransition,
+          onAfterLeave
+        }
+      } else {
+        return {
+          ...defaultPageTransition,
+          ...(metaTransition || {}),
+          onAfterLeave
+        }
+      }
+    }
+
     return () => {
       return h(RouterView, {}, {
         default: (routeProps: RouterViewSlotProps) => routeProps.Component &&
-            _wrapIf(Transition, routeProps.route.meta.pageTransition ?? defaultPageTransition,
-              wrapInKeepAlive(routeProps.route.meta.keepalive, h(Suspense, {
-                onPending: () => nuxtApp.callHook('page:start', routeProps.Component),
-                onResolve: () => nuxtApp.callHook('page:finish', routeProps.Component)
-              }, { default: () => h(routeProps.Component, { key: generateRouteKey(props.pageKey, routeProps) } as {}) }))).default()
+          _wrapIf(Transition, getTransitionProps(routeProps),
+            wrapInKeepAlive(routeProps.route.meta.keepalive, h(Suspense, {
+              onPending: () => nuxtApp.callHook('page:start', routeProps.Component),
+              onResolve: () => {
+                nuxtApp.callHook('page:finish', routeProps.Component)
+                if (!hasTransition(routeProps)) {
+                  nuxtApp.callHook('page:transition:finish', routeProps.Component)
+                }
+              }
+            }, { default: () => h(routeProps.Component, { key: generateRouteKey(props.pageKey, routeProps) } as {}) }))).default()
       })
     }
   }
