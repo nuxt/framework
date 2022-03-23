@@ -6,11 +6,11 @@ import { loadKit } from '../utils/kit'
 export default defineNuxtCommand({
   meta: {
     name: 'add',
-    usage: 'npx nuxi add endpoint|plugin <name>',
-    description: ''
+    usage: 'npx nuxi add api|plugin|component|composable|middleware|layout|page <name> [rootDir]',
+    description: 'Create new components, plugins, composables by using handy CLI commands'
   },
   async invoke(args) {
-    const rootDir = resolve('.')
+    const rootDir = resolve(args.rootDir || '.')
     const schematic = args._[0]
     const name = args._[1];
 
@@ -19,25 +19,80 @@ export default defineNuxtCommand({
 
     const rootDirPath = nuxt.options.rootDir
 
-    switch (schematic) {
-      case 'endpoint':
-        const endpointPath = `${rootDirPath}/server/api`
-        const newEndpointPath = resolve(endpointPath, `${name.toLowerCase()}.ts`)
+    const templates = {
+      api: {
+        path: `${rootDirPath}/server/api`,
+        template: `export default (req, res) => 'Hello ${name}'`,
+        fileName: name,
+        fileExtension: 'ts'
+      },
+      plugin: {
+        path: `${rootDirPath}/plugins`,
+        template: 'export default defineNuxtPlugin(nuxtApp => {})',
+        fileName: name,
+        fileExtension: 'ts'
+      },
+      component: {
+        path: `${rootDirPath}/components`,
+        template: `<template>
+  <div>${name}</div>
+</template>
 
-        if(!(existsSync(endpointPath) && readdirSync(endpointPath).length)) {
-          await fsp.mkdir(endpointPath, { recursive: true })
-        }
-        await fsp.writeFile(newEndpointPath, `export default (req, res) => 'Hello ${name}'`)
-        break
-      case 'plugin':
-        const pluginPath = `${rootDirPath}/plugins`
-        const newPluginPath = resolve(pluginPath, `${name.toLowerCase()}.ts`)
+<script setup></script>`,
+        fileName: name,
+        fileExtension: 'vue'
+      },
+      composable: {
+        path: `${rootDirPath}/composables`,
+        template: `export const ${name} = () => {
+  return useState(${name}, () => 'bar')
+}`,
+        fileName: !name.includes('use') ? `use${name.charAt(0).toUpperCase() + name.slice(1)}` : name,
+        fileExtension: 'ts'
+      },
+      middleware: {
+        path: `${rootDirPath}/middleware`,
+        template: 'export default defineNuxtRouteMiddleware((to, from) => {})',
+        fileName: name,
+        fileExtension: 'ts'
+      },
+      layout: {
+        path: `${rootDirPath}/layouts`,
+        template: `<template>
+  <div>
+    ${name}
+    <slot />
+  </div>
+</template>
 
-        if(!(existsSync(pluginPath) && readdirSync(pluginPath).length)) {
-          await fsp.mkdir(pluginPath, { recursive: true })
-        }
-        await fsp.writeFile(newPluginPath, 'export default defineNuxtPlugin(nuxtApp => {})')
-        break
+<script setup></script>`,
+        fileName: name,
+        fileExtension: 'vue'
+      },
+      page: {
+        path: name.includes('/') ? `${rootDirPath}/pages/${name.split('/')[0]}` : `${rootDirPath}/pages`,
+        template: `<template>
+  <div>${name}</div>
+</template>
+
+<script setup></script>`,
+        fileName: name.includes('/') ? name.split('/')[1] : name,
+        fileExtension: 'vue'
+      }
     }
+
+    const { path, template, fileExtension, fileName } = templates[schematic]
+
+    await writeTemplate(path, template, fileExtension, fileName)
   }
 })
+
+async function writeTemplate(path: string, template: string, fileExtension: string, fileName: string) {
+  if(!(existsSync(path) && readdirSync(path).length)) {
+    await fsp.mkdir(path, { recursive: true })
+  }
+
+  const newFilePath = resolve(path, `${fileName}.${fileExtension}`)
+
+  await fsp.writeFile(newFilePath, template)
+}
