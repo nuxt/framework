@@ -41,6 +41,17 @@ export default <RouterOptions>{
       position = { left: 0, top: 0 }
     }
 
+    // if either to or from has no transition
+    // and to is not async setup, then we can scroll right away
+    const hasTransition = to.meta.pageTransition !== false && from.meta.pageTransition !== false
+    if (!hasTransition) {
+      const proto = Object.getPrototypeOf(to.matched[0].components.default.setup || '')
+
+      if (proto.constructor.name !== 'AsyncFunction') {
+        return position
+      }
+    }
+
     return new Promise((resolve) => {
       nuxtApp.hooks.hookOnce('page:transition:finish', async () => {
         await nextTick()
