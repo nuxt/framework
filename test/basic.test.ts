@@ -157,15 +157,29 @@ describe('reactivity transform', () => {
 })
 
 describe('extends support', () => {
-  describe('pages', () => {
-    it('extends foo/pages/index.vue', async () => {
+  describe('layouts & pages', () => {
+    it('extends foo/layouts/default & foo/pages/index', async () => {
       const html = await $fetch('/foo')
+      expect(html).toContain('Hello from extended default layout of foo!')
       expect(html).toContain('Hello from extended page of foo!')
     })
 
-    it('extends bar/pages/override.vue over foo/pages/override.vue', async () => {
+    it('extends [bar/layouts/override & bar/pages/override] over [foo/layouts/override & foo/pages/override]', async () => {
       const html = await $fetch('/override')
+      expect(html).toContain('Extended layout from bar')
       expect(html).toContain('Extended page from bar')
+    })
+  })
+
+  describe('components', () => {
+    it('extends foo/components/ExtendsFoo.vue', async () => {
+      const html = await $fetch('/foo')
+      expect(html).toContain('Hello from extended component of foo!')
+    })
+
+    it('extends bar/components/ExtendsOverride.vue over foo/components/ExtendsOverride.vue', async () => {
+      const html = await $fetch('/override')
+      expect(html).toContain('Extended component from bar')
     })
   })
 
@@ -175,9 +189,23 @@ describe('extends support', () => {
       expect(html).toContain('Injected by extended middleware')
     })
 
-    it('extends bar/middleware/override.vue over foo/middleware/override.vue', async () => {
+    it('extends bar/middleware/override over foo/middleware/override', async () => {
       const html = await $fetch('/with-middleware-override')
       expect(html).toContain('Injected by extended middleware from bar')
+    })
+  })
+
+  describe('composables', () => {
+    it('extends foo/composables/foo', async () => {
+      const html = await $fetch('/foo')
+      expect(html).toContain('Composable | useExtendsFoo: foo')
+    })
+  })
+
+  describe('plugins', () => {
+    it('extends foo/plugins/foo', async () => {
+      const html = await $fetch('/foo')
+      expect(html).toContain('Plugin | foo: String generated from foo plugin!')
     })
   })
 })

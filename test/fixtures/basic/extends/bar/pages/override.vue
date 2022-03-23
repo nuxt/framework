@@ -1,3 +1,12 @@
+<script setup>
+definePageMeta({
+  layout: 'override'
+})
+</script>
+
 <template>
-  <div>Extended page from bar</div>
+  <div>
+    <div>Extended page from bar</div>
+    <ExtendsOverride />
+  </div>
 </template>
