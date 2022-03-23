@@ -1,17 +1,18 @@
 import { existsSync, promises as fsp, readdirSync } from 'fs'
 import { resolve } from 'pathe'
 import { loadKit } from '../utils/kit'
+import { templates } from '../utils/templates'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
   meta: {
     name: 'add',
-    usage: 'npx nuxi add api|plugin|component|composable|middleware|layout|page <name> [rootDir]',
+    usage: `npx nuxi add ${Object.keys(templates).join('|')} <name> [rootDir]`,
     description: 'Create new components, plugins, composables by using handy CLI commands'
   },
   async invoke (args) {
     const rootDir = resolve(args.rootDir || '.')
-    const schematic = args._[0]
+    const element = args._[0]
     const name = args._[1]
 
     const { loadNuxt } = await loadKit(rootDir)
@@ -19,84 +20,25 @@ export default defineNuxtCommand({
 
     const rootDirPath = nuxt.options.rootDir
 
-    const templates = {
-      api: {
-        path: `${rootDirPath}/server/api`,
-        template: `export default (req, res) => 'Hello ${name}'`,
-        fileName: name,
-        fileExtension: 'ts'
-      },
-      plugin: {
-        path: `${rootDirPath}/plugins`,
-        template: 'export default defineNuxtPlugin(nuxtApp => {})',
-        fileName: name,
-        fileExtension: 'ts'
-      },
-      component: {
-        path: `${rootDirPath}/components`,
-        template: `<template>
-  <div>${name}</div>
-</template>
+    const schema = templates[element](name)
 
-<script setup></script>`,
-        fileName: name,
-        fileExtension: 'vue'
-      },
-      composable: {
-        path: `${rootDirPath}/composables`,
-        template: `export const ${name} = () => {
-  return useState(${name}, () => 'bar')
-}`,
-        fileName: !name.includes('use') ? `use${name.charAt(0).toUpperCase() + name.slice(1)}` : name,
-        fileExtension: 'ts'
-      },
-      middleware: {
-        path: `${rootDirPath}/middleware`,
-        template: 'export default defineNuxtRouteMiddleware((to, from) => {})',
-        fileName: name,
-        fileExtension: 'ts'
-      },
-      layout: {
-        path: `${rootDirPath}/layouts`,
-        template: `<template>
-  <div>
-    ${name}
-    <slot />
-  </div>
-</template>
+    if (!schema) { throw new Error('Template was not found. Pleasy try one of the templates described in the docs') }
 
-<script setup></script>`,
-        fileName: name,
-        fileExtension: 'vue'
-      },
-      page: {
-        path: name.includes('/') ? `${rootDirPath}/pages/${name.split('/')[0]}` : `${rootDirPath}/pages`,
-        template: `<template>
-  <div>${name}</div>
-</template>
+    const { path, template } = schema
 
-<script setup></script>`,
-        fileName: name.includes('/') ? name.split('/')[1] : name,
-        fileExtension: 'vue'
-      }
-    }
+    const pathWithRootDir = rootDirPath + path
 
-    const schema = templates[schematic]
-
-    if (!schema) { throw new Error('Schematic was not found. Pleasy try one of the schematics described in the docs') }
-
-    const { path, template, fileExtension, fileName } = schema
-
-    await writeTemplate(path, template, fileExtension, fileName)
+    await writeTemplate(pathWithRootDir, template)
   }
 })
 
-async function writeTemplate (path: string, template: string, fileExtension: string, fileName: string) {
-  if (!(existsSync(path) && readdirSync(path).length)) {
-    await fsp.mkdir(path, { recursive: true })
+async function writeTemplate (path: string, template: string) {
+  const pathElements = path.split('/')
+  const pathWithoutFile = pathElements.filter((element, index) => index < pathElements.length - 1).join('/')
+
+  if (!(existsSync(pathWithoutFile) && readdirSync(pathWithoutFile).length)) {
+    await fsp.mkdir(pathWithoutFile, { recursive: true })
   }
 
-  const newFilePath = resolve(path, `${fileName}.${fileExtension}`)
-
-  await fsp.writeFile(newFilePath, template)
+  await fsp.writeFile(path, template)
 }
