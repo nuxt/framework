@@ -16,11 +16,9 @@ export const UnctxTransformPlugin = (nuxt: Nuxt) => {
     name: 'unctx:transfrom',
     enforce: 'post',
     transformInclude (id) {
-      console.log({ app, middlewares })
       return !!(app?.plugins.find(i => i.src === id) || middlewares.find(m => m.path === id))
     },
-    transform (code, id) {
-      console.log(id)
+    transform (code) {
       const result = transformer.transform(code)
       if (result) {
         return {
