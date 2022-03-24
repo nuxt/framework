@@ -1,4 +1,4 @@
-import { useNuxt, resolveModule, addTemplate, resolveAlias, addWebpackPlugin, addVitePlugin, extendWebpackConfig } from '@nuxt/kit'
+import { useNuxt, addTemplate, resolveAlias, addWebpackPlugin, addVitePlugin } from '@nuxt/kit'
 import { NuxtModule } from '@nuxt/schema'
 import { resolve } from 'pathe'
 import { componentsTypeTemplate } from '../../nuxt3/src/components/templates'
