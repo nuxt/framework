@@ -56,7 +56,11 @@ function createViteNodeMiddleware (ctx: ViteBuildContext): Connect.NextHandleFun
 }
 
 export async function prepareDevServerEntry (ctx: ViteBuildContext) {
-  const entryPath = resolve(ctx.nuxt.options.appDir, 'entry.async.mjs')
+  let entryPath = resolve(ctx.nuxt.options.appDir, 'entry.async.mjs')
+  if (!fse.existsSync(entryPath)) {
+    entryPath = resolve(ctx.nuxt.options.appDir, 'entry.async')
+  }
+
   const raw = await fse.readFile(resolve(distDir, 'runtime/server.mjs'), 'utf-8')
   const host = ctx.nuxt.options.server.host || 'localhost'
   const port = ctx.nuxt.options.server.port || '3000'

@@ -32,8 +32,6 @@ export async function bundle (nuxt: Nuxt) {
     ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
   })
 
-  const asyncEntry = nuxt.options.experimental.asyncEntry || nuxt.options.experimental.viteNode
-
   const ctx: ViteBuildContext = {
     nuxt,
     config: vite.mergeConfig(
@@ -46,7 +44,7 @@ export async function bundle (nuxt: Nuxt) {
             // will be filled in client/server configs
             '#build/plugins': '',
             '#build': nuxt.options.buildDir,
-            '/entry.mjs': resolve(nuxt.options.appDir, asyncEntry ? 'entry.async' : 'entry'),
+            '/entry.mjs': resolve(nuxt.options.appDir, nuxt.options.experimental.asyncEntry ? 'entry.async' : 'entry'),
             'web-streams-polyfill/ponyfill/es2018': 'unenv/runtime/mock/empty',
             // Cannot destructure property 'AbortController' of ..
             'abort-controller': 'unenv/runtime/mock/empty'
