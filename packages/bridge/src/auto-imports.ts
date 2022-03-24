@@ -1,25 +1,37 @@
 import { installModule, useNuxt } from '@nuxt/kit'
 import * as CompositionApi from '@vue/composition-api'
+import type { Preset } from 'unimport'
 import autoImports from '../../nuxt3/src/auto-imports/module'
+import { vuePreset } from '../../nuxt3/src/auto-imports/presets'
 
 const UnsupportedImports = new Set(['useAsyncData', 'useFetch', 'useError', 'throwError', 'clearError'])
 const CapiHelpers = new Set(Object.keys(CompositionApi))
 
 export function setupAutoImports () {
   const nuxt = useNuxt()
+
+  const bridgePresets: Preset[] = [
+    {
+      from: '@vue/composition-api',
+      imports: vuePreset.imports.filter(i => CapiHelpers.has(i as string))
+    },
+    {
+      from: '#app',
+      imports: ['useNuxt2Meta']
+    }
+  ]
   nuxt.hook('autoImports:sources', (presets) => {
-    for (const preset of presets) {
-      if (preset.from === '#app') {
-        preset.imports = preset.imports.filter(i => !UnsupportedImports.has(i as string))
-        if (!preset.imports.includes('useNuxt2Meta')) {
-          preset.imports.push('useNuxt2Meta')
-        }
-      } else if (preset.from === 'vue') {
-        preset.from = '@vue/composition-api'
-        preset.imports = preset.imports.filter(i => CapiHelpers.has(i as string))
+    const vuePreset = presets.find(p => p.from === 'vue')
+    if (vuePreset) { vuePreset.disabled = true }
+  })
+
+  nuxt.hook('autoImports:extend', (imports) => {
+    for (const i of imports) {
+      if (i.from === '#app' && UnsupportedImports.has(i.name)) {
+        i.disabled = true
       }
     }
   })
 
-  nuxt.hook('modules:done', () => installModule(autoImports))
+  nuxt.hook('modules:done', () => installModule(autoImports, { presets: bridgePresets }))
 }
