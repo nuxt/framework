@@ -18,12 +18,12 @@ export const UnctxTransformPlugin = (nuxt: Nuxt) => {
     transformInclude (id) {
       return !!(app?.plugins.find(i => i.src === id) || middlewares.find(m => m.path === id))
     },
-    transform (code) {
+    transform (code, id) {
       const result = transformer.transform(code)
       if (result) {
         return {
           code: result.code,
-          map: result.magicString.generateMap()
+          map: result.magicString.generateMap({ source: id, includeContent: true })
         }
       }
     }
