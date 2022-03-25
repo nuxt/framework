@@ -273,7 +273,7 @@ export function getImportName (name: string) {
 }
 
 function uniqueBy <T, K extends keyof T> (arr: T[], key: K) {
-  const res = []
+  const res: T[] = []
   const seen = new Set<T[K]>()
   for (const item of arr) {
     if (seen.has(item[key])) { continue }
