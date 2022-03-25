@@ -7,9 +7,9 @@ import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
   meta: {
-    name: 'create',
-    usage: `npx nuxi create [--cwd] [--force] ${Object.keys(templates).join('|')} <name>`,
-    description: 'Create new components, plugins, composables by using handy CLI commands'
+    name: 'new',
+    usage: `npx nuxi add [--cwd] [--force] ${Object.keys(templates).join('|')} <name>`,
+    description: 'Create a new template file.'
   },
   async invoke (args) {
     const cwd = resolve(args.cwd || '.')
