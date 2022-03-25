@@ -1,44 +1,57 @@
-import { existsSync, promises as fsp, readdirSync } from 'fs'
-import { resolve } from 'pathe'
-import { loadKit } from '../utils/kit'
+import { existsSync, promises as fsp } from 'fs'
+import { resolve, dirname } from 'pathe'
+import consola from 'consola'
 import { templates } from '../utils/templates'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
   meta: {
-    name: 'add',
-    usage: `npx nuxi add ${Object.keys(templates).join('|')} <name> [rootDir]`,
+    name: 'create',
+    usage: `npx nuxi create [--cwd] [--force] ${Object.keys(templates).join('|')} <name>`,
     description: 'Create new components, plugins, composables by using handy CLI commands'
   },
   async invoke (args) {
-    const rootDir = resolve(args.rootDir || '.')
-    const element = args._[0]
+    const cwd = resolve(args.cwd || '.')
+
+    const template = args._[0]
     const name = args._[1]
 
-    const { loadNuxt } = await loadKit(rootDir)
-    const nuxt = await loadNuxt({ rootDir, config: { _export: true } })
+    // Validate template name
+    if (!templates[template]) {
+      consola.error(`Template ${template} is not supported. Possible values: ${Object.keys(templates).join(', ')}`)
+      process.exit(1)
+    }
 
-    const rootDirPath = nuxt.options.rootDir
+    // Validate options
+    if (!name) {
+      consola.error('name argument is missing!')
+      process.exit(1)
+    }
 
-    const schema = templates[element](name)
+    // Resolve template
+    const res = templates[template]({ name })
 
-    if (!schema) { throw new Error('Template was not found. Pleasy try one of the templates described in the docs') }
+    // Resolve full path to generated file
+    const path = resolve(cwd, res.path)
 
-    const { path, template } = schema
+    // Ensure not overriding user code
+    if (!args.force && existsSync(path)) {
+      consola.error(`File exists: ${path} . Use --force to override or use a different name.`)
+      process.exit(1)
+    }
 
-    const pathWithRootDir = rootDirPath + path
+    // Ensure parent directory exists
+    const parentDir = dirname(path)
+    if (!existsSync(parentDir)) {
+      consola.info('Creating directory', parentDir)
+      if (template === 'page') {
+        consola.info('This enables vue-router functionality!')
+      }
+      await fsp.mkdir(parentDir, { recursive: true })
+    }
 
-    await writeTemplate(pathWithRootDir, template)
+    // Write file
+    await fsp.writeFile(path, res.contents.trim() + '\n')
+    consola.info(`🪄 Generated a new ${template} in ${path}`)
   }
 })
-
-async function writeTemplate (path: string, template: string) {
-  const pathElements = path.split('/')
-  const pathWithoutFile = pathElements.filter((element, index) => index < pathElements.length - 1).join('/')
-
-  if (!(existsSync(pathWithoutFile) && readdirSync(pathWithoutFile).length)) {
-    await fsp.mkdir(pathWithoutFile, { recursive: true })
-  }
-
-  await fsp.writeFile(path, template)
-}

@@ -1,13 +1,14 @@
 import { upperFirst } from 'scule'
 
 interface Template {
-  (options: { name: string }): { path: string, template: string }
+  (options: { name: string }): { path: string, contents: string }
 }
 
 const api: Template = ({ name }) => ({
-  path: `/server/api/${name}.ts`,
-  template: `
+  path: `server/api/${name}.ts`,
+  contents: `
 import { defineHandle } from 'h3'
+
 export default defineHandle((req, res) => {
   return 'Hello ${name}'
 })
@@ -15,51 +16,56 @@ export default defineHandle((req, res) => {
 })
 
 const plugin: Template = ({ name }) => ({
-  path: `/plugins/${name}.ts`,
-  template: `
-export default defineNuxtPlugin(nuxtApp => {})
+  path: `plugins/${name}.ts`,
+  contents: `
+export default defineNuxtPlugin((nuxtApp) => {})
   `
 })
 
 const component: Template = ({ name }) => ({
-  path: `/components/${name}.vue`,
-  template: `
+  path: `components/${name}.vue`,
+  contents: `
 <script lang="ts" setup></script>
 
 <template>
-<div>${name}</div>
+  <div>
+    Component: ${name}
+  </div>
 </template>
 
 <style scoped></style>
 `
 })
 
-const composable: Template = ({ name }) => ({
-  path: `/composables/${!name.includes('use') ? `use${upperFirst(name)}` : name}.ts`,
-  template: `
-export const ${name} = () => {
-return useState(${name}, () => 'bar')
+const composable: Template = ({ name }) => {
+  const nameWithUsePrefix = name.startsWith('use') ? name : `use${upperFirst(name)}`
+  return {
+    path: `composables/${name}.ts`,
+    contents: `
+export const ${nameWithUsePrefix} = () => {
+  return ref()
 }
-`
-})
+  `
+  }
+}
 
 const middleware: Template = ({ name }) => ({
-  path: `/middleware/${name}.ts`,
-  template: `
+  path: `middleware/${name}.ts`,
+  contents: `
 export default defineNuxtRouteMiddleware((to, from) => {})
 `
 })
 
 const layout: Template = ({ name }) => ({
-  path: `/layouts/${name}.vue`,
-  template: `
+  path: `layouts/${name}.vue`,
+  contents: `
 <script lang="ts" setup></script>
 
 <template>
-<div>
-  Layout: ${name}
-  <slot />
-</div>
+  <div>
+    Layout: ${name}
+    <slot />
+  </div>
 </template>
 
 <style scoped></style>
@@ -67,14 +73,14 @@ const layout: Template = ({ name }) => ({
 })
 
 const page: Template = ({ name }) => ({
-  path: `/pages/${name}.vue`,
-  template: `
+  path: `pages/${name}.vue`,
+  contents: `
 <script lang="ts" setup></script>
 
 <template>
-<div>
-  Page: ${name}
-</div>
+  <div>
+    Page: foo
+  </div>
 </template>
 
 <style scoped></style>
@@ -89,4 +95,4 @@ export const templates = {
   middleware,
   layout,
   page
-}
+} as Record<string, Template>
