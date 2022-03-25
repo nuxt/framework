@@ -19,7 +19,7 @@ export interface Nuxt {
   close: () => Promise<void>
 
   /** The production or development server */
-  server?: ReturnType<typeof import('nitropack').createDevServer> & {
+  server?: ReturnType<typeof import ('@nuxt/nitro').createDevServer> & {
     /** @deprecated Nuxt 2 only */
     listeners?: any[]
     /** @deprecated Nuxt 2 only */
