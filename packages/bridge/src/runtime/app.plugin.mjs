@@ -32,6 +32,8 @@ export default async (ctx, inject) => {
       provide: inject,
       unmount: () => { },
       use (vuePlugin) {
+        if (vuePlugin.__nuxt_installed) { return }
+        vuePlugin.__nuxt_installed = true
         vuePlugin.install(this)
       },
       version: Vue.version
