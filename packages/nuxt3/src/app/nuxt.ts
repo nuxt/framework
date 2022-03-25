@@ -181,10 +181,14 @@ export function isLegacyPlugin (plugin: unknown): plugin is LegacyPlugin {
  * @param setup The function to call
  */
 export function callWithNuxt<T extends (...args: any[]) => any> (nuxt: NuxtApp | _NuxtApp, setup: T, args?: Parameters<T>) {
-  return nuxtAppCtx.callAsync<ReturnType<T>>(
-    nuxt,
-    () => args ? setup(...args as Parameters<T>) : setup()
-  )
+  const fn = () => args ? setup(...args as Parameters<T>) : setup()
+  if (process.server) {
+    return nuxtAppCtx.callAsync<ReturnType<T>>(nuxt, fn)
+  } else {
+    // In client side we could assume nuxt app is singleton
+    nuxtAppCtx.set(nuxt)
+    return fn()
+  }
 }
 
 /**
