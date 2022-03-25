@@ -1,6 +1,7 @@
 <script setup>
 const ctr = ref(0)
-const { data, refresh, pending } = await useAsyncData('/api/hello', () => $fetch(`/api/hello/${ctr.value}`), { watch: [ctr] })
+const { data, pending } = await useAsyncData('/api/hello', () => $fetch(`/api/hello/${ctr.value}`), { watch: [ctr] })
+const refresh = useNuxtApp().callHook('app:refresh')
 </script>
 
 <template>
@@ -13,6 +14,7 @@ const { data, refresh, pending } = await useAsyncData('/api/hello', () => $fetch
       <NButton :disabled="pending" @click="ctr++">
         +
       </NButton>
+      <Mountain />
     </div>
     <template #tips>
       <div>
