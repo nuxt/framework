@@ -14,9 +14,9 @@ const metaMixin = {
   [metaConfig.mixinKey] () {
     const instance = getCurrentInstance()
     const options = instance?.type || /* nuxt2 */ instance?.proxy?.$options
-    const nuxtApp = useNuxtApp()
     if (!options || !('head' in options)) { return }
 
+    const nuxtApp = useNuxtApp()
     const source = typeof options.head === 'function'
       ? computed(() => options.head(nuxtApp))
       : options.head
