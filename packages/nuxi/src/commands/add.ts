@@ -1,6 +1,7 @@
 import { existsSync, promises as fsp } from 'fs'
 import { resolve, dirname } from 'pathe'
 import consola from 'consola'
+import { loadKit } from '../utils/kit'
 import { templates } from '../utils/templates'
 import { defineNuxtCommand } from './index'
 
@@ -28,11 +29,15 @@ export default defineNuxtCommand({
       process.exit(1)
     }
 
+    // Load config in order to respect srcDir
+    const kit = await loadKit(cwd)
+    const config = await kit.loadNuxtConfig({ cwd })
+
     // Resolve template
     const res = templates[template]({ name })
 
     // Resolve full path to generated file
-    const path = resolve(cwd, res.path)
+    const path = resolve(config.srcDir, res.path)
 
     // Ensure not overriding user code
     if (!args.force && existsSync(path)) {
