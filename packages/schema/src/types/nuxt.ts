@@ -19,7 +19,16 @@ export interface Nuxt {
   close: () => Promise<void>
 
   /** The production or development server */
-  server?: any
+  server?: ReturnType<typeof import('nitropack').createDevServer> & {
+    /** @deprecated Nuxt 2 only */
+    listeners?: any[]
+    /** @deprecated Nuxt 2 only */
+    renderRoute?: (route?: string, renderContext?: any) => Promise<{ html: string }>
+    /** @deprecated Nuxt 2 only */
+    serverMiddlewarePaths?: () => any[]
+    /** @deprecated Nuxt 2 only */
+    ready?: () => Promise<any> | void
+  }
 
   vfs: Record<string, string>
 }
