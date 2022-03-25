@@ -161,7 +161,7 @@ async function renderHTML (payload, rendered, ssrContext) {
     BODY_ATTRS: bodyAttrs,
     APP: bodyScriptsPrepend + html + state + rendered.renderScripts() + bodyScripts
   })
-  if (!Object.keys(ssrContext.teleports).length) {
+  if (!ssrContext.teleports || !Object.keys(ssrContext.teleports).length) {
     return result
   }
   const $ = await getCheerio().then(load => load(result))
