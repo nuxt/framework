@@ -344,7 +344,7 @@ export default {
    *   'redirect-ssl',
    *   // Will register file from project server-middleware directory to handle /server-middleware/* requires
    *   { path: '/server-middleware', handler: '~/server-middleware/index.js' },
-   *   // We can create custom instances too - but only in development mode
+   *   // We can create custom instances too, but only in development mode, they are ignored for the production bundle.
    *   { path: '/static2', handler: serveStatic(__dirname + '/static2') }
    * ]
    * ```
