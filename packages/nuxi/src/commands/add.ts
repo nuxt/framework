@@ -7,7 +7,7 @@ import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
   meta: {
-    name: 'new',
+    name: 'add',
     usage: `npx nuxi add [--cwd] [--force] ${Object.keys(templates).join('|')} <name>`,
     description: 'Create a new template file.'
   },
