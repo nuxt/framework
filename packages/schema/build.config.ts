@@ -19,6 +19,7 @@ export default defineBuildConfig({
   ],
   externals: [
     // Type imports
+    'nitropack',
     'vue-meta',
     'vue-router',
     'vue',
