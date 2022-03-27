@@ -1,7 +1,7 @@
 import { upperFirst } from 'scule'
 
 interface Template {
-  (options: { name: string }): { path: string, contents: string }
+  (options: { name: string, mode?: string }): { path: string, contents: string }
 }
 
 const api: Template = ({ name }) => ({
@@ -15,27 +15,34 @@ export default defineHandle((req, res) => {
 `
 })
 
-const plugin: Template = ({ name }) => ({
-  path: `plugins/${name}.ts`,
-  contents: `
+const plugin: Template = (opts) => {
+  opts.name = opts.mode ? `${opts.name}.${opts.mode}` : opts.name
+  return {
+    path: `plugins/${opts.name}.ts`,
+    contents: `
 export default defineNuxtPlugin((nuxtApp) => {})
   `
-})
+  }
+}
 
-const component: Template = ({ name }) => ({
-  path: `components/${name}.vue`,
-  contents: `
+const component: Template = (opts) => {
+  // Enable when https://github.com/nuxt/framework/pull/1919 is merged
+  // opts.name = opts.mode ? `${opts.name}.${opts.mode}` : opts.name
+  return {
+    path: `components/${opts.name}.vue`,
+    contents: `
 <script lang="ts" setup></script>
 
 <template>
   <div>
-    Component: ${name}
+    Component: ${opts.name}
   </div>
 </template>
 
 <style scoped></style>
 `
-})
+  }
+}
 
 const composable: Template = ({ name }) => {
   const nameWithUsePrefix = name.startsWith('use') ? name : `use${upperFirst(name)}`

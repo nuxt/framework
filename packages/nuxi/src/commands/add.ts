@@ -16,6 +16,7 @@ export default defineNuxtCommand({
 
     const template = args._[0]
     let name = args._[1]
+    let mode = (args.client && 'client') || (args.server && 'server')
 
     // Validate template name
     if (!templates[template]) {
@@ -35,13 +36,19 @@ export default defineNuxtCommand({
 
     const extRegex = /\.[a-z]+$/
     const extProvided = name.match(extRegex)?.[0]
+    const modeProvided = name.match(/\.(client|server)/g)?.[0]
 
-    if (extProvided && extProvided !== name.match(/\.(client|server)/g)?.[0]) {
+    if (extProvided && extProvided !== modeProvided) {
       name = name.replace(extRegex, '')
     }
 
+    if (modeProvided) {
+      name = name.replace(modeProvided, '')
+      if (!mode) { mode = modeProvided.replace(/\./, '') }
+    }
+
     // Resolve template
-    const res = templates[template]({ name })
+    const res = templates[template]({ name, mode })
 
     // Resolve full path to generated file
     const path = resolve(config.srcDir, res.path)
