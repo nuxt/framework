@@ -36,7 +36,7 @@ export default defineNuxtCommand({
 
     const extRegex = /\.[a-z]+$/
     const extProvided = name.match(extRegex)?.[0]
-    const modeProvided = name.match(/\.(client|server)/g)?.[0]
+    const modeProvided = name.match(/\.(client|server)/)?.[0]
 
     if (extProvided && extProvided !== modeProvided) {
       name = name.replace(extRegex, '')
