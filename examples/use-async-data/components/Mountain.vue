@@ -1,5 +1,4 @@
 <script setup>
-console.log('Mountain')
 const { data: mountain } = await useFetch(
   'https://api.nuxtjs.dev/mountains/mount-everest'
 )

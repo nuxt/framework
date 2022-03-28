@@ -1,5 +1,5 @@
 export { defineNuxtComponent } from './component'
-export { useAsyncData, useLazyAsyncData, useDataRefetch } from './asyncData'
+export { useAsyncData, useLazyAsyncData, useDataRefresh } from './asyncData'
 export type { AsyncDataOptions, AsyncData } from './asyncData'
 export { useHydration } from './hydrate'
 export { useState } from './state'

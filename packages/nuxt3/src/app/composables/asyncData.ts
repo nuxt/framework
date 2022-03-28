@@ -139,7 +139,7 @@ export function useAsyncData<
     if (options.watch) {
       watch(options.watch, () => asyncData.refresh())
     }
-    const off = nuxt.hook('app:data:refetch', (keys) => {
+    const off = nuxt.hook('app:data:refresh', (keys) => {
       if (!keys || keys.includes(key)) {
         return asyncData.refresh()
       }
@@ -169,11 +169,11 @@ export function useLazyAsyncData<
   return useAsyncData(key, handler, { ...options, lazy: true })
 }
 
-export function useDataRefetch (keys?: string | string[]) {
+export function useDataRefresh (keys?: string | string[]) {
   const _keys = keys ? Array.isArray(keys) ? keys : [keys] : undefined
   return () => {
     const nuxt = useNuxtApp()
-    return nuxt.callHook('app:data:refetch', _keys)
+    return nuxt.callHook('app:data:refresh', _keys)
   }
 }
 

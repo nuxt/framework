@@ -2,7 +2,12 @@
 const ctr = ref(0)
 const showMountain = ref(false)
 const { data, pending } = await useAsyncData('/api/hello', () => $fetch(`/api/hello/${ctr.value}`), { watch: [ctr] })
-const refresh = useDataRefetch()
+const refresh = useDataRefresh()
+const refreshAll = async () => {
+  console.log('trigger refresh')
+  await refresh()
+  console.log('refresh done')
+}
 </script>
 
 <template>
@@ -15,8 +20,8 @@ const refresh = useDataRefetch()
       <NButton @click="showMountain = !showMountain">
         {{ showMountain ? 'Hide' : 'Show' }} Mountain
       </NButton>
-      <NButton :disabled="pending" @click="refresh">
-        Refetch Data
+      <NButton :disabled="pending" @click="refreshAll">
+        Refetch All Data
       </NButton>
     </div>
     <Mountain v-if="showMountain" />
