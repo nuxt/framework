@@ -13,7 +13,6 @@ const PAYLOAD_JS = '/payload.js'
 
 const getClientManifest = cachedImport(() => import('#build/dist/server/client.manifest.mjs'))
 const getSSRApp = !process.env.NUXT_NO_SSR && cachedImport(() => import('#build/dist/server/server.mjs'))
-const getCheerio = cachedImport(() => import('cheerio').then(r => r.load))
 
 const getSSRRenderer = cachedResult(async () => {
   // Load server bundle
@@ -153,23 +152,15 @@ async function renderHTML (payload, rendered, ssrContext) {
     bodyScripts = ''
   } = rendered.meta || {}
 
-  const result = htmlTemplate({
+  return htmlTemplate({
     HTML_ATTRS: htmlAttrs,
     HEAD_ATTRS: headAttrs,
     HEAD: headTags +
       rendered.renderResourceHints() + rendered.renderStyles() + (ssrContext.styles || ''),
+    BODY_TELEPORTS: ssrContext.teleports?.body,
     BODY_ATTRS: bodyAttrs,
     APP: bodyScriptsPrepend + html + state + rendered.renderScripts() + bodyScripts
   })
-  if (!ssrContext.teleports || !Object.keys(ssrContext.teleports).length) {
-    return result
-  }
-  const $ = await getCheerio().then(load => load(result))
-  for (const target in ssrContext.teleports) {
-    const content = ssrContext.teleports[target]
-    $(target).prepend(content)
-  }
-  return $.html()
 }
 
 function renderPayload (payload, url) {
