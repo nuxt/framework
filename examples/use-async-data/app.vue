@@ -1,7 +1,7 @@
 <script setup>
 const ctr = ref(0)
 const showMountain = ref(false)
-const refresh = useDataRefresh()
+const refresh = refreshNuxtData()
 const { data, pending } = await useAsyncData('/api/hello', () => $fetch(`/api/hello/${ctr.value}`), { watch: [ctr] })
 
 const refreshAll = async () => {
