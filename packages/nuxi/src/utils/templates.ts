@@ -25,24 +25,20 @@ export default defineNuxtPlugin((nuxtApp) => {})
   }
 }
 
-const component: Template = (opts) => {
-  // Enable when https://github.com/nuxt/framework/pull/1919 is merged
-  // opts.name = opts.mode ? `${opts.name}.${opts.mode}` : opts.name
-  return {
-    path: `components/${opts.name}.vue`,
-    contents: `
+const component: Template = ({ name }) => ({
+  path: `components/${name}.vue`,
+  contents: `
 <script lang="ts" setup></script>
 
 <template>
   <div>
-    Component: ${opts.name}
+    Component: ${name}
   </div>
 </template>
 
 <style scoped></style>
 `
-  }
-}
+})
 
 const composable: Template = ({ name }) => {
   const nameWithUsePrefix = name.startsWith('use') ? name : `use${upperFirst(name)}`
