@@ -1,30 +1,36 @@
 <script setup>
-const ctr = ref(0)
 const showMountain = ref(false)
-const { data, pending } = await useAsyncData('/api/hello', () => $fetch(`/api/hello/${ctr.value}`), { watch: [ctr] })
 
+const refreshing = ref(false)
 const refreshAll = async () => {
-  console.log('trigger refresh')
-  await refreshNuxtData()
-  console.log('refresh done')
+  refreshing.value = true
+  try {
+    await refreshNuxtData()
+  } finally {
+    refreshing.value = false
+  }
 }
 </script>
 
 <template>
   <NuxtExampleLayout example="use-async-data" show-tips>
-    <div>{{ data }}</div>
-    <div class="flex justify-center gap-2">
-      <NButton :disabled="pending" @click="ctr++">
-        +
-      </NButton>
-      <NButton @click="showMountain = !showMountain">
-        {{ showMountain ? 'Hide' : 'Show' }} Mountain
-      </NButton>
-      <NButton :disabled="pending" @click="refreshAll">
-        Refetch All Data
-      </NButton>
+    <div>
+      <div class="flex justify-center gap-2">
+        <NButton @click="showMountain = !showMountain">
+          {{ showMountain ? 'Hide' : 'Show' }} Mountain
+        </NButton>
+        <NButton :disabled="refreshing" @click="refreshAll">
+          Refetch All Data
+        </NButton>
+      </div>
+
+      <div class="flex justify-center gap-2">
+        <CounterExample />
+      </div>
+      <div class="flex justify-center gap-2">
+        <MountainExample v-if="showMountain" />
+      </div>
     </div>
-    <Mountain v-if="showMountain" />
     <template #tips>
       <div>
         <p>
