@@ -1,7 +1,7 @@
 import { upperFirst } from 'scule'
 
 interface Template {
-  (options: { name: string, mode?: string }): { path: string, contents: string }
+  (options: { name: string, mode?: 'client' | 'server' }): { path: string, contents: string }
 }
 
 const api: Template = ({ name }) => ({
