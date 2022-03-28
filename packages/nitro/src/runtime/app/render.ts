@@ -157,7 +157,7 @@ async function renderHTML (payload, rendered, ssrContext) {
     HEAD_ATTRS: headAttrs,
     HEAD: headTags +
       rendered.renderResourceHints() + rendered.renderStyles() + (ssrContext.styles || ''),
-    BODY_TELEPORTS: ssrContext.teleports?.body,
+    BODY_TELEPORTS: ssrContext.teleports?.body || '',
     BODY_ATTRS: bodyAttrs,
     APP: bodyScriptsPrepend + html + state + rendered.renderScripts() + bodyScripts
   })
