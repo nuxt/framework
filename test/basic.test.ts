@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'url'
 import { describe, expect, it } from 'vitest'
-import { setup, $fetch, startServer } from '@nuxt/test-utils'
+import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
@@ -91,6 +91,16 @@ describe('pages', () => {
     expect(html).toContain('foo: foobar')
     expect(html).toContain('group: admin')
   })
+
+  it('/parent', async () => {
+    const html = await $fetch('/parent')
+    expect(html).toContain('parent/index')
+  })
+
+  it('/another-parent', async () => {
+    const html = await $fetch('/another-parent')
+    expect(html).toContain('another-parent/index')
+  })
 })
 
 describe('navigate', () => {
@@ -157,82 +167,121 @@ describe('reactivity transform', () => {
 })
 
 describe('extends support', () => {
-  describe('pages', () => {
-    it('extends foo/pages/index.vue', async () => {
+  describe('layouts & pages', () => {
+    it('extends foo/layouts/default & foo/pages/index', async () => {
       const html = await $fetch('/foo')
-      expect(html).toContain('Hello from extended page of foo!')
+      expect(html).toContain('Extended layout from foo')
+      expect(html).toContain('Extended page from foo')
     })
 
-    it('extends bar/pages/override.vue over foo/pages/override.vue', async () => {
+    it('extends [bar/layouts/override & bar/pages/override] over [foo/layouts/override & foo/pages/override]', async () => {
       const html = await $fetch('/override')
+      expect(html).toContain('Extended layout from bar')
       expect(html).toContain('Extended page from bar')
+    })
+  })
+
+  describe('components', () => {
+    it('extends foo/components/ExtendsFoo', async () => {
+      const html = await $fetch('/foo')
+      expect(html).toContain('Extended component from foo')
+    })
+
+    it('extends bar/components/ExtendsOverride over foo/components/ExtendsOverride', async () => {
+      const html = await $fetch('/override')
+      expect(html).toContain('Extended component from bar')
     })
   })
 
   describe('middlewares', () => {
     it('extends foo/middleware/foo', async () => {
-      const html = await $fetch('/with-middleware')
-      expect(html).toContain('Injected by extended middleware')
+      const html = await $fetch('/foo')
+      expect(html).toContain('Middleware | foo: Injected by extended middleware from foo')
     })
 
-    it('extends bar/middleware/override.vue over foo/middleware/override.vue', async () => {
-      const html = await $fetch('/with-middleware-override')
-      expect(html).toContain('Injected by extended middleware from bar')
+    it('extends bar/middleware/override over foo/middleware/override', async () => {
+      const html = await $fetch('/override')
+      expect(html).toContain('Middleware | override: Injected by extended middleware from bar')
     })
   })
 
-  describe('dynamic paths', () => {
-    it('should work with no overrides', async () => {
-      const html = await $fetch('/assets')
-      for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
-        const url = match[2]
-        expect(url.startsWith('/_nuxt/') || url === '/public.svg').toBeTruthy()
-      }
+  describe('composables', () => {
+    it('extends foo/composables/foo', async () => {
+      const html = await $fetch('/foo')
+      expect(html).toContain('Composable | useExtendsFoo: foo')
+    })
+  })
+
+  describe('plugins', () => {
+    it('extends foo/plugins/foo', async () => {
+      const html = await $fetch('/foo')
+      expect(html).toContain('Plugin | foo: String generated from foo plugin!')
+    })
+  })
+
+  describe('server', () => {
+    it('extends foo/server/api/foo', async () => {
+      expect(await $fetch('/api/foo')).toBe('foo')
     })
 
-    it('adds relative paths to CSS', async () => {
-      const html = await $fetch('/assets')
-      const urls = Array.from(html.matchAll(/(href|src)="(.*?)"/g)).map(m => m[2])
-      const cssURL = urls.find(u => /_nuxt\/entry.*\.css$/.test(u))
-      if (process.env.TEST_WITH_WEBPACK) {
-        // Webpack injects CSS differently
-        return
-      }
-      const css = await $fetch(cssURL)
-      const imageUrls = Array.from(css.matchAll(/url\(([^)]*)\)/g)).map(m => m[1].replace(/[-.][\w]{8}\./g, '.'))
-      expect(imageUrls).toMatchInlineSnapshot(`
+    it('extends foo/server/middleware/foo', async () => {
+      const { headers } = await fetch('/')
+      expect(headers.get('injected-header')).toEqual('foo')
+    })
+  })
+})
+
+describe('dynamic paths', () => {
+  it('should work with no overrides', async () => {
+    const html = await $fetch('/assets')
+    for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
+      const url = match[2]
+      expect(url.startsWith('/_nuxt/') || url === '/public.svg').toBeTruthy()
+    }
+  })
+
+  it('adds relative paths to CSS', async () => {
+    const html = await $fetch('/assets')
+    const urls = Array.from(html.matchAll(/(href|src)="(.*?)"/g)).map(m => m[2])
+    const cssURL = urls.find(u => /_nuxt\/entry.*\.css$/.test(u))
+    if (process.env.TEST_WITH_WEBPACK) {
+      // Webpack injects CSS differently
+      return
+    }
+    const css = await $fetch(cssURL)
+    const imageUrls = Array.from(css.matchAll(/url\(([^)]*)\)/g)).map(m => m[1].replace(/[-.][\w]{8}\./g, '.'))
+    expect(imageUrls).toMatchInlineSnapshot(`
         [
           "./logo.svg",
           "../public.svg",
         ]
       `)
-    })
+  })
 
-    it('should allow setting base URL and build assets directory', async () => {
-      process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_other/'
-      process.env.NUXT_APP_BASE_URL = '/foo/'
-      await startServer()
+  it('should allow setting base URL and build assets directory', async () => {
+    process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_other/'
+    process.env.NUXT_APP_BASE_URL = '/foo/'
+    await startServer()
 
-      const html = await $fetch('/assets')
-      for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
-        const url = match[2]
-        // TODO: webpack does not yet support dynamic static paths
-        expect(url.startsWith('/foo/_other/') || url === '/foo/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
-      }
-    })
+    const html = await $fetch('/assets')
+    for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
+      const url = match[2]
+      // TODO: webpack does not yet support dynamic static paths
+      expect(url.startsWith('/foo/_other/') || url === '/foo/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
+    }
+  })
 
-    it('should allow setting CDN URL', async () => {
-      process.env.NUXT_APP_BASE_URL = '/foo/'
-      process.env.NUXT_APP_CDN_URL = 'https://example.com/'
-      process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_cdn/'
-      await startServer()
+  it('should allow setting CDN URL', async () => {
+    process.env.NUXT_APP_BASE_URL = '/foo/'
+    process.env.NUXT_APP_CDN_URL = 'https://example.com/'
+    process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_cdn/'
+    await startServer()
 
-      const html = await $fetch('/assets')
-      for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
-        const url = match[2]
-        // TODO: webpack does not yet support dynamic static paths
-        expect(url.startsWith('https://example.com/_cdn/') || url === 'https://example.com/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
-      }
-    })
+    const html = await $fetch('/assets')
+    for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
+      const url = match[2]
+      // TODO: webpack does not yet support dynamic static paths
+      expect(url.startsWith('https://example.com/_cdn/') || url === 'https://example.com/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
+    }
   })
 })
