@@ -96,7 +96,6 @@ export default defineNuxtModule({
           'export default {',
           '...configRouterOptions,',
           // We need to reverse spreading order to respect layers priority
-          // ? Do we care about trailing `,` for last item ?
           ...routerOptionsFiles.map((_, index) => `...routerOptions${index},`).reverse(),
           '}'
         ].join('\n')
