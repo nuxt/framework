@@ -139,11 +139,14 @@ export function useAsyncData<
     if (options.watch) {
       watch(options.watch, () => asyncData.refresh())
     }
-    nuxt.hook('app:data:refetch', (keys) => {
+    const off = nuxt.hook('app:data:refetch', (keys) => {
       if (!keys || keys.includes(key)) {
-        asyncData.refresh()
+        return asyncData.refresh()
       }
     })
+    if (instance) {
+      onUnmounted(off)
+    }
   }
 
   // Allow directly awaiting on asyncData
