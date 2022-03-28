@@ -137,13 +137,13 @@ export function useAsyncData<
       asyncData.refresh()
     }
     if (options.watch) {
-      const unwatch = watch(options.watch, () => {
-        asyncData.refresh()
-      })
-      if (instance) {
-        onUnmounted(() => unwatch())
-      }
+      watch(options.watch, () => asyncData.refresh())
     }
+    nuxt.hook('app:data:refetch', (keys) => {
+      if (!keys || keys.includes(key)) {
+        asyncData.refresh()
+      }
+    })
   }
 
   // Allow directly awaiting on asyncData
@@ -164,6 +164,14 @@ export function useLazyAsyncData<
   options: Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'lazy'> = {}
 ): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>> {
   return useAsyncData(key, handler, { ...options, lazy: true })
+}
+
+export function useDataRefetch (keys?: string | string[]) {
+  const _keys = keys ? Array.isArray(keys) ? keys : [keys] : undefined
+  return () => {
+    const nuxt = useNuxtApp()
+    return nuxt.callHook('app:data:refetch', _keys)
+  }
 }
 
 function pick (obj: Record<string, any>, keys: string[]) {

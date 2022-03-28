@@ -8,7 +8,7 @@ import { sendRedirect } from 'h3'
 import defu from 'defu'
 import { useNuxtApp } from './app'
 
-export { useLazyAsyncData } from './asyncData'
+export { useLazyAsyncData, useDataRefetch } from './asyncData'
 export { useLazyFetch } from './fetch'
 export { useCookie } from './cookie'
 export { useRequestHeaders } from './ssr'

@@ -2,24 +2,24 @@
 const ctr = ref(0)
 const showMountain = ref(false)
 const { data, pending } = await useAsyncData('/api/hello', () => $fetch(`/api/hello/${ctr.value}`), { watch: [ctr] })
-const refresh = useNuxtApp().callHook('app:refresh')
+const refresh = useDataRefetch()
 </script>
 
 <template>
   <NuxtExampleLayout example="use-async-data" show-tips>
     <div>{{ data }}</div>
-    <div>
-      <NButton :disabled="pending" @click="refresh">
-        Refresh Data
-      </NButton>
+    <div class="flex justify-center gap-2">
       <NButton :disabled="pending" @click="ctr++">
         +
       </NButton>
       <NButton @click="showMountain = !showMountain">
         {{ showMountain ? 'Hide' : 'Show' }} Mountain
       </NButton>
-      <Mountain v-if="showMountain" />
+      <NButton :disabled="pending" @click="refresh">
+        Refetch Data
+      </NButton>
     </div>
+    <Mountain v-if="showMountain" />
     <template #tips>
       <div>
         <p>
