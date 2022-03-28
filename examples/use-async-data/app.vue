@@ -1,8 +1,9 @@
 <script setup>
 const ctr = ref(0)
 const showMountain = ref(false)
-const { data, pending } = await useAsyncData('/api/hello', () => $fetch(`/api/hello/${ctr.value}`), { watch: [ctr] })
 const refresh = useDataRefresh()
+const { data, pending } = await useAsyncData('/api/hello', () => $fetch(`/api/hello/${ctr.value}`), { watch: [ctr] })
+
 const refreshAll = async () => {
   console.log('trigger refresh')
   await refresh()
