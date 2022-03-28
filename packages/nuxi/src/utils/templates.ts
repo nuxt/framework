@@ -1,7 +1,15 @@
 import { upperFirst } from 'scule'
 
+interface TemplateOptions {
+  name: string
+  mode?: 'client' | 'server'
+}
 interface Template {
-  (options: { name: string, mode?: 'client' | 'server' }): { path: string, contents: string }
+  (options: TemplateOptions): { path: string, contents: string }
+}
+
+const suffixMode = (opts: TemplateOptions): string => {
+  return !opts.mode ? opts.name : `${opts.name}.${opts.mode}`
 }
 
 const api: Template = ({ name }) => ({
@@ -15,15 +23,12 @@ export default defineHandle((req, res) => {
 `
 })
 
-const plugin: Template = (opts) => {
-  opts.name = opts.mode ? `${opts.name}.${opts.mode}` : opts.name
-  return {
-    path: `plugins/${opts.name}.ts`,
-    contents: `
+const plugin: Template = opts => ({
+  path: `plugins/${suffixMode(opts)}.ts`,
+  contents: `
 export default defineNuxtPlugin((nuxtApp) => {})
   `
-  }
-}
+})
 
 const component: Template = ({ name }) => ({
   path: `components/${name}.vue`,
@@ -99,3 +104,5 @@ export const templates = {
   layout,
   page
 } as Record<string, Template>
+
+export const modeSupported = (template: string) => ['plugin'].includes(template)

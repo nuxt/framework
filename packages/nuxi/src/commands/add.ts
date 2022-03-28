@@ -2,7 +2,7 @@ import { existsSync, promises as fsp } from 'fs'
 import { resolve, dirname } from 'pathe'
 import consola from 'consola'
 import { loadKit } from '../utils/kit'
-import { templates } from '../utils/templates'
+import { templates, modeSupported } from '../utils/templates'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -16,7 +16,7 @@ export default defineNuxtCommand({
 
     const template = args._[0]
     let name = args._[1]
-    let mode = (args.client && 'client') || (args.server && 'server')
+    const mode = (args.client && 'client') || (args.server && 'server') || name?.match(/\.(client|server)/)?.[1] as 'client' | 'server'
 
     // Validate template name
     if (!templates[template]) {
@@ -30,22 +30,18 @@ export default defineNuxtCommand({
       process.exit(1)
     }
 
+    if (mode && !modeSupported(template)) {
+      consola.error(`Template \`${template}\` does not support modes.`)
+      process.exit(1)
+    }
+
     // Load config in order to respect srcDir
     const kit = await loadKit(cwd)
     const config = await kit.loadNuxtConfig({ cwd })
 
-    const extRegex = /\.[a-z]+$/
-    const extProvided = name.match(extRegex)?.[0]
-    const modeProvided = name.match(/\.(client|server)/)?.[0]
-
-    if (extProvided && extProvided !== modeProvided) {
-      name = name.replace(extRegex, '')
-    }
-
-    if (modeProvided) {
-      name = name.replace(modeProvided, '')
-      if (!mode) { mode = modeProvided.replace(/\./, '') }
-    }
+    const extRegex = /\.[a-z]+/g
+    const extProvided = name.match(extRegex)
+    if (extProvided) { name = name.replaceAll(extRegex, '') }
 
     // Resolve template
     const res = templates[template]({ name, mode })
