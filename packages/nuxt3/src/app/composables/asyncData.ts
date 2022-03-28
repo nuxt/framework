@@ -169,13 +169,12 @@ export function useLazyAsyncData<
   return useAsyncData(key, handler, { ...options, lazy: true })
 }
 
-export async function refreshNuxtData (keys?: string | string[]) {
+export function refreshNuxtData (keys?: string | string[]): Promise<void> {
   if (process.server) {
-    return
+    return Promise.resolve()
   }
   const _keys = keys ? Array.isArray(keys) ? keys : [keys] : undefined
-  const nuxt = useNuxtApp()
-  await nuxt.callHook('app:data:refresh', _keys)
+  return useNuxtApp().callHook('app:data:refresh', _keys)
 }
 
 function pick (obj: Record<string, any>, keys: string[]) {
