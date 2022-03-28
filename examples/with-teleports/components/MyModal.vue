@@ -20,6 +20,11 @@ export default {
       </button>
     </div>
   </Teleport>
+  <NuxtTeleport to="body">
+    <div>
+      Hello from NuxtTeleport!
+    </div>
+  </NuxtTeleport>
 </template>
 
 <style scoped>
