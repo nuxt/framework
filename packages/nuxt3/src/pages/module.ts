@@ -3,7 +3,6 @@ import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlug
 import { resolve } from 'pathe'
 import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
-import defu from 'defu'
 import { distDir } from '../dirs'
 import { resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
@@ -88,18 +87,17 @@ export default defineNuxtModule({
           async layer => await findPath(resolve(layer.config.srcDir, 'app/router.options'))
         ))).filter(Boolean)
 
-        const routerOptions = defu({}, ...await Promise.all(routerOptionsFiles.map(async file => await import(file))))
-
-        const genObject = (object: object) => genObjectFromRawEntries(
-          Object.entries(object).map(([key, value]) => [key, genString(value as string)])
-        )
+        const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router.options)
+          .map(([key, value]) => [key, genString(value as string)]))
 
         return [
-          `const configRouterOptions = ${genObject(nuxt.options.router.options)}`,
-          `const routerOptions = ${genObject(routerOptions)}`,
+          ...routerOptionsFiles.map((file, index) => genImport(file, `routerOptions${index}`)),
+          `const configRouterOptions = ${configRouterOptions}`,
           'export default {',
           '...configRouterOptions,',
-          '...routerOptions',
+          // We need to reverse spreading order to respect layers priority
+          // ? Do we care about trailing `,` for last item ?
+          ...routerOptionsFiles.map((_, index) => `...routerOptions${index},`).reverse(),
           '}'
         ].join('\n')
       }
