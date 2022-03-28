@@ -3,6 +3,7 @@ import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlug
 import { resolve } from 'pathe'
 import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
+import defu from 'defu'
 import { distDir } from '../dirs'
 import { resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
@@ -83,15 +84,22 @@ export default defineNuxtModule({
       filename: 'router.options.mjs',
       getContents: async () => {
         // Check for router options
-        const routerOptionsFile = await findPath('~/app/router.options')
-        const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router.options)
-          .map(([key, value]) => [key, genString(value as string)]))
+        const routerOptionsFiles = (await Promise.all(nuxt.options._layers.map(
+          async layer => await findPath(resolve(layer.config.srcDir, 'app/router.options'))
+        ))).filter(Boolean)
+
+        const routerOptions = defu({}, ...await Promise.all(routerOptionsFiles.map(async file => await import(file))))
+
+        const genObject = (object: object) => genObjectFromRawEntries(
+          Object.entries(object).map(([key, value]) => [key, genString(value as string)])
+        )
+
         return [
-          routerOptionsFile ? genImport(routerOptionsFile, 'routerOptions') : '',
-          `const configRouterOptions = ${configRouterOptions}`,
+          `const configRouterOptions = ${genObject(nuxt.options.router.options)}`,
+          `const routerOptions = ${genObject(routerOptions)}`,
           'export default {',
           '...configRouterOptions,',
-          routerOptionsFile ? '...routerOptions' : '',
+          '...routerOptions',
           '}'
         ].join('\n')
       }
