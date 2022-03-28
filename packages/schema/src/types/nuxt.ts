@@ -1,5 +1,6 @@
 import type { Hookable } from 'hookable'
 import type { Ignore } from 'ignore'
+import type { createDevServer } from '@nuxt/nitro'
 import type { NuxtHooks, NuxtLayout } from './hooks'
 import type { NuxtOptions } from './config'
 
@@ -19,7 +20,7 @@ export interface Nuxt {
   close: () => Promise<void>
 
   /** The production or development server */
-  server?: ReturnType<typeof import ('@nuxt/nitro').createDevServer> & {
+  server?: ReturnType<typeof createDevServer> & {
     /** @deprecated Nuxt 2 only */
     listeners?: any[]
     /** @deprecated Nuxt 2 only */

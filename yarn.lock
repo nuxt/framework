@@ -3084,6 +3084,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nuxt/schema@workspace:packages/schema"
   dependencies:
+    "@nuxt/nitro": 3.0.0
     "@types/lodash.template": ^4
     "@types/semver": ^7
     c12: ^0.2.4

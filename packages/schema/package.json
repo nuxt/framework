@@ -14,6 +14,7 @@
     "prepack": "unbuild"
   },
   "devDependencies": {
+    "@nuxt/nitro": "3.0.0",
     "@types/lodash.template": "^4",
     "@types/semver": "^7",
     "unbuild": "latest"
