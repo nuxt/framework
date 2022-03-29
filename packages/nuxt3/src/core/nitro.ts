@@ -7,6 +7,11 @@ import fsExtra from 'fs-extra'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
 export async function initNitro (nuxt: Nuxt) {
+  // TODO: #590
+  nuxt.options.alias['vue/server-renderer'] = 'vue/server-renderer'
+  nuxt.options.alias['vue/compiler-sfc'] = 'vue/compiler-sfc'
+  nuxt.options.alias.vue = await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
+
   // Create contexts
   const nitroOptions = ((nuxt.options as any).nitro || {}) as NitroConfig
   const nitro = await createNitro({
