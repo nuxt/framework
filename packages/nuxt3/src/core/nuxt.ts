@@ -13,6 +13,7 @@ import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
 import { ImportProtectionPlugin, vueAppPatterns } from './plugins/import-protection'
 import { addModuleTranspiles } from './modules'
+import { initNitro } from './nitro'
 
 export function createNuxt (options: NuxtOptions): Nuxt {
   const hooks = createHooks<NuxtHooks>()
@@ -41,7 +42,6 @@ async function initNuxt (nuxt: Nuxt) {
   nuxt.hook('close', () => nuxtCtx.unset())
 
   // Init nitro
-  const { initNitro } = await import(nuxt.options.experimentNitropack ? './nitro-nitropack' : './nitro-legacy')
   await initNitro(nuxt)
 
   // Add nuxt3 types
