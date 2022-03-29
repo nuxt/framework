@@ -5,6 +5,7 @@ import {loadKit} from '../utils/kit'
 import {templates} from '../utils/templates'
 import {defineNuxtCommand} from './index'
 
+
 export default defineNuxtCommand({
   meta: {
     name: 'add',
@@ -17,9 +18,21 @@ export default defineNuxtCommand({
     const template = args._[0]
     const name = args._[1]
 
+    consola.info('custom templates')
+    const files = await fsp.readdir(resolve('templates'))
+
+    const customTemplateArray = (await Promise.all(files.map(async file => await (import(resolve('templates', file))))))
+    const customTemplates = customTemplateArray.reduce((r, c) => Object.assign(r, c), {})
+    consola.info(customTemplates)
+
+    const allTemplates = {
+      ...templates,
+      ...customTemplates
+    }
+
     // Validate template name
-    if (!templates[template]) {
-      consola.error(`Template ${template} is not supported. Possible values: ${Object.keys(templates).join(', ')}`)
+    if (!allTemplates[template]) {
+      consola.error(`Template ${template} is not supported. Possible values: ${Object.keys(allTemplates).join(', ')}`)
       process.exit(1)
     }
 
@@ -34,7 +47,7 @@ export default defineNuxtCommand({
     const config = await kit.loadNuxtConfig({cwd})
 
     // Resolve template
-    const res = templates[template]({name})
+    const res = allTemplates[template]({name})
 
     // Resolve full path to generated file
     const path = resolve(config.srcDir, res.path)

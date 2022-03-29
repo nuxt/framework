@@ -88,17 +88,13 @@ const page: Template = ({name}) => ({
 })
 
 const template: Template = ({name}) => ({
-  path: `templates/${name}.ts`,
+  path: `templates/${name}.mjs`,
   contents: `
-  interface Template {
-    (options: { name: string }): { path: string, contents: string }
-  }
-  export const ${name}: Template = ({ name }) => ({
-    path: \`path-to-template\`/$$\{ name }.ext\`,
-    contents: \`
-
-    \`
-  })
+export const ${name} = ({ name }) => ({
+  path: \`path-to-template/\${ name }.ext\`,
+  contents: \`
+\`
+})
   `
 })
 
