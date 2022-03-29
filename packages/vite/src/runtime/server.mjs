@@ -23,13 +23,15 @@ function isCSS (file) {
   return IS_CSS_RE.test(file)
 }
 
-async function writeManifest (extraEntries) {
+async function writeManifest () {
   const dir = dirname(fileURLToPath(import.meta.url))
 
   const entries = [
     '@vite/client',
     'entry.mjs',
-    ...extraEntries
+    ...Array.from(runner.moduleCache.keys())
+      .filter(i => runner.moduleCache.get(i).exports && isCSS(i))
+      .map(i => i.slice(1))
   ]
 
   const clientManifest = {
@@ -47,8 +49,6 @@ async function writeManifest (extraEntries) {
 export default async (ssrContext) => {
   const { default: render } = await runner.executeFile(entry)
   const result = await render(ssrContext)
-  const modules = Array.from(runner.moduleCache.keys())
-  // Write CSS modules intro manifest to prevent FOUC
-  await writeManifest(modules.filter(i => isCSS(i)).map(i => i.slice(1)))
+  await writeManifest()
   return result
 }
