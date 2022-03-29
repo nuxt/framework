@@ -1,15 +1,17 @@
 import { promises as fsp } from 'fs'
 import fetch from 'node-fetch'
-import fse from 'fs-extra'
-import { addPluginTemplate, useNuxt } from '@nuxt/kit'
+import fsExtra from 'fs-extra'
+import { addPluginTemplate, resolvePath, useNuxt } from '@nuxt/kit'
 import { joinURL, stringifyQuery, withoutTrailingSlash } from 'ufo'
 import { resolve, join } from 'pathe'
-import { build, generate, prepare, getNitroContext, NitroContext, createDevServer, wpfs, resolveMiddleware, scanMiddleware, writeTypes } from '@nuxt/nitro'
+import type { Handler } from 'h3'
+import { createNitro, createDevServer, build, writeTypes, prepare, copyPublicAssets, prerender, Nitro } from 'nitropack'
+import { Nuxt } from '@nuxt/schema'
 import { AsyncLoadingPlugin } from './async-loading'
 import { distDir } from './dirs'
 import { isDirectory, readDirRecursively } from './vite/utils/fs'
 
-export function setupNitroBridge () {
+export async function setupNitroBridge () {
   const nuxt = useNuxt()
 
   // Ensure we're not just building with 'static' target
@@ -42,26 +44,51 @@ export function setupNitroBridge () {
 
   // Create contexts
   const nitroOptions = (nuxt.options as any).nitro || {}
-  const nitroContext = getNitroContext(nuxt.options, nitroOptions)
-  const nitroDevContext = getNitroContext(nuxt.options, { ...nitroOptions, preset: 'dev' })
 
-  // Normalize Nuxt directories
-  for (const context of [nitroContext, nitroDevContext]) {
-    context._nuxt.rootDir = resolve(context._nuxt.rootDir)
-    context._nuxt.srcDir = resolve(context._nuxt.srcDir)
-    context._nuxt.buildDir = resolve(context._nuxt.buildDir)
-    context._nuxt.generateDir = resolve(context._nuxt.generateDir)
-  }
+  nitroOptions.alias = nitroOptions.alias || {}
+  nitroOptions.alias['#nitro-renderer'] = '#nitro/vue/vue2'
+  nitroOptions.alias['#nitro-vue-renderer'] = 'vue-server-renderer/' + (nuxt.options.dev ? 'build.dev.js' : 'build.prod.js')
+
+  const nitro = await createNitro({
+    ...nitroOptions,
+    rootDir: resolve(nuxt.options.rootDir),
+    srcDir: resolve(nuxt.options.srcDir, 'server'),
+    buildDir: resolve(nuxt.options.buildDir),
+    scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
+    generateDir: resolve(nuxt.options.buildDir, 'dist'),
+    publicDir: nuxt.options.dir.public,
+    publicPath: nuxt.options.app.buildAssetsDir,
+    renderer: '#nitro/vue/render',
+    modulesDir: nuxt.options.modulesDir,
+    runtimeConfig: {
+      public: nuxt.options.publicRuntimeConfig,
+      private: nuxt.options.privateRuntimeConfig
+    },
+    output: {
+      dir: nitroOptions.output?.dir || (
+        nuxt.options.dev
+          ? join(nuxt.options.buildDir, 'nitro')
+          : resolve(nuxt.options.rootDir, '.output')
+      )
+    },
+    dev: nuxt.options.dev,
+    preset: nuxt.options.dev ? 'dev' : undefined
+  })
+
+  nitro.vfs = nuxt.vfs = nitro.vfs || nuxt.vfs || {}
 
   // Connect hooks
-  nuxt.addHooks(nitroContext.nuxtHooks)
-  nuxt.hook('close', () => nitroContext._internal.hooks.callHook('close'))
-  nitroContext._internal.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
-  nitroContext._internal.hooks.hook('nitro:generate', ctx => nuxt.callHook('nitro:generate', ctx))
+  const nitroHooks = [
+    'nitro:document'
+  ]
+  nuxt.hook('close', () => nitro.hooks.callHook('close'))
+  for (const hook of nitroHooks) {
+    nitro.hooks.hook(hook as any, (...args) => nuxt.callHook(hook as any, ...args))
+  }
 
-  nuxt.addHooks(nitroDevContext.nuxtHooks)
-  nuxt.hook('close', () => nitroDevContext._internal.hooks.callHook('close'))
-  nitroDevContext._internal.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
+  // @ts-ignore
+  nuxt.hook('close', () => nitro.hooks.callHook('close'))
+  nitro.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
 
   // Use custom document template if provided
   if (nuxt.options.appTemplatePath) {
@@ -82,7 +109,7 @@ export function setupNitroBridge () {
       publicFiles = readDirRecursively(publicDir).map(r => r.replace(publicDir, ''))
       for (const file of publicFiles) {
         try {
-          fse.rmSync(join(clientDist, file))
+          fsExtra.rmSync(join(clientDist, file))
         } catch {}
       }
     }
@@ -93,8 +120,8 @@ export function setupNitroBridge () {
       const nestedAssetsPath = withoutTrailingSlash(join(clientDist, nuxt.options.app.buildAssetsDir))
 
       if (await isDirectory(nestedAssetsPath)) {
-        await fse.copy(nestedAssetsPath, clientDist, { recursive: true })
-        await fse.remove(nestedAssetsPath)
+        await fsExtra.copy(nestedAssetsPath, clientDist, { recursive: true })
+        await fsExtra.remove(nestedAssetsPath)
       }
     }
   }
@@ -102,7 +129,7 @@ export function setupNitroBridge () {
   nuxt.hook('generate:before', updateViteBase)
 
   // Expose process.env.NITRO_PRESET
-  nuxt.options.env.NITRO_PRESET = nitroContext.preset
+  nuxt.options.env.NITRO_PRESET = nitro.options.preset
 
   // .ts is supported for serverMiddleware
   nuxt.options.extensions.push('ts')
@@ -110,7 +137,7 @@ export function setupNitroBridge () {
   // Replace nuxt server
   if (nuxt.server) {
     nuxt.server.__closed = true
-    nuxt.server = createNuxt2DevServer(nitroDevContext)
+    nuxt.server = createNuxt2DevServer(nitro)
   }
 
   // Disable server sourceMap, esbuild will generate for it.
@@ -134,8 +161,8 @@ export function setupNitroBridge () {
 
   // Nitro client plugin
   addPluginTemplate({
-    filename: 'nitro.client.mjs',
-    src: resolve(nitroContext._internal.runtimeDir, 'app/nitro.client.mjs')
+    filename: 'nitro-bridge.client.mjs',
+    src: resolve(distDir, 'runtime/nitro-bridge.client.mjs')
   })
 
   // Nitro server plugin (for vue-meta)
@@ -170,16 +197,14 @@ export function setupNitroBridge () {
   // Wait for all modules to be ready
   nuxt.hook('modules:done', async () => {
     // Extend nitro with modules
-    await nuxt.callHook('nitro:context', nitroContext)
-    await nuxt.callHook('nitro:context', nitroDevContext)
+    await nuxt.callHook('nitro:context', nitro)
 
     // Resolve middleware
     const { middleware, legacyMiddleware } = await resolveMiddleware(nuxt)
     if (nuxt.server) {
       nuxt.server.setLegacyMiddleware(legacyMiddleware)
     }
-    nitroContext.middleware.push(...middleware)
-    nitroDevContext.middleware.push(...middleware)
+    nitro.options.handlers.push(...middleware)
   })
 
   // Add typed route responses
@@ -189,8 +214,7 @@ export function setupNitroBridge () {
 
   // nuxt prepare
   nuxt.hook('build:done', async () => {
-    nitroDevContext.scannedMiddleware = await scanMiddleware(nitroDevContext._nuxt.serverDir)
-    await writeTypes(nitroDevContext)
+    await writeTypes(nitro)
   })
 
   // nuxt build/dev
@@ -200,47 +224,57 @@ export function setupNitroBridge () {
   nuxt.hook('build:done', async () => {
     if (nuxt.options._prepare) { return }
     if (nuxt.options.dev) {
-      await build(nitroDevContext)
-    } else if (!nitroContext._nuxt.isStatic) {
-      await prepare(nitroContext)
-      await generate(nitroContext)
-      await build(nitroContext)
+      await build(nitro)
+      // nitro.hooks.callHook('nitro:dev:reload')
+    } else {
+      // TODO: Nitro generate
+      await prepare(nitro)
+      await copyPublicAssets(nitro)
+      if (nuxt.options.target === 'static') {
+        await prerender(nitro)
+      }
+      await build(nitro)
     }
   })
 
   // nuxt dev
   if (nuxt.options.dev) {
-    nitroDevContext._internal.hooks.hook('nitro:compiled', () => { nuxt.server.watch() })
-    nuxt.hook('build:compile', ({ compiler }) => { compiler.outputFileSystem = wpfs })
-    nuxt.hook('server:devMiddleware', (m) => { nuxt.server.setDevMiddleware(m) })
+    nitro.hooks.hook('nitro:compiled', () => { nuxt.server?.watch() })
+    nuxt.hook('build:compile', ({ compiler }) => {
+      compiler.outputFileSystem = { ...fsExtra, join } as any
+    })
+    nuxt.hook('server:devMiddleware', (m) => { nuxt.server?.setDevMiddleware(m) })
   }
 
   // nuxt generate
-  nuxt.options.generate.dir = nitroContext.output.publicDir
+  nuxt.options.generate.dir = nitro.options.output.publicDir
   nuxt.options.generate.manifest = false
   nuxt.hook('generate:cache:ignore', (ignore: string[]) => {
-    ignore.push(nitroContext.output.dir)
-    ignore.push(nitroContext.output.serverDir)
-    if (nitroContext.output.publicDir) {
-      ignore.push(nitroContext.output.publicDir)
+    ignore.push(nitro.options.output.dir)
+    ignore.push(nitro.options.output.serverDir)
+    if (nitro.options.output.publicDir) {
+      ignore.push(nitro.options.output.publicDir)
     }
-    ignore.push(...nitroContext.ignore)
+    ignore.push(...nitro.options.ignore)
   })
   nuxt.hook('generate:before', async () => {
-    await prepare(nitroContext)
+    console.log('generate:before')
+    await prepare(nitro)
   })
   nuxt.hook('generate:extendRoutes', async () => {
-    await build(nitroDevContext)
+    console.log('generate:extendRoutes')
+    await build(nitro)
     await nuxt.server.reload()
   })
   nuxt.hook('generate:done', async () => {
+    console.log('generate:done')
     await nuxt.server.close()
-    await build(nitroContext)
+    await build(nitro)
   })
 }
 
-function createNuxt2DevServer (nitroContext: NitroContext) {
-  const server = createDevServer(nitroContext)
+function createNuxt2DevServer (nitro: Nitro) {
+  const server = createDevServer(nitro)
 
   const listeners = []
   async function listen (port) {
@@ -275,5 +309,32 @@ function createNuxt2DevServer (nitroContext: NitroContext) {
     listen,
     serverMiddlewarePaths () { return [] },
     ready () { }
+  }
+}
+
+async function resolveMiddleware (nuxt: Nuxt) {
+  const middleware: Handler[] = []
+  const legacyMiddleware: Handler[] = []
+
+  for (let m of nuxt.options.serverMiddleware) {
+    if (typeof m === 'string' || typeof m === 'function' /* legacy middleware */) { m = { handler: m } }
+    const route = m.path || m.route || '/'
+    const handle = m.handler || m.handle
+    if (typeof handle !== 'string' || typeof route !== 'string') {
+      legacyMiddleware.push(m)
+    } else {
+      delete m.handler
+      delete m.path
+      middleware.push({
+        ...m,
+        handle: await resolvePath(handle),
+        route
+      })
+    }
+  }
+
+  return {
+    middleware,
+    legacyMiddleware
   }
 }
