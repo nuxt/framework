@@ -1,10 +1,10 @@
-import {upperFirst} from 'scule'
+import { upperFirst } from 'scule'
 
 interface Template {
   (options: { name: string }): { path: string, contents: string }
 }
 
-const api: Template = ({name}) => ({
+const api: Template = ({ name }) => ({
   path: `server/api/${name}.ts`,
   contents: `
 import { defineHandle } from 'h3'
@@ -15,21 +15,16 @@ export default defineHandle((req, res) => {
 `
 })
 
-const plugin: Template = ({name}) => ({
+const plugin: Template = ({ name }) => ({
   path: `plugins/${name}.ts`,
   contents: `
 export default defineNuxtPlugin((nuxtApp) => {})
   `
 })
 
-const component: Template = ({name}) => ({
+const component: Template = ({ name }) => ({
   path: `components/${name}.vue`,
   contents: `
-<script lang="ts">
-export default {
-    name: ${name.split('/').join('-')}
-}
-</script>
 <script lang="ts" setup></script>
 
 <template>
@@ -42,7 +37,7 @@ export default {
 `
 })
 
-const composable: Template = ({name}) => {
+const composable: Template = ({ name }) => {
   const nameWithUsePrefix = name.startsWith('use') ? name : `use${upperFirst(name)}`
   return {
     path: `composables/${name}.ts`,
@@ -54,14 +49,14 @@ export const ${nameWithUsePrefix} = () => {
   }
 }
 
-const middleware: Template = ({name}) => ({
+const middleware: Template = ({ name }) => ({
   path: `middleware/${name}.ts`,
   contents: `
 export default defineNuxtRouteMiddleware((to, from) => {})
 `
 })
 
-const layout: Template = ({name}) => ({
+const layout: Template = ({ name }) => ({
   path: `layouts/${name}.vue`,
   contents: `
 <script lang="ts" setup></script>
@@ -77,7 +72,7 @@ const layout: Template = ({name}) => ({
 `
 })
 
-const page: Template = ({name}) => ({
+const page: Template = ({ name }) => ({
   path: `pages/${name}.vue`,
   contents: `
 <script lang="ts" setup></script>
