@@ -2640,6 +2640,7 @@ __metadata:
     vite: ^2.8.6
     vite-plugin-vue2: ^1.9.3
     vue: ^2
+    vue-bundle-renderer: ^0.3.5
     vue-router: ^3
     vue-template-compiler: ^2.6.14
   bin:
@@ -6857,6 +6858,15 @@ __metadata:
   version: 1.0.3
   resolution: "builtins@npm:1.0.3"
   checksum: 47ce94f7eee0e644969da1f1a28e5f29bd2e48b25b2bbb61164c345881086e29464ccb1fb88dbc155ea26e8b1f5fc8a923b26c8c1ed0935b67b644d410674513
+  languageName: node
+  linkType: hard
+
+"bundle-runner@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "bundle-runner@npm:0.0.1"
+  dependencies:
+    source-map: ^0.7.3
+  checksum: 26a2f681a82e57b27e788fbce71096d9417af078c09b06d0038fade878417809732ea5a785b0e4dfbe69f2b4980f8523710fae9a59e883e2680fc92e90bfc2d3
   languageName: node
   linkType: hard
 
@@ -15568,6 +15578,7 @@ __metadata:
     unplugin: ^0.6.0
     untyped: ^0.4.3
     vue: ^3.2.31
+    vue-bundle-renderer: ^0.3.5
     vue-meta: next
     vue-router: ^4.0.14
   bin:
@@ -21843,6 +21854,15 @@ __metadata:
   version: 3.0.3
   resolution: "vscode-uri@npm:3.0.3"
   checksum: 683bf9de835c3cef0b51c104a4949bf746148ded7c2287ebafcc506d20aa0e90b99385a972dba8132903420dba67fc33a5e146e30212c4a6b3ca5d74d1f95702
+  languageName: node
+  linkType: hard
+
+"vue-bundle-renderer@npm:^0.3.5":
+  version: 0.3.5
+  resolution: "vue-bundle-renderer@npm:0.3.5"
+  dependencies:
+    bundle-runner: ^0.0.1
+  checksum: 7c6814890b25d480994476b751776af852f87ae320b175b76a1913ba510caf09ff0d938c5468bccebc31a9288fb55d66bf31d044454a098a8c638a73c3580c7a
   languageName: node
   linkType: hard
 
