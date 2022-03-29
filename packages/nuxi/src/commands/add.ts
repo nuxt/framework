@@ -15,8 +15,8 @@ export default defineNuxtCommand({
     const cwd = resolve(args.cwd || '.')
 
     const template = args._[0]
-    let name = args._[1]
-    const mode = (args.client && 'client') || (args.server && 'server') || name?.match(/\.(client|server)/)?.[1] as 'client' | 'server'
+    const name = args._[1]
+    const mode = (args.client && 'client') || (args.server && 'server') as 'client' | 'server'
 
     // Validate template name
     if (!templates[template]) {
@@ -38,10 +38,6 @@ export default defineNuxtCommand({
     // Load config in order to respect srcDir
     const kit = await loadKit(cwd)
     const config = await kit.loadNuxtConfig({ cwd })
-
-    const extRegex = /\.[a-z]+/g
-    const extProvided = name.match(extRegex)
-    if (extProvided) { name = name.replaceAll(extRegex, '') }
 
     // Resolve template
     const res = templates[template]({ name, mode })
