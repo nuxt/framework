@@ -1,5 +1,5 @@
 import { resolve, join } from 'pathe'
-import { createNitro, createDevServer, build, prepare, copyPublicAssets, NitroHandlerConfig } from 'nitropack'
+import { createNitro, createDevServer, build, prepare, copyPublicAssets, NitroHandlerConfig, writeTypes, scanHandlers } from 'nitropack'
 import type { NitroConfig } from 'nitropack'
 import type { Nuxt } from '@nuxt/schema'
 import { resolvePath } from '@nuxt/kit'
@@ -69,6 +69,14 @@ export async function initNitro (nuxt: Nuxt) {
       ]
     }))
   })
+
+  // Generate nitro types
+  if (nuxt.options._prepare) {
+    nuxt.hook('modules:done', async () => {
+      await scanHandlers(nitro)
+      await writeTypes(nitro)
+    })
+  }
 
   // Add typed route responses
   nuxt.hook('prepare:types', (opts) => {
