@@ -1,6 +1,6 @@
 import { resolve, join } from 'pathe'
-import { createNitro, createDevServer, build, scanMiddleware, writeTypes, prepare, copyPublicAssets } from 'nitropack'
-import type { NitroConfig, ServerMiddleware } from 'nitropack'
+import { createNitro, createDevServer, build, prepare, copyPublicAssets, NitroHandlerConfig } from 'nitropack'
+import type { NitroConfig } from 'nitropack'
 import type { Nuxt } from '@nuxt/schema'
 import { resolvePath } from '@nuxt/kit'
 import fsExtra from 'fs-extra'
@@ -13,6 +13,7 @@ export async function initNitro (nuxt: Nuxt) {
     ...nitroOptions,
     rootDir: nuxt.options.rootDir,
     srcDir: join(nuxt.options.srcDir, 'server'),
+    scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
     buildDir: nuxt.options.buildDir,
     generateDir: join(nuxt.options.buildDir, 'dist'),
     publicDir: nuxt.options.dir.public,
@@ -73,9 +74,9 @@ export async function initNitro (nuxt: Nuxt) {
     await nuxt.callHook('nitro:context', nitro)
 
     // Resolve middleware
-    const { middleware, legacyMiddleware } = await resolveMiddleware(nuxt)
+    const { middleware, legacyMiddleware } = await resolveHandlers(nuxt)
     nuxt.server.setLegacyMiddleware(legacyMiddleware)
-    nitro.options.middleware.push(...middleware)
+    nitro.options.handlers.push(...middleware)
   })
 
   // nuxt build/dev
@@ -89,11 +90,6 @@ export async function initNitro (nuxt: Nuxt) {
     }
   })
 
-  nuxt.hook('build:before', async () => {
-    nitro.scannedMiddleware = await scanMiddleware(nitro.options.srcDir)
-    await writeTypes(nitro)
-  })
-
   // nuxt dev
   if (nuxt.options.dev) {
     nitro.hooks.hook('nitro:compiled', () => { nitroDevServer.watch() })
@@ -104,9 +100,9 @@ export async function initNitro (nuxt: Nuxt) {
   }
 }
 
-async function resolveMiddleware (nuxt: Nuxt) {
-  const middleware: ServerMiddleware[] = []
-  const legacyMiddleware: ServerMiddleware[] = []
+async function resolveHandlers (nuxt: Nuxt) {
+  const middleware: NitroHandlerConfig[] = []
+  const legacyMiddleware: NitroHandlerConfig[] = []
 
   for (let m of nuxt.options.serverMiddleware) {
     if (typeof m === 'string' || typeof m === 'function' /* legacy middleware */) { m = { handler: m } }
@@ -119,8 +115,8 @@ async function resolveMiddleware (nuxt: Nuxt) {
       delete m.path
       middleware.push({
         ...m,
-        handle: await resolvePath(handle),
-        route
+        route,
+        handler: await resolvePath(handle)
       })
     }
   }
