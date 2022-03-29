@@ -1,9 +1,9 @@
-import { existsSync, promises as fsp } from 'fs'
-import { resolve, dirname } from 'pathe'
+import {existsSync, promises as fsp} from 'fs'
+import {dirname, resolve} from 'pathe'
 import consola from 'consola'
-import { loadKit } from '../utils/kit'
-import { templates } from '../utils/templates'
-import { defineNuxtCommand } from './index'
+import {loadKit} from '../utils/kit'
+import {templates} from '../utils/templates'
+import {defineNuxtCommand} from './index'
 
 export default defineNuxtCommand({
   meta: {
@@ -11,7 +11,7 @@ export default defineNuxtCommand({
     usage: `npx nuxi add [--cwd] [--force] ${Object.keys(templates).join('|')} <name>`,
     description: 'Create a new template file.'
   },
-  async invoke (args) {
+  async invoke(args) {
     const cwd = resolve(args.cwd || '.')
 
     const template = args._[0]
@@ -31,10 +31,10 @@ export default defineNuxtCommand({
 
     // Load config in order to respect srcDir
     const kit = await loadKit(cwd)
-    const config = await kit.loadNuxtConfig({ cwd })
+    const config = await kit.loadNuxtConfig({cwd})
 
     // Resolve template
-    const res = templates[template]({ name })
+    const res = templates[template]({name})
 
     // Resolve full path to generated file
     const path = resolve(config.srcDir, res.path)
@@ -52,7 +52,11 @@ export default defineNuxtCommand({
       if (template === 'page') {
         consola.info('This enables vue-router functionality!')
       }
-      await fsp.mkdir(parentDir, { recursive: true })
+      if (template === 'template' && name.lastIndexOf('/') !== -1) {
+        consola.error('This template does not support nested directories')
+        process.exit(1)
+      }
+      await fsp.mkdir(parentDir, {recursive: true})
     }
 
     // Write file
