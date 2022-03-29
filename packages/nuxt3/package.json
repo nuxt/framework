@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "@nuxt/kit": "3.0.0",
-    "@nuxt/nitro": "3.0.0",
     "@nuxt/schema": "3.0.0",
     "@nuxt/ui-templates": "npm:@nuxt/ui-templates-edge@latest",
     "@nuxt/vite-builder": "3.0.0",

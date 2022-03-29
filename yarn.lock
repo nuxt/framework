@@ -2976,81 +2976,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/nitro@3.0.0, @nuxt/nitro@workspace:packages/nitro":
-  version: 0.0.0-use.local
-  resolution: "@nuxt/nitro@workspace:packages/nitro"
-  dependencies:
-    "@cloudflare/kv-asset-handler": ^0.2.0
-    "@netlify/functions": ^1.0.0
-    "@nuxt/devalue": ^2.0.0
-    "@nuxt/kit": 3.0.0
-    "@nuxt/schema": 3.0.0
-    "@nuxt/ui-templates": "npm:@nuxt/ui-templates-edge@latest"
-    "@rollup/plugin-alias": ^3.1.9
-    "@rollup/plugin-commonjs": ^21.0.3
-    "@rollup/plugin-inject": ^4.0.4
-    "@rollup/plugin-json": ^4.1.0
-    "@rollup/plugin-node-resolve": ^13.1.3
-    "@rollup/plugin-replace": ^4.0.0
-    "@rollup/plugin-virtual": ^2.1.0
-    "@rollup/plugin-wasm": ^5.1.2
-    "@rollup/pluginutils": ^4.2.0
-    "@types/aws-lambda": ^8.10.93
-    "@types/etag": ^1.8.1
-    "@types/fs-extra": ^9.0.13
-    "@types/http-proxy": ^1.17.8
-    "@types/jsdom": ^16.2.14
-    "@types/mime": ^2.0.3
-    "@types/node-fetch": ^3.0.2
-    "@types/serve-static": ^1.13.10
-    "@vercel/nft": ^0.18.0
-    archiver: ^5.3.0
-    chalk: ^5.0.1
-    chokidar: ^3.5.3
-    connect: ^3.7.0
-    consola: ^2.15.3
-    defu: ^6.0.0
-    destr: ^1.1.0
-    dot-prop: ^7.2.0
-    esbuild: ^0.14.28
-    etag: ^1.8.1
-    fs-extra: ^10.0.1
-    globby: ^13.1.1
-    gzip-size: ^7.0.0
-    h3: ^0.5.1
-    hasha: ^5.2.2
-    hookable: ^5.1.1
-    http-proxy: ^1.18.1
-    is-primitive: ^3.0.1
-    jiti: ^1.13.0
-    knitwork: ^0.1.1
-    listhen: ^0.2.6
-    mime: ^3.0.0
-    mlly: ^0.5.1
-    node-fetch: ^3.2.3
-    ohmyfetch: ^0.4.15
-    ora: ^6.1.0
-    pathe: ^0.2.0
-    perfect-debounce: ^0.1.3
-    pkg-types: ^0.3.2
-    pretty-bytes: ^6.0.0
-    rollup: ^2.70.1
-    rollup-plugin-terser: ^7.0.2
-    rollup-plugin-visualizer: ^5.6.0
-    serve-placeholder: ^1.2.4
-    serve-static: ^1.15.0
-    std-env: ^3.0.1
-    table: ^6.8.0
-    ufo: ^0.8.1
-    unbuild: latest
-    unenv: ^0.4.3
-    unstorage: ^0.3.3
-    vue: 3.2.31
-    vue-bundle-renderer: ^0.3.5
-    vue-server-renderer: ^2.6.14
-  languageName: unknown
-  linkType: soft
-
 "@nuxt/opencollective@npm:^0.3.2":
   version: 0.3.2
   resolution: "@nuxt/opencollective@npm:0.3.2"
@@ -3832,23 +3757,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-commonjs@npm:^21.0.3":
-  version: 21.0.3
-  resolution: "@rollup/plugin-commonjs@npm:21.0.3"
-  dependencies:
-    "@rollup/pluginutils": ^3.1.0
-    commondir: ^1.0.1
-    estree-walker: ^2.0.1
-    glob: ^7.1.6
-    is-reference: ^1.2.1
-    magic-string: ^0.25.7
-    resolve: ^1.17.0
-  peerDependencies:
-    rollup: ^2.38.3
-  checksum: 23307d3b7eb8d64dd966fbe380b85bf3b5f4908c7344427d45918d570cf6b48710ef6f155bea74545127c10de9d64f87dd2219078e83dbccf927505d38774de8
-  languageName: node
-  linkType: hard
-
 "@rollup/plugin-inject@npm:^4.0.4":
   version: 4.0.4
   resolution: "@rollup/plugin-inject@npm:4.0.4"
@@ -3984,13 +3892,6 @@ __metadata:
     "@types/browserslist": "*"
     postcss: 7.x.x
   checksum: 7370a9b126cc5a2f4f20c5e1acb8b4ab17790f1d0108735fc732c3043314b0c7260c262d41bcaa3330b93432873063810662054d2483b786094afa76af467d8e
-  languageName: node
-  linkType: hard
-
-"@types/aws-lambda@npm:^8.10.93":
-  version: 8.10.93
-  resolution: "@types/aws-lambda@npm:8.10.93"
-  checksum: 82eac08a9e1c77724708192ff5c487ffbef572d4dd3851908c56c8bd7f174dd3fa558090ff5c499e04c3e7afa0dc885fb8cf12cd1b1044542b55b17c61846d14
   languageName: node
   linkType: hard
 
@@ -4164,15 +4065,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/etag@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "@types/etag@npm:1.8.1"
-  dependencies:
-    "@types/node": "*"
-  checksum: 93ae9d2eeeee484b9a9edc46581c6d9f32163b61f3f9a8c3df3a9ef903d1efc9c8e5b9146b10c19f3d1f23d40419426cb85eea20cf42cfaa1af3abda2d405cee
-  languageName: node
-  linkType: hard
-
 "@types/express-serve-static-core@npm:^4.17.18":
   version: 4.17.28
   resolution: "@types/express-serve-static-core@npm:4.17.28"
@@ -4249,15 +4141,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/http-proxy@npm:^1.17.8":
-  version: 1.17.8
-  resolution: "@types/http-proxy@npm:1.17.8"
-  dependencies:
-    "@types/node": "*"
-  checksum: 3b3d683498267096c8aca03652702243b1e087bc20e77a9abe74fdbee1c89c8283ee41c47d245cda2f422483b01980d70a1030b92a8ff24b280e0aa868241a8b
-  languageName: node
-  linkType: hard
-
 "@types/jsdom@npm:^16, @types/jsdom@npm:^16.2.14":
   version: 16.2.14
   resolution: "@types/jsdom@npm:16.2.14"
@@ -4310,13 +4193,6 @@ __metadata:
   version: 1.3.2
   resolution: "@types/mime@npm:1.3.2"
   checksum: 0493368244cced1a69cb791b485a260a422e6fcc857782e1178d1e6f219f1b161793e9f87f5fae1b219af0f50bee24fcbe733a18b4be8fdd07a38a8fb91146fd
-  languageName: node
-  linkType: hard
-
-"@types/mime@npm:^2.0.3":
-  version: 2.0.3
-  resolution: "@types/mime@npm:2.0.3"
-  checksum: 1f4f144423e149f300438f7cdca9b308d7a18a944e63f5ddf262558208a22a64c8e79b6973d602d86928e19052b3256b492429951b34d037242bb1bdfddae388
   languageName: node
   linkType: hard
 
@@ -4512,7 +4388,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/serve-static@npm:*, @types/serve-static@npm:^1.13.10":
+"@types/serve-static@npm:*":
   version: 1.13.10
   resolution: "@types/serve-static@npm:1.13.10"
   dependencies:
@@ -5037,27 +4913,6 @@ __metadata:
   bin:
     nft: out/cli.js
   checksum: 812de9ed9dc9116ddc514fbb8ece044ba9427a16fe999110ebdea7581f1055d891d05ad1d8bb4cb6dfb497bdac605168440be64b00f1fad9581a42158a97a02c
-  languageName: node
-  linkType: hard
-
-"@vercel/nft@npm:^0.18.0":
-  version: 0.18.0
-  resolution: "@vercel/nft@npm:0.18.0"
-  dependencies:
-    "@mapbox/node-pre-gyp": ^1.0.5
-    acorn: ^8.6.0
-    bindings: ^1.4.0
-    estree-walker: 2.0.2
-    glob: ^7.1.3
-    graceful-fs: ^4.2.9
-    micromatch: ^4.0.2
-    node-gyp-build: ^4.2.2
-    node-pre-gyp: ^0.13.0
-    resolve-from: ^5.0.0
-    rollup-pluginutils: ^2.8.2
-  bin:
-    nft: out/cli.js
-  checksum: a3127ad14a93e358c5a4716843c08fbf3e3ed3fd6a664c3ea7d944365ad514689325d309c94f1b54a02a9bf988e8d4146e7c0cf5688d25da15e846d114f3a09c
   languageName: node
   linkType: hard
 
@@ -7002,15 +6857,6 @@ __metadata:
   version: 1.0.3
   resolution: "builtins@npm:1.0.3"
   checksum: 47ce94f7eee0e644969da1f1a28e5f29bd2e48b25b2bbb61164c345881086e29464ccb1fb88dbc155ea26e8b1f5fc8a923b26c8c1ed0935b67b644d410674513
-  languageName: node
-  linkType: hard
-
-"bundle-runner@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "bundle-runner@npm:0.0.1"
-  dependencies:
-    source-map: ^0.7.3
-  checksum: 26a2f681a82e57b27e788fbce71096d9417af078c09b06d0038fade878417809732ea5a785b0e4dfbe69f2b4980f8523710fae9a59e883e2680fc92e90bfc2d3
   languageName: node
   linkType: hard
 
@@ -15688,7 +15534,6 @@ __metadata:
   resolution: "nuxt3@workspace:packages/nuxt3"
   dependencies:
     "@nuxt/kit": 3.0.0
-    "@nuxt/nitro": 3.0.0
     "@nuxt/schema": 3.0.0
     "@nuxt/ui-templates": "npm:@nuxt/ui-templates-edge@latest"
     "@nuxt/vite-builder": 3.0.0
@@ -19583,7 +19428,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serve-static@npm:^1.14.1, serve-static@npm:^1.14.2, serve-static@npm:^1.15.0":
+"serve-static@npm:^1.14.1, serve-static@npm:^1.14.2":
   version: 1.15.0
   resolution: "serve-static@npm:1.15.0"
   dependencies:
@@ -21998,15 +21843,6 @@ __metadata:
   version: 3.0.3
   resolution: "vscode-uri@npm:3.0.3"
   checksum: 683bf9de835c3cef0b51c104a4949bf746148ded7c2287ebafcc506d20aa0e90b99385a972dba8132903420dba67fc33a5e146e30212c4a6b3ca5d74d1f95702
-  languageName: node
-  linkType: hard
-
-"vue-bundle-renderer@npm:^0.3.5":
-  version: 0.3.5
-  resolution: "vue-bundle-renderer@npm:0.3.5"
-  dependencies:
-    bundle-runner: ^0.0.1
-  checksum: 7c6814890b25d480994476b751776af852f87ae320b175b76a1913ba510caf09ff0d938c5468bccebc31a9288fb55d66bf31d044454a098a8c638a73c3580c7a
   languageName: node
   linkType: hard
 

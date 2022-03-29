@@ -96,7 +96,7 @@ export interface NuxtHooks {
   // 'watch:fileChanged': (builder: Builder, fileName: string) => HookResult
   'builder:watch': (event: WatchEvent, path: string) => HookResult
 
-  // @nuxt/nitro
+  // nitropack
   'nitro:document': (template: { src: string, contents: string }) => HookResult
   'nitro:context': (context: any) => HookResult
   'nitro:generate': (context: any) => HookResult
