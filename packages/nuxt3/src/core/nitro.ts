@@ -70,16 +70,12 @@ export async function initNitro (nuxt: Nuxt) {
     }))
   })
 
-  // Generate nitro types
-  if (nuxt.options._prepare) {
-    nuxt.hook('modules:done', async () => {
+  // Add typed route responses
+  nuxt.hook('prepare:types', async (opts) => {
+    if (nuxt.options._prepare) {
       await scanHandlers(nitro)
       await writeTypes(nitro)
-    })
-  }
-
-  // Add typed route responses
-  nuxt.hook('prepare:types', (opts) => {
+    }
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/nitro.d.ts') })
   })
 
