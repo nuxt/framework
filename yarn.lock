@@ -11924,7 +11924,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"h3@npm:^0.4.1, h3@npm:^0.4.2":
+"h3@npm:^0.4.2":
   version: 0.4.2
   resolution: "h3@npm:0.4.2"
   dependencies:
@@ -11933,6 +11933,18 @@ __metadata:
     radix3: ^0.1.1
     ufo: ^0.7.11
   checksum: 8467d562a31e782e3456ebad55b90ac6f2a8f44c1857a9e82f9bcb839c5ef9ba7d3eb34c752b21b0498f385dcca5a282e9895353a34347af229143293fef6eed
+  languageName: node
+  linkType: hard
+
+"h3@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "h3@npm:0.5.1"
+  dependencies:
+    cookie-es: ^0.5.0
+    destr: ^1.1.0
+    radix3: ^0.1.1
+    ufo: ^0.7.11
+  checksum: dd966b714687c146df2b6a69a879797be68b4e0cbe184515fc63f6b480932ae7b1f2ab8cfcfa229734cf9c86f55f0b21512f8919377b095aa93046f020624dc7
   languageName: node
   linkType: hard
 
@@ -14959,9 +14971,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitropack@npm:nitropack-edge@latest":
-  version: 0.0.0-27456183.d13b842
-  resolution: "nitropack-edge@npm:0.0.0-27456183.d13b842"
+"nitropack@npm:nitropack-edge@0.0.0-27476193.c705dd4":
+  version: 0.0.0-27476193.c705dd4
+  resolution: "nitropack-edge@npm:0.0.0-27476193.c705dd4"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@netlify/functions": ^1.0.0
@@ -14991,7 +15003,7 @@ __metadata:
     fs-extra: ^10.0.1
     globby: ^13.1.1
     gzip-size: ^7.0.0
-    h3: ^0.4.1
+    h3: ^0.5.1
     hasha: ^5.2.2
     hookable: ^5.1.1
     http-proxy: ^1.18.1
@@ -15005,8 +15017,8 @@ __metadata:
     object-hash: ^3.0.0
     ohmyfetch: ^0.4.15
     ora: ^6.1.0
-    p-debounce: ^4.0.0
     pathe: ^0.2.0
+    perfect-debounce: ^0.1.3
     pkg-types: ^0.3.2
     pretty-bytes: ^6.0.0
     rollup: ^2.70.1
@@ -15024,7 +15036,7 @@ __metadata:
   bin:
     nitro: ./dist/cli.mjs
     nitropack: ./dist/cli.mjs
-  checksum: 32a7525695c6f070788b631dfa7a575bef0e4d7f237a17a2e1bffc0578b060ce5f1986e5b549fb6233effaa1b6d8415a45de739b6ee3b898bea8669a613d00a1
+  checksum: d822b2ed5db762164fbcff8f5257bceda16e342c2a7020e4e8e35d59b0b893e290145b276fe23ba79ba5d98e2e00660d03e133f5bada71cf0d8f28ff8fc1977b
   languageName: node
   linkType: hard
 
@@ -15709,7 +15721,7 @@ __metadata:
     knitwork: ^0.1.1
     magic-string: ^0.26.1
     mlly: ^0.5.1
-    nitropack: "npm:nitropack-edge@latest"
+    nitropack: "npm:nitropack-edge@0.0.0-27476193.c705dd4"
     nuxi: 3.0.0
     ohash: ^0.1.0
     ohmyfetch: ^0.4.15
@@ -16024,13 +16036,6 @@ __metadata:
     os-homedir: ^1.0.0
     os-tmpdir: ^1.0.0
   checksum: 779d261920f2a13e5e18cf02446484f12747d3f2ff82280912f52b213162d43d312647a40c332373cbccd5e3fb8126915d3bfea8dde4827f70f82da76e52d359
-  languageName: node
-  linkType: hard
-
-"p-debounce@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "p-debounce@npm:4.0.0"
-  checksum: 7f796f6ed264cb964b83601e70c4c0d94dd52d54e1361400ee80df7527217a59074aa14ab746d4d3089b352181c4ffb5329158fd679cb4b4b52c208574e9e56d
   languageName: node
   linkType: hard
 
