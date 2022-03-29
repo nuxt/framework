@@ -5,6 +5,5 @@ export default defineNuxtConfig({
     '@nuxt/ui'
   ],
   experimental: {
-    viteNode: true
   }
 })
