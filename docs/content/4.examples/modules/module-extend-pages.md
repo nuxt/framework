@@ -4,4 +4,10 @@ template: Example
 
 # Module Extend pages
 
-::sandbox{repo="nuxt/framework" branch="main" dir="examples/modules-extend-pages" file="app.vue"}
+This example defines a new `test` page using `extendPages` within a module.
+
+::alert{type=info icon=👉}
+Learn more about [modules creation](/docs/advanced/modules).
+::
+
+::sandbox{repo="nuxt/framework" branch="main" dir="examples/module-extend-pages" file="pages/index.vue"}
