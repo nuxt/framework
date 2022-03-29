@@ -1,7 +1,6 @@
-import type { ServerResponse } from 'http'
 import { Ref, ref, watch } from 'vue'
 import { parse, serialize, CookieParseOptions, CookieSerializeOptions } from 'cookie-es'
-import { appendHeader } from 'h3'
+import { appendHeader, ServerResponse } from 'h3'
 import type { NuxtApp } from '@nuxt/schema'
 import destr from 'destr'
 import { useNuxtApp } from '#app'
@@ -34,8 +33,7 @@ export function useCookie <T=string> (name: string, _opts?: CookieOptions<T>): C
     const nuxtApp = useNuxtApp()
     nuxtApp.hooks.hookOnce('app:rendered', () => {
       if (cookie.value !== initialValue) {
-        // @ts-ignore
-        writeServerCookie(useSSRRes(nuxtApp), name, cookie.value, opts)
+        writeServerCookie(useSSRRes(nuxtApp as any), name, cookie.value, opts)
       }
     })
   }
