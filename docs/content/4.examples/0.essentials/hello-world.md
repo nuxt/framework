@@ -10,4 +10,4 @@ A minimal Nuxt 3 application only requires the `app.vue` and `nuxt.config.js` fi
 Read more about [installation](/getting-started/installation).
 ::
 
-::sandbox{repo="nuxt/framework" branch="main" dir="examples/hello-world" file="app.vue"}
+::sandbox{repo="nuxt/framework" branch="main" dir="examples/essentials/hello-world" file="app.vue"}
