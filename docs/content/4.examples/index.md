@@ -5,5 +5,5 @@ layout.fluid: true
 navigation:
   exclusive: true
   collapse: true
-  redirect: /examples/auto-imports/with-components
+  redirect: /examples/essentials/hello-world
 ---
