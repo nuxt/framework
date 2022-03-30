@@ -43,7 +43,7 @@
     "magic-string": "^0.26.1",
     "mlly": "^0.5.1",
     "murmurhash-es": "^0.1.1",
-    "nitropack": "npm:nitropack-edge@0.0.0-27477917.f18a673",
+    "nitropack": "npm:nitropack-edge@0.0.0-27478008.0831bac",
     "node-fetch": "^3.2.3",
     "nuxi": "3.0.0",
     "ohash": "^0.1.0",
