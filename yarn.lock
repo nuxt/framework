@@ -2617,7 +2617,7 @@ __metadata:
     magic-string: ^0.26.1
     mlly: ^0.5.1
     murmurhash-es: ^0.1.1
-    nitropack: "npm:nitropack-edge@0.0.0-27478008.0831bac"
+    nitropack: "npm:nitropack-edge@0.0.0-27478065.2124d5f"
     node-fetch: ^3.2.3
     nuxi: 3.0.0
     nuxt: ^2
@@ -14813,9 +14813,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitropack@npm:nitropack-edge@0.0.0-27478008.0831bac":
-  version: 0.0.0-27478008.0831bac
-  resolution: "nitropack-edge@npm:0.0.0-27478008.0831bac"
+"nitropack@npm:nitropack-edge@0.0.0-27478065.2124d5f":
+  version: 0.0.0-27478065.2124d5f
+  resolution: "nitropack-edge@npm:0.0.0-27478065.2124d5f"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@netlify/functions": ^1.0.0
@@ -14880,7 +14880,7 @@ __metadata:
   bin:
     nitro: ./dist/cli.mjs
     nitropack: ./dist/cli.mjs
-  checksum: 0e16bb2a0d4bf4b2616390cec9921546358c5b5de5d16b7e7565273872439487c73b1928b6cd7b6282142116b400b57a87698904e4411e1a9ff1f4fc066644c9
+  checksum: bc8c6f97ea31dea55508f323b4746b872318ac57ae639fe2e4dc0536075ecefaacdae31ade2fc35b1265c11dad52f2194d03759f06c8775c96e6f27bd61b59f5
   languageName: node
   linkType: hard
 
@@ -15563,7 +15563,7 @@ __metadata:
     knitwork: ^0.1.1
     magic-string: ^0.26.1
     mlly: ^0.5.1
-    nitropack: "npm:nitropack-edge@0.0.0-27478008.0831bac"
+    nitropack: "npm:nitropack-edge@0.0.0-27478065.2124d5f"
     nuxi: 3.0.0
     ohash: ^0.1.0
     ohmyfetch: ^0.4.15

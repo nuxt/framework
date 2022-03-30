@@ -19,7 +19,7 @@ export default async function handleError (error: any, event: CompatibilityEvent
 
   // Console output
   if (error.statusCode !== 404) {
-    console.error(error.message + '\n' + stack.map(l => '  ' + l.text).join('  \n'))
+    console.error('[nuxt] [request error]', error.message + '\n' + stack.map(l => '  ' + l.text).join('  \n'))
   }
 
   // JSON response
