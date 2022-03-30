@@ -97,13 +97,13 @@ export async function prepareDevServerEntry (ctx: ViteBuildContext) {
   process.env.NUXT_VITE_SERVER_BASE = ctx.ssrServer.config.base || '/_nuxt/'
   process.env.NUXT_VITE_SERVER_ROOT = ctx.nuxt.options.rootDir
 
-  await fse.copyFile(
-    resolve(distDir, 'runtime/server.mjs'),
-    resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs')
+  await fse.writeFile(
+    resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'),
+    `export { default } from ${JSON.stringify(resolve(distDir, 'runtime/vite-node.mjs'))}`
   )
-  await fse.copyFile(
-    resolve(distDir, 'runtime/client.manifest.mjs'),
-    resolve(ctx.nuxt.options.buildDir, 'dist/server/client.manifest.mjs')
+  await fse.writeFile(
+    resolve(ctx.nuxt.options.buildDir, 'dist/server/client.manifest.mjs'),
+    `export { default } from ${JSON.stringify(resolve(distDir, 'runtime/client.manifest.mjs'))}`
   )
 }
 
