@@ -15575,6 +15575,7 @@ __metadata:
     scule: ^0.2.1
     ufo: ^0.8.1
     unbuild: latest
+    unenv: ^0.4.3
     unimport: ^0.1.3
     unplugin: ^0.6.0
     untyped: ^0.4.3
