@@ -5,5 +5,5 @@ layout.fluid: true
 navigation:
   exclusive: true
   collapse: true
-  redirect: /examples/components/with-components
+  redirect: /examples/auto-imports/with-components
 ---

@@ -11,7 +11,7 @@ links:
     to: '/docs/usage/data-fetching'
   -
     title: 'Examples'
-    to: '/examples/components/with-components'
+    to: '/examples/auto-imports/with-components'
   -
     title: 'Community'
     to: '/community/getting-help'
