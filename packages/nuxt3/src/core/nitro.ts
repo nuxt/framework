@@ -4,20 +4,38 @@ import type { NitroConfig } from 'nitropack'
 import type { Nuxt } from '@nuxt/schema'
 import { resolvePath } from '@nuxt/kit'
 import fsExtra from 'fs-extra'
+import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
 export async function initNitro (nuxt: Nuxt) {
   // Create contexts
-  const nitroOptions = ((nuxt.options as any).nitro || {}) as NitroConfig
-  nitroOptions.alias = nitroOptions.alias || {}
+  const nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
+  nitroConfig.alias = nitroConfig.alias || {}
 
   // TODO: #590
-  nitroOptions.alias['vue/server-renderer'] = 'vue/server-renderer'
-  nitroOptions.alias['vue/compiler-sfc'] = 'vue/compiler-sfc'
-  nitroOptions.alias.vue = await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
+  nitroConfig.alias['vue/server-renderer'] = 'vue/server-renderer'
+  nitroConfig.alias['vue/compiler-sfc'] = 'vue/compiler-sfc'
+  nitroConfig.alias.vue = await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
+
+  // Extend aliases
+  nitroConfig.alias = {
+    // Vue 3 mocks
+    'estree-walker': 'unenv/runtime/mock/proxy',
+    '@babel/parser': 'unenv/runtime/mock/proxy',
+    '@vue/compiler-core': 'unenv/runtime/mock/proxy',
+    '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
+    '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
+    '@vue/devtools-api': 'unenv/runtime/mock/proxy',
+
+    // Renderer
+    '#vue-renderer': resolve(distDir, 'core/runtime/nitro/vue3'),
+
+    // User
+    ...nitroConfig.alias
+  }
 
   const nitro = await createNitro({
-    ...nitroOptions,
+    ...nitroConfig,
     rootDir: nuxt.options.rootDir,
     srcDir: join(nuxt.options.srcDir, 'server'),
     scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
@@ -25,14 +43,14 @@ export async function initNitro (nuxt: Nuxt) {
     generateDir: join(nuxt.options.buildDir, 'dist'),
     publicDir: nuxt.options.dir.public,
     publicPath: nuxt.options.app.buildAssetsDir,
-    renderer: '#nitro/vue/render',
+    renderer: resolve(distDir, 'core/runtime/nitro/renderer'),
     modulesDir: nuxt.options.modulesDir,
     runtimeConfig: {
       public: nuxt.options.publicRuntimeConfig,
       private: nuxt.options.privateRuntimeConfig
     },
     output: {
-      dir: nitroOptions.output?.dir || (
+      dir: nitroConfig.output?.dir || (
         nuxt.options.dev
           ? join(nuxt.options.buildDir, 'nitro')
           : resolve(nuxt.options.rootDir, '.output')

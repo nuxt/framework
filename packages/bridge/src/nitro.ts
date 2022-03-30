@@ -45,9 +45,23 @@ export async function setupNitroBridge () {
   // Create contexts
   const nitroOptions = (nuxt.options as any).nitro || {}
 
-  nitroOptions.alias = nitroOptions.alias || {}
-  nitroOptions.alias['#nitro-renderer'] = '#nitro/vue/vue2'
-  nitroOptions.alias['#nitro-vue-renderer'] = 'vue-server-renderer/' + (nuxt.options.dev ? 'build.dev.js' : 'build.prod.js')
+  // Extend aliases
+  nitroOptions.alias = {
+    // Vue 2 mocks
+    encoding: 'unenv/runtime/mock/proxy',
+    he: 'unenv/runtime/mock/proxy',
+    resolve: 'unenv/runtime/mock/proxy',
+    'source-map': 'unenv/runtime/mock/proxy',
+    'lodash.template': 'unenv/runtime/mock/proxy',
+    'serialize-javascript': 'unenv/runtime/mock/proxy',
+
+    // Renderer
+    '#vue-renderer': resolve(distDir, 'runtime/nitro/vue2'),
+    '#vue2-server-renderer': 'vue-server-renderer/' + (nuxt.options.dev ? 'build.dev.js' : 'build.prod.js'),
+
+    // User
+    ...nitroOptions.alias
+  }
 
   const nitro = await createNitro({
     ...nitroOptions,
@@ -58,7 +72,7 @@ export async function setupNitroBridge () {
     generateDir: resolve(nuxt.options.buildDir, 'dist'),
     publicDir: nuxt.options.dir.public,
     publicPath: nuxt.options.app.buildAssetsDir,
-    renderer: '#nitro/vue/render',
+    renderer: resolve(distDir, 'runtime/nitro/renderer'),
     modulesDir: nuxt.options.modulesDir,
     runtimeConfig: {
       public: nuxt.options.publicRuntimeConfig,
