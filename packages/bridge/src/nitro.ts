@@ -79,7 +79,10 @@ export async function setupNitroBridge () {
 
       // Renderer
       '#vue-renderer': resolve(distDir, 'runtime/nitro/vue2'),
-      '#vue2-server-renderer': 'vue-server-renderer/' + (nuxt.options.dev ? 'build.dev.js' : 'build.prod.js')
+      '#vue2-server-renderer': 'vue-server-renderer/' + (nuxt.options.dev ? 'build.dev.js' : 'build.prod.js'),
+
+      // Error renderer
+      '#nitro-error': resolve(distDir, 'runtime/nitro/error')
     }
 
   })
@@ -218,6 +221,11 @@ export async function setupNitroBridge () {
       nuxt.server.setLegacyMiddleware(legacyMiddleware)
     }
     nitro.options.handlers.push(...middleware)
+    nitro.options.handlers.unshift({
+      route: '/_nitro',
+      lazy: true,
+      handler: resolve(distDir, 'runtime/nitro/renderer')
+    })
   })
 
   // Add typed route responses
