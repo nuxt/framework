@@ -88,7 +88,7 @@ export async function bundle (nuxt: Nuxt) {
 
   await nuxt.callHook('vite:extend', ctx)
 
-  nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer, env) => {
+  nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer) => {
     // Invalidate virtual modules when templates are re-generated
     ctx.nuxt.hook('app:templatesGenerated', () => {
       for (const [id, mod] of server.moduleGraph.idToModuleMap) {
