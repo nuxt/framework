@@ -125,6 +125,8 @@ export async function initNitro (nuxt: Nuxt) {
       compiler.outputFileSystem = { ...fsExtra, join } as any
     })
     nuxt.hook('server:devMiddleware', (m) => { nitroDevServer.setDevMiddleware(m) })
+    const waitUntilCompile = new Promise<void>(resolve => nitro.hooks.hook('nitro:compiled', () => resolve()))
+    nuxt.hook('build:done', () => waitUntilCompile)
   }
 }
 
