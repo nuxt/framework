@@ -1,9 +1,0 @@
----
-template: Example
----
-
-# With Wasm
-
-This example demonstrates the server-side support of WebAssembly in Nuxt 3.
-
-::sandbox{repo="nuxt/framework" branch="main" dir="examples/with-wasm" file="app.vue"}
