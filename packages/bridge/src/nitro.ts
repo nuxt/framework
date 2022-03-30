@@ -45,7 +45,7 @@ export async function setupNitroBridge () {
 
   // Create contexts
   const _nitroConfig = (nuxt.options as any).nitro || {} as NitroConfig
-  const nitroConfig: NitroConfig = defu(_nitroConfig, {
+  const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
     rootDir: resolve(nuxt.options.rootDir),
     srcDir: resolve(nuxt.options.srcDir, 'server'),
     dev: nuxt.options.dev,
@@ -67,6 +67,9 @@ export async function setupNitroBridge () {
     },
     output: {
       dir: nuxt.options.dev ? join(nuxt.options.buildDir, 'nitro') : resolve(nuxt.options.rootDir, '.output')
+    },
+    externals: {
+      inline: nuxt.options.dev ? [] : [nuxt.options.buildDir]
     },
     alias: {
       // Vue 2 mocks

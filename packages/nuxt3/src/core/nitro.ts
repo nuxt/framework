@@ -10,7 +10,7 @@ import { ImportProtectionPlugin } from './plugins/import-protection'
 
 export async function initNitro (nuxt: Nuxt) {
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
-  const nitroConfig: NitroConfig = defu(_nitroConfig, {
+  const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
     rootDir: nuxt.options.rootDir,
     srcDir: join(nuxt.options.srcDir, 'server'),
     dev: nuxt.options.dev,
@@ -32,6 +32,9 @@ export async function initNitro (nuxt: Nuxt) {
     },
     output: {
       dir: nuxt.options.dev ? join(nuxt.options.buildDir, 'nitro') : resolve(nuxt.options.rootDir, '.output')
+    },
+    externals: {
+      inline: nuxt.options.dev ? [] : [nuxt.options.buildDir]
     },
     alias: {
       // TODO: #590
