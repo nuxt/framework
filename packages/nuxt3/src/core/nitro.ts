@@ -48,7 +48,10 @@ export async function initNitro (nuxt: Nuxt) {
       '@vue/devtools-api': 'unenv/runtime/mock/proxy',
 
       // Renderer
-      '#vue-renderer': resolve(distDir, 'core/runtime/nitro/vue3')
+      '#vue-renderer': resolve(distDir, 'core/runtime/nitro/vue3'),
+
+      // Error renderer
+      '#nitro-error': resolve(distDir, 'core/runtime/nitro/error')
     }
   })
 
@@ -102,6 +105,11 @@ export async function initNitro (nuxt: Nuxt) {
     const { middleware, legacyMiddleware } = await resolveHandlers(nuxt)
     nuxt.server.setLegacyMiddleware(legacyMiddleware)
     nitro.options.handlers.push(...middleware)
+    nitro.options.handlers.unshift({
+      route: '/_nitro',
+      lazy: true,
+      handler: resolve(distDir, 'core/runtime/nitro/renderer')
+    })
   })
 
   // nuxt build/dev
@@ -125,6 +133,8 @@ export async function initNitro (nuxt: Nuxt) {
       compiler.outputFileSystem = { ...fsExtra, join } as any
     })
     nuxt.hook('server:devMiddleware', (m) => { nitroDevServer.setDevMiddleware(m) })
+    const waitUntilCompile = new Promise<void>(resolve => nitro.hooks.hook('nitro:compiled', () => resolve()))
+    nuxt.hook('build:done', () => waitUntilCompile)
   }
 }
 

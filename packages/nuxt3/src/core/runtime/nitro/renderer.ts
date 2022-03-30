@@ -1,5 +1,5 @@
 import { createRenderer } from 'vue-bundle-renderer'
-import { defineEventHandler } from 'h3'
+import { defineEventHandler, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { privateConfig, publicConfig } from '#config'
 import { buildAssetsURL } from '#paths'
@@ -68,7 +68,9 @@ function renderToString (ssrContext) {
 }
 
 export default defineEventHandler(async (event) => {
-  let url = event.req.url
+  // Whether we're rendering an error page
+  const ssrError = event.req.url?.startsWith('/__error') ? useQuery(event.req) : null
+  let url = ssrError?.url as string || event.req.url!
 
   // payload.json request detection
   let isPayloadReq = false
@@ -86,25 +88,31 @@ export default defineEventHandler(async (event) => {
     runtimeConfig: { private: privateConfig, public: publicConfig },
     noSSR: event.req.headers['x-nuxt-no-ssr'],
 
-    error: undefined,
+    error: ssrError,
     redirected: undefined,
     nuxt: undefined, /* NuxtApp */
     payload: undefined
   }
 
   // Render app
-  const rendered = await renderToString(ssrContext)
+  const rendered = await renderToString(ssrContext).catch((e) => {
+    if (!ssrError) { throw e }
+  })
 
-  // Handle errors
-  if (ssrContext.error) {
-    throw ssrContext.error
-  }
+  // If we error on rendering error page, we bail out and directly return to the error handler
+  if (!rendered) { return }
 
   if (ssrContext.redirected || event.res.writableEnded) {
     return
   }
 
-  if (ssrContext.nuxt.hooks) {
+  const error = ssrContext.error /* nuxt 3 */ || ssrContext.nuxt?.error
+  // Handle errors
+  if (error && !ssrError) {
+    throw error
+  }
+
+  if (ssrContext.nuxt?.hooks) {
     await ssrContext.nuxt.hooks.callHook('app:rendered')
   }
 
@@ -124,10 +132,6 @@ export default defineEventHandler(async (event) => {
     event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   }
 
-  const error = ssrContext.nuxt && ssrContext.nuxt.error
-  if (error && error.statusCode && event.res.statusCode === 200) {
-    event.res.statusCode = error.statusCode
-  }
   event.res.end(data, 'utf-8')
 })
 
@@ -171,7 +175,7 @@ function cachedImport <M> (importer: () => Promise<M>) {
 }
 
 function cachedResult <T> (fn: () => Promise<T>): () => Promise<T> {
-  let res = null
+  let res: Promise<T> | null = null
   return () => {
     if (res === null) {
       res = fn().catch((err) => { res = null; throw err })

@@ -114,6 +114,31 @@ describe('navigate', () => {
   })
 })
 
+describe('errors', () => {
+  it('should render a JSON error page', async () => {
+    const res = await fetch('/error', {
+      headers: {
+        accept: 'application/json'
+      }
+    })
+    expect(res.status).toBe(500)
+    expect(await res.json()).toMatchInlineSnapshot(`
+      {
+        "description": "",
+        "message": "This is a custom error",
+        "statusCode": 500,
+        "statusMessage": "Internal Server Error",
+        "url": "/error",
+      }
+    `)
+  })
+
+  it('should render a HTML error page', async () => {
+    const res = await fetch('/error')
+    expect(await res.text()).toContain('This is a custom error')
+  })
+})
+
 describe('middlewares', () => {
   it('should redirect to index with global middleware', async () => {
     const html = await $fetch('/redirect/')
