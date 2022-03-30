@@ -36,20 +36,16 @@ import {
 export default defineComponent({
   props: {
     src: {
-      type: String,
-      default: void 0
+      type: String
     },
     repo: {
-      type: String,
-      default: void 0
+      type: String
     },
     branch: {
-      type: String,
-      default: void 0
+      type: String
     },
     dir: {
-      type: String,
-      default: void 0
+      type: String
     },
     file: {
       type: String,
