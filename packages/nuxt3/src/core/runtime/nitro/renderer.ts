@@ -171,7 +171,7 @@ function cachedImport <M> (importer: () => Promise<M>) {
 }
 
 function cachedResult <T> (fn: () => Promise<T>): () => Promise<T> {
-  let res = null
+  let res: Promise<T> | null = null
   return () => {
     if (res === null) {
       res = fn().catch((err) => { res = null; throw err })
