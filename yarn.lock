@@ -10424,9 +10424,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"example-components@workspace:examples/components":
+  version: 0.0.0-use.local
+  resolution: "example-components@workspace:examples/components"
+  dependencies:
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
+"example-composables@workspace:examples/composables":
+  version: 0.0.0-use.local
+  resolution: "example-composables@workspace:examples/composables"
+  dependencies:
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-config-extends@workspace:examples/config-extends":
   version: 0.0.0-use.local
   resolution: "example-config-extends@workspace:examples/config-extends"
+  dependencies:
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
+"example-errors@workspace:examples/errors":
+  version: 0.0.0-use.local
+  resolution: "example-errors@workspace:examples/errors"
   dependencies:
     "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
     nuxt3: latest
@@ -10441,9 +10468,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-layouts@workspace:examples/layouts":
+  version: 0.0.0-use.local
+  resolution: "example-layouts@workspace:examples/layouts"
+  dependencies:
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
 "example-locale@workspace:examples/locale":
   version: 0.0.0-use.local
   resolution: "example-locale@workspace:examples/locale"
+  dependencies:
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
+"example-middleware@workspace:examples/middleware":
+  version: 0.0.0-use.local
+  resolution: "example-middleware@workspace:examples/middleware"
   dependencies:
     "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
     nuxt3: latest
@@ -10462,6 +10507,50 @@ __metadata:
 "example-nuxt-link@workspace:examples/nuxt-link":
   version: 0.0.0-use.local
   resolution: "example-nuxt-link@workspace:examples/nuxt-link"
+  dependencies:
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
+"example-pages@workspace:examples/pages":
+  version: 0.0.0-use.local
+  resolution: "example-pages@workspace:examples/pages"
+  dependencies:
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
+"example-plugins@workspace:examples/plugins":
+  version: 0.0.0-use.local
+  resolution: "example-plugins@workspace:examples/plugins"
+  dependencies:
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
+"example-reactivity-transform@workspace:examples/reactivity-transform":
+  version: 0.0.0-use.local
+  resolution: "example-reactivity-transform@workspace:examples/reactivity-transform"
+  dependencies:
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
+"example-test@workspace:examples/test":
+  version: 0.0.0-use.local
+  resolution: "example-test@workspace:examples/test"
+  dependencies:
+    nuxt3: latest
+  languageName: unknown
+  linkType: soft
+
+"example-universal-router@workspace:examples/universal-router":
+  version: 0.0.0-use.local
+  resolution: "example-universal-router@workspace:examples/universal-router"
   dependencies:
     "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
     nuxt3: latest
@@ -10513,98 +10602,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"example-with-components@workspace:examples/with-components":
+"example-wasm@workspace:examples/wasm":
   version: 0.0.0-use.local
-  resolution: "example-with-components@workspace:examples/with-components"
-  dependencies:
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
-"example-with-composables@workspace:examples/with-composables":
-  version: 0.0.0-use.local
-  resolution: "example-with-composables@workspace:examples/with-composables"
-  dependencies:
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
-"example-with-errors@workspace:examples/with-errors":
-  version: 0.0.0-use.local
-  resolution: "example-with-errors@workspace:examples/with-errors"
-  dependencies:
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
-"example-with-layouts@workspace:examples/with-layouts":
-  version: 0.0.0-use.local
-  resolution: "example-with-layouts@workspace:examples/with-layouts"
-  dependencies:
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
-"example-with-middleware@workspace:examples/with-middleware":
-  version: 0.0.0-use.local
-  resolution: "example-with-middleware@workspace:examples/with-middleware"
-  dependencies:
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
-"example-with-pages@workspace:examples/with-pages":
-  version: 0.0.0-use.local
-  resolution: "example-with-pages@workspace:examples/with-pages"
-  dependencies:
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
-"example-with-plugins@workspace:examples/with-plugins":
-  version: 0.0.0-use.local
-  resolution: "example-with-plugins@workspace:examples/with-plugins"
-  dependencies:
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
-"example-with-reactivity-transform@workspace:examples/with-reactivity-transform":
-  version: 0.0.0-use.local
-  resolution: "example-with-reactivity-transform@workspace:examples/with-reactivity-transform"
-  dependencies:
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
-"example-with-test@workspace:examples/with-test":
-  version: 0.0.0-use.local
-  resolution: "example-with-test@workspace:examples/with-test"
-  dependencies:
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
-"example-with-universal-router@workspace:examples/with-universal-router":
-  version: 0.0.0-use.local
-  resolution: "example-with-universal-router@workspace:examples/with-universal-router"
-  dependencies:
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
-    nuxt3: latest
-  languageName: unknown
-  linkType: soft
-
-"example-with-wasm@workspace:examples/with-wasm":
-  version: 0.0.0-use.local
-  resolution: "example-with-wasm@workspace:examples/with-wasm"
+  resolution: "example-wasm@workspace:examples/wasm"
   dependencies:
     "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
     nuxt3: latest
