@@ -49,34 +49,19 @@ export default <RouterOptions>{
       nuxtApp.hooks.hookOnce(hookAwait, async () => {
         await nextTick()
 
-        // coords will be used if no selector is provided,
-        // or if the selector didn't match any element.
         if (to.hash) {
-          let hash = to.hash
-          // CSS.escape() is not supported with IE and Edge.
-          if (
-            typeof window.CSS !== 'undefined' &&
-            typeof window.CSS.escape !== 'undefined'
-          ) {
-            hash = '#' + window.CSS.escape(hash.substr(1))
-          }
-          try {
-            const elem = document.querySelector(hash)
+          let top = 0
 
-            // vue-router does not incorporate scroll-margin-top on its own.
-            if (elem) {
-              const offset = parseFloat(getComputedStyle(elem).scrollMarginTop)
-              position = {
-                selector: hash,
-                offset: { y: offset }
-              }
-            } else {
-              position = { selector: hash }
-            }
-          } catch (e) {
-            console.warn(
-              'Failed to save scroll position. Please add CSS.escape() polyfill (https://github.com/mathiasbynens/CSS.escape).'
-            )
+          // vue-router does not incorporate scroll-margin-top on its own.
+          const elem = document.querySelector(to.hash)
+
+          if (elem) {
+            top = parseFloat(getComputedStyle(elem).scrollMarginTop)
+          }
+
+          position = {
+            el: to.hash,
+            top
           }
         }
         resolve(position)
