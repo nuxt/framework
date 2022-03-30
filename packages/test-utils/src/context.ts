@@ -13,7 +13,7 @@ export function createTestContext (options: Partial<TestOptions>): TestContext {
     dev: !!JSON.parse(process.env.NUXT_TEST_DEV || 'false'),
     logLevel: 1,
     server: true,
-    build: (options.browser !== false) && (options.server !== false),
+    build: (options.browser !== false) || (options.server !== false),
     nuxtConfig: {},
     // TODO: auto detect based on process.env
     runner: <TestRunner>'vitest',
