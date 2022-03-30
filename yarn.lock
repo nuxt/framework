@@ -2599,7 +2599,7 @@ __metadata:
     "@types/fs-extra": ^9.0.13
     "@types/hash-sum": ^1.0.0
     "@types/node-fetch": ^3.0.2
-    "@vitejs/plugin-legacy": ^1.7.1
+    "@vitejs/plugin-legacy": ^1.8.0
     "@vue/composition-api": ^1.4.9
     "@vueuse/head": ^0.7.5
     acorn: ^8.7.0
@@ -2637,7 +2637,7 @@ __metadata:
     unplugin: ^0.6.0
     unplugin-vue2-script-setup: ^0.10.1
     untyped: ^0.4.3
-    vite: ^2.8.6
+    vite: ^2.9.0
     vite-plugin-vue2: ^1.9.3
     vue: ^2
     vue-router: ^3
@@ -3209,7 +3209,7 @@ __metadata:
     ohmyfetch: ^0.4.15
     playwright: ^1.20.1
     unbuild: latest
-    vitest: ^0.8.0
+    vitest: ^0.8.1
   peerDependencies:
     vue: 3.2.31
   languageName: unknown
@@ -3317,8 +3317,8 @@ __metadata:
     "@nuxt/kit": 3.0.0
     "@nuxt/schema": 3.0.0
     "@types/cssnano": ^5
-    "@vitejs/plugin-vue": ^2.2.4
-    "@vitejs/plugin-vue-jsx": ^1.3.8
+    "@vitejs/plugin-vue": ^2.3.1
+    "@vitejs/plugin-vue-jsx": ^1.3.9
     autoprefixer: ^10.4.4
     chokidar: ^3.5.3
     cssnano: ^5.1.5
@@ -3341,8 +3341,8 @@ __metadata:
     ufo: ^0.8.1
     unbuild: latest
     unplugin: ^0.6.0
-    vite: ^2.8.6
-    vite-node: ^0.8.0
+    vite: ^2.9.0
+    vite-node: ^0.8.1
     vue: 3.2.31
   peerDependencies:
     vue: 3.2.31
@@ -5036,7 +5036,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-legacy@npm:^1.7.1":
+"@vitejs/plugin-legacy@npm:^1.8.0":
   version: 1.8.0
   resolution: "@vitejs/plugin-legacy@npm:1.8.0"
   dependencies:
@@ -5051,7 +5051,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue-jsx@npm:^1.3.8":
+"@vitejs/plugin-vue-jsx@npm:^1.3.9":
   version: 1.3.9
   resolution: "@vitejs/plugin-vue-jsx@npm:1.3.9"
   dependencies:
@@ -5065,13 +5065,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:^2.2.4":
-  version: 2.3.0
-  resolution: "@vitejs/plugin-vue@npm:2.3.0"
+"@vitejs/plugin-vue@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "@vitejs/plugin-vue@npm:2.3.1"
   peerDependencies:
-    vite: ^2.9.0
+    vite: ^2.5.10
     vue: ^3.2.25
-  checksum: 732ef5b08cec12303b254aa15d9f11970a5ea92bdf1314554e5241ed571df9e3b22d554fae5200ef62c88558747d1ae1f2c8814a6bc440e082facc33ab8f5e5b
+  checksum: 7102d80c7b37c5761213ca57a5d50db95bda387dee92a77bd3d0198fd00c47d117ba82761c26a9d40f83e274d6fa8e3932765f5f930e8139848be7b7b176a200
   languageName: node
   linkType: hard
 
@@ -15450,7 +15450,7 @@ __metadata:
     pathe: ^0.2.0
     typescript: ^4.6.3
     unbuild: ^0.7.2
-    vitest: ^0.8.0
+    vitest: ^0.8.1
     vue-router: ^4.0.14
     vue-tsc: ^0.33.9
   languageName: unknown
@@ -21606,7 +21606,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:^0.8.0":
+"vite-node@npm:^0.8.1":
   version: 0.8.1
   resolution: "vite-node@npm:0.8.1"
   dependencies:
@@ -21652,7 +21652,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.8.6":
+"vite@npm:^2.9.0":
   version: 2.9.0
   resolution: "vite@npm:2.9.0"
   dependencies:
@@ -21681,7 +21681,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.8.0":
+"vitest@npm:^0.8.1":
   version: 0.8.1
   resolution: "vitest@npm:0.8.1"
   dependencies:

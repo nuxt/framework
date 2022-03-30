@@ -2,14 +2,13 @@ import * as vite from 'vite'
 import { resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
-import { logger, isIgnored } from '@nuxt/kit'
+import { isIgnored } from '@nuxt/kit'
 import type { Options } from '@vitejs/plugin-vue'
 import { sanitizeFilePath } from 'mlly'
 import { getPort } from 'get-port-please'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
-import { warmupViteServer } from './utils/warmup'
 import { resolveCSSOptions } from './css'
 
 export interface ViteOptions extends InlineConfig {
@@ -98,11 +97,6 @@ export async function bundle (nuxt: Nuxt) {
         }
       }
     })
-
-    const start = Date.now()
-    warmupViteServer(server, ['/entry.mjs'])
-      .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
-      .catch(logger.error)
   })
 
   await buildClient(ctx)
