@@ -13,7 +13,7 @@ const refreshAll = async () => {
 </script>
 
 <template>
-  <NuxtExampleLayout example="use-async-data" show-tips>
+  <NuxtExampleLayout example="use-async-data">
     <div>
       <div class="flex justify-center gap-2">
         <NButton @click="showMountain = !showMountain">
@@ -31,20 +31,5 @@ const refreshAll = async () => {
         <MountainExample v-if="showMountain" />
       </div>
     </div>
-    <template #tips>
-      <div>
-        <p>
-          This example shows how to use <code>useAsyncData</code> to fetch data from an API endpoint.
-        </p>
-        <p>
-          Nuxt will automatically read files in the
-          <a href="https://v3.nuxtjs.org/docs/directory-structure/server#api-routes" target="_blank">
-            <code>~/server/api</code> directory
-          </a>
-          to create API endpoints. Learn more about
-          <a href="https://v3.nuxtjs.org/docs/usage/data-fetching" target="_blank">data fetching</a>
-        </p>
-      </div>
-    </template>
   </NuxtExampleLayout>
 </template>

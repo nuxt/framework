@@ -3,7 +3,7 @@ const counter = useState('counter', () => Math.round(Math.random() * 1000))
 </script>
 
 <template>
-  <NuxtExampleLayout show-tips example="use-state">
+  <NuxtExampleLayout example="use-state">
     <div>Counter: {{ counter }}</div>
     <div>
       <NButton class="font-mono" @click="counter++">
@@ -13,16 +13,5 @@ const counter = useState('counter', () => Math.round(Math.random() * 1000))
         -
       </NButton>
     </div>
-
-    <template #tips>
-      <div>
-        <NuxtLink to="https://v3.nuxtjs.org/docs/usage/state" target="_blank">
-          useState
-        </NuxtLink>
-        is an SSR-friendly ref replacement.
-        Its value will be preserved after server-side rendering
-        and shared across all components using a unique key.
-      </div>
-    </template>
   </NuxtExampleLayout>
 </template>

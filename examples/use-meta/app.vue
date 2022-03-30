@@ -1,5 +1,5 @@
 <template>
-  <NuxtExampleLayout example="use-meta" show-tips>
+  <NuxtExampleLayout example="use-meta">
     <div
       class="bg-gray-400/10 border-2 border-dashed border-gray-400/50 rounded-xl py-8 px-2 op-80"
     >
@@ -20,21 +20,6 @@
         Click me and see the dynamic title
       </NButton>
     </div>
-
-    <template #tips>
-      <div class="flex-auto">
-        <p>
-          This example shows how to use <code>useMeta</code> and Nuxt built-in components to bind meta data to the <code>head</code> of the page.
-        </p>
-        <p>
-          Learn more about
-          <NuxtLink to="https://v3.nuxtjs.org/docs/usage/meta-tags" target="_blank">
-            Meta tags
-          </NuxtLink>.
-          Open in editor to see the source code 👉
-        </p>
-      </div>
-    </template>
   </NuxtExampleLayout>
 </template>
 

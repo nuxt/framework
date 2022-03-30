@@ -15,7 +15,7 @@ const logout = () => {
 </script>
 
 <template>
-  <NuxtExampleLayout show-tips="true" class="h-50" example="use-cookie">
+  <NuxtExampleLayout class="h-50" example="use-cookie">
     <template v-if="user">
       <h1 class="text-3xl mb-3">
         Welcome, {{ user.name }}! 👋
@@ -40,16 +40,6 @@ const logout = () => {
         <NButton icon="carbon:user" :disabled="!name" @click="login">
           Log in
         </NButton>
-      </div>
-    </template>
-
-    <template #tips>
-      <div>
-        This demo showcases using the
-        <NuxtLink to="https://v3.nuxtjs.org/docs/usage/cookies" target="_blank">
-          useCookie
-        </NuxtLink>
-        API to persist small amounts of data that can be used both client-side and server-side.
       </div>
     </template>
   </NuxtExampleLayout>
