@@ -234,10 +234,13 @@ export async function setupNitroBridge () {
   // @ts-ignore
   nuxt.options.build._minifyServer = false
   nuxt.options.build.standalone = false
+
+  const waitUntilCompile = new Promise<void>(resolve => nitro.hooks.hook('nitro:compiled', () => resolve()))
   nuxt.hook('build:done', async () => {
     if (nuxt.options._prepare) { return }
     if (nuxt.options.dev) {
       await build(nitro)
+      await waitUntilCompile
       // nitro.hooks.callHook('nitro:dev:reload')
     } else {
       await prepare(nitro)
