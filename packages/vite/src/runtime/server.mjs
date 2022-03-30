@@ -3,12 +3,13 @@ import { fileURLToPath } from 'url'
 import { ViteNodeRunner } from 'vite-node/client'
 import { dirname, join } from 'pathe'
 
-const entry = '__NUXT_SERVER_ENTRY__'
-const url = '__NUXT_SERVER_FETCH_URL__'
-const base = '__NUXT_SERVER_BASE__'
+const url = process.env.NUXT_VITE_SERVER_FETCH
+const entry = process.env.NUXT_VITE_SERVER_ENTRY
+const base = process.env.NUXT_VITE_SERVER_BASE
+const root = process.env.NUXT_VITE_SERVER_ROOT
 
 const runner = new ViteNodeRunner({
-  root: process.cwd(),
+  root,
   base,
   async fetchModule (id) {
     return await $fetch(url, {
@@ -46,8 +47,10 @@ async function writeManifest () {
   await fs.writeFile(join(dir, 'client.manifest.mjs'), 'export default ' + JSON.stringify(clientManifest, null, 2), 'utf8')
 }
 
+let render
+
 export default async (ssrContext) => {
-  const { default: render } = await runner.executeFile(entry)
+  render = render || (await runner.executeFile(entry)).default
   const result = await render(ssrContext)
   await writeManifest()
   return result
