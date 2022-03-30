@@ -4,9 +4,10 @@ import fsExtra from 'fs-extra'
 import { addPluginTemplate, resolvePath, useNuxt } from '@nuxt/kit'
 import { joinURL, stringifyQuery, withoutTrailingSlash } from 'ufo'
 import { resolve, join } from 'pathe'
-import type { Handler } from 'h3'
-import { createNitro, createDevServer, build, writeTypes, prepare, copyPublicAssets, prerender, Nitro } from 'nitropack'
+import { createNitro, createDevServer, build, writeTypes, prepare, copyPublicAssets, prerender } from 'nitropack'
+import type { Nitro, NitroConfig, NitroHandlerConfig } from 'nitropack'
 import { Nuxt } from '@nuxt/schema'
+import defu from 'defu'
 import { AsyncLoadingPlugin } from './async-loading'
 import { distDir } from './dirs'
 import { isDirectory, readDirRecursively } from './vite/utils/fs'
@@ -15,7 +16,7 @@ export async function setupNitroBridge () {
   const nuxt = useNuxt()
 
   // Ensure we're not just building with 'static' target
-  if (!nuxt.options.dev && nuxt.options.target === 'static' && !nuxt.options._prepare && !nuxt.options._export && !nuxt.options._legacyGenerate) {
+  if (!nuxt.options.dev && nuxt.options.target === 'static' && !nuxt.options._prepare && !(nuxt.options as any)._export && !nuxt.options._legacyGenerate) {
     throw new Error('[nitro] Please use `nuxt generate` for static target')
   }
 
@@ -43,30 +44,12 @@ export async function setupNitroBridge () {
   }
 
   // Create contexts
-  const nitroOptions = (nuxt.options as any).nitro || {}
-
-  // Extend aliases
-  nitroOptions.alias = {
-    // Vue 2 mocks
-    encoding: 'unenv/runtime/mock/proxy',
-    he: 'unenv/runtime/mock/proxy',
-    resolve: 'unenv/runtime/mock/proxy',
-    'source-map': 'unenv/runtime/mock/proxy',
-    'lodash.template': 'unenv/runtime/mock/proxy',
-    'serialize-javascript': 'unenv/runtime/mock/proxy',
-
-    // Renderer
-    '#vue-renderer': resolve(distDir, 'runtime/nitro/vue2'),
-    '#vue2-server-renderer': 'vue-server-renderer/' + (nuxt.options.dev ? 'build.dev.js' : 'build.prod.js'),
-
-    // User
-    ...nitroOptions.alias
-  }
-
-  const nitro = await createNitro({
-    ...nitroOptions,
+  const _nitroConfig = (nuxt.options as any).nitro || {} as NitroConfig
+  const nitroConfig: NitroConfig = defu(_nitroConfig, {
     rootDir: resolve(nuxt.options.rootDir),
     srcDir: resolve(nuxt.options.srcDir, 'server'),
+    dev: nuxt.options.dev,
+    preset: nuxt.options.dev ? 'dev' : undefined,
     buildDir: resolve(nuxt.options.buildDir),
     scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
     generateDir: resolve(nuxt.options.buildDir, 'dist'),
@@ -78,17 +61,33 @@ export async function setupNitroBridge () {
       public: nuxt.options.publicRuntimeConfig,
       private: nuxt.options.privateRuntimeConfig
     },
-    output: {
-      dir: nitroOptions.output?.dir || (
-        nuxt.options.dev
-          ? join(nuxt.options.buildDir, 'nitro')
-          : resolve(nuxt.options.rootDir, '.output')
-      )
+    prerender: {
+      crawlLinks: nuxt.options.generate.crawler,
+      routes: nuxt.options.generate.routes
     },
-    dev: nuxt.options.dev,
-    preset: nuxt.options.dev ? 'dev' : undefined
+    output: {
+      dir: nuxt.options.dev ? join(nuxt.options.buildDir, 'nitro') : resolve(nuxt.options.rootDir, '.output')
+    },
+    alias: {
+      // Vue 2 mocks
+      encoding: 'unenv/runtime/mock/proxy',
+      he: 'unenv/runtime/mock/proxy',
+      resolve: 'unenv/runtime/mock/proxy',
+      'source-map': 'unenv/runtime/mock/proxy',
+      'lodash.template': 'unenv/runtime/mock/proxy',
+      'serialize-javascript': 'unenv/runtime/mock/proxy',
+
+      // Renderer
+      '#vue-renderer': resolve(distDir, 'runtime/nitro/vue2'),
+      '#vue2-server-renderer': 'vue-server-renderer/' + (nuxt.options.dev ? 'build.dev.js' : 'build.prod.js')
+    }
+
   })
 
+  // Initiate nitro
+  const nitro = await createNitro(nitroConfig)
+
+  // Shared vfs storage
   nitro.vfs = nuxt.vfs = nitro.vfs || nuxt.vfs || {}
 
   // Connect hooks
@@ -214,7 +213,7 @@ export async function setupNitroBridge () {
     await nuxt.callHook('nitro:context', nitro)
 
     // Resolve middleware
-    const { middleware, legacyMiddleware } = await resolveMiddleware(nuxt)
+    const { middleware, legacyMiddleware } = await resolveHandlers(nuxt)
     if (nuxt.server) {
       nuxt.server.setLegacyMiddleware(legacyMiddleware)
     }
@@ -241,13 +240,15 @@ export async function setupNitroBridge () {
       await build(nitro)
       // nitro.hooks.callHook('nitro:dev:reload')
     } else {
-      // TODO: Nitro generate
       await prepare(nitro)
       await copyPublicAssets(nitro)
       if (nuxt.options.target === 'static') {
         await prerender(nitro)
       }
       await build(nitro)
+      if (nuxt.options._generate) {
+        await prerender(nitro)
+      }
     }
   })
 
@@ -326,9 +327,9 @@ function createNuxt2DevServer (nitro: Nitro) {
   }
 }
 
-async function resolveMiddleware (nuxt: Nuxt) {
-  const middleware: Handler[] = []
-  const legacyMiddleware: Handler[] = []
+async function resolveHandlers (nuxt: Nuxt) {
+  const middleware: NitroHandlerConfig[] = []
+  const legacyMiddleware: NitroHandlerConfig[] = []
 
   for (let m of nuxt.options.serverMiddleware) {
     if (typeof m === 'string' || typeof m === 'function' /* legacy middleware */) { m = { handler: m } }
@@ -341,8 +342,8 @@ async function resolveMiddleware (nuxt: Nuxt) {
       delete m.path
       middleware.push({
         ...m,
-        handle: await resolvePath(handle),
-        route
+        route,
+        handler: await resolvePath(handle)
       })
     }
   }

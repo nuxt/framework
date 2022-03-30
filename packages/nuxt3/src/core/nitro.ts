@@ -1,43 +1,20 @@
 import { resolve, join } from 'pathe'
-import { createNitro, createDevServer, build, prepare, copyPublicAssets, NitroHandlerConfig, writeTypes, scanHandlers } from 'nitropack'
+import { createNitro, createDevServer, build, prepare, copyPublicAssets, NitroHandlerConfig, writeTypes, scanHandlers, prerender } from 'nitropack'
 import type { NitroConfig } from 'nitropack'
 import type { Nuxt } from '@nuxt/schema'
 import { resolvePath } from '@nuxt/kit'
+import defu from 'defu'
 import fsExtra from 'fs-extra'
 import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
 export async function initNitro (nuxt: Nuxt) {
-  // Create contexts
-  const nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
-  nitroConfig.alias = nitroConfig.alias || {}
-
-  // TODO: #590
-  nitroConfig.alias['vue/server-renderer'] = 'vue/server-renderer'
-  nitroConfig.alias['vue/compiler-sfc'] = 'vue/compiler-sfc'
-  nitroConfig.alias.vue = await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
-
-  // Extend aliases
-  nitroConfig.alias = {
-    // Vue 3 mocks
-    'estree-walker': 'unenv/runtime/mock/proxy',
-    '@babel/parser': 'unenv/runtime/mock/proxy',
-    '@vue/compiler-core': 'unenv/runtime/mock/proxy',
-    '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
-    '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
-    '@vue/devtools-api': 'unenv/runtime/mock/proxy',
-
-    // Renderer
-    '#vue-renderer': resolve(distDir, 'core/runtime/nitro/vue3'),
-
-    // User
-    ...nitroConfig.alias
-  }
-
-  const nitro = await createNitro({
-    ...nitroConfig,
+  const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
+  const nitroConfig: NitroConfig = defu(_nitroConfig, {
     rootDir: nuxt.options.rootDir,
     srcDir: join(nuxt.options.srcDir, 'server'),
+    dev: nuxt.options.dev,
+    preset: nuxt.options.dev ? 'dev' : undefined,
     scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
     buildDir: nuxt.options.buildDir,
     generateDir: join(nuxt.options.buildDir, 'dist'),
@@ -49,19 +26,38 @@ export async function initNitro (nuxt: Nuxt) {
       public: nuxt.options.publicRuntimeConfig,
       private: nuxt.options.privateRuntimeConfig
     },
-    output: {
-      dir: nitroConfig.output?.dir || (
-        nuxt.options.dev
-          ? join(nuxt.options.buildDir, 'nitro')
-          : resolve(nuxt.options.rootDir, '.output')
-      )
+    prerender: {
+      crawlLinks: nuxt.options.generate.crawler,
+      routes: nuxt.options.generate.routes
     },
-    dev: nuxt.options.dev,
-    preset: nuxt.options.dev ? 'dev' : undefined
+    output: {
+      dir: nuxt.options.dev ? join(nuxt.options.buildDir, 'nitro') : resolve(nuxt.options.rootDir, '.output')
+    },
+    alias: {
+      // TODO: #590
+      'vue/server-renderer': 'vue/server-renderer',
+      'vue/compiler-sfc': 'vue/compiler-sfc',
+      vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`),
+
+      // Vue 3 mocks
+      'estree-walker': 'unenv/runtime/mock/proxy',
+      '@babel/parser': 'unenv/runtime/mock/proxy',
+      '@vue/compiler-core': 'unenv/runtime/mock/proxy',
+      '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
+      '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
+      '@vue/devtools-api': 'unenv/runtime/mock/proxy',
+
+      // Renderer
+      '#vue-renderer': resolve(distDir, 'core/runtime/nitro/vue3')
+    }
   })
 
+  const nitro = await createNitro(nitroConfig)
+
+  // Create dev server
   const nitroDevServer = nuxt.server = createDevServer(nitro)
 
+  // Connect vfs storages
   nitro.vfs = nuxt.vfs = nitro.vfs || nuxt.vfs || {}
 
   // Connect hooks
@@ -116,6 +112,9 @@ export async function initNitro (nuxt: Nuxt) {
       await prepare(nitro)
       await copyPublicAssets(nitro)
       await build(nitro)
+      if (nuxt.options._generate) {
+        await prerender(nitro)
+      }
     }
   })
 
