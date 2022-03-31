@@ -79,7 +79,16 @@ export function createDevServer (nitroContext: NitroContext) {
   // _nuxt and static
   const buildAssetsURL = joinURL(nitroContext._nuxt.baseURL, nitroContext._nuxt.buildAssetsDir)
   app.use(buildAssetsURL, serveStatic(resolve(nitroContext._nuxt.buildDir, 'dist/client')))
-  app.use(nitroContext._nuxt.baseURL, serveStatic(resolve(nitroContext._nuxt.publicDir)))
+  const renderStaticOptions = { setHeaders: undefined }
+  if (nitroContext.staticAllowFromAnyOrigin) {
+    renderStaticOptions.setHeaders = (res) => {
+      res.setHeader('X-Frame-Options', 'ALLOWALL')
+      res.setHeader('Access-Control-Allow-Origin', '*')
+      res.setHeader('Access-Control-Allow-Methods', 'GET')
+      res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+    }
+  }
+  app.use(nitroContext._nuxt.baseURL, serveStatic(resolve(nitroContext._nuxt.publicDir), renderStaticOptions))
 
   // debugging endpoint to view vfs
   app.use('/_vfs', useBase('/_vfs', handleVfs(nitroContext)))

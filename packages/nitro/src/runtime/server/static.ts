@@ -68,6 +68,13 @@ export default async function serveStatic (req, res) {
     res.setHeader('Cache-Control', `max-age=${TWO_DAYS}, immutable`)
   }
 
+  if (asset.allowFromAnyOrigin) {
+    res.setHeader('X-Frame-Options', 'ALLOWALL')
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'GET')
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  }
+
   const contents = await readAsset(id)
   return res.end(contents)
 }

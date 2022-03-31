@@ -73,9 +73,7 @@ export default {
   },
 
   /**
-   * Configure the behavior of the `static/` directory.
-   *
-   * See [serve-static docs](https://github.com/expressjs/serve-static) for possible options.
+   * Configure the behavior of the `public/` directory.
    */
   static: {
     /**
@@ -89,7 +87,17 @@ export default {
      * With `prefix: true` (default): /t/favicon.ico
      * With `prefix: false`: /favicon.ico
      */
-    prefix: true
+    prefix: true,
+    /**
+     * Whether to add headers to allow access from any origin
+     *
+     * If set to true, all responses of static files from the `public/` directory will get the following headers:
+     * Access-Control-Allow-Origin *
+     * Access-Control-Allow-Methods GET
+     * Access-Control-Allow-Headers Origin, X-Requested-With, Content-Type, Accept
+     * X-Frame-Options ALLOWALL
+     */
+    allowFromAnyOrigin: false
   },
 
   /**

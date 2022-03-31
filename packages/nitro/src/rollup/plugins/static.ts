@@ -8,7 +8,7 @@ import type { Plugin } from 'rollup'
 import type { NitroContext } from '../../context'
 
 export function staticAssets (context: NitroContext) {
-  const assets: Record<string, { type: string, etag: string, mtime: string, path: string }> = {}
+  const assets: Record<string, { type: string, etag: string, mtime: string, path: string, allowFromAnyOrigin?: boolean }> = {}
 
   const files = globbySync('**/*.*', { cwd: context.output.publicDir, absolute: false })
 
@@ -23,7 +23,8 @@ export function staticAssets (context: NitroContext) {
       type,
       etag,
       mtime: stat.mtime.toJSON(),
-      path: relative(context.output.serverDir, fullPath)
+      path: relative(context.output.serverDir, fullPath),
+      allowFromAnyOrigin: id.startsWith('_nuxt/') ? undefined : context.staticAllowFromAnyOrigin
     }
   }
 
