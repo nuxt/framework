@@ -74,9 +74,8 @@ const availableModules = [
 ]
 
 export async function findModule (name: string) {
-  const modules = availableModules.filter(
+  const module = availableModules.find(
     x => x.packageName === name || x.name === name
   )
-  if (modules.length < 0) { return }
-  return modules[0]
+  return module;
 }
