@@ -33,6 +33,7 @@ export const appPreset = defineUnimportPreset({
     'useLazyFetch',
     'useCookie',
     'useRequestHeaders',
+    'useRequestEvent',
     'useRouter',
     'useRoute',
     'defineNuxtRouteMiddleware',
