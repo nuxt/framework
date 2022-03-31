@@ -7,11 +7,17 @@ import { useAsyncData } from './asyncData'
 
 export type FetchResult<ReqT extends FetchRequest> = TypedInternalResponse<ReqT, unknown>
 
-export type UseFetchOptions<
+export interface UseFetchOptions<
   DataT,
   Transform extends _Transform<DataT, any> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-> = AsyncDataOptions<DataT, Transform, PickKeys> & FetchOptions & { key?: string }
+> extends
+  Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'cache'>,
+  Omit<FetchOptions, 'cache'>
+  {
+  cache?: boolean | RequestCache,
+  key?: string
+ }
 
 export function useFetch<
   ResT = void,
@@ -32,17 +38,41 @@ export function useFetch<
     return isRef(r) ? r.value : r
   })
 
-  const asyncData = useAsyncData(key, () => {
-    return $fetch(_request.value, opts) as Promise<_ResT>
-  }, {
+  const _fetchOptions = {
     ...opts,
+    cache: typeof opts.cache === 'boolean' ? undefined : opts.cache
+  }
+
+  const _asyncDataOptions: AsyncDataOptions<any> = {
+    ...opts,
+    cache: requestCacheToCacheOption(opts.cache),
     watch: [
       _request,
       ...(opts.watch || [])
     ]
-  })
+  }
+
+  const asyncData = useAsyncData(key, () => {
+    return $fetch(_request.value, _fetchOptions) as Promise<_ResT>
+  }, _asyncDataOptions)
 
   return asyncData
+}
+
+// Maps request cache option to useAsyncData cache strategy
+// https://developer.mozilla.org/en-US/docs/Web/API/Request/cache
+function requestCacheToCacheOption (input: undefined | boolean | RequestCache): AsyncDataOptions<any>['cache'] {
+  // Async data possible options
+  const t = typeof input
+  if (t === 'boolean' || t === 'undefined') {
+    return input as boolean | undefined
+  }
+  // Map values
+  if (input === 'force-cache') {
+    return true
+  }
+  // Use default behavior for rest
+  return undefined
 }
 
 export function useLazyFetch<
