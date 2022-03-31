@@ -23,6 +23,7 @@ export const appPreset = defineUnimportPreset({
   imports: [
     'useAsyncData',
     'useLazyAsyncData',
+    'refreshNuxtData',
     'defineNuxtComponent',
     'useNuxtApp',
     'defineNuxtPlugin',
@@ -104,6 +105,7 @@ export const vuePreset = defineUnimportPreset({
     // Component
     'defineComponent',
     'defineAsyncComponent',
+    'resolveComponent',
     'getCurrentInstance',
     'h',
     'inject',

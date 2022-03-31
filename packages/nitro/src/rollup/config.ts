@@ -168,7 +168,8 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       'process.env.RUNTIME_CONFIG': devalue(nitroContext._nuxt.runtimeConfig),
       'process.env.DEBUG': JSON.stringify(nitroContext._nuxt.dev),
       // Needed for vue 2 server build
-      'commonjsGlobal.process.env.VUE_ENV': '"server"'
+      'commonjsGlobal.process.env.VUE_ENV': '"server"',
+      'global["process"].env.VUE_ENV': '"server"'
     }
   }))
 
@@ -231,6 +232,7 @@ export const getRollupConfig = (nitroContext: NitroContext) => {
       '#nitro-renderer': resolve(nitroContext._internal.runtimeDir, 'app', renderer),
       '#paths': resolve(nitroContext._internal.runtimeDir, 'app/paths'),
       '#config': resolve(nitroContext._internal.runtimeDir, 'app/config'),
+      '#_config': resolve(nitroContext._internal.runtimeDir, 'app/config'),
       '#nitro-vue-renderer': vue2ServerRenderer,
       // Only file and data URLs are supported by the default ESM loader on Windows (#427)
       '#build': nitroContext._nuxt.dev && process.platform === 'win32'

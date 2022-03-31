@@ -271,13 +271,13 @@ export default {
    * ]
    * ```
    *
-   * @note Using `buildModules` helps to make production startup faster and also significantly
+   * @note In Nuxt 2, using `buildModules` helps to make production startup faster and also significantly
    * decreases the size of `node_modules` in production deployments. Please refer to each
    * module's documentation to see if it is recommended to use `modules` or `buildModules`.
    *
    * @type {(typeof import('../src/types/module').NuxtModule | string | [typeof import('../src/types/module').NuxtModule | string, Record<string, any>])[]}
    * @version 2
-   * @version 3
+   * @deprecated This is no longer needed in Nuxt 3 and Nuxt Bridge; all modules should be added to `modules` instead.
    */
   buildModules: [],
 
@@ -328,12 +328,14 @@ export default {
    * Server middleware are connect/express/h3-shaped functions that handle server-side requests. They
    * run on the server and before the Vue renderer.
    *
-   * By adding entries to `serverMiddleware` you can register additional routes or modify `req`/`res`
-   * objects without the need for an external server.
+   * By adding entries to `serverMiddleware` you can register additional routes without the need
+   * for an external server.
    *
    * You can pass a string, which can be the name of a node dependency or a path to a file. You
    * can also pass an object with `path` and `handler` keys. (`handler` can be a path or a
    * function.)
+   *
+   * @note If you pass a function directly, it will only run in development mode.
    *
    * @example
    * ```js
@@ -342,7 +344,7 @@ export default {
    *   'redirect-ssl',
    *   // Will register file from project server-middleware directory to handle /server-middleware/* requires
    *   { path: '/server-middleware', handler: '~/server-middleware/index.js' },
-   *   // We can create custom instances too
+   *   // We can create custom instances too, but only in development mode, they are ignored for the production bundle.
    *   { path: '/static2', handler: serveStatic(__dirname + '/static2') }
    * ]
    * ```
@@ -368,13 +370,14 @@ export default {
    * Alternatively, it can export a connect/express/h3-type app instance.
    * @example
    * ```js
-   * const bodyParser = require('body-parser')
-   * const app = require('express')()
+   * import bodyParser from 'body-parser'
+   * import createApp from 'express'
+   * const app = createApp()
    * app.use(bodyParser.json())
    * app.all('/getJSON', (req, res) => {
    *   res.json({ data: 'data' })
    * })
-   * module.exports = app
+   * export default app
    * ```
    *
    * Alternatively, instead of passing an array of `serverMiddleware`, you can pass an object
