@@ -153,7 +153,7 @@ export function useAsyncData<
     }
     const off = nuxt.hook('app:data:refresh', (keys) => {
       if (!keys || keys.includes(key)) {
-        return initialFetch()
+        return asyncData.refresh()
       }
     })
     if (instance) {
