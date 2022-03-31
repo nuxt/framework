@@ -2,30 +2,6 @@ import type { RouterOptions } from '@nuxt/schema'
 import { nextTick } from 'vue'
 import { useNuxtApp } from '#app'
 
-function setScrollRestoration (newVal) {
-  try {
-    window.history.scrollRestoration = newVal
-  } catch (e) { }
-}
-
-if (process.client) {
-  if ('scrollRestoration' in window.history) {
-    setScrollRestoration('manual')
-
-    // reset scrollRestoration to auto when leaving page, allowing page reload
-    // and back-navigation from other pages to use the browser to restore the
-    // scrolling position.
-    window.addEventListener('beforeunload', () => {
-      setScrollRestoration('auto')
-    })
-
-    // Setting scrollRestoration to manual again when returning to this page.
-    window.addEventListener('load', () => {
-      setScrollRestoration('manual')
-    })
-  }
-}
-
 // https://router.vuejs.org/api/#routeroptions
 export default <RouterOptions>{
   scrollBehavior (to, from, savedPosition) {
