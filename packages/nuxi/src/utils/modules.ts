@@ -1,82 +1,82 @@
 const availableModules = [
   {
-    name: "vueuse",
-    packageName: "@vueuse/nuxt",
+    name: 'vueuse',
+    packageName: '@vueuse/nuxt'
   },
   {
-    name: "tailwindcss",
-    packageName: "@nuxtjs/tailwindcss",
+    name: 'tailwindcss',
+    packageName: '@nuxtjs/tailwindcss'
   },
   {
-    name: "color-mode",
-    packageName: "@nuxtjs/color-mode",
+    name: 'color-mode',
+    packageName: '@nuxtjs/color-mode'
   },
   {
-    name: "prismic",
-    packageName: "@nuxtjs/prismic",
+    name: 'prismic',
+    packageName: '@nuxtjs/prismic'
   },
   {
-    name: "windicss",
-    packageName: "nuxt-windicss",
+    name: 'windicss',
+    packageName: 'nuxt-windicss'
   },
   {
-    name: "strapi",
-    packageName: "@nuxtjs/strapi",
+    name: 'strapi',
+    packageName: '@nuxtjs/strapi'
   },
   {
-    name: "sanity",
-    packageName: "@nuxtjs/sanity",
+    name: 'sanity',
+    packageName: '@nuxtjs/sanity'
   },
   {
-    name: "unocss",
-    packageName: "@unocss/nuxt",
+    name: 'unocss',
+    packageName: '@unocss/nuxt'
   },
   {
-    name: "plausible",
-    packageName: "vue-plausible",
+    name: 'plausible',
+    packageName: 'vue-plausible'
   },
   {
-    name: "formkit",
-    packageName: "@formkit/nuxt",
+    name: 'formkit',
+    packageName: '@formkit/nuxt'
   },
   {
-    name: "storyblok",
-    packageName: "@storyblok/nuxt",
+    name: 'storyblok',
+    packageName: '@storyblok/nuxt'
   },
   {
-    name: "lodash",
-    packageName: "nuxt-lodash",
+    name: 'lodash',
+    packageName: 'nuxt-lodash'
   },
   {
-    name: "partytown",
-    packageName: "@nuxtjs/partytown",
+    name: 'partytown',
+    packageName: '@nuxtjs/partytown'
   },
   {
-    name: "directus",
-    packageName: "nuxt-directus",
+    name: 'directus',
+    packageName: 'nuxt-directus'
   },
   {
-    name: "harlem",
-    packageName: "@nuxtjs/harlem",
+    name: 'harlem',
+    packageName: '@nuxtjs/harlem'
   },
   {
-    name: "algolia",
-    packageName: "@nuxtjs/algolia",
+    name: 'algolia',
+    packageName: '@nuxtjs/algolia'
   },
   {
-    name: "nuxt-hue",
-    packageName: "nuxt-hue",
+    name: 'nuxt-hue',
+    packageName: 'nuxt-hue'
   },
   {
-    name: "grapqhl",
-    packageName: "nuxt-graphql-client",
-  },
-];
+    name: 'grapqhl',
+    packageName: 'nuxt-graphql-client'
+  }
+]
 
-export async function findModule(name: string) {
+export async function findModule (name: string) {
   const modules = availableModules.filter(
-    (x) => x.packageName === name || x.name === name
-  );
-  if (modules.length < 0) return;
-  return modules[0];
+    x => x.packageName === name || x.name === name
+  )
+  if (modules.length < 0) { return }
+  return modules[0]
 }
