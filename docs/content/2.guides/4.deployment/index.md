@@ -3,7 +3,7 @@ layout:
   aside: true
   asideClass: ''
 navigation:
-  collapse: false
+  collapse: true
   exclusive: false
-  redirect: /docs/deployment/presets
+  redirect: /guides/deployment/presets
 ---
