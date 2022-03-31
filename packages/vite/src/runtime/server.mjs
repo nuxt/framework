@@ -50,6 +50,7 @@ async function writeManifest () {
 let render
 
 export default async (ssrContext) => {
+  process.server = true
   render = render || (await runner.executeFile(entry)).default
   const result = await render(ssrContext)
   await writeManifest()
