@@ -9,6 +9,7 @@ import { getPort } from 'get-port-please'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
+import { DynamicBasePlugin } from './plugins/dynamic-base'
 import { warmupViteServer } from './utils/warmup'
 import { resolveCSSOptions } from './css'
 
@@ -64,7 +65,8 @@ export async function bundle (nuxt: Nuxt) {
           }
         },
         plugins: [
-          virtual(nuxt.vfs)
+          virtual(nuxt.vfs),
+          DynamicBasePlugin.vite()
         ],
         vue: {
           reactivityTransform: nuxt.options.experimental.reactivityTransform
