@@ -21,7 +21,7 @@ export interface AsyncDataOptions<
   transform?: Transform
   pick?: PickKeys
   watch?: MultiWatchSources
-  cache?: boolean
+  initialCache?: boolean
 }
 
 export interface RefreshOptions {
@@ -63,7 +63,7 @@ export function useAsyncData<
     console.warn('[useAsyncData] `defer` has been renamed to `lazy`. Support for `defer` will be removed in RC.')
   }
   options.lazy = options.lazy ?? (options as any).defer ?? false
-  options.cache = options.cache ?? true
+  options.initialCache = options.initialCache ?? true
 
   // Setup nuxt instance payload
   const nuxt = useNuxtApp()
@@ -93,7 +93,7 @@ export function useAsyncData<
       return nuxt._asyncDataPromises[key]
     }
     // Avoid fetching same key that is already fetched
-    if (opts._initial && options.cache && nuxt.payload.data[key] !== undefined) {
+    if (opts._initial && options.initialCache && nuxt.payload.data[key] !== undefined) {
       return nuxt.payload.data[key]
     }
     asyncData.pending.value = true

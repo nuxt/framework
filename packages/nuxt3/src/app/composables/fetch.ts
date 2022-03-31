@@ -12,10 +12,9 @@ export interface UseFetchOptions<
   Transform extends _Transform<DataT, any> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > extends
-  Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'cache'>,
-  Omit<FetchOptions, 'cache'>
+  AsyncDataOptions<DataT, Transform, PickKeys>,
+  FetchOptions
   {
-  cache?: boolean | RequestCache,
   key?: string
  }
 
@@ -45,7 +44,6 @@ export function useFetch<
 
   const _asyncDataOptions: AsyncDataOptions<any> = {
     ...opts,
-    cache: requestCacheToCacheOption(opts.cache),
     watch: [
       _request,
       ...(opts.watch || [])
@@ -57,22 +55,6 @@ export function useFetch<
   }, _asyncDataOptions)
 
   return asyncData
-}
-
-// Maps request cache option to useAsyncData cache strategy
-// https://developer.mozilla.org/en-US/docs/Web/API/Request/cache
-function requestCacheToCacheOption (input: undefined | boolean | RequestCache): AsyncDataOptions<any>['cache'] {
-  // Async data possible options
-  const t = typeof input
-  if (t === 'boolean' || t === 'undefined') {
-    return input as boolean | undefined
-  }
-  // Map values
-  if (input === 'force-cache') {
-    return true
-  }
-  // Use default behavior for rest
-  return undefined
 }
 
 export function useLazyFetch<

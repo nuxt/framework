@@ -1,4 +1,6 @@
 <script setup lang="ts">
+await useFetch('http://icanhazip.com', { key: 'test' })
+await useFetch('http://icanhazip.com', { key: 'test', server: false, initialCache: false })
 </script>
 
 <template>
