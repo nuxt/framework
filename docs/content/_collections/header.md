@@ -2,17 +2,14 @@
 links:
   -
     title: 'Getting Started'
-    to: '/getting-started/introduction'
+    to: '/getting-started/quick-start'
   -
-    title: 'Concepts'
-    to: '/concepts/introduction'
+    title: 'Guides'
+    to: '/guides/concepts/introduction'
   -
-    title: 'Docs'
-    to: '/docs/usage/data-fetching'
+    title: 'References'
+    to: '/references/directory-structure/nuxt'
   -
     title: 'Examples'
     to: '/examples/essentials/hello-world'
-  -
-    title: 'Community'
-    to: '/community/getting-help'
 ---
