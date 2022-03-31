@@ -104,6 +104,12 @@ export async function initNitro (nuxt: Nuxt) {
     // Extend nitro with modules
     await nuxt.callHook('nitro:context', nitro)
 
+    // Extend runtimeConfig
+    nitro.options.runtimeConfig = defu({
+      private: nuxt.options.privateRuntimeConfig,
+      public: nuxt.options.publicRuntimeConfig
+    }, nitro.options.runtimeConfig)
+
     // Resolve middleware
     const { middleware, legacyMiddleware } = await resolveHandlers(nuxt)
     nuxt.server.setLegacyMiddleware(legacyMiddleware)
