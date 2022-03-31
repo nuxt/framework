@@ -24,14 +24,14 @@ export interface AsyncDataOptions<
   cache?: boolean
 }
 
-export interface RefrashOptions {
+export interface RefreshOptions {
   _initial?: boolean
 }
 
 export interface _AsyncData<DataT> {
   data: Ref<DataT>
   pending: Ref<boolean>
-  refrash: (opts?: RefrashOptions) => Promise<void>
+  refrash: (opts?: RefreshOptions) => Promise<void>
   error?: any
 }
 
