@@ -1,7 +1,9 @@
 import { resolve } from 'pathe'
 import * as vite from 'vite'
+import { logger } from '@nuxt/kit'
 import { withoutLeadingSlash } from 'ufo'
 import { distDir } from '../dirs'
+import { warmupViteServer } from '../../../vite/src/utils/warmup'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import { defaultExportPlugin } from './plugins/default-export'
@@ -86,6 +88,15 @@ async function bundle (nuxt: Nuxt, builder: any) {
   }
 
   await ctx.nuxt.callHook('vite:extend', ctx)
+
+  if (nuxt.options.dev) {
+    ctx.nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer) => {
+      const start = Date.now()
+      warmupViteServer(server, ['/.nuxt/entry.mjs']).then(() => {
+        logger.info(`Vite warmed up in ${Date.now() - start}ms`)
+      }).catch(logger.error)
+    })
+  }
 
   await buildClient(ctx)
   await prepareManifests(ctx)
