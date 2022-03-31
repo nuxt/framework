@@ -69,7 +69,7 @@ function renderToString (ssrContext) {
 
 export default defineEventHandler(async (event) => {
   // Whether we're rendering an error page
-  const ssrError = event.req.url?.startsWith('/__error') ? useQuery(event.req) : null
+  const ssrError = event.req.url?.startsWith('/__error') ? useQuery(event) : null
   let url = ssrError?.url as string || event.req.url!
 
   // payload.json request detection
