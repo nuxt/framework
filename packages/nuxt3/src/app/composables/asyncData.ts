@@ -31,7 +31,7 @@ export interface RefreshOptions {
 export interface _AsyncData<DataT> {
   data: Ref<DataT>
   pending: Ref<boolean>
-  refrash: (opts?: RefreshOptions) => Promise<void>
+  refresh: (opts?: RefreshOptions) => Promise<void>
   error?: any
 }
 
@@ -87,7 +87,7 @@ export function useAsyncData<
     error: ref(nuxt.payload._errors[key] ?? null)
   } as AsyncData<DataT>
 
-  asyncData.refrash = (opts = {}) => {
+  asyncData.refresh = (opts = {}) => {
     // Avoid fetching same key more than once at a time
     if (nuxt._asyncDataPromises[key]) {
       return nuxt._asyncDataPromises[key]
@@ -125,7 +125,7 @@ export function useAsyncData<
     return nuxt._asyncDataPromises[key]
   }
 
-  const initialFetch = () => asyncData.refrash({ _initial: true })
+  const initialFetch = () => asyncData.refresh({ _initial: true })
 
   const fetchOnServer = options.server !== false && nuxt.payload.serverRendered
 
