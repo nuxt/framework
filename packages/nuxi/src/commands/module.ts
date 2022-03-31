@@ -29,7 +29,7 @@ export default defineNuxtCommand({
 
     // Checking if provided package is a Nuxt Module
     const module = await findModule(name)
-    if (!module) { consola.error('Please check the module list, and ensure if') }
+    if (!module) { consola.error('Please ensure you try to install a Nuxt3 module!') }
 
     // Read Configuration .nuxtrc in project directory
     const config = await read({ name: '.nuxtrc', dir: cwd })
