@@ -149,7 +149,7 @@ export function useAsyncData<
       initialFetch()
     }
     if (options.watch) {
-      watch(options.watch, () => initialFetch())
+      watch(options.watch, () => asyncData.refresh())
     }
     const off = nuxt.hook('app:data:refresh', (keys) => {
       if (!keys || keys.includes(key)) {
