@@ -4,7 +4,7 @@ import { parse, serialize, CookieParseOptions, CookieSerializeOptions } from 'co
 import { appendHeader } from 'h3'
 import type { NuxtApp } from '@nuxt/schema'
 import destr from 'destr'
-import { useNuxtApp, useRuntimeConfig } from '#app'
+import { useNuxtApp } from '#app'
 
 type _CookieOptions = Omit<CookieSerializeOptions & CookieParseOptions, 'decode' | 'encode'>
 
