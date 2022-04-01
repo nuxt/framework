@@ -1,4 +1,4 @@
-import { resolve, relative } from 'pathe'
+import { resolve, relative, normalize } from 'pathe'
 import chokidar from 'chokidar'
 import { debounce } from 'perfect-debounce'
 import type { Nuxt } from '@nuxt/schema'
@@ -23,8 +23,8 @@ export default defineNuxtCommand({
     const listener = await server.listen({
       clipboard: args.clipboard,
       open: args.open || args.o,
-      port: args.port || args.p,
-      hostname: args.host || args.h,
+      port: args.port || args.p || process.env.NUXT_PORT,
+      hostname: args.host || args.h || process.env.NUXT_HOST,
       https: Boolean(args.https),
       certificate: (args['ssl-cert'] && args['ssl-key']) && {
         cert: args['ssl-cert'],
@@ -73,7 +73,7 @@ export default defineNuxtCommand({
     const watcher = chokidar.watch([rootDir], { ignoreInitial: true, depth: 1 })
     watcher.on('all', (event, file) => {
       if (!currentNuxt) { return }
-      if (file.startsWith(withTrailingSlash(currentNuxt.options.buildDir))) { return }
+      if (normalize(file).startsWith(withTrailingSlash(normalize(currentNuxt.options.buildDir)))) { return }
       if (file.match(/(nuxt\.config\.(js|ts|mjs|cjs)|\.nuxtignore|\.env|\.nuxtrc)$/)) {
         dLoad(true, `${relative(rootDir, file)} updated`)
       }
