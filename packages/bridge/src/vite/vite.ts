@@ -1,10 +1,9 @@
 import { resolve } from 'pathe'
 import * as vite from 'vite'
 import { isIgnored, logger } from '@nuxt/kit'
-import { NuxtConfigSchema } from '@nuxt/schema'
-import { applyDefaults } from 'untyped'
 import { sanitizeFilePath } from 'mlly'
 import { getPort } from 'get-port-please'
+import { joinURL, withoutLeadingSlash } from 'ufo'
 import { distDir } from '../dirs'
 import { warmupViteServer } from '../../../vite/src/utils/warmup'
 import { DynamicBasePlugin } from '../../../vite/src/plugins/dynamic-base'
@@ -28,20 +27,40 @@ async function bundle (nuxt: Nuxt, builder: any) {
     ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
   })
 
-  nuxt.options.vite = applyDefaults(NuxtConfigSchema, { ...nuxt.options, server: {} }).vite
-
   const ctx: ViteBuildContext = {
     nuxt,
     builder,
     config: vite.mergeConfig(
       {
+        // defaults from packages/schema/src/config/vite
+        root: nuxt.options.srcDir,
+        mode: nuxt.options.dev ? 'development' : 'production',
+        logLevel: 'warn',
+        base: nuxt.options.dev
+          ? joinURL(nuxt.options.app.baseURL, nuxt.options.app.buildAssetsDir)
+          : '/__NUXT_BASE__/',
+        publicDir: resolve(nuxt.options.rootDir, nuxt.options.srcDir, nuxt.options.dir.static),
+        vue: {
+          isProduction: !nuxt.options.dev,
+          template: {
+            compilerOptions: nuxt.options.vue.compilerOptions
+          }
+        },
+        esbuild: {
+          jsxFactory: 'h',
+          jsxFragment: 'Fragment',
+          tsconfigRaw: '{}'
+        },
+        clearScreen: false,
         define: {
+          'process.dev': nuxt.options.dev,
           'process.static': nuxt.options.target === 'static',
           'process.env.NODE_ENV': JSON.stringify(nuxt.options.dev ? 'development' : 'production'),
           'process.mode': JSON.stringify(nuxt.options.dev ? 'development' : 'production'),
           'process.target': JSON.stringify(nuxt.options.target)
         },
         resolve: {
+          extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
           alias: {
             ...nuxt.options.alias,
             '#build': nuxt.options.buildDir,
@@ -55,6 +74,8 @@ async function bundle (nuxt: Nuxt, builder: any) {
         },
         optimizeDeps: {
           exclude: [
+            ...nuxt.options.build.transpile.filter(i => typeof i === 'string'),
+            'vue-demi',
             'ufo',
             'date-fns',
             'nanoid',
@@ -66,6 +87,8 @@ async function bundle (nuxt: Nuxt, builder: any) {
         },
         css: resolveCSSOptions(nuxt),
         build: {
+          assetsDir: nuxt.options.dev ? withoutLeadingSlash(nuxt.options.app.buildAssetsDir) : '.',
+          emptyOutDir: false,
           rollupOptions: {
             output: { sanitizeFileName: sanitizeFilePath }
           }
@@ -87,8 +110,12 @@ async function bundle (nuxt: Nuxt, builder: any) {
             port: hmrPort
           },
           fs: {
+            strict: false,
             allow: [
-              nuxt.options.rootDir
+              nuxt.options.buildDir,
+              nuxt.options.srcDir,
+              nuxt.options.rootDir,
+              ...nuxt.options.modulesDir
             ]
           }
         }
