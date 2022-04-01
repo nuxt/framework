@@ -12,6 +12,7 @@ import autoImportsModule from '../auto-imports/module'
 import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
 import { ImportProtectionPlugin, vueAppPatterns } from './plugins/import-protection'
+import { UnctxTransformPlugin } from './plugins/unctx'
 import { addModuleTranspiles } from './modules'
 import { initNitro } from './nitro'
 
@@ -57,13 +58,16 @@ async function initNuxt (nuxt: Nuxt) {
   })
 
   // Add import protection
-
   const config = {
     rootDir: nuxt.options.rootDir,
     patterns: vueAppPatterns(nuxt)
   }
   addVitePlugin(ImportProtectionPlugin.vite(config))
   addWebpackPlugin(ImportProtectionPlugin.webpack(config))
+
+  // Add unctx transform
+  addVitePlugin(UnctxTransformPlugin(nuxt).vite())
+  addWebpackPlugin(UnctxTransformPlugin(nuxt).webpack())
 
   // Init user modules
   await nuxt.callHook('modules:before', { nuxt } as ModuleContainer)
