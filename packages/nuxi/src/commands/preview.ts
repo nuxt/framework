@@ -36,7 +36,7 @@ export default defineNuxtCommand({
     }
 
     if (existsSync(resolve(rootDir, '.env'))) {
-      consola.info('Loading `.env` for preview...')
+      consola.info('Loading `.env`. This will not be loaded when running the server in production.')
       process.env = await loadDotenv({ cwd: rootDir, fileName: '.env', env: process.env })
     }
 
