@@ -1,4 +1,4 @@
-import { promises as fsp } from 'fs'
+import { promises as fsp, existsSync } from 'fs'
 import fetch from 'node-fetch'
 import fsExtra from 'fs-extra'
 import { addPluginTemplate, resolvePath, useNuxt } from '@nuxt/kit'
@@ -52,15 +52,23 @@ export async function setupNitroBridge () {
     preset: nuxt.options.dev ? 'dev' : undefined,
     buildDir: resolve(nuxt.options.buildDir),
     scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
-    generateDir: resolve(nuxt.options.buildDir, 'dist'),
-    publicDir: nuxt.options.dir.public,
-    publicPath: nuxt.options.app.buildAssetsDir,
+    app: nuxt.options.app,
     renderer: resolve(distDir, 'runtime/nitro/renderer'),
-    modulesDir: nuxt.options.modulesDir,
+    nodeModulesDirs: nuxt.options.modulesDir,
     runtimeConfig: {
       public: nuxt.options.publicRuntimeConfig,
       private: nuxt.options.privateRuntimeConfig
     },
+    publicAssets: [
+      {
+        baseURL: nuxt.options.app.buildAssetsDir,
+        dir: resolve(nuxt.options.buildDir, 'dist/client')
+      },
+      ...nuxt.options._layers
+        .map(layer => join(layer.config.srcDir, 'public'))
+        .filter(dir => existsSync(dir))
+        .map(dir => ({ dir }))
+    ],
     prerender: {
       crawlLinks: nuxt.options.generate.crawler,
       routes: nuxt.options.generate.routes
@@ -87,7 +95,6 @@ export async function setupNitroBridge () {
       // Error renderer
       '#nitro-error': resolve(distDir, 'runtime/nitro/error')
     }
-
   })
 
   // Initiate nitro

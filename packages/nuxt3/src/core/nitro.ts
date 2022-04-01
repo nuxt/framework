@@ -1,3 +1,4 @@
+import { existsSync } from 'fs'
 import { resolve, join } from 'pathe'
 import { createNitro, createDevServer, build, prepare, copyPublicAssets, NitroHandlerConfig, writeTypes, scanHandlers, prerender } from 'nitropack'
 import type { NitroConfig } from 'nitropack'
@@ -15,17 +16,25 @@ export async function initNitro (nuxt: Nuxt) {
     srcDir: join(nuxt.options.srcDir, 'server'),
     dev: nuxt.options.dev,
     preset: nuxt.options.dev ? 'dev' : undefined,
-    scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
     buildDir: nuxt.options.buildDir,
-    generateDir: join(nuxt.options.buildDir, 'dist'),
-    publicDir: nuxt.options.dir.public,
-    publicPath: nuxt.options.app.buildAssetsDir,
+    scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
+    app: nuxt.options.app,
     renderer: resolve(distDir, 'core/runtime/nitro/renderer'),
-    modulesDir: nuxt.options.modulesDir,
+    nodeModulesDirs: nuxt.options.modulesDir,
     runtimeConfig: {
       public: nuxt.options.publicRuntimeConfig,
       private: nuxt.options.privateRuntimeConfig
     },
+    publicAssets: [
+      {
+        baseURL: nuxt.options.app.buildAssetsDir,
+        dir: resolve(nuxt.options.buildDir, 'dist/client')
+      },
+      ...nuxt.options._layers
+        .map(layer => join(layer.config.srcDir, 'public'))
+        .filter(dir => existsSync(dir))
+        .map(dir => ({ dir }))
+    ],
     prerender: {
       crawlLinks: nuxt.options.generate.crawler,
       routes: nuxt.options.generate.routes

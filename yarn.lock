@@ -2611,13 +2611,13 @@ __metadata:
     externality: ^0.2.1
     fs-extra: ^10.0.1
     globby: ^13.1.1
-    h3: ^0.5.2
+    h3: ^0.5.4
     hash-sum: ^2.0.0
     knitwork: ^0.1.1
     magic-string: ^0.26.1
     mlly: ^0.5.1
     murmurhash-es: ^0.1.1
-    nitropack: "npm:nitropack-edge@0.0.0-27479281.32ff5e4"
+    nitropack: "npm:nitropack-edge@0.0.0-27480770.82c2767"
     node-fetch: ^3.2.3
     nuxi: 3.0.0
     nuxt: ^2
@@ -11801,15 +11801,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"h3@npm:^0.5.2, h3@npm:^0.5.3":
-  version: 0.5.3
-  resolution: "h3@npm:0.5.3"
+"h3@npm:^0.5.4":
+  version: 0.5.4
+  resolution: "h3@npm:0.5.4"
   dependencies:
     cookie-es: ^0.5.0
     destr: ^1.1.0
     radix3: ^0.1.1
     ufo: ^0.7.11
-  checksum: 1bf0a0b30014b4db1dc913d4a4c548885ac62cc59f40d6e534d9137a6f366e0ef9ff9b5ec4615cb24e1920fc19757014267363a8c8318f4de640bb9a92cec01f
+  checksum: 226f1e87a8a8a5e3e15421dd34c0f2db771681a7a283a3b415160e2e5d1ce7ccf8d4874e5056c00711c88cf0baebc7afe30f4a01ee00155a06937a33e48083fc
   languageName: node
   linkType: hard
 
@@ -14836,9 +14836,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitropack@npm:nitropack-edge@0.0.0-27479281.32ff5e4":
-  version: 0.0.0-27479281.32ff5e4
-  resolution: "nitropack-edge@npm:0.0.0-27479281.32ff5e4"
+"nitropack@npm:nitropack-edge@0.0.0-27480770.82c2767":
+  version: 0.0.0-27480770.82c2767
+  resolution: "nitropack-edge@npm:0.0.0-27480770.82c2767"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@netlify/functions": ^1.0.0
@@ -14868,7 +14868,7 @@ __metadata:
     fs-extra: ^10.0.1
     globby: ^13.1.1
     gzip-size: ^7.0.0
-    h3: ^0.5.3
+    h3: ^0.5.4
     hasha: ^5.2.2
     hookable: ^5.1.1
     http-proxy: ^1.18.1
@@ -14903,7 +14903,7 @@ __metadata:
   bin:
     nitro: ./dist/cli.mjs
     nitropack: ./dist/cli.mjs
-  checksum: c23a7606d1a8e37bd8202d9f328eef281131f7ecdd34eae171f8138e5b0b36a9911bd98077997332d9afcbd73576a3eac6329ff9932cc055c3a077da427c26cb
+  checksum: 62422a2e86a9ac372f8d461e68fcac4205cc696f0031a7c072dafe9707e8edc00b69fb037ec131b9720107ef99b9c0c220d6dc04abf9efe10b7d4c6289648b6d
   languageName: node
   linkType: hard
 
@@ -15580,13 +15580,13 @@ __metadata:
     escape-string-regexp: ^5.0.0
     fs-extra: ^10.0.1
     globby: ^13.1.1
-    h3: ^0.5.2
+    h3: ^0.5.4
     hash-sum: ^2.0.0
     hookable: ^5.1.1
     knitwork: ^0.1.1
     magic-string: ^0.26.1
     mlly: ^0.5.1
-    nitropack: "npm:nitropack-edge@0.0.0-27479281.32ff5e4"
+    nitropack: "npm:nitropack-edge@0.0.0-27480770.82c2767"
     nuxi: 3.0.0
     ohash: ^0.1.0
     ohmyfetch: ^0.4.15
