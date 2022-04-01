@@ -106,12 +106,6 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: resolve(nuxt.options.appDir, 'components/nuxt-link')
   })
 
-  // Add <NuxtTeleport>
-  addComponent({
-    name: 'NuxtTeleport',
-    filePath: resolve(nuxt.options.appDir, 'components/nuxt-teleport')
-  })
-
   for (const m of modulesToInstall) {
     if (Array.isArray(m)) {
       await installModule(m[0], m[1])
