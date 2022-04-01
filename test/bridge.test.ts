@@ -44,10 +44,9 @@ describe('fixtures:bridge', async () => {
     })
 
     // TODO:
-    it.todo('should render a HTML error page', async () => {
-      const res = await $fetch('/error')
-      console.log(res)
-      expect(await res).toContain('This is a custom error')
+    it.skip('should render a HTML error page', async () => {
+      const res = await fetch('/error')
+      expect(await res.text()).toContain('This is a custom error')
     })
   })
 
@@ -79,9 +78,9 @@ describe('fixtures:bridge', async () => {
       `)
     })
 
-    it.todo('should allow setting base URL and build assets directory', async () => {
-      process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_other/'
-      process.env.NUXT_APP_BASE_URL = '/foo/'
+    it('should allow setting base URL and build assets directory', async () => {
+      process.env.APP_BUILD_ASSETS_DIR = '/_other/'
+      process.env.APP_BASE_URL = '/foo/'
       await startServer()
 
       const html = await $fetch('/assets')
@@ -92,10 +91,10 @@ describe('fixtures:bridge', async () => {
       }
     })
 
-    it.todo('should allow setting CDN URL', async () => {
-      process.env.NUXT_APP_BASE_URL = '/foo/'
-      process.env.NUXT_APP_CDN_URL = 'https://example.com/'
-      process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_cdn/'
+    it('should allow setting CDN URL', async () => {
+      process.env.APP_BASE_URL = '/foo/'
+      process.env.APP_CDN_URL = 'https://example.com/'
+      process.env.APP_BUILD_ASSETS_DIR = '/_cdn/'
       await startServer()
 
       const html = await $fetch('/assets')
