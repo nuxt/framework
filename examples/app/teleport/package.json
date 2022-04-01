@@ -1,5 +1,5 @@
 {
-  "name": "example-with-teleports",
+  "name": "example-teleport",
   "private": true,
   "scripts": {
     "build": "nuxi build",
@@ -7,6 +7,7 @@
     "start": "nuxi preview"
   },
   "devDependencies": {
-    "nuxt3": "latest"
+    "nuxt3": "latest",
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
   }
 }

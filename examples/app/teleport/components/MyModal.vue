@@ -9,24 +9,17 @@ export default {
 </script>
 
 <template>
-  <button @click="open = true">
+  <NButton @click="open = true">
     Open Modal
-  </button>
+  </NButton>
   <Teleport to="body">
-    <div v-if="open" class="modal">
+    <NCard v-if="open" class="modal p4">
       <p>Hello from the modal!</p>
-      <button @click="open = false">
+      <NButton @click="open = false">
         Close
-      </button>
-    </div>
+      </NButton>
+    </NCard>
   </Teleport>
-  <ClientOnly>
-    <Teleport to="body">
-      <div>
-        Hello from a client-side teleport!
-      </div>
-    </Teleport>
-  </ClientOnly>
 </template>
 
 <style scoped>
