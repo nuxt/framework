@@ -7,7 +7,7 @@
     "start": "nuxi preview"
   },
   "devDependencies": {
-    "nuxt3": "latest",
-    "@nuxt/ui": "npm:@nuxt/ui-edge@latest"
+    "@nuxt/ui": "npm:@nuxt/ui-edge@latest",
+    "nuxt3": "latest"
   }
 }
