@@ -4,7 +4,7 @@ import { parse, serialize, CookieParseOptions, CookieSerializeOptions } from 'co
 import { appendHeader } from 'h3'
 import type { NuxtApp } from '@nuxt/schema'
 import destr from 'destr'
-import { useNuxtApp } from '#app'
+import { useNuxtApp, useRuntimeConfig } from '#app'
 
 type _CookieOptions = Omit<CookieSerializeOptions & CookieParseOptions, 'decode' | 'encode'>
 
@@ -22,7 +22,8 @@ const CookieDefaults: CookieOptions<any> = {
 }
 
 export function useCookie <T=string> (name: string, _opts?: CookieOptions<T>): CookieRef<T> {
-  const opts = { ...CookieDefaults, ..._opts }
+  const baseURL = useRuntimeConfig().app.baseURL
+  const opts = { ...CookieDefaults, path: baseURL, ..._opts }
   const cookies = readRawCookies(opts)
 
   const cookie = ref(cookies[name] ?? opts.default?.())
