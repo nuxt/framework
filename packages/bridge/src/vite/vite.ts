@@ -22,7 +22,6 @@ async function bundle (nuxt: Nuxt, builder: any) {
     p.src = nuxt.resolver.resolvePath(resolve(nuxt.options.buildDir, p.src))
   }
 
-  // TODO: After nitropack refactor, try if we can resuse the same server port as Nuxt
   const hmrPortDefault = 24678 // Vite's default HMR port
   const hmrPort = await getPort({
     port: hmrPortDefault,
