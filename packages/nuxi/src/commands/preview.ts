@@ -35,12 +35,9 @@ export default defineNuxtCommand({
       process.exit(1)
     }
 
-    for (const env of ['.env.production', '.env']) {
-      if (existsSync(resolve(rootDir, env))) {
-        consola.info(`Loading \`${env}\` for preview...`)
-        process.env = await loadDotenv({ cwd: rootDir, fileName: env, env: process.env })
-        break
-      }
+    if (existsSync(resolve(rootDir, '.env'))) {
+      consola.info('Loading `.env` for preview...')
+      process.env = await loadDotenv({ cwd: rootDir, fileName: '.env', env: process.env })
     }
 
     consola.info('Starting preview command:', nitroJSON.commands.preview)
