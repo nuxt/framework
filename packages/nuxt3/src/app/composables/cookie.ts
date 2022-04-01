@@ -17,13 +17,13 @@ export interface CookieOptions<T=any> extends _CookieOptions {
 export interface CookieRef<T> extends Ref<T> {}
 
 const CookieDefaults: CookieOptions<any> = {
+  path: '/',
   decode: val => destr(decodeURIComponent(val)),
   encode: val => encodeURIComponent(typeof val === 'string' ? val : JSON.stringify(val))
 }
 
 export function useCookie <T=string> (name: string, _opts?: CookieOptions<T>): CookieRef<T> {
-  const baseURL = useRuntimeConfig().app.baseURL
-  const opts = { ...CookieDefaults, path: baseURL, ..._opts }
+  const opts = { ...CookieDefaults, ..._opts }
   const cookies = readRawCookies(opts)
 
   const cookie = ref(cookies[name] ?? opts.default?.())
