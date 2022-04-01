@@ -1,6 +1,7 @@
 import { existsSync, promises as fsp } from 'fs'
 import { dirname, relative } from 'path'
 import { execa } from 'execa'
+import { loadDotenv } from 'c12'
 import { resolve } from 'pathe'
 import consola from 'consola'
 
@@ -32,6 +33,14 @@ export default defineNuxtCommand({
     if (!nitroJSON.commands.preview) {
       consola.error('Preview is not supported for this build.')
       process.exit(1)
+    }
+
+    for (const env of ['.env.production', '.env']) {
+      if (existsSync(resolve(rootDir, env))) {
+        consola.info(`Loading \`${env}\` for preview...`)
+        process.env = await loadDotenv({ cwd: rootDir, fileName: env, env: process.env })
+        break
+      }
     }
 
     consola.info('Starting preview command:', nitroJSON.commands.preview)
