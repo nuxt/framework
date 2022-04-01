@@ -43,8 +43,7 @@ describe('fixtures:bridge', async () => {
     `)
     })
 
-    // TODO:
-    it.skip('should render a HTML error page', async () => {
+    it('should render a HTML error page', async () => {
       const res = await fetch('/error')
       expect(await res.text()).toContain('This is a custom error')
     })
