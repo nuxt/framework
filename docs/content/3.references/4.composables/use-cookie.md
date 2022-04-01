@@ -1,4 +1,4 @@
-# Cookies
+# useCookie
 
 Nuxt provides an SSR-friendly composable to read and write cookies.
 
