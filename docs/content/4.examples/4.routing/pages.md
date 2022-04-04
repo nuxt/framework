@@ -7,7 +7,7 @@ template: Example
 This example shows how to use the `pages/` directory to create application routes.
 
 ::alert{type=info icon=👉}
-Learn more about [pages](/docs/directory-structure/pages).
+Learn more about [pages](/api-reference/directory-structure/pages).
 ::
 
 ::sandbox{repo="nuxt/framework" branch="main" dir="examples/routing/pages" file="app.vue"}

@@ -8,7 +8,7 @@ Components in the `components/` directory are auto imported and can be directly 
 You can configure other directories to support components auto-imports.
 
 ::alert{type=info icon=👉}
-Read more about [the components directory](/docs/directory-structure/components).
+Read more about [the components directory](/api-reference/directory-structure/components).
 ::
 
 ::sandbox{repo="nuxt/framework" branch="main" dir="examples/auto-imports/components" file="app.vue"}
