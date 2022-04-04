@@ -2,8 +2,9 @@ import { pathToFileURL } from 'url'
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL } from 'ufo'
 import { Component } from '@nuxt/schema'
-import { genImport } from 'knitwork'
+import { genDynamicImport, genImport } from 'knitwork'
 import MagicString from 'magic-string'
+import { pascalCase } from 'scule'
 
 interface LoaderOptions {
   getComponents(): Component[]
@@ -24,31 +25,38 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => ({
   }
 }))
 
-function findComponent (components: Component[], name:string) {
-  return components.find(({ pascalName, kebabName }) => [pascalName, kebabName].includes(name))
+function findComponent (components: Component[], name: string) {
+  const id = pascalCase(name).replace(/["']/g, '')
+  return components.find(component => id === component.pascalName)
 }
 
 function transform (code: string, id: string, components: Component[]) {
   let num = 0
-  let imports = ''
+  const imports = new Set<string>()
   const map = new Map<Component, string>()
   const s = new MagicString(code)
 
   // replace `_resolveComponent("...")` to direct import
-  s.replace(/ _resolveComponent\("(.*?)"\)/g, (full, name) => {
+  s.replace(/(?<=[ (])_?resolveComponent\(["'](lazy-|Lazy)?([^'"]*?)["']\)/g, (full, lazy, name) => {
     const component = findComponent(components, name)
     if (component) {
       const identifier = map.get(component) || `__nuxt_component_${num++}`
       map.set(component, identifier)
-      imports += genImport(component.filePath, [{ name: component.export, as: identifier }])
-      return ` ${identifier}`
+      if (lazy) {
+        // Nuxt will auto-import `defineAsyncComponent` for us
+        imports.add(`const ${identifier}_lazy = defineAsyncComponent(${genDynamicImport(component.filePath)})`)
+        return `${identifier}_lazy`
+      } else {
+        imports.add(genImport(component.filePath, [{ name: component.export, as: identifier }]))
+        return identifier
+      }
     }
     // no matched
     return full
   })
 
-  if (imports) {
-    s.prepend(imports + '\n')
+  if (imports.size) {
+    s.prepend([...imports, ''].join('\n'))
   }
 
   if (s.hasChanged()) {

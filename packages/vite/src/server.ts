@@ -10,7 +10,6 @@ import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { prepareDevServerEntry } from './vite-node'
-import { DynamicBasePlugin } from './plugins/dynamic-base'
 import { isCSS, isDirectory, readDirRecursively } from './utils'
 import { bundleRequest } from './dev-bundler'
 import { writeManifest } from './manifest'
@@ -55,12 +54,13 @@ export async function buildServer (ctx: ViteBuildContext) {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
+        // Private nitro alias: packages/nitro/src/rollup/config.ts#L234
+        external: ['#_config'],
         output: {
           entryFileNames: 'server.mjs',
           preferConst: true,
           format: 'module'
         },
-        external: ['#config'],
         onwarn (warning, rollupWarn) {
           if (!['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
             rollupWarn(warning)
@@ -75,7 +75,6 @@ export async function buildServer (ctx: ViteBuildContext) {
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
       vuePlugin(ctx.config.vue),
-      DynamicBasePlugin.vite({ env: ctx.nuxt.options.dev ? 'dev' : 'server', devAppConfig: ctx.nuxt.options.app }),
       viteJsxPlugin()
     ]
   } as ViteOptions)

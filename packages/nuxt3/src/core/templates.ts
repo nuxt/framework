@@ -80,7 +80,7 @@ export const appViewTemplate = {
   {{ HEAD }}
 </head>
 
-<body {{ BODY_ATTRS }}>
+<body {{ BODY_ATTRS }}>{{ BODY_PREPEND }}
   {{ APP }}
 </body>
 
@@ -166,5 +166,34 @@ export const layoutTemplate: NuxtTemplate = {
       'import { defineAsyncComponent } from \'vue\'',
           `export default ${layoutsObject}`
     ].join('\n')
+  }
+}
+
+export const clientConfigTemplate: NuxtTemplate = {
+  filename: 'config.client.mjs',
+  getContents: () => 'export default window?.__NUXT__?.config || {}'
+}
+
+export const publicPathTemplate: NuxtTemplate = {
+  filename: 'paths.mjs',
+  getContents ({ nuxt }) {
+    return [
+      'import { joinURL } from \'ufo\'',
+      !nuxt.options.dev && 'import config from \'#_config\'',
+
+      nuxt.options.dev
+        ? `const appConfig = ${JSON.stringify(nuxt.options.app)}`
+        : 'const appConfig = config.app',
+
+      'export const baseURL = () => appConfig.baseURL',
+      'export const buildAssetsDir = () => appConfig.buildAssetsDir',
+
+      'export const buildAssetsURL = (...path) => joinURL(publicAssetsURL(), buildAssetsDir(), ...path)',
+
+      'export const publicAssetsURL = (...path) => {',
+      '  const publicBase = appConfig.cdnURL || appConfig.baseURL',
+      '  return path.length ? joinURL(publicBase, ...path) : publicBase',
+      '}'
+    ].filter(Boolean).join('\n')
   }
 }
