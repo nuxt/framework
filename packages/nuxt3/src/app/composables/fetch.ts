@@ -42,15 +42,17 @@ export function useFetch<
     cache: typeof opts.cache === 'boolean' ? undefined : opts.cache
   }
 
-  const asyncData = useAsyncData(key, () => {
-    return $fetch(_request.value, _fetchOptions) as Promise<_ResT>
-  }, {
+  const _asyncDataOptions: AsyncDataOptions<_ResT, Transform, PickKeys> = {
     ...opts,
     watch: [
       _request,
       ...(opts.watch || [])
     ]
-  })
+  }
+
+  const asyncData = useAsyncData(key, () => {
+    return $fetch(_request.value, _fetchOptions) as Promise<_ResT>
+  }, _asyncDataOptions)
 
   return asyncData
 }
