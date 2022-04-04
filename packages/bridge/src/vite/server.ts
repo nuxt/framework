@@ -50,7 +50,6 @@ export async function buildServer (ctx: ViteBuildContext) {
         /\.(es|esm|esm-browser|esm-bundler).js$/,
         '#app',
         /@nuxt\/nitro\/(dist|src)/,
-        '@nuxt/bridge-edge',
         ...ctx.nuxt.options.build.transpile.filter(i => typeof i === 'string')
       ]
     },

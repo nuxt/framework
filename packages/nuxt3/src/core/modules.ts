@@ -4,6 +4,7 @@ export const addModuleTranspiles = () => {
   const nuxt = useNuxt()
 
   const modules = [
+    '@nuxt/bridge-edge',
     ...nuxt.options.buildModules,
     ...nuxt.options.modules,
     ...nuxt.options._modules
