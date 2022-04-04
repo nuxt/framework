@@ -1,6 +1,5 @@
-import { useNuxt } from './context'
-import { IncomingMessage, ServerResponse } from 'http'
 import { Middleware } from 'h3'
+import { useNuxt } from './context'
 
 export interface ServerMiddleware {
   path?: string,
