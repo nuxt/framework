@@ -16,15 +16,16 @@ export function useHead (meta: MetaObject | ComputedGetter<MetaObject>) {
   useNuxtApp()._useHead(resolvedMeta)
 }
 
-// TODO: remove useMeta support when Nuxt 3 is stable
 const _warned = {}
 const warnOnce = (id: string, message: string) => {
   if (!_warned[id]) {
-    console.warn('[meta]', message)
+    console.warn(message)
     _warned[id] = true
   }
 }
+// TODO: remove useMeta support when Nuxt 3 is stable
+/** @deprecated */
 export function useMeta (meta: MetaObject | ComputedGetter<MetaObject>) {
-  warnOnce('useMeta', 'useMeta has been renamed to useHead.')
+  warnOnce('useMeta', '[meta] useMeta has been renamed to useHead.')
   return useHead(meta)
 }
