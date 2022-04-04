@@ -1,4 +1,4 @@
-import { Middleware } from 'h3'
+import type { Middleware } from 'h3'
 import { useNuxt } from './context'
 
 export interface ServerMiddleware {
