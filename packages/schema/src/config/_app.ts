@@ -150,14 +150,14 @@ export default {
    * @version 2
    */
   head: {
-    /** Each item in the array maps to a newly-created `<meta>` element, where object properties map to attributes. */
-    meta: [],
-    /** Each item in the array maps to a newly-created `<link>` element, where object properties map to attributes. */
-    link: [],
-    /** Each item in the array maps to a newly-created `<style>` element, where object properties map to attributes. */
-    style: [],
-    /** Each item in the array maps to a newly-created `<script>` element, where object properties map to attributes. */
-    script: []
+    $resolve: (val, get) => {
+      return defu(val, get('meta'), {
+        meta: [],
+        link: [],
+        style: [],
+        script: []
+      })
+    }
   },
 
   /**
