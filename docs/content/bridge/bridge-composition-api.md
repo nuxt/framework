@@ -38,7 +38,7 @@ Because some composables have been removed and don't yet have a replacement, thi
 2. Remove any explicit imports of the basic Vue Composition API composables.
 
    ::alert{type=info}
-   Nuxt Bridge [auto-imports](/concepts/auto-imports) Vue composables, you don't have to explicitly import them.
+   Nuxt Bridge [auto-imports](/guide/concepts/auto-imports) Vue composables, you don't have to explicitly import them.
    ::
 
    ```diff
@@ -90,7 +90,7 @@ export default <Plugin> function (ctx, inject) {}
 ```
 
 ::alert
-You may wish to [migrate your plugins to Nuxt 3-style plugins](/getting-started/bridge#new-plugins-format-optional) as a next (optional) step.
+You may wish to [migrate your plugins to Nuxt 3-style plugins](/bridge#new-plugins-format-optional) as a next (optional) step.
 ::
 
 ### `onGlobalSetup`
@@ -129,7 +129,7 @@ The key differences are that you must provide a _key_ for this state (which Nuxt
 
 Because the state is keyed, you can access the same state from multiple locations, as long as you are using the same key.
 
-You can read more about how to use this composable in [the Nuxt 3 docs](/docs/usage/state#usestate).
+You can read more about how to use this composable in [the Nuxt 3 docs](/api-reference/composables/usestate).
 
 ### `ssrPromise`
 
@@ -186,7 +186,7 @@ const wrapProperty = (property, makeComputed = true) => () => {
 
 ### `useAsync` and `useFetch`
 
-These two composables can be replaced with `useLazyAsyncData` and `useLazyFetch`, which are documented [in the Nuxt 3 docs](/docs/usage/data-fetching). Just like the previous `@nuxtjs/composition-api` composables, these composables do not block route navigation on the client-side (hence the 'lazy' part of the name).
+These two composables can be replaced with `useLazyAsyncData` and `useLazyFetch`, which are documented [in the Nuxt 3 docs](/guide/features/data-fetching). Just like the previous `@nuxtjs/composition-api` composables, these composables do not block route navigation on the client-side (hence the 'lazy' part of the name).
 
 ::alert
 Note that the API is entirely different, despite similar sounding names. Importantly, you should not attempt to change the value of other variables outside the composable (as you may have been doing with the previous `useFetch`).
@@ -274,4 +274,4 @@ export default defineNuxtConfig({
 
 This `useMeta` composable uses `@vueuse/head` under the hood (rather than `vue-meta`) to manipulate your `<head>`. Accordingly, it is recommended not to use both the native Nuxt 2 `head()` properties as well as `useMeta`, as they may conflict.
 
-For more information on how to use this composable, see [the Nuxt 3 docs](/docs/usage/meta-tags#usemeta-composable).
+For more information on how to use this composable, see [the Nuxt 3 docs](/api-reference/composables/use-meta).

@@ -3,12 +3,11 @@
 Experience Nuxt 3 features on existing Nuxt 2 projects.
 
 ::alert
-If you're starting a fresh Nuxt 3 project, please skip this section and go to [Nuxt 3 Installation](/getting-started/installation).<br>
-Learn more in [Introduction](/getting-started/introduction).
+If you're starting a fresh Nuxt 3 project, please skip this section and go to [Nuxt 3 Installation](/getting-started/quick-start).
 ::
 
 ::alert{type=warning}
-Nuxt Bridge provides identical features to Nuxt 3 ([docs](/docs/usage)) but there are some limitations, notably that `useAsyncData` and `useFetch` composables are not available. Please read the rest of this page for details.
+Nuxt Bridge provides identical features to Nuxt 3 ([docs](/guide/features)) but there are some limitations, notably that `useAsyncData` and `useFetch` composables are not available. Please read the rest of this page for details.
 ::
 
 Bridge is a forward-compatibility layer that allows you to experience many of the new Nuxt 3 features by simply installing and enabling a Nuxt module.
@@ -64,7 +63,7 @@ You will also need to update your scripts within your `package.json` to reflect 
 
 ### Nuxi
 
-Nuxt 3 introduced the new Nuxt CLI command [`nuxi`](/getting-started/commands/). Update your scripts as follows to leverage the better support from Nuxt Bridge:
+Nuxt 3 introduced the new Nuxt CLI command [`nuxi`](/api-reference/commands/cli). Update your scripts as follows to leverage the better support from Nuxt Bridge:
 
 ```diff
 {
@@ -143,11 +142,11 @@ In case you need to extend options provided by `./.nuxt/tsconfig.json` further, 
 
 ## Migrate Composition API
 
-If you were using `@vue/composition-api` or `@nuxtjs/composition-api`, please read the [composition api migration guide](/getting-started/bridge-composition-api).
+If you were using `@vue/composition-api` or `@nuxtjs/composition-api`, please read the [composition api migration guide](/bridge/bridge-composition-api).
 
 ### Migrate from CommonJS to ESM
 
-Nuxt 3 natively supports TypeScript and ECMAScript Modules. Please check [Native ES Modules](/concepts/esm) for more info and upgrading.
+Nuxt 3 natively supports TypeScript and ECMAScript Modules. Please check [Native ES Modules](/guide/going-further/native-es-modules) for more info and upgrading.
 
 ## Remove incompatible and obsolete modules
 
@@ -156,8 +155,8 @@ Nuxt 3 natively supports TypeScript and ECMAScript Modules. Please check [Native
 - Remove `@nuxt/typescript-build`: Bridge enables same functionality
 - Remove `@nuxt/typescript-runtime` and `nuxt-ts`: Nuxt 2 has built-in runtime support
 - Remove `@nuxt/nitro`: Bridge injects same functionality
-- Remove `@vue/composition-api` from your dependencies ([migration guide](/getting-started/bridge-composition-api)).
-- Remove `@nuxtjs/composition-api` from your dependencies (and from your modules in `nuxt.config`) ([migration guide](/getting-started/bridge-composition-api)).
+- Remove `@vue/composition-api` from your dependencies ([migration guide](/bridge/bridge-composition-api)).
+- Remove `@nuxtjs/composition-api` from your dependencies (and from your modules in `nuxt.config`) ([migration guide](/bridge/bridge-composition-api)).
 
 ## Exclude built Nitro folder from git
 
@@ -181,7 +180,7 @@ export default defineNuxtConfig({
 
 You can now migrate to the Nuxt 3 plugins API, which is slightly different in format from Nuxt 2.
 
-Plugins now take only one argument (`nuxtApp`). You can find out more in [the docs](/docs/directory-structure/plugins).
+Plugins now take only one argument (`nuxtApp`). You can find out more in [the docs](/api-reference/directory-structure/plugins).
 
 ```js
 export default defineNuxtPlugin(nuxtApp => {
@@ -225,7 +224,7 @@ export default defineNuxtConfig({
 This `useMeta` composable uses `@vueuse/head` under the hood (rather than `vue-meta`) to manipulate your `<head>`.
 Accordingly, we recommend not to use both the native Nuxt 2 `head()` properties as well as `useMeta`, as they may conflict.
 
-For more information on how to use this composable, see [the docs](/docs/usage/meta-tags#usemeta-composable).
+For more information on how to use this composable, see [the docs](/api-reference/composables/use-meta).
 
 ## Feature Flags
 
