@@ -96,7 +96,7 @@ export async function setupNitroBridge () {
       '#vue2-server-renderer': 'vue-server-renderer/' + (nuxt.options.dev ? 'build.dev.js' : 'build.prod.js'),
 
       // Error renderer
-      '#nitro-error': resolve(distDir, 'runtime/nitro/error')
+      '#nitro/error': resolve(distDir, 'runtime/nitro/error')
     }
   })
 

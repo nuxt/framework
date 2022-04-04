@@ -34,7 +34,6 @@ describe('fixtures:bridge', async () => {
       expect(res.status).toBe(500)
       expect(await res.json()).toMatchInlineSnapshot(`
       {
-        "description": "",
         "message": "This is a custom error",
         "statusCode": 500,
         "statusMessage": "Internal Server Error",

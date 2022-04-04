@@ -3,7 +3,7 @@ import { resolve, join } from 'pathe'
 import { createNitro, createDevServer, build, prepare, copyPublicAssets, writeTypes, scanHandlers, prerender } from 'nitropack'
 import type { NitroEventHandler, NitroDevEventHandler, NitroConfig } from 'nitropack'
 import type { Nuxt } from '@nuxt/schema'
-import { resolvePath } from '@nuxt/kit'
+import { resolveModule, resolvePath } from '@nuxt/kit'
 import defu from 'defu'
 import fsExtra from 'fs-extra'
 import { toEventHandler, dynamicEventHandler } from 'h3'
@@ -67,7 +67,7 @@ export async function initNitro (nuxt: Nuxt) {
       '#vue-renderer': resolve(distDir, 'core/runtime/nitro/vue3'),
 
       // Error renderer
-      '#nitro-error': resolve(distDir, 'core/runtime/nitro/error')
+      '#nitro/error': resolve(distDir, 'core/runtime/nitro/error')
     },
     replace: {
       'process.env.NUXT_NO_SSR': nuxt.options.ssr === false ? true : undefined
@@ -120,6 +120,9 @@ export async function initNitro (nuxt: Nuxt) {
       await scanHandlers(nitro)
       await writeTypes(nitro)
     }
+    const nitroRuntimeIndex = resolveModule('nitropack/dist/runtime/index', { paths: nuxt.options.modulesDir })
+    opts.tsConfig.compilerOptions.paths['#nitro'] = [nitroRuntimeIndex]
+    opts.tsConfig.compilerOptions.paths['#nitro/*'] = [join(nitroRuntimeIndex, '../*.mjs')]
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/nitro.d.ts') })
   })
 

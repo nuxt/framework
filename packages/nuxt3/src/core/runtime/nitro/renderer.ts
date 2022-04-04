@@ -1,8 +1,8 @@
 import { createRenderer } from 'vue-bundle-renderer'
-import { defineEventHandler, useQuery } from 'h3'
+import { eventHandler, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
-import { privateConfig, publicConfig } from '#config'
-import { buildAssetsURL } from '#paths'
+import { privateConfig, publicConfig } from '#nitro/config'
+import { buildAssetsURL } from '#nitro/paths'
 // @ts-ignore
 import htmlTemplate from '#build/views/document.template.mjs'
 
@@ -67,7 +67,7 @@ function renderToString (ssrContext) {
   return getRenderer().then(renderToString => renderToString(ssrContext))
 }
 
-export default defineEventHandler(async (event) => {
+export default eventHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__error') ? useQuery(event) : null
   let url = ssrError?.url as string || event.req.url!

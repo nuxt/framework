@@ -33,11 +33,7 @@ export const writeTypes = async (nuxt: Nuxt) => {
 
   const aliases = {
     ...nuxt.options.alias,
-    '#build': nuxt.options.buildDir,
-    // The `nitropack` types will be overwritten by packages/nitro/types/shims.d.ts
-    '#config': 'nitropack',
-    '#storage': 'nitropack',
-    '#assets': 'nitropack'
+    '#build': nuxt.options.buildDir
   }
 
   // Exclude bridge alias types to support Volar
