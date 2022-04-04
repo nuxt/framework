@@ -5,5 +5,5 @@ layout:
 navigation:
   collapse: true
   exclusive: false
-  redirect: /guides/deployment/presets
+  redirect: /guide/deployment/presets
 ---
