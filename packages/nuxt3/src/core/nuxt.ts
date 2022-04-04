@@ -42,9 +42,6 @@ async function initNuxt (nuxt: Nuxt) {
   nuxtCtx.set(nuxt)
   nuxt.hook('close', () => nuxtCtx.unset())
 
-  // Init nitro
-  await initNitro(nuxt)
-
   // Add nuxt3 types
   nuxt.hook('prepare:types', (opts) => {
     opts.references.push({ types: 'nuxt3' })
@@ -117,6 +114,9 @@ async function initNuxt (nuxt: Nuxt) {
   await nuxt.callHook('modules:done', { nuxt } as ModuleContainer)
 
   await addModuleTranspiles()
+
+  // Init nitro
+  await initNitro(nuxt)
 
   await nuxt.callHook('ready', nuxt)
 }

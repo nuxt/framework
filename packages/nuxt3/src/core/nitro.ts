@@ -1,15 +1,17 @@
 import { existsSync } from 'fs'
 import { resolve, join } from 'pathe'
-import { createNitro, createDevServer, build, prepare, copyPublicAssets, NitroHandlerConfig, writeTypes, scanHandlers, prerender } from 'nitropack'
-import type { NitroConfig } from 'nitropack'
+import { createNitro, createDevServer, build, prepare, copyPublicAssets, writeTypes, scanHandlers, prerender } from 'nitropack'
+import type { NitroEventHandler, NitroDevEventHandler, NitroConfig } from 'nitropack'
 import type { Nuxt } from '@nuxt/schema'
 import { resolvePath } from '@nuxt/kit'
 import defu from 'defu'
 import fsExtra from 'fs-extra'
+import { toEventHandler, dynamicEventHandler } from 'h3'
 import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
 export async function initNitro (nuxt: Nuxt) {
+  // Resolve config
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
     rootDir: nuxt.options.rootDir,
@@ -21,6 +23,8 @@ export async function initNitro (nuxt: Nuxt) {
     app: nuxt.options.app,
     renderer: resolve(distDir, 'core/runtime/nitro/renderer'),
     nodeModulesDirs: nuxt.options.modulesDir,
+    handlers: [],
+    devHandlers: [],
     runtimeConfig: {
       public: nuxt.options.publicRuntimeConfig,
       private: nuxt.options.privateRuntimeConfig
@@ -70,24 +74,19 @@ export async function initNitro (nuxt: Nuxt) {
     }
   })
 
+  // Extend nitro config with hook
+  await nuxt.callHook('nitro:config', nitroConfig)
+
+  // Init nitro
   const nitro = await createNitro(nitroConfig)
 
-  // Create dev server
-  const nitroDevServer = nuxt.server = createDevServer(nitro)
+  // Expose nitro to modules
+  await nuxt.callHook('nitro:init', nitro)
 
   // Connect vfs storages
   nitro.vfs = nuxt.vfs = nitro.vfs || nuxt.vfs || {}
 
   // Connect hooks
-  const nitroHooks = [
-    'nitro:document'
-  ]
-  nuxt.hook('close', () => nitro.hooks.callHook('close'))
-  for (const hook of nitroHooks) {
-    nitro.hooks.hook(hook as any, (...args) => nuxt.callHook(hook as any, ...args))
-  }
-
-  // @ts-ignore
   nuxt.hook('close', () => nitro.hooks.callHook('close'))
   nitro.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
 
@@ -102,6 +101,19 @@ export async function initNitro (nuxt: Nuxt) {
     }))
   })
 
+  // Create dev server
+  const devMidlewareHandler = dynamicEventHandler()
+  nitro.options.devHandlers.unshift({ handler: devMidlewareHandler })
+  const { handlers, devHandlers } = await resolveHandlers(nuxt)
+  nitro.options.handlers.push(...handlers)
+  nitro.options.devHandlers.push(...devHandlers)
+  nitro.options.handlers.unshift({
+    route: '/_nitro',
+    lazy: true,
+    handler: resolve(distDir, 'core/runtime/nitro/renderer')
+  })
+  nuxt.server = createDevServer(nitro)
+
   // Add typed route responses
   nuxt.hook('prepare:types', async (opts) => {
     if (nuxt.options._prepare) {
@@ -109,28 +121,6 @@ export async function initNitro (nuxt: Nuxt) {
       await writeTypes(nitro)
     }
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/nitro.d.ts') })
-  })
-
-  // Wait for all modules to be ready
-  nuxt.hook('modules:done', async () => {
-    // Extend nitro with modules
-    await nuxt.callHook('nitro:context', nitro)
-
-    // Extend runtimeConfig
-    nitro.options.runtimeConfig = defu({
-      private: nuxt.options.privateRuntimeConfig,
-      public: nuxt.options.publicRuntimeConfig
-    }, nitro.options.runtimeConfig)
-
-    // Resolve middleware
-    const { middleware, legacyMiddleware } = await resolveHandlers(nuxt)
-    nuxt.server.setLegacyMiddleware(legacyMiddleware)
-    nitro.options.handlers.push(...middleware)
-    nitro.options.handlers.unshift({
-      route: '/_nitro',
-      lazy: true,
-      handler: resolve(distDir, 'core/runtime/nitro/renderer')
-    })
   })
 
   // nuxt build/dev
@@ -149,39 +139,38 @@ export async function initNitro (nuxt: Nuxt) {
 
   // nuxt dev
   if (nuxt.options.dev) {
-    nitro.hooks.hook('nitro:compiled', () => { nitroDevServer.watch() })
     nuxt.hook('build:compile', ({ compiler }) => {
       compiler.outputFileSystem = { ...fsExtra, join } as any
     })
-    nuxt.hook('server:devMiddleware', (m) => { nitroDevServer.setDevMiddleware(m) })
+    nuxt.hook('server:devMiddleware', (m) => { devMidlewareHandler.set(toEventHandler(m)) })
     const waitUntilCompile = new Promise<void>(resolve => nitro.hooks.hook('nitro:compiled', () => resolve()))
     nuxt.hook('build:done', () => waitUntilCompile)
   }
 }
 
 async function resolveHandlers (nuxt: Nuxt) {
-  const middleware: NitroHandlerConfig[] = []
-  const legacyMiddleware: NitroHandlerConfig[] = []
+  const handlers: NitroEventHandler[] = []
+  const devHandlers: NitroDevEventHandler[] = []
 
   for (let m of nuxt.options.serverMiddleware) {
     if (typeof m === 'string' || typeof m === 'function' /* legacy middleware */) { m = { handler: m } }
     const route = m.path || m.route || '/'
-    const handle = m.handler || m.handle
-    if (typeof handle !== 'string' || typeof route !== 'string') {
-      legacyMiddleware.push(m)
+    const handler = m.handler || m.handle
+    if (typeof handler !== 'string' || typeof route !== 'string') {
+      devHandlers.push({ route, handler })
     } else {
       delete m.handler
       delete m.path
-      middleware.push({
+      handlers.push({
         ...m,
         route,
-        handler: await resolvePath(handle)
+        handler: await resolvePath(handler)
       })
     }
   }
 
   return {
-    middleware,
-    legacyMiddleware
+    handlers,
+    devHandlers
   }
 }

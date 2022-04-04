@@ -2620,13 +2620,13 @@ __metadata:
     externality: ^0.2.1
     fs-extra: ^10.0.1
     globby: ^13.1.1
-    h3: ^0.5.4
+    h3: ^0.5.5
     hash-sum: ^2.0.0
     knitwork: ^0.1.1
     magic-string: ^0.26.1
     mlly: ^0.5.1
     murmurhash-es: ^0.1.1
-    nitropack: "npm:nitropack-edge@0.0.0-27480770.82c2767"
+    nitropack: "npm:nitropack-edge@0.0.0-27485114.689aad0"
     node-fetch: ^3.2.3
     nuxi: 3.0.0
     nuxt: ^2
@@ -12089,15 +12089,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"h3@npm:^0.5.4":
-  version: 0.5.4
-  resolution: "h3@npm:0.5.4"
+"h3@npm:^0.5.5":
+  version: 0.5.5
+  resolution: "h3@npm:0.5.5"
   dependencies:
     cookie-es: ^0.5.0
     destr: ^1.1.0
     radix3: ^0.1.1
     ufo: ^0.7.11
-  checksum: 226f1e87a8a8a5e3e15421dd34c0f2db771681a7a283a3b415160e2e5d1ce7ccf8d4874e5056c00711c88cf0baebc7afe30f4a01ee00155a06937a33e48083fc
+  checksum: 3f83b5a74b24a1782c788d27d9d5c60b737671e47261e631f4d6b6bd8b00bb96538cfb47c4f4d778b08dd8e1c5150c29b48460d804e60a6e9c8478c42eab76c9
   languageName: node
   linkType: hard
 
@@ -15124,9 +15124,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitropack@npm:nitropack-edge@0.0.0-27480770.82c2767":
-  version: 0.0.0-27480770.82c2767
-  resolution: "nitropack-edge@npm:0.0.0-27480770.82c2767"
+"nitropack@npm:nitropack-edge@0.0.0-27485114.689aad0":
+  version: 0.0.0-27485114.689aad0
+  resolution: "nitropack-edge@npm:0.0.0-27485114.689aad0"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@netlify/functions": ^1.0.0
@@ -15156,7 +15156,7 @@ __metadata:
     fs-extra: ^10.0.1
     globby: ^13.1.1
     gzip-size: ^7.0.0
-    h3: ^0.5.4
+    h3: ^0.5.5
     hasha: ^5.2.2
     hookable: ^5.1.1
     http-proxy: ^1.18.1
@@ -15180,7 +15180,7 @@ __metadata:
     rollup-plugin-visualizer: ^5.6.0
     scule: ^0.2.1
     semver: ^7.3.5
-    serve-placeholder: ^1.2.4
+    serve-placeholder: ^2.0.1
     serve-static: ^1.14.2
     std-env: ^3.0.1
     table: ^6.8.0
@@ -15191,7 +15191,7 @@ __metadata:
   bin:
     nitro: ./dist/cli.mjs
     nitropack: ./dist/cli.mjs
-  checksum: 62422a2e86a9ac372f8d461e68fcac4205cc696f0031a7c072dafe9707e8edc00b69fb037ec131b9720107ef99b9c0c220d6dc04abf9efe10b7d4c6289648b6d
+  checksum: 005be673411d9eb6112be75258ff7e963057e0b80109e8edfccd0564ee22cc60ee1b7f43c7ba76162bfc9e436dcc04923e0f1645b1f7d4e82cb81c533a126894
   languageName: node
   linkType: hard
 
@@ -15869,13 +15869,13 @@ __metadata:
     escape-string-regexp: ^5.0.0
     fs-extra: ^10.0.1
     globby: ^13.1.1
-    h3: ^0.5.4
+    h3: ^0.5.5
     hash-sum: ^2.0.0
     hookable: ^5.1.1
     knitwork: ^0.1.1
     magic-string: ^0.26.1
     mlly: ^0.5.1
-    nitropack: "npm:nitropack-edge@0.0.0-27480770.82c2767"
+    nitropack: "npm:nitropack-edge@0.0.0-27485114.689aad0"
     nuxi: 3.0.0
     ohash: ^0.1.0
     ohmyfetch: ^0.4.15
@@ -19760,6 +19760,15 @@ __metadata:
   dependencies:
     defu: ^5.0.0
   checksum: d1464680f31eacdff37efacb12428b354fc43a259dcf75d1d7affc2445abbbe5ff101af336d5816ebc77e2ab8f964fae11cec074c1af64c9750956ee08430143
+  languageName: node
+  linkType: hard
+
+"serve-placeholder@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "serve-placeholder@npm:2.0.1"
+  dependencies:
+    defu: ^6.0.0
+  checksum: 19bbaba041634a3e7d51e7336667808688faed1ffa1983b98c94d9c96951eb4e028f33cd086c7564450eb8b8d374e197c5efbf5fd7e5521a5246f9200720e496
   languageName: node
   linkType: hard
 

@@ -5,7 +5,8 @@ import { addPluginTemplate, resolvePath, useNuxt } from '@nuxt/kit'
 import { joinURL, stringifyQuery, withoutTrailingSlash } from 'ufo'
 import { resolve, join } from 'pathe'
 import { createNitro, createDevServer, build, writeTypes, prepare, copyPublicAssets, prerender } from 'nitropack'
-import type { Nitro, NitroConfig, NitroHandlerConfig } from 'nitropack'
+import { dynamicEventHandler, toEventHandler } from 'h3'
+import type { Nitro, NitroEventHandler, NitroDevEventHandler, NitroConfig } from 'nitropack'
 import { Nuxt } from '@nuxt/schema'
 import defu from 'defu'
 import { AsyncLoadingPlugin } from './async-loading'
@@ -43,7 +44,7 @@ export async function setupNitroBridge () {
     }
   }
 
-  // Create contexts
+  // Resolve config
   const _nitroConfig = (nuxt.options as any).nitro || {} as NitroConfig
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
     rootDir: resolve(nuxt.options.rootDir),
@@ -55,6 +56,8 @@ export async function setupNitroBridge () {
     app: nuxt.options.app,
     renderer: resolve(distDir, 'runtime/nitro/renderer'),
     nodeModulesDirs: nuxt.options.modulesDir,
+    handlers: [],
+    devHandlers: [],
     runtimeConfig: {
       public: nuxt.options.publicRuntimeConfig,
       private: nuxt.options.privateRuntimeConfig
@@ -97,22 +100,19 @@ export async function setupNitroBridge () {
     }
   })
 
+  // Extend nitro config with hook
+  await nuxt.callHook('nitro:config', nitroConfig)
+
   // Initiate nitro
   const nitro = await createNitro(nitroConfig)
+
+  // Expose nitro to modules
+  await nuxt.callHook('nitro:init', nitro)
 
   // Shared vfs storage
   nitro.vfs = nuxt.vfs = nitro.vfs || nuxt.vfs || {}
 
   // Connect hooks
-  const nitroHooks = [
-    'nitro:document'
-  ]
-  nuxt.hook('close', () => nitro.hooks.callHook('close'))
-  for (const hook of nitroHooks) {
-    nitro.hooks.hook(hook as any, (...args) => nuxt.callHook(hook as any, ...args))
-  }
-
-  // @ts-ignore
   nuxt.hook('close', () => nitro.hooks.callHook('close'))
   nitro.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
 
@@ -154,17 +154,8 @@ export async function setupNitroBridge () {
   nuxt.hook('nitro:generate', updateViteBase)
   nuxt.hook('generate:before', updateViteBase)
 
-  // Expose process.env.NITRO_PRESET
-  nuxt.options.env.NITRO_PRESET = nitro.options.preset
-
   // .ts is supported for serverMiddleware
   nuxt.options.extensions.push('ts')
-
-  // Replace nuxt server
-  if (nuxt.server) {
-    nuxt.server.__closed = true
-    nuxt.server = createNuxt2DevServer(nitro)
-  }
 
   // Disable server sourceMap, esbuild will generate for it.
   nuxt.hook('webpack:config', (webpackConfigs) => {
@@ -220,29 +211,21 @@ export async function setupNitroBridge () {
     }
   })
 
-  // Wait for all modules to be ready
-  nuxt.hook('modules:done', async () => {
-    // Extend nitro with modules
-    await nuxt.callHook('nitro:context', nitro)
-
-    // Extend runtimeConfig
-    nitro.options.runtimeConfig = defu({
-      private: nuxt.options.privateRuntimeConfig,
-      public: nuxt.options.publicRuntimeConfig
-    }, nitro.options.runtimeConfig)
-
-    // Resolve middleware
-    const { middleware, legacyMiddleware } = await resolveHandlers(nuxt)
-    if (nuxt.server) {
-      nuxt.server.setLegacyMiddleware(legacyMiddleware)
-    }
-    nitro.options.handlers.push(...middleware)
-    nitro.options.handlers.unshift({
-      route: '/_nitro',
-      lazy: true,
-      handler: resolve(distDir, 'runtime/nitro/renderer')
-    })
+  // Create dev server
+  const devMidlewareHandler = dynamicEventHandler()
+  nitro.options.devHandlers.unshift({ handler: devMidlewareHandler })
+  const { handlers, devHandlers } = await resolveHandlers(nuxt)
+  nitro.options.handlers.push(...handlers)
+  nitro.options.devHandlers.push(...devHandlers)
+  nitro.options.handlers.unshift({
+    route: '/_nitro',
+    lazy: true,
+    handler: resolve(distDir, 'runtime/nitro/renderer')
   })
+  if (nuxt.server) {
+    nuxt.server.__closed = true
+    nuxt.server = createNuxt2DevServer(nitro)
+  }
 
   // Add typed route responses
   nuxt.hook('prepare:types', (opts) => {
@@ -281,11 +264,10 @@ export async function setupNitroBridge () {
 
   // nuxt dev
   if (nuxt.options.dev) {
-    nitro.hooks.hook('nitro:compiled', () => { nuxt.server?.watch() })
     nuxt.hook('build:compile', ({ compiler }) => {
       compiler.outputFileSystem = { ...fsExtra, join } as any
     })
-    nuxt.hook('server:devMiddleware', (m) => { nuxt.server?.setDevMiddleware(m) })
+    nuxt.hook('server:devMiddleware', (m) => { devMidlewareHandler.set(toEventHandler(m)) })
   }
 
   // nuxt generate
@@ -297,7 +279,6 @@ export async function setupNitroBridge () {
     if (nitro.options.output.publicDir) {
       ignore.push(nitro.options.output.publicDir)
     }
-    ignore.push(...nitro.options.ignore)
   })
   nuxt.hook('generate:before', async () => {
     console.log('generate:before')
@@ -355,28 +336,28 @@ function createNuxt2DevServer (nitro: Nitro) {
 }
 
 async function resolveHandlers (nuxt: Nuxt) {
-  const middleware: NitroHandlerConfig[] = []
-  const legacyMiddleware: NitroHandlerConfig[] = []
+  const handlers: NitroEventHandler[] = []
+  const devHandlers: NitroDevEventHandler[] = []
 
   for (let m of nuxt.options.serverMiddleware) {
     if (typeof m === 'string' || typeof m === 'function' /* legacy middleware */) { m = { handler: m } }
     const route = m.path || m.route || '/'
-    const handle = m.handler || m.handle
-    if (typeof handle !== 'string' || typeof route !== 'string') {
-      legacyMiddleware.push(m)
+    const handler = m.handler || m.handle
+    if (typeof handler !== 'string' || typeof route !== 'string') {
+      devHandlers.push({ route, handler })
     } else {
       delete m.handler
       delete m.path
-      middleware.push({
+      handlers.push({
         ...m,
         route,
-        handler: await resolvePath(handle)
+        handler: await resolvePath(handler)
       })
     }
   }
 
   return {
-    middleware,
-    legacyMiddleware
+    handlers,
+    devHandlers
   }
 }
