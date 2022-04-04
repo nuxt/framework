@@ -20,11 +20,11 @@ export function useHead (meta: MetaObject | ComputedGetter<MetaObject>) {
 const _warned = {}
 const warnOnce = (id: string, message: string) => {
   if (!_warned[id]) {
-    console.warn('[nuxt3]', message)
+    console.warn('[meta]', message)
     _warned[id] = true
   }
 }
 export function useMeta (meta: MetaObject | ComputedGetter<MetaObject>) {
-  warnOnce('useMeta', 'useMeta is deprecated. Please use useHead instead.')
+  warnOnce('useMeta', 'useMeta has been renamed to useHead.')
   return useHead(meta)
 }
