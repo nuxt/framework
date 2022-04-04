@@ -3046,7 +3046,7 @@ __metadata:
     rollup: ^2.70.1
     rollup-plugin-terser: ^7.0.2
     rollup-plugin-visualizer: ^5.6.0
-    serve-placeholder: ^1.2.4
+    serve-placeholder: ^2.0.1
     serve-static: ^1.15.0
     std-env: ^3.0.1
     table: ^6.8.0
@@ -19687,6 +19687,15 @@ __metadata:
   dependencies:
     defu: ^5.0.0
   checksum: d1464680f31eacdff37efacb12428b354fc43a259dcf75d1d7affc2445abbbe5ff101af336d5816ebc77e2ab8f964fae11cec074c1af64c9750956ee08430143
+  languageName: node
+  linkType: hard
+
+"serve-placeholder@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "serve-placeholder@npm:2.0.1"
+  dependencies:
+    defu: ^6.0.0
+  checksum: 19bbaba041634a3e7d51e7336667808688faed1ffa1983b98c94d9c96951eb4e028f33cd086c7564450eb8b8d374e197c5efbf5fd7e5521a5246f9200720e496
   languageName: node
   linkType: hard
 
