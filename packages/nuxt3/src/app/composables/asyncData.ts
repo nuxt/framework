@@ -83,7 +83,7 @@ export function useAsyncData<
 
   const asyncData = {
     data: ref(nuxt.payload.data[key] ?? options.default()),
-    pending: ref(true),
+    pending: ref(!options.initialCache || nuxt.payload.data[key] === undefined),
     error: ref(nuxt.payload._errors[key] ?? null)
   } as AsyncData<DataT>
 
