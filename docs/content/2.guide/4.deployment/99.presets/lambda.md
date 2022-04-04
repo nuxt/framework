@@ -3,12 +3,12 @@
 Discover the Lambda function preset with Nitro to deploy Nuxt to any lambda-compatible serverless platform.
 
 ::alert{icon=IconPresets}
-Back to [presets list](/docs/deployment/presets).
+Back to [presets list](/guide/deployment/presets).
 ::
 
 ## Usage
 
-You can use the [Nuxt config](/docs/directory-structure/nuxt.config) to explicitly set the preset to use:
+You can use the [Nuxt config](/api-reference/directory-structure/nuxt.config) to explicitly set the preset to use:
 
 ```ts [nuxt.config.js|ts]
 export default {

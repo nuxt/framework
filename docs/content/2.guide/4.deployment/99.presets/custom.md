@@ -9,7 +9,7 @@ Get full control of Nuxt Nitro output to deploy on any kind of hosting platform.
 ::
 
 ::alert{icon=IconPresets}
-Back to [presets list](/docs/deployment/presets).
+Back to [presets list](/guide/deployment/presets).
 ::
 
 ## Setup

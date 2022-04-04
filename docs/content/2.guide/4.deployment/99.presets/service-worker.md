@@ -10,7 +10,7 @@ Explore the Service worker preset with Nitro to push the boundaries of Nuxt rend
 ::
 
 ::alert{icon=IconPresets}
-Back to [presets list](/docs/deployment/presets).
+Back to [presets list](/guide/deployment/presets).
 ::
 
 ::alert{type=warning}
@@ -19,7 +19,7 @@ Deployment as service worker has some limitations since SSR code is not running 
 
 ## Usage
 
-You can use the [Nuxt config](/docs/directory-structure/nuxt.config) to explicitly set the preset to use:
+You can use the [Nuxt config](/api-reference/directory-structure/nuxt.config) to explicitly set the preset to use:
 
 ```js [nuxt.config.js|ts]
 export default {
@@ -37,6 +37,6 @@ NITRO_PRESET=worker npx nuxt build
 
 ## Entry point
 
-The worker preset produces a service worker that can provide full HTML rendering within a worker context (for example [Cloudflare Workers](/docs/deployment/cloudflare)). It registers appropriate handlers for `fetch`, `install` and `activate`.
+The worker preset produces a service worker that can provide full HTML rendering within a worker context (for example [Cloudflare Workers](/guide/deployment/cloudflare)). It registers appropriate handlers for `fetch`, `install` and `activate`.
 
 For more information you can see the [source code](https://github.com/nuxt/framework/blob/main/packages/nitro/src/runtime/entries/service-worker.ts).
