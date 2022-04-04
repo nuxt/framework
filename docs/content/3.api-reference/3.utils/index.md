@@ -1,5 +1,5 @@
 ---
-title: Global API
+title: Utils
 layout.aside: true
 layout.asideClass: ''
 navigation.redirect: /api-reference/global-api/
