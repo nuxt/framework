@@ -64,6 +64,9 @@ export async function initNitro (nuxt: Nuxt) {
 
       // Error renderer
       '#nitro-error': resolve(distDir, 'core/runtime/nitro/error')
+    },
+    replace: {
+      'process.env.NUXT_NO_SSR': nuxt.options.ssr === false ? true : undefined
     }
   })
 
