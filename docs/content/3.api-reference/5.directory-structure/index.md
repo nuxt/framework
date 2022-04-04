@@ -2,5 +2,5 @@
 title: 'Directory structure'
 layout.aside: true
 layout.asideClass: ''
-navigation.redirect: /references/directory-structure/nuxt
+navigation.redirect: /api-reference/directory-structure/nuxt
 ---
