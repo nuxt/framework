@@ -6,7 +6,7 @@ import { upperFirst } from 'scule'
 export async function main () {
   const rootDir = resolve(__dirname, '..')
   const configTemplate = resolve(__dirname, 'nuxt.config.md')
-  const configFile = resolve(rootDir, 'content/3.references/1.directory-structure/16.nuxt.config.md')
+  const configFile = resolve(rootDir, 'content/3.api-reference/1.directory-structure/16.nuxt.config.md')
   await generateDocs({ configFile, configTemplate })
 }
 
