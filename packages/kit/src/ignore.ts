@@ -8,6 +8,8 @@ import { tryUseNuxt } from './context'
  */
 export function isIgnored (pathname: string): boolean {
   const nuxt = tryUseNuxt()
+
+  // Happens with CLI reloads
   if (!nuxt) {
     return null
   }
