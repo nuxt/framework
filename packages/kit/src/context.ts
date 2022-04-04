@@ -4,6 +4,8 @@ import type { Nuxt } from '@nuxt/schema'
 /** Direct access to the Nuxt context - see https://github.com/unjs/unctx. */
 export const nuxtCtx = getContext<Nuxt>('nuxt')
 
+// TODO: Use use/tryUse from unctx. https://github.com/unjs/unctx/issues/6
+
 /**
  * Get access to Nuxt instance.
  *
