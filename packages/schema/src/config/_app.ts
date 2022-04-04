@@ -124,8 +124,29 @@ export default {
   /**
    * Set default configuration for `<head>` on every page.
    *
-   * @see [documentation](https://vue-meta.nuxtjs.org/api/#metainfo-properties) for specifics.
-   * @type {import('vue-meta').MetaInfo}
+   * @example
+   * ```js
+   * head: {
+   *  meta: [
+   *    // <meta name="viewport" content="width=device-width, initial-scale=1">
+   *    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+   *  ],
+   *  script: [
+   *    // <script src="https://myawesome-lib.js"></script>
+   *    { src: 'https://awesome-lib.js' }
+   *  ],
+   *  link: [
+   *    // <link rel="stylesheet" href="https://myawesome-lib.css">
+   *    { rel: 'stylesheet', href: 'https://awesome-lib.css' }
+   *  ],
+   *  // please note that this is an area that is likely to change
+   *  style: [
+   *    // <style type="text/css">:root { color: red }</style>
+   *    { children: ':root { color: red }', type: 'text/css' }
+   *  ]
+   * }
+   * ```
+   * @type {typeof import('../src/types/meta').MetaObject}
    * @version 2
    */
   head: {
@@ -166,6 +187,7 @@ export default {
    * ```
    * @type {typeof import('../src/types/meta').MetaObject}
    * @version 3
+   * @deprecated - use `head` instead
    */
   meta: {
     meta: [],

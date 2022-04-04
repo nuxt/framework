@@ -5,6 +5,7 @@ export const commonPresets: Preset[] = [
   defineUnimportPreset({
     from: '#meta',
     imports: [
+      'useHead',
       'useMeta'
     ]
   }),
