@@ -22,12 +22,12 @@ export function viteNodePlugin (ctx: ViteBuildContext): VitePlugin {
 
 export function registerViteNodeMiddleware (ctx: ViteBuildContext) {
   addServerMiddleware({
-    route: '/__nuxt_vite_node__/',
-    handle: createViteNodeMiddleware(ctx)
+    path: '/__nuxt_vite_node__/',
+    handler: createViteNodeMiddleware(ctx)
   })
 }
 
-function getManifest (server: ViteDevServer) {
+async function getManifest (server: ViteDevServer) {
   const ids = Array.from(server.moduleGraph.urlToModuleMap.keys())
     .filter(i => isCSS(i))
 
@@ -65,7 +65,7 @@ function createViteNodeMiddleware (ctx: ViteBuildContext): Connect.NextHandleFun
     }
 
     if (req.url === '/manifest') {
-      res.write(JSON.stringify(getManifest(ctx.ssrServer)))
+      res.write(JSON.stringify(await getManifest(ctx.ssrServer)))
       res.end()
       return
     }
@@ -92,7 +92,7 @@ export async function prepareDevServerEntry (ctx: ViteBuildContext) {
   const port = ctx.nuxt.options.server.port || '3000'
   const protocol = ctx.nuxt.options.server.https ? 'https' : 'http'
 
-  process.env.NUXT_VITE_SERVER_FETCH = `${protocol}://${host}:${port}/__nuxt_vite_node__/`
+  process.env.NUXT_VITE_SERVER_FETCH = `${protocol}://${host}:${port}/__nuxt_vite_node__`
   process.env.NUXT_VITE_SERVER_ENTRY = entryPath
   process.env.NUXT_VITE_SERVER_BASE = ctx.ssrServer.config.base || '/_nuxt/'
   process.env.NUXT_VITE_SERVER_ROOT = ctx.nuxt.options.rootDir
