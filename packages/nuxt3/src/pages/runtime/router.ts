@@ -27,6 +27,27 @@ declare module 'vue' {
   }
 }
 
+// https://github.dev/vuejs/router/blob/main/src/history/html5.ts#L33-L56
+function createCurrentLocation (
+  base: string,
+  location: Location
+): string {
+  const { pathname, search, hash } = location
+  // allows hash bases like #, /#, #/, #!, #!/, /#!/, or even /folder#end
+  const hashPos = base.indexOf('#')
+  if (hashPos > -1) {
+    const slicePos = hash.includes(base.slice(hashPos))
+      ? base.slice(hashPos).length
+      : 1
+    let pathFromHash = hash.slice(slicePos)
+    // prepend the starting slash to hash so the url starts with /#
+    if (pathFromHash[0] !== '/') { pathFromHash = '/' + pathFromHash }
+    return withoutBase(pathFromHash, '')
+  }
+  const path = withoutBase(pathname, base)
+  return path + search + hash
+}
+
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('NuxtPage', NuxtPage)
   // TODO: remove before release - present for backwards compatibility & intentionally undocumented
@@ -55,7 +76,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   })
 
   // Allows suspending the route object until page navigation completes
-  const path = process.server ? nuxtApp.ssrContext.req.url : withoutBase(window.location.href, window.location.origin)
+  const path = process.server ? nuxtApp.ssrContext.req.url : createCurrentLocation(baseURL, window.location)
   const currentRoute = shallowRef(router.resolve(path) as RouteLocation)
   const syncCurrentRoute = () => { currentRoute.value = router.currentRoute.value }
   nuxtApp.hook('page:finish', syncCurrentRoute)
