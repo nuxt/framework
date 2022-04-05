@@ -92,7 +92,7 @@ export async function prepareDevServerEntry (ctx: ViteBuildContext) {
   const port = ctx.nuxt.options.server.port || '3000'
   const protocol = ctx.nuxt.options.server.https ? 'https' : 'http'
 
-  process.env.NUXT_VITE_SERVER_FETCH = `${protocol}://${host}:${port}/__nuxt_vite_node__`
+  process.env.NUXT_VITE_SERVER_FETCH = `${protocol}://${host}:${port}/__nuxt_vite_node__/`
   process.env.NUXT_VITE_SERVER_ENTRY = entryPath
   process.env.NUXT_VITE_SERVER_BASE = ctx.ssrServer.config.base || '/_nuxt/'
   process.env.NUXT_VITE_SERVER_ROOT = ctx.nuxt.options.rootDir
