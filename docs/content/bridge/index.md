@@ -146,7 +146,7 @@ If you were using `@vue/composition-api` or `@nuxtjs/composition-api`, please re
 
 ### Migrate from CommonJS to ESM
 
-Nuxt 3 natively supports TypeScript and ECMAScript Modules. Please check [Native ES Modules](/guide/going-further/native-es-modules) for more info and upgrading.
+Nuxt 3 natively supports TypeScript and ECMAScript Modules. Please check [Native ES Modules](/guide/going-further/esm) for more info and upgrading.
 
 ## Remove incompatible and obsolete modules
 
