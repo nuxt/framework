@@ -3,5 +3,5 @@ title: References
 layout.aside: true
 navigation.exclusive: true
 navigation.collapse: true
-navigation.redirect: /api-reference/directory-structure/nuxt
+navigation.redirect: /api-reference/composables/use-async-data
 ---
