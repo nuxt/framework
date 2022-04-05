@@ -11,7 +11,7 @@ This example shows different ways to use Nuxtlink.
 ::
 
 ::alert{type=info icon=👉}
-Learn more about [NuxtLink](/api-reference/components/nuxt-link).
+Learn more about [NuxtLink](/api/components/nuxt-link).
 ::
 
 ::sandbox{repo="nuxt/framework" branch="main" dir="examples/routing/nuxt-link" file="app.vue"}

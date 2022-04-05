@@ -7,7 +7,7 @@ template: Example
 `useState` is an SSR-friendly ref replacement. Its value will be preserved after server-side rendering and shared across all components using a unique key.
 
 ::alert{type=info icon=👉}
-Learn more about [useState](/api-reference/composables/use-state).
+Learn more about [useState](/api/composables/use-state).
 ::
 
 ::sandbox{repo="nuxt/framework" branch="main" dir="examples/composables/use-state" file="app.vue"}

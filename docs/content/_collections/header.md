@@ -8,7 +8,7 @@ links:
     to: '/guide/concepts/introduction'
   -
     title: 'API'
-    to: '/api-reference/composables/use-async-data'
+    to: '/api/composables/use-async-data'
   -
     title: 'Examples'
     to: '/examples/essentials/hello-world'

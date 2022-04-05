@@ -129,7 +129,7 @@ The key differences are that you must provide a _key_ for this state (which Nuxt
 
 Because the state is keyed, you can access the same state from multiple locations, as long as you are using the same key.
 
-You can read more about how to use this composable in [the Nuxt 3 docs](/api-reference/composables/use-state).
+You can read more about how to use this composable in [the Nuxt 3 docs](/api/composables/use-state).
 
 ### `ssrPromise`
 

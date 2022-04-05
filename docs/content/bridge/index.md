@@ -63,7 +63,7 @@ You will also need to update your scripts within your `package.json` to reflect 
 
 ### Nuxi
 
-Nuxt 3 introduced the new Nuxt CLI command [`nuxi`](/api-reference/commands/add). Update your scripts as follows to leverage the better support from Nuxt Bridge:
+Nuxt 3 introduced the new Nuxt CLI command [`nuxi`](/api/commands/add). Update your scripts as follows to leverage the better support from Nuxt Bridge:
 
 ```diff
 {

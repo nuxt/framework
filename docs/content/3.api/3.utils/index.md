@@ -2,5 +2,5 @@
 title: Utils
 layout.aside: true
 layout.asideClass: ''
-navigation.redirect: /api-reference/utils/
+navigation.redirect: /api/utils/
 ---
