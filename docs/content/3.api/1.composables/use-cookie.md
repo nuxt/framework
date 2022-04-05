@@ -2,8 +2,6 @@
 
 Nuxt provides an SSR-friendly composable to read and write cookies.
 
-## Usage
-
 Within your pages, components and plugins you can use `useCookie` to create a reactive reference bound to a specific cookie.
 
 ```js
