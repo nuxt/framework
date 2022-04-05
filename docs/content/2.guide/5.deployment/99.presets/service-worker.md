@@ -19,7 +19,7 @@ Deployment as service worker has some limitations since SSR code is not running 
 
 ## Usage
 
-You can use the [Nuxt config](/api-reference/directory-structure/nuxt.config) to explicitly set the preset to use:
+You can use the [Nuxt config](/guide/directory-structure/nuxt.config) to explicitly set the preset to use:
 
 ```js [nuxt.config.js|ts]
 export default {

@@ -63,7 +63,7 @@ You will also need to update your scripts within your `package.json` to reflect 
 
 ### Nuxi
 
-Nuxt 3 introduced the new Nuxt CLI command [`nuxi`](/api-reference/commands/cli). Update your scripts as follows to leverage the better support from Nuxt Bridge:
+Nuxt 3 introduced the new Nuxt CLI command [`nuxi`](/api-reference/commands/add). Update your scripts as follows to leverage the better support from Nuxt Bridge:
 
 ```diff
 {
@@ -180,7 +180,7 @@ export default defineNuxtConfig({
 
 You can now migrate to the Nuxt 3 plugins API, which is slightly different in format from Nuxt 2.
 
-Plugins now take only one argument (`nuxtApp`). You can find out more in [the docs](/api-reference/directory-structure/plugins).
+Plugins now take only one argument (`nuxtApp`). You can find out more in [the docs](/guide/directory-structure/plugins).
 
 ```js
 export default defineNuxtPlugin(nuxtApp => {
