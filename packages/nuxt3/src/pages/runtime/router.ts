@@ -7,6 +7,7 @@ import {
   RouteLocation
 } from 'vue-router'
 import { createError } from 'h3'
+import { withoutBase } from 'ufo'
 import NuxtPage from './page'
 import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, throwError, clearError } from '#app'
 // @ts-ignore
@@ -54,7 +55,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   })
 
   // Allows suspending the route object until page navigation completes
-  const path = process.server ? nuxtApp.ssrContext.req.url : window.location.pathname
+  const path = process.server ? nuxtApp.ssrContext.req.url : withoutBase(window.location.href, window.location.origin)
   const currentRoute = shallowRef(router.resolve(path) as RouteLocation)
   router.afterEach((to, from) => {
     // We won't trigger suspense if the component is reused between routes
