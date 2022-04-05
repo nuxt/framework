@@ -57,15 +57,14 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Allows suspending the route object until page navigation completes
   const path = process.server ? nuxtApp.ssrContext.req.url : withoutBase(window.location.href, window.location.origin)
   const currentRoute = shallowRef(router.resolve(path) as RouteLocation)
+  const syncCurrentRoute = () => { currentRoute.value = router.currentRoute.value }
+  nuxtApp.hook('page:finish', syncCurrentRoute)
   router.afterEach((to, from) => {
     // We won't trigger suspense if the component is reused between routes
     // so we need to update the route manually
     if (to.matched[0]?.components?.default === from.matched[0]?.components?.default) {
-      currentRoute.value = router.currentRoute.value
+      syncCurrentRoute()
     }
-  })
-  nuxtApp.hook('page:finish', () => {
-    currentRoute.value = router.currentRoute.value
   })
   // https://github.com/vuejs/vue-router-next/blob/master/src/router.ts#L1192-L1200
   const route = {}
