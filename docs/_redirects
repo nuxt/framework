@@ -1,1 +1,11 @@
-/concepts/esm    /guide/going-further/esm
+/getting-started/introduction   /getting-started/quick-start
+/getting-started/installation   /getting-started/quick-start
+/getting-started/commands       /api/commands/add
+/getting-started/bridge         /bridge
+/concepts/introduction          /guide/concepts/introduction
+/concepts/vuejs-development     /guide/concepts/vuejs-development
+/concepts/rendering             /guide/concepts/rendering
+/concepts/auto-imports          /guide/concepts/auto-imports
+/concepts/server-engine         /guide/concepts/server-engine
+/concepts/typescript            /guide/concepts/typescript
+/concepts/esm                   /guide/going-further/esm
