@@ -12,4 +12,7 @@ links:
   -
     title: 'Examples'
     to: '/examples/essentials/hello-world'
+  -
+    title: 'Community'
+    to: '/community/getting-help'
 ---
