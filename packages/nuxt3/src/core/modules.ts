@@ -1,6 +1,6 @@
 import { useNuxt } from '@nuxt/kit'
 
-interface AddModuleTranspilesOptions {
+export interface AddModuleTranspilesOptions {
   additionalModules?: string[]
 }
 
