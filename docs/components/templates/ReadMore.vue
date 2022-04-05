@@ -1,6 +1,6 @@
 <template>
   <Alert icon="👉">
-    Read more in <NuxtLink :to="link" v-text="title" />.
+    Read more in <Link :to="link" v-text="computedTitle" />.
   </Alert>
 </template>
 
@@ -13,12 +13,16 @@ export default defineComponent({
     link: {
       type: String,
       required: true
+    },
+    title: {
+      type: String,
+      required: false
     }
   },
   computed: {
-    title () {
+    computedTitle () {
       // Guess title from link!
-      return this.link.split('/')
+      return this.title || this.link.split('/')
         .filter(Boolean).map(part => splitByCase(part).map(p => upperFirst(p)).join(' ')).join(' > ')
     }
   }
