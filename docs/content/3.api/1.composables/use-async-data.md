@@ -3,8 +3,6 @@
 ::ReadMore{link="/guide/features/data-fetching"}
 ::
 
-### Usage
-
 ```ts
 const {
   data: Ref<DataT>,
@@ -22,7 +20,7 @@ const {
 )
 ```
 
-### Params
+## Params
 
 * **key**: a unique key to ensure that data fetching can be properly de-duplicated across requests
 * **handler**: an asynchronous function that returns a value
@@ -37,7 +35,7 @@ const {
 
 Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the route before the data has been fetched. Consider using `lazy: true` and implementing a loading state instead for a snappier user experience.
 
-### Return values
+## Return values
 
 * **data**: the result of the asynchronous function that is passed in
 * **pending**: a boolean indicating whether the data is still being fetched
