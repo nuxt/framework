@@ -46,7 +46,9 @@
     "semver": "^7.3.5",
     "superb": "^4.0.0",
     "tiged": "^2.12.0",
-    "unbuild": "latest"
+    "unbuild": "latest",
+    "lmify": "^0.3.0",
+    "rc9": "^1.2.0"
   },
   "optionalDependencies": {
     "fsevents": "~2.3.2"
