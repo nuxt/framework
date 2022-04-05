@@ -1,4 +1,5 @@
-import { readFile, writeFile } from 'fs/promises'
+import { readFile, writeFile, mkdir } from 'fs/promises'
+import { dirname } from 'path'
 import type { Schema } from 'untyped'
 import { resolve } from 'pathe'
 import { upperFirst } from 'scule'
@@ -149,6 +150,7 @@ async function generateDocs ({ configFile, configTemplate }) {
   }
 
   const body = template.replace(GENERATE_KEY, generatedDocs)
+  await mkdir(dirname(configFile), { recursive: true })
   await writeFile(configFile, body)
 
   console.log(`Generate done in ${(Date.now() - start) / 1000} seconds!`)
