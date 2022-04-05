@@ -1,5 +1,5 @@
 {
-  "name": "example-test",
+  "name": "example-testing",
   "private": true,
   "scripts": {
     "build": "nuxi build",
