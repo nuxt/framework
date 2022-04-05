@@ -1,4 +1,4 @@
-# useRequestHeaders
+# `useRequestHeaders`
 
 Nuxt provides composables and utilities for first-class server-side-rendering support.
 

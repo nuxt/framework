@@ -1,4 +1,4 @@
-# $fetch
+# `$fetch`
 
 Nuxt internally uses [ohmyfetch](https://github.com/unjs/ohmyfetch) to expose globally the `$fetch` helper for making HTTP requests within you Vue app or API routes.
 

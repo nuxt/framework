@@ -1,4 +1,4 @@
-# definePageMeta
+# `definePageMeta`
 
 ::alert{type=warning}
 The documentation for this page is not yet complete and will be released soon.<br>
