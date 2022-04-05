@@ -40,8 +40,6 @@ describe('pages', () => {
     // composables auto import
     expect(html).toContain('Composable | foo: auto imported from ~/components/foo.ts')
     expect(html).toContain('Composable | bar: auto imported from ~/components/useBar.ts')
-    // plugins
-    expect(html).toContain('Plugin | myPlugin: Injected by my-plugin')
     // should import components
     expect(html).toContain('This is a custom component with a named export.')
   })
@@ -146,6 +144,18 @@ describe('middlewares', () => {
   })
 })
 
+describe('plugins', () => {
+  it('basic plugin', async () => {
+    const html = await $fetch('/plugins')
+    expect(html).toContain('myPlugin: Injected by my-plugin')
+  })
+
+  it('async plugin', async () => {
+    const html = await $fetch('/plugins')
+    expect(html).toContain('asyncPlugin: Async plugin works! 123')
+  })
+})
+
 describe('layouts', () => {
   it('should apply custom layout', async () => {
     const html = await $fetch('/with-layout')
@@ -227,6 +237,15 @@ describe('extends support', () => {
     it('extends foo/server/middleware/foo', async () => {
       const { headers } = await fetch('/')
       expect(headers.get('injected-header')).toEqual('foo')
+    })
+  })
+
+  describe('app', () => {
+    it('extends foo/app/router.options & bar/app/router.options', async () => {
+      const html: string = await $fetch('/')
+      const routerLinkClasses = html.match(/href="\/" class="([^"]*)"/)[1].split(' ')
+      expect(routerLinkClasses).toContain('foo-active-class')
+      expect(routerLinkClasses).toContain('bar-exact-active-class')
     })
   })
 })

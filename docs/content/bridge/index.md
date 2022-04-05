@@ -135,7 +135,7 @@ You may also need to add `@vue/runtime-dom` as a devDependency if you are strugg
 ::
 ::alert
 Keep in mind that all options extended from `./.nuxt/tsconfig.json` will be overwritten by the options defined in your `tsconfig.json`.
-Overwriting options such as `"compilerOptions.paths"` with your own configuration will lead Typescript to not factor in the module resolutions from `./.nuxt/tsconfig.json`. This can lead to module resolutions such as `#imports` not being recognized.
+Overwriting options such as `"compilerOptions.paths"` with your own configuration will lead TypeScript to not factor in the module resolutions from `./.nuxt/tsconfig.json`. This can lead to module resolutions such as `#imports` not being recognized.
 
 In case you need to extend options provided by `./.nuxt/tsconfig.json` further, you can use the `alias` property withing your `nuxt.config`. `nuxi` will pick them up and extend `./.nuxt/tsconfig.json` accordingly.
 ::
@@ -254,10 +254,10 @@ export default defineNuxtConfig({
     // Disable nuxt 3 compatible `nuxtApp` interface
     // app: false,
 
-    // Disable composition API support
+    // Disable Composition API support
     // capi: false,
 
-    // ... or just disable legacy composition API support
+    // ... or just disable legacy Composition API support
     // capi: {
     //   legacy: false
     // },
