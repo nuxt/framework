@@ -22,7 +22,7 @@ export default defineNuxtModule({
     nuxt.options.alias['#head'] = runtimeDir
 
     // Global meta
-    const globalMeta: MetaObject = defu(nuxt.options.head, {
+    const globalMeta: MetaObject = defu(nuxt.options.app.head, {
       meta: [
         { charset: options.charset },
         { name: 'viewport', content: options.viewport }

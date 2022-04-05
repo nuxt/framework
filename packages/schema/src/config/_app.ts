@@ -66,9 +66,48 @@ export default {
     */
     cdnURL: {
       $resolve: (val, get) => get('dev') ? null : val || null
-    }
+    },
+    /**
+     * Set default configuration for `<head>` on every page.
+     *
+     * @example
+     * ```js
+     * app: {
+     *   head: {
+     *     meta: [
+     *       // <meta name="viewport" content="width=device-width, initial-scale=1">
+     *       { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+     *     ],
+     *     script: [
+     *       // <script src="https://myawesome-lib.js"></script>
+     *       { src: 'https://awesome-lib.js' }
+     *     ],
+     *     link: [
+     *       // <link rel="stylesheet" href="https://myawesome-lib.css">
+     *       { rel: 'stylesheet', href: 'https://awesome-lib.css' }
+     *     ],
+     *     // please note that this is an area that is likely to change
+     *     style: [
+     *       // <style type="text/css">:root { color: red }</style>
+     *       { children: ':root { color: red }', type: 'text/css' }
+     *     ]
+     *   }
+     * }
+     * ```
+     * @type {typeof import('../src/types/meta').MetaObject}
+     * @version 3
+     */
+    head: {
+      $resolve: (val, get) => {
+        return defu(val, get('meta'), {
+          meta: [],
+          link: [],
+          style: [],
+          script: []
+        })
+      }
+    },
   },
-
   /**
    * The path to a templated HTML file for rendering Nuxt responses.
    * Uses `<srcDir>/app.html` if it exists or the Nuxt default template if not.
@@ -124,67 +163,22 @@ export default {
   /**
    * Set default configuration for `<head>` on every page.
    *
-   * @example
-   * ```js
-   * head: {
-   *  meta: [
-   *    // <meta name="viewport" content="width=device-width, initial-scale=1">
-   *    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
-   *  ],
-   *  script: [
-   *    // <script src="https://myawesome-lib.js"></script>
-   *    { src: 'https://awesome-lib.js' }
-   *  ],
-   *  link: [
-   *    // <link rel="stylesheet" href="https://myawesome-lib.css">
-   *    { rel: 'stylesheet', href: 'https://awesome-lib.css' }
-   *  ],
-   *  // please note that this is an area that is likely to change
-   *  style: [
-   *    // <style type="text/css">:root { color: red }</style>
-   *    { children: ':root { color: red }', type: 'text/css' }
-   *  ]
-   * }
-   * ```
-   * @type {typeof import('../src/types/meta').MetaObject}
+   * @see [documentation](https://vue-meta.nuxtjs.org/api/#metainfo-properties) for specifics.
+   * @type {import('vue-meta').MetaInfo}
    * @version 2
    */
   head: {
-    $resolve: (val, get) => {
-      return defu(val, get('meta'), {
-        meta: [],
-        link: [],
-        style: [],
-        script: []
-      })
-    }
+    /** Each item in the array maps to a newly-created `<meta>` element, where object properties map to attributes. */
+    meta: [],
+    /** Each item in the array maps to a newly-created `<link>` element, where object properties map to attributes. */
+    link: [],
+    /** Each item in the array maps to a newly-created `<style>` element, where object properties map to attributes. */
+    style: [],
+    /** Each item in the array maps to a newly-created `<script>` element, where object properties map to attributes. */
+    script: []
   },
 
   /**
-   * Set default configuration for `<head>` on every page.
-   *
-   * @example
-   * ```js
-   * meta: {
-   *  meta: [
-   *    // <meta name="viewport" content="width=device-width, initial-scale=1">
-   *    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
-   *  ],
-   *  script: [
-   *    // <script src="https://myawesome-lib.js"></script>
-   *    { src: 'https://awesome-lib.js' }
-   *  ],
-   *  link: [
-   *    // <link rel="stylesheet" href="https://myawesome-lib.css">
-   *    { rel: 'stylesheet', href: 'https://awesome-lib.css' }
-   *  ],
-   *  // please note that this is an area that is likely to change
-   *  style: [
-   *    // <style type="text/css">:root { color: red }</style>
-   *    { children: ':root { color: red }', type: 'text/css' }
-   *  ]
-   * }
-   * ```
    * @type {typeof import('../src/types/meta').MetaObject}
    * @version 3
    * @deprecated - use `head` instead
