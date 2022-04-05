@@ -3,7 +3,8 @@ import {
   createRouter,
   createWebHistory,
   createMemoryHistory,
-  NavigationGuard
+  NavigationGuard,
+  RouteLocation
 } from 'vue-router'
 import { createError } from 'h3'
 import NuxtPage from './page'
@@ -52,10 +53,23 @@ export default defineNuxtPlugin((nuxtApp) => {
     get: () => previousRoute.value
   })
 
+  // Allows suspending the route object until page navigation completes
+  const path = process.server ? nuxtApp.ssrContext.req.url : window.location.pathname
+  const currentRoute = shallowRef(router.resolve(path) as RouteLocation)
+  router.afterEach((to, from) => {
+    // We won't trigger suspense if the component is reused between routes
+    // so we need to update the route manually
+    if (to.matched[0]?.components?.default === from.matched[0]?.components?.default) {
+      currentRoute.value = router.currentRoute.value
+    }
+  })
+  nuxtApp.hook('page:finish', () => {
+    currentRoute.value = router.currentRoute.value
+  })
   // https://github.com/vuejs/vue-router-next/blob/master/src/router.ts#L1192-L1200
   const route = {}
-  for (const key in router.currentRoute.value) {
-    route[key] = computed(() => router.currentRoute.value[key])
+  for (const key in currentRoute.value) {
+    route[key] = computed(() => currentRoute.value[key])
   }
 
   nuxtApp._route = reactive(route)
