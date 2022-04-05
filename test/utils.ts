@@ -21,20 +21,19 @@ export async function renderPage (path = '/') {
     await page.goto(url(path), { waitUntil: 'networkidle' })
   }
 
-  const consoleLogErrors = consoleLogs.filter(i => i.type === 'error')
-  const consoleLogWarnings = consoleLogs.filter(i => i.type === 'warn')
-
   return {
     page,
     pageErrors,
-    consoleLogs,
-    consoleLogErrors,
-    consoleLogWarnings
+    consoleLogs
   }
 }
 
 export async function expectNoClientErrors (path: string) {
-  const { pageErrors, consoleLogErrors, consoleLogWarnings } = await renderPage(path)
+  const { pageErrors, consoleLogs } = await renderPage(path)
+
+  const consoleLogErrors = consoleLogs.filter(i => i.type === 'error')
+  const consoleLogWarnings = consoleLogs.filter(i => i.type === 'warn')
+
   expect(pageErrors).toEqual([])
   expect(consoleLogErrors).toEqual([])
   expect(consoleLogWarnings).toEqual([])
