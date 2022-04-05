@@ -1,5 +1,5 @@
 ---
-navigation: false
+navigation.exclusive: true
 layout.aside: true
 layout.asideClass: ''
 ---

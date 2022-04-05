@@ -21,7 +21,7 @@ Build your next application with Vue 3 and experience hybrid rendering, powerful
 Nuxt 3 is an open source framework making web development simple and powerful.
 
 #secondary-button
-:button-link[Get started]{ href="/getting-started" size="medium" aria-label="Get started" }
+:button-link[Get started]{ href="/getting-started/quick-start" size="medium" aria-label="Get started" }
 ::
 
 ::home-features{.dark:bg-secondary-darkest .bg-gray-50}
@@ -152,7 +152,7 @@ Nuxt 3 has been re-architected with a smaller core and optimized for faster perf
 
     The foundation of the Nitro server is rollup and [h3](https://github.com/unjs/h3): a minimal http framework built for high performance and portability.
 
-    :button-link[Learn more about Nitro]{ href="/concepts/server-engine" size="medium" aria-label="Learn more about Nitro" }
+    :button-link[Learn more about Nitro]{ href="/guide/concepts/server-engine" size="medium" aria-label="Learn more about Nitro" }
   ::
 ::
 
