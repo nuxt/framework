@@ -40,8 +40,6 @@ describe('pages', () => {
     // composables auto import
     expect(html).toContain('Composable | foo: auto imported from ~/components/foo.ts')
     expect(html).toContain('Composable | bar: auto imported from ~/components/useBar.ts')
-    // plugins
-    expect(html).toContain('Plugin | myPlugin: Injected by my-plugin')
     // should import components
     expect(html).toContain('This is a custom component with a named export.')
   })
@@ -103,6 +101,18 @@ describe('pages', () => {
   })
 })
 
+describe('head tags', () => {
+  it('should render tags', async () => {
+    const html = await $fetch('/head')
+    expect(html).toContain('<title>Using a dynamic component</title>')
+    expect(html).not.toContain('<meta name="description" content="first">')
+    expect(html).toContain('<meta name="description" content="overriding with an inline useHead call">')
+    expect(html).toMatch(/<html[^>]*class="html-attrs-test"/)
+    expect(html).toMatch(/<body[^>]*class="body-attrs-test"/)
+    expect(html).toContain('script>console.log("works with useMeta too")</script>')
+  })
+})
+
 describe('navigate', () => {
   it('should redirect to index with navigateTo', async () => {
     const html = await $fetch('/navigate-to/')
@@ -143,6 +153,18 @@ describe('middlewares', () => {
     expect(html).toContain('no-auth.vue')
     expect(html).toContain('auth: ')
     expect(html).not.toContain('Injected by injectAuth middleware')
+  })
+})
+
+describe('plugins', () => {
+  it('basic plugin', async () => {
+    const html = await $fetch('/plugins')
+    expect(html).toContain('myPlugin: Injected by my-plugin')
+  })
+
+  it('async plugin', async () => {
+    const html = await $fetch('/plugins')
+    expect(html).toContain('asyncPlugin: Async plugin works! 123')
   })
 })
 
@@ -227,6 +249,15 @@ describe('extends support', () => {
     it('extends foo/server/middleware/foo', async () => {
       const { headers } = await fetch('/')
       expect(headers.get('injected-header')).toEqual('foo')
+    })
+  })
+
+  describe('app', () => {
+    it('extends foo/app/router.options & bar/app/router.options', async () => {
+      const html: string = await $fetch('/')
+      const routerLinkClasses = html.match(/href="\/" class="([^"]*)"/)[1].split(' ')
+      expect(routerLinkClasses).toContain('foo-active-class')
+      expect(routerLinkClasses).toContain('bar-exact-active-class')
     })
   })
 })

@@ -1,10 +1,11 @@
 import { defineUnimportPreset, Preset } from 'unimport'
 
 export const commonPresets: Preset[] = [
-  // #meta
+  // #head
   defineUnimportPreset({
-    from: '#meta',
+    from: '#head',
     imports: [
+      'useHead',
       'useMeta'
     ]
   }),
@@ -23,6 +24,7 @@ export const appPreset = defineUnimportPreset({
   imports: [
     'useAsyncData',
     'useLazyAsyncData',
+    'refreshNuxtData',
     'defineNuxtComponent',
     'useNuxtApp',
     'defineNuxtPlugin',
