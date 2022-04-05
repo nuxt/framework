@@ -6,7 +6,7 @@ import { upperFirst } from 'scule'
 export async function main () {
   const rootDir = resolve(__dirname, '..')
   const configTemplate = resolve(__dirname, 'nuxt.config.md')
-  const configFile = resolve(rootDir, 'content/3.api-reference/5.configuration/nuxt.config.md')
+  const configFile = resolve(rootDir, 'content/3.api-reference/6.configuration/nuxt.config.md')
   await generateDocs({ configFile, configTemplate })
 }
 
@@ -38,11 +38,15 @@ function generateMarkdown (schema: Schema, title: string, level: string, parentV
       lines.push(`- **Type**: \`${schema.type}\``)
     }
     const defaultValue = formatValue(schema.default)
-    if (defaultValue) {
-      lines.push('- **Default**', ...defaultValue)
+    if (defaultValue && defaultValue.length) {
+      if (defaultValue.length === 1) {
+        lines.push(`- **Default:** ${defaultValue[0]}`)
+      } else {
+        lines.push('- **Default**', ...defaultValue)
+      }
     }
 
-    lines.push(`- **Version**: ${versions.join(', ')}`)
+    // lines.push(`- **Version**: ${versions.join(', ')}`)
 
     lines.push('')
   }
@@ -92,8 +96,12 @@ const InternalTypes = new Set([
 
 function formatValue (val) {
   const stringified = JSON.stringify(val, null, 2)
-  if (stringified === '{}' || stringified === '[]') { return null }
-  return ['```json', stringified, '```']
+  if (!stringified || stringified === '{}' || stringified === '[]') { return null }
+  if (stringified.includes('\n')) {
+    return ['```json', stringified, '```']
+  } else {
+    return ['`' + stringified + '`']
+  }
 }
 
 function renderTag (tag: string) {
