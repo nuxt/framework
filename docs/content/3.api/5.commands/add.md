@@ -1,5 +1,7 @@
 # `nuxi add`
 
+Scaffold an entity into your Nuxt application.
+
 ```{bash}
 npx nuxi add [--cwd] [--force] <TEMPLATE> <NAME>
 ```

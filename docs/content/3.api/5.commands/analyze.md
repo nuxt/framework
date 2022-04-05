@@ -1,5 +1,7 @@
 # `nuxi analyze`
 
+Analyze the production bundle or your Nuxt applicaiton.
+
 ```{bash}
 npx nuxi analyze [rootDir]
 ```
