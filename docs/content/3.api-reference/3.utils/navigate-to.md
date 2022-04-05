@@ -1,7 +1,3 @@
----
-icon: '◦'
----
-
 # navigateTo
 
 ::alert{type=warning}

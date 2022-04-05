@@ -1,7 +1,3 @@
----
-icon: '◦'
----
-
 # useAsyncData
 
 ::alert{type=warning}

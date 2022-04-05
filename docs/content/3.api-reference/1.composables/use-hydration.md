@@ -1,7 +1,3 @@
----
-icon: '◦'
----
-
 # useHydration
 
 ::alert{type=warning}

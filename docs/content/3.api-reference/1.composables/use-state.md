@@ -1,7 +1,3 @@
----
-icon: '◦'
----
-
 # useState
 
 ::alert{type=warning}

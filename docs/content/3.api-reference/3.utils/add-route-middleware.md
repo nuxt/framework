@@ -1,7 +1,3 @@
----
-icon: '◦'
----
-
 # addRouteMiddleware
 
 ::alert{type=warning}

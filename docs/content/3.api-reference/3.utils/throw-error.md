@@ -1,7 +1,3 @@
----
-icon: '◦'
----
-
 # throwError
 
 ::alert{type=warning}

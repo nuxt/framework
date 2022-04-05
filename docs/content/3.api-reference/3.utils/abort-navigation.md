@@ -1,7 +1,3 @@
----
-icon: '◦'
----
-
 # abortNavigation
 
 ::alert{type=warning}

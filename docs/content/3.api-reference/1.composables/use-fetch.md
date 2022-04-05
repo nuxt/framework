@@ -1,7 +1,3 @@
----
-icon: '◦'
----
-
 # useFetch
 
 ::alert{type=warning}

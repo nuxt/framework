@@ -1,7 +1,3 @@
----
-icon: '◦'
----
-
 # useRouter
 
 ::alert{type=warning}

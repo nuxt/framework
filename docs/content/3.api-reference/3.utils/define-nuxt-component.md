@@ -1,7 +1,3 @@
----
-icon: '◦'
----
-
 # defineNuxtComponent
 
 ::alert{type=warning}
