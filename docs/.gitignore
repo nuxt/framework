@@ -1,1 +1,2 @@
 schema
+**/*.configuration/nuxt.config.md
