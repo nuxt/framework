@@ -19,7 +19,6 @@ head.title: Nuxt configuration reference
   "public": "/<rootDir>/public"
 }
 ```
-- **Version**: 2, 3
 
 > You can improve your DX by defining additional aliases to access custom directories within your JavaScript and CSS.
 
@@ -72,11 +71,7 @@ body {
 ### `baseURL`
 
 - **Type**: `string`
-- **Default**
-```json
-"/"
-```
-- **Version**: 2, 3
+- **Default:** `"/"`
 
 > The base path of your Nuxt application.
 
@@ -90,22 +85,14 @@ BASE_PATH=/prefix/ node .output/server/index.mjs
 ### `buildAssetsDir`
 
 - **Type**: `string`
-- **Default**
-```json
-"/_nuxt/"
-```
-- **Version**: 2, 3
+- **Default:** `"/_nuxt/"`
 
 > The folder name for the built site assets, relative to `baseURL` (or `cdnURL` if set). This is set at build time and should not be customized at runtime.
 
 
 ### `cdnURL`
 
-- **Default**
-```json
-null
-```
-- **Version**: 2, 3
+- **Default:** `null`
 
 > An absolute URL to serve the public folder from (production-only).
 
@@ -124,17 +111,12 @@ CDN_URL=https://mycdn.org/ node .output/server/index.mjs
 ### `dirs`
 
 - **Type**: `array`
-- **Version**: 3
 
 
 ### `global`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 ## build
 
@@ -144,11 +126,7 @@ false
 ### `analyze`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 2, 3
+- **Default:** `false`
 
 > Nuxt uses `webpack-bundle-analyzer` to visualize your bundles and how to optimize them.
 
@@ -164,11 +142,7 @@ analyze: {
 ### `quiet`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 2, 3
+- **Default:** `false`
 
 > Suppresses most of the build output log.
 
@@ -179,7 +153,6 @@ It is enabled by default when a CI or test environment is detected.
 ### `templates`
 
 - **Type**: `array`
-- **Version**: 2, 3
 
 > You can provide your own templates which will be rendered based on Nuxt configuration. This feature is specially useful for using with modules.
 
@@ -202,7 +175,6 @@ templates: [
 ### `transpile`
 
 - **Type**: `array`
-- **Version**: 2, 3
 
 > If you want to transpile specific dependencies with Babel, you can add them here. Each item in transpile can be a package name, a function, a string or regex object matching the dependency's file name.
 
@@ -215,11 +187,7 @@ You can also use a function to conditionally transpile. The function will receiv
 ## buildDir
 
 - **Type**: `string`
-- **Default**
-```json
-"/<rootDir>/.nuxt"
-```
-- **Version**: 2, 3
+- **Default:** `"/<rootDir>/.nuxt"`
 
 > Define the directory where your built Nuxt files will be placed.
 
@@ -234,11 +202,7 @@ export default {
 ## builder
 
 - **Type**: `string`
-- **Default**
-```json
-"@nuxt/vite-builder"
-```
-- **Version**: 3
+- **Default:** `"@nuxt/vite-builder"`
 
 > The builder to use for bundling the Vue part of your application.
 
@@ -253,7 +217,6 @@ export default {
   ]
 }
 ```
-- **Version**: 2, 3
 
 > Configure Nuxt component auto-registration.
 
@@ -265,7 +228,6 @@ Any components in the directories configured here can be used throughout your pa
 ## css
 
 - **Type**: `array`
-- **Version**: 2, 3
 
 > You can define the CSS files/modules/libraries you want to set globally (included in every page).
 
@@ -285,11 +247,7 @@ css: [
 ## dev
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 2, 3
+- **Default:** `false`
 
 > Whether Nuxt is running in development mode.
 
@@ -305,11 +263,7 @@ It is better to stick with defaults unless needed.
 ### `layouts`
 
 - **Type**: `string`
-- **Default**
-```json
-"layouts"
-```
-- **Version**: 2, 3
+- **Default:** `"layouts"`
 
 > The layouts directory, each file of which will be auto-registered as a Nuxt layout.
 
@@ -317,11 +271,7 @@ It is better to stick with defaults unless needed.
 ### `middleware`
 
 - **Type**: `string`
-- **Default**
-```json
-"middleware"
-```
-- **Version**: 3, 2
+- **Default:** `"middleware"`
 
 > The middleware directory, each file of which will be auto-registered as a Nuxt middleware.
 
@@ -329,11 +279,7 @@ It is better to stick with defaults unless needed.
 ### `pages`
 
 - **Type**: `string`
-- **Default**
-```json
-"pages"
-```
-- **Version**: 2, 3
+- **Default:** `"pages"`
 
 > The directory which will be processed to auto-generate your application page routes.
 
@@ -341,11 +287,7 @@ It is better to stick with defaults unless needed.
 ### `public`
 
 - **Type**: `string`
-- **Default**
-```json
-"public"
-```
-- **Version**: 3
+- **Default:** `"public"`
 
 > The directory containing your static files, which will be directly accessible via the Nuxt server and copied across into your `dist` folder when your app is generated.
 
@@ -355,11 +297,7 @@ It is better to stick with defaults unless needed.
 ### `asyncEntry`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 > Set to true to generate an async entrypoint for the Vue bundle (for module federation support).
 
@@ -367,11 +305,7 @@ false
 ### `reactivityTransform`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 > Enable Vue's reactivity transform
 
@@ -380,21 +314,13 @@ false
 ### `viteNode`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 > Use vite-node for on-demand server chunk loading
 
 ## extends
 
-- **Default**
-```json
-null
-```
-- **Version**: 3
+- **Default:** `null`
 
 > Extend nested configurations from multiple local or remote sources
 
@@ -415,17 +341,12 @@ You can use `github:`, `gitlab:`, `bitbucket:` or `https://` to extend from a re
   ".vue"
 ]
 ```
-- **Version**: 2, 3
 
 > The extensions that should be resolved by the Nuxt resolver.
 
 ## hooks
 
-- **Default**
-```json
-null
-```
-- **Version**: 2, 3
+- **Default:** `null`
 
 > Hooks are listeners to Nuxt events that are typically used in modules, but are also available in `nuxt.config`.
 
@@ -462,13 +383,11 @@ export default {
   "**/-*.*"
 ]
 ```
-- **Version**: 2, 3
 
 > More customizable than `ignorePrefix`: all files matching glob patterns specified inside the `ignore` array will be ignored in building.
 
 ## ignoreOptions
 
-- **Version**: 2, 3
 
 > Pass options directly to `node-ignore` (which is used by Nuxt to ignore files).
 
@@ -482,11 +401,7 @@ ignoreOptions: {
 ## ignorePrefix
 
 - **Type**: `string`
-- **Default**
-```json
-"-"
-```
-- **Version**: 2, 3
+- **Default:** `"-"`
 
 > Any file in `pages/`, `layouts/`, `middleware/` or `store/` will be ignored during building if its filename starts with the prefix specified by `ignorePrefix`.
 
@@ -520,30 +435,25 @@ meta: {
 ### `link`
 
 - **Type**: `array`
-- **Version**: 3
 
 
 ### `meta`
 
 - **Type**: `array`
-- **Version**: 3
 
 
 ### `script`
 
 - **Type**: `array`
-- **Version**: 3
 
 
 ### `style`
 
 - **Type**: `array`
-- **Version**: 3
 
 ## modules
 
 - **Type**: `array`
-- **Version**: 2, 3
 
 > Modules are Nuxt extensions which can extend its core functionality and add endless integrations
 
@@ -569,7 +479,6 @@ modules: [
 ```
 ## nitro
 
-- **Version**: 2, 3
 
 > Configuration for Nuxt Nitro.
 
@@ -579,11 +488,7 @@ modules: [
 ### `config`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 > Path to postcss config file.
 
@@ -597,7 +502,6 @@ https://postcss.org/
 
 #### `autoprefixer`
 
-- **Version**: 3
 
 > https://github.com/postcss/autoprefixer
 
@@ -605,30 +509,23 @@ https://postcss.org/
 #### `cssnano`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 
 #### `postcss-import`
 
 - **Type**: `object`
-- **Version**: 3
 
 > https://github.com/postcss/postcss-import
 
 
 #### `postcss-url`
 
-- **Version**: 3
 
 > https://github.com/postcss/postcss-url
 
 ## privateRuntimeConfig
 
-- **Version**: 2, 3
 
 > Runtime config allows passing dynamic config and environment variables to the Nuxt app context.
 
@@ -658,7 +555,6 @@ export default {
   }
 }
 ```
-- **Version**: 2, 3
 
 > Runtime config allows passing dynamic config and environment variables to the Nuxt app context.
 
@@ -677,11 +573,7 @@ export default {
 ## rootDir
 
 - **Type**: `string`
-- **Default**
-```json
-"/<rootDir>"
-```
-- **Version**: 2, 3
+- **Default:** `"/<rootDir>"`
 
 > Define the workspace directory of your application.
 
@@ -691,7 +583,6 @@ It is normally not needed to configure this option.
 ## serverMiddleware
 
 - **Type**: `array`
-- **Version**: 2, 3
 
 > Server middleware are connect/express/h3-shaped functions that handle server-side requests. They run on the server and before the Vue renderer.
 
@@ -758,11 +649,7 @@ export default {
 ## srcDir
 
 - **Type**: `string`
-- **Default**
-```json
-"/<rootDir>"
-```
-- **Version**: 2, 3
+- **Default:** `"/<rootDir>"`
 
 > Define the source directory of your Nuxt application.
 
@@ -793,11 +680,7 @@ This would work with the following folder structure:
 ## ssr
 
 - **Type**: `boolean`
-- **Default**
-```json
-true
-```
-- **Version**: 2, 3
+- **Default:** `true`
 
 > Whether to enable rendering of HTML - either dynamically (in server mode) or at generate time. If set to `false` and combined with `static` target, generated pages will simply display a loading screen with no content.
 
@@ -809,11 +692,7 @@ true
 ### `shim`
 
 - **Type**: `boolean`
-- **Default**
-```json
-true
-```
-- **Version**: 2, 3
+- **Default:** `true`
 
 > Generate a `*.vue` shim.
 
@@ -823,18 +702,13 @@ We recommend instead either enabling [**Take Over Mode**](https://github.com/joh
 ### `strict`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 2, 3
+- **Default:** `false`
 
 > TypeScript comes with certain checks to give you more safety and analysis of your program. Once you’ve converted your codebase to TypeScript, you can start enabling these checks for greater safety. [Read More](https://www.typescriptlang.org/docs/handbook/migrating-from-javascript.html#getting-stricter-checks)
 
 
 ### `tsConfig`
 
-- **Version**: 2, 3
 
 > You can extend generated `.nuxt/tsconfig.json` using this option
 
@@ -848,11 +722,7 @@ See https://vitejs.dev/config for more information. Please note that not all vit
 ### `base`
 
 - **Type**: `string`
-- **Default**
-```json
-"/_nuxt/"
-```
-- **Version**: 3
+- **Default:** `"/_nuxt/"`
 
 
 ### `build`
@@ -861,31 +731,19 @@ See https://vitejs.dev/config for more information. Please note that not all vit
 #### `assetsDir`
 
 - **Type**: `string`
-- **Default**
-```json
-"."
-```
-- **Version**: 3
+- **Default:** `"."`
 
 
 #### `emptyOutDir`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 
 ### `clearScreen`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 
 ### `define`
@@ -897,7 +755,6 @@ false
   "process.dev": false
 }
 ```
-- **Version**: 3
 
 
 ### `esbuild`
@@ -906,51 +763,31 @@ false
 #### `jsxFactory`
 
 - **Type**: `string`
-- **Default**
-```json
-"h"
-```
-- **Version**: 3
+- **Default:** `"h"`
 
 
 #### `jsxFragment`
 
 - **Type**: `string`
-- **Default**
-```json
-"Fragment"
-```
-- **Version**: 3
+- **Default:** `"Fragment"`
 
 
 #### `tsconfigRaw`
 
 - **Type**: `string`
-- **Default**
-```json
-"{}"
-```
-- **Version**: 3
+- **Default:** `"{}"`
 
 
 ### `logLevel`
 
 - **Type**: `string`
-- **Default**
-```json
-"warn"
-```
-- **Version**: 3
+- **Default:** `"warn"`
 
 
 ### `mode`
 
 - **Type**: `string`
-- **Default**
-```json
-"production"
-```
-- **Version**: 3
+- **Default:** `"production"`
 
 
 ### `optimizeDeps`
@@ -965,17 +802,12 @@ false
   "vue-demi"
 ]
 ```
-- **Version**: 3
 
 
 ### `publicDir`
 
 - **Type**: `string`
-- **Default**
-```json
-"/<rootDir>/public"
-```
-- **Version**: 3
+- **Default:** `"/<rootDir>/public"`
 
 
 ### `resolve`
@@ -996,17 +828,12 @@ false
   ".vue"
 ]
 ```
-- **Version**: 3
 
 
 ### `root`
 
 - **Type**: `string`
-- **Default**
-```json
-"/<rootDir>"
-```
-- **Version**: 3
+- **Default:** `"/<rootDir>"`
 
 
 ### `server`
@@ -1028,17 +855,12 @@ false
   "/home/pooya/Code/framework/packages/schema/node_modules"
 ]
 ```
-- **Version**: 3
 
 
 ##### `strict`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 
 ### `vue`
@@ -1047,11 +869,7 @@ false
 #### `isProduction`
 
 - **Type**: `boolean`
-- **Default**
-```json
-true
-```
-- **Version**: 3
+- **Default:** `true`
 
 
 #### `template`
@@ -1060,7 +878,6 @@ true
 ##### `compilerOptions`
 
 - **Type**: `object`
-- **Version**: 3
 
 ## vue
 
@@ -1069,7 +886,6 @@ true
 
 ### `compilerOptions`
 
-- **Version**: 3
 
 > Options for the Vue compiler that will be passed at build time
 
@@ -1088,16 +904,11 @@ true
 #### `ignoreInitial`
 
 - **Type**: `boolean`
-- **Default**
-```json
-true
-```
-- **Version**: 2, 3
+- **Default:** `true`
 
 
 ### `rewatchOnRawEvents`
 
-- **Version**: 2, 3
 
 > An array of event types, which, when received, will cause the watcher to restart.
 
@@ -1111,11 +922,7 @@ true
 #### `aggregateTimeout`
 
 - **Type**: `number`
-- **Default**
-```json
-1000
-```
-- **Version**: 2, 3
+- **Default:** `1000`
 
 ## webpack
 
@@ -1123,11 +930,7 @@ true
 ### `aggressiveCodeRemoval`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 > Hard-replaces `typeof process`, `typeof window` and `typeof document` to tree-shake bundle.
 
@@ -1135,11 +938,7 @@ false
 ### `analyze`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 > Nuxt uses `webpack-bundle-analyzer` to visualize your bundles and how to optimize them.
 
@@ -1155,11 +954,7 @@ analyze: {
 ### `cssSourceMap`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 > Enables CSS source map support (defaults to true in development)
 
@@ -1172,21 +967,13 @@ false
 #### `stats`
 
 - **Type**: `string`
-- **Default**
-```json
-"none"
-```
-- **Version**: 3
+- **Default:** `"none"`
 
 
 ### `extractCSS`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 > Enables Common CSS Extraction using [Vue Server Renderer guidelines](https://ssr.vuejs.org/guide/css.html).
 
@@ -1252,78 +1039,43 @@ filenames: {
 #### `app`
 
 - **Type**: `function`
-- **Default**
-```json
-
-```
-- **Version**: 3
 
 
 #### `chunk`
 
 - **Type**: `function`
-- **Default**
-```json
-
-```
-- **Version**: 3
 
 
 #### `css`
 
 - **Type**: `function`
-- **Default**
-```json
-
-```
-- **Version**: 3
 
 
 #### `font`
 
 - **Type**: `function`
-- **Default**
-```json
-
-```
-- **Version**: 3
 
 
 #### `img`
 
 - **Type**: `function`
-- **Default**
-```json
-
-```
-- **Version**: 3
 
 
 #### `video`
 
 - **Type**: `function`
-- **Default**
-```json
-
-```
-- **Version**: 3
 
 
 ### `friendlyErrors`
 
 - **Type**: `boolean`
-- **Default**
-```json
-true
-```
-- **Version**: 3
+- **Default:** `true`
 
 > Set to `false` to disable the overlay provided by [FriendlyErrorsWebpackPlugin](https://github.com/nuxt/friendly-errors-webpack-plugin)
 
 
 ### `hotMiddleware`
 
-- **Version**: 3
 
 > See [webpack-hot-middleware](https://github.com/webpack-contrib/webpack-hot-middleware) for available options.
 
@@ -1339,21 +1091,13 @@ true
 ##### `esModule`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 
 ##### `importLoaders`
 
 - **Type**: `number`
-- **Default**
-```json
-0
-```
-- **Version**: 3
+- **Default:** `0`
 
 
 ##### `url`
@@ -1362,11 +1106,6 @@ false
 ###### `filter`
 
 - **Type**: `function`
-- **Default**
-```json
-
-```
-- **Version**: 3
 
 
 #### `cssModules`
@@ -1375,21 +1114,13 @@ false
 ##### `esModule`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 
 ##### `importLoaders`
 
 - **Type**: `number`
-- **Default**
-```json
-0
-```
-- **Version**: 3
+- **Default:** `0`
 
 
 ##### `modules`
@@ -1398,11 +1129,7 @@ false
 ###### `localIdentName`
 
 - **Type**: `string`
-- **Default**
-```json
-"[local]_[hash:base64:5]"
-```
-- **Version**: 3
+- **Default:** `"[local]_[hash:base64:5]"`
 
 
 ##### `url`
@@ -1411,11 +1138,6 @@ false
 ###### `filter`
 
 - **Type**: `function`
-- **Default**
-```json
-
-```
-- **Version**: 3
 
 
 #### `file`
@@ -1424,11 +1146,7 @@ false
 ##### `esModule`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 
 #### `fontUrl`
@@ -1437,21 +1155,13 @@ false
 ##### `esModule`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 
 ##### `limit`
 
 - **Type**: `number`
-- **Default**
-```json
-1000
-```
-- **Version**: 3
+- **Default:** `1000`
 
 
 #### `imgUrl`
@@ -1460,21 +1170,13 @@ false
 ##### `esModule`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 
 ##### `limit`
 
 - **Type**: `number`
-- **Default**
-```json
-1000
-```
-- **Version**: 3
+- **Default:** `1000`
 
 
 #### `less`
@@ -1485,12 +1187,10 @@ false
   "sourceMap": false
 }
 ```
-- **Version**: 3
 
 
 #### `pugPlain`
 
-- **Version**: 3
 
 
 #### `sass`
@@ -1502,11 +1202,7 @@ false
 ###### `indentedSyntax`
 
 - **Type**: `boolean`
-- **Default**
-```json
-true
-```
-- **Version**: 3
+- **Default:** `true`
 
 
 #### `scss`
@@ -1517,7 +1213,6 @@ true
   "sourceMap": false
 }
 ```
-- **Version**: 3
 
 
 #### `stylus`
@@ -1528,7 +1223,6 @@ true
   "sourceMap": false
 }
 ```
-- **Version**: 3
 
 
 #### `vue`
@@ -1537,17 +1231,12 @@ true
 ##### `compilerOptions`
 
 - **Type**: `object`
-- **Version**: 3
 
 
 ##### `productionMode`
 
 - **Type**: `boolean`
-- **Default**
-```json
-true
-```
-- **Version**: 3
+- **Default:** `true`
 
 
 ##### `transformAssetUrls`
@@ -1556,41 +1245,25 @@ true
 ###### `embed`
 
 - **Type**: `string`
-- **Default**
-```json
-"src"
-```
-- **Version**: 3
+- **Default:** `"src"`
 
 
 ###### `object`
 
 - **Type**: `string`
-- **Default**
-```json
-"src"
-```
-- **Version**: 3
+- **Default:** `"src"`
 
 
 ###### `source`
 
 - **Type**: `string`
-- **Default**
-```json
-"src"
-```
-- **Version**: 3
+- **Default:** `"src"`
 
 
 ###### `video`
 
 - **Type**: `string`
-- **Default**
-```json
-"src"
-```
-- **Version**: 3
+- **Default:** `"src"`
 
 
 #### `vueStyle`
@@ -1601,7 +1274,6 @@ true
   "sourceMap": false
 }
 ```
-- **Version**: 3
 
 
 ### `optimization`
@@ -1612,18 +1284,13 @@ true
 #### `minimize`
 
 - **Type**: `boolean`
-- **Default**
-```json
-true
-```
-- **Version**: 3
+- **Default:** `true`
 
 > Set minimize to false to disable all minimizers. (It is disabled in development by default)
 
 
 #### `minimizer`
 
-- **Version**: 3
 
 > You can set minimizer to a customized array of plugins.
 
@@ -1631,11 +1298,7 @@ true
 #### `runtimeChunk`
 
 - **Type**: `string`
-- **Default**
-```json
-"single"
-```
-- **Version**: 3
+- **Default:** `"single"`
 
 
 #### `splitChunks`
@@ -1644,36 +1307,23 @@ true
 ##### `automaticNameDelimiter`
 
 - **Type**: `string`
-- **Default**
-```json
-"/"
-```
-- **Version**: 3
+- **Default:** `"/"`
 
 
 ##### `cacheGroups`
 
-- **Version**: 3
 
 
 ##### `chunks`
 
 - **Type**: `string`
-- **Default**
-```json
-"all"
-```
-- **Version**: 3
+- **Default:** `"all"`
 
 
 ### `optimizeCSS`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 > OptimizeCSSAssets plugin options.
 
@@ -1684,7 +1334,6 @@ Defaults to true when `extractCSS` is enabled.
 ### `plugins`
 
 - **Type**: `array`
-- **Version**: 3
 
 > Add webpack plugins.
 
@@ -1708,31 +1357,17 @@ plugins: [
 #### `execute`
 
 - **Type**: `undefined`
-- **Default**
-```json
-
-```
-- **Version**: 3
 
 
 #### `implementation`
 
 - **Type**: `undefined`
-- **Default**
-```json
-
-```
-- **Version**: 3
 
 
 #### `order`
 
 - **Type**: `string`
-- **Default**
-```json
-""
-```
-- **Version**: 3
+- **Default:** `""`
 
 
 #### `postcssOptions`
@@ -1741,11 +1376,7 @@ plugins: [
 ##### `config`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 
 ##### `plugins`
@@ -1760,27 +1391,17 @@ false
   "cssnano": false
 }
 ```
-- **Version**: 3
 
 
 #### `sourceMap`
 
 - **Type**: `undefined`
-- **Default**
-```json
-
-```
-- **Version**: 3
 
 
 ### `profile`
 
 - **Type**: `boolean`
-- **Default**
-```json
-false
-```
-- **Version**: 3
+- **Default:** `false`
 
 > Enable the profiler in webpackbar.
 
@@ -1791,11 +1412,7 @@ It is normally enabled by CLI argument `--profile`.
 ### `serverURLPolyfill`
 
 - **Type**: `string`
-- **Default**
-```json
-"url"
-```
-- **Version**: 3
+- **Default:** `"url"`
 
 > The polyfill library to load to provide URL and URLSearchParams.
 
@@ -1804,7 +1421,6 @@ Defaults to `'url'` ([see package](https://www.npmjs.com/package/url)).
 
 ### `terser`
 
-- **Version**: 3
 
 > Terser plugin options.
 
@@ -1820,7 +1436,6 @@ the end of each output file if webpack `config.devtool` is set to `source-map`.
 ### `warningIgnoreFilters`
 
 - **Type**: `array`
-- **Version**: 3
 
 > Filters to hide build warnings.
 
