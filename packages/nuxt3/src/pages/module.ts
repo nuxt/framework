@@ -94,7 +94,7 @@ export default defineNuxtModule({
         return [
           ...routerOptionsFiles.map((file, index) => genImport(file, `routerOptions${index}`)),
           defaultOptsFile ? genImport(defaultOptsFile, 'defaultOptions') : '',
-          
+
           `const configRouterOptions = ${configRouterOptions}`,
           'export default {',
           '...(defaultOptions || {}),',
