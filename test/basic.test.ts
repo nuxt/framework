@@ -329,8 +329,8 @@ describe('dynamic paths', () => {
   })
 
   it('should allow setting base URL and build assets directory', async () => {
-    process.env.APP_BUILD_ASSETS_DIR = '/_other/'
-    process.env.APP_BASE_URL = '/foo/'
+    process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_other/'
+    process.env.NUXT_APP_BASE_URL = '/foo/'
     await startServer()
 
     const html = await $fetch('/assets')
@@ -342,9 +342,9 @@ describe('dynamic paths', () => {
   })
 
   it('should allow setting CDN URL', async () => {
-    process.env.APP_BASE_URL = '/foo/'
-    process.env.APP_CDN_URL = 'https://example.com/'
-    process.env.APP_BUILD_ASSETS_DIR = '/_cdn/'
+    process.env.NUXT_APP_BASE_URL = '/foo/'
+    process.env.NUXT_APP_CDN_URL = 'https://example.com/'
+    process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_cdn/'
     await startServer()
 
     const html = await $fetch('/assets')
