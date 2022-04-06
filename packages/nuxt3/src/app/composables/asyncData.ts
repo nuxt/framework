@@ -32,7 +32,7 @@ export interface _AsyncData<DataT> {
   data: Ref<DataT>
   pending: Ref<boolean>
   refresh: (opts?: RefreshOptions) => Promise<void>
-  error?: any
+  error: Ref<any>
 }
 
 export type AsyncData<Data> = _AsyncData<Data> & Promise<_AsyncData<Data>>
