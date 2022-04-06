@@ -27,7 +27,7 @@ export function registerViteNodeMiddleware (ctx: ViteBuildContext) {
   })
 }
 
-async function getManifest (server: ViteDevServer) {
+function getManifest (server: ViteDevServer) {
   const ids = Array.from(server.moduleGraph.urlToModuleMap.keys())
     .filter(i => isCSS(i))
 

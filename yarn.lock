@@ -5471,12 +5471,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:8.2.3, @vueuse/core@npm:^8.2.3":
-  version: 8.2.3
-  resolution: "@vueuse/core@npm:8.2.3"
+"@vueuse/core@npm:8.2.5, @vueuse/core@npm:^8.2.3":
+  version: 8.2.5
+  resolution: "@vueuse/core@npm:8.2.5"
   dependencies:
-    "@vueuse/metadata": 8.2.3
-    "@vueuse/shared": 8.2.3
+    "@vueuse/metadata": 8.2.5
+    "@vueuse/shared": 8.2.5
     vue-demi: "*"
   peerDependencies:
     "@vue/composition-api": ^1.1.0
@@ -5486,7 +5486,7 @@ __metadata:
       optional: true
     vue:
       optional: true
-  checksum: 6740f54727d2c8f1795d225940ce844df41237d002ff3b4c2a235432b19854d329bfae80e836b546a86330e8258c4cfd58031130477321e0de14da1cf6fccc79
+  checksum: cd9b047555e6473c692ec5c0871b97ce80730678a9e0ad662b3cc41bd9d39811d07ab54624df290f6b478607ff0ee77721aea4bb3cb36c6d9b05c82d33ba8539
   languageName: node
   linkType: hard
 
@@ -5500,11 +5500,11 @@ __metadata:
   linkType: hard
 
 "@vueuse/integrations@npm:^8.2.3":
-  version: 8.2.3
-  resolution: "@vueuse/integrations@npm:8.2.3"
+  version: 8.2.5
+  resolution: "@vueuse/integrations@npm:8.2.5"
   dependencies:
-    "@vueuse/core": 8.2.3
-    "@vueuse/shared": 8.2.3
+    "@vueuse/core": 8.2.5
+    "@vueuse/shared": 8.2.5
     vue-demi: "*"
   peerDependencies:
     axios: "*"
@@ -5533,33 +5533,33 @@ __metadata:
       optional: true
     universal-cookie:
       optional: true
-  checksum: ce358b2def4c9be558e06cc2fa63bdf263a138d2fceb31f684fd95d6131ace473b6070b82814b69be11bed72a37edb7747047d837d84b23bdd99edb42b9143e8
+  checksum: 22a0a37dd2e1699fd4f8632b23b310e14ede2955bd51f7499d313ce2ee3779ad2642536bf12490ade6fbf9d55acc1f8762c7cacd46496c50668a29e1450dbc62
   languageName: node
   linkType: hard
 
-"@vueuse/metadata@npm:8.2.3":
-  version: 8.2.3
-  resolution: "@vueuse/metadata@npm:8.2.3"
-  checksum: d3e386ef071f98f0faaf2a01ea203e66c485a5d102096d155e02096b91ee548a9b2aa15dea8361c37190730e1124860a45342a83d4dca8e6e0acbeb68fa803ed
+"@vueuse/metadata@npm:8.2.5":
+  version: 8.2.5
+  resolution: "@vueuse/metadata@npm:8.2.5"
+  checksum: 988699fb7933451da3dc120e340e93ed478a17cf5697a2273fe955c46da309cc6f34c451f7c90ed0573881f72bfeb4cc57dd8830725568e58d19250dae3671ce
   languageName: node
   linkType: hard
 
 "@vueuse/nuxt@npm:^8.2.3":
-  version: 8.2.3
-  resolution: "@vueuse/nuxt@npm:8.2.3"
+  version: 8.2.5
+  resolution: "@vueuse/nuxt@npm:8.2.5"
   dependencies:
     "@nuxt/kit": "npm:@nuxt/kit-edge@latest"
-    "@vueuse/core": 8.2.3
-    "@vueuse/metadata": 8.2.3
+    "@vueuse/core": 8.2.5
+    "@vueuse/metadata": 8.2.5
     local-pkg: ^0.4.1
     vue-demi: "*"
-  checksum: 28b12d5c5b1b125cf9d63ccb0f62c8bc2b10f62bea51df2925b8a184d0268ad0805dc202db456da28be5c88923df6a0cbb46451e3aa7483df1fffcc256c67401
+  checksum: bce6ec2417e5bfc349f4de00ef58315aea95223036343ed2cb5bb0e0315e4ed9f1a52e04746a7f9a08143c4855d64f4cbde16b94d79a2f002618d3979344c904
   languageName: node
   linkType: hard
 
-"@vueuse/shared@npm:8.2.3":
-  version: 8.2.3
-  resolution: "@vueuse/shared@npm:8.2.3"
+"@vueuse/shared@npm:8.2.5":
+  version: 8.2.5
+  resolution: "@vueuse/shared@npm:8.2.5"
   dependencies:
     vue-demi: "*"
   peerDependencies:
@@ -5570,7 +5570,7 @@ __metadata:
       optional: true
     vue:
       optional: true
-  checksum: b20bfb89c993b25caec59beebc1a5b11a4641f369ca53aa76bb897b25ff80a47b0ee82c5531c716fa59ec8c17ae8acb7a6d4906cbbf2b16a1abea7d7d4990fb7
+  checksum: 974d070523f4f0e693f543077566ae7d2656a14cf89b560783427cfa8278df09ead1d20c4ad2340efdfa6cee3b5aece222828388a945229094e82d600b5b1e81
   languageName: node
   linkType: hard
 
