@@ -6,7 +6,7 @@ import { expectNoClientErrors } from './utils'
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
   server: true,
-  browser: true
+  browser: false
 })
 
 describe('server api', () => {
