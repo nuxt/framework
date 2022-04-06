@@ -53,14 +53,14 @@ export async function setupNitroBridge () {
     preset: nuxt.options.dev ? 'dev' : undefined,
     buildDir: resolve(nuxt.options.buildDir),
     scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
-    app: nuxt.options.app,
     renderer: resolve(distDir, 'runtime/nitro/renderer'),
     nodeModulesDirs: nuxt.options.modulesDir,
     handlers: [],
     devHandlers: [],
     runtimeConfig: {
-      public: nuxt.options.publicRuntimeConfig,
-      private: nuxt.options.privateRuntimeConfig
+      ...nuxt.options.publicRuntimeConfig,
+      ...nuxt.options.privateRuntimeConfig,
+      public: nuxt.options.publicRuntimeConfig
     },
     publicAssets: [
       {
@@ -96,7 +96,10 @@ export async function setupNitroBridge () {
       '#vue2-server-renderer': 'vue-server-renderer/' + (nuxt.options.dev ? 'build.dev.js' : 'build.prod.js'),
 
       // Error renderer
-      '#nitro/error': resolve(distDir, 'runtime/nitro/error')
+      '#nitro/error': resolve(distDir, 'runtime/nitro/error'),
+
+      // Paths
+      '#paths': resolve(distDir, 'runtime/nitro/paths')
     }
   })
 
@@ -211,7 +214,7 @@ export async function setupNitroBridge () {
     }
   })
 
-  // Create dev server
+  // Setup handlers
   const devMidlewareHandler = dynamicEventHandler()
   nitro.options.devHandlers.unshift({ handler: devMidlewareHandler })
   const { handlers, devHandlers } = await resolveHandlers(nuxt)
@@ -222,9 +225,14 @@ export async function setupNitroBridge () {
     lazy: true,
     handler: resolve(distDir, 'runtime/nitro/renderer')
   })
+
+  // Create dev server
   if (nuxt.server) {
     nuxt.server.__closed = true
     nuxt.server = createNuxt2DevServer(nitro)
+    nuxt.hook('build:resources', () => {
+      nuxt.server.reload()
+    })
   }
 
   // Add typed route responses

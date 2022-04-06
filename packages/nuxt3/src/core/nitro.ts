@@ -1,4 +1,4 @@
-import { existsSync } from 'fs'
+import { existsSync, promises as fsp } from 'fs'
 import { resolve, join } from 'pathe'
 import { createNitro, createDevServer, build, prepare, copyPublicAssets, writeTypes, scanHandlers, prerender } from 'nitropack'
 import type { NitroEventHandler, NitroDevEventHandler, NitroConfig } from 'nitropack'
@@ -20,14 +20,15 @@ export async function initNitro (nuxt: Nuxt) {
     preset: nuxt.options.dev ? 'dev' : undefined,
     buildDir: nuxt.options.buildDir,
     scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
-    app: nuxt.options.app,
     renderer: resolve(distDir, 'core/runtime/nitro/renderer'),
     nodeModulesDirs: nuxt.options.modulesDir,
     handlers: [],
     devHandlers: [],
+    baseURL: nuxt.options.app.baseURL,
     runtimeConfig: {
-      public: nuxt.options.publicRuntimeConfig,
-      private: nuxt.options.privateRuntimeConfig
+      ...nuxt.options.publicRuntimeConfig,
+      ...nuxt.options.privateRuntimeConfig,
+      public: nuxt.options.publicRuntimeConfig
     },
     publicAssets: [
       {
@@ -67,7 +68,10 @@ export async function initNitro (nuxt: Nuxt) {
       '#vue-renderer': resolve(distDir, 'core/runtime/nitro/vue3'),
 
       // Error renderer
-      '#nitro/error': resolve(distDir, 'core/runtime/nitro/error')
+      '#nitro/error': resolve(distDir, 'core/runtime/nitro/error'),
+
+      // Paths
+      '#paths': resolve(distDir, 'core/runtime/nitro/paths')
     },
     replace: {
       'process.env.NUXT_NO_SSR': nuxt.options.ssr === false ? true : undefined
@@ -101,7 +105,7 @@ export async function initNitro (nuxt: Nuxt) {
     }))
   })
 
-  // Create dev server
+  // Setup handlers
   const devMidlewareHandler = dynamicEventHandler()
   nitro.options.devHandlers.unshift({ handler: devMidlewareHandler })
   const { handlers, devHandlers } = await resolveHandlers(nuxt)
@@ -112,7 +116,6 @@ export async function initNitro (nuxt: Nuxt) {
     lazy: true,
     handler: resolve(distDir, 'core/runtime/nitro/renderer')
   })
-  nuxt.server = createDevServer(nitro)
 
   // Add typed route responses
   nuxt.hook('prepare:types', async (opts) => {
@@ -122,7 +125,6 @@ export async function initNitro (nuxt: Nuxt) {
     }
     const nitroRuntimeIndex = resolveModule('nitropack/dist/runtime/index', { paths: nuxt.options.modulesDir })
     opts.tsConfig.compilerOptions.paths['#nitro'] = [nitroRuntimeIndex]
-    opts.tsConfig.compilerOptions.paths['#nitro/*'] = [join(nitroRuntimeIndex, '../*.mjs')]
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/nitro.d.ts') })
   })
 
@@ -146,6 +148,10 @@ export async function initNitro (nuxt: Nuxt) {
       compiler.outputFileSystem = { ...fsExtra, join } as any
     })
     nuxt.hook('server:devMiddleware', (m) => { devMidlewareHandler.set(toEventHandler(m)) })
+    nuxt.server = createDevServer(nitro)
+    nuxt.hook('build:resources', () => {
+      nuxt.server.reload()
+    })
     const waitUntilCompile = new Promise<void>(resolve => nitro.hooks.hook('nitro:compiled', () => resolve()))
     nuxt.hook('build:done', () => waitUntilCompile)
   }
