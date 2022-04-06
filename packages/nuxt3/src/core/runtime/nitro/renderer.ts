@@ -1,7 +1,7 @@
 import { createRenderer } from 'vue-bundle-renderer'
 import { eventHandler, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
-import { config } from '#nitro'
+import { useConfig } from '#nitro'
 import { buildAssetsURL } from '#paths'
 // @ts-ignore
 import htmlTemplate from '#build/views/document.template.mjs'
@@ -30,7 +30,7 @@ const getSPARenderer = cachedResult(async () => {
   return (ssrContext) => {
     ssrContext.nuxt = {
       serverRendered: false,
-      config: config.public
+      config: useConfig().public
     }
 
     let entryFiles = Object.values(clientManifest).filter(
@@ -85,7 +85,7 @@ export default eventHandler(async (event) => {
     event,
     req: event.req,
     res: event.res,
-    runtimeConfig: { private: config, public: config.public },
+    runtimeConfig: { private: useConfig(), public: useConfig().public },
     noSSR: event.req.headers['x-nuxt-no-ssr'],
 
     error: ssrError,
