@@ -28,9 +28,13 @@ const getSSRRenderer = cachedResult(async () => {
 const getSPARenderer = cachedResult(async () => {
   const clientManifest = await getClientManifest()
   return (ssrContext) => {
+    const config = useConfig()
     ssrContext.nuxt = {
       serverRendered: false,
-      config: useConfig().public
+      config: {
+        ...config.public,
+        app: config.app
+      }
     }
 
     let entryFiles = Object.values(clientManifest).filter(
@@ -80,12 +84,13 @@ export default eventHandler(async (event) => {
   }
 
   // Initialize ssr context
+  const config = useConfig()
   const ssrContext = {
     url,
     event,
     req: event.req,
     res: event.res,
-    runtimeConfig: { private: useConfig(), public: useConfig().public },
+    runtimeConfig: { private: config, public: { ...config.public, app: config.app } },
     noSSR: event.req.headers['x-nuxt-no-ssr'],
 
     error: ssrError,

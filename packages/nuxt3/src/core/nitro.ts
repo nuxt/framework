@@ -17,7 +17,7 @@ export async function initNitro (nuxt: Nuxt) {
     rootDir: nuxt.options.rootDir,
     srcDir: join(nuxt.options.srcDir, 'server'),
     dev: nuxt.options.dev,
-    preset: nuxt.options.dev ? 'dev' : undefined,
+    preset: nuxt.options.dev ? 'nitro-dev' : undefined,
     buildDir: nuxt.options.buildDir,
     scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
     renderer: resolve(distDir, 'core/runtime/nitro/renderer'),
@@ -26,9 +26,15 @@ export async function initNitro (nuxt: Nuxt) {
     devHandlers: [],
     baseURL: nuxt.options.app.baseURL,
     runtimeConfig: {
+      // Private
       ...nuxt.options.publicRuntimeConfig,
       ...nuxt.options.privateRuntimeConfig,
-      public: nuxt.options.publicRuntimeConfig,
+      // Public
+      public: {
+        ...nuxt.options.publicRuntimeConfig,
+        app: undefined // avoid dupicate
+      },
+      // Nitro
       NITRO_ENV_PREFIX_ALT: 'NUXT_'
     },
     typescript: {

@@ -50,7 +50,7 @@ export async function setupNitroBridge () {
     rootDir: resolve(nuxt.options.rootDir),
     srcDir: resolve(nuxt.options.srcDir, 'server'),
     dev: nuxt.options.dev,
-    preset: nuxt.options.dev ? 'dev' : undefined,
+    preset: nuxt.options.dev ? 'nitro-dev' : undefined,
     buildDir: resolve(nuxt.options.buildDir),
     scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
     renderer: resolve(distDir, 'runtime/nitro/renderer'),
