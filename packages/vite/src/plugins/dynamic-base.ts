@@ -4,8 +4,6 @@ import type { Plugin } from 'vite'
 import MagicString from 'magic-string'
 
 interface DynamicBasePluginOptions {
-  env: 'dev' | 'server' | 'client'
-  devAppConfig?: Record<string, any>
   globalPublicPath?: string
 }
 
@@ -18,6 +16,15 @@ export const RelativeAssetPlugin = function (): Plugin {
 
       for (const file in bundle) {
         const asset = bundle[file]
+        if (asset.fileName.includes('legacy') && asset.type === 'chunk' && asset.code.includes('innerHTML')) {
+          for (const delimiter of ['`', '"', "'"]) {
+            asset.code = asset.code.replace(
+              new RegExp(`(?<=innerHTML=)${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g'),
+              /* eslint-disable-next-line no-template-curly-in-string */
+              '`$1${(window?.__NUXT__?.config.app.cdnURL || window?.__NUXT__?.config.app.baseURL) + window?.__NUXT__?.config.app.buildAssetsDir.slice(1)}$2`'
+            )
+          }
+        }
         if (asset.type === 'asset' && typeof asset.source === 'string' && asset.fileName.endsWith('.css')) {
           const depth = file.split('/').length - 1
           const assetBase = depth === 0 ? '.' : Array.from({ length: depth }).map(() => '..').join('/')
@@ -26,6 +33,12 @@ export const RelativeAssetPlugin = function (): Plugin {
             .replace(assetRE, r => r.replace(/\/__NUXT_BASE__/g, assetBase))
             .replace(/\/__NUXT_BASE__/g, publicBase)
         }
+        if (asset.type === 'chunk' && typeof asset.code === 'string') {
+          asset.code = asset.code
+            .replace(/`\$\{(_?_?publicAssetsURL|buildAssetsURL|)\(\)\}([^`]*)`/g, '$1(`$2`)')
+            .replace(/"\/__NUXT_BASE__\/([^"]*)"\.replace\("\/__NUXT_BASE__", ""\)/g, '"$1"')
+            .replace(/'\/__NUXT_BASE__\/([^']*)'\.replace\("\/__NUXT_BASE__", ""\)/g, '"$1"')
+        }
       }
     }
   }
@@ -33,7 +46,7 @@ export const RelativeAssetPlugin = function (): Plugin {
 
 const VITE_ASSET_RE = /^export default ["'](__VITE_ASSET.*)["']$/
 
-export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePluginOptions) {
+export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePluginOptions = {}) {
   return {
     name: 'nuxt:dynamic-base-path',
     resolveId (id) {
@@ -75,10 +88,10 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
       s.replace(/from *['"]\/__NUXT_BASE__(\/[^'"]*)['"]/g, 'from "$1"')
 
       // Dynamically compute string URLs featuring baseURL
-      for (const delimiter of ['`', '"', "'"]) {
-        const delimiterRE = new RegExp(`(?<!const base = )${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g')
+      for (const delimiter of ['`', "'", '"']) {
+        const delimiterRE = new RegExp(`(?<!(const base = |from *))${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g')
         /* eslint-disable-next-line no-template-curly-in-string */
-        s.replace(delimiterRE, '`$1${__publicAssetsURL()}$2`')
+        s.replace(delimiterRE, r => '`' + r.replace(/\/__NUXT_BASE__\//g, '${__publicAssetsURL()}').slice(1, -1) + '`')
       }
 
       if (s.hasChanged()) {
