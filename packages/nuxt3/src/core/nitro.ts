@@ -28,7 +28,8 @@ export async function initNitro (nuxt: Nuxt) {
     runtimeConfig: {
       ...nuxt.options.publicRuntimeConfig,
       ...nuxt.options.privateRuntimeConfig,
-      public: nuxt.options.publicRuntimeConfig
+      public: nuxt.options.publicRuntimeConfig,
+      NITRO_ENV_PREFIX_ALT: 'NUXT_'
     },
     typescript: {
       generateTsConfig: false
