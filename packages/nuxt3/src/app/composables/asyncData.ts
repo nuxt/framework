@@ -173,7 +173,7 @@ export function useAsyncData<
 
 export function useLazyAsyncData<
   DataT,
-  DataE,
+  DataE = any,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
