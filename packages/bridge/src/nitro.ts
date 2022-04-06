@@ -62,6 +62,9 @@ export async function setupNitroBridge () {
       ...nuxt.options.privateRuntimeConfig,
       public: nuxt.options.publicRuntimeConfig
     },
+    typescript: {
+      generateTsConfig: false
+    },
     publicAssets: [
       {
         baseURL: nuxt.options.app.buildAssetsDir,

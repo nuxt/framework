@@ -30,6 +30,9 @@ export async function initNitro (nuxt: Nuxt) {
       ...nuxt.options.privateRuntimeConfig,
       public: nuxt.options.publicRuntimeConfig
     },
+    typescript: {
+      generateTsConfig: false
+    },
     publicAssets: [
       {
         baseURL: nuxt.options.app.buildAssetsDir,
