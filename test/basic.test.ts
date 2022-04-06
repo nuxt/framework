@@ -1,13 +1,13 @@
 import { fileURLToPath } from 'url'
 import { describe, expect, it } from 'vitest'
-import { isWindows } from 'std-env'
+// import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
 import { expectNoClientErrors } from './utils'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
   server: true,
-  browser: !isWindows
+  browser: true
 })
 
 describe('server api', () => {
