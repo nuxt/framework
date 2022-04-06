@@ -45,7 +45,7 @@ describe('pages', () => {
     // should import components
     expect(html).toContain('This is a custom component with a named export.')
 
-    expectNoClientErrors('/')
+    await expectNoClientErrors('/')
   })
 
   if (!isDev()) {
@@ -57,7 +57,8 @@ describe('pages', () => {
 
       expect(html).toContain('[...slug].vue')
       expect(html).toContain('404 at not-found')
-      expectNoClientErrors('/not-found')
+
+      await expectNoClientErrors('/not-found')
     })
   }
 
@@ -85,7 +86,7 @@ describe('pages', () => {
     expect(html).toContain('nested/[foo]/index.vue')
     expect(html).toContain('foo: foobar')
 
-    expectNoClientErrors('/nested/foobar')
+    await expectNoClientErrors('/nested/foobar')
   })
 
   it('/nested/[foo]/user-[group].vue', async () => {
@@ -98,21 +99,21 @@ describe('pages', () => {
     expect(html).toContain('foo: foobar')
     expect(html).toContain('group: admin')
 
-    expectNoClientErrors('/nested/foobar/user-admin')
+    await expectNoClientErrors('/nested/foobar/user-admin')
   })
 
   it('/parent', async () => {
     const html = await $fetch('/parent')
     expect(html).toContain('parent/index')
 
-    expectNoClientErrors('/parent')
+    await expectNoClientErrors('/parent')
   })
 
   it('/another-parent', async () => {
     const html = await $fetch('/another-parent')
     expect(html).toContain('another-parent/index')
 
-    expectNoClientErrors('/another-parent')
+    await expectNoClientErrors('/another-parent')
   })
 })
 
