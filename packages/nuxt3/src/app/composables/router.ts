@@ -1,23 +1,17 @@
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure } from 'vue-router'
 import { sendRedirect } from 'h3'
-import { getCurrentInstance, inject } from 'vue'
 import { useNuxtApp } from '#app'
-
-export const currentRouteKey = Symbol('currentRoute')
 
 export const useRouter = () => {
   return useNuxtApp()?.$router as Router
 }
 
 export const useRoute = () => {
-  const vm = getCurrentInstance()
-  if (vm) {
-    const route = inject(currentRouteKey, null)
-    if (route) {
-      return route as RouteLocationNormalizedLoaded
-    }
-  }
   return useNuxtApp()._route as RouteLocationNormalizedLoaded
+}
+
+export const useActiveRoute = () => {
+  return useNuxtApp()._activeRoute as RouteLocationNormalizedLoaded
 }
 
 export interface RouteMiddleware {
