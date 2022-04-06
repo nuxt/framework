@@ -1,4 +1,4 @@
-import { existsSync, promises as fsp } from 'fs'
+import { existsSync } from 'fs'
 import { resolve, join } from 'pathe'
 import { createNitro, createDevServer, build, prepare, copyPublicAssets, writeTypes, scanHandlers, prerender } from 'nitropack'
 import type { NitroEventHandler, NitroDevEventHandler, NitroConfig } from 'nitropack'
