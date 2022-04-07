@@ -67,7 +67,7 @@ export default {
      * ```
     */
     cdnURL: {
-      $resolve: (val, get) => get('dev') ? null : val || null
+      $resolve: (val, get) => get('dev') ? '' : (process.env.NUXT_APP_CDN_URL ?? val) || ''
     },
     /**
      * Set default configuration for `<head>` on every page.

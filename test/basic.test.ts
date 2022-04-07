@@ -333,7 +333,7 @@ describe('dynamic paths', () => {
     process.env.NUXT_APP_BASE_URL = '/foo/'
     await startServer()
 
-    const html = await $fetch('/assets')
+    const html = await $fetch('/foo/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
       // TODO: webpack does not yet support dynamic static paths
@@ -347,7 +347,7 @@ describe('dynamic paths', () => {
     process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_cdn/'
     await startServer()
 
-    const html = await $fetch('/assets')
+    const html = await $fetch('/foo/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
       // TODO: webpack does not yet support dynamic static paths
