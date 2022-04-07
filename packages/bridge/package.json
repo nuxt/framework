@@ -30,7 +30,7 @@
     "acorn": "^8.7.0",
     "cookie-es": "^0.5.0",
     "defu": "^6.0.0",
-    "destr": "^1.1.1",
+    "destr": "^1.1.0",
     "enhanced-resolve": "^5.9.2",
     "escape-string-regexp": "^5.0.0",
     "estree-walker": "^3.0.1",
