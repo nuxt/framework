@@ -56,9 +56,6 @@ export async function initNitro (nuxt: Nuxt) {
       crawlLinks: nuxt.options.generate.crawler,
       routes: nuxt.options.generate.routes
     },
-    output: {
-      dir: nuxt.options.dev ? join(nuxt.options.buildDir, 'nitro') : resolve(nuxt.options.rootDir, '.output')
-    },
     externals: {
       inline: [
         ...(nuxt.options.dev ? [] : [nuxt.options.buildDir]),
