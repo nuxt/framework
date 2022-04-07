@@ -265,10 +265,10 @@ export async function setupNitroBridge () {
     } else {
       await prepare(nitro)
       await copyPublicAssets(nitro)
-      await build(nitro)
       if (nuxt.options._generate || nuxt.options.target === 'static') {
         await prerender(nitro)
       }
+      await build(nitro)
     }
   })
 

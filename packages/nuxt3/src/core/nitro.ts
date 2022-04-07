@@ -152,7 +152,7 @@ export async function initNitro (nuxt: Nuxt) {
     } else {
       await prepare(nitro)
       await copyPublicAssets(nitro)
-      if (nuxt.options._generate) {
+      if (nuxt.options._generate || nuxt.options.target === 'static') {
         await prerender(nitro)
       }
       await build(nitro)
