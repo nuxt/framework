@@ -1,7 +1,7 @@
 import { createRenderer } from 'vue-bundle-renderer'
 import { eventHandler, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
-import { useConfig } from '#nitro'
+import { useRuntimeConfig } from '#nitro'
 import { buildAssetsURL } from '#paths'
 // @ts-ignore
 import htmlTemplate from '#build/views/document.template.mjs'
@@ -28,7 +28,7 @@ const getSSRRenderer = cachedResult(async () => {
 const getSPARenderer = cachedResult(async () => {
   const clientManifest = await getClientManifest()
   return (ssrContext) => {
-    const config = useConfig()
+    const config = useRuntimeConfig()
     ssrContext.nuxt = {
       serverRendered: false,
       config: {
@@ -84,7 +84,7 @@ export default eventHandler(async (event) => {
   }
 
   // Initialize ssr context
-  const config = useConfig()
+  const config = useRuntimeConfig()
   const ssrContext = {
     url,
     event,

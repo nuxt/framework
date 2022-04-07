@@ -172,7 +172,7 @@ export const layoutTemplate: NuxtTemplate = {
 export const clientConfigTemplate: NuxtTemplate = {
   filename: 'nitro.client.mjs',
   getContents: () => `
-export const useConfig = () => window?.__NUXT__?.config || {}
+export const useRuntimeConfig = () => window?.__NUXT__?.config || {}
 `
 }
 
@@ -181,11 +181,11 @@ export const publicPathTemplate: NuxtTemplate = {
   getContents ({ nuxt }) {
     return [
       'import { joinURL } from \'ufo\'',
-      !nuxt.options.dev && 'import { useConfig } from \'#nitro\'',
+      !nuxt.options.dev && 'import { useRuntimeConfig } from \'#nitro\'',
 
       nuxt.options.dev
         ? `const appConfig = ${JSON.stringify(nuxt.options.app)}`
-        : 'const appConfig = useConfig().app',
+        : 'const appConfig = useRuntimeConfig().app',
 
       'export const baseURL = () => appConfig.baseURL',
       'export const buildAssetsDir = () => appConfig.buildAssetsDir',
