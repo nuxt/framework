@@ -49,15 +49,14 @@ describe('pages', () => {
     await expectNoClientErrors('/')
   })
 
-  if (!isDev()) {
-    it('render 404', async () => {
-      const html = await $fetch('/not-found')
+  it('render 404', async () => {
+    const html = await $fetch('/not-found')
 
-      // Snapshot
-      // expect(html).toMatchInlineSnapshot()
+    // Snapshot
+    // expect(html).toMatchInlineSnapshot()
 
-      expect(html).toContain('[...slug].vue')
-      expect(html).toContain('404 at not-found')
+    expect(html).toContain('[...slug].vue')
+    expect(html).toContain('404 at not-found')
 
     await expectNoClientErrors('/not-found')
   })
