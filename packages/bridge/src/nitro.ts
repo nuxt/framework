@@ -110,7 +110,10 @@ export async function setupNitroBridge () {
       '#nitro/error': resolve(distDir, 'runtime/nitro/error'),
 
       // Paths
-      '#paths': resolve(distDir, 'runtime/nitro/paths')
+      '#paths': resolve(distDir, 'runtime/nitro/paths'),
+
+      // Nuxt aliases
+      ...nuxt.options.alias
     }
   })
 

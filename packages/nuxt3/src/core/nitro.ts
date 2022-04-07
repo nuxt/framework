@@ -84,7 +84,10 @@ export async function initNitro (nuxt: Nuxt) {
       '#nitro/error': resolve(distDir, 'core/runtime/nitro/error'),
 
       // Paths
-      '#paths': resolve(distDir, 'core/runtime/nitro/paths')
+      '#paths': resolve(distDir, 'core/runtime/nitro/paths'),
+
+      // Nuxt aliases
+      ...nuxt.options.alias
     },
     replace: {
       'process.env.NUXT_NO_SSR': nuxt.options.ssr === false ? true : undefined
