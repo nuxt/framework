@@ -117,6 +117,9 @@ export async function setupNitroBridge () {
     }
   })
 
+  // Let nitro handle #build for windows path normalization
+  delete nitroConfig.alias['#build']
+
   // Extend nitro config with hook
   await nuxt.callHook('nitro:config', nitroConfig)
 
