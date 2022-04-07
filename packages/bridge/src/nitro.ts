@@ -374,7 +374,7 @@ async function resolveHandlers (nuxt: Nuxt) {
 
 async function writeDocumentTemplate (nuxt: Nuxt) {
   // Compile html template
-  const src = nuxt.options.appTemplatePath
+  const src = nuxt.options.appTemplatePath || resolve(nuxt.options.buildDir, 'views/app.template.html')
   const dst = src.replace(/.html$/, '.mjs').replace('app.template.mjs', 'document.template.mjs')
   const contents = nuxt.vfs[src] || await fsp.readFile(src, 'utf-8').catch(() => '')
   if (contents) {
