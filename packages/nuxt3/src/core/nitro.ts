@@ -35,7 +35,9 @@ export async function initNitro (nuxt: Nuxt) {
         app: undefined // avoid dupicate
       },
       // Nitro
-      NITRO_ENV_PREFIX_ALT: 'NUXT_'
+      nitro: {
+        envPrefix: 'NUXT_'
+      }
     },
     typescript: {
       generateTsConfig: false

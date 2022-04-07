@@ -65,7 +65,9 @@ export async function setupNitroBridge () {
       // Public
       public: nuxt.options.publicRuntimeConfig,
       // Nitro
-      NITRO_ENV_PREFIX_ALT: 'NUXT_'
+      nitro: {
+        envPrefix: 'NUXT_'
+      }
     },
     typescript: {
       generateTsConfig: false
