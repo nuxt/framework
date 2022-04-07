@@ -1,5 +1,4 @@
 import { resolve } from 'path'
-import { existsSync, promises as fsp } from 'fs'
 import { execa } from 'execa'
 import { getRandomPort, waitForPort } from 'get-port-please'
 import { fetch as _fetch, $fetch as _$fetch, FetchOptions } from 'ohmyfetch'
