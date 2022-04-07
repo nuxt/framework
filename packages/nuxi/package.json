@@ -19,7 +19,6 @@
   "devDependencies": {
     "@nuxt/kit": "3.0.0",
     "@nuxt/schema": "3.0.0",
-    "@nuxt/ui-templates": "npm:@nuxt/ui-templates-edge@latest",
     "@types/clear": "^0",
     "@types/mri": "^1.1.1",
     "@types/rimraf": "^3",
@@ -43,7 +42,7 @@
     "pkg-types": "^0.3.2",
     "rimraf": "^3.0.2",
     "scule": "^0.2.1",
-    "semver": "^7.3.5",
+    "semver": "^7.3.6",
     "superb": "^4.0.0",
     "tiged": "^2.12.0",
     "unbuild": "latest"

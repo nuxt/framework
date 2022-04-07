@@ -744,6 +744,14 @@ export default {
    * @version 3
    */
   publicRuntimeConfig: {
-    $resolve: (val: Record<string, any> = {}, get) => ({ ...val, app: defu(val.app, get('app')) })
+    $resolve: (val: Record<string, any> = {}, get) => ({
+      ...val,
+      app: {
+        baseURL: get('app.baseURL'),
+        buildAssetsDir: get('app.buildAssetsDir'),
+        cdnURL: get('app.cdnURL'),
+        ...val.app || {},
+      }
+    })
   }
 }
