@@ -49,6 +49,11 @@ describe('fixtures:bridge', async () => {
   })
 
   describe('dynamic paths', () => {
+    if (!process.env.NUXT_TEST_DEV) {
+      // TODO:
+      it.todo('dynamic paths in dev')
+      return
+    }
     if (process.env.TEST_WITH_WEBPACK) {
       // TODO:
       it.todo('work with webpack')

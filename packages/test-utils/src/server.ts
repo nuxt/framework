@@ -10,6 +10,15 @@ export async function startServer () {
   const port = await getRandomPort()
   ctx.url = 'http://localhost:' + port
   if (ctx.options.dev) {
+    ctx.serverProcess = execa('npx', ['nuxi', 'prepare'], {
+      cwd: ctx.nuxt.options.rootDir,
+      stdio: 'inherit',
+      env: {
+        ...process.env,
+        PORT: String(port),
+        NODE_ENV: 'development'
+      }
+    })
     ctx.serverProcess = execa('npx', ['nuxi', 'dev'], {
       cwd: ctx.nuxt.options.rootDir,
       stdio: 'inherit',

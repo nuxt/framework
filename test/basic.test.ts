@@ -303,61 +303,65 @@ describe('extends support', () => {
   })
 })
 
-if (!process.env.NUXT_TEST_DEV) {
-  describe('dynamic paths', () => {
-    it('should work with no overrides', async () => {
-      const html = await $fetch('/assets')
-      for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
-        const url = match[2]
-        expect(url.startsWith('/_nuxt/') || url === '/public.svg').toBeTruthy()
-      }
-    })
+describe('dynamic paths', () => {
+  if (!process.env.NUXT_TEST_DEV) {
+    // TODO:
+    it.todo('dynamic paths in dev')
+    return
+  }
 
-    it('adds relative paths to CSS', async () => {
-      if (process.env.TEST_WITH_WEBPACK) {
-        // Webpack injects CSS differently
-        return
-      }
+  it('should work with no overrides', async () => {
+    const html = await $fetch('/assets')
+    for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
+      const url = match[2]
+      expect(url.startsWith('/_nuxt/') || url === '/public.svg').toBeTruthy()
+    }
+  })
 
-      const html = await $fetch('/assets')
-      const urls = Array.from(html.matchAll(/(href|src)="(.*?)"/g)).map(m => m[2])
-      const cssURL = urls.find(u => /_nuxt\/entry.*\.css$/.test(u))
-      expect(cssURL).toBeDefined()
-      const css = await $fetch(cssURL)
-      const imageUrls = Array.from(css.matchAll(/url\(([^)]*)\)/g)).map(m => m[1].replace(/[-.][\w]{8}\./g, '.'))
-      expect(imageUrls).toMatchInlineSnapshot(`
+  it('adds relative paths to CSS', async () => {
+    if (process.env.TEST_WITH_WEBPACK) {
+      // Webpack injects CSS differently
+      return
+    }
+
+    const html = await $fetch('/assets')
+    const urls = Array.from(html.matchAll(/(href|src)="(.*?)"/g)).map(m => m[2])
+    const cssURL = urls.find(u => /_nuxt\/entry.*\.css$/.test(u))
+    expect(cssURL).toBeDefined()
+    const css = await $fetch(cssURL)
+    const imageUrls = Array.from(css.matchAll(/url\(([^)]*)\)/g)).map(m => m[1].replace(/[-.][\w]{8}\./g, '.'))
+    expect(imageUrls).toMatchInlineSnapshot(`
         [
           "./logo.svg",
           "../public.svg",
         ]
       `)
-    })
-
-    it('should allow setting base URL and build assets directory', async () => {
-      process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_other/'
-      process.env.NUXT_APP_BASE_URL = '/foo/'
-      await startServer()
-
-      const html = await $fetch('/foo/assets')
-      for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
-        const url = match[2]
-        // TODO: webpack does not yet support dynamic static paths
-        expect(url.startsWith('/foo/_other/') || url === '/foo/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
-      }
-    })
-
-    it('should allow setting CDN URL', async () => {
-      process.env.NUXT_APP_BASE_URL = '/foo/'
-      process.env.NUXT_APP_CDN_URL = 'https://example.com/'
-      process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_cdn/'
-      await startServer()
-
-      const html = await $fetch('/foo/assets')
-      for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
-        const url = match[2]
-        // TODO: webpack does not yet support dynamic static paths
-        expect(url.startsWith('https://example.com/_cdn/') || url === 'https://example.com/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
-      }
-    })
   })
-}
+
+  it('should allow setting base URL and build assets directory', async () => {
+    process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_other/'
+    process.env.NUXT_APP_BASE_URL = '/foo/'
+    await startServer()
+
+    const html = await $fetch('/foo/assets')
+    for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
+      const url = match[2]
+      // TODO: webpack does not yet support dynamic static paths
+      expect(url.startsWith('/foo/_other/') || url === '/foo/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
+    }
+  })
+
+  it('should allow setting CDN URL', async () => {
+    process.env.NUXT_APP_BASE_URL = '/foo/'
+    process.env.NUXT_APP_CDN_URL = 'https://example.com/'
+    process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_cdn/'
+    await startServer()
+
+    const html = await $fetch('/foo/assets')
+    for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
+      const url = match[2]
+      // TODO: webpack does not yet support dynamic static paths
+      expect(url.startsWith('https://example.com/_cdn/') || url === 'https://example.com/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
+    }
+  })
+})
