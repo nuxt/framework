@@ -2611,6 +2611,7 @@ __metadata:
     estree-walker: ^3.0.1
     externality: ^0.2.1
     fs-extra: ^10.0.1
+    get-port-please: ^2.4.3
     globby: ^13.1.1
     h3: ^0.7.1
     hash-sum: ^2.0.0
@@ -2918,7 +2919,7 @@ __metadata:
     "@nuxt/schema": ^3.0.0
     "@types/lodash.template": ^4
     "@types/semver": ^7
-    c12: ^0.2.4
+    c12: ^0.2.5
     consola: ^2.15.3
     defu: ^6.0.0
     globby: ^13.1.1
@@ -3013,7 +3014,7 @@ __metadata:
   dependencies:
     "@types/lodash.template": ^4
     "@types/semver": ^7
-    c12: ^0.2.4
+    c12: ^0.2.5
     create-require: ^1.1.1
     defu: ^6.0.0
     jiti: ^1.13.0
@@ -4841,10 +4842,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/reset@npm:0.30.11, @unocss/reset@npm:^0.30.11, @unocss/reset@npm:^0.30.8":
+"@unocss/reset@npm:0.30.11, @unocss/reset@npm:^0.30.8":
   version: 0.30.11
   resolution: "@unocss/reset@npm:0.30.11"
   checksum: 022cc6b49193485506beeb96833729aa37cc3310700a33d3507e41217d2646cbbe2d78c55559a46168ef35cbec8ebf61c99735406d3d11357f027eae509e9ec6
+  languageName: node
+  linkType: hard
+
+"@unocss/reset@npm:^0.30.12":
+  version: 0.30.12
+  resolution: "@unocss/reset@npm:0.30.12"
+  checksum: 74a019cd94d280cf535ef42d717d2b58a110ea44fa8c3f7885164cf1a204772c6d25ea236a7e0b486b78a6a89df4f9481a124d33abe5111731609522f1e8797c
   languageName: node
   linkType: hard
 
@@ -6920,6 +6928,21 @@ __metadata:
     pathe: ^0.2.0
     rc9: ^1.2.0
   checksum: e5a6ea7fa4beabf3e2cc19da42c2f00ed0d56f88d109fe5d20e6986aeaee30d3d5b1e5d56830d98fb0ef1a8c09c54aea858b46925fde401cadc53742d9349bb3
+  languageName: node
+  linkType: hard
+
+"c12@npm:^0.2.5":
+  version: 0.2.5
+  resolution: "c12@npm:0.2.5"
+  dependencies:
+    defu: ^6.0.0
+    dotenv: ^16.0.0
+    gittar: ^0.1.1
+    jiti: ^1.12.14
+    mlly: ^0.5.1
+    pathe: ^0.2.0
+    rc9: ^1.2.1
+  checksum: 3ce50b327bc85b00d14191d7626412366a08fb6906a668fdae370a49ecc12ac818700722a3689adba29ec7738cec7516d936a3d838ef24a9706e6a34641c5730
   languageName: node
   linkType: hard
 
@@ -9167,6 +9190,13 @@ __metadata:
   version: 14.3.2
   resolution: "dotenv@npm:14.3.2"
   checksum: 86c06758915d6facc35275f4a7fafc16705b6f3b44befaa8abca91367991efc8ff8db5437d3cc14778231d19fb97610fe82d60f8a53ba723cdb69fe4171439aa
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.0.0":
+  version: 16.0.0
+  resolution: "dotenv@npm:16.0.0"
+  checksum: 664cebb51f0a9a1d1b930f51f0271e72e26d62feaecc9dc03df39453dd494b4e724809ca480fb3ec3213382b1ed3f791aaeb83569a137f9329ce58efd4853dbf
   languageName: node
   linkType: hard
 
@@ -13345,6 +13375,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"listhen@npm:^0.2.8":
+  version: 0.2.8
+  resolution: "listhen@npm:0.2.8"
+  dependencies:
+    clipboardy: ^3.0.0
+    colorette: ^2.0.16
+    defu: ^6.0.0
+    get-port-please: ^2.1.0
+    http-shutdown: ^1.2.2
+    open: ^8.0.5
+    selfsigned: ^2.0.0
+  checksum: 5019ecf7a4b8bc514629f18e40a6459d958ad041101d9336a25f556ccbe244b5603463b1c4482c4d8d33220e8118fb1c0134c5b7d68674d79669b9ba78adb11a
+  languageName: node
+  linkType: hard
+
 "load-json-file@npm:^4.0.0":
   version: 4.0.0
   resolution: "load-json-file@npm:4.0.0"
@@ -15241,7 +15286,7 @@ __metadata:
     "@types/mri": ^1.1.1
     "@types/rimraf": ^3
     "@types/semver": ^7
-    c12: ^0.2.4
+    c12: ^0.2.5
     chokidar: ^3.5.3
     clear: ^0.1.0
     clipboardy: ^3.0.0
@@ -15253,7 +15298,7 @@ __metadata:
     flat: ^5.0.2
     fsevents: ~2.3.2
     jiti: ^1.13.0
-    listhen: ^0.2.6
+    listhen: ^0.2.8
     mlly: ^0.5.1
     mri: ^1.2.0
     pathe: ^0.2.0
@@ -15308,7 +15353,7 @@ __metadata:
     "@types/jsdom": ^16
     "@types/node": ^16.11.26
     "@types/object-hash": ^2
-    "@unocss/reset": ^0.30.11
+    "@unocss/reset": ^0.30.12
     case-police: ^0.5.1
     esbuild: ^0.14.34
     eslint: ^8.12.0
@@ -18239,6 +18284,17 @@ __metadata:
     destr: ^1.0.0
     flat: ^5.0.0
   checksum: b5356c61156a442bc10ac34c1c163d056c8ca2a88af584fd2d7fb42daf00e446d7522c8f4e18818d4a300e65d60eed86e9464311d247777bfb41bc49c4979ff6
+  languageName: node
+  linkType: hard
+
+"rc9@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "rc9@npm:1.2.1"
+  dependencies:
+    defu: ^6.0.0
+    destr: ^1.1.1
+    flat: ^5.0.0
+  checksum: 0fcd0fb358bb1190f4bb834bc24d03f9a8aee5fe7440ed89fd6cc798b2a691203cd089aaf32b25f5bc0570e0f607c8a25dfffbbe3797eef207633b3207e1bbe7
   languageName: node
   linkType: hard
 
