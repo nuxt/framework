@@ -11,13 +11,6 @@ export async function startServer () {
   const port = await getRandomPort()
   ctx.url = 'http://localhost:' + port
   if (ctx.options.dev) {
-    // workaround: stub `.nuxt/tsconfig.json`
-    if (!existsSync(resolve(ctx.options.rootDir, '.nuxt'))) {
-      await fsp.mkdir(resolve(ctx.options.rootDir, '.nuxt'), { recursive: true })
-    }
-    if (!existsSync(resolve(ctx.options.rootDir, '.nuxt', 'tsconfig.json'))) {
-      await fsp.writeFile(resolve(ctx.options.rootDir, '.nuxt', 'tsconfig.json'), '{}', 'utf-8')
-    }
     ctx.serverProcess = execa('npx', ['nuxi', 'dev'], {
       cwd: ctx.nuxt.options.rootDir,
       stdio: 'inherit',
@@ -27,7 +20,7 @@ export async function startServer () {
         NODE_ENV: 'development'
       }
     })
-    await waitForPort(port, { retries: 8 })
+    await waitForPort(port, { retries: 16 })
     for (let i = 0; i < 50; i++) {
       await new Promise(resolve => setTimeout(resolve, 100))
       try {
