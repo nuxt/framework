@@ -70,12 +70,12 @@ export async function initNitro (nuxt: Nuxt) {
       vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`),
 
       // Vue 3 mocks
-      'estree-walker': 'unenv/runtime/mock/proxy-cjs',
-      '@babel/parser': 'unenv/runtime/mock/proxy-cjs',
-      '@vue/compiler-core': 'unenv/runtime/mock/proxy-cjs',
-      '@vue/compiler-dom': 'unenv/runtime/mock/proxy-cjs',
-      '@vue/compiler-ssr': 'unenv/runtime/mock/proxy-cjs',
-      '@vue/devtools-api': 'unenv/runtime/mock/proxy-cjs',
+      'estree-walker': 'unenv/runtime/mock/proxy',
+      '@babel/parser': 'unenv/runtime/mock/proxy',
+      '@vue/compiler-core': 'unenv/runtime/mock/proxy',
+      '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
+      '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
+      '@vue/devtools-api': 'unenv/runtime/mock/proxy',
 
       // Renderer
       '#vue-renderer': resolve(distDir, 'core/runtime/nitro/vue3'),

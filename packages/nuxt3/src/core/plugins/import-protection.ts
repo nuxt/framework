@@ -43,7 +43,7 @@ export const ImportProtectionPlugin = createUnplugin(function (options: ImportPr
         matched = true
       }
       if (matched) {
-        return _require.resolve('unenv/runtime/mock/proxy-cjs')
+        return _require.resolve('unenv/runtime/mock/proxy')
       }
       return null
     }

@@ -95,12 +95,12 @@ export async function setupNitroBridge () {
     },
     alias: {
       // Vue 2 mocks
-      encoding: 'unenv/runtime/mock/proxy-cjs',
-      he: 'unenv/runtime/mock/proxy-cjs',
-      resolve: 'unenv/runtime/mock/proxy-cjs',
-      'source-map': 'unenv/runtime/mock/proxy-cjs',
-      'lodash.template': 'unenv/runtime/mock/proxy-cjs',
-      'serialize-javascript': 'unenv/runtime/mock/proxy-cjs',
+      encoding: 'unenv/runtime/mock/proxy',
+      he: 'unenv/runtime/mock/proxy',
+      resolve: 'unenv/runtime/mock/proxy',
+      'source-map': 'unenv/runtime/mock/proxy',
+      'lodash.template': 'unenv/runtime/mock/proxy',
+      'serialize-javascript': 'unenv/runtime/mock/proxy',
 
       // Renderer
       '#vue-renderer': resolve(distDir, 'runtime/nitro/vue2'),

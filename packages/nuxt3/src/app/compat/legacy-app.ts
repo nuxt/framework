@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'http'
 import type { App } from 'vue'
 import type { Component } from '@vue/runtime-core'
-import mockContext from 'unenv/runtime/mock/proxy-cjs'
+import mockContext from 'unenv/runtime/mock/proxy'
 import type { RouteLocationNormalized, Router } from 'vue-router'
 import { NuxtApp, useRuntimeConfig } from '../nuxt'
 
