@@ -1,8 +1,9 @@
 import { templateUtils } from '@nuxt/kit'
-import type { Nuxt, NuxtApp } from '@nuxt/schema'
-import { genArrayFromRaw, genDynamicImport, genExport, genImport, genString } from 'knitwork'
+import type { Nuxt, NuxtApp, NuxtTemplate } from '@nuxt/schema'
+import { genArrayFromRaw, genDynamicImport, genExport, genImport, genObjectFromRawEntries, genString } from 'knitwork'
 
 import { isAbsolute, join, relative } from 'pathe'
+import { resolveSchema, generateTypes } from 'untyped'
 import escapeRE from 'escape-string-regexp'
 
 export interface TemplateContext {
@@ -31,6 +32,11 @@ export const appComponentTemplate = {
 export const rootComponentTemplate = {
   filename: 'root-component.mjs',
   getContents: (ctx: TemplateContext) => genExport(ctx.app.rootComponent, ['default'])
+}
+// TODO: Use an alias
+export const errorComponentTemplate = {
+  filename: 'error-component.mjs',
+  getContents: (ctx: TemplateContext) => genExport(ctx.app.errorComponent, ['default'])
 }
 
 export const cssTemplate = {
@@ -74,7 +80,7 @@ export const appViewTemplate = {
   {{ HEAD }}
 </head>
 
-<body {{ BODY_ATTRS }}>
+<body {{ BODY_ATTRS }}>{{ BODY_PREPEND }}
   {{ APP }}
 </body>
 
@@ -128,7 +134,68 @@ export const schemaTemplate = {
       `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
       ),
       '  }',
+      generateTypes(resolveSchema(nuxt.options.publicRuntimeConfig),
+        {
+          interfaceName: 'PublicRuntimeConfig',
+          addExport: false,
+          addDefaults: false,
+          allowExtraKeys: false,
+          indentation: 2
+        }),
+      generateTypes(resolveSchema(nuxt.options.privateRuntimeConfig), {
+        interfaceName: 'PrivateRuntimeConfig',
+        addExport: false,
+        addDefaults: false,
+        indentation: 2,
+        allowExtraKeys: false,
+        defaultDescrption: 'This value is only accessible from server-side.'
+      }),
       '}'
     ].join('\n')
+  }
+}
+
+// Add layouts template
+export const layoutTemplate: NuxtTemplate = {
+  filename: 'layouts.mjs',
+  getContents ({ app }) {
+    const layoutsObject = genObjectFromRawEntries(Object.values(app.layouts).map(({ name, file }) => {
+      return [name, `defineAsyncComponent(${genDynamicImport(file)})`]
+    }))
+    return [
+      'import { defineAsyncComponent } from \'vue\'',
+          `export default ${layoutsObject}`
+    ].join('\n')
+  }
+}
+
+export const clientConfigTemplate: NuxtTemplate = {
+  filename: 'nitro.client.mjs',
+  getContents: () => `
+export const useRuntimeConfig = () => window?.__NUXT__?.config || {}
+`
+}
+
+export const publicPathTemplate: NuxtTemplate = {
+  filename: 'paths.mjs',
+  getContents ({ nuxt }) {
+    return [
+      'import { joinURL } from \'ufo\'',
+      !nuxt.options.dev && 'import { useRuntimeConfig } from \'#nitro\'',
+
+      nuxt.options.dev
+        ? `const appConfig = ${JSON.stringify(nuxt.options.app)}`
+        : 'const appConfig = useRuntimeConfig().app',
+
+      'export const baseURL = () => appConfig.baseURL',
+      'export const buildAssetsDir = () => appConfig.buildAssetsDir',
+
+      'export const buildAssetsURL = (...path) => joinURL(publicAssetsURL(), buildAssetsDir(), ...path)',
+
+      'export const publicAssetsURL = (...path) => {',
+      '  const publicBase = appConfig.cdnURL || appConfig.baseURL',
+      '  return path.length ? joinURL(publicBase, ...path) : publicBase',
+      '}'
+    ].filter(Boolean).join('\n')
   }
 }

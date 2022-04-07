@@ -1,15 +1,16 @@
-import { useNuxt, resolveModule, addTemplate, resolveAlias } from '@nuxt/kit'
+import { useNuxt, addTemplate, resolveAlias, addWebpackPlugin, addVitePlugin, addPlugin } from '@nuxt/kit'
 import { NuxtModule } from '@nuxt/schema'
 import { resolve } from 'pathe'
 import { componentsTypeTemplate } from '../../nuxt3/src/components/templates'
 import { schemaTemplate } from '../../nuxt3/src/core/templates'
 import { distDir } from './dirs'
+import { VueCompat } from './vue-compat'
 
 export function setupAppBridge (_options: any) {
   const nuxt = useNuxt()
 
   // Setup aliases
-  nuxt.options.alias['#app'] = resolve(distDir, 'runtime/index.mjs')
+  nuxt.options.alias['#app'] = resolve(distDir, 'runtime/index')
   nuxt.options.alias['nuxt3/app'] = nuxt.options.alias['#app']
   nuxt.options.alias['nuxt/app'] = nuxt.options.alias['#app']
   nuxt.options.alias['#build'] = nuxt.options.buildDir
@@ -21,9 +22,12 @@ export function setupAppBridge (_options: any) {
     })
   }
 
-  // Resolve vue2 builds
-  nuxt.options.alias.vue2 = resolveModule('vue/dist/vue.runtime.esm.js', { paths: nuxt.options.modulesDir })
-  nuxt.options.build.transpile.push('vue')
+  // Transpile core vue libraries
+  // TODO: resolve in vercel/nft
+  nuxt.options.build.transpile.push('vuex')
+
+  // Transpile libs with modern syntax
+  nuxt.options.build.transpile.push('h3')
 
   // Disable legacy fetch polyfills
   nuxt.options.fetch.server = false
@@ -56,43 +60,15 @@ export function setupAppBridge (_options: any) {
   })
 
   // Alias vue to have identical vue3 exports
-  nuxt.options.alias['vue2-bridge'] = resolve(distDir, 'runtime/vue2-bridge.mjs')
-  for (const alias of [
-    // vue
-    'vue',
-    // vue 3 helper packages
-    '@vue/shared',
-    '@vue/reactivity',
-    '@vue/runtime-core',
-    '@vue/runtime-dom',
-    // vue-demi
-    'vue-demi',
-    ...[
-      // vue 2 dist files
-      'vue/dist/vue.common.dev',
-      'vue/dist/vue.common',
-      'vue/dist/vue.common.prod',
-      'vue/dist/vue.esm.browser',
-      'vue/dist/vue.esm.browser.min',
-      'vue/dist/vue.esm',
-      'vue/dist/vue',
-      'vue/dist/vue.min',
-      'vue/dist/vue.runtime.common.dev',
-      'vue/dist/vue.runtime.common',
-      'vue/dist/vue.runtime.common.prod',
-      'vue/dist/vue.runtime.esm',
-      'vue/dist/vue.runtime',
-      'vue/dist/vue.runtime.min'
-    ].flatMap(m => [m, `${m}.js`])
-  ]) {
-    nuxt.options.alias[alias] = nuxt.options.alias['vue2-bridge']
-  }
+  const { dst: vueCompat } = addTemplate({ src: resolve(distDir, 'runtime/vue2-bridge.mjs') })
+  addWebpackPlugin(VueCompat.webpack({ src: vueCompat }))
+  addVitePlugin(VueCompat.vite({ src: vueCompat }))
 
-  // Ensure TS still recognises vue imports
-  nuxt.hook('prepare:types', ({ tsConfig }) => {
-    tsConfig.compilerOptions.paths.vue2 = ['vue']
-    delete tsConfig.compilerOptions.paths.vue
+  nuxt.hook('prepare:types', ({ tsConfig, references }) => {
+    // Type 'vue' module with composition API exports
+    references.push({ path: resolve(distDir, 'runtime/vue2-bridge.d.ts') })
 
+    // Enable Volar support with vue 2 compat mode
     // @ts-ignore
     tsConfig.vueCompilerOptions = {
       experimentalCompatMode: 2
@@ -117,5 +93,10 @@ export function setupAppBridge (_options: any) {
         include: [/node_modules/]
       })
     }
+  })
+
+  addPlugin({
+    src: resolve(distDir, 'runtime/error.plugin.server.mjs'),
+    mode: 'server'
   })
 }

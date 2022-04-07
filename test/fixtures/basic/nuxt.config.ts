@@ -3,13 +3,19 @@ import { addComponent } from '@nuxt/kit'
 
 export default defineNuxtConfig({
   buildDir: process.env.NITRO_BUILD_DIR,
-  vite: !process.env.TEST_WITH_WEBPACK,
+  builder: process.env.TEST_WITH_WEBPACK ? 'webpack' : 'vite',
+  extends: [
+    './extends/bar',
+    './extends/foo'
+  ],
   nitro: {
     output: { dir: process.env.NITRO_OUTPUT_DIR }
   },
   publicRuntimeConfig: {
-    // @ts-ignore TODO: Fix schema types
-    testConfig: '123'
+    testConfig: 123
+  },
+  privateRuntimeConfig: {
+    privateConfig: 'secret_key'
   },
   modules: ['~/modules/example'],
   hooks: {
@@ -20,5 +26,8 @@ export default defineNuxtConfig({
         filePath: '~/other-components-folder/named-export'
       })
     }
+  },
+  experimental: {
+    reactivityTransform: true
   }
 })

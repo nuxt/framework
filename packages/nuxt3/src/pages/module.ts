@@ -1,10 +1,10 @@
 import { existsSync } from 'fs'
-import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin, findPath } from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
 import { distDir } from '../dirs'
-import { resolveLayouts, resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
+import { resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
 
 export default defineNuxtModule({
@@ -12,13 +12,17 @@ export default defineNuxtModule({
     name: 'router'
   },
   setup (_options, nuxt) {
-    const pagesDir = resolve(nuxt.options.srcDir, nuxt.options.dir.pages)
-    const runtimeDir = resolve(distDir, 'pages/runtime')
+    const pagesDirs = nuxt.options._layers.map(
+      layer => resolve(layer.config.srcDir, layer.config.dir?.pages || 'pages')
+    )
 
-    // Disable module if pages dir do not exists
-    if (!existsSync(pagesDir)) {
+    // Disable module (and use universal router) if pages dir do not exists
+    if (!pagesDirs.some(dir => existsSync(dir))) {
+      addPlugin(resolve(distDir, 'app/plugins/router'))
       return
     }
+
+    const runtimeDir = resolve(distDir, 'pages/runtime')
 
     // Add $router types
     nuxt.hook('prepare:types', ({ references }) => {
@@ -41,25 +45,13 @@ export default defineNuxtModule({
 
     nuxt.hook('app:resolve', (app) => {
       // Add default layout for pages
-      if (app.mainComponent.includes('nuxt-welcome')) {
+      if (app.mainComponent.includes('@nuxt/ui-templates')) {
         app.mainComponent = resolve(runtimeDir, 'app.vue')
       }
     })
 
     nuxt.hook('autoImports:extend', (autoImports) => {
-      const composablesFile = resolve(runtimeDir, 'composables')
-      const composables = [
-        'useRouter',
-        'useRoute',
-        'defineNuxtRouteMiddleware',
-        'definePageMeta',
-        'navigateTo',
-        'abortNavigation',
-        'addRouteMiddleware'
-      ]
-      for (const composable of composables) {
-        autoImports.push({ name: composable, as: composable, from: composablesFile })
-      }
+      autoImports.push({ name: 'definePageMeta', as: 'definePageMeta', from: resolve(runtimeDir, 'composables') })
     })
 
     // Extract macros from pages
@@ -79,10 +71,34 @@ export default defineNuxtModule({
     addTemplate({
       filename: 'routes.mjs',
       async getContents () {
-        const pages = await resolvePagesRoutes(nuxt)
+        const pages = await resolvePagesRoutes()
         await nuxt.callHook('pages:extend', pages)
         const { routes, imports } = normalizeRoutes(pages)
         return [...imports, `export default ${routes}`].join('\n')
+      }
+    })
+
+    // Add router options template
+    addTemplate({
+      filename: 'router.options.mjs',
+      getContents: async () => {
+        // Check for router options
+        const routerOptionsFiles = (await Promise.all(nuxt.options._layers.map(
+          async layer => await findPath(resolve(layer.config.srcDir, 'app/router.options'))
+        ))).filter(Boolean)
+
+        const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router.options)
+          .map(([key, value]) => [key, genString(value as string)]))
+
+        return [
+          ...routerOptionsFiles.map((file, index) => genImport(file, `routerOptions${index}`)),
+          `const configRouterOptions = ${configRouterOptions}`,
+          'export default {',
+          '...configRouterOptions,',
+          // We need to reverse spreading order to respect layers priority
+          ...routerOptionsFiles.map((_, index) => `...routerOptions${index},`).reverse(),
+          '}'
+        ].join('\n')
       }
     })
 
@@ -91,6 +107,7 @@ export default defineNuxtModule({
       filename: 'middleware.mjs',
       async getContents () {
         const middleware = await resolveMiddleware()
+        await nuxt.callHook('pages:middleware:extend', middleware)
         const globalMiddleware = middleware.filter(mw => mw.global)
         const namedMiddleware = middleware.filter(mw => !mw.global)
         const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
@@ -122,12 +139,11 @@ export default defineNuxtModule({
 
     addTemplate({
       filename: 'types/layouts.d.ts',
-      getContents: async () => {
+      getContents: ({ app }) => {
         const composablesFile = resolve(runtimeDir, 'composables')
-        const layouts = await resolveLayouts(nuxt)
         return [
           'import { ComputedRef, Ref } from \'vue\'',
-          `export type LayoutKey = ${layouts.map(layout => genString(layout.name)).join(' | ') || 'string'}`,
+          `export type LayoutKey = ${Object.keys(app.layouts).map(name => genString(name)).join(' | ') || 'string'}`,
           `declare module ${genString(composablesFile)} {`,
           '  interface PageMeta {',
           '    layout?: false | LayoutKey | Ref<LayoutKey> | ComputedRef<LayoutKey>',
@@ -137,22 +153,7 @@ export default defineNuxtModule({
       }
     })
 
-    // Add layouts template
-    addTemplate({
-      filename: 'layouts.mjs',
-      async getContents () {
-        const layouts = await resolveLayouts(nuxt)
-        const layoutsObject = genObjectFromRawEntries(layouts.map(({ name, file }) => {
-          return [name, `defineAsyncComponent({ suspensible: false, loader: ${genDynamicImport(file)} })`]
-        }))
-        return [
-          'import { defineAsyncComponent } from \'vue\'',
-          `export default ${layoutsObject}`
-        ].join('\n')
-      }
-    })
-
-    // Add declarations for middleware and layout keys
+    // Add declarations for middleware keys
     nuxt.hook('prepare:types', ({ references }) => {
       references.push({ path: resolve(nuxt.options.buildDir, 'types/middleware.d.ts') })
       references.push({ path: resolve(nuxt.options.buildDir, 'types/layouts.d.ts') })

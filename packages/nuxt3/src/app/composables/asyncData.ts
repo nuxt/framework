@@ -1,5 +1,5 @@
-import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance } from 'vue'
-import type { Ref } from 'vue'
+import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch } from 'vue'
+import type { Ref, WatchSource } from 'vue'
 import { NuxtApp, useNuxtApp } from '#app'
 
 export type _Transform<Input = any, Output = any> = (input: Input) => Output
@@ -7,6 +7,8 @@ export type _Transform<Input = any, Output = any> = (input: Input) => Output
 export type PickFrom<T, K extends Array<string>> = T extends Array<any> ? T : T extends Record<string, any> ? Pick<T, K[number]> : T
 export type KeysOf<T> = Array<keyof T extends string ? keyof T : string>
 export type KeyOfRes<Transform extends _Transform> = KeysOf<ReturnType<Transform>>
+
+type MultiWatchSources = (WatchSource<unknown> | object)[];
 
 export interface AsyncDataOptions<
   DataT,
@@ -18,28 +20,35 @@ export interface AsyncDataOptions<
   default?: () => DataT
   transform?: Transform
   pick?: PickKeys
+  watch?: MultiWatchSources
+  initialCache?: boolean
 }
 
-export interface _AsyncData<DataT> {
+export interface RefreshOptions {
+  _initial?: boolean
+}
+
+export interface _AsyncData<DataT, ErrorT> {
   data: Ref<DataT>
   pending: Ref<boolean>
-  refresh: (force?: boolean) => Promise<void>
-  error?: any
+  refresh: (opts?: RefreshOptions) => Promise<void>
+  error: Ref<ErrorT>
 }
 
-export type AsyncData<Data> = _AsyncData<Data> & Promise<_AsyncData<Data>>
+export type AsyncData<Data, Error> = _AsyncData<Data, Error> & Promise<_AsyncData<Data, Error>>
 
 const getDefault = () => null
 
 export function useAsyncData<
   DataT,
+  DataE = any,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   key: string,
   handler: (ctx?: NuxtApp) => Promise<DataT>,
   options: AsyncDataOptions<DataT, Transform, PickKeys> = {}
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>> {
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE> {
   // Validate arguments
   if (typeof key !== 'string') {
     throw new TypeError('asyncData key must be a string')
@@ -55,6 +64,7 @@ export function useAsyncData<
     console.warn('[useAsyncData] `defer` has been renamed to `lazy`. Support for `defer` will be removed in RC.')
   }
   options.lazy = options.lazy ?? (options as any).defer ?? false
+  options.initialCache = options.initialCache ?? true
 
   // Setup nuxt instance payload
   const nuxt = useNuxtApp()
@@ -72,16 +82,22 @@ export function useAsyncData<
     }
   }
 
+  const useInitialCache = () => options.initialCache && nuxt.payload.data[key] !== undefined
+
   const asyncData = {
     data: ref(nuxt.payload.data[key] ?? options.default()),
-    pending: ref(true),
+    pending: ref(!useInitialCache()),
     error: ref(nuxt.payload._errors[key] ?? null)
-  } as AsyncData<DataT>
+  } as AsyncData<DataT, DataE>
 
-  asyncData.refresh = (force?: boolean) => {
+  asyncData.refresh = (opts = {}) => {
     // Avoid fetching same key more than once at a time
-    if (nuxt._asyncDataPromises[key] && !force) {
+    if (nuxt._asyncDataPromises[key]) {
       return nuxt._asyncDataPromises[key]
+    }
+    // Avoid fetching same key that is already fetched
+    if (opts._initial && useInitialCache()) {
+      return nuxt.payload.data[key]
     }
     asyncData.pending.value = true
     // TODO: Cancel previous promise
@@ -112,11 +128,13 @@ export function useAsyncData<
     return nuxt._asyncDataPromises[key]
   }
 
+  const initialFetch = () => asyncData.refresh({ _initial: true })
+
   const fetchOnServer = options.server !== false && nuxt.payload.serverRendered
 
   // Server side
   if (process.server && fetchOnServer) {
-    const promise = asyncData.refresh()
+    const promise = initialFetch()
     onServerPrefetch(() => promise)
   }
 
@@ -128,31 +146,50 @@ export function useAsyncData<
     } else if (instance && (nuxt.isHydrating || options.lazy)) {
       // 2. Initial load (server: false): fetch on mounted
       // 3. Navigation (lazy: true): fetch on mounted
-      instance._nuxtOnBeforeMountCbs.push(asyncData.refresh)
+      instance._nuxtOnBeforeMountCbs.push(initialFetch)
     } else {
       // 4. Navigation (lazy: false) - or plugin usage: await fetch
-      asyncData.refresh()
+      initialFetch()
+    }
+    if (options.watch) {
+      watch(options.watch, () => asyncData.refresh())
+    }
+    const off = nuxt.hook('app:data:refresh', (keys) => {
+      if (!keys || keys.includes(key)) {
+        return asyncData.refresh()
+      }
+    })
+    if (instance) {
+      onUnmounted(off)
     }
   }
 
   // Allow directly awaiting on asyncData
-  const asyncDataPromise = Promise.resolve(nuxt._asyncDataPromises[key]).then(() => asyncData) as AsyncData<DataT>
+  const asyncDataPromise = Promise.resolve(nuxt._asyncDataPromises[key]).then(() => asyncData) as AsyncData<DataT, DataE>
   Object.assign(asyncDataPromise, asyncData)
 
-  // @ts-ignore
-  return asyncDataPromise as AsyncData<DataT>
+  return asyncDataPromise as AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE>
 }
 
 export function useLazyAsyncData<
   DataT,
+  DataE = any,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   key: string,
   handler: (ctx?: NuxtApp) => Promise<DataT>,
   options: Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'lazy'> = {}
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>> {
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE> {
   return useAsyncData(key, handler, { ...options, lazy: true })
+}
+
+export function refreshNuxtData (keys?: string | string[]): Promise<void> {
+  if (process.server) {
+    return Promise.resolve()
+  }
+  const _keys = keys ? Array.isArray(keys) ? keys : [keys] : undefined
+  return useNuxtApp().callHook('app:data:refresh', _keys)
 }
 
 function pick (obj: Record<string, any>, keys: string[]) {

@@ -1,8 +1,7 @@
 import { promises as fsp } from 'fs'
 import { join, resolve } from 'pathe'
 import { createApp, lazyHandle } from 'h3'
-import type { PluginVisualizerOptions } from 'rollup-plugin-visualizer'
-import { createServer } from '../utils/server'
+import { listen } from 'listhen'
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
 import { clearDir } from '../utils/fs'
@@ -22,18 +21,11 @@ export default defineNuxtCommand({
 
     const { loadNuxt, buildNuxt } = await loadKit(rootDir)
 
-    const analyzeOptions: PluginVisualizerOptions = {
-      template: 'treemap',
-      projectRoot: rootDir,
-      filename: join(statsDir, '{name}.html')
-    }
-
     const nuxt = await loadNuxt({
       rootDir,
       config: {
         build: {
-          // @ts-ignore
-          analyze: analyzeOptions
+          analyze: true
         }
       }
     })
@@ -43,7 +35,6 @@ export default defineNuxtCommand({
     await buildNuxt(nuxt)
 
     const app = createApp()
-    const server = createServer(app)
 
     const serveFile = (filePath: string) => lazyHandle(async () => {
       const contents = await fsp.readFile(filePath, 'utf-8')
@@ -73,6 +64,6 @@ export default defineNuxtCommand({
   </ul>
 </html>`)
 
-    await server.listen()
+    await listen(app)
   }
 })

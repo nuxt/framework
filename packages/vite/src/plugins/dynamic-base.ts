@@ -1,10 +1,9 @@
 import { createUnplugin } from 'unplugin'
 import escapeRE from 'escape-string-regexp'
 import type { Plugin } from 'vite'
+import MagicString from 'magic-string'
 
 interface DynamicBasePluginOptions {
-  env: 'dev' | 'server' | 'client'
-  devAppConfig?: Record<string, any>
   globalPublicPath?: string
 }
 
@@ -17,6 +16,15 @@ export const RelativeAssetPlugin = function (): Plugin {
 
       for (const file in bundle) {
         const asset = bundle[file]
+        if (asset.fileName.includes('legacy') && asset.type === 'chunk' && asset.code.includes('innerHTML')) {
+          for (const delimiter of ['`', '"', "'"]) {
+            asset.code = asset.code.replace(
+              new RegExp(`(?<=innerHTML=)${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g'),
+              /* eslint-disable-next-line no-template-curly-in-string */
+              '`$1${(window?.__NUXT__?.config.app.cdnURL || window?.__NUXT__?.config.app.baseURL) + window?.__NUXT__?.config.app.buildAssetsDir.slice(1)}$2`'
+            )
+          }
+        }
         if (asset.type === 'asset' && typeof asset.source === 'string' && asset.fileName.endsWith('.css')) {
           const depth = file.split('/').length - 1
           const assetBase = depth === 0 ? '.' : Array.from({ length: depth }).map(() => '..').join('/')
@@ -25,6 +33,12 @@ export const RelativeAssetPlugin = function (): Plugin {
             .replace(assetRE, r => r.replace(/\/__NUXT_BASE__/g, assetBase))
             .replace(/\/__NUXT_BASE__/g, publicBase)
         }
+        if (asset.type === 'chunk' && typeof asset.code === 'string') {
+          asset.code = asset.code
+            .replace(/`\$\{(_?_?publicAssetsURL|buildAssetsURL|)\(\)\}([^`]*)`/g, '$1(`$2`)')
+            .replace(/"\/__NUXT_BASE__\/([^"]*)"\.replace\("\/__NUXT_BASE__", ""\)/g, '"$1"')
+            .replace(/'\/__NUXT_BASE__\/([^']*)'\.replace\("\/__NUXT_BASE__", ""\)/g, '"$1"')
+        }
       }
     }
   }
@@ -32,61 +46,60 @@ export const RelativeAssetPlugin = function (): Plugin {
 
 const VITE_ASSET_RE = /^export default ["'](__VITE_ASSET.*)["']$/
 
-export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePluginOptions) {
+export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePluginOptions = {}) {
   return {
     name: 'nuxt:dynamic-base-path',
     resolveId (id) {
       if (id.startsWith('/__NUXT_BASE__')) {
         return id.replace('/__NUXT_BASE__', '')
       }
+      if (id === '#nitro') { return '#nitro' }
       return null
     },
     enforce: 'post',
-    transform (original, id) {
-      let code = original
-      if (options.globalPublicPath && id.includes('entry.ts')) {
-        code = 'import { joinURL } from "ufo";' +
-          `${options.globalPublicPath} = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);` + code
+    transform (code, id) {
+      const s = new MagicString(code)
+
+      if (options.globalPublicPath && id.includes('paths.mjs') && code.includes('const appConfig = ')) {
+        s.append(`${options.globalPublicPath} = buildAssetsURL();\n`)
       }
 
       const assetId = code.match(VITE_ASSET_RE)
       if (assetId) {
-        code = 'import { joinURL } from "ufo";' +
-          `export default joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir, "${assetId[1]}".replace("/__NUXT_BASE__", ""));`
+        s.overwrite(0, code.length,
+          [
+            'import { buildAssetsURL } from \'#build/paths.mjs\';',
+            `export default buildAssetsURL("${assetId[1]}".replace("/__NUXT_BASE__", ""));`
+          ].join('\n')
+        )
       }
 
-      if (code.includes('NUXT_BASE') && !code.includes('const NUXT_BASE =')) {
-        code = 'const NUXT_BASE = NUXT_CONFIG.app.cdnURL || NUXT_CONFIG.app.baseURL;' + code
-
-        if (options.env === 'dev') {
-          code = `const NUXT_CONFIG = { app: ${JSON.stringify(options.devAppConfig)} };` + code
-        } else if (options.env === 'server') {
-          code = 'import NUXT_CONFIG from "#config";' + code
-        } else {
-          code = 'const NUXT_CONFIG = __NUXT__.config;' + code
-        }
+      if (!id.includes('paths.mjs') && code.includes('NUXT_BASE') && !code.includes('import { publicAssetsURL as __publicAssetsURL }')) {
+        s.prepend('import { publicAssetsURL as __publicAssetsURL } from \'#build/paths.mjs\';\n')
       }
 
       if (id === 'vite/preload-helper') {
         // Define vite base path as buildAssetsUrl (i.e. including _nuxt/)
-        code = code.replace(
-          /const base = ['"]\/__NUXT_BASE__\/['"]/,
-          'import { joinURL } from "ufo";' +
-          'const base = joinURL(NUXT_BASE, NUXT_CONFIG.app.buildAssetsDir);')
+        s.prepend('import { buildAssetsDir } from \'#build/paths.mjs\';\n')
+        s.replace(/const base = ['"]\/__NUXT_BASE__\/['"]/, 'const base = buildAssetsDir()')
       }
 
       // Sanitize imports
-      code = code.replace(/from *['"]\/__NUXT_BASE__(\/[^'"]*)['"]/g, 'from "$1"')
+      s.replace(/from *['"]\/__NUXT_BASE__(\/[^'"]*)['"]/g, 'from "$1"')
 
       // Dynamically compute string URLs featuring baseURL
-      for (const delimiter of ['`', '"', "'"]) {
-        const delimiterRE = new RegExp(`${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g')
+      for (const delimiter of ['`', "'", '"']) {
+        const delimiterRE = new RegExp(`(?<!(const base = |from *))${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g')
         /* eslint-disable-next-line no-template-curly-in-string */
-        code = code.replace(delimiterRE, '`$1${NUXT_BASE}$2`')
+        s.replace(delimiterRE, r => '`' + r.replace(/\/__NUXT_BASE__\//g, '${__publicAssetsURL()}').slice(1, -1) + '`')
       }
 
-      if (code === original) { return }
-      return code
+      if (s.hasChanged()) {
+        return {
+          code: s.toString(),
+          map: s.generateMap({ source: id, includeContent: true })
+        }
+      }
     }
   }
 })

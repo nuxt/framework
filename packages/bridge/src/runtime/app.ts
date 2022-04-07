@@ -9,8 +9,6 @@ export const isVue3 = false
 
 export const defineNuxtComponent = defineComponent
 
-export interface RuntimeNuxtHooks { }
-
 export interface VueAppCompat {
   component: Vue['component'],
   config: {
@@ -24,6 +22,12 @@ export interface VueAppCompat {
   unmount: Vue['unmount'],
   use: Vue['use']
   version: string
+}
+
+export interface RuntimeNuxtHooks {
+  'vue:setup': () => void
+  'app:mounted': (app: VueAppCompat) => void | Promise<void>
+  'meta:register': (metaRenderers: any[]) => void | Promise<void>
 }
 
 export interface NuxtAppCompat {
@@ -74,8 +78,20 @@ export function callWithNuxt<T extends (...args: any[]) => any> (nuxt: NuxtAppCo
   return p
 }
 
-export function defineNuxtPlugin (plugin: (nuxtApp: NuxtAppCompat) => void): (ctx: Context) => void {
-  return ctx => callWithNuxt(ctx.$_nuxtApp, plugin, [ctx.$_nuxtApp])
+interface Plugin {
+  (nuxt: NuxtAppCompat): Promise<void> | Promise<{ provide?: Record<string, any> }> | void | { provide?: Record<string, any> }
+}
+
+export function defineNuxtPlugin (plugin: Plugin): (ctx: Context, inject: (id: string, value: any) => void) => void {
+  return async (ctx, inject) => {
+    const result = await callWithNuxt(ctx.$_nuxtApp, plugin, [ctx.$_nuxtApp])
+    if (result && result.provide) {
+      for (const key in result.provide) {
+        inject(key, result.provide[key])
+      }
+    }
+    return result
+  }
 }
 
 export const useNuxtApp = (): NuxtAppCompat => {

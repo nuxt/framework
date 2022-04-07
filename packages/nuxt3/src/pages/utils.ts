@@ -1,6 +1,6 @@
 import { basename, extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
-import type { Nuxt, NuxtMiddleware, NuxtPage } from '@nuxt/schema'
+import { NuxtMiddleware, NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
 import { kebabCase, pascalCase } from 'scule'
 import { genImport, genDynamicImport, genArrayFromRaw } from 'knitwork'
@@ -24,14 +24,23 @@ interface SegmentToken {
   value: string
 }
 
-export async function resolvePagesRoutes (nuxt: Nuxt) {
-  const pagesDir = resolve(nuxt.options.srcDir, nuxt.options.dir.pages)
-  const files = await resolveFiles(pagesDir, `**/*{${nuxt.options.extensions.join(',')}}`)
+export async function resolvePagesRoutes (): Promise<NuxtPage[]> {
+  const nuxt = useNuxt()
 
-  // Sort to make sure parent are listed first
-  files.sort()
+  const pagesDirs = nuxt.options._layers.map(
+    layer => resolve(layer.config.srcDir, layer.config.dir?.pages || 'pages')
+  )
 
-  return generateRoutesFromFiles(files, pagesDir)
+  const allRoutes = (await Promise.all(
+    pagesDirs.map(async (dir) => {
+      const files = await resolveFiles(dir, `**/*{${nuxt.options.extensions.join(',')}}`)
+      // Sort to make sure parent are listed first
+      files.sort()
+      return generateRoutesFromFiles(files, dir)
+    })
+  )).flat()
+
+  return uniqueBy(allRoutes, 'path')
 }
 
 export function generateRoutesFromFiles (files: string[], pagesDir: string): NuxtPage[] {
@@ -217,15 +226,6 @@ function prepareRoutes (routes: NuxtPage[], parent?: NuxtPage) {
   return routes
 }
 
-export async function resolveLayouts (nuxt: Nuxt) {
-  const layoutDir = resolve(nuxt.options.srcDir, nuxt.options.dir.layouts)
-  const files = await resolveFiles(layoutDir, `*{${nuxt.options.extensions.join(',')}}`)
-
-  const layouts = files.map(file => ({ name: getNameFromPath(file), file }))
-  await nuxt.callHook('pages:layouts:extend', layouts)
-  return layouts
-}
-
 export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = new Set()): { imports: Set<string>, routes: string } {
   return {
     imports: metaImports,
@@ -236,7 +236,7 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
       return {
         ...Object.fromEntries(Object.entries(route).map(([key, value]) => [key, JSON.stringify(value)])),
         children: route.children ? normalizeRoutes(route.children, metaImports).routes : [],
-        meta: route.meta ? JSON.stringify(route.meta) : metaImportName,
+        meta: route.meta ? `{...(${metaImportName} || {}), ...${JSON.stringify(route.meta)}}` : metaImportName,
         component: genDynamicImport(file)
       }
     }))
@@ -245,11 +245,19 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
 
 export async function resolveMiddleware (): Promise<NuxtMiddleware[]> {
   const nuxt = useNuxt()
-  const middlewareDir = resolve(nuxt.options.srcDir, nuxt.options.dir.middleware)
-  const files = await resolveFiles(middlewareDir, `*{${nuxt.options.extensions.join(',')}}`)
-  const middleware = files.map(path => ({ name: getNameFromPath(path), path, global: hasSuffix(path, '.global') }))
-  await nuxt.callHook('pages:middleware:extend', middleware)
-  return middleware
+
+  const middlewareDirs = nuxt.options._layers.map(
+    layer => resolve(layer.config.srcDir, layer.config.dir?.middleware || 'middleware')
+  )
+
+  const allMiddlewares = (await Promise.all(
+    middlewareDirs.map(async (dir) => {
+      const files = await resolveFiles(dir, `*{${nuxt.options.extensions.join(',')}}`)
+      return files.map(path => ({ name: getNameFromPath(path), path, global: hasSuffix(path, '.global') }))
+    })
+  )).flat()
+
+  return uniqueBy(allMiddlewares, 'name')
 }
 
 function getNameFromPath (path: string) {
@@ -262,4 +270,15 @@ function hasSuffix (path: string, suffix: string) {
 
 export function getImportName (name: string) {
   return pascalCase(name).replace(/[^\w]/g, '')
+}
+
+function uniqueBy <T, K extends keyof T> (arr: T[], key: K) {
+  const res: T[] = []
+  const seen = new Set<T[K]>()
+  for (const item of arr) {
+    if (seen.has(item[key])) { continue }
+    seen.add(item[key])
+    res.push(item)
+  }
+  return res
 }

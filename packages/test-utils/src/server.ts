@@ -1,48 +1,47 @@
 import { resolve } from 'path'
-import { createServer, AddressInfo } from 'net'
 import { execa } from 'execa'
-import { getPort } from 'get-port-please'
+import { getRandomPort, waitForPort } from 'get-port-please'
 import { fetch as _fetch, $fetch as _$fetch, FetchOptions } from 'ohmyfetch'
 import { useTestContext } from './context'
 
-// TODO: use the export from `get-port-please`
-function checkPort (port: number, host: string): Promise<number|false> {
-  return new Promise((resolve) => {
-    const server = createServer()
-    server.unref()
-    server.on('error', () => { resolve(false) })
-    server.listen(port, host, () => {
-      const { port } = server.address() as AddressInfo
-      server.close(() => { resolve(port) })
+export async function startServer () {
+  const ctx = useTestContext()
+  await stopServer()
+  const port = await getRandomPort()
+  ctx.url = 'http://localhost:' + port
+  if (ctx.options.dev) {
+    ctx.listener = await ctx.nuxt.server.listen(port)
+    await waitForPort(port, { retries: 8 })
+    for (let i = 0; i < 50; i++) {
+      await new Promise(resolve => setTimeout(resolve, 100))
+      const res = await $fetch('/')
+      if (!res.includes('__NUXT_LOADING__')) {
+        return
+      }
+    }
+    throw new Error('Timeout waiting for dev server!')
+  } else {
+    ctx.serverProcess = execa('node', [
+      resolve(ctx.nuxt.options.nitro.output.dir, 'server/index.mjs')
+    ], {
+      stdio: 'inherit',
+      env: {
+        ...process.env,
+        PORT: String(port),
+        NODE_ENV: 'test'
+      }
     })
-  })
+    await waitForPort(port, { retries: 8 })
+  }
 }
 
-export async function listen () {
+export async function stopServer () {
   const ctx = useTestContext()
-  const host = process.env.HOST || '0.0.0.0'
-  const port = await getPort({ host, random: true })
-
-  ctx.url = 'http://localhost:' + port
-  execa('node', [
-    // @ts-ignore
-    resolve(ctx.nuxt.options.nitro.output.dir, 'server/index.mjs')
-  ], {
-    env: {
-      PORT: String(port),
-      NODE_ENV: 'test'
-    }
-  })
-
-  const TRIES = 50
-  const DELAY = 100
-
-  for (let i = TRIES; i; i--) {
-    await new Promise(resolve => setTimeout(resolve, DELAY))
-    // wait until port is in used
-    if (await checkPort(port, host) === false) {
-      return
-    }
+  if (ctx.serverProcess) {
+    await ctx.serverProcess.kill()
+  }
+  if (ctx.listener) {
+    await ctx.listener.close()
   }
 }
 

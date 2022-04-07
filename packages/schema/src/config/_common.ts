@@ -1,5 +1,5 @@
 import { join, resolve } from 'pathe'
-import { isDevelopment, isTest } from 'std-env'
+import { isDevelopment } from 'std-env'
 import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
@@ -271,13 +271,13 @@ export default {
    * ]
    * ```
    *
-   * @note Using `buildModules` helps to make production startup faster and also significantly
+   * @note In Nuxt 2, using `buildModules` helps to make production startup faster and also significantly
    * decreases the size of `node_modules` in production deployments. Please refer to each
    * module's documentation to see if it is recommended to use `modules` or `buildModules`.
    *
    * @type {(typeof import('../src/types/module').NuxtModule | string | [typeof import('../src/types/module').NuxtModule | string, Record<string, any>])[]}
    * @version 2
-   * @version 3
+   * @deprecated This is no longer needed in Nuxt 3 and Nuxt Bridge; all modules should be added to `modules` instead.
    */
   buildModules: [],
 
@@ -328,12 +328,14 @@ export default {
    * Server middleware are connect/express/h3-shaped functions that handle server-side requests. They
    * run on the server and before the Vue renderer.
    *
-   * By adding entries to `serverMiddleware` you can register additional routes or modify `req`/`res`
-   * objects without the need for an external server.
+   * By adding entries to `serverMiddleware` you can register additional routes without the need
+   * for an external server.
    *
    * You can pass a string, which can be the name of a node dependency or a path to a file. You
    * can also pass an object with `path` and `handler` keys. (`handler` can be a path or a
    * function.)
+   *
+   * @note If you pass a function directly, it will only run in development mode.
    *
    * @example
    * ```js
@@ -342,7 +344,7 @@ export default {
    *   'redirect-ssl',
    *   // Will register file from project server-middleware directory to handle /server-middleware/* requires
    *   { path: '/server-middleware', handler: '~/server-middleware/index.js' },
-   *   // We can create custom instances too
+   *   // We can create custom instances too, but only in development mode, they are ignored for the production bundle.
    *   { path: '/static2', handler: serveStatic(__dirname + '/static2') }
    * ]
    * ```
@@ -368,13 +370,14 @@ export default {
    * Alternatively, it can export a connect/express/h3-type app instance.
    * @example
    * ```js
-   * const bodyParser = require('body-parser')
-   * const app = require('express')()
+   * import bodyParser from 'body-parser'
+   * import createApp from 'express'
+   * const app = createApp()
    * app.use(bodyParser.json())
    * app.all('/getJSON', (req, res) => {
    *   res.json({ data: 'data' })
    * })
-   * module.exports = app
+   * export default app
    * ```
    *
    * Alternatively, instead of passing an array of `serverMiddleware`, you can pass an object
@@ -553,7 +556,7 @@ export default {
       '~': get('srcDir'),
       '@': get('srcDir'),
       [get('dir.assets')]: join(get('srcDir'), get('dir.assets')),
-      [get('dir.static')]: join(get('srcDir', get('dir.static'))),
+      [get('dir.public')]: join(get('srcDir'), get('dir.public')),
       ...val
     })
   },
@@ -570,6 +573,7 @@ export default {
    * }
    * ```
    * @version 2
+   * @version 3
    */
   ignoreOptions: undefined,
 
@@ -577,6 +581,7 @@ export default {
    * Any file in `pages/`, `layouts/`, `middleware/` or `store/` will be ignored during
    * building if its filename starts with the prefix specified by `ignorePrefix`.
    * @version 2
+   * @version 3
    */
   ignorePrefix: '-',
 
@@ -584,11 +589,13 @@ export default {
    * More customizable than `ignorePrefix`: all files matching glob patterns specified
    * inside the `ignore` array will be ignored in building.
    * @version 2
+   * @version 3
    */
   ignore: {
     $resolve: (val, get) => [
-      '**/*.test.*',
-      '**/*.spec.*',
+      '**/*.stories.{js,ts,jsx,tsx}', // ignore storybook files
+      '**/*.{spec,test}.{js,ts,jsx,tsx}', // ignore tests
+      '.output',
       get('ignorePrefix') && `**/${get('ignorePrefix')}*.*`
     ].concat(val).filter(Boolean)
   },
@@ -737,6 +744,14 @@ export default {
    * @version 3
    */
   publicRuntimeConfig: {
-    $resolve: (val: Record<string, any> = {}, get) => ({ ...val, app: defu(val.app, get('app')) })
+    $resolve: (val: Record<string, any> = {}, get) => ({
+      ...val,
+      app: {
+        baseURL: get('app.baseURL'),
+        buildAssetsDir: get('app.buildAssetsDir'),
+        cdnURL: get('app.cdnURL'),
+        ...val.app || {},
+      }
+    })
   }
 }

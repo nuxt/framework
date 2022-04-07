@@ -46,7 +46,7 @@ function serverStandalone (ctx: WebpackConfigContext) {
     '#',
     ...ctx.options.build.transpile
   ]
-  const external = ['#config']
+  const external = ['#nitro']
 
   if (!Array.isArray(ctx.config.externals)) { return }
   ctx.config.externals.push(({ request }, cb) => {
@@ -71,10 +71,10 @@ function serverPlugins (ctx: WebpackConfigContext) {
   const { config, options } = ctx
 
   // Server polyfills
-  if (options.build.serverURLPolyfill) {
+  if (options.webpack.serverURLPolyfill) {
     config.plugins.push(new webpack.ProvidePlugin({
-      URL: [options.build.serverURLPolyfill, 'URL'],
-      URLSearchParams: [options.build.serverURLPolyfill, 'URLSearchParams']
+      URL: [options.webpack.serverURLPolyfill, 'URL'],
+      URLSearchParams: [options.webpack.serverURLPolyfill, 'URLSearchParams']
     }))
   }
 }

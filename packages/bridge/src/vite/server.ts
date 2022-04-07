@@ -3,7 +3,7 @@ import * as vite from 'vite'
 import { createVuePlugin } from 'vite-plugin-vue2'
 import { logger } from '@nuxt/kit'
 import fse from 'fs-extra'
-import pDebounce from 'p-debounce'
+import { debounce } from 'perfect-debounce'
 import { bundleRequest } from '../../../vite/src/dev-bundler'
 import { isCSS } from '../../../vite/src/utils'
 import { wpfs } from './utils/wpfs'
@@ -45,7 +45,11 @@ export async function buildServer (ctx: ViteBuildContext) {
         'axios'
       ],
       noExternal: [
+        // TODO: Use externality for production (rollup) build
+        /\/esm\/.*\.js$/,
         /\.(es|esm|esm-browser|esm-bundler).js$/,
+        '#app',
+        /@nuxt\/nitro\/(dist|src)/,
         ...ctx.nuxt.options.build.transpile.filter(i => typeof i === 'string')
       ]
     },
@@ -54,11 +58,13 @@ export async function buildServer (ctx: ViteBuildContext) {
       ssr: ctx.nuxt.options.ssr ?? true,
       ssrManifest: true,
       rollupOptions: {
+        external: ['#nitro'],
         input: resolve(ctx.nuxt.options.buildDir, 'server.js'),
         output: {
-          format: 'esm',
           entryFileNames: 'server.mjs',
-          chunkFileNames: 'chunks/[name].mjs'
+          chunkFileNames: 'chunks/[name].mjs',
+          preferConst: true,
+          format: 'module'
         },
         onwarn (warning, rollupWarn) {
           if (!['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
@@ -66,6 +72,10 @@ export async function buildServer (ctx: ViteBuildContext) {
           }
         }
       }
+    },
+    server: {
+      // https://github.com/vitest-dev/vitest/issues/229#issuecomment-1002685027
+      preTransformRequests: false
     },
     plugins: [
       jsxPlugin(),
@@ -118,7 +128,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     consola.info(`Server built in ${time}ms`)
     await onBuild()
   }
-  const doBuild = pDebounce(_doBuild, 300)
+  const doBuild = debounce(_doBuild)
 
   // Initial build
   await _doBuild()

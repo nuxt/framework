@@ -9,7 +9,10 @@ export default defineBuildConfig({
       name: 'config',
       builder: 'untyped',
       defaults: {
-        rootDir: '/<rootDir>/'
+        rootDir: '/<rootDir>/',
+        vite: {
+          base: '/'
+        }
       }
     },
     'src/index'
@@ -17,14 +20,23 @@ export default defineBuildConfig({
   externals: [
     // Type imports
     'vue-meta',
+    'vue-router',
     'vue',
     'hookable',
+    'nitropack',
     'webpack',
     'pkg-types',
     'webpack-bundle-analyzer',
     'rollup-plugin-visualizer',
     'vite',
+    'mini-css-extract-plugin',
+    'terser-webpack-plugin',
+    'css-minimizer-webpack-plugin',
+    'webpack-dev-middleware',
+    'webpack-hot-middleware',
+    'postcss',
     'consola',
+    'ignore',
     // Implicit
     '@vue/compiler-core',
     '@vue/shared'

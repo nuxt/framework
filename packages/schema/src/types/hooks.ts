@@ -4,10 +4,12 @@ import type { Compiler, Configuration, Stats } from 'webpack'
 import type { TSConfig } from 'pkg-types'
 import type { ModuleContainer } from './module'
 import type { NuxtTemplate, Nuxt, NuxtApp } from './nuxt'
-import type { AutoImport, AutoImportSource } from './imports'
+import type { Preset as ImportPreset, Import } from 'unimport'
 import type { NuxtConfig, NuxtOptions } from './config'
+import type { Nitro, NitroConfig } from 'nitropack'
 import type { Component, ComponentsDir, ScanDir, ComponentsOptions } from './components'
 import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
+
 
 type HookResult = Promise<void> | void
 
@@ -52,6 +54,13 @@ export type NuxtLayout = {
   file: string
 }
 
+export interface ImportPresetWithDeprecation extends ImportPreset {
+  /**
+   * @deprecated renamed to `imports`
+   */
+  names?: string[]
+}
+
 export interface NuxtHooks {
   // Kit
   'kit:compatibility': (compatibility: NuxtCompatibility, issues: NuxtCompatibilityIssues) => HookResult
@@ -63,11 +72,10 @@ export interface NuxtHooks {
   'builder:generateApp': () => HookResult
   'pages:extend': (pages: NuxtPage[]) => HookResult
   'pages:middleware:extend': (middleware: NuxtMiddleware[]) => HookResult
-  'pages:layouts:extend': (layouts: NuxtLayout[]) => HookResult
 
   // Auto imports
-  'autoImports:sources': (autoImportSources: AutoImportSource[]) => HookResult
-  'autoImports:extend': (autoImports: AutoImport[]) => HookResult
+  'autoImports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
+  'autoImports:extend': (imports: Import[]) => HookResult
   'autoImports:dirs': (dirs: string[]) => HookResult
 
   // Components
@@ -90,9 +98,10 @@ export interface NuxtHooks {
   // 'watch:fileChanged': (builder: Builder, fileName: string) => HookResult
   'builder:watch': (event: WatchEvent, path: string) => HookResult
 
-  // @nuxt/nitro
+  // nitropack
+  'nitro:config': (nitroConfig: NitroConfig) => HookResult
+  'nitro:init': (nitro: Nitro) => HookResult
   'nitro:document': (template: { src: string, contents: string }) => HookResult
-  'nitro:context': (context: any) => HookResult
   'nitro:generate': (context: any) => HookResult
 
   // @nuxt/cli
@@ -136,6 +145,8 @@ export interface NuxtHooks {
 
   // @nuxt/webpack
   'webpack:config': (webpackConfigs: Configuration[]) => HookResult
+  'webpack:devMiddleware': (middleware: (req: IncomingMessage, res: ServerResponse, next: (err?: any) => any) => any) => HookResult
+  'webpack:hotMiddleware': (middleware: (req: IncomingMessage, res: ServerResponse, next: (err?: any) => any) => any) => HookResult
   'build:compile': (options: { name: string, compiler: Compiler }) => HookResult
   'build:compiled': (options: { name: string, compiler: Compiler, stats: Stats }) => HookResult
   'build:resources': (mfs?: Compiler['outputFileSystem']) => HookResult
@@ -175,7 +186,7 @@ export interface NuxtHooks {
   // vite
   'vite:extend': (viteBuildContext: { nuxt: Nuxt, config: any }) => HookResult
   'vite:extendConfig': (viteInlineConfig: any, env: { isClient: boolean, isServer: boolean }) => HookResult
-  'vite:serverCreated': (viteServer: any) => HookResult
+  'vite:serverCreated': (viteServer: any, env: { isClient: boolean, isServer: boolean }) => HookResult
 }
 
 export type NuxtHookName = keyof NuxtHooks

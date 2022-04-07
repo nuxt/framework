@@ -4,7 +4,7 @@ import { applyDefaults } from 'untyped'
 import { dirname } from 'pathe'
 import type { Nuxt, NuxtTemplate, NuxtModule, ModuleOptions, ModuleDefinition } from '@nuxt/schema'
 import { logger } from '../logger'
-import { useNuxt, nuxtCtx } from '../context'
+import { useNuxt, nuxtCtx, tryUseNuxt } from '../context'
 import { isNuxt2, checkNuxtCompatibility } from '../compatibility'
 import { templateUtils, compileTemplate } from '../internal/template'
 
@@ -32,7 +32,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
   // Resolves module options from inline options, [configKey] in nuxt.config, defaults and schema
   function getOptions (inlineOptions?: OptionsT, nuxt: Nuxt = useNuxt()) {
     const configKey = definition.meta.configKey || definition.meta.name
-    const _defaults = typeof definition.defaults === 'function' ? definition.defaults(nuxt) : definition.defaults
+    const _defaults = definition.defaults instanceof Function ? definition.defaults(nuxt) : definition.defaults
     let _options = defu(inlineOptions, nuxt.options[configKey], _defaults) as OptionsT
     if (definition.schema) {
       _options = applyDefaults(definition.schema, _options) as OptionsT
@@ -43,7 +43,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
   // Module format is always a simple function
   async function normalizedModule (inlineOptions: OptionsT, nuxt: Nuxt) {
     if (!nuxt) {
-      nuxt = useNuxt() || this.nuxt /* invoked by nuxt 2 */
+      nuxt = tryUseNuxt() || this.nuxt /* invoked by nuxt 2 */
     }
 
     // Avoid duplicate installs

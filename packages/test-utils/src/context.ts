@@ -10,9 +10,10 @@ export function createTestContext (options: Partial<TestOptions>): TestContext {
     fixture: 'fixture',
     configFile: 'nuxt.config',
     setupTimeout: 60000,
+    dev: !!JSON.parse(process.env.NUXT_TEST_DEV || 'false'),
     logLevel: 1,
-    server: options.browser,
-    build: options.browser || options.server,
+    server: true,
+    build: (options.browser !== false) || (options.server !== false),
     nuxtConfig: {},
     // TODO: auto detect based on process.env
     runner: <TestRunner>'vitest',
@@ -34,4 +35,9 @@ export function useTestContext (): TestContext {
 export function setTestContext (context: TestContext): TestContext {
   currentContext = context
   return currentContext
+}
+
+export function isDev () {
+  const ctx = useTestContext()
+  return ctx.options.dev
 }

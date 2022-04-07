@@ -11,7 +11,8 @@ import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
-import { DynamicBasePlugin, RelativeAssetPlugin } from './plugins/dynamic-base'
+import { RelativeAssetPlugin } from './plugins/dynamic-base'
+import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
@@ -22,7 +23,8 @@ export async function buildClient (ctx: ViteBuildContext) {
     },
     resolve: {
       alias: {
-        '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/client')
+        '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/client'),
+        '#nitro': resolve(ctx.nuxt.options.buildDir, 'nitro.client.mjs')
       }
     },
     build: {
@@ -39,12 +41,12 @@ export async function buildClient (ctx: ViteBuildContext) {
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'client'),
       vuePlugin(ctx.config.vue),
       viteJsxPlugin(),
-      DynamicBasePlugin.vite({ env: 'client', devAppConfig: ctx.nuxt.options.app }),
       RelativeAssetPlugin(),
       devStyleSSRPlugin({
         rootDir: ctx.nuxt.options.rootDir,
         buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
-      })
+      }),
+      viteNodePlugin(ctx)
     ],
     server: {
       middlewareMode: true
@@ -59,7 +61,8 @@ export async function buildClient (ctx: ViteBuildContext) {
   await ctx.nuxt.callHook('vite:extendConfig', clientConfig, { isClient: true, isServer: false })
 
   const viteServer = await vite.createServer(clientConfig)
-  await ctx.nuxt.callHook('vite:serverCreated', viteServer)
+  ctx.clientServer = viteServer
+  await ctx.nuxt.callHook('vite:serverCreated', viteServer, { isClient: true, isServer: false })
 
   const viteMiddleware: Connect.NextHandleFunction = (req, res, next) => {
     // Workaround: vite devmiddleware modifies req.url

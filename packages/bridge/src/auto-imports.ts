@@ -1,43 +1,35 @@
 import { installModule, useNuxt } from '@nuxt/kit'
 import * as CompositionApi from '@vue/composition-api'
+import type { Preset } from 'unimport'
 import autoImports from '../../nuxt3/src/auto-imports/module'
+import { vuePreset } from '../../nuxt3/src/auto-imports/presets'
 
-const UnsupportedImports = new Set(['useAsyncData', 'useFetch'])
+const UnsupportedImports = new Set(['useAsyncData', 'useFetch', 'useError', 'throwError', 'clearError', 'defineNuxtLink', 'useActiveRoute'])
 const CapiHelpers = new Set(Object.keys(CompositionApi))
-
-const ImportRewrites = {
-  vue: '@vue/composition-api'
-}
 
 export function setupAutoImports () {
   const nuxt = useNuxt()
 
-  nuxt.hook('autoImports:extend', (autoImports) => {
-    for (const autoImport of autoImports) {
-      // Rewrite imports
-      if (autoImport.from in ImportRewrites) {
-        autoImport.from = ImportRewrites[autoImport.from]
-      }
-      // Disable unsupported imports
-      if (UnsupportedImports.has(autoImport.name)) {
-        autoImport.disabled = true
-      }
-      if (autoImport.from === '@vue/composition-api' && !CapiHelpers.has(autoImport.name)) {
-        autoImport.disabled = true
+  const bridgePresets: Preset[] = [{
+    from: '@vue/composition-api',
+    imports: vuePreset.imports.filter(i => CapiHelpers.has(i as string))
+  }]
+
+  nuxt.hook('autoImports:sources', (presets) => {
+    const vuePreset = presets.find(p => p.from === 'vue')
+    if (vuePreset) { vuePreset.disabled = true }
+
+    const appPreset = presets.find(p => p.from === '#app')
+    if (!appPreset) { return }
+
+    for (const [index, i] of Object.entries(appPreset.imports).reverse()) {
+      if (typeof i === 'string' && UnsupportedImports.has(i)) {
+        appPreset.imports.splice(Number(index), 1)
       }
     }
 
-    // Add auto-imports that are added by ad-hoc modules in nuxt 3
-    autoImports.push({ name: 'useRouter', as: 'useRouter', from: '#app' })
-    autoImports.push({ name: 'useRoute', as: 'useRoute', from: '#app' })
-    autoImports.push({ name: 'addRouteMiddleware', as: 'addRouteMiddleware', from: '#app' })
-    autoImports.push({ name: 'navigateTo', as: 'navigateTo', from: '#app' })
-    autoImports.push({ name: 'abortNavigation', as: 'abortNavigation', from: '#app' })
-    autoImports.push({ name: 'defineNuxtRouteMiddleware', as: 'defineNuxtRouteMiddleware', from: '#app' })
-
-    // Add bridge-only auto-imports
-    autoImports.push({ name: 'useNuxt2Meta', as: 'useNuxt2Meta', from: '#app' })
+    appPreset.imports.push('useNuxt2Meta')
   })
 
-  nuxt.hook('modules:done', () => installModule(autoImports))
+  nuxt.hook('modules:done', () => installModule(autoImports, { presets: bridgePresets }))
 }

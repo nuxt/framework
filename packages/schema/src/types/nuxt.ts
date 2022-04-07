@@ -1,10 +1,12 @@
 import type { Hookable } from 'hookable'
-import type { NuxtHooks } from './hooks'
+import type { Ignore } from 'ignore'
+import type { NuxtHooks, NuxtLayout } from './hooks'
 import type { NuxtOptions } from './config'
 
 export interface Nuxt {
   // Private fields
   _version: string
+  _ignore?: Ignore
 
   /** The resolved Nuxt configuration. */
   options: NuxtOptions
@@ -51,11 +53,13 @@ export interface NuxtPlugin {
 export interface NuxtApp {
   mainComponent?: string
   rootComponent?: string
+  errorComponent?: string
   dir: string
   extensions: string[]
   plugins: NuxtPlugin[]
+  layouts: Record<string, NuxtLayout>
   templates: NuxtTemplate[]
 }
 
-type _TemplatePlugin = NuxtPlugin & NuxtTemplate
+type _TemplatePlugin = Omit<NuxtPlugin, 'src'> & NuxtTemplate
 export interface NuxtPluginTemplate extends _TemplatePlugin { }

@@ -1,18 +1,19 @@
-import { join, resolve, normalize } from 'pathe'
+import { resolve, join, normalize } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import { logger, resolveModule } from '@nuxt/kit'
 import fse from 'fs-extra'
-import pDebounce from 'p-debounce'
+import { debounce } from 'perfect-debounce'
 import { withoutTrailingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
-import { DynamicBasePlugin } from './plugins/dynamic-base'
+import { prepareDevServerEntry } from './vite-node'
+import { isCSS, isDirectory, readDirRecursively } from './utils'
 import { bundleRequest } from './dev-bundler'
 import { writeManifest } from './manifest'
-import { isCSS, isDirectory, readDirRecursively } from './utils'
+import { RelativeAssetPlugin } from './plugins/dynamic-base'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
@@ -46,21 +47,20 @@ export async function buildServer (ctx: ViteBuildContext) {
         /\.(es|esm|esm-browser|esm-bundler).js$/,
         '/__vue-jsx',
         '#app',
-        'nuxt3',
-        /@nuxt\/nitro\/dist/,
-        /@nuxt\/nitro\/src/
+        /nuxt3\/(dist|src|app)/,
+        /@nuxt\/nitro\/(dist|src)/
       ]
     },
     build: {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
+        external: ['#nitro'],
         output: {
           entryFileNames: 'server.mjs',
           preferConst: true,
           format: 'module'
         },
-        external: ['#config'],
         onwarn (warning, rollupWarn) {
           if (!['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
             rollupWarn(warning)
@@ -74,8 +74,8 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
+      RelativeAssetPlugin(),
       vuePlugin(ctx.config.vue),
-      DynamicBasePlugin.vite({ env: ctx.nuxt.options.dev ? 'dev' : 'server', devAppConfig: ctx.nuxt.options.app }),
       viteJsxPlugin()
     ]
   } as ViteOptions)
@@ -86,7 +86,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
 
     // Remove public files that have been duplicated into buildAssetsDir
-    // TODO: Add option to configure this behaviour in vite
+    // TODO: Add option to configure this behavior in vite
     const publicDir = join(ctx.nuxt.options.srcDir, ctx.nuxt.options.dir.public)
     let publicFiles: string[] = []
     if (await isDirectory(publicDir)) {
@@ -129,7 +129,9 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   // Start development server
   const viteServer = await vite.createServer(serverConfig)
-  await ctx.nuxt.callHook('vite:serverCreated', viteServer)
+  ctx.ssrServer = viteServer
+
+  await ctx.nuxt.callHook('vite:serverCreated', viteServer, { isClient: false, isServer: true })
 
   // Close server on exit
   ctx.nuxt.hook('close', () => viteServer.close())
@@ -137,28 +139,33 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Initialize plugins
   await viteServer.pluginContainer.buildStart({})
 
-  // Build and watch
-  const _doBuild = async () => {
-    const start = Date.now()
-    const { code, ids } = await bundleRequest({ viteServer }, resolve(ctx.nuxt.options.appDir, 'entry'))
-    await fse.writeFile(resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'), code, 'utf-8')
-    // Have CSS in the manifest to prevent FOUC on dev SSR
-    await writeManifest(ctx, ids.filter(isCSS).map(i => i.slice(1)))
-    const time = (Date.now() - start)
-    logger.success(`Vite server built in ${time}ms`)
-    await onBuild()
+  if (ctx.nuxt.options.experimental.viteNode) {
+    logger.info('Vite server using experimental `vite-node`...')
+    await prepareDevServerEntry(ctx)
+  } else {
+    // Build and watch
+    const _doBuild = async () => {
+      const start = Date.now()
+      const { code, ids } = await bundleRequest({ viteServer }, resolve(ctx.nuxt.options.appDir, 'entry'))
+      await fse.writeFile(resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'), code, 'utf-8')
+      // Have CSS in the manifest to prevent FOUC on dev SSR
+      await writeManifest(ctx, ids.filter(isCSS).map(i => i.slice(1)))
+      const time = (Date.now() - start)
+      logger.success(`Vite server built in ${time}ms`)
+      await onBuild()
+    }
+    const doBuild = debounce(_doBuild)
+
+    // Initial build
+    await _doBuild()
+
+    // Watch
+    viteServer.watcher.on('all', (_event, file) => {
+      file = normalize(file) // Fix windows paths
+      if (file.indexOf(ctx.nuxt.options.buildDir) === 0) { return }
+      doBuild()
+    })
+    // ctx.nuxt.hook('builder:watch', () => doBuild())
+    ctx.nuxt.hook('app:templatesGenerated', () => doBuild())
   }
-  const doBuild = pDebounce(_doBuild, 100)
-
-  // Initial build
-  await _doBuild()
-
-  // Watch
-  viteServer.watcher.on('all', (_event, file) => {
-    file = normalize(file) // Fix windows paths
-    if (file.indexOf(ctx.nuxt.options.buildDir) === 0) { return }
-    doBuild()
-  })
-  // ctx.nuxt.hook('builder:watch', () => doBuild())
-  ctx.nuxt.hook('app:templatesGenerated', () => doBuild())
 }

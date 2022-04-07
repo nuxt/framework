@@ -2,12 +2,8 @@ import { basename, extname, join, dirname, relative } from 'pathe'
 import { globby } from 'globby'
 import { pascalCase, splitByCase } from 'scule'
 import type { Component, ComponentsDir } from '@nuxt/schema'
-
-// vue@2 src/shared/util.js
-// TODO: update to vue3?
-function hyphenate (str: string): string {
-  return str.replace(/\B([A-Z])/g, '-$1').toLowerCase()
-}
+import { isIgnored } from '@nuxt/kit'
+import { hyphenate } from '@vue/shared'
 
 /**
  * Scan the components inside different components folders
@@ -34,7 +30,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
     for (const _file of await globby(dir.pattern!, { cwd: dir.path, ignore: dir.ignore })) {
       const filePath = join(dir.path, _file)
 
-      if (scannedPaths.find(d => filePath.startsWith(d))) {
+      if (scannedPaths.find(d => filePath.startsWith(d)) || isIgnored(filePath)) {
         continue
       }
 

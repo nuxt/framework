@@ -2,8 +2,9 @@ import { promises as fsp, existsSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { basename, dirname, resolve, join, normalize, isAbsolute } from 'pathe'
 import { globby } from 'globby'
-import { useNuxt } from './context'
+import { tryUseNuxt, useNuxt } from './context'
 import { tryResolveModule } from './internal/cjs'
+import { isIgnored } from './ignore'
 
 export interface ResolvePathOptions {
   /** Base for resolving paths from. Default is Nuxt rootDir. */
@@ -58,7 +59,7 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
   for (const ext of extensions) {
     // path.[ext]
     const pathWithExt = path + ext
-    if (!isDirectory && existsSync(pathWithExt)) {
+    if (existsSync(pathWithExt)) {
       return pathWithExt
     }
     // path/index.[ext]
@@ -81,11 +82,17 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
 /**
  * Try to resolve first existing file in paths
  */
-export async function findPath (paths: string[], opts?: ResolvePathOptions): Promise<string|null> {
+export async function findPath (paths: string|string[], opts?: ResolvePathOptions, pathType: 'file' | 'dir' = 'file'): Promise<string|null> {
+  if (!Array.isArray(paths)) {
+    paths = [paths]
+  }
   for (const path of paths) {
     const rPath = await resolvePath(path, opts)
     if (await existsSensitive(rPath)) {
-      return rPath
+      const isDirectory = (await fsp.lstat(rPath)).isDirectory()
+      if (!pathType || (pathType === 'file' && !isDirectory) || (pathType === 'dir' && isDirectory)) {
+        return rPath
+      }
     }
   }
   return null
@@ -96,7 +103,7 @@ export async function findPath (paths: string[], opts?: ResolvePathOptions): Pro
  */
 export function resolveAlias (path: string, alias?: Record<string, string>): string {
   if (!alias) {
-    alias = useNuxt()?.options.alias || {}
+    alias = tryUseNuxt()?.options.alias || {}
   }
   for (const key in alias) {
     if (key === '@' && !path.startsWith('@/')) { continue } // Don't resolve @foo/bar
@@ -141,5 +148,5 @@ async function existsSensitive (path: string) {
 
 export async function resolveFiles (path: string, pattern: string | string[]) {
   const files = await globby(pattern, { cwd: path, followSymbolicLinks: true })
-  return files.map(p => resolve(path, p))
+  return files.filter(p => !isIgnored(p)).map(p => resolve(path, p))
 }

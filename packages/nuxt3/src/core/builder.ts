@@ -1,22 +1,29 @@
 import chokidar from 'chokidar'
 import type { Nuxt } from '@nuxt/schema'
-import { createApp, generateApp } from './app'
+import { importModule, isIgnored } from '@nuxt/kit'
+import { debounce } from 'perfect-debounce'
+import { normalize } from 'pathe'
+import { createApp, generateApp as _generateApp } from './app'
 
 export async function build (nuxt: Nuxt) {
   const app = createApp(nuxt)
-  await generateApp(nuxt, app)
+  const generateApp = debounce(() => _generateApp(nuxt, app), undefined, { leading: true })
+  await generateApp()
 
   if (nuxt.options.dev) {
     watch(nuxt)
     nuxt.hook('builder:watch', async (event, path) => {
-      if (event !== 'change' && /app|plugins/i.test(path)) {
+      if (event !== 'change' && /app|error|plugins/i.test(path)) {
         if (path.match(/app/i)) {
           app.mainComponent = null
         }
-        await generateApp(nuxt, app)
+        if (path.match(/error/i)) {
+          app.errorComponent = null
+        }
+        await generateApp()
       }
     })
-    nuxt.hook('builder:generateApp', () => generateApp(nuxt, app))
+    nuxt.hook('builder:generateApp', generateApp)
   }
 
   await nuxt.callHook('build:before', { nuxt }, nuxt.options.build)
@@ -36,24 +43,34 @@ function watch (nuxt: Nuxt) {
     cwd: nuxt.options.srcDir,
     ignoreInitial: true,
     ignored: [
+      isIgnored,
       '.nuxt',
-      '.output',
       'node_modules'
     ]
   })
-  const watchHook = (event, path) => nuxt.callHook('builder:watch', event, path)
+
+  const watchHook = debounce((event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir', path: string) => nuxt.callHook('builder:watch', event, normalize(path)))
   watcher.on('all', watchHook)
   nuxt.hook('close', () => watcher.close())
   return watcher
 }
 
 async function bundle (nuxt: Nuxt) {
-  const useVite = nuxt.options.vite !== false
-  const { bundle } = await (useVite ? import('@nuxt/vite-builder') : import('@nuxt/webpack-builder'))
   try {
+    const { bundle } = typeof nuxt.options.builder === 'string'
+      ? await importModule(nuxt.options.builder, { paths: nuxt.options.rootDir })
+      : nuxt.options.builder
+
     return bundle(nuxt)
   } catch (error) {
     await nuxt.callHook('build:error', error)
+
+    if (error.toString().includes('Cannot find module \'@nuxt/webpack-builder\'')) {
+      throw new Error([
+        'Could not load `@nuxt/webpack-builder`. You may need to add it to your project dependencies, following the steps in `https://github.com/nuxt/framework/pull/2812`.'
+      ].join('\n'))
+    }
+
     throw error
   }
 }

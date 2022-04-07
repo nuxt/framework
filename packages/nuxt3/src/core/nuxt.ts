@@ -1,18 +1,20 @@
 import { resolve } from 'pathe'
 import { createHooks } from 'hookable'
 import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
-import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule } from '@nuxt/kit'
 // Temporary until finding better placement
 /* eslint-disable import/no-restricted-paths */
 import pagesModule from '../pages/module'
-import metaModule from '../meta/module'
+import metaModule from '../head/module'
 import componentsModule from '../components/module'
 import autoImportsModule from '../auto-imports/module'
 /* eslint-enable */
 import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
 import { ImportProtectionPlugin, vueAppPatterns } from './plugins/import-protection'
+import { UnctxTransformPlugin } from './plugins/unctx'
 import { addModuleTranspiles } from './modules'
+import { initNitro } from './nitro'
 
 export function createNuxt (options: NuxtOptions): Nuxt {
   const hooks = createHooks<NuxtHooks>()
@@ -40,10 +42,6 @@ async function initNuxt (nuxt: Nuxt) {
   nuxtCtx.set(nuxt)
   nuxt.hook('close', () => nuxtCtx.unset())
 
-  // Init nitro
-  const { initNitro } = await import(nuxt.options.experimentNitropack ? './nitro-nitropack' : './nitro-legacy')
-  await initNitro(nuxt)
-
   // Add nuxt3 types
   nuxt.hook('prepare:types', (opts) => {
     opts.references.push({ types: 'nuxt3' })
@@ -57,13 +55,16 @@ async function initNuxt (nuxt: Nuxt) {
   })
 
   // Add import protection
-
   const config = {
     rootDir: nuxt.options.rootDir,
     patterns: vueAppPatterns(nuxt)
   }
   addVitePlugin(ImportProtectionPlugin.vite(config))
   addWebpackPlugin(ImportProtectionPlugin.webpack(config))
+
+  // Add unctx transform
+  addVitePlugin(UnctxTransformPlugin(nuxt).vite())
+  addWebpackPlugin(UnctxTransformPlugin(nuxt).webpack())
 
   // Init user modules
   await nuxt.callHook('modules:before', { nuxt } as ModuleContainer)
@@ -76,13 +77,30 @@ async function initNuxt (nuxt: Nuxt) {
   // Add <NuxtWelcome>
   addComponent({
     name: 'NuxtWelcome',
-    filePath: resolve(nuxt.options.appDir, 'components/nuxt-welcome.vue')
+    filePath: tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')
+  })
+
+  addComponent({
+    name: 'NuxtLayout',
+    filePath: resolve(nuxt.options.appDir, 'components/layout')
+  })
+
+  // Add <NuxtErrorBoundary>
+  addComponent({
+    name: 'NuxtErrorBoundary',
+    filePath: resolve(nuxt.options.appDir, 'components/nuxt-error-boundary')
   })
 
   // Add <ClientOnly>
   addComponent({
     name: 'ClientOnly',
     filePath: resolve(nuxt.options.appDir, 'components/client-only')
+  })
+
+  // Add <NuxtLink>
+  addComponent({
+    name: 'NuxtLink',
+    filePath: resolve(nuxt.options.appDir, 'components/nuxt-link')
   })
 
   for (const m of modulesToInstall) {
@@ -97,6 +115,9 @@ async function initNuxt (nuxt: Nuxt) {
 
   await addModuleTranspiles()
 
+  // Init nitro
+  await initNitro(nuxt)
+
   await nuxt.callHook('ready', nuxt)
 }
 
@@ -108,6 +129,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   options._majorVersion = 3
   options._modules.push(pagesModule, metaModule, componentsModule, autoImportsModule)
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))
+  options.build.transpile.push('@nuxt/ui-templates')
   options.alias['vue-demi'] = resolve(options.appDir, 'compat/vue-demi')
   options.alias['@vue/composition-api'] = resolve(options.appDir, 'compat/capi')
 

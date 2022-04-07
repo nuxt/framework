@@ -4,10 +4,11 @@ import type { MetaInfo } from 'vue-meta'
 import type VueRouter from 'vue-router'
 import type { Location, Route } from 'vue-router'
 import type { RuntimeConfig } from '@nuxt/schema'
+import { sendRedirect } from 'h3'
 import defu from 'defu'
 import { useNuxtApp } from './app'
 
-export { useLazyAsyncData } from './asyncData'
+export { useLazyAsyncData, refreshNuxtData } from './asyncData'
 export { useLazyFetch } from './fetch'
 export { useCookie } from './cookie'
 export { useRequestHeaders } from './ssr'
@@ -160,15 +161,6 @@ function convertToLegacyMiddleware (middleware) {
   }
 }
 
-export const addRouteMiddleware = (name: string, middleware: any, options: AddRouteMiddlewareOptions = {}) => {
-  const nuxtApp = useNuxtApp()
-  if (options.global) {
-    nuxtApp._middleware.global.push(middleware)
-  } else {
-    nuxtApp._middleware.named[name] = convertToLegacyMiddleware(middleware)
-  }
-}
-
 const isProcessingMiddleware = () => {
   try {
     if (useNuxtApp()._processingMiddleware) {
@@ -181,12 +173,23 @@ const isProcessingMiddleware = () => {
   return false
 }
 
-export const navigateTo = (to: Route) => {
+export interface NavigateToOptions {
+  replace?: boolean
+}
+
+export const navigateTo = (to: Route, options: NavigateToOptions = {}): Promise<Route | void> | Route => {
   if (isProcessingMiddleware()) {
     return to
   }
-  const router: VueRouter = process.server ? useRouter() : (window as any).$nuxt.$router
-  return router.push(to)
+  const router = useRouter()
+  if (process.server && useNuxtApp().ssrContext) {
+    // Server-side redirection using h3 res from ssrContext
+    const res = useNuxtApp().ssrContext?.res
+    const redirectLocation = router.resolve(to).route.fullPath
+    return sendRedirect(res, redirectLocation)
+  }
+  // Client-side redirection using vue-router
+  return options.replace ? router.replace(to) : router.push(to)
 }
 
 /** This will abort navigation within a Nuxt route middleware handler. */
@@ -207,3 +210,17 @@ export interface RouteMiddleware {
 }
 
 export const defineNuxtRouteMiddleware = (middleware: RouteMiddleware) => middleware
+
+interface AddRouteMiddleware {
+  (name: string, middleware: RouteMiddleware, options?: AddRouteMiddlewareOptions): void
+  (middleware: RouteMiddleware): void
+}
+
+export const addRouteMiddleware: AddRouteMiddleware = (name: string | RouteMiddleware, middleware?: RouteMiddleware, options: AddRouteMiddlewareOptions = {}) => {
+  const nuxtApp = useNuxtApp()
+  if (options.global || typeof name === 'function') {
+    nuxtApp._middleware.global.push(typeof name === 'function' ? name : middleware)
+  } else {
+    nuxtApp._middleware.named[name] = convertToLegacyMiddleware(middleware)
+  }
+}
