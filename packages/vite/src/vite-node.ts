@@ -22,7 +22,7 @@ export function viteNodePlugin (ctx: ViteBuildContext): VitePlugin {
 
 export function registerViteNodeMiddleware (ctx: ViteBuildContext) {
   addServerMiddleware({
-    path: '/__nuxt_vite_node__/',
+    route: '/__nuxt_vite_node__/',
     handler: createViteNodeMiddleware(ctx)
   })
 }
