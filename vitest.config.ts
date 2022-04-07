@@ -10,6 +10,6 @@ export default defineConfig({
     tsconfigRaw: '{}'
   },
   test: {
-    testTimeout: 8000
+    testTimeout: 10000
   }
 })
