@@ -1,5 +1,7 @@
 # `useHead`
 
+::ReadMore{link="/guide/features/head-management"}
+
 Nuxt provides a simple composable to easily update the head properties of your page with an object of meta properties with keys corresponding to meta tags:
 
 `title`, `base`, `script`, `style`, `meta` and `link`, as well as `htmlAttrs` and `bodyAttrs`. Alternatively, you can pass a function returning the object for reactive metadata.
