@@ -1,7 +1,7 @@
 # `abortNavigation`
 
 ```ts
-abortNavigation(err?: Error | string): false<Boolean>
+abortNavigation(err?: Error | string): Promise<Boolean>
 ```
 
 * **err**: Optional error to be thrown by `abortNavigation()`.
