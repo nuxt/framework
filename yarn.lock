@@ -15374,7 +15374,7 @@ __metadata:
     ufo: ^0.8.3
     unbuild: latest
     unctx: ^1.1.4
-    unenv: ^0.4.6
+    unenv: ^0.4.5
     unimport: ^0.1.4
     unplugin: ^0.6.1
     untyped: ^0.4.4
@@ -20938,7 +20938,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unenv@npm:^0.4.6":
+"unenv@npm:^0.4.5, unenv@npm:^0.4.6":
   version: 0.4.6
   resolution: "unenv@npm:0.4.6"
   dependencies:
