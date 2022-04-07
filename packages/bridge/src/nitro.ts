@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import fsExtra from 'fs-extra'
 import { addPluginTemplate, resolvePath, useNuxt } from '@nuxt/kit'
 import { joinURL, stringifyQuery, withoutTrailingSlash } from 'ufo'
-import { resolve, join } from 'pathe'
+import { resolve, join, dirname } from 'pathe'
 import { createNitro, createDevServer, build, writeTypes, prepare, copyPublicAssets, prerender } from 'nitropack'
 import { dynamicEventHandler, toEventHandler } from 'h3'
 import type { Nitro, NitroEventHandler, NitroDevEventHandler, NitroConfig } from 'nitropack'
@@ -88,7 +88,7 @@ export async function setupNitroBridge () {
     },
     externals: {
       inline: [
-        ...(nuxt.options.dev ? [] : [nuxt.options.buildDir]),
+        ...(nuxt.options.dev ? [] : ['vue', '@vue/', '@nuxt/', nuxt.options.buildDir]),
         '@nuxt/bridge/dist',
         '@nuxt/bridge-edge/dist'
       ]
@@ -131,15 +131,6 @@ export async function setupNitroBridge () {
 
   // Connect hooks
   nuxt.hook('close', () => nitro.hooks.callHook('close'))
-  nitro.hooks.hook('nitro:document', template => nuxt.callHook('nitro:document', template))
-
-  // Use custom document template if provided
-  if (nuxt.options.appTemplatePath) {
-    nuxt.hook('nitro:document', async (template) => {
-      template.src = nuxt.options.appTemplatePath
-      template.contents = await fsp.readFile(nuxt.options.appTemplatePath, 'utf-8')
-    })
-  }
 
   async function updateViteBase () {
     const clientDist = resolve(nuxt.options.buildDir, 'dist/client')
@@ -168,7 +159,6 @@ export async function setupNitroBridge () {
       }
     }
   }
-  nuxt.hook('nitro:generate', updateViteBase)
   nuxt.hook('generate:before', updateViteBase)
 
   // .ts is supported for serverMiddleware
@@ -267,6 +257,7 @@ export async function setupNitroBridge () {
   const waitUntilCompile = new Promise<void>(resolve => nitro.hooks.hook('nitro:compiled', () => resolve()))
   nuxt.hook('build:done', async () => {
     if (nuxt.options._prepare) { return }
+    await writeDocumentTemplate(nuxt)
     if (nuxt.options.dev) {
       await build(nitro)
       await waitUntilCompile
@@ -274,11 +265,8 @@ export async function setupNitroBridge () {
     } else {
       await prepare(nitro)
       await copyPublicAssets(nitro)
-      if (nuxt.options.target === 'static') {
-        await prerender(nitro)
-      }
       await build(nitro)
-      if (nuxt.options._generate) {
+      if (nuxt.options._generate || nuxt.options.target === 'static') {
         await prerender(nitro)
       }
     }
@@ -381,5 +369,19 @@ async function resolveHandlers (nuxt: Nuxt) {
   return {
     handlers,
     devHandlers
+  }
+}
+
+async function writeDocumentTemplate (nuxt: Nuxt) {
+  // Compile html template
+  const src = nuxt.options.appTemplatePath
+  const dst = src.replace(/.html$/, '.mjs').replace('app.template.mjs', 'document.template.mjs')
+  const contents = nuxt.vfs[src] || await fsp.readFile(src, 'utf-8').catch(() => '')
+  if (contents) {
+    const compiled = 'export default ' +
+      // eslint-disable-next-line no-template-curly-in-string
+      `(params) => \`${contents.replace(/{{ (\w+) }}/g, '${params.$1}')}\``
+    await fsp.mkdir(dirname(dst), { recursive: true })
+    await fsp.writeFile(dst, compiled, 'utf8')
   }
 }
