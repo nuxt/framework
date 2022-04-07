@@ -304,7 +304,7 @@ describe('extends support', () => {
 })
 
 describe('dynamic paths', () => {
-  if (!process.env.NUXT_TEST_DEV) {
+  if (process.env.NUXT_TEST_DEV) {
     // TODO:
     it.todo('dynamic paths in dev')
     return
