@@ -1,10 +1,11 @@
 import { defineUnimportPreset, Preset } from 'unimport'
 
 export const commonPresets: Preset[] = [
-  // #meta
+  // #head
   defineUnimportPreset({
-    from: '#meta',
+    from: '#head',
     imports: [
+      'useHead',
       'useMeta'
     ]
   }),
@@ -33,8 +34,10 @@ export const appPreset = defineUnimportPreset({
     'useLazyFetch',
     'useCookie',
     'useRequestHeaders',
+    'useRequestEvent',
     'useRouter',
     'useRoute',
+    'useActiveRoute',
     'defineNuxtRouteMiddleware',
     'navigateTo',
     'abortNavigation',

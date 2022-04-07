@@ -1,11 +1,12 @@
-/**
- * @version 3
- */
 export default {
-  experimentNitropack: process.env.EXPERIMENT_NITROPACK ? true : false,
-
   /**
-   * @typedef {Awaited<ReturnType<typeof import('nitropack')['NitroConfig']>>}
+   * Configuration for Nitro
+   *
+   * @see https://github.com/unjs/nitropack
+   *
+   * @type {typeof import('nitropack')['NitroConfig']}
+   * @version 2
+   * @version 3
   */
   nitro: {}
 }
