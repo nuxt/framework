@@ -2605,7 +2605,7 @@ __metadata:
     acorn: ^8.7.0
     cookie-es: ^0.5.0
     defu: ^6.0.0
-    destr: ^1.1.0
+    destr: ^1.1.1
     enhanced-resolve: ^5.9.2
     escape-string-regexp: ^5.0.0
     estree-walker: ^3.0.1
@@ -8952,6 +8952,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"destr@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "destr@npm:1.1.1"
+  checksum: 334886494cef39d39526061071b83384dee493b531a7a13f6705e92a168ebb072b45be4aba4179aaba88c4a32c3e35d8058d1357871179dbaf74890584199019
+  languageName: node
+  linkType: hard
+
 "destroy@npm:1.2.0, destroy@npm:^1.0.4":
   version: 1.2.0
   resolution: "destroy@npm:1.2.0"
@@ -15263,7 +15270,7 @@ __metadata:
     colorette: ^2.0.16
     consola: ^2.15.3
     deep-object-diff: ^1.1.7
-    destr: ^1.1.0
+    destr: ^1.1.1
     execa: ^6.1.0
     flat: ^5.0.2
     fsevents: ~2.3.2
@@ -15369,7 +15376,7 @@ __metadata:
     chokidar: ^3.5.3
     cookie-es: ^0.5.0
     defu: ^6.0.0
-    destr: ^1.1.0
+    destr: ^1.1.1
     escape-string-regexp: ^5.0.0
     fs-extra: ^10.0.1
     globby: ^13.1.1
