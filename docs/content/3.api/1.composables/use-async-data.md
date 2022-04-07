@@ -3,7 +3,13 @@
 ::ReadMore{link="/guide/features/data-fetching"}
 ::
 
-```ts
+::code-group
+
+```js[JavaScript]
+const { data, pending, refresh, error } = useAsyncData(key, handler, options?)
+```
+
+```ts[TypeScript]
 const {
   data: Ref<DataT>,
   pending: Ref<boolean>,
@@ -19,6 +25,8 @@ const {
   }
 )
 ```
+
+::
 
 ## Params
 
