@@ -22,9 +22,9 @@ type AsyncDataOptions = {
 }
 
 type DataT = {
-  data: Ref<DataT>,
-  pending: Ref<boolean>,
-  refresh: () => Promise<void>,
+  data: Ref<DataT>
+  pending: Ref<boolean>
+  refresh: () => Promise<void>
   error: Ref<any>
 }
 ```
