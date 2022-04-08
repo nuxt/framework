@@ -34,15 +34,8 @@ async function _main () {
     showHelp(cmd.meta)
   } else {
     const result = await cmd.invoke(args)
-    if (result !== true) {
-      process.exit(1)
-    }
+    return result
   }
-}
-
-function onFatalError (err: unknown) {
-  consola.error(err)
-  process.exit(1)
 }
 
 // Wrap all console logs with consola for better DX
@@ -52,5 +45,14 @@ process.on('unhandledRejection', err => consola.error('[unhandledRejection]', er
 process.on('uncaughtException', err => consola.error('[uncaughtException]', err))
 
 export function main () {
-  _main().catch(onFatalError)
+  _main()
+    .then((result) => {
+      if (result !== true) {
+        process.exit(0)
+      }
+    })
+    .catch((error) => {
+      consola.error(error)
+      process.exit(1)
+    })
 }
