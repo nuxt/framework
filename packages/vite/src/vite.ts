@@ -109,6 +109,4 @@ export async function bundle (nuxt: Nuxt) {
   })
   await buildClient(ctx)
   await buildServer(ctx)
-
-  console.log('vite ctx', ctx.config.server.hmr)
 }
