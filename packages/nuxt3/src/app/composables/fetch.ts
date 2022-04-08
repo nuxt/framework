@@ -20,7 +20,7 @@ export interface UseFetchOptions<
 
 export function useFetch<
   ResT = void,
-  ErroT = any,
+  ErrorT = any,
   ReqT extends FetchRequest = FetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
@@ -51,7 +51,7 @@ export function useFetch<
     ]
   }
 
-  const asyncData = useAsyncData<_ResT, ErroT, Transform, PickKeys>(key, () => {
+  const asyncData = useAsyncData<_ResT, ErrorT, Transform, PickKeys>(key, () => {
     return $fetch(_request.value, _fetchOptions)
   }, _asyncDataOptions)
 
@@ -60,7 +60,7 @@ export function useFetch<
 
 export function useLazyFetch<
   ResT = void,
-  ErroT = any,
+  ErrorT = any,
   ReqT extends string = string,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
@@ -69,7 +69,7 @@ export function useLazyFetch<
   request: Ref<ReqT> | ReqT | (() => ReqT),
   opts: Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'lazy'> = {}
 ) {
-  return useFetch<ResT, ErroT, ReqT, _ResT, Transform, PickKeys>(request, {
+  return useFetch<ResT, ErrorT, ReqT, _ResT, Transform, PickKeys>(request, {
     ...opts,
     lazy: true
   })
