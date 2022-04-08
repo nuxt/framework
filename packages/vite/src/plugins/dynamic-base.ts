@@ -33,6 +33,12 @@ export const RelativeAssetPlugin = function (): Plugin {
             .replace(assetRE, r => r.replace(/\/__NUXT_BASE__/g, assetBase))
             .replace(/\/__NUXT_BASE__/g, publicBase)
         }
+        if (asset.type === 'chunk' && typeof asset.code === 'string') {
+          asset.code = asset.code
+            .replace(/`\$\{(_?_?publicAssetsURL|buildAssetsURL|)\(\)\}([^`]*)`/g, '$1(`$2`)')
+            .replace(/"\/__NUXT_BASE__\/([^"]*)"\.replace\("\/__NUXT_BASE__", ""\)/g, '"$1"')
+            .replace(/'\/__NUXT_BASE__\/([^']*)'\.replace\("\/__NUXT_BASE__", ""\)/g, '"$1"')
+        }
       }
     }
   }
@@ -47,7 +53,7 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
       if (id.startsWith('/__NUXT_BASE__')) {
         return id.replace('/__NUXT_BASE__', '')
       }
-      if (id === '#_config') { return '#_config' }
+      if (id === '#nitro') { return '#nitro' }
       return null
     },
     enforce: 'post',

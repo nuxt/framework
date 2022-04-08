@@ -6,8 +6,10 @@ import type { ModuleContainer } from './module'
 import type { NuxtTemplate, Nuxt, NuxtApp } from './nuxt'
 import type { Preset as ImportPreset, Import } from 'unimport'
 import type { NuxtConfig, NuxtOptions } from './config'
+import type { Nitro, NitroConfig } from 'nitropack'
 import type { Component, ComponentsDir, ScanDir, ComponentsOptions } from './components'
 import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
+
 
 type HookResult = Promise<void> | void
 
@@ -96,10 +98,9 @@ export interface NuxtHooks {
   // 'watch:fileChanged': (builder: Builder, fileName: string) => HookResult
   'builder:watch': (event: WatchEvent, path: string) => HookResult
 
-  // @nuxt/nitro
-  'nitro:document': (template: { src: string, contents: string }) => HookResult
-  'nitro:context': (context: any) => HookResult
-  'nitro:generate': (context: any) => HookResult
+  // nitropack
+  'nitro:config': (nitroConfig: NitroConfig) => HookResult
+  'nitro:init': (nitro: Nitro) => HookResult
 
   // @nuxt/cli
   'generate:cache:ignore': (ignore: string[]) => HookResult

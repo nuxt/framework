@@ -1,10 +1,13 @@
 import { fileURLToPath } from 'url'
 import { describe, expect, it } from 'vitest'
+// import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
+import { expectNoClientErrors } from './utils'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
-  server: true
+  server: true,
+  browser: true
 })
 
 describe('server api', () => {
@@ -42,6 +45,8 @@ describe('pages', () => {
     expect(html).toContain('Composable | bar: auto imported from ~/components/useBar.ts')
     // should import components
     expect(html).toContain('This is a custom component with a named export.')
+
+    await expectNoClientErrors('/')
   })
 
   it('render 404', async () => {
@@ -52,6 +57,8 @@ describe('pages', () => {
 
     expect(html).toContain('[...slug].vue')
     expect(html).toContain('404 at not-found')
+
+    await expectNoClientErrors('/not-found')
   })
 
   it('/nested/[foo]/[bar].vue', async () => {
@@ -77,6 +84,8 @@ describe('pages', () => {
 
     expect(html).toContain('nested/[foo]/index.vue')
     expect(html).toContain('foo: foobar')
+
+    await expectNoClientErrors('/nested/foobar')
   })
 
   it('/nested/[foo]/user-[group].vue', async () => {
@@ -88,16 +97,34 @@ describe('pages', () => {
     expect(html).toContain('nested/[foo]/user-[group].vue')
     expect(html).toContain('foo: foobar')
     expect(html).toContain('group: admin')
+
+    await expectNoClientErrors('/nested/foobar/user-admin')
   })
 
   it('/parent', async () => {
     const html = await $fetch('/parent')
     expect(html).toContain('parent/index')
+
+    await expectNoClientErrors('/parent')
   })
 
   it('/another-parent', async () => {
     const html = await $fetch('/another-parent')
     expect(html).toContain('another-parent/index')
+
+    await expectNoClientErrors('/another-parent')
+  })
+})
+
+describe('head tags', () => {
+  it('should render tags', async () => {
+    const html = await $fetch('/head')
+    expect(html).toContain('<title>Using a dynamic component</title>')
+    expect(html).not.toContain('<meta name="description" content="first">')
+    expect(html).toContain('<meta name="description" content="overriding with an inline useHead call">')
+    expect(html).toMatch(/<html[^>]*class="html-attrs-test"/)
+    expect(html).toMatch(/<body[^>]*class="body-attrs-test"/)
+    expect(html).toContain('script>console.log("works with useMeta too")</script>')
   })
 })
 
@@ -109,6 +136,32 @@ describe('navigate', () => {
     // expect(html).toMatchInlineSnapshot()
 
     expect(html).toContain('Hello Nuxt 3!')
+  })
+})
+
+describe('errors', () => {
+  it('should render a JSON error page', async () => {
+    const res = await fetch('/error', {
+      headers: {
+        accept: 'application/json'
+      }
+    })
+    expect(res.status).toBe(500)
+    const error = await res.json()
+    delete error.stack
+    expect(error).toMatchInlineSnapshot(`
+      {
+        "message": "This is a custom error",
+        "statusCode": 500,
+        "statusMessage": "Internal Server Error",
+        "url": "/error",
+      }
+    `)
+  })
+
+  it('should render a HTML error page', async () => {
+    const res = await fetch('/error')
+    expect(await res.text()).toContain('This is a custom error')
   })
 })
 
@@ -251,6 +304,12 @@ describe('extends support', () => {
 })
 
 describe('dynamic paths', () => {
+  if (process.env.NUXT_TEST_DEV) {
+    // TODO:
+    it.todo('dynamic paths in dev')
+    return
+  }
+
   it('should work with no overrides', async () => {
     const html = await $fetch('/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
@@ -260,13 +319,15 @@ describe('dynamic paths', () => {
   })
 
   it('adds relative paths to CSS', async () => {
-    const html = await $fetch('/assets')
-    const urls = Array.from(html.matchAll(/(href|src)="(.*?)"/g)).map(m => m[2])
-    const cssURL = urls.find(u => /_nuxt\/entry.*\.css$/.test(u))
     if (process.env.TEST_WITH_WEBPACK) {
       // Webpack injects CSS differently
       return
     }
+
+    const html = await $fetch('/assets')
+    const urls = Array.from(html.matchAll(/(href|src)="(.*?)"/g)).map(m => m[2])
+    const cssURL = urls.find(u => /_nuxt\/entry.*\.css$/.test(u))
+    expect(cssURL).toBeDefined()
     const css = await $fetch(cssURL)
     const imageUrls = Array.from(css.matchAll(/url\(([^)]*)\)/g)).map(m => m[1].replace(/[-.][\w]{8}\./g, '.'))
     expect(imageUrls).toMatchInlineSnapshot(`
@@ -282,7 +343,7 @@ describe('dynamic paths', () => {
     process.env.NUXT_APP_BASE_URL = '/foo/'
     await startServer()
 
-    const html = await $fetch('/assets')
+    const html = await $fetch('/foo/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
       // TODO: webpack does not yet support dynamic static paths
@@ -296,7 +357,7 @@ describe('dynamic paths', () => {
     process.env.NUXT_APP_BUILD_ASSETS_DIR = '/_cdn/'
     await startServer()
 
-    const html = await $fetch('/assets')
+    const html = await $fetch('/foo/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
       // TODO: webpack does not yet support dynamic static paths

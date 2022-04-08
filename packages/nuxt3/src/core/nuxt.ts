@@ -5,7 +5,7 @@ import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, 
 // Temporary until finding better placement
 /* eslint-disable import/no-restricted-paths */
 import pagesModule from '../pages/module'
-import metaModule from '../meta/module'
+import metaModule from '../head/module'
 import componentsModule from '../components/module'
 import autoImportsModule from '../auto-imports/module'
 /* eslint-enable */
@@ -14,6 +14,7 @@ import { version } from '../../package.json'
 import { ImportProtectionPlugin, vueAppPatterns } from './plugins/import-protection'
 import { UnctxTransformPlugin } from './plugins/unctx'
 import { addModuleTranspiles } from './modules'
+import { initNitro } from './nitro'
 
 export function createNuxt (options: NuxtOptions): Nuxt {
   const hooks = createHooks<NuxtHooks>()
@@ -40,10 +41,6 @@ async function initNuxt (nuxt: Nuxt) {
   // Set nuxt instance for useNuxt
   nuxtCtx.set(nuxt)
   nuxt.hook('close', () => nuxtCtx.unset())
-
-  // Init nitro
-  const { initNitro } = await import(nuxt.options.experimentNitropack ? './nitro-nitropack' : './nitro-legacy')
-  await initNitro(nuxt)
 
   // Add nuxt3 types
   nuxt.hook('prepare:types', (opts) => {
@@ -117,6 +114,9 @@ async function initNuxt (nuxt: Nuxt) {
   await nuxt.callHook('modules:done', { nuxt } as ModuleContainer)
 
   await addModuleTranspiles()
+
+  // Init nitro
+  await initNitro(nuxt)
 
   await nuxt.callHook('ready', nuxt)
 }

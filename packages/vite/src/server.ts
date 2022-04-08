@@ -13,6 +13,7 @@ import { prepareDevServerEntry } from './vite-node'
 import { isCSS, isDirectory, readDirRecursively } from './utils'
 import { bundleRequest } from './dev-bundler'
 import { writeManifest } from './manifest'
+import { RelativeAssetPlugin } from './plugins/dynamic-base'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
@@ -54,8 +55,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
-        // Private nitro alias: packages/nitro/src/rollup/config.ts#L234
-        external: ['#_config'],
+        external: ['#nitro'],
         output: {
           entryFileNames: 'server.mjs',
           preferConst: true,
@@ -74,6 +74,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
+      RelativeAssetPlugin(),
       vuePlugin(ctx.config.vue),
       viteJsxPlugin()
     ]
@@ -81,7 +82,8 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
 
-  ctx.nuxt.hook('nitro:generate', async () => {
+  // TODO: Do we still need this?
+  ctx.nuxt.hook('build:done', async () => {
     const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
 
     // Remove public files that have been duplicated into buildAssetsDir

@@ -9,7 +9,8 @@ export default defineBuildConfig({
     { input: 'src/app/', outDir: 'dist/app/' },
     // Runtime dirs
     ...[
-      'meta',
+      'core',
+      'head',
       'pages'
     ].map(name => ({ input: `src/${name}/runtime/`, outDir: `dist/${name}/runtime`, format: 'esm' } as BuildEntry))
   ],
