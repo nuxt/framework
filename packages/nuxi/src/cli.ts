@@ -47,8 +47,10 @@ process.on('uncaughtException', err => consola.error('[uncaughtException]', err)
 export function main () {
   _main()
     .then((result) => {
-      if (result !== true) {
+      if (result === 'wait') {
         process.exit(0)
+      } else if (result === 'error') {
+        process.exit(1)
       }
     })
     .catch((error) => {

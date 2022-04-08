@@ -109,6 +109,6 @@ export default defineNuxtCommand({
       await currentNuxt.hooks.callHook('listen', listener.server, listener)
     }
 
-    return true // Do not exit process
+    return 'wait'
   }
 })
