@@ -3,30 +3,30 @@
 ::ReadMore{link="/guide/features/data-fetching"}
 ::
 
-::code-group
+```ts [Signature]
+function useAsyncData(
+  key: string,
+  handler: (ctx?: NuxtApp) => Promise<Object>,
+  options?: AsyncDataOptions
+): Promise<DataT>
 
-```js[JavaScript]
-const { data, pending, refresh, error } = useAsyncData(key, handler, options?)
-```
+type AsyncDataOptions = {
+  server?: boolean
+  lazy?: boolean
+  default?: () => DataT
+  transform?: Transform
+  pick?: PickKeys
+  watch?: WatchSource[]
+  initialCache?: boolean
+}
 
-```ts[TypeScript]
-const {
+type DataT = {
   data: Ref<DataT>,
   pending: Ref<boolean>,
   refresh: () => Promise<void>,
   error: Ref<any>
-} = useAsyncData(
-  key: string,
-  handler: (ctx?: NuxtApp) => Promise<Object>,
-  options?: {
-    lazy: boolean,
-    server: boolean,
-    watch: WatchSource[]
-  }
-)
+}
 ```
-
-::
 
 ## Params
 
@@ -51,3 +51,15 @@ Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the rout
 * **error**: an error object if the data fetching failed
 
 By default, Nuxt waits until a `refresh` is finished before it can be executed again. Passing `true` as parameter skips that wait.
+
+## Example
+
+```ts
+const { data, pending, error, refresh } = useAsyncData(
+  'mountains',
+  () => $fetch('https://api.nuxtjs.dev/mountains),
+  {
+    pick: ['title']
+  }
+)
+```
