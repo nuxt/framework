@@ -106,6 +106,7 @@ async function bundle (nuxt: Nuxt, builder: any) {
             ignored: isIgnored
           },
           hmr: {
+            protocol: 'ws',
             clientPort: hmrPort,
             port: hmrPort
           },

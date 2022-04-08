@@ -75,6 +75,7 @@ export async function bundle (nuxt: Nuxt) {
             ignored: isIgnored
           },
           hmr: {
+            protocol: 'ws',
             clientPort: hmrPort,
             port: hmrPort
           },
@@ -106,7 +107,8 @@ export async function bundle (nuxt: Nuxt) {
       .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
       .catch(logger.error)
   })
-
   await buildClient(ctx)
   await buildServer(ctx)
+
+  console.log('vite ctx', ctx.config.server.hmr)
 }
