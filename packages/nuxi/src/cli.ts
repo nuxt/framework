@@ -48,7 +48,7 @@ export function main () {
   _main()
     .then((result) => {
       if (result === 'wait') {
-        process.exit(0)
+        return
       } else if (result === 'error') {
         process.exit(1)
       }
