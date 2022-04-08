@@ -1,6 +1,6 @@
 # `useAsyncData`
 
-Within your pages, components and plugins you can use useAsyncData to get access to data that resolves asynchronously.
+Within your pages, components, and plugins you can use useAsyncData to get access to data that resolves asynchronously.
 
 ## Type
 
