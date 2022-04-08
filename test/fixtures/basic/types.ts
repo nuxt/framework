@@ -39,12 +39,15 @@ describe('API routes', () => {
     expectTypeOf(useFetch('/api/hey', { pick: ['baz'] }).data).toMatchTypeOf<Ref<{ baz: string }>>()
     expectTypeOf(useFetch('/api/other').data).toMatchTypeOf<Ref<unknown>>()
     expectTypeOf(useFetch<TestResponse>('/test').data).toMatchTypeOf<Ref<TestResponse>>()
+    expectTypeOf(useFetch<any, string>('/test').error).toMatchTypeOf<Ref<string>>()
+
     expectTypeOf(useLazyFetch('/api/hello').data).toMatchTypeOf<Ref<string>>()
     expectTypeOf(useLazyFetch('/api/hey').data).toMatchTypeOf<Ref<{ foo:string, baz: string }>>()
     expectTypeOf(useLazyFetch('/api/hey', { pick: ['baz'] }).data).toMatchTypeOf<Ref<{ baz: string }>>()
     expectTypeOf(useLazyFetch('/api/other').data).toMatchTypeOf<Ref<unknown>>()
     expectTypeOf(useLazyFetch('/api/other').data).toMatchTypeOf<Ref<unknown>>()
     expectTypeOf(useLazyFetch<TestResponse>('/test').data).toMatchTypeOf<Ref<TestResponse>>()
+    expectTypeOf(useLazyFetch<any, string>('/test').error).toMatchTypeOf<Ref<string>>()
   })
 })
 
