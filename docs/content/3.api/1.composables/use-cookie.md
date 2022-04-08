@@ -153,5 +153,4 @@ export default (req, res) => {
 }
 ```
 
-::LinkExample{link="/examples/composables/use-cookie"}
-::
+:LinkExample{link="/examples/composables/use-cookie"}
