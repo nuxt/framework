@@ -26,18 +26,17 @@ async function _main () {
   }
 
   // Check Node.js version in background
-  setTimeout(() => { checkEngines() }, 1000)
+  setTimeout(() => { checkEngines().catch(() => {}) }, 1000)
 
-  try {
-    // @ts-ignore default.default is hotfix for #621
-    const cmd = await commands[command as Command]() as NuxtCommand
-    if (args.h || args.help) {
-      showHelp(cmd.meta)
-    } else {
-      await cmd.invoke(args)
+  // @ts-ignore default.default is hotfix for #621
+  const cmd = await commands[command as Command]() as NuxtCommand
+  if (args.h || args.help) {
+    showHelp(cmd.meta)
+  } else {
+    const result = await cmd.invoke(args)
+    if (result !== true) {
+      process.exit(1)
     }
-  } catch (err) {
-    onFatalError(err)
   }
 }
 
