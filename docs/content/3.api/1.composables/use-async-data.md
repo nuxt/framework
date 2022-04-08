@@ -1,7 +1,8 @@
 # `useAsyncData`
 
-::ReadMore{link="/guide/features/data-fetching"}
-::
+Within your pages, components and plugins you can use useAsyncData to get access to data that resolves asynchronously.
+
+## Type
 
 ```ts [Signature]
 function useAsyncData(
@@ -63,3 +64,6 @@ const { data, pending, error, refresh } = useAsyncData(
   }
 )
 ```
+
+::ReadMore{link="/guide/features/data-fetching"}
+::
