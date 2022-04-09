@@ -55,8 +55,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
-        // Private nitro alias: packages/nitro/src/rollup/config.ts#L234
-        external: ['#_config'],
+        external: ['#nitro'],
         output: {
           entryFileNames: 'server.mjs',
           preferConst: true,
@@ -83,7 +82,8 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
 
-  ctx.nuxt.hook('nitro:generate', async () => {
+  // TODO: Do we still need this?
+  ctx.nuxt.hook('build:done', async () => {
     const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
 
     // Remove public files that have been duplicated into buildAssetsDir

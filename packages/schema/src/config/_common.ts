@@ -13,7 +13,7 @@ export default {
    *
    * You can use `github:`, `gitlab:`, `bitbucket:` or `https://` to extend from a remote git repository.
    *
-   * @typedef {string|string[]}
+   * @type {string|string[]}
    *
    * @version 3
    */
@@ -749,7 +749,6 @@ export default {
       app: {
         baseURL: get('app.baseURL'),
         buildAssetsDir: get('app.buildAssetsDir'),
-        assetsPath: get('app.assetsPath'),
         cdnURL: get('app.cdnURL'),
         ...val.app || {},
       }
