@@ -75,6 +75,7 @@ export async function bundle (nuxt: Nuxt) {
             ignored: isIgnored
           },
           hmr: {
+            // https://github.com/nuxt/framework/issues/4191
             protocol: 'ws',
             clientPort: hmrPort,
             port: hmrPort
