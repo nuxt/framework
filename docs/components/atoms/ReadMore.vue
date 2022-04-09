@@ -6,7 +6,7 @@
 
 <script>
 import { defineComponent } from '@nuxtjs/composition-api'
-import { splitByCase, upperFirst } from 'scule'
+import createTitle from '~/utils/createTitle'
 
 export default defineComponent({
   props: {
@@ -22,8 +22,7 @@ export default defineComponent({
   computed: {
     computedTitle () {
       // Guess title from link!
-      return this.title || this.link.split('/')
-        .filter(Boolean).map(part => splitByCase(part).map(p => upperFirst(p)).join(' ')).join(' > ')
+      return createTitle(this.title, this.link)
     }
   }
 })

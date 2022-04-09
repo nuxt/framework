@@ -2596,6 +2596,7 @@ __metadata:
     "@nuxt/postcss8": ^1.1.3
     "@nuxt/schema": 3.0.0
     "@nuxt/types": ^2.15.8
+    "@nuxt/ui-templates": "npm:@nuxt/ui-templates-edge@latest"
     "@types/fs-extra": ^9.0.13
     "@types/hash-sum": ^1.0.0
     "@types/node-fetch": ^3.0.2
@@ -2613,13 +2614,13 @@ __metadata:
     fs-extra: ^10.0.1
     get-port-please: ^2.4.3
     globby: ^13.1.1
-    h3: ^0.7.1
+    h3: ^0.7.2
     hash-sum: ^2.0.0
     knitwork: ^0.1.1
     magic-string: ^0.26.1
     mlly: ^0.5.1
     murmurhash-es: ^0.1.1
-    nitropack: ^0.1.2
+    nitropack: ^0.2.1
     node-fetch: ^3.2.3
     nuxi: 3.0.0
     nuxt: ^2
@@ -3137,7 +3138,7 @@ __metadata:
     ohmyfetch: ^0.4.15
     playwright: ^1.20.2
     unbuild: latest
-    vitest: ^0.9.0
+    vitest: ^0.9.2
   peerDependencies:
     vue: 3.2.31
   languageName: unknown
@@ -3272,7 +3273,7 @@ __metadata:
     unbuild: latest
     unplugin: ^0.6.1
     vite: ^2.9.1
-    vite-node: ^0.9.0
+    vite-node: ^0.9.2
     vue: 3.2.31
   peerDependencies:
     vue: 3.2.31
@@ -7167,12 +7168,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"case-police@npm:^0.5.1":
-  version: 0.5.1
-  resolution: "case-police@npm:0.5.1"
+"case-police@npm:^0.5.3":
+  version: 0.5.3
+  resolution: "case-police@npm:0.5.3"
   bin:
     case-police: bin/case-police.mjs
-  checksum: 315d1e58c684c944454e5734b923e3e9ae061e63cb3c866ccf9fb3b88fd23321a9caab4b7c8841a488af66524ce13107ceb8f47916e2659133a0493f59c29a28
+  checksum: 6dbc684afd7bf6a75123389b75dce2d047e60218d0df1b3d3993057d4fee56d8a5cb89552862c3f239efc3d561434a1a5e6792653c7146674439367726aa54da
   languageName: node
   linkType: hard
 
@@ -10003,21 +10004,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^38.1.6":
-  version: 38.1.6
-  resolution: "eslint-plugin-jsdoc@npm:38.1.6"
+"eslint-plugin-jsdoc@npm:^39.0.1":
+  version: 39.0.1
+  resolution: "eslint-plugin-jsdoc@npm:39.0.1"
   dependencies:
     "@es-joy/jsdoccomment": ~0.22.1
     comment-parser: 1.3.1
     debug: ^4.3.4
     escape-string-regexp: ^4.0.0
     esquery: ^1.4.0
-    regextras: ^0.8.0
-    semver: ^7.3.5
+    semver: ^7.3.6
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: 600dac3a9b81ac6fcb62a30a30e83a85a003ca3ecfe5376d99a1042ba703cfdf3ef404413c74a75f61c2a77e6cc7435628cfc51d80081108a67965ac238d14b4
+  checksum: 2ca195a3cba198f21e9357e0d85015f424683325042ecb073ae38067ab7afc9ed7f0cf07491626be4755289445c8bd73aac0887c53c87bdb314a5be677168fea
   languageName: node
   linkType: hard
 
@@ -10155,9 +10155,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.12.0":
-  version: 8.12.0
-  resolution: "eslint@npm:8.12.0"
+"eslint@npm:^8.13.0":
+  version: 8.13.0
+  resolution: "eslint@npm:8.13.0"
   dependencies:
     "@eslint/eslintrc": ^1.2.1
     "@humanwhocodes/config-array": ^0.9.2
@@ -10196,7 +10196,7 @@ __metadata:
     v8-compile-cache: ^2.0.3
   bin:
     eslint: bin/eslint.js
-  checksum: 111bf9046b7a463049788dd00d7f4cd91e024029982352dff4811ce5dfa8cb1136aa127cd8a7a91508234d3e1b4fb6f638a1f5ef9ea08b1af93a18703a4a8dc1
+  checksum: bc7d2fc9a046d42cb2c8987573ecaf534c1fae14747c4695e32388e179c5f21b83eefdb3e4f35924bf76152e226d7cc9dfb21f12348baf12c803109005b17439
   languageName: node
   linkType: hard
 
@@ -11615,6 +11615,18 @@ __metadata:
     radix3: ^0.1.1
     ufo: ^0.7.11
   checksum: 72845e5c77fb4974a2ed50d036c5a8277b5362c59f83a7f8dc8ab36e5fe4952e6134d2aaca6eab7a7baa146a3cd3e8a26ac062ce9761eb9135a968ca765244a7
+  languageName: node
+  linkType: hard
+
+"h3@npm:^0.7.2":
+  version: 0.7.2
+  resolution: "h3@npm:0.7.2"
+  dependencies:
+    cookie-es: ^0.5.0
+    destr: ^1.1.0
+    radix3: ^0.1.1
+    ufo: ^0.7.11
+  checksum: 7c7d605d3d608f4b3448c619bab51921c946911faa3cf50977c1210c4f36d05f55c40bc937dbeac686ee325943aefd8684252dcba575ced23d2c7941e1b18563
   languageName: node
   linkType: hard
 
@@ -14658,9 +14670,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitropack@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "nitropack@npm:0.1.2"
+"nitropack@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "nitropack@npm:0.2.1"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@netlify/functions": ^1.0.0
@@ -14726,7 +14738,7 @@ __metadata:
   bin:
     nitro: dist/cli.mjs
     nitropack: dist/cli.mjs
-  checksum: 81836ce9a4b04c78e21f799e92eaec99c4c609dca2a541859d6d444f3123f3866ae684e4ac34849260108eb961b5aa76bf9db96a36f1a7c6930f40d07c4f7704
+  checksum: 995a4a3dc7bb311417a95549aed42b2a1e47b686713b5500971985aede751e6f597203d7246b412208e84280339debf17d6f883f1e19fe17b74a98e9f3153baf
   languageName: node
   linkType: hard
 
@@ -15354,10 +15366,10 @@ __metadata:
     "@types/node": ^16.11.26
     "@types/object-hash": ^2
     "@unocss/reset": ^0.30.12
-    case-police: ^0.5.1
+    case-police: ^0.5.3
     esbuild: ^0.14.34
-    eslint: ^8.12.0
-    eslint-plugin-jsdoc: ^38.1.6
+    eslint: ^8.13.0
+    eslint-plugin-jsdoc: ^39.0.1
     execa: ^6.1.0
     expect-type: ^0.13.0
     globby: ^13.1.1
@@ -15369,7 +15381,7 @@ __metadata:
     pathe: ^0.2.0
     typescript: ^4.6.3
     unbuild: ^0.7.2
-    vitest: ^0.9.0
+    vitest: ^0.9.2
     vue-router: ^4.0.14
     vue-tsc: ^0.33.9
   languageName: unknown
@@ -15403,13 +15415,13 @@ __metadata:
     escape-string-regexp: ^5.0.0
     fs-extra: ^10.0.1
     globby: ^13.1.1
-    h3: ^0.7.1
+    h3: ^0.7.2
     hash-sum: ^2.0.0
     hookable: ^5.1.1
     knitwork: ^0.1.1
     magic-string: ^0.26.1
     mlly: ^0.5.1
-    nitropack: ^0.1.2
+    nitropack: ^0.2.1
     nuxi: 3.0.0
     ohash: ^0.1.0
     ohmyfetch: ^0.4.15
@@ -18610,13 +18622,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regextras@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "regextras@npm:0.8.0"
-  checksum: b7ec5b32a2b98b4b27048d44f8ab90009873c1307f2cf89321aa8c4cbb8147f1bee07863f4dadf585546ca0b91a234ad9804954dea5fc029421f6c25a4523798
-  languageName: node
-  linkType: hard
-
 "regjsgen@npm:^0.6.0":
   version: 0.6.0
   resolution: "regjsgen@npm:0.6.0"
@@ -20521,7 +20526,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tinyspy@npm:^0.3.0":
+"tinyspy@npm:^0.3.2":
   version: 0.3.2
   resolution: "tinyspy@npm:0.3.2"
   checksum: 674d238c9b879a9d7acee3c30cfbc94334016d15a43b9db2f750aa74f107fa7096821d3866603576ea8efda9f2ec0683ffbd960f83de166f250ed583e68f25b3
@@ -21521,9 +21526,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "vite-node@npm:0.9.0"
+"vite-node@npm:^0.9.2":
+  version: 0.9.2
+  resolution: "vite-node@npm:0.9.2"
   dependencies:
     kolorist: ^1.5.1
     minimist: ^1.2.6
@@ -21532,7 +21537,7 @@ __metadata:
     vite: ^2.9.1
   bin:
     vite-node: vite-node.mjs
-  checksum: f66a5ee6ea6edfb37beda70ca76a05bf725ff45b06bfe072a3dc081fc33fc43547f1fe3b7c034e2cf1f5237239e769dfaa3a245d755201c6d40b645b861f83cc
+  checksum: 4ba1e61b950bff29a8315d984ec020b028a6eb4bb1c35ac52c24b8ea5d96697e96ada275156759db17900a00c07dc76c7227a9f810d1281ebb7302b460effd3c
   languageName: node
   linkType: hard
 
@@ -21596,16 +21601,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "vitest@npm:0.9.0"
+"vitest@npm:^0.9.2":
+  version: 0.9.2
+  resolution: "vitest@npm:0.9.2"
   dependencies:
     "@types/chai": ^4.3.0
     "@types/chai-subset": ^1.3.3
     chai: ^4.3.6
     local-pkg: ^0.4.1
     tinypool: ^0.1.2
-    tinyspy: ^0.3.0
+    tinyspy: ^0.3.2
     vite: ^2.9.1
   peerDependencies:
     "@vitest/ui": "*"
@@ -21623,7 +21628,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 728ebb085f0fa8fd9d364e5770cc59b95cf57fe8ed6bc4ea6241cd28bf8a44bcd5b1835cfdf1da194e47da0b137c6c9436932e94688fb1fa60615d60c806ab0f
+  checksum: fcf4065828a225dad576ed328b8c27d9f03a8df1054c9b6fb65b321d7acf9832af25862cf17acb352f199d1b7b0f9d1f64fc271e0208359a8c6b507ccb1e4239
   languageName: node
   linkType: hard
 
