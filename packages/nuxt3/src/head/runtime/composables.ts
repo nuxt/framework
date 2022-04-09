@@ -17,7 +17,7 @@ export function useHead (meta: MetaObject | ComputedGetter<MetaObject>) {
 }
 
 // TODO: remove useMeta support when Nuxt 3 is stable
-/** @deprecated */
+/** @deprecated Please use new `useHead` composable instead */
 export function useMeta (meta: MetaObject | ComputedGetter<MetaObject>) {
   return useHead(meta)
 }
