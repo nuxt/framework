@@ -27,7 +27,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         overrides.title = typeof titleTemplate.value === 'function' ? titleTemplate.value(val.title) : titleTemplate.value.replace(/%s/g, val.title)
       }
       if (val.charset) {
-        overrides.meta!.push({ charset: val.charset })
+        overrides.meta!.push({ key: 'charset', charset: val.charset })
       }
       if (val.viewport) {
         overrides.meta!.push({ name: 'viewport', content: val.viewport })

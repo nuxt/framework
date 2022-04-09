@@ -23,10 +23,8 @@ export default defineNuxtModule({
 
     // Global meta
     const globalMeta: MetaObject = defu(nuxt.options.app.head, {
-      meta: [
-        { charset: options.charset },
-        { name: 'viewport', content: options.viewport }
-      ]
+      charset: options.charset,
+      viewport: options.viewport
     })
 
     // Add global meta configuration
