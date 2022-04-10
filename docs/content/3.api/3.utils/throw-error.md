@@ -9,7 +9,7 @@ Within your pages, components and plugins you can use `throwError` to throw an e
 - **Returns:** Error
 
 ```js
-throwError("😱 Oh no, an error has been throwen.")
+throwError("😱 Oh no, an error has been thrown.")
 ```
 
 The thrown error is set in state using [`useError()`](/api/composables/useError) to create a reactive and SSR-friendly shared error state across components.
