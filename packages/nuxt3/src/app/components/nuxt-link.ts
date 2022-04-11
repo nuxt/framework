@@ -154,7 +154,8 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
               activeClass: props.activeClass || options.activeClass,
               exactActiveClass: props.exactActiveClass || options.exactActiveClass,
               replace: props.replace,
-              ariaCurrentValue: props.ariaCurrentValue
+              ariaCurrentValue: props.ariaCurrentValue,
+              custom: props.custom
             },
             // TODO: Slot API
             slots.default
@@ -175,7 +176,9 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
           // converts `""` to `null` to prevent the attribute from being added as empty (`rel=""`)
           : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, href ? DEFAULT_EXTERNAL_REL_ATTRIBUTE : '') || null
 
-        return h('a', { href, rel, target }, slots.default())
+        return props.custom
+          ? slots.default && slots.default({ href, rel, target })
+          : h('a', { href, rel, target }, slots.default())
       }
     }
   }) as unknown as DefineComponent<NuxtLinkProps>
