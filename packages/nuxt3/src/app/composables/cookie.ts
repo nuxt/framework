@@ -65,7 +65,7 @@ function writeClientCookie (name: string, value: any, opts: CookieSerializeOptio
 }
 
 function writeServerCookie (event: CompatibilityEvent, name: string, value: any, opts: CookieSerializeOptions = {}) {
-  if (event) {
+  if (event && !event.res.writableEnded) {
     // TODO: Try to smart join with existing Set-Cookie headers
     appendHeader(event, 'Set-Cookie', serializeCookie(name, value, opts))
   }

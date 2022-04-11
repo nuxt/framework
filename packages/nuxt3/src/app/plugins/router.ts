@@ -220,7 +220,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   if (process.server) {
     nuxtApp.hooks.hookOnce('app:created', async () => {
       await router.push(nuxtApp.ssrContext.url)
-      if (route.fullPath !== nuxtApp.ssrContext.url) {
+      if (route.fullPath !== nuxtApp.ssrContext.url && !nuxtApp.ssrContext.res.writableEnded) {
         nuxtApp.ssrContext.res.setHeader('Location', route.fullPath)
         nuxtApp.ssrContext.res.statusCode = 301
         nuxtApp.ssrContext.res.end()

@@ -168,7 +168,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       router.push(nuxtApp.ssrContext.url)
 
       router.afterEach((to) => {
-        if (to.fullPath !== nuxtApp.ssrContext.url) {
+        if (to.fullPath !== nuxtApp.ssrContext.url && !nuxtApp.ssrContext.res.writableEnded) {
           nuxtApp.ssrContext.res.setHeader('Location', to.fullPath)
           nuxtApp.ssrContext.res.statusCode = 301
           nuxtApp.ssrContext.res.end()
