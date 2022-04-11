@@ -5,7 +5,7 @@ const {
   data: Ref<DataT>,
   pending: Ref<boolean>,
   refresh: (force?: boolean) => Promise<void>,
-  error: Ref<any>
+  error: Ref<Error | boolean>
 } = useFetch(url: string | Request, options?)
 ```
 
