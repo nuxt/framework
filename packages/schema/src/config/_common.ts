@@ -698,13 +698,13 @@ export default {
    *
    * The value of this object is accessible from server only using `useRuntimeConfig`.
    *
-   * It mainly should holds _private_ configuration which is not exposed on the frontend.
+   * It mainly should hold _private_ configuration which is not exposed on the frontend.
    * This could include a reference to your API secret tokens.
    *
-   * Anything under the `public` and `app` will be exposed to the frontned as well.
+   * Anything under `public` and `app` will be exposed to the frontend as well.
    *
    * Values are automatically replaced by matching env variables at runtime, e.g. setting an environment
-   * variable `API_KEY=my-api-key` would overwrite the value in the example below.
+   * variable `API_KEY=my-api-key PUBLIC_BASE_URL=/foo/` would overwrite the two values in the example below.
    *
    * @example
    * ```js
