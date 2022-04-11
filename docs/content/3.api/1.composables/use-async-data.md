@@ -16,7 +16,7 @@ type AsyncDataOptions = {
   lazy?: boolean
   default?: () => DataT
   transform?: (input: DataT) => DataT
-  pick?: PickKeys
+  pick?: string[]
   watch?: WatchSource[]
   initialCache?: boolean
 }
