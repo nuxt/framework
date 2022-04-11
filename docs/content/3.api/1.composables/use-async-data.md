@@ -7,7 +7,7 @@ Within your pages, components, and plugins you can use useAsyncData to get acces
 ```ts [Signature]
 function useAsyncData(
   key: string,
-  handler: (ctx?: NuxtApp) => Promise<Object>,
+  handler: (nuxtApp?: NuxtApp) => Promise<DataT>,
   options?: AsyncDataOptions
 ): Promise<DataT>
 
@@ -15,7 +15,7 @@ type AsyncDataOptions = {
   server?: boolean
   lazy?: boolean
   default?: () => DataT
-  transform?: Transform
+  transform?: (input: DataT) => DataT
   pick?: PickKeys
   watch?: WatchSource[]
   initialCache?: boolean
