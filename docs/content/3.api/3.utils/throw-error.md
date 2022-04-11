@@ -4,9 +4,9 @@ Nuxt provides a quick and simple way to throw errows.
 
 Within your pages, components and plugins you can use `throwError` to throw an error.
 
-- **Arguments:**
-  - _err: `string | Error`
-- **Returns:** Error
+**Parameters:**
+
+- `error`: `string | Error`
 
 ```js
 throwError("😱 Oh no, an error has been thrown.")
