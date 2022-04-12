@@ -140,7 +140,7 @@ export function createNuxtApp (options: CreateOptions) {
       return target[prop] ?? target.public[prop]
     },
     set (target, prop, value) {
-      if (prop === 'public' || prop === 'app') {
+      if (process.server || prop === 'public' || prop === 'app') {
         return false // Throws TypeError
       }
       target[prop] = value
