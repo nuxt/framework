@@ -11176,6 +11176,7 @@ __metadata:
   resolution: "fixture-basic@workspace:test/fixtures/bridge"
   dependencies:
     "@nuxt/bridge": "*"
+    defu: ^6.0.0
     nuxt-edge: latest
     vue: ^2
   languageName: unknown
