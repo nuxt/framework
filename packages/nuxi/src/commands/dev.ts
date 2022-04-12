@@ -19,7 +19,7 @@ export default defineNuxtCommand({
   async invoke (args) {
     process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
-    const { listen } = await import('listhen')
+    const { listen } = await import('listen')
     let currentHandler
     let loadingMessage = 'Nuxt is starting...'
     const loadingHandler = async (_req, res) => {
