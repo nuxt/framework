@@ -35,14 +35,13 @@ describe('fixtures:bridge', async () => {
       const error = await res.json()
       delete error.stack
       expect(error).toMatchInlineSnapshot(`
-      {
-        "description": "",
-        "message": "This is a custom error",
-        "statusCode": 500,
-        "statusMessage": "Internal Server Error",
-        "url": "/error",
-      }
-    `)
+        {
+          "message": "This is a custom error",
+          "statusCode": 500,
+          "statusMessage": "Internal Server Error",
+          "url": "/error",
+        }
+      `)
     })
 
     it('should render a HTML error page', async () => {
