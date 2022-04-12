@@ -157,6 +157,7 @@ describe('errors', () => {
     delete error.stack
     expect(error).toMatchInlineSnapshot(`
       {
+        "description": "",
         "message": "This is a custom error",
         "statusCode": 500,
         "statusMessage": "Internal Server Error",
