@@ -14,7 +14,7 @@ export async function exists (path: string) {
 }
 
 export async function clearDir (path: string) {
-  await promisify(rimraf)(path)
+  await promisify(rimraf)(path, { glob: false })
   await fsp.mkdir(path, { recursive: true })
 }
 
