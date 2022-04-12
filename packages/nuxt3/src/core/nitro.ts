@@ -141,6 +141,7 @@ export async function initNitro (nuxt: Nuxt) {
   // nuxt build/dev
   nuxt.hook('build:done', async () => {
     await writeDocumentTemplate(nuxt)
+    await nuxt.callHook('nitro:generate', nitro)
     if (nuxt.options.dev) {
       await build(nitro)
     } else {

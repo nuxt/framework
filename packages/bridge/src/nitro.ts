@@ -269,6 +269,7 @@ export async function setupNitroBridge () {
   nuxt.hook('build:done', async () => {
     if (nuxt.options._prepare) { return }
     await writeDocumentTemplate(nuxt)
+    await nuxt.callHook('nitro:generate', nitro)
     if (nuxt.options.dev) {
       await build(nitro)
       await waitUntilCompile
