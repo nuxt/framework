@@ -1,6 +1,6 @@
 import { createHead, renderHeadToString } from '@vueuse/head'
 import { computed, ref, watchEffect, onBeforeUnmount, getCurrentInstance, ComputedGetter } from 'vue'
-import defu from 'defu'
+import { defu } from 'defu'
 import type { MetaObject } from '..'
 import { defineNuxtPlugin } from '#app'
 

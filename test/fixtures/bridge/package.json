@@ -7,7 +7,6 @@
   },
   "devDependencies": {
     "@nuxt/bridge": "*",
-    "defu": "^6.0.0",
     "nuxt-edge": "latest",
     "vue": "^2"
   },
