@@ -5,7 +5,7 @@ import { createNitro, createDevServer, build, prepare, copyPublicAssets, writeTy
 import type { NitroEventHandler, NitroDevEventHandler, NitroConfig } from 'nitropack'
 import type { Nuxt } from '@nuxt/schema'
 import { resolveModule, resolvePath } from '@nuxt/kit'
-import { defu } from 'defu'
+import defu from 'defu'
 import fsExtra from 'fs-extra'
 import { toEventHandler, dynamicEventHandler } from 'h3'
 import { distDir } from '../dirs'

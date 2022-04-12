@@ -8,7 +8,7 @@ import { createNitro, createDevServer, build, writeTypes, prepare, copyPublicAss
 import { dynamicEventHandler, toEventHandler } from 'h3'
 import type { Nitro, NitroEventHandler, NitroDevEventHandler, NitroConfig } from 'nitropack'
 import { Nuxt } from '@nuxt/schema'
-import { defu } from 'defu'
+import defu from 'defu'
 import { AsyncLoadingPlugin } from './async-loading'
 import { distDir } from './dirs'
 import { isDirectory, readDirRecursively } from './vite/utils/fs'

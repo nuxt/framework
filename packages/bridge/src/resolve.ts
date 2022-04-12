@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { promisify } from 'util'
-import { defu } from 'defu'
+import defu from 'defu'
 import enhancedResolve from 'enhanced-resolve'
 import { ResolveOptions } from 'webpack/types'
 import { extendWebpackConfig, useNuxt } from '@nuxt/kit'

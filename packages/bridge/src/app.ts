@@ -82,10 +82,6 @@ export function setupAppBridge (_options: any) {
     throw new Error('Custom global name is not supported by @nuxt/bridge.')
   }
 
-  // Alias defu  - we deliberately want the local version of defu
-  const _require = createRequire(import.meta.url)
-  nuxt.options.alias.defu = _require.resolve('defu')
-
   // Fix wp4 esm
   nuxt.hook('webpack:config', (configs) => {
     for (const config of configs.filter(c => c.module)) {

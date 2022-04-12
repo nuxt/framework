@@ -5,7 +5,7 @@ import type VueRouter from 'vue-router'
 import type { Location, Route } from 'vue-router'
 import type { RuntimeConfig } from '@nuxt/schema'
 import { sendRedirect } from 'h3'
-import { defu } from 'defu'
+import defu from 'defu'
 import { useNuxtApp } from './app'
 
 export { useLazyAsyncData, refreshNuxtData } from './asyncData'

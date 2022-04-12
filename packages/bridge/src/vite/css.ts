@@ -1,5 +1,5 @@
 import createResolver from 'postcss-import-resolver'
-import { defu } from 'defu'
+import defu from 'defu'
 import type { Nuxt, ViteOptions } from './types'
 
 // Ref: https://github.com/nuxt/nuxt.js/blob/dev/packages/webpack/src/utils/postcss.js

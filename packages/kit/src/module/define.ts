@@ -1,5 +1,5 @@
 import { promises as fsp } from 'fs'
-import { defu } from 'defu'
+import defu from 'defu'
 import { applyDefaults } from 'untyped'
 import { dirname } from 'pathe'
 import type { Nuxt, NuxtTemplate, NuxtModule, ModuleOptions, ModuleDefinition } from '@nuxt/schema'
