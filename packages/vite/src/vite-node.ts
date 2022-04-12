@@ -1,4 +1,4 @@
-import { createApp, createRouter, useQuery, createError, defineEventHandler, defineLazyEventHandler } from 'h3'
+import { createApp, createError, defineEventHandler, defineLazyEventHandler } from 'h3'
 import { ViteNodeServer } from 'vite-node/server'
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
