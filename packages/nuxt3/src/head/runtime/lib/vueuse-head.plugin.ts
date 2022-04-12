@@ -1,5 +1,6 @@
 import { createHead, renderHeadToString } from '@vueuse/head'
-import { ref, watchEffect, onBeforeUnmount, getCurrentInstance } from 'vue'
+import { computed, ref, watchEffect, onBeforeUnmount, getCurrentInstance, ComputedGetter } from 'vue'
+import defu from 'defu'
 import type { MetaObject } from '..'
 import { defineNuxtPlugin } from '#app'
 
@@ -14,9 +15,28 @@ export default defineNuxtPlugin((nuxtApp) => {
     headReady = true
   })
 
-  nuxtApp._useHead = (meta: MetaObject) => {
-    const headObj = ref(meta as any)
-    head.addHeadObjs(headObj)
+  const titleTemplate = ref<MetaObject['titleTemplate']>()
+
+  nuxtApp._useHead = (_meta: MetaObject | ComputedGetter<MetaObject>) => {
+    const meta = ref<MetaObject>(_meta)
+    if ('titleTemplate' in meta.value) {
+      titleTemplate.value = meta.value.titleTemplate
+    }
+
+    const headObj = computed(() => {
+      const overrides: MetaObject = { meta: [] }
+      if (titleTemplate.value && 'title' in meta.value) {
+        overrides.title = typeof titleTemplate.value === 'function' ? titleTemplate.value(meta.value.title) : titleTemplate.value.replace(/%s/g, meta.value.title)
+      }
+      if (meta.value.charset) {
+        overrides.meta!.push({ key: 'charset', charset: meta.value.charset })
+      }
+      if (meta.value.viewport) {
+        overrides.meta!.push({ name: 'viewport', content: meta.value.viewport })
+      }
+      return defu(overrides, meta.value)
+    })
+    head.addHeadObjs(headObj as any)
 
     if (process.server) { return }
 
