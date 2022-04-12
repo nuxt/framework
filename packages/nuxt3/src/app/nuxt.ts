@@ -118,18 +118,19 @@ export function createNuxtApp (options: CreateOptions) {
     nuxtApp.ssrContext.payload = nuxtApp.payload
   }
 
-  // Expose runtime config
-  let runtimeConfig
+  // Expose client runtime-config to the payload
   if (process.server) {
-    runtimeConfig = options.ssrContext.runtimeConfig
-    // Client's runtime-config
     nuxtApp.payload.config = {
       public: options.ssrContext.runtimeConfig.public,
       app: options.ssrContext.runtimeConfig.app
     }
-  } else {
-    runtimeConfig = reactive(nuxtApp.payload.config)
   }
+
+  // Expose runtime config
+  const runtimeConfig = process.server
+    ? options.ssrContext.runtimeConfig
+    : reactive(nuxtApp.payload.config)
+
   // Backward compatibilty following #4254
   const compatibilityConfig = new Proxy(runtimeConfig, {
     get (target, prop) {
@@ -147,6 +148,7 @@ export function createNuxtApp (options: CreateOptions) {
       return true
     }
   })
+
   nuxtApp.provide('config', compatibilityConfig)
 
   return nuxtApp
