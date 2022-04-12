@@ -1,6 +1,6 @@
 # `throwError`
 
-Nuxt provides a quick and simple way to throw errows.
+Nuxt provides a quick and simple way to throw errors.
 
 Within your pages, components and plugins you can use `throwError` to throw an error.
 
