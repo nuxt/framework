@@ -3,7 +3,7 @@ import { isDevelopment } from 'std-env'
 import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
-import defu from 'defu'
+import { defu } from 'defu'
 import { RuntimeConfig } from '../types/config'
 
 export default {

@@ -82,17 +82,9 @@ export function setupAppBridge (_options: any) {
     throw new Error('Custom global name is not supported by @nuxt/bridge.')
   }
 
-  // Alias defu to compat version - we deliberately want the local version of defu
+  // Alias defu  - we deliberately want the local version of defu
   const _require = createRequire(import.meta.url)
-  const defuPath = genString(_require.resolve('defu'))
-  nuxt.options.alias.defu = addTemplate({
-    filename: 'defu.alias.mjs',
-    getContents: () => [
-      `import { defu } from ${defuPath};`,
-      `export * from ${defuPath};`,
-      'export { defu as default };'
-    ].join('\n')
-  }).dst
+  nuxt.options.alias.defu = _require.resolve('defu')
 
   // Fix wp4 esm
   nuxt.hook('webpack:config', (configs) => {

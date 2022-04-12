@@ -1,4 +1,4 @@
-import defu from 'defu'
+import { defu } from 'defu'
 import createResolver from 'postcss-import-resolver'
 
 export default {

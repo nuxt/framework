@@ -1,6 +1,6 @@
 import { resolve } from 'pathe'
 import { addPlugin, addTemplate, defineNuxtModule, isNuxt3 } from '@nuxt/kit'
-import defu from 'defu'
+import { defu } from 'defu'
 import { distDir } from '../dirs'
 import type { MetaObject } from './runtime'
 
