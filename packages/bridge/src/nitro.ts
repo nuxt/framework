@@ -69,7 +69,7 @@ export async function setupNitroBridge () {
     buildDir: resolve(nuxt.options.buildDir),
     scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
     renderer: resolve(distDir, 'runtime/nitro/renderer'),
-    errorHandler: resolve(distDir, 'core/runtime/nitro/error'),
+    errorHandler: resolve(distDir, 'runtime/nitro/error'),
     nodeModulesDirs: nuxt.options.modulesDir,
     handlers,
     devHandlers: [],
