@@ -2,12 +2,6 @@
   "extends": [
     "@nuxtjs"
   ],
-  "packageRules": [
-    {
-      "matchPackageNames": ["vue", "vue-router"],
-      "enabled": false
-    }
-  ],
   "ignoreDeps": [
     "docus",
     "@docus/app",
