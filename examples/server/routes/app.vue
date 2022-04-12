@@ -1,10 +1,9 @@
 <template>
   <NuxtExampleLayout example="server/routes">
-    <p>Count fetched from <pre>/api/count</pre>:</p>
+    <p>Fetched from <pre>/api/mountain</pre>: {{ mountain }}</p>
   </NuxtExampleLayout>
 </template>
 
 <script setup>
-const { data } = await useFetch('/api/count')
-console.log(data)
+const { data: mountain } = await useAsyncData('mountain', () => $fetch('/api/mountain').catch(console.trace))
 </script>
