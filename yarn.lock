@@ -10201,7 +10201,7 @@ __metadata:
     object-hash: ^3.0.0
     pathe: ^0.2.0
     typescript: ^4.6.3
-    unbuild: ^0.7.4
+    unbuild: ^0.7.3
     vitest: ^0.9.3
     vue-router: ^4.0.14
     vue-tsc: ^0.34.6
@@ -13541,7 +13541,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.7.4":
+"unbuild@npm:^0.7.3":
   version: 0.7.4
   resolution: "unbuild@npm:0.7.4"
   dependencies:
