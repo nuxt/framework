@@ -93,7 +93,7 @@ export function useLazyFetch<
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   request: Ref<ReqT> | ReqT | (() => ReqT),
-  opts?: Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'lazy' | 'sercer'> & { server?: true }
+  opts?: Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'lazy' | 'server'> & { server?: true }
 ): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | true>;
 
 export function useLazyFetch<
