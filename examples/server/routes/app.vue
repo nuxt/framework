@@ -5,5 +5,5 @@
 </template>
 
 <script setup>
-const { data: mountain } = await useAsyncData('mountain', () => $fetch('/api/mountain').catch(console.trace))
+const { data: mountain } = await useFetch('/api/mountain')
 </script>
