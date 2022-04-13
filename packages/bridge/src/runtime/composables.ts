@@ -8,7 +8,7 @@ import { sendRedirect } from 'h3'
 import defu from 'defu'
 import { useNuxtApp } from './app'
 
-export { useLazyAsyncData } from './asyncData'
+export { useLazyAsyncData, refreshNuxtData } from './asyncData'
 export { useLazyFetch } from './fetch'
 export { useCookie } from './cookie'
 export { useRequestHeaders } from './ssr'
@@ -25,7 +25,25 @@ export const useHydration = mock()
 export const useRuntimeConfig = () => {
   const nuxtApp = useNuxtApp()
   if (!nuxtApp.$config) {
-    nuxtApp.$config = reactive(nuxtApp.nuxt2Context.app.$config)
+    const runtimeConfig = reactive(nuxtApp.nuxt2Context.app.$config)
+    const compatibilityConfig = new Proxy(runtimeConfig, {
+      get (target, prop) {
+        if (prop === 'public') {
+          return target.public
+        }
+        return target[prop] ?? target.public[prop]
+      },
+      set (target, prop, value) {
+        if (prop === 'public' || prop === 'app') {
+          return false // Throws TypeError
+        }
+        target[prop] = value
+        target.public[prop] = value
+        return true
+      }
+    })
+    nuxtApp.provide('config', compatibilityConfig)
+    nuxtApp.$config = compatibilityConfig
   }
   return nuxtApp.$config as RuntimeConfig
 }

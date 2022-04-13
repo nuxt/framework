@@ -9,6 +9,7 @@ import { getPort } from 'get-port-please'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
+import { DynamicBasePlugin } from './plugins/dynamic-base'
 import { warmupViteServer } from './utils/warmup'
 import { resolveCSSOptions } from './css'
 
@@ -25,7 +26,6 @@ export interface ViteBuildContext {
 }
 
 export async function bundle (nuxt: Nuxt) {
-  // TODO: After nitropack refactor, try if we can resuse the same server port as Nuxt
   const hmrPortDefault = 24678 // Vite's default HMR port
   const hmrPort = await getPort({
     port: hmrPortDefault,
@@ -53,7 +53,8 @@ export async function bundle (nuxt: Nuxt) {
         optimizeDeps: {
           entries: [
             resolve(nuxt.options.appDir, 'entry.ts')
-          ]
+          ],
+          include: ['vue']
         },
         css: resolveCSSOptions(nuxt),
         build: {
@@ -63,7 +64,8 @@ export async function bundle (nuxt: Nuxt) {
           }
         },
         plugins: [
-          virtual(nuxt.vfs)
+          virtual(nuxt.vfs),
+          DynamicBasePlugin.vite()
         ],
         vue: {
           reactivityTransform: nuxt.options.experimental.reactivityTransform
@@ -73,6 +75,8 @@ export async function bundle (nuxt: Nuxt) {
             ignored: isIgnored
           },
           hmr: {
+            // https://github.com/nuxt/framework/issues/4191
+            protocol: 'ws',
             clientPort: hmrPort,
             port: hmrPort
           },
@@ -104,7 +108,6 @@ export async function bundle (nuxt: Nuxt) {
       .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
       .catch(logger.error)
   })
-
   await buildClient(ctx)
   await buildServer(ctx)
 }

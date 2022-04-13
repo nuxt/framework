@@ -1,5 +1,6 @@
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
+import { isWindows } from 'std-env'
 
 export default defineConfig({
   alias: {
@@ -8,5 +9,8 @@ export default defineConfig({
   },
   esbuild: {
     tsconfigRaw: '{}'
+  },
+  test: {
+    testTimeout: isWindows ? 60000 : 10000
   }
 })

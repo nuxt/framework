@@ -3,7 +3,11 @@ import { existsSync, readdirSync } from 'fs'
 import defu from 'defu'
 
 export default {
-  /** Vue.js config */
+  /**
+   * Vue.js config
+   * @version 2
+   * @version 3
+   */
   vue: {
     /**
      * Properties that will be set directly on `Vue.config` for vue@2.
@@ -34,15 +38,17 @@ export default {
     /**
      * The base path of your Nuxt application.
      *
-     * This can be set at runtime by setting the BASE_PATH environment variable.
+     * This can be set at runtime by setting the NUXT_APP_BASE_URL environment variable.
      * @example
      * ```bash
-     * BASE_PATH=/prefix/ node .output/server/index.mjs
+     * NUXT_APP_BASE_URL=/prefix/ node .output/server/index.mjs
      * ```
      */
-    baseURL: '/',
+    baseURL: process.env.NUXT_APP_BASE_URL || '/',
+
     /** The folder name for the built site assets, relative to `baseURL` (or `cdnURL` if set). This is set at build time and should not be customized at runtime. */
-    buildAssetsDir: '/_nuxt/',
+    buildAssetsDir: process.env.NUXT_APP_BUILD_ASSETS_DIR || '/_nuxt/',
+
     /**
      * The folder name for the built site assets, relative to `baseURL` (or `cdnURL` if set).
      * @deprecated - use `buildAssetsDir` instead
@@ -61,10 +67,51 @@ export default {
      * ```
     */
     cdnURL: {
-      $resolve: (val, get) => get('dev') ? null : val || null
-    }
+      $resolve: (val, get) => get('dev') ? '' : (process.env.NUXT_APP_CDN_URL ?? val) || ''
+    },
+    /**
+     * Set default configuration for `<head>` on every page.
+     *
+     * @example
+     * ```js
+     * app: {
+     *   head: {
+     *     meta: [
+     *       // <meta name="viewport" content="width=device-width, initial-scale=1">
+     *       { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+     *     ],
+     *     script: [
+     *       // <script src="https://myawesome-lib.js"></script>
+     *       { src: 'https://awesome-lib.js' }
+     *     ],
+     *     link: [
+     *       // <link rel="stylesheet" href="https://myawesome-lib.css">
+     *       { rel: 'stylesheet', href: 'https://awesome-lib.css' }
+     *     ],
+     *     // please note that this is an area that is likely to change
+     *     style: [
+     *       // <style type="text/css">:root { color: red }</style>
+     *       { children: ':root { color: red }', type: 'text/css' }
+     *     ]
+     *   }
+     * }
+     * ```
+     * @type {typeof import('../src/types/meta').MetaObject}
+     * @version 3
+     */
+    head: {
+      $resolve: (val, get) => {
+        return defu(val, get('meta'), {
+          charset: 'utf-8',
+          viewport: 'width=device-width, initial-scale=1',
+          meta: [],
+          link: [],
+          style: [],
+          script: []
+        })
+      }
+    },
   },
-
   /**
    * The path to a templated HTML file for rendering Nuxt responses.
    * Uses `<srcDir>/app.html` if it exists or the Nuxt default template if not.
@@ -136,32 +183,9 @@ export default {
   },
 
   /**
-   * Set default configuration for `<head>` on every page.
-   *
-   * @example
-   * ```js
-   * meta: {
-   *  meta: [
-   *    // <meta name="viewport" content="width=device-width, initial-scale=1">
-   *    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
-   *  ],
-   *  script: [
-   *    // <script src="https://myawesome-lib.js"></script>
-   *    { src: 'https://awesome-lib.js' }
-   *  ],
-   *  link: [
-   *    // <link rel="stylesheet" href="https://myawesome-lib.css">
-   *    { rel: 'stylesheet', href: 'https://awesome-lib.css' }
-   *  ],
-   *  // please note that this is an area that is likely to change
-   *  style: [
-   *    // <style type="text/css">:root { color: red }</style>
-   *    { children: ':root { color: red }', type: 'text/css' }
-   *  ]
-   * }
-   * ```
    * @type {typeof import('../src/types/meta').MetaObject}
    * @version 3
+   * @deprecated - use `head` instead
    */
   meta: {
     meta: [],

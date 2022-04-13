@@ -80,7 +80,7 @@ export const appViewTemplate = {
   {{ HEAD }}
 </head>
 
-<body {{ BODY_ATTRS }}>
+<body {{ BODY_ATTRS }}>{{ BODY_PREPEND }}
   {{ APP }}
 </body>
 
@@ -134,22 +134,14 @@ export const schemaTemplate = {
       `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
       ),
       '  }',
-      generateTypes(resolveSchema(nuxt.options.publicRuntimeConfig),
+      generateTypes(resolveSchema(nuxt.options.runtimeConfig),
         {
-          interfaceName: 'PublicRuntimeConfig',
+          interfaceName: 'RuntimeConfig',
           addExport: false,
           addDefaults: false,
           allowExtraKeys: false,
           indentation: 2
         }),
-      generateTypes(resolveSchema(nuxt.options.privateRuntimeConfig), {
-        interfaceName: 'PrivateRuntimeConfig',
-        addExport: false,
-        addDefaults: false,
-        indentation: 2,
-        allowExtraKeys: false,
-        defaultDescrption: 'This value is only accessible from server-side.'
-      }),
       '}'
     ].join('\n')
   }
@@ -170,8 +162,10 @@ export const layoutTemplate: NuxtTemplate = {
 }
 
 export const clientConfigTemplate: NuxtTemplate = {
-  filename: 'config.client.mjs',
-  getContents: () => 'export default window?.__NUXT__?.config || {}'
+  filename: 'nitro.client.mjs',
+  getContents: () => `
+export const useRuntimeConfig = () => window?.__NUXT__?.config || {}
+`
 }
 
 export const publicPathTemplate: NuxtTemplate = {
@@ -179,11 +173,11 @@ export const publicPathTemplate: NuxtTemplate = {
   getContents ({ nuxt }) {
     return [
       'import { joinURL } from \'ufo\'',
-      !nuxt.options.dev && 'import config from \'#_config\'',
+      !nuxt.options.dev && 'import { useRuntimeConfig } from \'#nitro\'',
 
       nuxt.options.dev
         ? `const appConfig = ${JSON.stringify(nuxt.options.app)}`
-        : 'const appConfig = config.app',
+        : 'const appConfig = useRuntimeConfig().app',
 
       'export const baseURL = () => appConfig.baseURL',
       'export const buildAssetsDir = () => appConfig.buildAssetsDir',

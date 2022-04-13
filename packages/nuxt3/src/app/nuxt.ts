@@ -3,7 +3,10 @@ import { getCurrentInstance, reactive } from 'vue'
 import type { App, onErrorCaptured, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import type { RuntimeConfig } from '@nuxt/schema'
+import { getContext } from 'unctx'
 import { legacyPlugin, LegacyContext } from './compat/legacy-app'
+
+const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
 type NuxtMeta = {
   htmlAttrs?: string
@@ -23,6 +26,7 @@ export interface RuntimeNuxtHooks {
   'app:suspense:resolve': (Component?: VNode) => HookResult
   'app:error': (err: any) => HookResult
   'app:error:cleared': (options: { redirect?: string }) => HookResult
+  'app:data:refresh': (keys?: string[]) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
   'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
@@ -114,13 +118,38 @@ export function createNuxtApp (options: CreateOptions) {
     nuxtApp.ssrContext.payload = nuxtApp.payload
   }
 
-  // Expose runtime config
+  // Expose client runtime-config to the payload
   if (process.server) {
-    nuxtApp.provide('config', options.ssrContext.runtimeConfig.private)
-    nuxtApp.payload.config = options.ssrContext.runtimeConfig.public
-  } else {
-    nuxtApp.provide('config', reactive(nuxtApp.payload.config))
+    nuxtApp.payload.config = {
+      public: options.ssrContext.runtimeConfig.public,
+      app: options.ssrContext.runtimeConfig.app
+    }
   }
+
+  // Expose runtime config
+  const runtimeConfig = process.server
+    ? options.ssrContext.runtimeConfig
+    : reactive(nuxtApp.payload.config)
+
+  // Backward compatibilty following #4254
+  const compatibilityConfig = new Proxy(runtimeConfig, {
+    get (target, prop) {
+      if (prop === 'public') {
+        return target.public
+      }
+      return target[prop] ?? target.public[prop]
+    },
+    set (target, prop, value) {
+      if (process.server || prop === 'public' || prop === 'app') {
+        return false // Throws TypeError
+      }
+      target[prop] = value
+      target.public[prop] = value
+      return true
+    }
+  })
+
+  nuxtApp.provide('config', compatibilityConfig)
 
   return nuxtApp
 }
@@ -171,12 +200,6 @@ export function isLegacyPlugin (plugin: unknown): plugin is LegacyPlugin {
   return !plugin[NuxtPluginIndicator]
 }
 
-let currentNuxtAppInstance: NuxtApp | null
-
-export const setNuxtAppInstance = (nuxt: NuxtApp | null) => {
-  currentNuxtAppInstance = nuxt
-}
-
 /**
  * Ensures that the setup function passed in has access to the Nuxt instance via `useNuxt`.
  *
@@ -184,13 +207,14 @@ export const setNuxtAppInstance = (nuxt: NuxtApp | null) => {
  * @param setup The function to call
  */
 export function callWithNuxt<T extends (...args: any[]) => any> (nuxt: NuxtApp | _NuxtApp, setup: T, args?: Parameters<T>) {
-  setNuxtAppInstance(nuxt as NuxtApp)
-  const p: ReturnType<T> = args ? setup(...args as Parameters<T>) : setup()
+  const fn = () => args ? setup(...args as Parameters<T>) : setup()
   if (process.server) {
-    // Unset nuxt instance to prevent context-sharing in server-side
-    setNuxtAppInstance(null)
+    return nuxtAppCtx.callAsync<ReturnType<T>>(nuxt, fn)
+  } else {
+    // In client side we could assume nuxt app is singleton
+    nuxtAppCtx.set(nuxt)
+    return fn()
   }
-  return p
 }
 
 /**
@@ -200,10 +224,11 @@ export function useNuxtApp () {
   const vm = getCurrentInstance()
 
   if (!vm) {
-    if (!currentNuxtAppInstance) {
+    const nuxtAppInstance = nuxtAppCtx.use()
+    if (!nuxtAppInstance) {
       throw new Error('nuxt instance unavailable')
     }
-    return currentNuxtAppInstance
+    return nuxtAppInstance
   }
 
   return vm.appContext.app.$nuxt as NuxtApp
