@@ -32,7 +32,7 @@ const getSPARenderer = cachedResult(async () => {
     ssrContext.nuxt = {
       serverRendered: false,
       config: {
-        ...config.public,
+        public: config.public,
         app: config.app
       }
     }
@@ -73,7 +73,7 @@ function renderToString (ssrContext) {
 
 export default eventHandler(async (event) => {
   // Whether we're rendering an error page
-  const ssrError = event.req.url?.startsWith('/__error') ? useQuery(event) : null
+  const ssrError = event.req.url?.startsWith('/__nuxt_error') ? useQuery(event) : null
   let url = ssrError?.url as string || event.req.url!
 
   // payload.json request detection
@@ -84,13 +84,12 @@ export default eventHandler(async (event) => {
   }
 
   // Initialize ssr context
-  const config = useRuntimeConfig()
   const ssrContext = {
     url,
     event,
     req: event.req,
     res: event.res,
-    runtimeConfig: { private: config, public: { ...config.public, app: config.app } },
+    runtimeConfig: useRuntimeConfig(),
     noSSR: event.req.headers['x-nuxt-no-ssr'],
 
     error: ssrError,

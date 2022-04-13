@@ -26,9 +26,20 @@ export async function setupNitroBridge () {
   nuxt.options.app.assetsPath = nuxt.options.app.buildAssetsDir
   nuxt.options.app.baseURL = nuxt.options.app.baseURL || (nuxt.options.app as any).basePath
   nuxt.options.app.cdnURL = nuxt.options.app.cdnURL || ''
-  // Nitro expects app config on `config.app` rather than `config._app`
-  nuxt.options.publicRuntimeConfig.app = nuxt.options.publicRuntimeConfig.app || {}
-  Object.assign(nuxt.options.publicRuntimeConfig.app, nuxt.options.publicRuntimeConfig._app)
+
+  // Extract publicConfig and app
+  const publicConfig = nuxt.options.publicRuntimeConfig
+  const appConfig = { ...publicConfig._app, ...publicConfig.app }
+  delete publicConfig.app
+  delete publicConfig._app
+
+  // Merge with new `runtimeConfig` format
+  nuxt.options.runtimeConfig = defu(nuxt.options.runtimeConfig, {
+    ...publicConfig,
+    ...nuxt.options.privateRuntimeConfig,
+    public: publicConfig,
+    app: appConfig
+  })
 
   // Disable loading-screen
   // @ts-ignore
@@ -45,6 +56,9 @@ export async function setupNitroBridge () {
     }
   }
 
+  // Resolve Handlers
+  const { handlers, devHandlers } = await resolveHandlers(nuxt)
+
   // Resolve config
   const _nitroConfig = (nuxt.options as any).nitro || {} as NitroConfig
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
@@ -55,18 +69,15 @@ export async function setupNitroBridge () {
     buildDir: resolve(nuxt.options.buildDir),
     scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
     renderer: resolve(distDir, 'runtime/nitro/renderer'),
+    errorHandler: resolve(distDir, 'runtime/nitro/error'),
     nodeModulesDirs: nuxt.options.modulesDir,
-    handlers: [],
+    handlers,
     devHandlers: [],
     runtimeConfig: {
-      // Private
-      ...nuxt.options.publicRuntimeConfig,
-      ...nuxt.options.privateRuntimeConfig,
-      // Public
-      public: nuxt.options.publicRuntimeConfig,
-      // Nitro
+      ...nuxt.options.runtimeConfig,
       nitro: {
-        envPrefix: 'NUXT_'
+        envPrefix: 'NUXT_',
+        ...nuxt.options.runtimeConfig.nitro
       }
     },
     typescript: {
@@ -105,9 +116,6 @@ export async function setupNitroBridge () {
       // Renderer
       '#vue-renderer': resolve(distDir, 'runtime/nitro/vue2'),
       '#vue2-server-renderer': 'vue-server-renderer/' + (nuxt.options.dev ? 'build.dev.js' : 'build.prod.js'),
-
-      // Error renderer
-      '#nitro/error': resolve(distDir, 'runtime/nitro/error'),
 
       // Paths
       '#paths': resolve(distDir, 'runtime/nitro/paths'),
@@ -224,11 +232,9 @@ export async function setupNitroBridge () {
   // Setup handlers
   const devMidlewareHandler = dynamicEventHandler()
   nitro.options.devHandlers.unshift({ handler: devMidlewareHandler })
-  const { handlers, devHandlers } = await resolveHandlers(nuxt)
-  nitro.options.handlers.push(...handlers)
   nitro.options.devHandlers.push(...devHandlers)
   nitro.options.handlers.unshift({
-    route: '/_nitro',
+    route: '/__nuxt_error',
     lazy: true,
     handler: resolve(distDir, 'runtime/nitro/renderer')
   })
