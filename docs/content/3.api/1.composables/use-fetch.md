@@ -32,7 +32,7 @@ type DataT = {
 
 ## Params
 
-* **key**: Provide a custom key
+* **url**: The URL to fetch
 * **Options from [ohmyfetch](https://github.com/unjs/ohmyfetch)**:
   * `method`: Request method
   * `params`: Query params
