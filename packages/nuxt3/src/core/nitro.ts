@@ -12,6 +12,9 @@ import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
 export async function initNitro (nuxt: Nuxt) {
+  // Resolve handlers
+  const { handlers, devHandlers } = await resolveHandlers(nuxt)
+
   // Resolve config
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
@@ -22,8 +25,9 @@ export async function initNitro (nuxt: Nuxt) {
     buildDir: nuxt.options.buildDir,
     scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
     renderer: resolve(distDir, 'core/runtime/nitro/renderer'),
+    errorHandler: resolve(distDir, 'core/runtime/nitro/error'),
     nodeModulesDirs: nuxt.options.modulesDir,
-    handlers: [],
+    handlers,
     devHandlers: [],
     baseURL: nuxt.options.app.baseURL,
     runtimeConfig: {
@@ -74,9 +78,6 @@ export async function initNitro (nuxt: Nuxt) {
       // Renderer
       '#vue-renderer': resolve(distDir, 'core/runtime/nitro/vue3'),
 
-      // Error renderer
-      '#nitro/error': resolve(distDir, 'core/runtime/nitro/error'),
-
       // Paths
       '#paths': resolve(distDir, 'core/runtime/nitro/paths'),
 
@@ -117,8 +118,6 @@ export async function initNitro (nuxt: Nuxt) {
   // Setup handlers
   const devMidlewareHandler = dynamicEventHandler()
   nitro.options.devHandlers.unshift({ handler: devMidlewareHandler })
-  const { handlers, devHandlers } = await resolveHandlers(nuxt)
-  nitro.options.handlers.push(...handlers)
   nitro.options.devHandlers.push(...devHandlers)
   nitro.options.handlers.unshift({
     route: '/__nuxt_error',
