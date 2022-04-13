@@ -48,6 +48,7 @@ export type NuxtLinkOptions = {
   externalRelAttribute?: string | null;
   activeClass?: string;
   exactActiveClass?: string;
+  prefetchedClass?: string
 }
 
 export type NuxtLinkProps = {
@@ -67,6 +68,7 @@ export type NuxtLinkProps = {
   // Styling
   activeClass?: string;
   exactActiveClass?: string;
+  prefetchedClass?: string
 
   // Vue Router's `<RouterLink>` additional props
   replace?: boolean;
@@ -138,6 +140,11 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
         default: undefined,
         required: false
       },
+      prefetchedClass: {
+        type: String as PropType<string>,
+        default: undefined,
+        required: false
+      },
 
       // Vue Router's `<RouterLink>` additional props
       replace: {
@@ -200,6 +207,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
         return to.value === '' || hasProtocol(to.value, true)
       })
 
+      const prefetched = ref(false)
       const shouldPrefetch = computed(() => {
         checkPropConflicts(props, 'prefetch', 'noPrefetch')
 
@@ -219,6 +227,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
           .map(component => component.components.default)
           .filter(component => typeof component === 'function' && !prefetcheds.has(component))
 
+        const promises = []
         components.forEach((component: Lazy<RouteComponent>) => {
           const promise = component()
           if (promise instanceof Promise) {
@@ -226,6 +235,10 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
           }
           promises.push(promise)
           prefetcheds.add(component)
+        })
+
+        Promise.all(promises).then(() => {
+          prefetched.value = true
         })
       }
 
@@ -255,6 +268,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
             {
               ref: setNodeRef,
               to: to.value,
+              class: prefetched.value && (props.prefetchedClass || options.prefetchedClass),
               activeClass: props.activeClass || options.activeClass,
               exactActiveClass: props.exactActiveClass || options.exactActiveClass,
               replace: props.replace,
