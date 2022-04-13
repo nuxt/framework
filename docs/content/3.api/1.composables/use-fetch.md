@@ -32,13 +32,13 @@ type DataT = {
 
 ## Params
 
-* **url**: The URL to fetch
-* **Options from [ohmyfetch](https://github.com/unjs/ohmyfetch)**:
+* **Url**: The URL to fetch
+* **Options (from [ohmyfetch](https://github.com/unjs/ohmyfetch))**:
   * `method`: Request method
   * `params`: Query params
   * `headers`: Request headers
   * `baseURL`: Base URL for the request
-* **Options from `useAsyncData`**
+* **Options (from `useAsyncData`)**:
   * `lazy`: Whether to resolve the async function after loading the route, instead of blocking navigation (defaults to `false`).
   * `server`: Whether to fetch the data on server-side (defaults to `true`).
   * `default`: A factory function to set the default value of the data, before the async function resolves - particularly useful with the `lazy: true` option.
