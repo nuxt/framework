@@ -1,13 +1,13 @@
 # `useLazyFetch`
 
-This composable behaves identically to [useFetch](/api/composables/use-fetch) with the `lazy: true` option set. 
+This composable behaves identically to [useFetch](/api/composables/use-fetch) with the `lazy: true` option set.  
 
 Otherwise, this function does not block navigation. That means you will need to handle the situation where the data is `null` (or whatever value you have provided in a custom `default` factory function).
 
 ::ReadMore{link="/api/composables/use-fetch"}
 ::
 
-### Example
+## Example
 
 ```vue
 <template>
