@@ -16,7 +16,7 @@ By default, [useFetch](/api/composables/use-fetch) blocks navigation until its a
 /* Navigation will occur before fetching is complete.
   Handle pending and error state directly within your component's template
 */
-const { data, pending, error, refresh } = useLazyFetch('https://api.nuxtjs.dev/mountains)
+const { data, pending, error, refresh } = await useLazyFetch('https://api.nuxtjs.dev/mountains')
 ```
 
 :ReadMore{link="/guide/features/data-fetching#uselazyfetch"}
