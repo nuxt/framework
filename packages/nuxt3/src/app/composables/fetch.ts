@@ -30,7 +30,7 @@ export function useFetch<
 > (
   request: Ref<ReqT> | ReqT | (() => ReqT),
   opts?: Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'server'> & { server?: true }
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | true>;
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | boolean>;
 
 export function useFetch<
   ResT = void,
