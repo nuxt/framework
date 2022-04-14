@@ -18,7 +18,7 @@ By default, [useAsyncData](/api/composables/use-async-data) blocks navigation un
 */
 const { data, pending, error, refresh } = await useLazyAsyncData(
   'mountains',
-  () => $fetch('https://api.nuxtjs.dev/mountains)
+  () => $fetch('https://api.nuxtjs.dev/mountains')
 )
 ```
 
