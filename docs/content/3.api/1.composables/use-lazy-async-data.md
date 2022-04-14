@@ -12,14 +12,25 @@ By default, [useAsyncData](/api/composables/use-async-data) blocks navigation un
 
 ## Example
 
-```ts
+```vue
+<template>
+  <div>
+    {{ pending ? 'Loading' : count }}
+  </div>
+</template>
+
+<script setup>
 /* Navigation will occur before fetching is complete.
   Handle pending and error state directly within your component's template
 */
-const { data, pending, error, refresh } = useLazyAsyncData(
-  'mountains',
-  () => $fetch('https://api.nuxtjs.dev/mountains)
-)
+const { pending, data: count } = useLazyAsyncData('count', () => $fetch('/api/count'))
+
+watch(count, (newCount) => {
+  // Because count starts out null, you won't have access
+  // to its contents immediately, but you can watch it.
+})
+</script>
 ```
 
-:ReadMore{link="/guide/features/data-fetching#uselazyasyncdata"}
+::ReadMore{link="/guide/features/data-fetching#uselazyasyncdata"}
+::

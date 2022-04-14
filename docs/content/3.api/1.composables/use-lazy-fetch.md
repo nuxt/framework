@@ -12,11 +12,29 @@ By default, [useFetch](/api/composables/use-fetch) blocks navigation until its a
 
 ## Example
 
-```ts
+```vue
+<template>
+  <div v-if="pending">
+    Loading ...
+  </div>
+  <div v-else>
+    <div v-for="post in posts">
+      <!-- do something -->
+    </div>
+  </div>
+</template>
+
+<script setup>
 /* Navigation will occur before fetching is complete.
   Handle pending and error state directly within your component's template
 */
-const { data, pending, error, refresh } = useLazyFetch('https://api.nuxtjs.dev/mountains)
+const { pending, data: posts } = useLazyFetch('/api/posts')
+watch(posts, (newPosts) => {
+  // Because posts starts out null, you won't have access
+  // to its contents immediately, but you can watch it.
+})
+</script>
 ```
 
-:ReadMore{link="/guide/features/data-fetching#uselazyfetch"}
+::ReadMore{link="/guide/features/data-fetching#uselazyfetch"}
+::
