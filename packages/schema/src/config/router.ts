@@ -85,13 +85,14 @@ export default {
    *
    * @example
    * ```js
+   * import { fileURLToPath } from 'url'
    * export default {
    *   router: {
    *     extendRoutes(routes, resolve) {
    *       routes.push({
    *         name: 'custom',
    *         path: '*',
-   *         component: new URL('./pages/404.vue', import.meta.url)
+   *         component: fileURLToPath(new URL('./pages/404.vue', import.meta.url))
    *       })
    *     }
    *   }

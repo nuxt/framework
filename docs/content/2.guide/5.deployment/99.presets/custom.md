@@ -45,9 +45,11 @@ export default myPreset
 Then in your `nuxt.config` you can specify that Nitro should use your custom preset:
 
 ```ts [nuxt.config.js|ts]
+import { fileURLToPath } from 'url'
+
 export default {
   nitro: {
-    preset: new URL('./my-preset', import.meta.url)
+    preset: fileURLToPath(new URL('./my-preset', import.meta.url))
   }
 }
 ```

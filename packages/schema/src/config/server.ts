@@ -4,12 +4,13 @@ export default {
    * Whether to enable HTTPS.
    *
    * @example
-   * ```js
+   * ```
+   * import { fileURLToPath } from 'url'
    * export default {
    *   server: {
    *     https: {
-   *       key: fs.readFileSync(new URL('./server.key', import.meta.url)),
-   *       cert: fs.readFileSync(new URL('./server.crt', import.meta.url))
+   *       key: fs.readFileSync(fileURLToPath(new URL('./server.key', import.meta.url))),
+   *       cert: fs.readFileSync(fileURLToPath(new URL('./server.crt', import.meta.url)))
    *     }
    *   }
    * }
