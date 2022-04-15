@@ -376,7 +376,7 @@ describe('dynamic paths', () => {
 
 // HMR should be at the last
 if (isDev()) {
-  describe.only('hmr', async () => {
+  describe('hmr', async () => {
     const { default: Git } = await import('simple-git')
     const git = Git()
     const diff = await git.diffSummary(fixturePath)
@@ -384,7 +384,7 @@ if (isDev()) {
       throw new Error('Fixture has uncommitted changes, please commit them before running HMR tests')
     }
 
-    it.only('should work', async () => {
+    it('should work', async () => {
       const { page, pageErrors, consoleLogs } = await renderPage('/')
 
       expect(await page.title()).toBe('Basic fixture - Fixture')
