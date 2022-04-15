@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'url'
 import { promises as fsp } from 'fs'
-import { afterAll, afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 // import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer, isDev } from '@nuxt/test-utils'
 import { join } from 'pathe'
