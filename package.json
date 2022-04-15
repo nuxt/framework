@@ -34,7 +34,7 @@
     "jiti": "^1.13.0",
     "nitropack-dev": "link:../nitropack",
     "nuxt3": "workspace:./packages/nuxt3",
-    "vite": "^2.9.3",
+    "vite": "^2.9.5",
     "unbuild": "^0.7.4"
   },
   "devDependencies": {
@@ -42,9 +42,9 @@
     "@nuxtjs/eslint-config": "^9.0.0",
     "@nuxtjs/eslint-config-typescript": "^9.0.0",
     "@types/jsdom": "^16",
-    "@types/node": "^16.11.26",
+    "@types/node": "^16.11.27",
     "@types/object-hash": "^2",
-    "@unocss/reset": "^0.31.2",
+    "@unocss/reset": "^0.31.3",
     "case-police": "^0.5.3",
     "esbuild": "^0.14.36",
     "eslint": "^8.13.0",
