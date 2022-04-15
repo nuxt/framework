@@ -50,8 +50,10 @@ export async function initNitro (nuxt: Nuxt) {
         .map(dir => ({ dir }))
     ],
     prerender: {
-      crawlLinks: nuxt.options.generate.crawler,
-      routes: nuxt.options.generate.routes
+      crawlLinks: nuxt.options._generate ? nuxt.options.generate.crawler : false,
+      routes: []
+        .concat(nuxt.options.generate.routes)
+        .concat(nuxt.options.ssr === false ? ['/', '/200', '/404'] : [])
     },
     externals: {
       inline: [
