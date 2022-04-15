@@ -113,8 +113,6 @@ export async function initNitro (nuxt: Nuxt) {
           .map(p => [p, 'Vue app aliases are not allowed in server routes.']) as [RegExp | string, string][]
       ]
     })
-    // TODO: Investigate unplugin type issue
-    // @ts-ignore
     nitro.options.rollupConfig.plugins.push(plugin)
   })
 
