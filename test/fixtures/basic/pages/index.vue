@@ -10,7 +10,7 @@
     <NuxtLink to="/">
       Link
     </NuxtLink>
-    <SugarCounter :count="12" />
+    <SugarCounter :multiplier="2" />
     <CustomComponent />
   </div>
 </template>

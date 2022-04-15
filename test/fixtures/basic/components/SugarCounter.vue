@@ -1,14 +1,16 @@
 <script setup lang="ts">
-const { count } = defineProps<{
-  count: number,
+const { multiplier } = defineProps<{
+  multiplier: number
 }>()
-// eslint-disable-next-line prefer-const
-let multiplier = $ref(2)
+const count = $ref(12)
 const doubled = $computed(() => count * multiplier)
 </script>
 
 <template>
-  <div>
+  <div class="sugar-counter">
     Sugar Counter {{ count }} x {{ multiplier }} = {{ doubled }}
+    <button @click="count += 1">
+      Inc
+    </button>
   </div>
 </template>
