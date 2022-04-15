@@ -88,7 +88,7 @@ export default {
      * ```
      * @type {false | typeof import('mini-css-extract-plugin').PluginOptions}
      */
-    extractCSS: false,
+    extractCSS: true,
 
     /**
      * Enables CSS source map support (defaults to true in development)

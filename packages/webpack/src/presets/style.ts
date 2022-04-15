@@ -113,10 +113,11 @@ function createCssLoadersRule (ctx: WebpackConfigContext, cssLoaderOptions) {
   }
 
   return [
-    {
-      loader: 'vue-style-loader',
-      options: options.webpack.loaders.vueStyle
-    },
+    // https://github.com/vuejs/vue-style-loader/issues/56
+    // {
+    //   loader: 'vue-style-loader',
+    //   options: options.webpack.loaders.vueStyle
+    // },
     cssLoader
   ]
 }
