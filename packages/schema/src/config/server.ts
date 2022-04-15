@@ -8,8 +8,8 @@ export default {
    * export default {
    *   server: {
    *     https: {
-   *       key: fs.readFileSync(path.resolve(__dirname, 'server.key')),
-   *       cert: fs.readFileSync(path.resolve(__dirname, 'server.crt'))
+   *       key: fs.readFileSync(new URL('./server.key', import.meta.url)),
+   *       cert: fs.readFileSync(new URL('./server.crt', import.meta.url))
    *     }
    *   }
    * }
