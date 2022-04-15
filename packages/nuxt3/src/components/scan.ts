@@ -60,6 +60,9 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
        */
       let fileName = basename(filePath, extname(filePath))
 
+      const mode = fileName.match(/(?<=\.)(server|client)$/)?.[0]
+      fileName = fileName.replace(/\.(client|server)$/, '')
+
       if (fileName.toLowerCase() === 'index') {
         fileName = dir.pathPrefix === false ? basename(dirname(filePath)) : '' /* inherits from path */
       }
@@ -82,14 +85,14 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
 
       const componentName = pascalCase(componentNameParts) + pascalCase(fileNameParts)
 
-      if (resolvedNames.has(componentName)) {
+      if (resolvedNames.has(componentName + mode)) {
         console.warn(`Two component files resolving to the same name \`${componentName}\`:\n` +
           `\n - ${filePath}` +
           `\n - ${resolvedNames.get(componentName)}`
         )
         continue
       }
-      resolvedNames.set(componentName, filePath)
+      resolvedNames.set(componentName + mode, filePath)
 
       const pascalName = pascalCase(componentName).replace(/["']/g, '')
       const kebabName = hyphenate(componentName)
@@ -105,15 +108,17 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
         export: 'default',
         global: dir.global,
         prefetch: Boolean(dir.prefetch),
-        preload: Boolean(dir.preload)
+        preload: Boolean(dir.preload),
+        server: mode !== 'client',
+        client: mode !== 'server'
       }
 
       if (typeof dir.extendComponent === 'function') {
         component = (await dir.extendComponent(component)) || component
       }
 
-      // Ignore component if component is already defined
-      if (!components.find(c => c.pascalName === component.pascalName)) {
+      // Ignore component if component is already defined (with same mode)
+      if (!components.some(c => c.pascalName === component.pascalName && (!mode || c[mode]))) {
         components.push(component)
       }
     }
