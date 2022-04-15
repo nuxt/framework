@@ -81,7 +81,7 @@ function serverPlugins (ctx: WebpackConfigContext) {
   }
 
   // Add type-checking
-  if (ctx.nuxt.options.typescript.typecheck === true || (ctx.nuxt.options.typescript.typecheck === 'build' && !ctx.nuxt.options.dev)) {
+  if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
     ctx.config.plugins.push(new ForkTSCheckerWebpackPlugin({ logger }))
   }
 }
