@@ -133,6 +133,7 @@ export default eventHandler(async (event) => {
     event.res.setHeader('Content-Type', 'text/javascript;charset=UTF-8')
   } else {
     data = await renderHTML(payload, rendered, ssrContext)
+    await ssrContext.nuxt.hooks.callHook('page:rendered')(data)
     event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   }
 

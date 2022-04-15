@@ -23,6 +23,7 @@ export interface RuntimeNuxtHooks {
   'app:beforeMount': (app: App<Element>) => HookResult
   'app:mounted': (app: App<Element>) => HookResult
   'app:rendered': () => HookResult
+  'page:rendered': (html: string) => HookResult
   'app:suspense:resolve': (Component?: VNode) => HookResult
   'app:error': (err: any) => HookResult
   'app:error:cleared': (options: { redirect?: string }) => HookResult
