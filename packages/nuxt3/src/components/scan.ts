@@ -60,8 +60,8 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
        */
       let fileName = basename(filePath, extname(filePath))
 
-      const mode = fileName.match(/(?<=\.)(server|client)$/)?.[0] as 'client' | 'server' || 'all'
-      fileName = fileName.replace(/\.(server|client)$/, '')
+      const mode = fileName.match(/(?<=\.)(client|server)$/)?.[0] as 'client' | 'server' || 'all'
+      fileName = fileName.replace(/\.(client|server)$/, '')
 
       if (fileName.toLowerCase() === 'index') {
         fileName = dir.pathPrefix === false ? basename(dirname(filePath)) : '' /* inherits from path */
@@ -118,7 +118,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
       }
 
       // Ignore component if component is already defined (with same mode)
-      if (!components.some(c => c.pascalName === component.pascalName && (c.mode === 'all' || c.mode === component.mode))) {
+      if (!components.some(c => c.pascalName === component.pascalName && ['all', component.mode].includes(c.mode))) {
         components.push(component)
       }
     }
