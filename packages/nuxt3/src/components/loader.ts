@@ -28,7 +28,7 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => ({
 
 function findComponent (components: Component[], name: string, mode: LoaderOptions['mode']) {
   const id = pascalCase(name).replace(/["']/g, '')
-  const component = components.find(component => id === component.pascalName && ['all', mode].includes(component.mode))
+  const component = components.find(component => id === component.pascalName && ['all', mode, undefined].includes(component.mode))
   if (!component && components.some(component => id === component.pascalName)) {
     return components.find(component => component.pascalName === 'ServerPlaceholder')
   }
