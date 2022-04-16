@@ -221,7 +221,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
 
       const prefetch = () => {
         const cn = navigator.connection as any
-        if (cn.saveData || /2g/.test(cn.effectiveType)) { return }
+        if (!cn && (cn.saveData || /2g/.test(cn.effectiveType))) { return }
 
         const components = router.resolve(to.value).matched
           .map(component => component.components.default)
