@@ -60,8 +60,8 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
        */
       let fileName = basename(filePath, extname(filePath))
 
-      const mode = fileName.match(/(?<=\.)(server|client)$/)?.[0]
-      fileName = fileName.replace(/\.(client|server)$/, '')
+      const mode = fileName.match(/(?<=\.)(server|client)$/)?.[0] as 'client' | 'server' || 'all'
+      fileName = fileName.replace(/\.(server|client)$/, '')
 
       if (fileName.toLowerCase() === 'index') {
         fileName = dir.pathPrefix === false ? basename(dirname(filePath)) : '' /* inherits from path */
@@ -85,7 +85,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
 
       const componentName = pascalCase(componentNameParts) + pascalCase(fileNameParts)
 
-      if (resolvedNames.has(componentName + mode)) {
+      if (resolvedNames.has(componentName + mode) || resolvedNames.has(componentName + 'all')) {
         console.warn(`Two component files resolving to the same name \`${componentName}\`:\n` +
           `\n - ${filePath}` +
           `\n - ${resolvedNames.get(componentName)}`
@@ -109,8 +109,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
         global: dir.global,
         prefetch: Boolean(dir.prefetch),
         preload: Boolean(dir.preload),
-        server: mode !== 'client',
-        client: mode !== 'server'
+        mode
       }
 
       if (typeof dir.extendComponent === 'function') {

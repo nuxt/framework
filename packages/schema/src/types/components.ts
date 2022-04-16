@@ -8,8 +8,7 @@ export interface Component {
   prefetch: boolean
   preload: boolean
   global?: boolean
-  server?: boolean
-  client?: boolean
+  mode?: 'client' | 'server' | 'all'
 
   /** @deprecated */
   level?: number

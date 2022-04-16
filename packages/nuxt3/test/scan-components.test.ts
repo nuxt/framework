@@ -58,8 +58,7 @@ const dirs: ComponentsDir[] = [
 
 const expectedComponents = [
   {
-    client: true,
-    server: true,
+    mode: 'all',
     pascalName: 'HelloWorld',
     kebabName: 'hello-world',
     chunkName: 'components/hello-world',
@@ -70,8 +69,7 @@ const expectedComponents = [
     preload: false
   },
   {
-    client: true,
-    server: false,
+    mode: 'client',
     pascalName: 'Nuxt3',
     kebabName: 'nuxt3',
     chunkName: 'components/nuxt3',
@@ -82,8 +80,7 @@ const expectedComponents = [
     preload: false
   },
   {
-    client: false,
-    server: true,
+    mode: 'server',
     pascalName: 'Nuxt3',
     kebabName: 'nuxt3',
     chunkName: 'components/nuxt3',
@@ -94,8 +91,7 @@ const expectedComponents = [
     preload: false
   },
   {
-    client: false,
-    server: true,
+    mode: 'server',
     pascalName: 'ParentFolder',
     kebabName: 'parent-folder',
     chunkName: 'components/parent-folder',

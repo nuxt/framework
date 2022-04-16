@@ -26,16 +26,16 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => ({
   }
 }))
 
-function findComponent (components: Component[], name: string, mode: 'client' | 'server') {
+function findComponent (components: Component[], name: string, mode: LoaderOptions['mode']) {
   const id = pascalCase(name).replace(/["']/g, '')
-  const component = components.find(component => id === component.pascalName && component[mode] !== false)
+  const component = components.find(component => id === component.pascalName && ['all', mode].includes(component.mode))
   if (!component && components.some(component => id === component.pascalName)) {
     return components.find(component => component.pascalName === 'ServerPlaceholder')
   }
   return component
 }
 
-function transform (code: string, id: string, components: Component[], mode: 'client' | 'server') {
+function transform (code: string, id: string, components: Component[], mode: LoaderOptions['mode']) {
   let num = 0
   const imports = new Set<string>()
   const map = new Map<Component, string>()
@@ -47,7 +47,7 @@ function transform (code: string, id: string, components: Component[], mode: 'cl
     if (component) {
       const identifier = map.get(component) || `__nuxt_component_${num++}`
       map.set(component, identifier)
-      const isClientOnly = component.client && !component.server
+      const isClientOnly = component.mode === 'client'
       if (isClientOnly) {
         imports.add(genImport('#app/components/client-only', [{ name: 'createClientOnly' }]))
       }
