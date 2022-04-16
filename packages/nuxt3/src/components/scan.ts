@@ -84,20 +84,21 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
       }
 
       const componentName = pascalCase(componentNameParts) + pascalCase(fileNameParts)
+      const suffix = (mode !== 'all' ? `-${mode}` : '')
 
-      if (resolvedNames.has(componentName + mode) || resolvedNames.has(componentName + 'all')) {
+      if (resolvedNames.has(componentName + suffix) || resolvedNames.has(componentName)) {
         console.warn(`Two component files resolving to the same name \`${componentName}\`:\n` +
           `\n - ${filePath}` +
           `\n - ${resolvedNames.get(componentName)}`
         )
         continue
       }
-      resolvedNames.set(componentName + mode, filePath)
+      resolvedNames.set(componentName + suffix, filePath)
 
       const pascalName = pascalCase(componentName).replace(/["']/g, '')
       const kebabName = hyphenate(componentName)
       const shortPath = relative(srcDir, filePath)
-      const chunkName = 'components/' + kebabName
+      const chunkName = 'components/' + kebabName + suffix
 
       let component: Component = {
         filePath,
@@ -117,7 +118,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
       }
 
       // Ignore component if component is already defined (with same mode)
-      if (!components.some(c => c.pascalName === component.pascalName && (!mode || c[mode]))) {
+      if (!components.some(c => c.pascalName === component.pascalName && (c.mode === 'all' || c.mode === component.mode))) {
         components.push(component)
       }
     }
