@@ -13,5 +13,5 @@ const headers = useRequestHeaders(['cookie'])
 ```
 
 ::alert{icon=👉}
-On the client side, `useRequestHeaders` will return an empty object.
+In the browser, `useRequestHeaders` will return an empty object.
 ::
