@@ -726,9 +726,9 @@ export default {
       ...get('privateRuntimeConfig'),
       public: get('publicRuntimeConfig'),
       app: {
-        baseURL: get('app.baseURL'),
-        buildAssetsDir: get('app.buildAssetsDir'),
-        cdnURL: get('app.cdnURL'),
+        baseURL: get('app').baseURL,
+        buildAssetsDir: get('app').buildAssetsDir,
+        cdnURL: get('app').cdnURL,
       }
     })
   },
