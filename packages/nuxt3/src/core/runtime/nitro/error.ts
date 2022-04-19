@@ -1,7 +1,8 @@
-import { withQuery } from 'ufo'
+import { withBase, withQuery } from 'ufo'
 import type { NitroErrorHandler } from 'nitropack'
 // @ts-ignore TODO
 import { normalizeError, isJsonRequest } from '#nitro/utils'
+import { baseURL } from '#paths'
 
 export default <NitroErrorHandler> async function errorhandler (_error, event) {
   // Parse and normalize error
@@ -35,7 +36,7 @@ export default <NitroErrorHandler> async function errorhandler (_error, event) {
   }
 
   // HTML response
-  const url = withQuery('/__nuxt_error', errorObject as any)
+  const url = withQuery(withBase(baseURL(), '/__nuxt_error'), errorObject as any)
   const html = await $fetch(url).catch((error) => {
     console.error('[nitro] Error while generating error response', error)
     return errorObject.statusMessage
