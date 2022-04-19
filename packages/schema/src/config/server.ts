@@ -5,7 +5,7 @@ export default {
    *
    * @example
    * ```
-   * import { fileURLToPath } from 'url'
+   * import { fileURLToPath } from 'node:url'
    * export default {
    *   server: {
    *     https: {
