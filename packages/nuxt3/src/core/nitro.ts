@@ -133,8 +133,6 @@ export async function initNitro (nuxt: Nuxt) {
       await scanHandlers(nitro)
       await writeTypes(nitro)
     }
-    const nitroRuntimeIndex = resolveModule('nitropack/dist/runtime/index', { paths: nuxt.options.modulesDir })
-    opts.tsConfig.compilerOptions.paths['#nitro'] = [nitroRuntimeIndex.replace(/(?<=\w)\.\w+$/g, '')]
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/nitro.d.ts') })
   })
 
