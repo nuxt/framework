@@ -6,7 +6,6 @@ import { NavigationFailure, RouteLocationNormalizedLoaded, RouteLocationRaw, use
 import { defineNuxtConfig } from '~~/../../../packages/nuxt3/src'
 import { useRouter } from '#imports'
 import { isVue3 } from '#app'
-import * as nitro from '#nitro'
 
 interface TestResponse { message: string }
 
@@ -103,12 +102,6 @@ describe('runtimeConfig', () => {
     expectTypeOf(runtimeConfig.testConfig).toMatchTypeOf<number>()
     expectTypeOf(runtimeConfig.privateConfig).toMatchTypeOf<string>()
     expectTypeOf(runtimeConfig.unknown).toMatchTypeOf<any>()
-  })
-})
-
-describe('tsconfig.json', () => {
-  it('type aliases for absolute paths', () => {
-    expectTypeOf(nitro.useRuntimeConfig).not.toBeAny()
   })
 })
 
