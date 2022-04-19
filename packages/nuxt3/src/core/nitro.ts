@@ -106,7 +106,7 @@ export async function initNitro (nuxt: Nuxt) {
   nuxt.hook('close', () => nitro.hooks.callHook('close'))
 
   // Register nuxt3 protection patterns
-  nitro.hooks.hook('nitro:rollup:before', (nitro) => {
+  nitro.hooks.hook('rollup:before', (nitro) => {
     const plugin = ImportProtectionPlugin.rollup({
       rootDir: nuxt.options.rootDir,
       patterns: [
@@ -158,7 +158,7 @@ export async function initNitro (nuxt: Nuxt) {
     nuxt.hook('build:resources', () => {
       nuxt.server.reload()
     })
-    const waitUntilCompile = new Promise<void>(resolve => nitro.hooks.hook('nitro:compiled', () => resolve()))
+    const waitUntilCompile = new Promise<void>(resolve => nitro.hooks.hook('compiled', () => resolve()))
     nuxt.hook('build:done', () => waitUntilCompile)
   }
 }

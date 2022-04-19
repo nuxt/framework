@@ -50,7 +50,7 @@
     "knitwork": "^0.1.1",
     "magic-string": "^0.26.1",
     "mlly": "^0.5.2",
-    "nitropack": "^0.2.11",
+    "nitropack": "^0.3.1",
     "nuxi": "3.0.0",
     "ohash": "^0.1.0",
     "ohmyfetch": "^0.4.15",
@@ -64,7 +64,7 @@
     "unplugin": "^0.6.2",
     "untyped": "^0.4.4",
     "vue": "^3.2.33",
-    "vue-bundle-renderer": "^0.3.5",
+    "vue-bundle-renderer": "^0.3.6",
     "vue-router": "^4.0.14"
   },
   "devDependencies": {
