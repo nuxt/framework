@@ -33,7 +33,11 @@ export function useCookie <T=string> (name: string, _opts?: CookieOptions<T>): C
     watch(cookie, () => { writeClientCookie(name, cookie.value, opts as CookieSerializeOptions) })
   } else if (process.server) {
     const nuxtApp = useNuxtApp()
-    const writeFinalCookieValue = () => writeServerCookie(useRequestEvent(nuxtApp), name, cookie.value, opts)
+    const writeFinalCookieValue = () => {
+      if (cookie.value !== cookies[name]) {
+        writeServerCookie(useRequestEvent(nuxtApp), name, cookie.value, opts)
+      }
+    }
     nuxtApp.hooks.hookOnce('app:rendered', writeFinalCookieValue)
     nuxtApp.hooks.hookOnce('app:redirected', writeFinalCookieValue)
   }
