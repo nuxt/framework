@@ -14,7 +14,7 @@ function useAsyncData(
 type AsyncDataOptions = {
   server?: boolean
   lazy?: boolean
-  default?: () => DataT
+  default?: () => DataT | Ref<DataT>
   transform?: (input: DataT) => DataT
   pick?: string[]
   watch?: WatchSource[]
@@ -36,11 +36,12 @@ type DataT = {
 * **options**:
   * _lazy_: whether to resolve the async function after loading the route, instead of blocking navigation (defaults to `false`)
   * _default_: a factory function to set the default value of the data, before the async function resolves - particularly useful with the `lazy: true` option
-  * _server_: whether to fetch the data on server-side (defaults to `true`)
+  * _server_: whether to fetch the data on the server (defaults to `true`)
   * _transform_: a function that can be used to alter `handler` function result after resolving
-  * _pick_: only pick specified keys in this array from `handler` function result
-  * _watch_: watch reactive sources to auto refresh
+  * _pick_: only pick specified keys in this array from the `handler` function result
+  * _watch_: watch reactive sources to auto-refresh
   * _initialCache_: When set to `false`, will skip payload cache for initial fetch. (defaults to `true`)
+  * _default_: A function that returns the default value (before the handler function returns its value).
 
 Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the route before the data has been fetched. Consider using `lazy: true` and implementing a loading state instead for a snappier user experience.
 

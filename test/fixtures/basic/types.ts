@@ -111,3 +111,23 @@ describe('tsconfig.json', () => {
     expectTypeOf(nitro.useRuntimeConfig).not.toBeAny()
   })
 })
+
+describe('composables', () => {
+  it('allows providing default refs', () => {
+    expectTypeOf(useState('test', () => ref('hello'))).toMatchTypeOf<Ref<string>>()
+    expectTypeOf(useState('test', () => 'hello')).toMatchTypeOf<Ref<string>>()
+
+    expectTypeOf(useCookie('test', { default: () => ref(500) })).toMatchTypeOf<Ref<number>>()
+    expectTypeOf(useCookie('test', { default: () => 500 })).toMatchTypeOf<Ref<number>>()
+
+    expectTypeOf(useAsyncData('test', () => Promise.resolve(500), { default: () => ref(500) }).data).toMatchTypeOf<Ref<number>>()
+    expectTypeOf(useAsyncData('test', () => Promise.resolve(500), { default: () => 500 }).data).toMatchTypeOf<Ref<number>>()
+    // @ts-expect-error
+    expectTypeOf(useAsyncData('test', () => Promise.resolve('500'), { default: () => ref(500) }).data).toMatchTypeOf<Ref<number>>()
+    // @ts-expect-error
+    expectTypeOf(useAsyncData('test', () => Promise.resolve('500'), { default: () => 500 }).data).toMatchTypeOf<Ref<number>>()
+
+    expectTypeOf(useFetch('test', { default: () => ref(500) }).data).toMatchTypeOf<Ref<number>>()
+    expectTypeOf(useFetch('test', { default: () => 500 }).data).toMatchTypeOf<Ref<number>>()
+  })
+})
