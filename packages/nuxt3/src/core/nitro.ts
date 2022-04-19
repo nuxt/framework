@@ -90,6 +90,10 @@ export async function initNitro (nuxt: Nuxt) {
     }
   })
 
+  if (nuxt.options.dev) {
+    nitroConfig.preset = 'nitro-dev'
+  }
+
   // Extend nitro config with hook
   await nuxt.callHook('nitro:config', nitroConfig)
 
