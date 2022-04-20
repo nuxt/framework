@@ -144,7 +144,9 @@ export async function initNitro (nuxt: Nuxt) {
       await prepare(nitro)
       await copyPublicAssets(nitro)
       await prerender(nitro)
-      await build(nitro)
+      if (!nuxt.options._generate) {
+        await build(nitro)
+      }
     }
   })
 
