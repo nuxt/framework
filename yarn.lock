@@ -1518,9 +1518,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/telemetry@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "@nuxt/telemetry@npm:2.1.1"
+"@nuxt/telemetry@npm:^2.1.2":
+  version: 2.1.2
+  resolution: "@nuxt/telemetry@npm:2.1.2"
   dependencies:
     "@nuxt/kit": 3.0.0-rc.0
     chalk: ^5.0.1
@@ -1544,7 +1544,7 @@ __metadata:
     std-env: ^3.1.1
   bin:
     nuxt-telemetry: bin/nuxt-telemetry.mjs
-  checksum: e9791f55263dd95685fcc3d423b42cb149e06bab2fc47072a5f5f2d9d7e583e11d3610fd22850b0add20e5f0995e36ae79da1128b3fdb36d89ca93ff0916cacc
+  checksum: 146a705a7940a86184b3c772332ccb4360d859f90bc0216a204ffeeeff012a0cde3852e0d4e95776a8a704fee74778636254d88ab68ac3aa5833fb7edd176aab
   languageName: node
   linkType: hard
 
@@ -10011,7 +10011,7 @@ __metadata:
   dependencies:
     "@nuxt/kit": 3.0.0-rc.0
     "@nuxt/schema": 3.0.0-rc.0
-    "@nuxt/telemetry": ^2.1.1
+    "@nuxt/telemetry": ^2.1.2
     "@nuxt/ui-templates": ^0.1.0
     "@nuxt/vite-builder": 3.0.0-rc.0
     "@types/fs-extra": ^9.0.13
