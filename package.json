@@ -31,7 +31,9 @@
     "version": "yarn && git add yarn.lock"
   },
   "resolutions": {
-    "unbuild": "^0.7.4"
+    "unbuild": "^0.7.4",
+    "nuxt": "link:./packages/nuxt",
+    "nuxt3": "link:./packages/nuxt"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^9.0.0",
