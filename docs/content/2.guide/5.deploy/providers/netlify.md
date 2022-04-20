@@ -4,7 +4,7 @@ icon: LogoNetlify
 
 # Netlify
 
-How to deploy Nuxt to Netlify.
+How to deploy Nuxt to [Netlify](https://www.netlify.com/).
 
 ::list
 
@@ -24,9 +24,9 @@ However, if you want to add custom redirects, you can do so by adding a [`_redir
 
 Just push to your git repository [as you would normally do for Netlify](https://docs.netlify.com/configure-builds/get-started/).
 
-## Demo
+## Deploy to Netlify Edge
 
-A live demo is available on <https://nitro-deployment.netlify.app/>.
+By setting `NITRO_PRESET` environement variable to `netlify_edge` you can use [Netlify Edge Functions](https://docs.netlify.com/netlify-labs/experimental-features/edge-functions/) to render Nuxt app!
 
 ## Learn more
 

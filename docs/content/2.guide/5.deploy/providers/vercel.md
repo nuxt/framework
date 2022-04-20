@@ -13,18 +13,6 @@ Nuxt on Vercel supports server-rendered pages and API routes.
 - No configuration required
 ::
 
-## CLI
-
-1. Install the [Vercel CLI](https://vercel.com/cli).
-2. Vercel will detect that you are using Nuxt and will enable the correct settings for your deployment.
-3. Your application is deployed! (e.g. [nuxt.vercel.app](https://nuxt.vercel.app/))
-
-```bash
-npm i -g vercel
-npx nuxi init -t v3-vercel
-vercel
-```
-
 ## Git
 
 1. Push your code to your git repository (GitHub, GitLab, Bitbucket).
@@ -36,13 +24,17 @@ After your project has been imported and deployed, all subsequent pushes to bran
 
 Learn more about Vercel’s [Git Integration](https://vercel.com/docs/concepts/git).
 
-## More information
+## CLI
 
-See [more information on the node preset](/guide/deployment/node-server) for full details.
+1. Install the [Vercel CLI](https://vercel.com/cli).
+2. Vercel will detect that you are using Nuxt and will enable the correct settings for your deployment.
+3. Your application is deployed! (e.g. [nuxt.vercel.app](https://nuxt.vercel.app/))
 
-## Demo
-
-A live demo is available at <https://nuxt.vercel.app>.
+```bash
+npm i -g vercel
+npx nuxi init -t v3-vercel
+vercel
+```
 
 ## Learn more
 
