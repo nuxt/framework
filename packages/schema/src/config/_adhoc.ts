@@ -46,11 +46,11 @@ export default {
   pages: undefined,
 
   /**
-   * Disable or configure nuxt telemetry
+   * Manually disable nuxt telemetry
    *
-   * @see [Nuxt Telemetry](https://github.com/nuxt/telemetry)
+   * @see [Nuxt Telemetry](https://github.com/nuxt/telemetry) for more information.
    *
-   * @type {boolean|typeof import('@nuxt/telemetry').ModuleOptions}
+   * @type {boolean}
    * @version 3
   */
   telemetry: undefined
