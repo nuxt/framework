@@ -31,9 +31,15 @@
     "version": "yarn && git add yarn.lock"
   },
   "resolutions": {
-    "unbuild": "^0.7.4",
+    "@nuxt/kit": "link:./packages/kit",
+    "@nuxt/schema": "link:./packages/schema",
+    "@nuxt/test-utils": "link:./packages/test-utils",
+    "@nuxt/vite": "link:./packages/vite",
+    "@nuxt/webpack": "link:./packages/webpack",
+    "nuxi": "link:./packages/nuxi",
     "nuxt": "link:./packages/nuxt",
-    "nuxt3": "link:./packages/nuxt"
+    "nuxt3": "link:./packages/nuxt",
+    "unbuild": "^0.7.4"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^9.0.0",

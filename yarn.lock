@@ -376,14 +376,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@es-joy/jsdoccomment@npm:~0.27.0":
-  version: 0.27.0
-  resolution: "@es-joy/jsdoccomment@npm:0.27.0"
+"@es-joy/jsdoccomment@npm:~0.28.0":
+  version: 0.28.0
+  resolution: "@es-joy/jsdoccomment@npm:0.28.0"
   dependencies:
     comment-parser: 1.3.1
     esquery: ^1.4.0
     jsdoc-type-pratt-parser: ~3.0.1
-  checksum: 9711b10a3e61e4ddfa42f7d2c150799f27e3d83f4da2579652b4167fad3d5f87eee3a13c58253d2b7a86b6e27d12703941c6d3d02db5baa0d626c89497476274
+  checksum: 41756afb28035fb323b03a5f0ce78fa4ae1741dbd602ef89e912ddbdd6d08f2a7060ce46860a738558c680b6e5b26fce6fcd7f3edaa382c7dff13af60203733e
   languageName: node
   linkType: hard
 
@@ -1458,7 +1458,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/kit@3.0.0, @nuxt/kit@workspace:packages/kit":
+"@nuxt/kit@link:./packages/kit::locator=nuxt-framework%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@nuxt/kit@link:./packages/kit::locator=nuxt-framework%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"@nuxt/kit@workspace:packages/kit":
   version: 0.0.0-use.local
   resolution: "@nuxt/kit@workspace:packages/kit"
   dependencies:
@@ -1486,33 +1492,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nuxt/kit@npm:@nuxt/kit-edge@latest":
-  version: 3.0.0-27506609.eed7036
-  resolution: "@nuxt/kit-edge@npm:3.0.0-27506609.eed7036"
-  dependencies:
-    "@nuxt/schema": "npm:@nuxt/schema-edge@3.0.0-27506609.eed7036"
-    c12: ^0.2.5
-    consola: ^2.15.3
-    defu: ^6.0.0
-    globby: ^13.1.1
-    hash-sum: ^2.0.0
-    ignore: ^5.2.0
-    jiti: ^1.13.0
-    knitwork: ^0.1.1
-    lodash.template: ^4.5.0
-    mlly: ^0.5.2
-    pathe: ^0.2.0
-    pkg-types: ^0.3.2
-    scule: ^0.2.1
-    semver: ^7.3.7
-    unctx: ^1.1.4
-    unimport: ^0.1.5
-    untyped: ^0.4.4
-  checksum: 7bf5b67cf33d816832479b0632db0fc2d1f716e716c71e7017d85a684198ebe56f38b48bb926dec0d9bfeb07c1d2f5f3869119128f510754130724eb0a4c90c6
+"@nuxt/schema@link:./packages/schema::locator=nuxt-framework%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@nuxt/schema@link:./packages/schema::locator=nuxt-framework%40workspace%3A."
   languageName: node
-  linkType: hard
+  linkType: soft
 
-"@nuxt/schema@3.0.0, @nuxt/schema@^3.0.0, @nuxt/schema@workspace:packages/schema":
+"@nuxt/schema@workspace:packages/schema":
   version: 0.0.0-use.local
   resolution: "@nuxt/schema@workspace:packages/schema"
   dependencies:
@@ -1531,24 +1517,6 @@ __metadata:
     unimport: ^0.1.5
   languageName: unknown
   linkType: soft
-
-"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27506609.eed7036":
-  version: 3.0.0-27506609.eed7036
-  resolution: "@nuxt/schema-edge@npm:3.0.0-27506609.eed7036"
-  dependencies:
-    c12: ^0.2.5
-    create-require: ^1.1.1
-    defu: ^6.0.0
-    jiti: ^1.13.0
-    pathe: ^0.2.0
-    postcss-import-resolver: ^2.0.0
-    scule: ^0.2.1
-    std-env: ^3.1.1
-    ufo: ^0.8.3
-    unimport: ^0.1.5
-  checksum: 5c4231e7ccb20c091053e0b586774004b81192fdbec01656884d7a7bf6153854cae22f6bd093127f14789d3c3e593631246feb949ef834bf6b8b0e522432fa22
-  languageName: node
-  linkType: hard
 
 "@nuxt/test-utils@workspace:packages/test-utils":
   version: 0.0.0-use.local
@@ -5895,10 +5863,10 @@ __metadata:
   linkType: hard
 
 "eslint-plugin-jsdoc@npm:^39.2.3":
-  version: 39.2.4
-  resolution: "eslint-plugin-jsdoc@npm:39.2.4"
+  version: 39.2.5
+  resolution: "eslint-plugin-jsdoc@npm:39.2.5"
   dependencies:
-    "@es-joy/jsdoccomment": ~0.27.0
+    "@es-joy/jsdoccomment": ~0.28.0
     comment-parser: 1.3.1
     debug: ^4.3.4
     escape-string-regexp: ^4.0.0
@@ -5907,7 +5875,7 @@ __metadata:
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: 4eb4335247347913bdc3e0dcc35713a1c2828ef5eccc380626650978c02a3f5123a0ee0c113e8022198f6c49839be4557e1344114614346e247b7c1cc201d15c
+  checksum: 8a28010e4f73a479d577b8dcd04f7e6fc461b9c00b5069a1fcf62d946765aae4aa9beb5f39f726aaeae056036b0364bf332dc65adb01ddc83c6d38a995354bfe
   languageName: node
   linkType: hard
 
@@ -9832,7 +9800,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxi@3.0.0, nuxi@workspace:packages/nuxi":
+"nuxi@link:./packages/nuxi::locator=nuxt-framework%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "nuxi@link:./packages/nuxi::locator=nuxt-framework%40workspace%3A."
+  languageName: node
+  linkType: soft
+
+"nuxi@workspace:packages/nuxi":
   version: 0.0.0-use.local
   resolution: "nuxi@workspace:packages/nuxi"
   dependencies:
