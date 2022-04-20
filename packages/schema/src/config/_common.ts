@@ -720,14 +720,19 @@ export default {
    * @version 3
    */
   runtimeConfig: {
-    $resolve: (val: RuntimeConfig, get) => defu(val, {
+    $resolve: (val: RuntimeConfig, get) => ({
       ...get('publicRuntimeConfig'),
       ...get('privateRuntimeConfig'),
-      public: get('publicRuntimeConfig'),
+      ...val || {},
+      public: {
+        ...get('publicRuntimeConfig'),
+        ...val?.public || {},
+      },
       app: {
         baseURL: get('app').baseURL,
         buildAssetsDir: get('app').buildAssetsDir,
         cdnURL: get('app').cdnURL,
+        ...val?.app || {},
       }
     })
   },
