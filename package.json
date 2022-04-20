@@ -24,9 +24,9 @@
     "play": "echo use yarn dev && exit 1",
     "release": "yarn && yarn lint && FORCE_COLOR=1 lerna publish -m \"chore: release\" && yarn stub",
     "stub": "lerna run prepack -- --stub",
-    "test:fixtures": "yarn nuxi prepare test/fixtures/basic && JITI_ESM_RESOLVE=1 vitest run --dir test",
-    "test:fixtures:dev": "NUXT_TEST_DEV=true yarn test:fixtures",
-    "test:fixtures:webpack": "TEST_WITH_WEBPACK=1 yarn test:fixtures",
+    "test:fixtures": "NUXT_TELEMETRY_DISABLED=1 yarn nuxi prepare test/fixtures/basic && JITI_ESM_RESOLVE=1 vitest run --dir test",
+    "test:fixtures:dev": "NUXT_TELEMETRY_DISABLED=1 NUXT_TEST_DEV=true yarn test:fixtures",
+    "test:fixtures:webpack": "NUXT_TELEMETRY_DISABLED=1 TEST_WITH_WEBPACK=1 yarn test:fixtures",
     "test:types": "yarn run nuxi prepare test/fixtures/basic && cd test/fixtures/basic && npx vue-tsc --noEmit",
     "test:unit": "JITI_ESM_RESOLVE=1 yarn vitest run --dir packages",
     "version": "yarn && git add yarn.lock"
