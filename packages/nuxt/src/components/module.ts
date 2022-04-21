@@ -132,6 +132,7 @@ export default defineNuxtModule<ComponentsOptions>({
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       config.plugins = config.plugins || []
       config.plugins.push(loaderPlugin.vite({
+        sourcemap: nuxt.options.dev,
         getComponents,
         mode: isClient ? 'client' : 'server'
       }))
@@ -140,6 +141,7 @@ export default defineNuxtModule<ComponentsOptions>({
       configs.forEach((config) => {
         config.plugins = config.plugins || []
         config.plugins.push(loaderPlugin.webpack({
+          sourcemap: nuxt.options.dev,
           getComponents,
           mode: config.name === 'client' ? 'client' : 'server'
         }))
