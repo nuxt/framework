@@ -88,9 +88,9 @@ const defaultAppTemplate = `
 export const appViewTemplate = {
   filename: 'views/document.template.mjs',
   write: true,
-  async getContents (ctx: TemplateContext) {
+  async getContents ({ nuxt }: TemplateContext) {
     const context = { contents: defaultAppTemplate }
-    await ctx.nuxt.hooks.callHook('app:documentTemplate', context)
+    await nuxt.hooks.callHook('app:documentTemplate', context)
 
     // eslint-disable-next-line no-template-curly-in-string
     return `export default (params) => \`${context.contents.replace(/{{ (\w+) }}/g, '${params.$1}')}\``
