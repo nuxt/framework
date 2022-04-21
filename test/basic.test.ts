@@ -1,5 +1,5 @@
-import { fileURLToPath } from 'url'
-import { promises as fsp } from 'fs'
+import { fileURLToPath } from 'node:url'
+import { promises as fsp } from 'node:fs'
 import { afterEach, describe, expect, it } from 'vitest'
 // import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer, isDev } from '@nuxt/test-utils'
