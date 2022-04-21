@@ -70,23 +70,30 @@ export const serverPluginTemplate = {
   }
 }
 
+const defaultAppTemplate = `
+<!DOCTYPE html>
+<html {{ HTML_ATTRS }}>
+
+<head {{ HEAD_ATTRS }}>
+  {{ HEAD }}
+</head>
+
+<body {{ BODY_ATTRS }}>{{ BODY_PREPEND }}
+  {{ APP }}
+</body>
+
+</html>
+`.trim()
+
 export const appViewTemplate = {
   filename: 'views/document.template.mjs',
   write: true,
-  getContents () {
-    return `export default (params) => \`<!DOCTYPE html>
-<html \${params.HTML_ATTRS}>
+  async getContents (ctx: TemplateContext) {
+    const context = { contents: defaultAppTemplate }
+    await ctx.nuxt.hooks.callHook('app:documentTemplate', context)
 
-<head \${params.HEAD_ATTRS}>
-  \${params.HEAD}
-</head>
-
-<body \${params.BODY_ATTRS}>\${params.BODY_PREPEND}
-  \${params.APP}
-</body>
-
-</html>\`
-`
+    // eslint-disable-next-line no-template-curly-in-string
+    return `export default (params) => \`${context.contents.replace(/{{ (\w+) }}/g, '${params.$1}')}\``
   }
 }
 

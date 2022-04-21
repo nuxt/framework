@@ -69,6 +69,7 @@ export interface NuxtHooks {
   'app:resolve': (app: NuxtApp) => HookResult
   'app:templates': (app: NuxtApp) => HookResult
   'app:templatesGenerated': (app: NuxtApp) => HookResult
+  'app:documentTemplate': ({ contents: string }) => HookResult
   'builder:generateApp': () => HookResult
   'pages:extend': (pages: NuxtPage[]) => HookResult
   'pages:middleware:extend': (middleware: NuxtMiddleware[]) => HookResult
