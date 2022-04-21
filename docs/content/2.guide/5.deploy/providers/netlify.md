@@ -22,9 +22,7 @@ Normally, the deployment to Netlify does not require any configuration.
 
 However, if you want to add custom redirects, you can do so by adding a [`_redirects`](https://docs.netlify.com/routing/redirects/#syntax-for-the-redirects-file) file in the [`public`](/guide/directory-structure/public) directory.
 
-## Setup
-
-Just push to your git repository [as you would normally do for Netlify](https://docs.netlify.com/configure-builds/get-started/).
+To trigger a deploy, just push to your git repository [as you would normally do for Netlify](https://docs.netlify.com/configure-builds/get-started/).
 
 By default, Nuxt will server-render each page on server hit. You can customize the behavior using the `netlify-edge` or `netlify-builder` preset.
 
