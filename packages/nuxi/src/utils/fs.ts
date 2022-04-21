@@ -1,9 +1,5 @@
-import { existsSync, promises as fsp, readFileSync } from 'fs'
-import { promisify } from 'util'
-import jiti from 'jiti'
-import rimraf from 'rimraf'
-import { dirname, resolve } from 'pathe'
-import destr from 'destr'
+import { promises as fsp } from 'node:fs'
+import { dirname } from 'pathe'
 
 // Check if a file exists
 export async function exists (path: string) {
@@ -16,7 +12,7 @@ export async function exists (path: string) {
 }
 
 export async function clearDir (path: string) {
-  await promisify(rimraf)(path)
+  await fsp.rm(path, { recursive: true, force: true })
   await fsp.mkdir(path, { recursive: true })
 }
 
@@ -30,31 +26,4 @@ export function findup<T> (rootDir: string, fn: (dir: string) => T | undefined):
     dir = dirname(dir)
   }
   return null
-}
-
-export function findPackage (rootDir) {
-  return findup(rootDir, (dir) => {
-    const p = resolve(dir, 'package.json')
-    if (existsSync(p)) {
-      return readJSONSync(p)
-    }
-  }) || {}
-}
-
-export function readJSONSync (filePath) {
-  try {
-    return destr(readFileSync(filePath, 'utf-8'))
-  } catch (err) {
-    // TODO: Warn error
-    return null
-  }
-}
-
-export function getNuxtConfig (rootDir) {
-  try {
-    return jiti(rootDir, { interopDefault: true })('./nuxt.config')
-  } catch (err) {
-    // TODO: Show error as warning if it is not 404
-    return {}
-  }
 }

@@ -1,23 +1,32 @@
 # `useAsyncData`
 
-::ReadMore{link="/guide/features/data-fetching"}
-::
+Within your pages, components, and plugins you can use useAsyncData to get access to data that resolves asynchronously.
 
-```ts
-const {
-  data: Ref<DataT>,
-  pending: Ref<boolean>,
-  refresh: () => Promise<void>,
-  error: Ref<any>
-} = useAsyncData(
+## Type
+
+```ts [Signature]
+function useAsyncData(
   key: string,
-  handler: (ctx?: NuxtApp) => Promise<Object>,
-  options?: {
-    lazy: boolean,
-    server: boolean,
-    watch: WatchSource[]
-  }
-)
+  handler: (nuxtApp?: NuxtApp) => Promise<DataT>,
+  options?: AsyncDataOptions
+): Promise<DataT>
+
+type AsyncDataOptions = {
+  server?: boolean
+  lazy?: boolean
+  default?: () => DataT | Ref<DataT>
+  transform?: (input: DataT) => DataT
+  pick?: string[]
+  watch?: WatchSource[]
+  initialCache?: boolean
+}
+
+type DataT = {
+  data: Ref<DataT>
+  pending: Ref<boolean>
+  refresh: () => Promise<void>
+  error: Ref<any>
+}
 ```
 
 ## Params
@@ -27,11 +36,12 @@ const {
 * **options**:
   * _lazy_: whether to resolve the async function after loading the route, instead of blocking navigation (defaults to `false`)
   * _default_: a factory function to set the default value of the data, before the async function resolves - particularly useful with the `lazy: true` option
-  * _server_: whether to fetch the data on server-side (defaults to `true`)
+  * _server_: whether to fetch the data on the server (defaults to `true`)
   * _transform_: a function that can be used to alter `handler` function result after resolving
-  * _pick_: only pick specified keys in this array from `handler` function result
-  * _watch_: watch reactive sources to auto refresh
+  * _pick_: only pick specified keys in this array from the `handler` function result
+  * _watch_: watch reactive sources to auto-refresh
   * _initialCache_: When set to `false`, will skip payload cache for initial fetch. (defaults to `true`)
+  * _default_: A function that returns the default value (before the handler function returns its value).
 
 Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the route before the data has been fetched. Consider using `lazy: true` and implementing a loading state instead for a snappier user experience.
 
@@ -43,3 +53,18 @@ Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the rout
 * **error**: an error object if the data fetching failed
 
 By default, Nuxt waits until a `refresh` is finished before it can be executed again. Passing `true` as parameter skips that wait.
+
+## Example
+
+```ts
+const { data, pending, error, refresh } = useAsyncData(
+  'mountains',
+  () => $fetch('https://api.nuxtjs.dev/mountains),
+  {
+    pick: ['title']
+  }
+)
+```
+
+::ReadMore{link="/guide/features/data-fetching"}
+::

@@ -1,10 +1,13 @@
-import os from 'os'
-import { createRequire } from 'module'
+import os from 'node:os'
+import { existsSync, readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { resolve } from 'pathe'
+import jiti from 'jiti'
+import destr from 'destr'
 import { splitByCase } from 'scule'
 import clipboardy from 'clipboardy'
 import { getPackageManager, getPackageManagerVersion } from '../utils/packageManagers'
-import { findPackage, getNuxtConfig, readJSONSync } from '../utils/fs'
+import { findup } from '../utils/fs'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -110,6 +113,15 @@ function normalizeConfigModule (module, rootDir) {
   }
 }
 
+function getNuxtConfig (rootDir) {
+  try {
+    return jiti(rootDir, { interopDefault: true })('./nuxt.config')
+  } catch (err) {
+    // TODO: Show error as warning if it is not 404
+    return {}
+  }
+}
+
 function getPkg (name, rootDir) {
   // Assume it is in {rootDir}/node_modules/${name}/package.json
   let pkgPath = resolve(rootDir, 'node_modules', name, 'package.json')
@@ -121,4 +133,22 @@ function getPkg (name, rootDir) {
   }
 
   return readJSONSync(pkgPath)
+}
+
+function findPackage (rootDir) {
+  return findup(rootDir, (dir) => {
+    const p = resolve(dir, 'package.json')
+    if (existsSync(p)) {
+      return readJSONSync(p)
+    }
+  }) || {}
+}
+
+function readJSONSync (filePath) {
+  try {
+    return destr(readFileSync(filePath, 'utf-8'))
+  } catch (err) {
+    // TODO: Warn error
+    return null
+  }
 }

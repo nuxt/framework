@@ -1,17 +1,14 @@
-import fsp from 'fs/promises'
-import { execSync } from 'child_process'
+import fsp from 'node:fs/promises'
 import consola from 'consola'
 import mri from 'mri'
 import { globby } from 'globby'
 import { upperFirst } from 'scule'
 import { resolve } from 'pathe'
 import addCommand from '../commands/add'
-import { findPackage, getNuxtConfig } from './fs'
-import { getPackageManager } from './packageManagers'
 
 const sharedCommands = ['add', 'new', 'show', 'rename', 'remove']
 
-type Entity = ('api' | 'pages' | 'layouts' | 'components' | 'plugins' | 'modules' | 'composables' | 'middleware' | 'serverMiddleware')
+type Entity = ('api' | 'pages' | 'layouts' | 'components' | 'plugins' | 'composables' | 'middleware' | 'serverMiddleware')
 type NuxiEntity = Record<Entity, { commands?: string[]; description?: string }>;
 
 export const entities: NuxiEntity = {
@@ -20,7 +17,6 @@ export const entities: NuxiEntity = {
   layouts: { commands: [] },
   components: { commands: [] },
   plugins: { commands: [] },
-  modules: { commands: [] },
   composables: { commands: [] },
   middleware: { commands: [] },
   serverMiddleware: { commands: [] }
@@ -29,19 +25,13 @@ export const entities: NuxiEntity = {
 export type EntityKey = keyof typeof entities & string
 export const EntityKeys = Object.keys(entities) as EntityKey[]
 
-for (const [k, v] of Object.entries(entities)) {
-  if ((k as EntityKey) === 'modules') {
-    const subset = sharedCommands.filter(s => ['add', 'new', 'show'].includes(s))
-    v.commands = [...subset, ...v.commands]
-    continue
-  }
-
+for (const v of Object.values(entities)) {
   v.commands = [...sharedCommands, ...v.commands]
 }
 
 const pattern = '**/*.{js,ts,vue,mjs}'
 
-export function EntityCommands ({ entity, srcDir, rootDir } :{entity: string, srcDir?: string, rootDir: string}) {
+export function EntityCommands ({ entity, srcDir } :{entity: string, srcDir?: string}) {
   const singular = (entity.endsWith('s') ? entity.slice(0, -1) : entity)
 
   const entityDir = entity === 'api' ? 'server/api' : entity === 'serverMiddleware' ? 'server/middleware' : entity
@@ -74,43 +64,11 @@ export function EntityCommands ({ entity, srcDir, rootDir } :{entity: string, sr
       process.exit(1)
     }
 
-    if (entity === 'modules') {
-      const { dependencies = {}, devDependencies = {} } = findPackage(rootDir)
-
-      if (dependencies[name] || devDependencies[name]) {
-        consola.info(`\`${name}\` is already installed.`)
-        process.exit(1)
-      }
-
-      const packageManager = getPackageManager(rootDir)
-      if (!packageManager) {
-        consola.info('Unable to detect package manager.')
-        consola.info(`Run \`yarn add\`|\`npm install\` -D ${name}`)
-      } else {
-        execSync(`${packageManager} ${packageManager === 'yarn' ? 'add' : 'install'} -D ${name}`, { stdio: 'inherit' })
-        consola.info(`\`${name}\` module installed.`)
-        // TODO: Automatically update nuxt.config
-        consola.info(`Add \`${name}\` to the modules array in nuxt.config.`)
-      }
-
-      process.exit(1)
-    }
-
     await addCommand.invoke(mri([singular, name]))
     process.exit(1)
   }
 
   const show = async () => {
-    if (entity === 'modules') {
-      const { modules = [], buildModules = [] } = getNuxtConfig(rootDir)
-
-      const entries = [...modules, ...buildModules]
-
-      consola.info(`${entries.length} ${entries.length <= 1 ? singular : entity} found`)
-      consola.info(entries.map(h => `\`${h}\``).join(' | '))
-      process.exit(1)
-    }
-
     let entries: string[] = await globby(pattern, { cwd: path, followSymbolicLinks: true })
 
     entries = entries.map(file => file.split(entity).pop())
