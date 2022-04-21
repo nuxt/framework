@@ -64,8 +64,8 @@ export async function initNitro (nuxt: Nuxt) {
     },
     alias: {
       // TODO: #590
-      'vue/server-renderer': 'vue/server-renderer',
-      'vue/compiler-sfc': 'vue/compiler-sfc',
+      'vue/server-renderer': await resolvePath('vue/server-renderer'),
+      'vue/compiler-sfc': await resolvePath('vue/compiler-sfc'),
       vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`),
 
       // Vue 3 mocks
