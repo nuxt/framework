@@ -10031,6 +10031,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxt@workspace:packages/nuxt"
   dependencies:
+    "@nuxt/devalue": ^2.0.0
     "@nuxt/kit": ^3.0.0-rc.1
     "@nuxt/schema": ^3.0.0-rc.1
     "@nuxt/telemetry": ^2.1.2
