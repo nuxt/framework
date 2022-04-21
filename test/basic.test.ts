@@ -4,7 +4,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 // import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer, isDev } from '@nuxt/test-utils'
 import { join } from 'pathe'
-import { expectNoClientErrors, renderPage } from './utils'
+import { expectNoClientErrors, pollingForHMR, renderPage } from './utils'
 
 const fixturePath = fileURLToPath(new URL('./fixtures/basic', import.meta.url))
 await setup({
@@ -403,10 +403,11 @@ if (isDev()) {
         .replace('<h1>Hello Nuxt 3!</h1>', '<h1>Hello Nuxt 3! HMR</h1>')
       indexVue += '<style scoped>\nh1 { color: red }\n</style>'
       await fsp.writeFile(join(fixturePath, 'pages/index.vue'), indexVue)
-      await new Promise(resolve => setTimeout(resolve, 1000))
 
-      // title HMR
-      expect(await page.title()).toBe('Basic fixture HMR - Fixture')
+      await pollingForHMR(async () => {
+        // title HMR
+        expect(await page.title()).toBe('Basic fixture HMR - Fixture')
+      })
 
       // content HMR
       const h1 = await page.$('h1')

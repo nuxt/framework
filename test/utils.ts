@@ -48,3 +48,15 @@ export async function expectNoClientErrors (path: string) {
   expect(consoleLogErrors).toEqual([])
   expect(consoleLogWarnings).toEqual([])
 }
+
+export async function pollingForHMR (check: ()=>Promise<void>|void, retries = 30, delay = 100) {
+  try {
+    return await check()
+  } catch (e) {
+    if (retries <= 0) {
+      throw e
+    }
+    await new Promise(resolve => setTimeout(resolve, delay))
+    return pollingForHMR(check, retries - 1, delay)
+  }
+}
