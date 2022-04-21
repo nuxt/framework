@@ -63,8 +63,8 @@ async function initNuxt (nuxt: Nuxt) {
   addWebpackPlugin(ImportProtectionPlugin.webpack(config))
 
   // Add unctx transform
-  addVitePlugin(UnctxTransformPlugin(nuxt).vite({ sourcemap: nuxt.options.dev }))
-  addWebpackPlugin(UnctxTransformPlugin(nuxt).webpack({ sourcemap: nuxt.options.dev }))
+  addVitePlugin(UnctxTransformPlugin(nuxt).vite({ sourceMap: nuxt.options.dev }))
+  addWebpackPlugin(UnctxTransformPlugin(nuxt).webpack({ sourceMap: nuxt.options.dev }))
 
   // Init user modules
   await nuxt.callHook('modules:before', { nuxt } as ModuleContainer)
