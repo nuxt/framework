@@ -36,14 +36,10 @@ export default function (entity: EntityKey) {
         process.exit(1)
       }
 
-      const conf: Parameters<typeof EntityCommands>[0] = { entity, rootDir: cwd }
+      const conf: Parameters<typeof EntityCommands>[0] = { entity }
 
-      if (['show', 'rename', 'remove'].includes(cmd)) {
-        const { loadNuxtConfig } = await loadKit(cwd)
-        const { srcDir } = await loadNuxtConfig({ cwd })
-
-        conf.srcDir = srcDir
-      }
+      const { loadNuxtConfig } = await loadKit(cwd)
+      conf.srcDir = (await loadNuxtConfig({ cwd }))!.srcDir
 
       const entityCommands = EntityCommands(conf)
 

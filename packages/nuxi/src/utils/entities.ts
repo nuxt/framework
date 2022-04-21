@@ -64,7 +64,7 @@ export function EntityCommands ({ entity, srcDir } :{entity: string, srcDir?: st
       process.exit(1)
     }
 
-    await addCommand.invoke(mri([singular, name]))
+    await addCommand.invoke(mri([singular, name, '--cwd', srcDir]))
     process.exit(1)
   }
 
