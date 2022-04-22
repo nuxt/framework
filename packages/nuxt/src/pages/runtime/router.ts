@@ -125,11 +125,6 @@ export default defineNuxtPlugin((nuxtApp) => {
       }
     }
 
-    if (process.client && !nuxtApp.isHydrating) {
-      // Clear any existing errors
-      await callWithNuxt(nuxtApp, clearError)
-    }
-
     for (const entry of middlewareEntries) {
       const middleware = typeof entry === 'string' ? nuxtApp._middleware.named[entry] || await namedMiddleware[entry]?.().then(r => r.default || r) : entry
 
@@ -152,6 +147,10 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   router.afterEach(() => {
     delete nuxtApp._processingMiddleware
+    if (process.client && !nuxtApp.isHydrating) {
+      // Clear any existing errors
+      callWithNuxt(nuxtApp, clearError)
+    }
   })
 
   nuxtApp.hook('app:created', async () => {
