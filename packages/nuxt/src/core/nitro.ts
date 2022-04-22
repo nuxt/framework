@@ -55,7 +55,7 @@ export async function initNitro (nuxt: Nuxt) {
         .concat(nuxt.options._generate ? ['/', ...nuxt.options.generate.routes] : [])
         .concat(nuxt.options.ssr === false ? ['/', '/200', '/404'] : [])
     },
-    sourceMap: nuxt.options.dev,
+    sourcemap: nuxt.options.sourcemap,
     externals: {
       inline: [
         ...(nuxt.options.dev ? [] : ['vue', '@vue/', '@nuxt/', nuxt.options.buildDir]),

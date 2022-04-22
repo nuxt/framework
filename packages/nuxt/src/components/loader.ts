@@ -9,7 +9,7 @@ import { pascalCase } from 'scule'
 interface LoaderOptions {
   getComponents(): Component[]
   mode: 'server' | 'client'
-  sourceMap?: boolean
+  sourcemap?: boolean
 }
 
 export const loaderPlugin = createUnplugin((options: LoaderOptions) => ({
@@ -60,7 +60,7 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => ({
     if (s.hasChanged()) {
       return {
         code: s.toString(),
-        map: options.sourceMap && s.generateMap({ source: id, includeContent: true })
+        map: options.sourcemap && s.generateMap({ source: id, includeContent: true })
       }
     }
   }
