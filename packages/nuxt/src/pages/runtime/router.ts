@@ -166,8 +166,6 @@ export default defineNuxtPlugin((nuxtApp) => {
     })
 
     if (process.server) {
-      router.push(nuxtApp.ssrContext.url)
-
       router.afterEach(async (to) => {
         if (to.fullPath !== nuxtApp.ssrContext.url) {
           await navigateTo(to.fullPath)
@@ -176,6 +174,10 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
 
     try {
+      if (process.server) {
+        await router.push(nuxtApp.ssrContext.url)
+      }
+
       await router.isReady()
     } catch (error) {
       callWithNuxt(nuxtApp, throwError, [error])
