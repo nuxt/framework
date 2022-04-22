@@ -25,12 +25,9 @@ export default {
   /**
    * Whether to generate sourcemaps.
    *
-   * By default, this option is enabled in development.
    * @version 3
    */
-  sourcemap: {
-    $resolve: (val, get) => val ?? get('dev')
-  },
+  sourcemap: true,
   /**
    * Shared build configuration.
    * @version 2
