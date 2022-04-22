@@ -123,7 +123,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
       if (process.client) {
         window.history[replace ? 'replaceState' : 'pushState']({}, '', url)
         if (!nuxtApp.isHydrating) {
-        // Clear any existing errors
+          // Clear any existing errors
           await callWithNuxt(nuxtApp, clearError)
         }
       }
