@@ -30,7 +30,7 @@ You can use `createError` from [`h3`](https://github.com/unjs/h3) package to tri
 import { createError } from 'h3'
 
 export default eventHandler(() => {
-  return createError({
+  throw createError({
     statusCode: 404,
     statusMessage: 'Page Not Found'
   })
