@@ -3,10 +3,10 @@ import { resolve, join } from 'pathe'
 import { createNitro, createDevServer, build, prepare, copyPublicAssets, writeTypes, scanHandlers, prerender } from 'nitropack'
 import type { NitroEventHandler, NitroDevEventHandler, NitroConfig } from 'nitropack'
 import type { Nuxt } from '@nuxt/schema'
-import { resolvePath } from '@nuxt/kit'
 import defu from 'defu'
 import fsExtra from 'fs-extra'
 import { toEventHandler, dynamicEventHandler } from 'h3'
+import { resolvePath } from 'mlly'
 import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
@@ -64,8 +64,8 @@ export async function initNitro (nuxt: Nuxt) {
     },
     alias: {
       // TODO: #590
-      'vue/server-renderer': await resolvePath('vue/server-renderer'),
-      'vue/compiler-sfc': await resolvePath('vue/compiler-sfc'),
+      'vue/server-renderer': await resolvePath('vue/server-renderer', { conditions: ['import'] }),
+      'vue/compiler-sfc': await resolvePath('vue/compiler-sfc', { conditions: ['import'] }),
       vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`),
 
       // Vue 3 mocks
