@@ -60,14 +60,15 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
 
     // Array where routes should be added, useful when adding child routes
     let parent = routes
+    const parsedSegments = []
 
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i]
 
       const tokens = parseSegment(segment)
+      parsedSegments.push(tokens)
       const segmentName = tokens.map(({ value }) => value).join('')
       const isSingleSegment = segments.length === 1
-      const isLastSegment = i === segments.length - 1
 
       // ex: parent/[slug].vue -> parent-slug
       route.name += (route.name && '-') + segmentName
@@ -81,10 +82,16 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
         route.path += '/:catchAll(.*)*'
       } else if (segmentName === 'index' && !route.path) {
         route.path += '/'
-      } else if (segmentName !== 'index') {
-        route.path += getRoutePath(tokens)
-        if (isLastSegment && tokens.length === 1 && tokens[0].type === SegmentTokenType.dynamic) {
-          route.path += '?'
+      } else {
+        if (segmentName !== 'index') {
+          route.path += getRoutePath(tokens)
+        }
+        // if this is the final segment & it's dynamic, we can indicate it's optional
+        if (i === segments.length - 1) {
+          const finalTokens = segmentName === 'index' ? parsedSegments[i - 1] : tokens
+          if (finalTokens.length === 1 && finalTokens[0].type === SegmentTokenType.dynamic) {
+            route.path += '?'
+          }
         }
       }
     }

@@ -97,6 +97,9 @@ describe('pages:generateRoutesFromFiles', () => {
       description: 'should generate correct dynamic routes',
       files: [
           `${pagesDir}/[slug].vue`,
+          `${pagesDir}/[foo]`,
+          `${pagesDir}/[foo]/index.vue`,
+          `${pagesDir}/[bar]/index.vue`,
           `${pagesDir}/sub/[slug].vue`,
           `${pagesDir}/[sub]/route-[slug].vue`
       ],
@@ -106,6 +109,25 @@ describe('pages:generateRoutesFromFiles', () => {
           path: '/:slug?',
           file: `${pagesDir}/[slug].vue`,
           children: []
+        },
+        {
+          children: [
+            {
+
+              name: 'foo',
+              path: '',
+              file: `${pagesDir}/[foo]/index.vue`,
+              children: []
+            }
+          ],
+          file: 'pages/[foo]',
+          path: '/:foo?'
+        },
+        {
+          children: [],
+          name: 'bar',
+          file: 'pages/[bar]/index.vue',
+          path: '/:bar?'
         },
         {
           name: 'sub-slug',
