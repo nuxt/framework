@@ -47,7 +47,7 @@ export async function buildServer (ctx: ViteBuildContext) {
         /\.(es|esm|esm-browser|esm-bundler).js$/,
         '/__vue-jsx',
         '#app',
-        /nuxt3\/(dist|src|app)/,
+        /(nuxt|nuxt3)\/(dist|src|app)/,
         /@nuxt\/nitro\/(dist|src)/
       ]
     },
@@ -55,7 +55,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
-        external: ['#nitro'],
+        external: ['#internal/nitro'],
         output: {
           entryFileNames: 'server.mjs',
           preferConst: true,
