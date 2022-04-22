@@ -8,7 +8,7 @@ How to deploy Nuxt to [Netlify](https://www.netlify.com/).
 
 ::list
 
-- Support for serverless SSR build
+- Support for serverless SSR using Netlify Functions and Edge
 - Auto-detected when deploying
 - No configuration required
 
@@ -16,30 +16,26 @@ How to deploy Nuxt to [Netlify](https://www.netlify.com/).
 
 ## Setup
 
-Nuxt will auto-detect that you are in a [Netlify](https://www.netlify.com) environment and build the correct version of your Nuxt server. For new sites, Netlify will detect that you are using Nuxt 3 or Bridge and set the publish directory to `dist` and build command to `npm run build`. If you are upgrading an existing site, you should check these and update them if needed.
-
-Normally, the deployment to Netlify does not require any configuration.
-
-However, if you want to add custom redirects, you can do so by adding a [`_redirects`](https://docs.netlify.com/routing/redirects/#syntax-for-the-redirects-file) file in the [`public`](/guide/directory-structure/public) directory.
+Normally, the deployment to Netlify does not require any configuration. Nuxt will auto-detect that you are in a [Netlify](https://www.netlify.com) build environment and build the correct version of your Nuxt server. For new sites, Netlify will detect that you are using Nuxt and set the publish directory to `dist` and build command to `npm run build`. If you are upgrading an existing site, you should check these and update them if needed.
 
 To trigger a deploy, just push to your git repository [as you would normally do for Netlify](https://docs.netlify.com/configure-builds/get-started/).
 
-By default, Nuxt will server-render each page on server hit. You can customize the behavior using the `netlify-edge` or `netlify-builder` preset.
+By default, Nuxt will server-render each page on server hit using [Netlify Functions](https://docs.netlify.com/functions/overview/). You can optionaly configure deployment to use [Netlify Edge Functions](https://docs.netlify.com/netlify-labs/experimental-features/edge-functions/) or [Netlify On-demand Builders](https://docs.netlify.com/configure-builds/on-demand-builders/).
 
 ## Netlify Edge Functions
 
-By setting the `NITRO_PRESET` environment variable to `netlify-edge`, you can use [Netlify Edge Functions](https://docs.netlify.com/netlify-labs/experimental-features/edge-functions/) to render your Nuxt app!
+[Netlify Edge Functions](https://docs.netlify.com/netlify-labs/experimental-features/edge-functions/) use [Deno](https://deno.land) and the powerful V8 JavaScript runtime to let you run globally distributed functions for the fastest possible response times. Nuxt output can directly run the server at the edge - closer to your users!
 
-Netlify Edge Functions use [Deno](https://deno.land) and the powerful V8 JavaScript runtime to let you run globally distributed functions for the fastest possible response times. Read more in the [Netlify Edge Functions announcement](https://www.netlify.com/blog/announcing-serverless-compute-with-edge-functions).
-
-Nitro output can directly run the server at the edge - closer to your users.
+Read more in the [Netlify Edge Functions announcement](https://www.netlify.com/blog/announcing-serverless-compute-with-edge-functions).
 
 ## On-demand Builders
 
-By setting the `NITRO_PRESET` environment variable to `netlify-builder`, you can benefit from [Netlify On-demand Builders](https://docs.netlify.com/configure-builds/on-demand-builders/).
+[Netlify On-demand Builders](https://docs.netlify.com/configure-builds/on-demand-builders/) are serverless functions used to generate web content as needed that’s automatically cached on Netlify’s Edge CDN. They enable you to build pages for your site when a user visits them for the first time and then cache them at the edge for subsequent visits (also known as Incremental Static Regeneration).
 
-On-demand Builders are serverless functions used to generate web content as needed that’s automatically cached on Netlify’s Edge CDN. They enable you to build pages for your site when a user visits them for the first time and then cache them at the edge for subsequent visits (also known as Incremental Static Regeneration).
+## Custom Redirects
 
-## Learn more
+If you want to add custom redirects, you can do so by adding a [`_redirects`](https://docs.netlify.com/routing/redirects/#syntax-for-the-redirects-file) file in the [`public`](/guide/directory-structure/public) directory.
+
+## Learn More
 
 :ReadMore{link="https://nitro.unjs.io/deploy/providers/netlify.html" title="the Nitro documentation for Netlify deployment"}
