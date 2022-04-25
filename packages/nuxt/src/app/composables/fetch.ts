@@ -17,7 +17,7 @@ export interface UseFetchOptions<
 
 export function useFetch<
   ResT = void,
-  ErrorT = null | Error,
+  ErrorT = Error,
   ReqT extends FetchRequest = FetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
@@ -57,7 +57,7 @@ export function useFetch<
 
 export function useLazyFetch<
   ResT = void,
-  ErrorT = null | Error,
+  ErrorT = Error,
   ReqT extends string = string,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
