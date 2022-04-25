@@ -26,6 +26,7 @@ export function createTestContext (options: Partial<TestOptions>): TestContext {
 }
 
 export function useTestContext (): TestContext {
+  recoverContextFromEnv()
   if (!currentContext) {
     throw new Error('No context is available. (Forgot calling setup or createContext?)')
   }
@@ -40,4 +41,16 @@ export function setTestContext (context: TestContext): TestContext {
 export function isDev () {
   const ctx = useTestContext()
   return ctx.options.dev
+}
+
+export function recoverContextFromEnv () {
+  if (process.env.NUXT_TEST_CONTEXT && !currentContext) {
+    setTestContext(JSON.parse(process.env.NUXT_TEST_CONTEXT))
+  }
+}
+
+export function exposeContextToEnv () {
+  const ctx = { ...currentContext }
+  delete ctx.nuxt
+  process.env.NUXT_TEST_CONTEXT = JSON.stringify(ctx)
 }

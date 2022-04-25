@@ -16,10 +16,6 @@ export default defineNuxtCommand({
       dev: !!args.dev,
       watch: !!args.watch
     })
-
-    if (args.watch) {
-      return 'wait'
-    }
   }
 })
 
@@ -33,7 +29,9 @@ async function importTestUtils (): Promise<typeof import('@nuxt/test-utils')> {
         throw new Error('Invalid version of `@nuxt/test-utils` is installed!')
       }
       return exports
-    } catch (_err) { err = _err }
+    } catch (_err) {
+      err = _err
+    }
   }
   console.error(err)
   throw new Error('`@nuxt/test-utils-edge` seems missing. Run `npm i -D @nuxt/test-utils-edge` or `yarn add -D @nuxt/test-utils-edge` to install.')

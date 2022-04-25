@@ -1548,6 +1548,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nuxt/test-utils@link:./packages/test-utils::locator=nuxt-framework%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@nuxt/test-utils@link:./packages/test-utils::locator=nuxt-framework%40workspace%3A."
+  languageName: node
+  linkType: soft
+
 "@nuxt/test-utils@workspace:packages/test-utils":
   version: 0.0.0-use.local
   resolution: "@nuxt/test-utils@workspace:packages/test-utils"
@@ -1559,6 +1565,7 @@ __metadata:
     get-port-please: ^2.5.0
     jiti: ^1.13.0
     ohmyfetch: ^0.4.15
+    pathe: ^0.2.0
     playwright: ^1.21.1
     unbuild: latest
     vitest: ^0.9.4
@@ -6568,6 +6575,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-testing@workspace:examples/advanced/testing"
   dependencies:
+    "@nuxt/test-utils": "npm:@nuxt/test-utils-edge@latest"
     nuxt: "npm:nuxt3@latest"
   languageName: unknown
   linkType: soft
@@ -10227,8 +10235,6 @@ __metadata:
 "nuxt-playground@workspace:playground":
   version: 0.0.0-use.local
   resolution: "nuxt-playground@workspace:playground"
-  dependencies:
-    nuxt: "npm:nuxt3@latest"
   languageName: unknown
   linkType: soft
 
