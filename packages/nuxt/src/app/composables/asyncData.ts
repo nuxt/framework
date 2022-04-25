@@ -1,4 +1,4 @@
-import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch } from 'vue'
+import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, unref, watch } from 'vue'
 import type { Ref, WatchSource } from 'vue'
 import { wrapInRef } from './utils'
 import { NuxtApp, useNuxtApp } from '#app'
@@ -42,14 +42,14 @@ const getDefault = () => null
 
 export function useAsyncData<
   DataT,
-  DataE = any,
+  DataE = null | Error,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   key: string,
   handler: (ctx?: NuxtApp) => Promise<DataT>,
   options: AsyncDataOptions<DataT, Transform, PickKeys> = {}
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE> {
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | true> {
   // Validate arguments
   if (typeof key !== 'string') {
     throw new TypeError('asyncData key must be a string')
@@ -116,7 +116,7 @@ export function useAsyncData<
       })
       .catch((error: any) => {
         asyncData.error.value = error
-        asyncData.data.value = options.default()
+        asyncData.data.value = unref(options.default())
       })
       .finally(() => {
         asyncData.pending.value = false
@@ -174,14 +174,14 @@ export function useAsyncData<
 
 export function useLazyAsyncData<
   DataT,
-  DataE = any,
+  DataE = null | Error,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   key: string,
   handler: (ctx?: NuxtApp) => Promise<DataT>,
   options: Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'lazy'> = {}
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE> {
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | true> {
   return useAsyncData(key, handler, { ...options, lazy: true })
 }
 

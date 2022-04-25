@@ -23,14 +23,18 @@ describe('API routes', () => {
     expectTypeOf(useAsyncData('api-hey-with-pick', () => $fetch('/api/hey'), { pick: ['baz'] }).data).toMatchTypeOf<Ref<{ baz: string }>>()
     expectTypeOf(useAsyncData('api-other', () => $fetch('/api/other')).data).toMatchTypeOf<Ref<unknown>>()
     expectTypeOf(useAsyncData<TestResponse>('api-generics', () => $fetch('/test')).data).toMatchTypeOf<Ref<TestResponse>>()
-    expectTypeOf(useAsyncData<any, string>('api-error-generics', () => $fetch('/test')).error).toMatchTypeOf<Ref<string>>()
+
+    expectTypeOf(useAsyncData('api-error-generics', () => $fetch('/error')).error).toMatchTypeOf<Ref<Error | true | null>>()
+    expectTypeOf(useAsyncData<any, string>('api-error-generics', () => $fetch('/error')).error).toMatchTypeOf<Ref<string | true | null>>()
 
     expectTypeOf(useLazyAsyncData('lazy-api-hello', () => $fetch('/api/hello')).data).toMatchTypeOf<Ref<string>>()
     expectTypeOf(useLazyAsyncData('lazy-api-hey', () => $fetch('/api/hey')).data).toMatchTypeOf<Ref<{ foo:string, baz: string }>>()
     expectTypeOf(useLazyAsyncData('lazy-api-hey-with-pick', () => $fetch('/api/hey'), { pick: ['baz'] }).data).toMatchTypeOf<Ref<{ baz: string }>>()
     expectTypeOf(useLazyAsyncData('lazy-api-other', () => $fetch('/api/other')).data).toMatchTypeOf<Ref<unknown>>()
     expectTypeOf(useLazyAsyncData<TestResponse>('lazy-api-generics', () => $fetch('/test')).data).toMatchTypeOf<Ref<TestResponse>>()
-    expectTypeOf(useLazyAsyncData<any, string>('lazy-error-generics', () => $fetch('/test')).error).toMatchTypeOf<Ref<string>>()
+
+    expectTypeOf(useLazyAsyncData('lazy-error-generics', () => $fetch('/error')).error).toMatchTypeOf<Ref<Error | true | null>>()
+    expectTypeOf(useLazyAsyncData<any, string>('lazy-error-generics', () => $fetch('/error')).error).toMatchTypeOf<Ref<string | true | null>>()
   })
 
   it('works with useFetch', () => {
@@ -40,11 +44,8 @@ describe('API routes', () => {
     expectTypeOf(useFetch('/api/other').data).toMatchTypeOf<Ref<unknown>>()
     expectTypeOf(useFetch<TestResponse>('/test').data).toMatchTypeOf<Ref<TestResponse>>()
 
-    expectTypeOf(useFetch('/test').error).toMatchTypeOf<Ref<Error | boolean>>()
-    expectTypeOf(useFetch('/test', { server: true }).error).toMatchTypeOf<Ref<Error | boolean>>()
-    expectTypeOf(useFetch('/test', { server: false }).error).toMatchTypeOf<Ref<Error>>()
-    expectTypeOf(useFetch<any, string>('/test').error).toMatchTypeOf<Ref<string | boolean>>()
-    expectTypeOf(useFetch<any, string>('/test', { server: false }).error).toMatchTypeOf<Ref<string>>()
+    expectTypeOf(useFetch('/error').error).toMatchTypeOf<Ref<Error | null | true>>()
+    expectTypeOf(useFetch<any, string>('/error').error).toMatchTypeOf<Ref<string | null | true>>()
 
     expectTypeOf(useLazyFetch('/api/hello').data).toMatchTypeOf<Ref<string>>()
     expectTypeOf(useLazyFetch('/api/hey').data).toMatchTypeOf<Ref<{ foo:string, baz: string }>>()
@@ -53,11 +54,8 @@ describe('API routes', () => {
     expectTypeOf(useLazyFetch('/api/other').data).toMatchTypeOf<Ref<unknown>>()
     expectTypeOf(useLazyFetch<TestResponse>('/test').data).toMatchTypeOf<Ref<TestResponse>>()
 
-    expectTypeOf(useLazyFetch('/test').error).toMatchTypeOf<Ref<Error | boolean>>()
-    expectTypeOf(useLazyFetch('/test', { server: true }).error).toMatchTypeOf<Ref<Error | boolean>>()
-    expectTypeOf(useLazyFetch('/test', { server: false }).error).toMatchTypeOf<Ref<Error>>()
-    expectTypeOf(useLazyFetch<any, string>('/test').error).toMatchTypeOf<Ref<string | boolean>>()
-    expectTypeOf(useLazyFetch<any, string>('/test', { server: false }).error).toMatchTypeOf<Ref<string | boolean>>()
+    expectTypeOf(useLazyFetch('/error').error).toMatchTypeOf<Ref<Error | null | true>>()
+    expectTypeOf(useLazyFetch<any, string>('/error').error).toMatchTypeOf<Ref<string | null | true>>()
   })
 })
 

@@ -1,10 +1,8 @@
-/* eslint-disable no-redeclare */
-
 import type { FetchOptions, FetchRequest } from 'ohmyfetch'
 import type { TypedInternalResponse } from 'nitropack'
 import { hash } from 'ohash'
 import { computed, isRef, Ref } from 'vue'
-import type { AsyncDataOptions, _Transform, KeyOfRes, AsyncData, PickFrom } from './asyncData'
+import type { AsyncDataOptions, _Transform, KeyOfRes } from './asyncData'
 import { useAsyncData } from './asyncData'
 
 export type FetchResult<ReqT extends FetchRequest> = TypedInternalResponse<ReqT, unknown>
@@ -13,44 +11,17 @@ export interface UseFetchOptions<
   DataT,
   Transform extends _Transform<DataT, any> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-> extends
-  AsyncDataOptions<DataT, Transform, PickKeys>,
-  FetchOptions
-  {
+> extends AsyncDataOptions<DataT, Transform, PickKeys>, FetchOptions {
   key?: string
 }
 
 export function useFetch<
   ResT = void,
-  ErrorT = Error,
+  ErrorT = null | Error,
   ReqT extends FetchRequest = FetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
-  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>,
-> (
-  request: Ref<ReqT> | ReqT | (() => ReqT),
-  opts?: Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'server'> & { server?: true }
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | boolean>;
-
-export function useFetch<
-  ResT = void,
-  ErrorT = Error,
-  ReqT extends FetchRequest = FetchRequest,
-  _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
-  Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
-  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>,
-> (
-  request: Ref<ReqT> | ReqT | (() => ReqT),
-  opts?: Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'server'> & { server: false }
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT>;
-
-export function useFetch<
-  ResT = void,
-  ErrorT = null,
-  ReqT extends FetchRequest = FetchRequest,
-  _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
-  Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
-  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>,
+  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   request: Ref<ReqT> | ReqT | (() => ReqT),
   opts: UseFetchOptions<_ResT, Transform, PickKeys> = {}
@@ -86,31 +57,7 @@ export function useFetch<
 
 export function useLazyFetch<
   ResT = void,
-  ErrorT = Error,
-  ReqT extends string = string,
-  _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
-  Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
-  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-> (
-  request: Ref<ReqT> | ReqT | (() => ReqT),
-  opts?: Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'lazy' | 'server'> & { server?: true }
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | true>;
-
-export function useLazyFetch<
-  ResT = void,
-  ErrorT = Error,
-  ReqT extends string = string,
-  _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
-  Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
-  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-> (
-  request: Ref<ReqT> | ReqT | (() => ReqT),
-  opts?: Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'lazy' | 'server'> & { server: false }
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT>;
-
-export function useLazyFetch<
-  ResT = void,
-  ErrorT = Error,
+  ErrorT = null | Error,
   ReqT extends string = string,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
@@ -119,7 +66,6 @@ export function useLazyFetch<
   request: Ref<ReqT> | ReqT | (() => ReqT),
   opts: Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'lazy'> = {}
 ) {
-  // @ts-ignore
   return useFetch<ResT, ErrorT, ReqT, _ResT, Transform, PickKeys>(request, {
     ...opts,
     lazy: true
