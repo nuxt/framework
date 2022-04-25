@@ -10235,6 +10235,8 @@ __metadata:
 "nuxt-playground@workspace:playground":
   version: 0.0.0-use.local
   resolution: "nuxt-playground@workspace:playground"
+  dependencies:
+    nuxt: "npm:nuxt3@latest"
   languageName: unknown
   linkType: soft
 
