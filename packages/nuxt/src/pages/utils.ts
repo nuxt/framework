@@ -170,7 +170,7 @@ function parseSegment (segment: string) {
           buffer = ''
           state = SegmentParserState.catchall
         }
-        if (c === '[' && state !== SegmentParserState.optional) {
+        if (c === '[' && state === SegmentParserState.dynamic) {
           state = SegmentParserState.optional
         }
         if (c === ']' && (state !== SegmentParserState.optional || buffer[buffer.length - 1] === ']')) {
