@@ -344,9 +344,9 @@ export default {
    *   // Will register redirect-ssl npm package
    *   'redirect-ssl',
    *   // Will register file from project server-middleware directory to handle /server-middleware/* requires
-   *   { path: '/server-middleware', handler: '~/server-middleware/index.js' },
+   *   { path: '/server-middleware/**', handler: '~/server-middleware/index.ts' },
    *   // We can create custom instances too, but only in development mode, they are ignored for the production bundle.
-   *   { path: '/static2', handler: serveStatic(fileURLToPath(new URL('./static2', import.meta.url))) }
+   *   { path: '/static2/**', handler: serveStatic(fileURLToPath(new URL('./static2', import.meta.url))) }
    * ]
    * ```
    *
@@ -354,17 +354,13 @@ export default {
    * form with a specific path.
    *
    * If you pass a string handler, Nuxt will expect that file to export a default function
-   * that handles `(req, res, next) => void`.
+   * produced with `eventHandler` from `h3`.
    *
    * @example
    * ```js
-   * export default function (req, res, next) {
+   * export default eventHandler(event => {
    *   // req is the Node.js http request object
-   *   console.log(req.url)
-   *   // res is the Node.js http response object
-   *   // next is a function to call to invoke the next middleware
-   *   // Don't forget to call next at the end if your middleware is not an endpoint!
-   *   next()
+   *   console.log(event.req.url)
    * }
    * ```
    *
@@ -375,24 +371,12 @@ export default {
    * import createApp from 'express'
    * const app = createApp()
    * app.use(bodyParser.json())
-   * app.all('/getJSON', (req, res) => {
+   * app.all('/server-middleware/get-json', (req, res) => {
    *   res.json({ data: 'data' })
    * })
    * export default app
    * ```
    *
-   * Alternatively, instead of passing an array of `serverMiddleware`, you can pass an object
-   * whose keys are the paths and whose values are the handlers (string or function).
-   * @example
-   * ```js
-   * export default {
-   *   serverMiddleware: {
-   *     '/a': '~/server-middleware/a.js',
-   *     '/b': '~/server-middleware/b.js',
-   *     '/c': '~/server-middleware/c.js'
-   *   }
-   * }
-   * ```
    * @version 2
    * @version 3
    */
