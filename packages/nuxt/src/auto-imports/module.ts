@@ -80,10 +80,10 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     const regenerateAutoImports = async () => {
       ctx.clearDynamicImports()
       await ctx.modifyDynamicImports(async (imports) => {
-        // Modules extending
-        await nuxt.callHook('autoImports:extend', imports)
         // Scan composables/
         imports.push(...await scanDirExports(composablesDirs))
+        // Modules extending
+        await nuxt.callHook('autoImports:extend', imports)
       })
     }
 
