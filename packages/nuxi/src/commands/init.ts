@@ -52,13 +52,15 @@ export default defineNuxtCommand({
       throw e
     }
 
-    // Show neet steps
-    console.log(`\n 🎉  Another ${superb.random()} Nuxt project just made! Next steps:` + [
+    // Show next steps
+    const nextSteps = [
       '',
-      `📁  \`cd ${rpath(dstDir)}\``,
       '💿  Install dependencies with `npm install` or `yarn install` or `pnpm install --shamefully-hoist`',
       '🚀  Start development server with `npm run dev` or `yarn dev` or `pnpm run dev',
-      ''
-    ].join('\n\n     '))
+      '',
+    ];
+    if (rpath(dstDir).length >= 1) nextSteps.splice(1, 0, `📁  \`cd ${rpath(dstDir)}\``);
+    
+    console.log(`\n 🎉  Another ${superb.random()} Nuxt project just made! Next steps:` + nextSteps.join('\n\n     '))
   }
 })
