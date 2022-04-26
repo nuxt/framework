@@ -344,7 +344,7 @@ export default {
    *   // Will register redirect-ssl npm package
    *   'redirect-ssl',
    *   // Will register file from project server-middleware directory to handle /server-middleware/* requires
-   *   { path: '/server-middleware/**', handler: '~/server-middleware/index.ts' },
+   *   { path: '/server-middleware/**', handler: '~/server-middleware/my-middleware' },
    *   // We can create custom instances too, but only in development mode, they are ignored for the production bundle.
    *   { path: '/static2/**', handler: serveStatic(fileURLToPath(new URL('./static2', import.meta.url))) }
    * ]
