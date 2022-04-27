@@ -55,7 +55,7 @@ export async function buildClient (ctx: ViteBuildContext) {
 
   // Add analyze plugin if needed
   if (ctx.nuxt.options.build.analyze) {
-    clientConfig.plugins.push(...analyzePlugin(ctx))
+    clientConfig.plugins!.push(...analyzePlugin(ctx))
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', clientConfig, { isClient: true, isServer: false })
@@ -67,7 +67,7 @@ export async function buildClient (ctx: ViteBuildContext) {
   const viteMiddleware: Connect.NextHandleFunction = (req, res, next) => {
     // Workaround: vite devmiddleware modifies req.url
     const originalURL = req.url
-    viteServer.middlewares.handle(req, res, (err) => {
+    viteServer.middlewares.handle(req, res, (err: unknown) => {
       req.url = originalURL
       next(err)
     })

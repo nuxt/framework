@@ -3,8 +3,10 @@ import type { Nuxt } from '@nuxt/schema'
 import type { ViteOptions } from './vite'
 import { distDir } from './dirs'
 
+type Defined<T> = T extends undefined ? never : T
+
 export function resolveCSSOptions (nuxt: Nuxt): ViteOptions['css'] {
-  const css: ViteOptions['css'] & { postcss: Exclude<ViteOptions['css']['postcss'], string> } = {
+  const css: ViteOptions['css'] & { postcss: Exclude<Defined<Defined<ViteOptions['css']>['postcss']>, string> } = {
     postcss: {
       plugins: []
     }

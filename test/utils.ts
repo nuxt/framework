@@ -1,6 +1,11 @@
 import { getBrowser, url, useTestContext } from '@nuxt/test-utils'
 import { expect } from 'vitest'
 
+export interface ConsoleLogRecord {
+  type: string
+  text: string
+}
+
 export async function renderPage (path = '/') {
   const ctx = useTestContext()
   if (!ctx.options.browser) {
@@ -9,8 +14,8 @@ export async function renderPage (path = '/') {
 
   const browser = await getBrowser()
   const page = await browser.newPage({})
-  const pageErrors = []
-  const consoleLogs = []
+  const pageErrors: Error[] = []
+  const consoleLogs: ConsoleLogRecord[] = []
 
   page.on('console', (message) => {
     consoleLogs.push({
@@ -39,7 +44,7 @@ export async function expectNoClientErrors (path: string) {
     return
   }
 
-  const { pageErrors, consoleLogs } = await renderPage(path)
+  const { pageErrors, consoleLogs } = (await renderPage(path))!
 
   const consoleLogErrors = consoleLogs.filter(i => i.type === 'error')
   const consoleLogWarnings = consoleLogs.filter(i => i.type === 'warn')

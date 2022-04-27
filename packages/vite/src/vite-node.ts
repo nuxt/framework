@@ -50,12 +50,12 @@ function createViteNodeMiddleware (ctx: ViteBuildContext) {
   const app = createApp()
 
   app.use('/manifest', defineEventHandler(async () => {
-    const manifest = await getManifest(ctx.ssrServer)
+    const manifest = await getManifest(ctx.ssrServer!)
     return manifest
   }))
 
   app.use('/module', defineLazyEventHandler(() => {
-    const node: ViteNodeServer = new ViteNodeServer(ctx.ssrServer, {
+    const node: ViteNodeServer = new ViteNodeServer(ctx.ssrServer!, {
       deps: {
         inline: [
           /\/(nuxt|nuxt3)\//,
@@ -65,7 +65,7 @@ function createViteNodeMiddleware (ctx: ViteBuildContext) {
       }
     })
     return async (event) => {
-      const moduleId = decodeURI(event.req.url).substring(1)
+      const moduleId = decodeURI(event.req.url!).substring(1)
       if (moduleId === '/') {
         throw createError({ statusCode: 400 })
       }
@@ -93,7 +93,7 @@ export async function prepareDevServerEntry (ctx: ViteBuildContext) {
     baseURL: `${protocol}://${host}:${port}/__nuxt_vite_node__`,
     rootDir: ctx.nuxt.options.rootDir,
     entryPath,
-    base: ctx.ssrServer.config.base || '/_nuxt/'
+    base: ctx.ssrServer!.config.base || '/_nuxt/'
   }
   process.env.NUXT_VITE_NODE_OPTIONS = JSON.stringify(viteNodeServerOptions)
 

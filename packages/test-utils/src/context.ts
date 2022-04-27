@@ -1,8 +1,9 @@
+/* eslint-disable no-redeclare */
 import { resolve } from 'node:path'
 import defu from 'defu'
-import type { TestContext, TestOptions, TestRunner } from './types'
+import type { TestContext, TestOptions } from './types'
 
-let currentContext: TestContext
+let currentContext: TestContext | undefined
 
 export function createTestContext (options: Partial<TestOptions>): TestContext {
   const _options: Partial<TestOptions> = defu(options, {
@@ -16,9 +17,9 @@ export function createTestContext (options: Partial<TestOptions>): TestContext {
     build: (options.browser !== false) || (options.server !== false),
     nuxtConfig: {},
     // TODO: auto detect based on process.env
-    runner: <TestRunner>'vitest',
+    runner: 'vitest' as const,
     browserOptions: {
-      type: 'chromium'
+      type: 'chromium' as const
     }
   })
 
@@ -32,7 +33,9 @@ export function useTestContext (): TestContext {
   return currentContext
 }
 
-export function setTestContext (context: TestContext): TestContext {
+export function setTestContext (context?: undefined): undefined
+export function setTestContext (context: TestContext): TestContext
+export function setTestContext (context?: TestContext): TestContext | undefined {
   currentContext = context
   return currentContext
 }

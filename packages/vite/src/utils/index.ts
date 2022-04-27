@@ -35,12 +35,12 @@ export function hash (input: string, length = 8) {
     .slice(0, length)
 }
 
-export function readDirRecursively (dir: string) {
+export function readDirRecursively (dir: string): string[] {
   return readdirSync(dir).reduce((files, file) => {
     const name = join(dir, file)
     const isDirectory = statSync(name).isDirectory()
     return isDirectory ? [...files, ...readDirRecursively(name)] : [...files, name]
-  }, [])
+  }, [] as string[])
 }
 
 export async function isDirectory (path: string) {

@@ -47,7 +47,7 @@ export const RelativeAssetPlugin = function (): Plugin {
 
 const VITE_ASSET_RE = /^export default ["'](__VITE_ASSET.*)["']$/
 
-export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePluginOptions = {}) {
+export const DynamicBasePlugin = createUnplugin((options: DynamicBasePluginOptions = {}) => {
   return {
     name: 'nuxt:dynamic-base-path',
     resolveId (id) {
@@ -96,7 +96,9 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
       if (s.hasChanged()) {
         return {
           code: s.toString(),
-          map: options.sourcemap && s.generateMap({ source: id, includeContent: true })
+          map: options.sourcemap
+            ? s.generateMap({ source: id, includeContent: true })
+            : undefined
         }
       }
     }

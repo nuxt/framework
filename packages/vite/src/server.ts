@@ -16,7 +16,7 @@ import { writeManifest } from './manifest'
 import { RelativeAssetPlugin } from './plugins/dynamic-base'
 
 export async function buildServer (ctx: ViteBuildContext) {
-  const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
+  const _resolve = (id: string) => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     define: {
       'process.server': true,
@@ -62,7 +62,7 @@ export async function buildServer (ctx: ViteBuildContext) {
           format: 'module'
         },
         onwarn (warning, rollupWarn) {
-          if (!['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
+          if (!warning.code || !['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
             rollupWarn(warning)
           }
         }
@@ -83,7 +83,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Add type-checking
   if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
     const checker = await import('vite-plugin-checker').then(r => r.default)
-    ctx.config.plugins.push(checker({ typescript: true }))
+    ctx.config.plugins!.push(checker({ typescript: true }))
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })

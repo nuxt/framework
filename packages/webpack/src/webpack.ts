@@ -33,7 +33,7 @@ export async function bundle (nuxt: Nuxt) {
 
   // Configure compilers
   const compilers = webpackConfigs.map((config) => {
-    config.plugins.push(DynamicBasePlugin.webpack({
+    config.plugins!.push(DynamicBasePlugin.webpack({
       sourcemap: nuxt.options.sourcemap,
       globalPublicPath: '__webpack_public_path__'
     }))
@@ -42,7 +42,7 @@ export async function bundle (nuxt: Nuxt) {
     const compiler = webpack(config)
 
     // In dev, write files in memory FS
-    if (nuxt.options.dev) {
+    if (nuxt.options.dev && mfs) {
       compiler.outputFileSystem = mfs
     }
 

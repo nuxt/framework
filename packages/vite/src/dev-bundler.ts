@@ -33,7 +33,7 @@ function isExternal (opts: TransformOptions, id: string) {
     inline: [
       /virtual:/,
       /\.ts$/,
-      ...ExternalsDefaults.inline,
+      ...(ExternalsDefaults.inline || []),
       ...ssrConfig.noExternal
     ],
     external: [
@@ -75,7 +75,7 @@ async function transformRequest (opts: TransformOptions, id: string) {
   // Remove for externals
   const withoutVersionQuery = id.replace(/\?v=\w+$/, '')
   if (await isExternal(opts, withoutVersionQuery)) {
-    const path = builtinModules.includes(withoutVersionQuery.split('node:').pop())
+    const path = builtinModules.includes(withoutVersionQuery.split('node:').pop()!)
       ? withoutVersionQuery
       : pathToFileURL(withoutVersionQuery).href
     return {
@@ -110,7 +110,7 @@ ${res.code || '/* empty */'};
   return { code, deps: res.deps || [], dynamicDeps: res.dynamicDeps || [] }
 }
 
-async function transformRequestRecursive (opts: TransformOptions, id, parent = '<entry>', chunks: Record<string, TransformChunk> = {}) {
+async function transformRequestRecursive (opts: TransformOptions, id: string, parent = '<entry>', chunks: Record<string, TransformChunk> = {}) {
   if (chunks[id]) {
     chunks[id].parents.push(parent)
     return
@@ -131,7 +131,7 @@ async function transformRequestRecursive (opts: TransformOptions, id, parent = '
 }
 
 export async function bundleRequest (opts: TransformOptions, entryURL: string) {
-  const chunks = await transformRequestRecursive(opts, entryURL)
+  const chunks = await transformRequestRecursive(opts, entryURL) || []
 
   const listIds = (ids: string[]) => ids.map(id => `// - ${id} (${hashId(id)})`).join('\n')
   const chunksCode = chunks.map(chunk => `
