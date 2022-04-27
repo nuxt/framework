@@ -31,7 +31,7 @@ export default defineNuxtModule({
     // Add global meta configuration
     addTemplate({
       filename: 'meta.config.mjs',
-      getContents: () => 'export default ' + JSON.stringify({ globalMeta, mixinKey: isNuxt3() ? 'created' : 'setup' })
+      getContents: () => 'export default ' + JSON.stringify({ globalMeta })
     })
 
     // Add generic plugin
