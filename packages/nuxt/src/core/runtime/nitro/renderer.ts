@@ -110,29 +110,25 @@ export default eventHandler(async (event) => {
     return
   }
 
-  const error = ssrContext.error /* nuxt 3 */ || ssrContext.nuxt?.error
   // Handle errors
-  if (error && !ssrError) {
-    throw error
+  if (ssrContext.error && !ssrError) {
+    throw ssrContext.error
   }
 
   if (ssrContext.nuxt?.hooks) {
     await ssrContext.nuxt.hooks.callHook('app:rendered')
   }
 
-  // TODO: nuxt3 should not reuse `nuxt` property for different purpose!
-  const payload = ssrContext.payload /* nuxt 3 */ || ssrContext.nuxt /* nuxt 2 */
-
   if (process.env.NUXT_FULL_STATIC) {
-    payload.staticAssetsBase = STATIC_ASSETS_BASE
+    ssrContext.payload.staticAssetsBase = STATIC_ASSETS_BASE
   }
 
   let data
   if (isPayloadReq) {
-    data = renderPayload(payload, url)
+    data = renderPayload(ssrContext.payload, url)
     event.res.setHeader('Content-Type', 'text/javascript;charset=UTF-8')
   } else {
-    data = await renderHTML(payload, rendered, ssrContext)
+    data = await renderHTML(ssrContext.payload, rendered, ssrContext)
     event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   }
 
