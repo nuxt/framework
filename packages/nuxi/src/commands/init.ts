@@ -53,14 +53,16 @@ export default defineNuxtCommand({
     }
 
     // Show next steps
+    const relativeDist = rpath(dstDir)
     const nextSteps = [
-      '',
+      relativeDist.length > 1 && `📁  \`cd ${relativeDist}\``,
       '💿  Install dependencies with `npm install` or `yarn install` or `pnpm install --shamefully-hoist`',
-      '🚀  Start development server with `npm run dev` or `yarn dev` or `pnpm run dev`',
-      '',
-    ];
-    if (rpath(dstDir).length >= 1) nextSteps.splice(1, 0, `📁  \`cd ${rpath(dstDir)}\``);
-    
-    console.log(`\n 🎉  Another ${superb.random()} Nuxt project just made! Next steps:` + nextSteps.join('\n\n     '))
+      '🚀  Start development server with `npm run dev` or `yarn dev` or `pnpm run dev`'
+    ].filter(Boolean)
+
+    consola.log(`\n ✨ Your ${superb.random()} Nuxt project is just created! Next steps:\n`)
+    for (const step of nextSteps) {
+      consola.log(` ${step}\n`)
+    }
   }
 })
