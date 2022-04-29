@@ -184,19 +184,17 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   // On SSR, we trigger another navigation once all plugins are loaded
   // On client-side, we do not process middleware on initial load
-  if (process.server || !nuxtApp.payload.serverRendered) {
-    nuxtApp.hooks.hookOnce('app:created', async () => {
-      try {
-        await router.replace({
-          path: initialURL,
-          force: true
-        })
-      } catch (error) {
-        // We'll catch middleware errors or deliberate exceptions here
-        callWithNuxt(nuxtApp, throwError, [error])
-      }
-    })
-  }
+  nuxtApp.hooks.hookOnce('app:created', async () => {
+    try {
+      await router.replace({
+        path: initialURL,
+        force: true
+      })
+    } catch (error) {
+      // We'll catch middleware errors or deliberate exceptions here
+      callWithNuxt(nuxtApp, throwError, [error])
+    }
+  })
 
   return { provide: { router } }
 })

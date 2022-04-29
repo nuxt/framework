@@ -219,11 +219,9 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
       delete nuxtApp._processingMiddleware
     })
 
-    if (process.server || !nuxtApp.payload.serverRendered) {
-      await router.replace(initialURL)
-      if (route.fullPath !== initialURL) {
-        await callWithNuxt(nuxtApp, navigateTo, [route.fullPath])
-      }
+    await router.replace(initialURL)
+    if (route.fullPath !== initialURL) {
+      await callWithNuxt(nuxtApp, navigateTo, [route.fullPath])
     }
   })
 
