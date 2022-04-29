@@ -1,4 +1,4 @@
-import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, unref, watch } from 'vue'
+import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch, unref } from 'vue'
 import type { Ref, WatchSource } from 'vue'
 import { wrapInRef } from './utils'
 import { NuxtApp, useNuxtApp } from '#app'
@@ -141,7 +141,7 @@ export function useAsyncData<
 
   // Client side
   if (process.client) {
-    if (fetchOnServer && nuxt.isHydrating) {
+    if (fetchOnServer && nuxt.isHydrating && key in nuxt.payload.data) {
       // 1. Hydration (server: true): no fetch
       asyncData.pending.value = false
     } else if (instance && (nuxt.isHydrating || options.lazy)) {
