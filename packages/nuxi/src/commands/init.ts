@@ -56,7 +56,7 @@ export default defineNuxtCommand({
     const nextSteps = [
       '',
       '💿  Install dependencies with `npm install` or `yarn install` or `pnpm install --shamefully-hoist`',
-      '🚀  Start development server with `npm run dev` or `yarn dev` or `pnpm run dev',
+      '🚀  Start development server with `npm run dev` or `yarn dev` or `pnpm run dev`',
       '',
     ];
     if (rpath(dstDir).length >= 1) nextSteps.splice(1, 0, `📁  \`cd ${rpath(dstDir)}\``);
