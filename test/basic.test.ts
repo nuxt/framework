@@ -1,4 +1,4 @@
-import { fileURLToPath } from 'url'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 // import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
@@ -155,14 +155,13 @@ describe('errors', () => {
     expect(res.status).toBe(500)
     const error = await res.json()
     delete error.stack
-    expect(error).toMatchInlineSnapshot(`
-      {
-        "message": "This is a custom error",
-        "statusCode": 500,
-        "statusMessage": "Internal Server Error",
-        "url": "/error",
-      }
-    `)
+    expect(error).toMatchObject({
+      description: process.env.NUXT_TEST_DEV ? expect.stringContaining('<pre>') : '',
+      message: 'This is a custom error',
+      statusCode: 500,
+      statusMessage: 'Internal Server Error',
+      url: '/error'
+    })
   })
 
   it('should render a HTML error page', async () => {

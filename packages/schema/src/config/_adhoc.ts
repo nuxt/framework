@@ -35,4 +35,23 @@ export default {
     global: false,
     dirs: []
   },
+
+  /**
+   * Whether to use the vue-router integration in Nuxt 3. If you do not provide a value it will be
+   * enabled if you have a `pages/` directory in your source folder.
+   *
+   * @type {boolean}
+   * @version 3
+   */
+  pages: undefined,
+
+  /**
+   * Manually disable nuxt telemetry
+   *
+   * @see [Nuxt Telemetry](https://github.com/nuxt/telemetry) for more information.
+   *
+   * @type {boolean}
+   * @version 3
+  */
+  telemetry: undefined
 }

@@ -1,4 +1,4 @@
-import { promises as fsp } from 'fs'
+import { promises as fsp } from 'node:fs'
 import { isAbsolute, join, relative, resolve } from 'pathe'
 import { Nuxt, TSReference } from '@nuxt/schema'
 import defu from 'defu'
@@ -44,16 +44,16 @@ export const writeTypes = async (nuxt: Nuxt) => {
       continue
     }
     const relativePath = isAbsolute(aliases[alias])
-      ? relative(nuxt.options.rootDir, aliases[alias]).replace(/(?<=\w)\.\w+$/g, '') /* remove extension */ || '.'
+      ? relative(nuxt.options.rootDir, aliases[alias]) || '.'
       : aliases[alias]
-    tsConfig.compilerOptions.paths[alias] = [relativePath]
 
-    try {
-      const { isDirectory } = await fsp.stat(resolve(nuxt.options.rootDir, relativePath))
-      if (isDirectory) {
-        tsConfig.compilerOptions.paths[`${alias}/*`] = [`${relativePath}/*`]
-      }
-    } catch { }
+    const stats = await fsp.stat(resolve(nuxt.options.rootDir, relativePath)).catch(() => null /* file does not exist */)
+    if (stats?.isDirectory()) {
+      tsConfig.compilerOptions.paths[alias] = [relativePath]
+      tsConfig.compilerOptions.paths[`${alias}/*`] = [`${relativePath}/*`]
+    } else {
+      tsConfig.compilerOptions.paths[alias] = [relativePath.replace(/(?<=\w)\.\w+$/g, '')] /* remove extension */
+    }
   }
 
   const references: TSReference[] = [

@@ -12,6 +12,7 @@
     "plugin:import/typescript"
   ],
   "rules": {
+    "unicorn/prefer-node-protocol": "error",
     "no-console": "off",
     "vue/multi-word-component-names": "off",
     "vue/one-component-per-file": "off",
@@ -26,13 +27,13 @@
       {
         "zones": [
           {
-            "from": "packages/nuxt3/src/!(core)/**/*",
-            "target": "packages/nuxt3/src/core",
+            "from": "packages/nuxt/src/!(core)/**/*",
+            "target": "packages/nuxt/src/core",
             "message": "core should not directly import from modules."
           },
           {
-            "from": "packages/nuxt3/src/!(app)/**/*",
-            "target": "packages/nuxt3/src/app",
+            "from": "packages/nuxt/src/!(app)/**/*",
+            "target": "packages/nuxt/src/app",
             "message": "app should not directly import from modules."
           },
           {

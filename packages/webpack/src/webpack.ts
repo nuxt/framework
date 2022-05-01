@@ -1,4 +1,4 @@
-import type { IncomingMessage, ServerResponse } from 'http'
+import type { IncomingMessage, ServerResponse } from 'node:http'
 import pify from 'pify'
 import webpack from 'webpack'
 import webpackDevMiddleware, { API } from 'webpack-dev-middleware'
@@ -34,6 +34,7 @@ export async function bundle (nuxt: Nuxt) {
   // Configure compilers
   const compilers = webpackConfigs.map((config) => {
     config.plugins.push(DynamicBasePlugin.webpack({
+      sourcemap: nuxt.options.sourcemap,
       globalPublicPath: '__webpack_public_path__'
     }))
 
