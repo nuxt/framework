@@ -4100,6 +4100,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"changelogen@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "changelogen@npm:0.0.2"
+  dependencies:
+    c12: ^0.2.7
+    consola: ^2.15.3
+    execa: ^6.1.0
+    mri: ^1.2.0
+    scule: ^0.2.1
+  bin:
+    changelogen: dist/cli.mjs
+  checksum: 9721ec963ed42febc45c1ff9d57251fd7f96bac356cce6eb3cd8136dc3e6ab8d3a9c7e015bfde652416a1708cc450c14512f81dfd6eabcedddd9cf537a3ce1cd
+  languageName: node
+  linkType: hard
+
 "chardet@npm:^0.7.0":
   version: 0.7.0
   resolution: "chardet@npm:0.7.0"
@@ -10096,6 +10111,7 @@ __metadata:
     "@types/rimraf": ^3
     "@unocss/reset": ^0.32.9
     case-police: ^0.5.3
+    changelogen: ^0.0.2
     eslint: ^8.14.0
     eslint-plugin-jsdoc: ^39.2.9
     execa: ^6.1.0
