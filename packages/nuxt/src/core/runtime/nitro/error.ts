@@ -16,7 +16,7 @@ export default <NitroErrorHandler> async function errorhandler (_error, event) {
     description: process.env.NODE_ENV === 'development' && statusCode !== 404
       ? `<pre>${stack.map(i => `<span class="stack${i.internal ? ' internal' : ''}">${i.text}</span>`).join('\n')}</pre>`
       : '',
-    data: _error.data
+    data: (_error as any).data
   }
 
   // Set response code and message
