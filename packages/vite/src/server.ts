@@ -89,6 +89,9 @@ export async function buildServer (ctx: ViteBuildContext) {
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
 
   ctx.nuxt.hook('nitro:build:before', async () => {
+    if (ctx.nuxt.options.dev) {
+      return
+    }
     const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
 
     // Remove public files that have been duplicated into buildAssetsDir
