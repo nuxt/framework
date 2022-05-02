@@ -182,8 +182,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     }
   })
 
-  // On SSR, we trigger another navigation once all plugins are loaded
-  // On client-side, we do not process middleware on initial load
   nuxtApp.hooks.hookOnce('app:created', async () => {
     try {
       await router.replace({
