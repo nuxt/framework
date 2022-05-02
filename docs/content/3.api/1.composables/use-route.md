@@ -41,13 +41,13 @@ If API endpoint requires query parameters to construct URL, then you can use `ro
 
 Apart from dynamic parameters and query parameters, `useRoute` also provides the following computed references related to the current route:
 
-- fullPath - Encoded URL associated to the route location. Contains path, query and hash
-- hash - Decoded hash section of the URL. Always starts with a #. Empty string if there is no hash in the URL
-- matched - array of normalized route records that were matched with the given route location
-- meta - custom data attached to the record
-- name - unique name for the route record
-- path - encoded pathname section of the URL associated to the route location
-- redirectedFrom - route location we were initially trying to access before ending up on the current route location
+* **fullPath**: encoded URL associated to the current route that contains path, query and hash
+* **hash**: decoded hash section of the URL that starts with a #
+* **matched**: array of normalized matched routes with current route location
+* **meta**: custom data attached to the record
+* **name**: unique name for the route record
+* **path**: encoded pathname section of the URL
+* **redirectedFrom**: route location that was attempted to access before ending up on the current route location
 
 ::ReadMore{link="https://router.vuejs.org/api/#routelocationnormalized"}
 ::
