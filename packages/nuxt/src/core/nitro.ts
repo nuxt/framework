@@ -12,6 +12,7 @@ import { createHeadCore } from 'unhead'
 import { renderSSRHead } from '@unhead/ssr'
 import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
+import commonjs from "@rollup/plugin-commonjs"
 
 export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   // Resolve config
@@ -121,10 +122,10 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
       // Vue 3 mocks
       'estree-walker': 'unenv/runtime/mock/proxy',
       '@babel/parser': 'unenv/runtime/mock/proxy',
-      '@vue/compiler-core': 'unenv/runtime/mock/proxy',
-      '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
-      '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
-      '@vue/devtools-api': 'vue-devtools-stub',
+      "@vue/compiler-core": (nuxt.options.runtimeCompiler && !nuxt.options.dev) ? "@vue/compiler-core" : "unenv/runtime/mock/proxy",
+      "@vue/compiler-dom": (nuxt.options.runtimeCompiler && !nuxt.options.dev) ? "@vue/compiler-dom" : "unenv/runtime/mock/proxy",
+      "@vue/compiler-ssr": (nuxt.options.runtimeCompiler && !nuxt.options.dev) ? "@vue/compiler-ssr" : "unenv/runtime/mock/proxy",
+      "@vue/devtools-api": (nuxt.options.runtimeCompiler && !nuxt.options.dev) ? "@vue/devtools-api" : 'vue-devtools-stub',
 
       // Paths
       '#paths': resolve(distDir, 'core/runtime/nitro/paths'),
@@ -195,6 +196,35 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   nitro.hooks.hook('prerender:routes', (routes) => {
     nuxt.callHook('prerender:routes', { routes })
   })
+
+  // Enable runtime compiler on build
+  if(nuxt.options.runtimeCompiler && !nuxt.options.dev){
+    // set vue esm on client
+    nuxt.hook('vite:extendConfig',(config, { isClient, isServer }) => {
+      if (isClient) {
+        config.resolve.alias.vue = 'vue/dist/vue.esm-bundler'
+      }
+    })
+
+    nitro.hooks.hook('rollup:before', (nitro) => {
+      // get the index of @rollup/plugin-commonjs set by nitro
+      const indexOfCommonJsPlugin = nitro.options.rollupConfig.plugins.findIndex((plugin) => {
+            return typeof plugin !== "boolean" && plugin.name === "commonjs"
+      })
+      if(indexOfCommonJsPlugin >= 0) {
+          // replace the @rollup/plugin-commonjs set by nitro
+          nitro.options.rollupConfig.plugins.splice(indexOfCommonJsPlugin, 1, commonjs({
+              dynamicRequireTargets: [  
+                "./node_modules/@vue/compiler-core",
+                "./node_modules/@vue/compiler-dom",
+                "./node_modules/@vue/compiler-ssr",
+                "./node_modules/@vue/devtools-api",
+                "./node_modules/vue/server-renderer",
+              ]
+          }))
+      }
+    })
+  }
 
   // Setup handlers
   const devMiddlewareHandler = dynamicEventHandler()

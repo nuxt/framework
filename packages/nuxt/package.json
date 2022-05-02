@@ -42,6 +42,7 @@
     "@nuxt/telemetry": "^2.1.9",
     "@nuxt/ui-templates": "^1.1.1",
     "@nuxt/vite-builder": "3.1.2",
+    "@rollup/plugin-commonjs": "^22.0.0",
     "@unhead/ssr": "^1.0.21",
     "@vue/reactivity": "^3.2.47",
     "@vue/shared": "^3.2.47",
