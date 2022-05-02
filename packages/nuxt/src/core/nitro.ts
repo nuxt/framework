@@ -142,7 +142,7 @@ export async function initNitro (nuxt: Nuxt) {
     if (nuxt.options.dev) {
       await build(nitro)
     } else {
-      await nuxt.callHook('nitro:_build', nitro)
+      await nuxt.callHook('nitro:build:before', nitro)
       await prepare(nitro)
       await copyPublicAssets(nitro)
       await prerender(nitro)
