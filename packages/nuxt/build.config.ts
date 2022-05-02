@@ -26,6 +26,6 @@ export default defineBuildConfig({
     '@vue/shared',
     '@vueuse/head',
     'vue-meta',
-    "@rollup/plugin-commonjs"
+    '@rollup/plugin-commonjs'
   ]
 })
