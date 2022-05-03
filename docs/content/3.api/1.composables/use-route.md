@@ -24,7 +24,7 @@ const { data, pending, error, refresh } = await useAsyncData("mountain", () =>
 </script>
 ```
 
-If API endpoint requires query parameters to construct URL, then you can use `route.query` instead of `route.params`.
+If you need to access the route query parameters (for example `example` in the path `/test?example=true`), then you can use `route.query` instead of `route.params`.
 
 Apart from dynamic parameters and query parameters, `useRoute` also provides the following computed references related to the current route:
 
