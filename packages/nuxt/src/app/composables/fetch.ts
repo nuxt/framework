@@ -11,15 +11,13 @@ export interface UseFetchOptions<
   DataT,
   Transform extends _Transform<DataT, any> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-> extends
-  AsyncDataOptions<DataT, Transform, PickKeys>,
-  FetchOptions
-  {
+> extends AsyncDataOptions<DataT, Transform, PickKeys>, FetchOptions {
   key?: string
- }
+}
 
 export function useFetch<
   ResT = void,
+  ErrorT = Error,
   ReqT extends FetchRequest = FetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
@@ -28,7 +26,10 @@ export function useFetch<
   request: Ref<ReqT> | ReqT | (() => ReqT),
   opts: UseFetchOptions<_ResT, Transform, PickKeys> = {}
 ) {
-  const key = '$f_' + (opts.key || hash([request, opts]))
+  if (process.dev && opts.transform && !opts.key) {
+    console.warn('[nuxt] You should provide a key for `useFetch` when using a custom transform function.')
+  }
+  const key = '$f_' + (opts.key || hash([request, { ...opts, transform: null }]))
   const _request = computed<FetchRequest>(() => {
     let r = request
     if (typeof r === 'function') {
@@ -50,8 +51,8 @@ export function useFetch<
     ]
   }
 
-  const asyncData = useAsyncData(key, () => {
-    return $fetch(_request.value, _fetchOptions) as Promise<_ResT>
+  const asyncData = useAsyncData<_ResT, ErrorT, Transform, PickKeys>(key, () => {
+    return $fetch(_request.value, _fetchOptions)
   }, _asyncDataOptions)
 
   return asyncData
@@ -59,6 +60,7 @@ export function useFetch<
 
 export function useLazyFetch<
   ResT = void,
+  ErrorT = Error,
   ReqT extends string = string,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
@@ -67,5 +69,8 @@ export function useLazyFetch<
   request: Ref<ReqT> | ReqT | (() => ReqT),
   opts: Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'lazy'> = {}
 ) {
-  return useFetch(request, { ...opts, lazy: true })
+  return useFetch<ResT, ErrorT, ReqT, _ResT, Transform, PickKeys>(request, {
+    ...opts,
+    lazy: true
+  })
 }
