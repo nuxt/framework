@@ -4,8 +4,6 @@ The `useRoute` composable returns the current route and must be called in a `set
 
 Within the template of a Vue component, you can access the route using `$route`.
 
-We can expose possible dynamic parameters of the route via `useRoute` composable. 
-
 ## Example
 
 In the following example, we call an API via `useAsyncData` using a dynamic page parameter - `slug` - as part of the URL.
