@@ -7,16 +7,7 @@
 ::
 # `useRoute`
 
-`useRoute` composable returns the location of current route and must be called inside of `setup()` function. 
-
-In Nuxt, `useRoute` is availble to use inside:
-
-- Nuxt pages
-- layouts,
-- components, 
-- composables,
-- route middleware and 
-- Nuxt plugins. 
+`useRoute` composable returns the location of current route and must be called inside `setup()` function.
 
 `useRoute` composable is accessed in `setup()` function using `useRoute()`, and directly inside the template of Vue component using `$route`.
 
