@@ -1,6 +1,6 @@
 # `useRoute`
 
-`useRoute` composable returns the location of current route and must be called inside `setup()` function.
+The `useRoute` composable returns the current route and must be called in a `setup` function, plugin, or route middleware.
 
 `useRoute` composable is accessed in `setup()` function using `useRoute()`, and directly inside the template of Vue component using `$route`.
 
