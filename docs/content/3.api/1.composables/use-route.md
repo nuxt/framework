@@ -1,12 +1,5 @@
 # `useRoute`
 
-::ReadMore{link="/guide/features/routing"}
-::
-
-::NeedContribution
-::
-# `useRoute`
-
 `useRoute` composable returns the location of current route and must be called inside `setup()` function.
 
 `useRoute` composable is accessed in `setup()` function using `useRoute()`, and directly inside the template of Vue component using `$route`.
@@ -44,7 +37,4 @@ Apart from dynamic parameters and query parameters, `useRoute` also provides the
 ::
 
 ::ReadMore{link="/guide/features/routing"}
-::
-
-::NeedContribution
 ::
