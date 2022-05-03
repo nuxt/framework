@@ -44,6 +44,7 @@
     "@nuxt/vite-builder": "3.1.2",
     "@rollup/plugin-commonjs": "^22.0.0",
     "@unhead/ssr": "^1.0.21",
+    "@vue/compiler-dom": "^3.2.33",
     "@vue/reactivity": "^3.2.47",
     "@vue/shared": "^3.2.47",
     "@vueuse/head": "^1.0.25",
