@@ -4,8 +4,11 @@
 
 `useRoute` composable is accessed in `setup()` function using `useRoute()`, and directly inside the template of Vue component using `$route`.
 
-We can expose possible dynamic parameters of the route via `useRoute` composable. In the following example, we call an API via `useAsyncData` using a dynamic page parameter - `slug` - as part of the URL. 
+We can expose possible dynamic parameters of the route via `useRoute` composable. 
 
+## Example
+
+In the following example, we call an API via `useAsyncData` using a dynamic page parameter - `slug` - as part of the URL.
 
 ```html [~/pages/[slug].vue]
 <template>
