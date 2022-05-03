@@ -11,7 +11,7 @@ export const throwError = (_err: string | Error | Partial<H3Error>) => {
   const error = useError()
   const err = typeof _err === 'string'
     ? new Error(_err)
-    : _err && typeof _err === 'object' && !(_err instanceof Error)
+    : _err && typeof _err === 'object' && !('__nuxt_error' in _err)
       ? createError(_err)
       : _err
   nuxtApp.callHook('app:error', err)

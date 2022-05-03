@@ -7,6 +7,7 @@
 
 <script setup>
 import { onErrorCaptured } from 'vue'
+import { H3Error } from 'h3'
 import { callWithNuxt, throwError, useError, useNuxtApp } from '#app'
 // @ts-ignore
 import ErrorComponent from '#build/error-component.mjs'
@@ -24,7 +25,8 @@ if (process.dev && results && results.some(i => i && 'then' in i)) {
 const error = useError()
 onErrorCaptured((err, target, info) => {
   nuxtApp.hooks.callHook('vue:error', err, target, info).catch(hookError => console.error('[nuxt] Error in `vue:error` hook', hookError))
-  if (process.server) {
+  if (process.server || err instanceof H3Error) {
+    err.__nuxt_error = true
     callWithNuxt(nuxtApp, throwError, [err])
   }
 })
