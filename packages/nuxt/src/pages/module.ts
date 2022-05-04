@@ -125,6 +125,7 @@ export default defineNuxtModule({
       getContents: async () => {
         const composablesFile = resolve(runtimeDir, 'composables')
         const middleware = await resolveMiddleware()
+        await nuxt.callHook('pages:middleware:extend', middleware)
         const namedMiddleware = middleware.filter(mw => !mw.global)
         return [
           'import type { NavigationGuard } from \'vue-router\'',
