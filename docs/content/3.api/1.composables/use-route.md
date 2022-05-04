@@ -26,7 +26,7 @@ If you need to access the route query parameters (for example `example` in the p
 
 Apart from dynamic parameters and query parameters, `useRoute` also provides the following computed references related to the current route:
 
-* **fullPath**: encoded URL associated to the current route that contains path, query and hash
+* **fullPath**: encoded URL associated with the current route that contains path, query and hash
 * **hash**: decoded hash section of the URL that starts with a #
 * **matched**: array of normalized matched routes with current route location
 * **meta**: custom data attached to the record
