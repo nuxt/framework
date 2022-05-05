@@ -1506,7 +1506,7 @@ __metadata:
     knitwork: ^0.1.1
     lodash.template: ^4.5.0
     mlly: ^0.5.2
-    pathe: ^0.2.0
+    pathe: ^0.3.0
     pkg-types: ^0.3.2
     scule: ^0.2.1
     semver: ^7.3.7
@@ -1533,7 +1533,7 @@ __metadata:
     create-require: ^1.1.1
     defu: ^6.0.0
     jiti: ^1.13.0
-    pathe: ^0.2.0
+    pathe: ^0.3.0
     postcss-import-resolver: ^2.0.0
     scule: ^0.2.1
     std-env: ^3.1.1
@@ -1586,7 +1586,7 @@ __metadata:
     ohmyfetch: ^0.4.16
     playwright: ^1.21.1
     unbuild: latest
-    vitest: ^0.10.2
+    vitest: ^0.10.4
   peerDependencies:
     vue: 3.2.33
   languageName: unknown
@@ -1629,7 +1629,7 @@ __metadata:
     "@nuxt/kit": ^3.0.0-rc.2
     "@nuxt/schema": ^3.0.0-rc.2
     "@types/cssnano": ^5
-    "@vitejs/plugin-vue": ^2.3.1
+    "@vitejs/plugin-vue": ^2.3.2
     "@vitejs/plugin-vue-jsx": ^1.3.10
     autoprefixer: ^10.4.7
     chokidar: ^3.5.3
@@ -1640,22 +1640,22 @@ __metadata:
     externality: ^0.2.1
     fs-extra: ^10.1.0
     get-port-please: ^2.5.0
-    h3: ^0.7.6
+    h3: ^0.7.8
     knitwork: ^0.1.1
     magic-string: ^0.26.1
     mlly: ^0.5.2
-    pathe: ^0.2.0
+    pathe: ^0.3.0
     perfect-debounce: ^0.1.3
     postcss: ^8.4.13
     postcss-import: ^14.1.0
     postcss-url: ^10.1.3
-    rollup: ^2.71.1
+    rollup: ^2.72.0
     rollup-plugin-visualizer: ^5.6.0
     ufo: ^0.8.3
     unbuild: latest
     unplugin: ^0.6.2
-    vite: ^2.9.7
-    vite-node: ^0.10.2
+    vite: ^2.9.8
+    vite-node: ^0.10.4
     vite-plugin-checker: ^0.4.6
     vue: 3.2.33
   peerDependencies:
@@ -1691,7 +1691,7 @@ __metadata:
     memfs: ^3.4.1
     mini-css-extract-plugin: ^2.6.0
     mlly: ^0.5.2
-    pathe: ^0.2.0
+    pathe: ^0.3.0
     pify: ^5.0.0
     postcss: ^8.4.13
     postcss-import: ^14.1.0
@@ -2677,10 +2677,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/reset@npm:^0.32.12":
-  version: 0.32.12
-  resolution: "@unocss/reset@npm:0.32.12"
-  checksum: 3255a32dfb871b563c69e8b0e5131314fe31eb8b5cb720c308d63f7b14bf57ef9e4ad3d0d1c51097f8cddde4b6ddff6377ecdc46e328bc7fd5567e77a23221dc
+"@unocss/reset@npm:^0.32.13":
+  version: 0.32.13
+  resolution: "@unocss/reset@npm:0.32.13"
+  checksum: d019e932d63e55ff52b749562f152660c26b957263bd650913bef561ab7227ec65f8916a9f4a2ef1cf50f60099acb5b8ff12acadef472edde2316e82a96a1ce5
   languageName: node
   linkType: hard
 
@@ -2777,13 +2777,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:^2.3.1":
-  version: 2.3.1
-  resolution: "@vitejs/plugin-vue@npm:2.3.1"
+"@vitejs/plugin-vue@npm:^2.3.2":
+  version: 2.3.2
+  resolution: "@vitejs/plugin-vue@npm:2.3.2"
   peerDependencies:
     vite: ^2.5.10
     vue: ^3.2.25
-  checksum: 7102d80c7b37c5761213ca57a5d50db95bda387dee92a77bd3d0198fd00c47d117ba82761c26a9d40f83e274d6fa8e3932765f5f930e8139848be7b7b176a200
+  checksum: cfd539b412fee269705a8fd81cbc45529ffc3fe3d1962c6d70b8532994c95d2a54004afc94eef161c64055644a4e7be44b95654fd78d8bd01b61acf6190c34d4
   languageName: node
   linkType: hard
 
@@ -3256,6 +3256,15 @@ __metadata:
   version: 1.1.1
   resolution: "abbrev@npm:1.1.1"
   checksum: a4a97ec07d7ea112c517036882b2ac22f3109b7b19077dc656316d07d308438aac28e4d9746dc4d84bf6b1e75b4a7b0a5f3cb30592419f128ca9a8cee3bcfa17
+  languageName: node
+  linkType: hard
+
+"abort-controller@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "abort-controller@npm:3.0.0"
+  dependencies:
+    event-target-shim: ^5.0.0
+  checksum: 170bdba9b47b7e65906a28c8ce4f38a7a369d78e2271706f020849c1bfe0ee2067d4261df8bbb66eb84f79208fd5b710df759d64191db58cfba7ce8ef9c54b75
   languageName: node
   linkType: hard
 
@@ -4100,9 +4109,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"changelogen@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "changelogen@npm:0.0.3"
+"changelogen@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "changelogen@npm:0.0.4"
   dependencies:
     c12: ^0.2.7
     consola: ^2.15.3
@@ -4111,7 +4120,7 @@ __metadata:
     scule: ^0.2.1
   bin:
     changelogen: dist/cli.mjs
-  checksum: 20d9f3a559874d0d56c0fe0c626938bf0d443838fabf0854aee8eccf6f1e3eb7cbbb11de204cb09da56ab61422965e9c3ad635ee75aa88893cb8e27511234733
+  checksum: 5d3f95e41ae570c10b0b4258ad1c7b1e76d18a933234c33fe3abbbda7995c23cfad96a9cac60d9a52517529d41da1e89272537c34ae2ca0260d53a73d5141c6a
   languageName: node
   linkType: hard
 
@@ -6298,6 +6307,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"event-target-shim@npm:^5.0.0":
+  version: 5.0.1
+  resolution: "event-target-shim@npm:5.0.1"
+  checksum: 1ffe3bb22a6d51bdeb6bf6f7cf97d2ff4a74b017ad12284cc9e6a279e727dc30a5de6bb613e5596ff4dc3e517841339ad09a7eec44266eccb1aa201a30448166
+  languageName: node
+  linkType: hard
+
 "eventemitter3@npm:^4.0.0, eventemitter3@npm:^4.0.4":
   version: 4.0.7
   resolution: "eventemitter3@npm:4.0.7"
@@ -7400,6 +7416,18 @@ __metadata:
     radix3: ^0.1.1
     ufo: ^0.8.3
   checksum: e3268fffd89ee9964137b4ff3ea451c531c070b15095513a62e415f071ecc4f8562f7a43835b98b3d33735559ad4f2b120ff8b8290dd477dcbb1b1fda4613009
+  languageName: node
+  linkType: hard
+
+"h3@npm:^0.7.8":
+  version: 0.7.8
+  resolution: "h3@npm:0.7.8"
+  dependencies:
+    cookie-es: ^0.5.0
+    destr: ^1.1.1
+    radix3: ^0.1.2
+    ufo: ^0.8.3
+  checksum: eb8cf97376102b1b246eaabca40c1a6e71f97d3e407c94d5e243f354b68bab527147f9d05fb384277d31255b741f9bbcaded2f86ee8f1c569a8505dfc5ee0530
   languageName: node
   linkType: hard
 
@@ -10086,7 +10114,7 @@ __metadata:
     listhen: ^0.2.11
     mlly: ^0.5.2
     mri: ^1.2.0
-    pathe: ^0.2.0
+    pathe: ^0.3.0
     perfect-debounce: ^0.1.3
     pkg-types: ^0.3.2
     scule: ^0.2.1
@@ -10109,9 +10137,9 @@ __metadata:
     "@nuxtjs/eslint-config-typescript": ^10.0.0
     "@types/node": ^16.11.33
     "@types/rimraf": ^3
-    "@unocss/reset": ^0.32.12
+    "@unocss/reset": ^0.32.13
     case-police: ^0.5.3
-    changelogen: ^0.0.3
+    changelogen: ^0.0.4
     eslint: ^8.14.0
     eslint-plugin-jsdoc: ^39.2.9
     execa: ^6.1.0
@@ -10120,11 +10148,11 @@ __metadata:
     jiti: ^1.13.0
     lerna: ^4.0.0
     markdownlint-cli: ^0.31.1
-    pathe: ^0.2.0
+    pathe: ^0.3.0
     rimraf: ^3.0.2
     typescript: ^4.6.4
     unbuild: ^0.7.4
-    vitest: ^0.10.2
+    vitest: ^0.10.4
     vue-tsc: ^0.34.11
   languageName: unknown
   linkType: soft
@@ -10164,7 +10192,7 @@ __metadata:
     escape-string-regexp: ^5.0.0
     fs-extra: ^10.1.0
     globby: ^13.1.1
-    h3: ^0.7.6
+    h3: ^0.7.8
     hash-sum: ^2.0.0
     hookable: ^5.1.1
     knitwork: ^0.1.1
@@ -10174,13 +10202,13 @@ __metadata:
     nuxi: ^3.0.0-rc.2
     ohash: ^0.1.0
     ohmyfetch: ^0.4.16
-    pathe: ^0.2.0
+    pathe: ^0.3.0
     perfect-debounce: ^0.1.3
     scule: ^0.2.1
     ufo: ^0.8.3
     unbuild: latest
     unctx: ^1.1.4
-    unenv: ^0.4.6
+    unenv: ^0.5.0
     unimport: ^0.1.8
     unplugin: ^0.6.2
     untyped: ^0.4.4
@@ -10691,6 +10719,13 @@ __metadata:
   version: 0.2.0
   resolution: "pathe@npm:0.2.0"
   checksum: 9a8149ce152088f30d15b0b03a7c128ba21f16b4dc1f3f90fe38eee9f6d0f1d6da8e4e47bd2a4f9e14aaac7c30ed01cfc86216479011de2bdc598b65e6f19f41
+  languageName: node
+  linkType: hard
+
+"pathe@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "pathe@npm:0.3.0"
+  checksum: 1da704da2b625b9062be4079b6f8d5609e053add991520fb6a43905b492ee48e5c61cc6fb87f7ae970df39d4b7be1e6840285f683d670f8b430481e46c81c863
   languageName: node
   linkType: hard
 
@@ -11475,6 +11510,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"radix3@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "radix3@npm:0.1.2"
+  checksum: 483ecb97ae51e8dbda04e1c393bb001739635799bd1d7a7d1086193458df61d85f9e936c44c7bde81aba370dfd6bce8ccbf0fa691911bb8ba83379c90f96fea4
+  languageName: node
+  linkType: hard
+
 "randombytes@npm:^2.1.0":
   version: 2.1.0
   resolution: "randombytes@npm:2.1.0"
@@ -11966,6 +12008,20 @@ __metadata:
   bin:
     rollup: dist/bin/rollup
   checksum: fe2b2fda7bf53c86e970f3b026b784c00e2237089b802755b3e43725db88f5d1869c1f81f8c5257e9b68b0fd1840dcbd3897d2f19768cce97a37c70e1a563dce
+  languageName: node
+  linkType: hard
+
+"rollup@npm:^2.72.0":
+  version: 2.72.0
+  resolution: "rollup@npm:2.72.0"
+  dependencies:
+    fsevents: ~2.3.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    rollup: dist/bin/rollup
+  checksum: d4c213d4250a0455e0ee40664db3339a9e3ca5affa09c348019b4895e7100cdbedeba881a239a7a80c407b4055dca4e97d10a740d99c09b17651efbfedd61a4b
   languageName: node
   linkType: hard
 
@@ -13456,6 +13512,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"unenv@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "unenv@npm:0.5.0"
+  dependencies:
+    abort-controller: ^3.0.0
+    defu: ^6.0.0
+    mime: ^3.0.0
+    node-fetch: ^3.2.4
+  checksum: ea32cb3749ca67d56c1318f36832a4cfc557ea8c92bf3565af468a4085755736e4a997b28e031177c2a50fa3670cc0be10ddc7ba69c8c8b7848f6cfb358f9b4a
+  languageName: node
+  linkType: hard
+
 "unimport@npm:^0.1.8":
   version: 0.1.8
   resolution: "unimport@npm:0.1.8"
@@ -13720,18 +13788,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:^0.10.2":
-  version: 0.10.2
-  resolution: "vite-node@npm:0.10.2"
+"vite-node@npm:^0.10.4":
+  version: 0.10.4
+  resolution: "vite-node@npm:0.10.4"
   dependencies:
     kolorist: ^1.5.1
     minimist: ^1.2.6
     mlly: ^0.5.2
     pathe: ^0.2.0
-    vite: ^2.9.5
+    vite: ^2.9.7
   bin:
     vite-node: vite-node.mjs
-  checksum: 914a58a00d4f5666699135e6a4755319226eaac4dbcdf79f920e47a1e8bc4d4f6626c414537a9bff67c95d999cd376e0c49eb0f867e33374663423cd8ea1e224
+  checksum: da12d07a1c80c90de8b53880575511029723f2784e1693a7870707847e7cc37d7c86bf2b130b86c1faa571f4ca7a8209025292b5d5bf8de492cd122288a7bac2
   languageName: node
   linkType: hard
 
@@ -13762,7 +13830,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.9.5, vite@npm:^2.9.7":
+"vite@npm:^2.9.7":
   version: 2.9.7
   resolution: "vite@npm:2.9.7"
   dependencies:
@@ -13791,9 +13859,38 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.10.2":
-  version: 0.10.2
-  resolution: "vitest@npm:0.10.2"
+"vite@npm:^2.9.8":
+  version: 2.9.8
+  resolution: "vite@npm:2.9.8"
+  dependencies:
+    esbuild: ^0.14.27
+    fsevents: ~2.3.2
+    postcss: ^8.4.13
+    resolve: ^1.22.0
+    rollup: ^2.59.0
+  peerDependencies:
+    less: "*"
+    sass: "*"
+    stylus: "*"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    less:
+      optional: true
+    sass:
+      optional: true
+    stylus:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 7de3450bec4caa06f4540d1d252563ef0b7e1bdd167d04abf03db72cfd8c9a93879e18861283bc7d075e1d094b78b71770ca36f9b965bdf28c66665eafdc29dc
+  languageName: node
+  linkType: hard
+
+"vitest@npm:^0.10.4":
+  version: 0.10.4
+  resolution: "vitest@npm:0.10.4"
   dependencies:
     "@types/chai": ^4.3.1
     "@types/chai-subset": ^1.3.3
@@ -13801,7 +13898,7 @@ __metadata:
     local-pkg: ^0.4.1
     tinypool: ^0.1.3
     tinyspy: ^0.3.2
-    vite: ^2.9.5
+    vite: ^2.9.7
   peerDependencies:
     "@vitest/ui": "*"
     c8: "*"
@@ -13818,7 +13915,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 92d226a22e07f313838081286219c83d58d3dbe13bdbdfdb827410a4b19f3df883718ef570fd481ede9550b50f18cccc8c949e2bb7c9f15d654487b4fc4fad2d
+  checksum: d9d8c26bbc728c9b889fa96b469a694d1eebd439218d31c1a789e43f247c0ed993c52cbd001b503dc827a8a4c42c33d3085062bc90ec79651f372fe7f2baee39
   languageName: node
   linkType: hard
 
