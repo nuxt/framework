@@ -1,5 +1,5 @@
 import type { FetchOptions, FetchRequest } from 'ohmyfetch'
-import type { TypedInternalResponse } from 'nitropack'
+import type { TypedInternalResponse, InternalApi } from 'nitropack'
 import { hash } from 'ohash'
 import { computed, isRef, Ref } from 'vue'
 import type { AsyncDataOptions, _Transform, KeyOfRes } from './asyncData'
@@ -15,10 +15,15 @@ export interface UseFetchOptions<
   key?: string
 }
 
+export declare type FetchRequestUrl =
+  Exclude<keyof InternalApi, '/__nuxt_error'>
+  | (`${string}${'/'|'.'}${string}` & {})
+  | Exclude<FetchRequest, string>
+
 export function useFetch<
   ResT = void,
   ErrorT = Error,
-  ReqT extends FetchRequest = FetchRequest,
+  ReqT extends FetchRequestUrl = FetchRequestUrl,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
@@ -32,7 +37,7 @@ export function useFetch<
   const key = '$f_' + (opts.key || hash([request, { ...opts, transform: null }]))
   const _request = computed<FetchRequest>(() => {
     let r = request
-    if (typeof r === 'function') {
+    if (typeof r === 'function' && typeof r !== 'string') {
       r = r()
     }
     return isRef(r) ? r.value : r
@@ -61,7 +66,7 @@ export function useFetch<
 export function useLazyFetch<
   ResT = void,
   ErrorT = Error,
-  ReqT extends string = string,
+  ReqT extends FetchRequestUrl = FetchRequestUrl,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
