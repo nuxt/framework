@@ -9,22 +9,22 @@ Within the template of a Vue component, you can access the route using `$route`.
 In the following example, we call an API via `useAsyncData` using a dynamic page parameter - `slug` - as part of the URL.
 
 ```html [~/pages/[slug].vue]
-<template>
-    <h1>{{ data.title }}</h1>
-    <p>{{ data.description }}</p>
-</template>
 <script setup>
-const route = useRoute();
-const slug = route.params.slug;
-const { data, pending, error, refresh } = await useAsyncData("mountain", () =>
-    $fetch(`https://api.nuxtjs.dev/mountains/${slug}`)
-);
+const { params } = useRoute()
+const { data: mountain } = await useFetch(`https://api.nuxtjs.dev/mountains/${params.slug}`)
 </script>
+
+<template>
+  <div>
+    <h1>{{ mountain.title }}</h1>
+    <p>{{ mountain.description }}</p>
+  </div>
+</template>
 ```
 
-If you need to access the route query parameters (for example `example` in the path `/test?example=true`), then you can use `route.query` instead of `route.params`.
+If you need to access the route query parameters (for example `example` in the path `/test?example=true`), then you can use `query` instead of `params`.
 
-Apart from dynamic parameters and query parameters, `useRoute` also provides the following computed references related to the current route:
+Apart from dynamic parameters and query parameters, `useRoute()` also provides the following computed references related to the current route:
 
 * **fullPath**: encoded URL associated with the current route that contains path, query and hash
 * **hash**: decoded hash section of the URL that starts with a #
