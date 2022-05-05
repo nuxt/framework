@@ -147,5 +147,4 @@ describe('composables', () => {
     // @ts-expect-error invalid request url should error (invalid api route or url)
     expectTypeOf(useFetch('invalidRequestUrl'))
   })
-  expectTypeOf(useFetch('/api/hello'))
 })
