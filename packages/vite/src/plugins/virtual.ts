@@ -37,9 +37,11 @@ export default function virtual (vfs: Record<string, string>): Plugin {
     load (id) {
       if (!id.startsWith(PREFIX)) { return null }
       const idNoPrefix = id.slice(PREFIX.length)
-      return {
-        code: vfs[idNoPrefix],
-        map: null
+      if (vfs[idNoPrefix]) {
+        return {
+          code: vfs[idNoPrefix],
+          map: null
+        }
       }
     }
   }
