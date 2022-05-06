@@ -14,7 +14,7 @@ export interface NuxtOptions extends ConfigSchema {
   _layers: ResolvedConfig<NuxtConfig>[]
 }
 
-type RuntimeConfigNamespace = Record<string, any >
+type RuntimeConfigNamespace = Record<string, any>
 
 export interface PublicRuntimeConfig extends RuntimeConfigNamespace { }
 
