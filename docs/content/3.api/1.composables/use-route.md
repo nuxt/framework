@@ -10,8 +10,8 @@ In the following example, we call an API via `useAsyncData` using a dynamic page
 
 ```html [~/pages/[slug].vue]
 <script setup>
-const { params } = useRoute()
-const { data: mountain } = await useFetch(`https://api.nuxtjs.dev/mountains/${params.slug}`)
+const route = useRoute()
+const { data: mountain } = await useFetch(`https://api.nuxtjs.dev/mountains/${route.params.slug}`)
 </script>
 
 <template>
