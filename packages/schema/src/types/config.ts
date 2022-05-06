@@ -18,6 +18,7 @@ type RuntimeConfigNamespace = Record<string, any>
 
 export interface PublicRuntimeConfig extends RuntimeConfigNamespace { }
 
+// TODO: remove before release of 3.0.0
 /** @deprecated use RuntimeConfig interface */
 export interface PrivateRuntimeConfig extends RuntimeConfigNamespace { }
 
