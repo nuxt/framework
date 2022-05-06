@@ -1462,6 +1462,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nuxt/devalue@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@nuxt/devalue@npm:2.0.0"
+  checksum: 345f6c3964722e805797ee0b249b25bb31246264d39a77cd42acf1f20e4869904d3a1fd74b91c6af62c0eecad1b2135e23e38b750073ce1971083cfd8eedd4a5
+  languageName: node
+  linkType: hard
+
 "@nuxt/friendly-errors-webpack-plugin@npm:^2.5.2":
   version: 2.5.2
   resolution: "@nuxt/friendly-errors-webpack-plugin@npm:2.5.2"
@@ -10032,6 +10039,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxt@workspace:packages/nuxt"
   dependencies:
+    "@nuxt/devalue": ^2.0.0
     "@nuxt/kit": ^3.0.0-rc.2
     "@nuxt/schema": ^3.0.0-rc.2
     "@nuxt/telemetry": ^2.1.3
