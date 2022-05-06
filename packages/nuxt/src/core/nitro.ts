@@ -77,9 +77,6 @@ export async function initNitro (nuxt: Nuxt) {
       '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
       '@vue/devtools-api': 'unenv/runtime/mock/proxy',
 
-      // Renderer
-      '#vue-renderer': resolve(distDir, 'core/runtime/nitro/vue3'),
-
       // Paths
       '#paths': resolve(distDir, 'core/runtime/nitro/paths'),
 
@@ -87,7 +84,7 @@ export async function initNitro (nuxt: Nuxt) {
       ...nuxt.options.alias
     },
     replace: {
-      'process.env.NUXT_NO_SSR': nuxt.options.ssr === false ? true : undefined
+      'process.env.NUXT_NO_SSR': nuxt.options.ssr === false
     },
     rollupConfig: {
       plugins: []
