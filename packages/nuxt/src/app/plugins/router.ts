@@ -221,7 +221,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
     })
 
     await router.replace(initialURL)
-    if (isEqual(route.fullPath, initialURL)) {
+    if (!isEqual(route.fullPath, initialURL)) {
       await callWithNuxt(nuxtApp, navigateTo, [route.fullPath])
     }
   })

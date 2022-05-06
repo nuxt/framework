@@ -177,7 +177,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
     if (process.server) {
       const currentURL = to.fullPath || '/'
-      if (isEqual(currentURL, initialURL)) {
+      if (!isEqual(currentURL, initialURL)) {
         await callWithNuxt(nuxtApp, navigateTo, [currentURL])
       }
     }
