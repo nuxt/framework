@@ -7,9 +7,9 @@ import {
   RouteLocation
 } from 'vue-router'
 import { createError } from 'h3'
-import { withoutBase } from 'ufo'
+import { withoutBase, isEqual } from 'ufo'
 import NuxtPage from './page'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, throwError, clearError, navigateTo } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, throwError, clearError, navigateTo, useError } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
@@ -54,7 +54,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   nuxtApp.vueApp.component('NuxtNestedPage', NuxtPage)
   nuxtApp.vueApp.component('NuxtChild', NuxtPage)
 
-  const { baseURL } = useRuntimeConfig().app
+  const baseURL = useRuntimeConfig().app.baseURL
   const routerHistory = process.client
     ? createWebHistory(baseURL)
     : createMemoryHistory(baseURL)
@@ -107,7 +107,12 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     named: {}
   }
 
-  router.afterEach((to) => {
+  const error = useError()
+  router.afterEach(async (to) => {
+    if (process.client && !nuxtApp.isHydrating && error.value) {
+      // Clear any existing errors
+      await callWithNuxt(nuxtApp, clearError)
+    }
     if (to.matched.length === 0) {
       callWithNuxt(nuxtApp, throwError, [createError({
         statusCode: 404,
@@ -147,11 +152,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       }
     }
 
-    if (process.client && !nuxtApp.isHydrating) {
-      // Clear any existing errors
-      await callWithNuxt(nuxtApp, clearError)
-    }
-
     for (const entry of middlewareEntries) {
       const middleware = typeof entry === 'string' ? nuxtApp._middleware.named[entry] || await namedMiddleware[entry]?.().then(r => r.default || r) : entry
 
@@ -176,8 +176,9 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     delete nuxtApp._processingMiddleware
 
     if (process.server) {
-      if (to.fullPath !== initialURL) {
-        await callWithNuxt(nuxtApp, navigateTo, [to.fullPath])
+      const currentURL = to.fullPath || '/'
+      if (!isEqual(currentURL, initialURL)) {
+        await callWithNuxt(nuxtApp, navigateTo, [currentURL])
       }
     }
   })

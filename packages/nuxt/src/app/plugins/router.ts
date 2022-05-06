@@ -1,9 +1,9 @@
 import { reactive, h } from 'vue'
-import { parseURL, parseQuery } from 'ufo'
+import { parseURL, parseQuery, withoutBase, isEqual } from 'ufo'
 import { createError } from 'h3'
 import { defineNuxtPlugin } from '..'
 import { callWithNuxt } from '../nuxt'
-import { clearError, navigateTo, throwError } from '#app'
+import { clearError, navigateTo, throwError, useRuntimeConfig } from '#app'
 
 interface Route {
     /** Percentage encoded pathname section of the URL. */
@@ -86,7 +86,9 @@ interface Router {
 }
 
 export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
-  const initialURL = process.client ? window.location.href : nuxtApp.ssrContext.url
+  const initialURL = process.client
+    ? withoutBase(window.location.pathname, useRuntimeConfig().app.baseURL) + window.location.search + window.location.hash
+    : nuxtApp.ssrContext.url
   const routes = []
 
   const hooks: { [key in keyof RouterHooks]: RouterHooks[key][] } = {
@@ -107,11 +109,6 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
       // Resolve route
       const to = getRouteFromPath(url)
 
-      if (process.client && !nuxtApp.isHydrating) {
-      // Clear any existing errors
-        await callWithNuxt(nuxtApp, clearError)
-      }
-
       // Run beforeEach hooks
       for (const middleware of hooks['navigate:before']) {
         const result = await middleware(to, route)
@@ -128,6 +125,10 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
       Object.assign(route, to)
       if (process.client) {
         window.history[replace ? 'replaceState' : 'pushState']({}, '', url)
+        if (!nuxtApp.isHydrating) {
+          // Clear any existing errors
+          await callWithNuxt(nuxtApp, clearError)
+        }
       }
       // Run afterEach hooks
       for (const middleware of hooks['navigate:after']) {
@@ -220,7 +221,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
     })
 
     await router.replace(initialURL)
-    if (route.fullPath !== initialURL) {
+    if (!isEqual(route.fullPath, initialURL)) {
       await callWithNuxt(nuxtApp, navigateTo, [route.fullPath])
     }
   })
