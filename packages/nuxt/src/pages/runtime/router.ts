@@ -9,7 +9,7 @@ import {
 import { createError } from 'h3'
 import { withoutBase } from 'ufo'
 import NuxtPage from './page'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, throwError, clearError, navigateTo } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, throwError, clearError, navigateTo, useError } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
@@ -54,7 +54,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   nuxtApp.vueApp.component('NuxtNestedPage', NuxtPage)
   nuxtApp.vueApp.component('NuxtChild', NuxtPage)
 
-  const { baseURL } = useRuntimeConfig().app
+  const baseURL = useRuntimeConfig().app.baseURL
   const routerHistory = process.client
     ? createWebHistory(baseURL)
     : createMemoryHistory(baseURL)
@@ -107,8 +107,9 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     named: {}
   }
 
+  const error = useError()
   router.afterEach(async (to) => {
-    if (process.client && !nuxtApp.isHydrating) {
+    if (process.client && !nuxtApp.isHydrating && error.value) {
       // Clear any existing errors
       await callWithNuxt(nuxtApp, clearError)
     }
