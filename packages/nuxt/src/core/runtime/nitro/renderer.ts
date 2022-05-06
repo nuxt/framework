@@ -167,12 +167,12 @@ async function renderHTML (payload: any, rendered: RenderResult, ssrContext: Nux
   }
 
   return htmlTemplate({
-    HTML_ATTRS: rendered.meta.htmlAttrs || '',
-    HEAD_ATTRS: rendered.meta.headAttrs || '',
-    HEAD: rendered.meta.headTags || '' +
+    HTML_ATTRS: (rendered.meta.htmlAttrs || ''),
+    HEAD_ATTRS: (rendered.meta.headAttrs || ''),
+    HEAD: (rendered.meta.headTags || '') +
       rendered.renderResourceHints() + rendered.renderStyles() + (ssrContext.styles || ''),
-    BODY_ATTRS: rendered.meta.bodyAttrs || '',
-    BODY_PREPEND: ssrContext.teleports?.body || '',
+    BODY_ATTRS: (rendered.meta.bodyAttrs || ''),
+    BODY_PREPEND: (ssrContext.teleports?.body || ''),
     APP: (rendered.meta.bodyScriptsPrepend || '') + rendered.html + state + rendered.renderScripts() + (rendered.meta.bodyScripts || '')
   })
 }
