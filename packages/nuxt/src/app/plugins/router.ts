@@ -85,14 +85,10 @@ interface Router {
   removeRoute: (name: string) => void
 }
 
-function createCurrentLocation (base: string, location: Location): string {
-  const { pathname, search, hash } = location
-  return withoutBase(pathname, base) + search + hash
-}
-
 export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
-  const baseURL = useRuntimeConfig().app.baseURL
-  const initialURL = process.client ? createCurrentLocation(baseURL, window.location) : nuxtApp.ssrContext.url
+  const initialURL = process.client
+    ? withoutBase(window.location.pathname, useRuntimeConfig().app.baseURL) + window.location.search + window.location.hash
+    : nuxtApp.ssrContext.url
   const routes = []
 
   const hooks: { [key in keyof RouterHooks]: RouterHooks[key][] } = {
