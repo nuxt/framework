@@ -1,7 +1,7 @@
 import { dirname, isAbsolute, join, resolve } from 'pathe'
 import type { Plugin } from 'rollup'
 
-const PREFIX = 'virtual:'
+const PREFIX = 'virtual:nuxt:'
 
 export default function virtual (vfs: Record<string, string>): Plugin {
   const extensions = ['', '.ts', '.vue', '.mjs', '.cjs', '.js', '.json']
