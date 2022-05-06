@@ -22,7 +22,7 @@ const { data: mountain } = await useFetch(`https://api.nuxtjs.dev/mountains/${ro
 </template>
 ```
 
-If you need to access the route query parameters (for example `example` in the path `/test?example=true`), then you can use `query` instead of `params`.
+If you need to access the route query parameters (for example `example` in the path `/test?example=true`), then you can use `useRoute().query` instead of `useRoute().params`.
 
 Apart from dynamic parameters and query parameters, `useRoute()` also provides the following computed references related to the current route:
 
