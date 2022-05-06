@@ -1,5 +1,3 @@
-import type { NitroEventHandler } from 'nitropack'
-
 export default {
   /**
    * Configuration for Nitro
