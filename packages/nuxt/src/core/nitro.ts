@@ -128,7 +128,7 @@ export async function initNitro (nuxt: Nuxt) {
   nitro.options.handlers.unshift({
     route: '/__nuxt_error',
     lazy: true,
-    handler: resolve(distDir, 'core/runtime/nitro/renderer'),
+    handler: resolve(distDir, 'core/runtime/nitro/renderer')
   })
 
   // Add typed route responses
