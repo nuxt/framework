@@ -13231,14 +13231,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ufo@npm:^0.8.3":
-  version: 0.8.3
-  resolution: "ufo@npm:0.8.3"
-  checksum: 7ea20e9d0fbd92b3310de4b020919f0a0542db60a6787ccecf232285d55795ddc0ea482b04d6c07cac60367a294aee705d888999867a5c3c69e47ed8d0ae3009
-  languageName: node
-  linkType: hard
-
-"ufo@npm:^0.8.4":
+"ufo@npm:^0.8.3, ufo@npm:^0.8.4":
   version: 0.8.4
   resolution: "ufo@npm:0.8.4"
   checksum: a2ebef6f64b9cc4114fc65405837eeb83eb8975edd6d54c7f37abb6905da6fd1f63524e4a02c8b087e7b0b3db6e6f4f798a3d86a96500410ff590b405f807dc9
@@ -13759,11 +13752,11 @@ __metadata:
   linkType: hard
 
 "vue-bundle-renderer@npm:^0.3.7":
-  version: 0.3.7
-  resolution: "vue-bundle-renderer@npm:0.3.7"
+  version: 0.3.8
+  resolution: "vue-bundle-renderer@npm:0.3.8"
   dependencies:
     bundle-runner: ^0.0.1
-  checksum: 6ef21f019e2b415554dfc1c4ba554a39248a7d8107001de4a3637098787be06cf9784273ec997ee7e2a348949225d2ee534e5523ca8ec9c981e8d7e3965228d0
+  checksum: f1cc37913369786e60db6cffcda3f016cb073301db765128cddebdcf8367b50a7525e47b60924788def443f3183b92bcfc72ad248ce28d3fed19ef092ae8b662
   languageName: node
   linkType: hard
 
