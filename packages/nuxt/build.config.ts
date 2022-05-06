@@ -25,7 +25,6 @@ export default defineBuildConfig({
     '@vue/reactivity',
     '@vue/shared',
     '@vueuse/head',
-    'vue-meta',
-    '@rollup/plugin-commonjs'
+    'vue-meta'
   ]
 })
