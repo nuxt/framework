@@ -107,7 +107,11 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     named: {}
   }
 
-  router.afterEach((to) => {
+  router.afterEach(async (to) => {
+    if (process.client && !nuxtApp.isHydrating) {
+      // Clear any existing errors
+      await callWithNuxt(nuxtApp, clearError)
+    }
     if (to.matched.length === 0) {
       callWithNuxt(nuxtApp, throwError, [createError({
         statusCode: 404,
@@ -145,11 +149,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       } else {
         middlewareEntries.add(componentMiddleware)
       }
-    }
-
-    if (process.client && !nuxtApp.isHydrating) {
-      // Clear any existing errors
-      await callWithNuxt(nuxtApp, clearError)
     }
 
     for (const entry of middlewareEntries) {
