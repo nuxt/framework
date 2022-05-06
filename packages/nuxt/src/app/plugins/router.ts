@@ -91,7 +91,7 @@ function createCurrentLocation (base: string, location: Location): string {
 }
 
 export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
-  const { baseURL } = useRuntimeConfig().app
+  const baseURL = useRuntimeConfig().app.baseURL
   const initialURL = process.client ? createCurrentLocation(baseURL, window.location) : nuxtApp.ssrContext.url
   const routes = []
 
