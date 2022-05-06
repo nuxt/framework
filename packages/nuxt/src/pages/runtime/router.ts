@@ -175,8 +175,9 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     delete nuxtApp._processingMiddleware
 
     if (process.server) {
-      if (to.fullPath !== initialURL) {
-        await callWithNuxt(nuxtApp, navigateTo, [to.fullPath])
+      const currentURL = to.fullPath || '/'
+      if (currentURL !== initialURL) {
+        await callWithNuxt(nuxtApp, navigateTo, [currentURL])
       }
     }
   })
@@ -184,7 +185,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   nuxtApp.hooks.hookOnce('app:created', async () => {
     try {
       await router.replace({
-        path: initialURL,
+        ...router.resolve(initialURL),
         force: true
       })
     } catch (error) {
