@@ -3,6 +3,7 @@ import type { SSRContext } from 'vue-bundle-renderer'
 import { CompatibilityEvent, eventHandler, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { RuntimeConfig } from '@nuxt/schema'
+import { renderToString as _renderToString } from 'vue/server-renderer'
 
 // @ts-ignore
 import { useRuntimeConfig } from '#internal/nitro'
@@ -58,7 +59,6 @@ const getSSRRenderer = lazyCachedFunction(async () => {
   if (!createSSRApp) { throw new Error('Server bundle is not available') }
 
   // Create renderer
-  const { renderToString: _renderToString } = await import('vue/server-renderer')
   const renderToString = async (input, context) => {
     const html = await _renderToString(input, context)
     return `<div id="__nuxt">${html}</div>`
@@ -95,7 +95,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
       renderResourceHints: () => '',
       renderStyles: () =>
         entryFiles
-          .flatMap((entry: any) => entry.css)
+          .flatMap(({ css }) => css)
           .filter(css => css != null)
           .map(file => `<link rel="stylesheet" href="${buildAssetsURL(file)}">`)
           .join(''),
@@ -160,12 +160,11 @@ export default eventHandler(async (event) => {
 
 async function renderHTML (payload: any, rendered: RenderResult, ssrContext: NuxtSSRContext) {
   const state = `<script>window.__NUXT__=${devalue(payload)}</script>`
-  const html = rendered.html
 
-  if (ssrContext.renderMeta) {
-    rendered.meta = await ssrContext.renderMeta()
-  }
   rendered.meta = rendered.meta || {}
+  if (ssrContext.renderMeta) {
+    Object.assign(rendered.meta, await ssrContext.renderMeta())
+  }
 
   return htmlTemplate({
     HTML_ATTRS: rendered.meta.htmlAttrs || '',
@@ -174,7 +173,7 @@ async function renderHTML (payload: any, rendered: RenderResult, ssrContext: Nux
       rendered.renderResourceHints() + rendered.renderStyles() + (ssrContext.styles || ''),
     BODY_ATTRS: rendered.meta.bodyAttrs || '',
     BODY_PREPEND: ssrContext.teleports?.body || '',
-    APP: (rendered.meta.bodyScriptsPrepend || '') + html + state + rendered.renderScripts() + (rendered.meta.bodyScripts || '')
+    APP: (rendered.meta.bodyScriptsPrepend || '') + rendered.html + state + rendered.renderScripts() + (rendered.meta.bodyScripts || '')
   })
 }
 
