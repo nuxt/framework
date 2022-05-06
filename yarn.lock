@@ -10089,7 +10089,7 @@ __metadata:
     unplugin: ^0.6.2
     untyped: ^0.4.4
     vue: ^3.2.33
-    vue-bundle-renderer: ^0.3.7
+    vue-bundle-renderer: ^0.3.8
     vue-meta: next
     vue-router: ^4.0.15
   bin:
@@ -13751,7 +13751,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-bundle-renderer@npm:^0.3.7":
+"vue-bundle-renderer@npm:^0.3.8":
   version: 0.3.8
   resolution: "vue-bundle-renderer@npm:0.3.8"
   dependencies:
