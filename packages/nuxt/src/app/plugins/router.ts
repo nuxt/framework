@@ -1,9 +1,9 @@
 import { reactive, h } from 'vue'
-import { parseURL, parseQuery } from 'ufo'
+import { parseURL, parseQuery, withoutBase } from 'ufo'
 import { createError } from 'h3'
 import { defineNuxtPlugin } from '..'
 import { callWithNuxt } from '../nuxt'
-import { clearError, navigateTo, throwError } from '#app'
+import { clearError, navigateTo, throwError, useRuntimeConfig } from '#app'
 
 interface Route {
     /** Percentage encoded pathname section of the URL. */
@@ -85,8 +85,14 @@ interface Router {
   removeRoute: (name: string) => void
 }
 
+function createCurrentLocation (base: string, location: Location): string {
+  const { pathname, search, hash } = location
+  return withoutBase(pathname, base) + search + hash
+}
+
 export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
-  const initialURL = process.client ? window.location.href : nuxtApp.ssrContext.url
+  const { baseURL } = useRuntimeConfig().app
+  const initialURL = process.client ? createCurrentLocation(baseURL, window.location) : nuxtApp.ssrContext.url
   const routes = []
 
   const hooks: { [key in keyof RouterHooks]: RouterHooks[key][] } = {
