@@ -123,17 +123,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     }
   })
 
-  try {
-    if (process.server) {
-      await router.push(initialURL)
-    }
-
-    await router.isReady()
-  } catch (error) {
-    // We'll catch 404s here
-    callWithNuxt(nuxtApp, throwError, [error])
-  }
-
   router.beforeEach(async (to, from) => {
     to.meta = reactive(to.meta)
     nuxtApp._processingMiddleware = true
@@ -171,6 +160,17 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       if (result || result === false) { return result }
     }
   })
+
+  try {
+    if (process.server) {
+      await router.push(initialURL)
+    }
+
+    await router.isReady()
+  } catch (error) {
+    // We'll catch 404s here
+    callWithNuxt(nuxtApp, throwError, [error])
+  }
 
   router.afterEach(async (to) => {
     delete nuxtApp._processingMiddleware
