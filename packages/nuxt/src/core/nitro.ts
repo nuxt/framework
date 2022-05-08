@@ -51,9 +51,11 @@ export async function initNitro (nuxt: Nuxt) {
     ],
     prerender: {
       crawlLinks: nuxt.options._generate ? nuxt.options.generate.crawler : false,
-      routes: []
-        .concat(nuxt.options._generate ? ['/', ...nuxt.options.generate.routes] : [])
-        .concat(nuxt.options.ssr === false ? ['/', '/200', '/404'] : [])
+      routes: typeof nuxt.options.generate.routes === 'function'
+        ? await nuxt.options.generate.routes()
+        : []
+            .concat(nuxt.options._generate ? ['/', ...nuxt.options.generate.routes] : [])
+            .concat(nuxt.options.ssr === false ? ['/', '/200', '/404'] : [])
     },
     sourcemap: nuxt.options.sourcemap,
     externals: {
@@ -172,8 +174,8 @@ export async function initNitro (nuxt: Nuxt) {
 }
 
 async function resolveHandlers (nuxt: Nuxt) {
-  const handlers: NitroEventHandler[] = [...nuxt.options.serverHandlers]
-  const devHandlers: NitroDevEventHandler[] = [...nuxt.options.devServerHandlers]
+  const handlers: NitroEventHandler[] = [...(nuxt.options.serverHandlers || [])]
+  const devHandlers: NitroDevEventHandler[] = [...(nuxt.options.devServerHandlers || [])]
 
   // Map legacy serverMiddleware to handlers
   for (let m of nuxt.options.serverMiddleware) {
