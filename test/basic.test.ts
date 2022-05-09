@@ -1,4 +1,4 @@
-import { fileURLToPath } from 'url'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 // import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
@@ -36,8 +36,6 @@ describe('pages', () => {
 
     // should render text
     expect(html).toContain('Hello Nuxt 3!')
-    // should render <Head> components
-    expect(html).toContain('<title>Basic fixture</title>')
     // should inject runtime config
     expect(html).toContain('RuntimeConfig | testConfig: 123')
     // composables auto import
@@ -59,6 +57,18 @@ describe('pages', () => {
     expect(html).toContain('404 at not-found')
 
     await expectNoClientErrors('/not-found')
+  })
+
+  it('preserves query', async () => {
+    const html = await $fetch('/?test=true')
+
+    // Snapshot
+    // expect(html).toMatchInlineSnapshot()
+
+    // should render text
+    expect(html).toContain('Path: /?test=true')
+
+    await expectNoClientErrors('/?test=true')
   })
 
   it('/nested/[foo]/[bar].vue', async () => {
@@ -119,12 +129,20 @@ describe('pages', () => {
 describe('head tags', () => {
   it('should render tags', async () => {
     const html = await $fetch('/head')
-    expect(html).toContain('<title>Using a dynamic component</title>')
+    expect(html).toContain('<title>Using a dynamic component - Fixture</title>')
     expect(html).not.toContain('<meta name="description" content="first">')
+    expect(html).toContain('<meta charset="utf-16">')
+    expect(html).not.toContain('<meta charset="utf-8">')
     expect(html).toContain('<meta name="description" content="overriding with an inline useHead call">')
     expect(html).toMatch(/<html[^>]*class="html-attrs-test"/)
     expect(html).toMatch(/<body[^>]*class="body-attrs-test"/)
     expect(html).toContain('script>console.log("works with useMeta too")</script>')
+
+    const index = await $fetch('/')
+    // should render charset by default
+    expect(index).toContain('<meta charset="utf-8">')
+    // should render <Head> components
+    expect(index).toContain('<title>Basic fixture - Fixture</title>')
   })
 })
 
@@ -149,14 +167,13 @@ describe('errors', () => {
     expect(res.status).toBe(500)
     const error = await res.json()
     delete error.stack
-    expect(error).toMatchInlineSnapshot(`
-      {
-        "message": "This is a custom error",
-        "statusCode": 500,
-        "statusMessage": "Internal Server Error",
-        "url": "/error",
-      }
-    `)
+    expect(error).toMatchObject({
+      description: process.env.NUXT_TEST_DEV ? expect.stringContaining('<pre>') : '',
+      message: 'This is a custom error',
+      statusCode: 500,
+      statusMessage: 'Internal Server Error',
+      url: '/error'
+    })
   })
 
   it('should render a HTML error page', async () => {

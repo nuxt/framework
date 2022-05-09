@@ -8,6 +8,7 @@ export interface Component {
   prefetch: boolean
   preload: boolean
   global?: boolean
+  mode?: 'client' | 'server' | 'all'
 
   /** @deprecated */
   level?: number
@@ -104,4 +105,9 @@ export interface ComponentsOptions {
    */
   global?: boolean
   loader?: boolean
+
+  transform?: {
+    exclude?: RegExp[]
+    include?: RegExp[]
+  }
 }

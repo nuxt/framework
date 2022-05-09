@@ -6,7 +6,7 @@ export default {
    * pages, layouts (and other components) without needing to explicitly import them.
    *
    * @default {{ dirs: [`~/components`] }}
-   * @see [Nuxt 3](https://v3.nuxtjs.org/docs/directory-structure/components) and
+   * @see [Nuxt 3](https://v3.nuxtjs.org/guide/directory-structure/components) and
    * [Nuxt 2](https://nuxtjs.org/docs/directory-structure/components/) documentation
    * @type {boolean | typeof import('../src/types/components').ComponentsOptions | typeof import('../src/types/components').ComponentsOptions['dirs']}
    * @version 2
@@ -27,7 +27,7 @@ export default {
   /**
    * Configure how Nuxt auto-imports composables into your application.
    *
-   * @see [Nuxt 3 documentation](https://v3.nuxtjs.org/docs/directory-structure/composables)
+   * @see [Nuxt 3 documentation](https://v3.nuxtjs.org/guide/directory-structure/composables)
    * @type {typeof import('../src/types/imports').AutoImportsOptions}
    * @version 3
    */
@@ -35,4 +35,23 @@ export default {
     global: false,
     dirs: []
   },
+
+  /**
+   * Whether to use the vue-router integration in Nuxt 3. If you do not provide a value it will be
+   * enabled if you have a `pages/` directory in your source folder.
+   *
+   * @type {boolean}
+   * @version 3
+   */
+  pages: undefined,
+
+  /**
+   * Manually disable nuxt telemetry
+   *
+   * @see [Nuxt Telemetry](https://github.com/nuxt/telemetry) for more information.
+   *
+   * @type {boolean}
+   * @version 3
+  */
+  telemetry: undefined
 }

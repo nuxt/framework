@@ -42,7 +42,7 @@ counter.value = counter.value || Math.round(Math.random() * 1000)
 </script>
 ```
 
-:button-link[Open on StackBlitz]{href="https://stackblitz.com/github/nuxt/framework/tree/main/examples/use-cookie?terminal=dev" blank}
+:button-link[Open on StackBlitz]{href="https://stackblitz.com/github/nuxt/framework/tree/main/examples/composables/use-cookie?terminal=dev&file=app.vue" blank}
 
 ## Options
 
@@ -92,7 +92,7 @@ the server in the future if the browser does not have an HTTPS connection. This 
 ### `domain`
 
 Specifies the value for the [`Domain` `Set-Cookie` attribute](https://tools.ietf.org/html/rfc6265#section-5.2.3). By default, no
-domain is set, and most clients will consider to apply the cookie only to the current domain.
+domain is set, and most clients will consider applying the cookie only to the current domain.
 
 ### `path`
 
@@ -132,6 +132,10 @@ The default decoder is `decodeURIComponent` + [destr](https://github.com/unjs/de
 be returned as the cookie's value.
 ::
 
+### `default`
+
+Specifies a function that returns the cookie's default value. The function can also return a `Ref`.
+
 ## Handling cookies in API routes
 
 You can use `useCookie` and `setCookie` from [`h3`](https://github.com/unjs/h3) package to set cookies in server API routes.
@@ -152,3 +156,5 @@ export default (req, res) => {
   return { counter }
 }
 ```
+
+:LinkExample{link="/examples/composables/use-cookie"}

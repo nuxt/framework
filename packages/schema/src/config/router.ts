@@ -33,7 +33,7 @@ export default {
    * @version 2
    */
   base: {
-    $resolve: (val, get) => val ? withTrailingSlash(normalizeURL(val)) : get('app.baseURL')
+    $resolve: (val, get) => val ? withTrailingSlash(normalizeURL(val)) : get('app').baseURL
   },
 
   /** @private */
@@ -85,13 +85,14 @@ export default {
    *
    * @example
    * ```js
+   * import { fileURLToPath } from 'url'
    * export default {
    *   router: {
    *     extendRoutes(routes, resolve) {
    *       routes.push({
    *         name: 'custom',
    *         path: '*',
-   *         component: resolve(__dirname, 'pages/404.vue')
+   *         component: fileURLToPath(new URL('./pages/404.vue', import.meta.url))
    *       })
    *     }
    *   }

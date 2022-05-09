@@ -1,5 +1,5 @@
 import { resolve, join } from 'pathe'
-import { existsSync, readdirSync } from 'fs'
+import { existsSync, readdirSync } from 'node:fs'
 import defu from 'defu'
 
 export default {
@@ -102,6 +102,8 @@ export default {
     head: {
       $resolve: (val, get) => {
         return defu(val, get('meta'), {
+          charset: 'utf-8',
+          viewport: 'width=device-width, initial-scale=1',
           meta: [],
           link: [],
           style: [],
