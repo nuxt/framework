@@ -17,27 +17,40 @@ export default <RouterConfig>{
       position = { left: 0, top: 0 }
     }
 
+    // hash routes on the same page, no page hook is fired so resolve here
+    if (to.path === from.path) {
+      if (from.hash && !to.hash) {
+        return { left: 0, top: 0 }
+      } else if (to.hash) {
+        return {
+          el: to.hash,
+          top: getHashElementScrollMarginTop()
+        }
+      }
+    }
+
     // if either to or from has no transition then wait for page:finish
     const hasTransition = to.meta.pageTransition !== false && from.meta.pageTransition !== false
     const hookAwait = hasTransition ? 'page:transition:finish' : 'page:finish'
+
+    function getHashElementScrollMarginTop () {
+      // vue-router does not incorporate scroll-margin-top on its own.
+      const elem = document.querySelector(to.hash)
+
+      if (elem) {
+        return parseFloat(getComputedStyle(elem).scrollMarginTop)
+      }
+      return 0
+    }
 
     return new Promise((resolve) => {
       nuxtApp.hooks.hookOnce(hookAwait, async () => {
         await nextTick()
 
         if (to.hash) {
-          let top = 0
-
-          // vue-router does not incorporate scroll-margin-top on its own.
-          const elem = document.querySelector(to.hash)
-
-          if (elem) {
-            top = parseFloat(getComputedStyle(elem).scrollMarginTop)
-          }
-
           position = {
             el: to.hash,
-            top
+            top: getHashElementScrollMarginTop()
           }
         }
         resolve(position)
