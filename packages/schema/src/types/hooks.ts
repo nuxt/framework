@@ -101,6 +101,8 @@ export interface NuxtHooks {
   // nitropack
   'nitro:config': (nitroConfig: NitroConfig) => HookResult
   'nitro:init': (nitro: Nitro) => HookResult
+  /* Nitro config is based on nuxt config. Create a hook to edit Nuxt config right before initializing Nitro config. */
+  'nitro:init:before': (nuxt: Nuxt) => HookResult
   'nitro:build:before': (nitro: Nitro) => HookResult
 
   // @nuxt/cli

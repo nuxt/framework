@@ -14,6 +14,8 @@ export async function initNitro (nuxt: Nuxt) {
   // Resolve handlers
   const { handlers, devHandlers } = await resolveHandlers(nuxt)
 
+  await nuxt.callHook('nitro:init:before', nuxt)
+
   // Resolve config
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
