@@ -9506,9 +9506,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitropack@npm:^0.4.2":
-  version: 0.4.2
-  resolution: "nitropack@npm:0.4.2"
+"nitropack@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "nitropack@npm:0.4.3"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@netlify/functions": ^1.0.0
@@ -9554,7 +9554,7 @@ __metadata:
     pkg-types: ^0.3.2
     pretty-bytes: ^6.0.0
     radix3: ^0.1.2
-    rollup: ^2.72.0
+    rollup: ^2.72.1
     rollup-plugin-terser: ^7.0.2
     rollup-plugin-visualizer: ^5.6.0
     scule: ^0.2.1
@@ -9566,12 +9566,12 @@ __metadata:
     table: ^6.8.0
     ufo: ^0.8.4
     unenv: ^0.5.1
-    unimport: ^0.1.8
+    unimport: ^0.2.1
     unstorage: ^0.4.1
   bin:
     nitro: dist/cli.mjs
     nitropack: dist/cli.mjs
-  checksum: 5f9c66882aad0d375770ba67cc80125016c83ea8c396510e0d4698e6eac30155d27c19e856fb00d9ed0ecbc68fb91cbc9b7099f13d3979cdede3b658260b1316
+  checksum: 41b143ec2c2990df7374f91014c7c13f00acd910039bc902874436655cbbbaec9478c6f374b21f984ebb21b9f6dbfc702dba84cdf0b19b15cd92f8843fad7694
   languageName: node
   linkType: hard
 
@@ -10085,7 +10085,7 @@ __metadata:
     knitwork: ^0.1.1
     magic-string: ^0.26.1
     mlly: ^0.5.2
-    nitropack: ^0.4.2
+    nitropack: ^0.4.3
     nuxi: ^3.0.0-rc.3
     ohash: ^0.1.0
     ohmyfetch: ^0.4.16
@@ -11872,7 +11872,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.59.0, rollup@npm:^2.70.1, rollup@npm:^2.72.0":
+"rollup@npm:^2.59.0, rollup@npm:^2.70.1":
   version: 2.72.0
   resolution: "rollup@npm:2.72.0"
   dependencies:
@@ -13375,23 +13375,6 @@ __metadata:
     node-fetch: ^3.2.4
     pathe: ^0.3.0
   checksum: baf9b2da33419a9d43b5598307705fe1a4f40cb13dc90bd827da27cda571149244ba108cbfd8550d790c56968df093e9315aab777c116e51eee7b15fe9896e3b
-  languageName: node
-  linkType: hard
-
-"unimport@npm:^0.1.8":
-  version: 0.1.8
-  resolution: "unimport@npm:0.1.8"
-  dependencies:
-    "@rollup/pluginutils": ^4.2.1
-    escape-string-regexp: ^5.0.0
-    globby: ^13.1.1
-    local-pkg: ^0.4.1
-    magic-string: ^0.26.1
-    mlly: ^0.5.2
-    pathe: ^0.2.0
-    scule: ^0.2.1
-    unplugin: ^0.6.2
-  checksum: d0bfc3d0c59ea95dd863cc7926da525a1c1839f0734a462c5a962ae4d3bbeddf604d37ae57008aa20179c8e69c4aa4206fadf58e28620a6f5376864c68e232fd
   languageName: node
   linkType: hard
 
