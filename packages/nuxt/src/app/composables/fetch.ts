@@ -29,7 +29,6 @@ export function useFetch<
   if (process.dev && opts.transform && !opts.key) {
     console.warn('[nuxt] You should provide a key for `useFetch` when using a custom transform function.')
   }
-  const key = '$f_' + (opts.key || hash([request, { ...opts, transform: null }]))
   const _request = computed<FetchRequest>(() => {
     let r = request
     if (typeof r === 'function') {
@@ -37,6 +36,7 @@ export function useFetch<
     }
     return isRef(r) ? r.value : r
   })
+  const key = '$f_' + (opts.key || hash([_request.value, { ...opts, transform: null }]))
 
   const _fetchOptions = {
     ...opts,
