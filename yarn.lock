@@ -1706,7 +1706,7 @@ __metadata:
     vue: 3.2.33
     vue-loader: ^17.0.0
     vue-style-loader: ^4.1.3
-    webpack: ^5.72.0
+    webpack: ^5.72.1
     webpack-bundle-analyzer: ^4.5.0
     webpack-dev-middleware: ^5.3.1
     webpack-hot-middleware: ^2.25.1
@@ -4069,9 +4069,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"changelogen@npm:^0.0.5":
-  version: 0.0.5
-  resolution: "changelogen@npm:0.0.5"
+"changelogen@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "changelogen@npm:0.0.6"
   dependencies:
     c12: ^0.2.7
     consola: ^2.15.3
@@ -4080,7 +4080,7 @@ __metadata:
     scule: ^0.2.1
   bin:
     changelogen: dist/cli.mjs
-  checksum: 9104532fa895f77ab51ff743c66c9618aadeb05f1c3bf26e92bfec65e8f03e2e0ca16ad05abe12cf945ec031ce16a4e5566d5bf0ff3f3478170d7a82b2aedbeb
+  checksum: 9eb5bb0875133c1b3c932112e689e455b608cf98b534b0214188851143232e66e74866a18c04dde3205834c06d2c68d851bf5603ce3cb29bcaec221884b8147f
   languageName: node
   linkType: hard
 
@@ -5286,7 +5286,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enhanced-resolve@npm:^5.9.2":
+"enhanced-resolve@npm:^5.9.2, enhanced-resolve@npm:^5.9.3":
   version: 5.9.3
   resolution: "enhanced-resolve@npm:5.9.3"
   dependencies:
@@ -8328,7 +8328,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-parse-even-better-errors@npm:^2.3.0":
+"json-parse-even-better-errors@npm:^2.3.0, json-parse-even-better-errors@npm:^2.3.1":
   version: 2.3.1
   resolution: "json-parse-even-better-errors@npm:2.3.1"
   checksum: 798ed4cf3354a2d9ccd78e86d2169515a0097a5c133337807cdf7f1fc32e1391d207ccfc276518cc1d7d8d4db93288b8a50ba4293d212ad1336e52a8ec0a941f
@@ -9506,9 +9506,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitropack@npm:^0.4.2":
-  version: 0.4.2
-  resolution: "nitropack@npm:0.4.2"
+"nitropack@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "nitropack@npm:0.4.3"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@netlify/functions": ^1.0.0
@@ -9554,7 +9554,7 @@ __metadata:
     pkg-types: ^0.3.2
     pretty-bytes: ^6.0.0
     radix3: ^0.1.2
-    rollup: ^2.72.0
+    rollup: ^2.72.1
     rollup-plugin-terser: ^7.0.2
     rollup-plugin-visualizer: ^5.6.0
     scule: ^0.2.1
@@ -9566,12 +9566,12 @@ __metadata:
     table: ^6.8.0
     ufo: ^0.8.4
     unenv: ^0.5.1
-    unimport: ^0.1.8
+    unimport: ^0.2.1
     unstorage: ^0.4.1
   bin:
     nitro: dist/cli.mjs
     nitropack: dist/cli.mjs
-  checksum: 5f9c66882aad0d375770ba67cc80125016c83ea8c396510e0d4698e6eac30155d27c19e856fb00d9ed0ecbc68fb91cbc9b7099f13d3979cdede3b658260b1316
+  checksum: 41b143ec2c2990df7374f91014c7c13f00acd910039bc902874436655cbbbaec9478c6f374b21f984ebb21b9f6dbfc702dba84cdf0b19b15cd92f8843fad7694
   languageName: node
   linkType: hard
 
@@ -10025,7 +10025,7 @@ __metadata:
     "@types/rimraf": ^3
     "@unocss/reset": ^0.33.2
     case-police: ^0.5.3
-    changelogen: ^0.0.5
+    changelogen: ^0.0.6
     eslint: ^8.15.0
     eslint-plugin-jsdoc: ^39.2.9
     execa: ^6.1.0
@@ -10085,7 +10085,7 @@ __metadata:
     knitwork: ^0.1.1
     magic-string: ^0.26.1
     mlly: ^0.5.2
-    nitropack: ^0.4.2
+    nitropack: ^0.4.3
     nuxi: ^3.0.0-rc.3
     ohash: ^0.1.0
     ohmyfetch: ^0.4.16
@@ -11872,7 +11872,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.59.0, rollup@npm:^2.70.1, rollup@npm:^2.72.0":
+"rollup@npm:^2.59.0, rollup@npm:^2.70.1":
   version: 2.72.0
   resolution: "rollup@npm:2.72.0"
   dependencies:
@@ -13378,23 +13378,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unimport@npm:^0.1.8":
-  version: 0.1.8
-  resolution: "unimport@npm:0.1.8"
-  dependencies:
-    "@rollup/pluginutils": ^4.2.1
-    escape-string-regexp: ^5.0.0
-    globby: ^13.1.1
-    local-pkg: ^0.4.1
-    magic-string: ^0.26.1
-    mlly: ^0.5.2
-    pathe: ^0.2.0
-    scule: ^0.2.1
-    unplugin: ^0.6.2
-  checksum: d0bfc3d0c59ea95dd863cc7926da525a1c1839f0734a462c5a962ae4d3bbeddf604d37ae57008aa20179c8e69c4aa4206fadf58e28620a6f5376864c68e232fd
-  languageName: node
-  linkType: hard
-
 "unimport@npm:^0.2.1":
   version: 0.2.1
   resolution: "unimport@npm:0.2.1"
@@ -14046,7 +14029,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5, webpack@npm:^5.38.1, webpack@npm:^5.72.0":
+"webpack@npm:^5, webpack@npm:^5.38.1":
   version: 5.72.0
   resolution: "webpack@npm:5.72.0"
   dependencies:
@@ -14080,6 +14063,43 @@ __metadata:
   bin:
     webpack: bin/webpack.js
   checksum: 8365f1466d0f7adbf80ebc9b780f263a28eeeabcd5fb515249bfd9a56ab7fe8d29ea53df3d9364d0732ab39ae774445eb28abce694ed375b13882a6b2fe93ffc
+  languageName: node
+  linkType: hard
+
+"webpack@npm:^5.72.1":
+  version: 5.72.1
+  resolution: "webpack@npm:5.72.1"
+  dependencies:
+    "@types/eslint-scope": ^3.7.3
+    "@types/estree": ^0.0.51
+    "@webassemblyjs/ast": 1.11.1
+    "@webassemblyjs/wasm-edit": 1.11.1
+    "@webassemblyjs/wasm-parser": 1.11.1
+    acorn: ^8.4.1
+    acorn-import-assertions: ^1.7.6
+    browserslist: ^4.14.5
+    chrome-trace-event: ^1.0.2
+    enhanced-resolve: ^5.9.3
+    es-module-lexer: ^0.9.0
+    eslint-scope: 5.1.1
+    events: ^3.2.0
+    glob-to-regexp: ^0.4.1
+    graceful-fs: ^4.2.9
+    json-parse-even-better-errors: ^2.3.1
+    loader-runner: ^4.2.0
+    mime-types: ^2.1.27
+    neo-async: ^2.6.2
+    schema-utils: ^3.1.0
+    tapable: ^2.1.1
+    terser-webpack-plugin: ^5.1.3
+    watchpack: ^2.3.1
+    webpack-sources: ^3.2.3
+  peerDependenciesMeta:
+    webpack-cli:
+      optional: true
+  bin:
+    webpack: bin/webpack.js
+  checksum: d1eff085eee1c67a68f7bf1d077ea202c1e68a0de0e0866274984769838c3f224fbc64e847e1a1bbc6eba9fb6a9965098809cc0be9292b573767bb5d8d2df96e
   languageName: node
   linkType: hard
 
