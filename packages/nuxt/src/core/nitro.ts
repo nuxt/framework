@@ -57,16 +57,11 @@ export async function initNitro (nuxt: Nuxt) {
     },
     sourcemap: nuxt.options.sourcemap,
     externals: {
-      inline: [
-        ...(nuxt.options.dev ? [] : ['vue', '@vue/', '@nuxt/', nuxt.options.buildDir]),
-        'nuxt/dist',
-        'nuxt3/dist'
-      ]
+      inline: nuxt.options.dev ? [] : ['vue', '@vue/', '@nuxt/', nuxt.options.buildDir]
     },
     alias: {
-      // TODO: #590
-      'vue/server-renderer': 'vue/server-renderer',
       'vue/compiler-sfc': 'vue/compiler-sfc',
+      'vue/server-renderer': 'vue/server-renderer',
       vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`),
 
       // Vue 3 mocks
@@ -77,9 +72,6 @@ export async function initNitro (nuxt: Nuxt) {
       '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
       '@vue/devtools-api': 'unenv/runtime/mock/proxy',
 
-      // Renderer
-      '#vue-renderer': resolve(distDir, 'core/runtime/nitro/vue3'),
-
       // Paths
       '#paths': resolve(distDir, 'core/runtime/nitro/paths'),
 
@@ -87,7 +79,7 @@ export async function initNitro (nuxt: Nuxt) {
       ...nuxt.options.alias
     },
     replace: {
-      'process.env.NUXT_NO_SSR': nuxt.options.ssr === false ? true : undefined
+      'process.env.NUXT_NO_SSR': nuxt.options.ssr === false
     },
     rollupConfig: {
       plugins: []
@@ -176,9 +168,10 @@ export async function initNitro (nuxt: Nuxt) {
 }
 
 async function resolveHandlers (nuxt: Nuxt) {
-  const handlers: NitroEventHandler[] = []
-  const devHandlers: NitroDevEventHandler[] = []
+  const handlers: NitroEventHandler[] = [...nuxt.options.serverHandlers]
+  const devHandlers: NitroDevEventHandler[] = [...nuxt.options.devServerHandlers]
 
+  // Map legacy serverMiddleware to handlers
   for (let m of nuxt.options.serverMiddleware) {
     if (typeof m === 'string' || typeof m === 'function' /* legacy middleware */) { m = { handler: m } }
     const route = m.path || m.route || '/'
@@ -191,6 +184,7 @@ async function resolveHandlers (nuxt: Nuxt) {
       handlers.push({
         ...m,
         route,
+        middleware: true,
         handler: await resolvePath(handler)
       })
     }
