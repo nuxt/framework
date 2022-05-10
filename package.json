@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "build": "FORCE_COLOR=1 lerna run prepack --stream --no-prefix",
+    "changelog": "changelogen",
     "cleanup": "rimraf 'packages/**/node_modules' 'examples/**/node_modules' 'node_modules'",
     "dev": "yarn run nuxi dev playground",
     "dev:build": "yarn run nuxi build playground",
@@ -29,6 +30,7 @@
     "test:fixtures:webpack": "NUXT_TELEMETRY_DISABLED=1 TEST_WITH_WEBPACK=1 yarn test:fixtures",
     "test:types": "yarn run nuxi prepare test/fixtures/basic && cd test/fixtures/basic && npx vue-tsc --noEmit",
     "test:unit": "JITI_ESM_RESOLVE=1 yarn vitest run --dir packages",
+    "typecheck": "tsc --noEmit",
     "version": "yarn && git add yarn.lock"
   },
   "resolutions": {
@@ -43,26 +45,27 @@
     "unbuild": "^0.7.4"
   },
   "devDependencies": {
-    "@nuxtjs/eslint-config-typescript": "^9.0.0",
-    "@types/node": "^16.11.27",
+    "@nuxtjs/eslint-config-typescript": "^10.0.0",
+    "@types/node": "^16.11.33",
     "@types/rimraf": "^3",
-    "@unocss/reset": "^0.31.8",
+    "@unocss/reset": "^0.33.2",
     "case-police": "^0.5.3",
-    "eslint": "^8.13.0",
-    "eslint-plugin-jsdoc": "^39.2.5",
+    "changelogen": "^0.0.5",
+    "eslint": "^8.15.0",
+    "eslint-plugin-jsdoc": "^39.2.9",
     "execa": "^6.1.0",
     "expect-type": "^0.13.0",
     "globby": "^13.1.1",
     "jiti": "^1.13.0",
     "lerna": "^4.0.0",
     "markdownlint-cli": "^0.31.1",
-    "pathe": "^0.2.0",
+    "pathe": "^0.3.0",
     "rimraf": "^3.0.2",
     "simple-git": "^3.6.0",
-    "typescript": "^4.6.3",
+    "typescript": "^4.6.4",
     "unbuild": "^0.7.4",
-    "vitest": "^0.9.3",
-    "vue-tsc": "^0.34.7"
+    "vitest": "^0.12.3",
+    "vue-tsc": "^0.34.11"
   },
   "packageManager": "yarn@3.2.0",
   "engines": {

@@ -1,9 +1,9 @@
 import { reactive, h } from 'vue'
-import { parseURL, parseQuery } from 'ufo'
+import { parseURL, parseQuery, withoutBase, isEqual } from 'ufo'
 import { createError } from 'h3'
 import { defineNuxtPlugin } from '..'
 import { callWithNuxt } from '../nuxt'
-import { clearError, navigateTo, throwError } from '#app'
+import { clearError, navigateTo, throwError, useRuntimeConfig } from '#app'
 
 interface Route {
     /** Percentage encoded pathname section of the URL. */
@@ -86,6 +86,9 @@ interface Router {
 }
 
 export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
+  const initialURL = process.client
+    ? withoutBase(window.location.pathname, useRuntimeConfig().app.baseURL) + window.location.search + window.location.hash
+    : nuxtApp.ssrContext.url
   const routes = []
 
   const hooks: { [key in keyof RouterHooks]: RouterHooks[key][] } = {
@@ -100,16 +103,11 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
     return () => hooks[hook].splice(hooks[hook].indexOf(guard), 1)
   }
 
-  const route: Route = reactive(getRouteFromPath(process.client ? window.location.href : nuxtApp.ssrContext.url))
+  const route: Route = reactive(getRouteFromPath(initialURL))
   async function handleNavigation (url: string, replace?: boolean): Promise<void> {
     try {
       // Resolve route
       const to = getRouteFromPath(url)
-
-      if (process.client && !nuxtApp.isHydrating) {
-      // Clear any existing errors
-        await callWithNuxt(nuxtApp, clearError)
-      }
 
       // Run beforeEach hooks
       for (const middleware of hooks['navigate:before']) {
@@ -127,6 +125,10 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
       Object.assign(route, to)
       if (process.client) {
         window.history[replace ? 'replaceState' : 'pushState']({}, '', url)
+        if (!nuxtApp.isHydrating) {
+          // Clear any existing errors
+          await callWithNuxt(nuxtApp, clearError)
+        }
       }
       // Run afterEach hooks
       for (const middleware of hooks['navigate:after']) {
@@ -193,38 +195,36 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
     named: {}
   }
 
-  router.beforeEach(async (to, from) => {
-    to.meta = reactive(to.meta || {})
-    nuxtApp._processingMiddleware = true
+  nuxtApp.hooks.hookOnce('app:created', async () => {
+    router.beforeEach(async (to, from) => {
+      to.meta = reactive(to.meta || {})
+      nuxtApp._processingMiddleware = true
 
-    const middlewareEntries = new Set<RouteGuard>(nuxtApp._middleware.global)
+      const middlewareEntries = new Set<RouteGuard>(nuxtApp._middleware.global)
 
-    for (const middleware of middlewareEntries) {
-      const result = await callWithNuxt(nuxtApp, middleware, [to, from])
-      if (process.server) {
-        if (result === false || result instanceof Error) {
-          const error = result || createError({
-            statusMessage: `Route navigation aborted: ${nuxtApp.ssrContext.url}`
-          })
-          return callWithNuxt(nuxtApp, throwError, [error])
+      for (const middleware of middlewareEntries) {
+        const result = await callWithNuxt(nuxtApp, middleware, [to, from])
+        if (process.server) {
+          if (result === false || result instanceof Error) {
+            const error = result || createError({
+              statusMessage: `Route navigation aborted: ${initialURL}`
+            })
+            return callWithNuxt(nuxtApp, throwError, [error])
+          }
         }
-      }
-      if (result || result === false) { return result }
-    }
-  })
-
-  router.afterEach(() => {
-    delete nuxtApp._processingMiddleware
-  })
-
-  if (process.server) {
-    nuxtApp.hooks.hookOnce('app:created', async () => {
-      await router.push(nuxtApp.ssrContext.url)
-      if (route.fullPath !== nuxtApp.ssrContext.url) {
-        await navigateTo(route.fullPath)
+        if (result || result === false) { return result }
       }
     })
-  }
+
+    router.afterEach(() => {
+      delete nuxtApp._processingMiddleware
+    })
+
+    await router.replace(initialURL)
+    if (!isEqual(route.fullPath, initialURL)) {
+      await callWithNuxt(nuxtApp, navigateTo, [route.fullPath])
+    }
+  })
 
   return {
     provide: {

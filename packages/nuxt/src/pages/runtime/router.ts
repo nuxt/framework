@@ -7,9 +7,9 @@ import {
   RouteLocation
 } from 'vue-router'
 import { createError } from 'h3'
-import { withoutBase } from 'ufo'
+import { withoutBase, isEqual } from 'ufo'
 import NuxtPage from './page'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, throwError, clearError, navigateTo } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, throwError, clearError, navigateTo, useError } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
@@ -48,17 +48,18 @@ function createCurrentLocation (
   return path + search + hash
 }
 
-export default defineNuxtPlugin((nuxtApp) => {
+export default defineNuxtPlugin(async (nuxtApp) => {
   nuxtApp.vueApp.component('NuxtPage', NuxtPage)
   // TODO: remove before release - present for backwards compatibility & intentionally undocumented
   nuxtApp.vueApp.component('NuxtNestedPage', NuxtPage)
   nuxtApp.vueApp.component('NuxtChild', NuxtPage)
 
-  const { baseURL } = useRuntimeConfig().app
+  const baseURL = useRuntimeConfig().app.baseURL
   const routerHistory = process.client
     ? createWebHistory(baseURL)
     : createMemoryHistory(baseURL)
 
+  const initialURL = process.server ? nuxtApp.ssrContext.url : createCurrentLocation(baseURL, window.location)
   const router = createRouter({
     ...routerOptions,
     history: routerHistory,
@@ -82,8 +83,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
 
   // Allows suspending the route object until page navigation completes
-  const path = process.server ? nuxtApp.ssrContext.url : createCurrentLocation(baseURL, window.location)
-  const _activeRoute = shallowRef(router.resolve(path) as RouteLocation)
+  const _activeRoute = shallowRef(router.resolve(initialURL) as RouteLocation)
   const syncCurrentRoute = () => { _activeRoute.value = router.currentRoute.value }
   nuxtApp.hook('page:finish', syncCurrentRoute)
   router.afterEach((to, from) => {
@@ -107,6 +107,33 @@ export default defineNuxtPlugin((nuxtApp) => {
     named: {}
   }
 
+  const error = useError()
+  router.afterEach(async (to) => {
+    if (process.client && !nuxtApp.isHydrating && error.value) {
+      // Clear any existing errors
+      await callWithNuxt(nuxtApp, clearError)
+    }
+    if (to.matched.length === 0) {
+      callWithNuxt(nuxtApp, throwError, [createError({
+        statusCode: 404,
+        statusMessage: `Page not found: ${to.fullPath}`
+      })])
+    } else if (process.server && to.matched[0].name === '404' && nuxtApp.ssrContext) {
+      nuxtApp.ssrContext.res.statusCode = 404
+    }
+  })
+
+  try {
+    if (process.server) {
+      await router.push(initialURL)
+    }
+
+    await router.isReady()
+  } catch (error) {
+    // We'll catch 404s here
+    callWithNuxt(nuxtApp, throwError, [error])
+  }
+
   router.beforeEach(async (to, from) => {
     to.meta = reactive(to.meta)
     nuxtApp._processingMiddleware = true
@@ -125,11 +152,6 @@ export default defineNuxtPlugin((nuxtApp) => {
       }
     }
 
-    if (process.client && !nuxtApp.isHydrating) {
-      // Clear any existing errors
-      await callWithNuxt(nuxtApp, clearError)
-    }
-
     for (const entry of middlewareEntries) {
       const middleware = typeof entry === 'string' ? nuxtApp._middleware.named[entry] || await namedMiddleware[entry]?.().then(r => r.default || r) : entry
 
@@ -141,7 +163,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       if (process.server) {
         if (result === false || result instanceof Error) {
           const error = result || createError({
-            statusMessage: `Route navigation aborted: ${nuxtApp.ssrContext.url}`
+            statusMessage: `Route navigation aborted: ${initialURL}`
           })
           return callWithNuxt(nuxtApp, throwError, [error])
         }
@@ -150,35 +172,25 @@ export default defineNuxtPlugin((nuxtApp) => {
     }
   })
 
-  router.afterEach(() => {
+  router.afterEach(async (to) => {
     delete nuxtApp._processingMiddleware
-  })
-
-  nuxtApp.hook('app:created', async () => {
-    router.afterEach((to) => {
-      if (to.matched.length === 0) {
-        callWithNuxt(nuxtApp, throwError, [createError({
-          statusCode: 404,
-          statusMessage: `Page not found: ${to.fullPath}`
-        })])
-      } else if (process.server && to.matched[0].name === '404' && nuxtApp.ssrContext) {
-        nuxtApp.ssrContext.res.statusCode = 404
-      }
-    })
 
     if (process.server) {
-      router.push(nuxtApp.ssrContext.url)
-
-      router.afterEach(async (to) => {
-        if (to.fullPath !== nuxtApp.ssrContext.url) {
-          await navigateTo(to.fullPath)
-        }
-      })
+      const currentURL = to.fullPath || '/'
+      if (!isEqual(currentURL, initialURL)) {
+        await callWithNuxt(nuxtApp, navigateTo, [currentURL])
+      }
     }
+  })
 
+  nuxtApp.hooks.hookOnce('app:created', async () => {
     try {
-      await router.isReady()
+      await router.replace({
+        ...router.resolve(initialURL),
+        force: true
+      })
     } catch (error) {
+      // We'll catch middleware errors or deliberate exceptions here
       callWithNuxt(nuxtApp, throwError, [error])
     }
   })
