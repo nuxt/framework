@@ -276,7 +276,7 @@ function hasSuffix (path: string, suffix: string) {
 }
 
 export function getImportName (name: string) {
-  return pascalCase(name).replace(/[^\w]/g, r => '_' + r.charCodeAt(0))
+  return pascalCase(name).replace(/[^a-zA-Z]/g, r => '_' + r.charCodeAt(0))
 }
 
 function uniqueBy <T, K extends keyof T> (arr: T[], key: K) {
