@@ -2,7 +2,9 @@
 
 The `useRouter` composable returns the router instance and must be called in a `setup` function, plugin, or route middleware.
 
-Within the template of a Vue component, you can access the router using `$router`. `useRouter` provides collection of methods to help you manipulate Vue router dynamically.
+Within the template of a Vue component, you can access the router using `$router` and you can access router in setup() function using `useRouter()` composable.
+
+`useRouter` provides collection of methods to help you manipulate Vue router dynamically.
 
 ```html [~/pages/*.vue]
 
