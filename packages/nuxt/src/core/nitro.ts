@@ -59,8 +59,12 @@ export async function initNitro (nuxt: Nuxt) {
     externals: {
       inline: [
         ...(nuxt.options.dev ? [] : ['vue', '@vue/', '@nuxt/', nuxt.options.buildDir]),
+        'nuxt/app',
         'nuxt/dist',
-        'nuxt3/dist'
+        'nuxt/src',
+        'nuxt3/app',
+        'nuxt3/dist',
+        'nuxt3/src'
       ]
     },
     alias: {
