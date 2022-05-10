@@ -57,7 +57,11 @@ export async function initNitro (nuxt: Nuxt) {
     },
     sourcemap: nuxt.options.sourcemap,
     externals: {
-      inline: nuxt.options.dev ? [] : ['vue', '@vue/', '@nuxt/', nuxt.options.buildDir]
+      inline: [
+        ...(nuxt.options.dev ? [] : ['vue', '@vue/', '@nuxt/', nuxt.options.buildDir]),
+        'nuxt/dist',
+        'nuxt3/dist'
+      ]
     },
     alias: {
       'vue/compiler-sfc': 'vue/compiler-sfc',
