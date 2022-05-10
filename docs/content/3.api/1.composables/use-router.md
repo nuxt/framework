@@ -13,7 +13,7 @@ Within the template of a Vue component, you can access the router using `$router
 
 ````
 
- Apart from `router.push()`, `useRouter` provides the following helper methods that we can roughly devide into four groups.
+ Apart from `router.push()`, `useRouter` provides the following helper methods that we can roughly divide into four groups.
 
 ## Basic manipulation
 
