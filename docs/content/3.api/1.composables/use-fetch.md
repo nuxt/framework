@@ -6,14 +6,9 @@ This composable provides a convenient wrapper around [`useAsyncData`](/api/compo
 
 ```ts [Signature]
 function useFetch(
-  url: FetchRequestUrl,
+  url: NitroFetchRequest,
   options?: UseFetchOptions
 ): Promise<DataT>
-
-type FetchRequestUrl =
-  Exclude<keyof InternalApi, '/__nuxt_error'>
-  | (`${string}${'/'|'.'}${string}` & {})
-  | Exclude<FetchRequest, string>
 
 type UseFetchOptions = {
   method?: string,
