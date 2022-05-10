@@ -36,7 +36,7 @@ export default <NitroErrorHandler> async function errorhandler (_error, event) {
   }
 
   // HTML response
-  const url = withQuery('/__nuxt_error', errorObject as any)
+  const url = withQuery('/__nuxt_error', errorObject as any) as '/__nuxt_error?{{queries}}'
   const html = await $fetch(url).catch((error) => {
     console.error('[nitro] Error while generating error response', error)
     return errorObject.statusMessage
