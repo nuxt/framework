@@ -6,7 +6,7 @@ This composable provides a convenient wrapper around [`useAsyncData`](/api/compo
 
 ```ts [Signature]
 function useFetch(
-  url: string,
+  url: string | Request,
   options?: UseFetchOptions
 ): Promise<DataT>
 
@@ -26,7 +26,7 @@ type DataT = {
   data: Ref<DataT>
   pending: Ref<boolean>
   refresh: () => Promise<void>
-  error: Ref<any>
+  error: Ref<Error | boolean>
 }
 ```
 
@@ -57,7 +57,7 @@ By default, Nuxt waits until a `refresh` is finished before it can be executed a
 ## Example
 
 ```ts
-const { data, pending, error, refresh } = useFetch(
+const { data, pending, error, refresh } = await useFetch(
   'https://api.nuxtjs.dev/mountains',
   {
     pick: ['title']

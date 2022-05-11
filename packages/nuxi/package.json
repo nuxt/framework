@@ -1,6 +1,6 @@
 {
   "name": "nuxi",
-  "version": "3.0.0-rc.1",
+  "version": "3.0.0-rc.3",
   "repository": "nuxt/framework",
   "license": "MIT",
   "type": "module",
@@ -17,8 +17,8 @@
     "prepack": "unbuild"
   },
   "devDependencies": {
-    "@nuxt/kit": "^3.0.0-rc.1",
-    "@nuxt/schema": "^3.0.0-rc.1",
+    "@nuxt/kit": "^3.0.0-rc.3",
+    "@nuxt/schema": "^3.0.0-rc.3",
     "@types/clear": "^0",
     "@types/mri": "^1.1.1",
     "@types/semver": "^7",
@@ -36,7 +36,7 @@
     "listhen": "^0.2.11",
     "mlly": "^0.5.2",
     "mri": "^1.2.0",
-    "pathe": "^0.2.0",
+    "pathe": "^0.3.0",
     "perfect-debounce": "^0.1.3",
     "pkg-types": "^0.3.2",
     "scule": "^0.2.1",
