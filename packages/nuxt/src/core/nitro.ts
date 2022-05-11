@@ -207,7 +207,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   })
 
   // Enable runtime compiler on build
-  if (nuxt.options.runtimeCompiler && !nuxt.options.dev) {
+  if (nuxt.options.runtimeCompiler) {
     // set vue esm on client
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       if (isClient) {
