@@ -6,7 +6,7 @@ This composable provides a convenient wrapper around [`useAsyncData`](/api/compo
 
 ```ts [Signature]
 function useFetch(
-  url: NitroFetchRequest,
+  url: string | Request,
   options?: UseFetchOptions
 ): Promise<DataT>
 
