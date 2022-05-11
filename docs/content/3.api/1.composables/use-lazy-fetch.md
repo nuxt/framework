@@ -28,7 +28,6 @@ By default, [useFetch](/api/composables/use-fetch) blocks navigation until its a
 /* Navigation will occur before fetching is complete.
   Handle pending and error states directly within your component's template
 */
-// will show '/api/posts' as type hint, assume project contains server/api/posts.ts
 const { pending, data: posts } = useLazyFetch('/api/posts')
 watch(posts, (newPosts) => {
   // Because posts starts out null, you won't have access
