@@ -136,11 +136,15 @@ describe('composables', () => {
   })
 
   it('infer request url string literal from server/api routes', () => {
-    // request param should infer string literal type / show auto-complete hint base on server routes, ex: '/api/hello'
+    // request can accept dynamic string type
     const dynamicStringUrl:string = 'https://example.com/api'
-    expectTypeOf(useFetch(dynamicStringUrl))
+    expectTypeOf(useFetch(dynamicStringUrl).data).toMatchTypeOf<Ref<Pick<unknown, never>>>()
+
+    // request param should infer string literal type / show auto-complete hint base on server routes, ex: '/api/hello'
     expectTypeOf(useFetch('/api/hello').data).toMatchTypeOf<Ref<string>>()
     expectTypeOf(useLazyFetch('/api/hello').data).toMatchTypeOf<Ref<string>>()
+
+    // request can accept string literal and Request object type
     expectTypeOf(useFetch('https://example.com/api').data).toMatchTypeOf<Ref<Pick<unknown, never>>>()
     expectTypeOf(useFetch(new Request('test')).data).toMatchTypeOf<Ref<Pick<unknown, never>>>()
   })
