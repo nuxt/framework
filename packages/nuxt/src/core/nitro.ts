@@ -147,7 +147,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
       plugins: []
     },
     commonJS: {
-      dynamicRequireTargets: (nuxt.options.runtimeCompiler && !nuxt.options.dev)
+      dynamicRequireTargets: (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev)
         ? [
             './node_modules/@vue/compiler-core',
             './node_modules/@vue/compiler-dom',
@@ -207,7 +207,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   })
 
   // Enable runtime compiler client side
-  if (nuxt.options.runtimeCompiler) {
+  if (nuxt.options.vue.runtimeCompiler) {
     // set vue esm on client
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       if (isClient) {
