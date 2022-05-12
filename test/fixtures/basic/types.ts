@@ -136,15 +136,12 @@ describe('composables', () => {
   })
 
   it('infer request url string literal from server/api routes', () => {
-    // request param should infer string literal type / show auto-complete hint base on server routes
+    // request param should infer string literal type / show auto-complete hint base on server routes, ex: '/api/hello'
+    const dynamicStringUrl:string = 'https://example.com/api'
+    expectTypeOf(useFetch(dynamicStringUrl))
     expectTypeOf(useFetch('/api/hello').data).toMatchTypeOf<Ref<string>>()
     expectTypeOf(useLazyFetch('/api/hello').data).toMatchTypeOf<Ref<string>>()
-    expectTypeOf(useFetch('/api/foo').data).toMatchTypeOf<Ref<string>>()
-    expectTypeOf(useFetch('/api/counter').data).toMatchTypeOf<Ref<Pick<{ count: number }, 'count'>>>()
-    expectTypeOf(useFetch('/api/hey').data).toMatchTypeOf<Ref<Pick<{ foo: string, baz: string }, 'foo' | 'baz'>>>()
     expectTypeOf(useFetch('https://example.com/api').data).toMatchTypeOf<Ref<Pick<unknown, never>>>()
     expectTypeOf(useFetch(new Request('test')).data).toMatchTypeOf<Ref<Pick<unknown, never>>>()
-    // @ts-expect-error invalid request url should error (invalid api route or url)
-    expectTypeOf(useFetch('invalidRequestUrl'))
   })
 })
