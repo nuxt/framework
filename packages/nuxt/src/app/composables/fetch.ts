@@ -31,7 +31,7 @@ export function useFetch<
   }
   const key = '$f_' + (opts.key || hash([request, { ...opts, transform: null }]))
   const _request = computed(() => {
-    let r = request as Ref<FetchRequest> | FetchRequest | (() => FetchRequest)
+    let r = request as Ref<NitroFetchRequest> | NitroFetchRequest | (() => NitroFetchRequest)
     if (typeof r === 'function') {
       r = r()
     }
@@ -52,7 +52,7 @@ export function useFetch<
   }
 
   const asyncData = useAsyncData<_ResT, ErrorT, Transform, PickKeys>(key, () => {
-    return $fetch(_request.value, _fetchOptions)
+    return $fetch(_request.value, _fetchOptions) as Promise<_ResT>
   }, _asyncDataOptions)
 
   return asyncData
