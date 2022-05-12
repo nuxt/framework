@@ -30,12 +30,12 @@ export function useFetch<
     console.warn('[nuxt] You should provide a key for `useFetch` when using a custom transform function.')
   }
   const key = '$f_' + (opts.key || hash([request, { ...opts, transform: null }]))
-  const _request = computed<NitroFetchRequest>(() => {
-    let r = request
-    if (typeof r === 'function' && typeof r !== 'string') {
+  const _request = computed(() => {
+    let r = request as Ref<FetchRequest> | FetchRequest | (() => FetchRequest)
+    if (typeof r === 'function') {
       r = r()
     }
-    return isRef(r) ? r.value : r
+    return (isRef(r) ? r.value : r) as NitroFetchRequest
   })
 
   const _fetchOptions = {
