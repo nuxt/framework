@@ -39,7 +39,15 @@ export interface _AsyncData<DataT, ErrorT> {
 export type AsyncData<Data, Error> = _AsyncData<Data, Error> & Promise<_AsyncData<Data, Error>>
 
 const getDefault = () => null
-
+export function useAsyncData<
+  DataT,
+  DataE = Error,
+  Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
+  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
+> (
+  handler: (ctx?: NuxtApp) => Promise<DataT>,
+  options?: AsyncDataOptions<DataT, Transform, PickKeys>
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true>
 export function useAsyncData<
   DataT,
   DataE = Error,
@@ -48,8 +56,21 @@ export function useAsyncData<
 > (
   key: string,
   handler: (ctx?: NuxtApp) => Promise<DataT>,
-  options: AsyncDataOptions<DataT, Transform, PickKeys> = {}
+  options?: AsyncDataOptions<DataT, Transform, PickKeys>
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true>
+export function useAsyncData<
+  DataT,
+  DataE = Error,
+  Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
+  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
+> (
+  _key: string | ((ctx?: NuxtApp) => Promise<DataT>),
+  _handler?: ((ctx?: NuxtApp) => Promise<DataT>) | AsyncDataOptions<DataT, Transform, PickKeys> | string,
+  _options?: AsyncDataOptions<DataT, Transform, PickKeys> | string,
+  fallback?: string
 ): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
+  // eslint-disable-next-line prefer-const
+  let [key, handler, options] = (typeof _key === 'string' ? [_key, _handler, _options] : typeof _options === 'string' ? [_options, _key, {}] : [fallback, _key, _options]) as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
   // Validate arguments
   if (typeof key !== 'string') {
     throw new TypeError('asyncData key must be a string')
@@ -171,7 +192,15 @@ export function useAsyncData<
 
   return asyncDataPromise as AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE>
 }
-
+export function useLazyAsyncData<
+  DataT,
+  DataE = Error,
+  Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
+  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
+> (
+  handler: (ctx?: NuxtApp) => Promise<DataT>,
+  options?: Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'lazy'>
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true>
 export function useLazyAsyncData<
   DataT,
   DataE = Error,
@@ -180,8 +209,21 @@ export function useLazyAsyncData<
 > (
   key: string,
   handler: (ctx?: NuxtApp) => Promise<DataT>,
-  options: Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'lazy'> = {}
+  options?: Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'lazy'>
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true>
+export function useLazyAsyncData<
+  DataT,
+  DataE = Error,
+  Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
+  PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
+> (
+  _key: string | ((ctx?: NuxtApp) => Promise<DataT>),
+  _handler?: ((ctx?: NuxtApp) => Promise<DataT>) | AsyncDataOptions<DataT, Transform, PickKeys> | string,
+  _options?: Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'lazy'>,
+  fallback?: string
 ): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
+  // eslint-disable-next-line prefer-const
+  let [key, handler, options] = (typeof _key === 'string' ? [_key, _handler, _options] : typeof _options === 'string' ? [_options, _key, {}] : [fallback, _key, _options]) as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
   return useAsyncData(key, handler, { ...options, lazy: true })
 }
 

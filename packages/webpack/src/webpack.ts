@@ -8,7 +8,9 @@ import type { Compiler, Watching } from 'webpack'
 import type { Nuxt } from '@nuxt/schema'
 import { joinURL } from 'ufo'
 import { logger, useNuxt } from '@nuxt/kit'
+import { createUnplugin } from 'unplugin'
 import { DynamicBasePlugin } from '../../vite/src/plugins/dynamic-base'
+import { magicKeysPlugin as _magicKeysPlugin } from '../../vite/src/plugins/magic-keys'
 import { createMFS } from './utils/mfs'
 import { registerVirtualModules } from './virtual-modules'
 import { client, server } from './configs'
@@ -16,6 +18,8 @@ import { createWebpackConfigContext, applyPresets, getWebpackConfig } from './ut
 
 // TODO: Support plugins
 // const plugins: string[] = []
+
+const magicKeysPlugin = createUnplugin(_magicKeysPlugin as any)
 
 export async function bundle (nuxt: Nuxt) {
   await registerVirtualModules()
@@ -37,6 +41,7 @@ export async function bundle (nuxt: Nuxt) {
       sourcemap: nuxt.options.sourcemap,
       globalPublicPath: '__webpack_public_path__'
     }))
+    config.plugins.push(magicKeysPlugin.webpack({ useAcorn: true, sourcemap: nuxt.options.sourcemap }))
 
     // Create compiler
     const compiler = webpack(config)
