@@ -5,9 +5,7 @@ import { computed, isRef, Ref } from 'vue'
 import type { AsyncDataOptions, _Transform, KeyOfRes } from './asyncData'
 import { useAsyncData } from './asyncData'
 
-export type FetchRequest = Exclude<NitroFetchRequest, `/_${string}`|`/api/_${string}`>
-
-export type FetchResult<ReqT extends FetchRequest> = TypedInternalResponse<ReqT, unknown>
+export type FetchResult<ReqT extends NitroFetchRequest> = TypedInternalResponse<ReqT, unknown>
 
 export interface UseFetchOptions<
   DataT,
@@ -20,7 +18,7 @@ export interface UseFetchOptions<
 export function useFetch<
   ResT = void,
   ErrorT = Error,
-  ReqT extends FetchRequest = FetchRequest,
+  ReqT extends NitroFetchRequest = NitroFetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
@@ -33,11 +31,11 @@ export function useFetch<
   }
   const key = '$f_' + (opts.key || hash([request, { ...opts, transform: null }]))
   const _request = computed(() => {
-    let r = request as Ref<FetchRequest> | FetchRequest | (() => FetchRequest)
+    let r = request
     if (typeof r === 'function') {
       r = r()
     }
-    return (isRef(r) ? r.value : r) as FetchRequest
+    return (isRef(r) ? r.value : r)
   })
 
   const _fetchOptions = {
@@ -63,7 +61,7 @@ export function useFetch<
 export function useLazyFetch<
   ResT = void,
   ErrorT = Error,
-  ReqT extends FetchRequest = FetchRequest,
+  ReqT extends NitroFetchRequest = NitroFetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
