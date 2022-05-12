@@ -6,15 +6,15 @@ This composable provides a convenient wrapper around [`useAsyncData`](/api/compo
 
 ```ts [Signature]
 function useFetch(
-  url: string | Request,
-  options?: UseFetchOptions
-): Promise<DataT>
+  url: string | Request | Ref<string | Request> | () => string | Request,
+  options?: UseFetchOptions<DataT>
+): AsyncData<DataT>
 
 type UseFetchOptions = {
-  method?: string,
-  params?: SearchParams,
-  headers?: {key: string, value: string}[],
-  baseURL?: string,
+  method?: string
+  params?: SearchParams
+  headers?: {key: string, value: string}[]
+  baseURL?: string
   server?: boolean
   lazy?: boolean
   default?: () => DataT
@@ -22,7 +22,7 @@ type UseFetchOptions = {
   pick?: string[]
 }
 
-type DataT = {
+type AsyncData<DataT> = {
   data: Ref<DataT>
   pending: Ref<boolean>
   refresh: () => Promise<void>
@@ -44,6 +44,10 @@ type DataT = {
   * `default`: A factory function to set the default value of the data, before the async function resolves - particularly useful with the `lazy: true` option.
   * `pick`: Only pick specified keys in this array from the `handler` function result.
   * `transform`: A function that can be used to alter `handler` function result after resolving.
+
+::alert{type=warning}
+If you provide a function or ref as the `url` parameter, or if you provide functions as arguments to the `options` parameter, then the `useFetch` call will not match other `useFetch` calls elsewhere in your codebase, even if the options seem to be identical. If you wish to force a match, you may provide your own key in `options`.
+::
 
 ## Return values
 
