@@ -9495,9 +9495,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitropack@npm:^0.4.3":
-  version: 0.4.3
-  resolution: "nitropack@npm:0.4.3"
+"nitropack@npm:^0.4.4":
+  version: 0.4.4
+  resolution: "nitropack@npm:0.4.4"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@netlify/functions": ^1.0.0
@@ -9535,7 +9535,7 @@ __metadata:
     mime: ^3.0.0
     mlly: ^0.5.2
     mri: ^1.2.0
-    node-fetch: ^3.2.4
+    node-fetch-native: ^0.1.2
     ohash: ^0.1.0
     ohmyfetch: ^0.4.16
     pathe: ^0.3.0
@@ -9554,13 +9554,13 @@ __metadata:
     std-env: ^3.1.1
     table: ^6.8.0
     ufo: ^0.8.4
-    unenv: ^0.5.1
+    unenv: ^0.5.2
     unimport: ^0.2.1
     unstorage: ^0.4.1
   bin:
     nitro: dist/cli.mjs
     nitropack: dist/cli.mjs
-  checksum: 41b143ec2c2990df7374f91014c7c13f00acd910039bc902874436655cbbbaec9478c6f374b21f984ebb21b9f6dbfc702dba84cdf0b19b15cd92f8843fad7694
+  checksum: 5dd9ece9707b775bf87f1f6625ce96bfc29813507157dbd84178220cd0f1216964b474498f51b934ddfcd5f6ea120a4f1071415ac37eed28ea9a406e6c283882
   languageName: node
   linkType: hard
 
@@ -9568,6 +9568,13 @@ __metadata:
   version: 1.0.0
   resolution: "node-domexception@npm:1.0.0"
   checksum: ee1d37dd2a4eb26a8a92cd6b64dfc29caec72bff5e1ed9aba80c294f57a31ba4895a60fd48347cf17dd6e766da0ae87d75657dfd1f384ebfa60462c2283f5c7f
+  languageName: node
+  linkType: hard
+
+"node-fetch-native@npm:^0.1.2":
+  version: 0.1.3
+  resolution: "node-fetch-native@npm:0.1.3"
+  checksum: b9659a22c41b471e970ef3223682d08c7c439deed9ed647f218bda503dae06d78f1882e1532ff9a70d088eac4a20b12a1711e18a756f609e26d6956955277a40
   languageName: node
   linkType: hard
 
@@ -10074,7 +10081,7 @@ __metadata:
     knitwork: ^0.1.1
     magic-string: ^0.26.1
     mlly: ^0.5.2
-    nitropack: ^0.4.3
+    nitropack: ^0.4.4
     nuxi: ^3.0.0-rc.3
     ohash: ^0.1.0
     ohmyfetch: ^0.4.16
@@ -13350,6 +13357,18 @@ __metadata:
     node-fetch: ^3.2.4
     pathe: ^0.3.0
   checksum: baf9b2da33419a9d43b5598307705fe1a4f40cb13dc90bd827da27cda571149244ba108cbfd8550d790c56968df093e9315aab777c116e51eee7b15fe9896e3b
+  languageName: node
+  linkType: hard
+
+"unenv@npm:^0.5.2":
+  version: 0.5.2
+  resolution: "unenv@npm:0.5.2"
+  dependencies:
+    defu: ^6.0.0
+    mime: ^3.0.0
+    node-fetch-native: ^0.1.2
+    pathe: ^0.3.0
+  checksum: 07efccc473e419cad22e86aac504bb49f9fc9c22c85fa8b830d6fbdf2aea39f82278bd70306a5c42dc26c6bc5f5034b23ea4f14bfd73ba9db7370a9e9b34fc6e
   languageName: node
   linkType: hard
 
