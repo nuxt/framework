@@ -8,8 +8,6 @@ import { distDir } from './dirs'
 import type { ViteBuildContext } from './vite'
 import { isCSS } from './utils'
 
-const isWindows = /^win/i.test(process.platform)
-
 // TODO: Remove this in favor of registerViteNodeMiddleware
 // after Nitropack or h3 fixed for adding middlewares after setup
 export function viteNodePlugin (ctx: ViteBuildContext): VitePlugin {
@@ -89,7 +87,6 @@ export async function prepareDevServerEntry (ctx: ViteBuildContext) {
   const host = ctx.nuxt.options.server.host || 'localhost'
   const port = ctx.nuxt.options.server.port || '3000'
   const protocol = ctx.nuxt.options.server.https ? 'https' : 'http'
-  const winFileProtocol = isWindows ? 'file://' : ''
 
   // Serialize and pass vite-node runtime options
   const viteNodeServerOptions = {
@@ -102,10 +99,10 @@ export async function prepareDevServerEntry (ctx: ViteBuildContext) {
 
   await fse.writeFile(
     resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'),
-    `export { default } from ${JSON.stringify(winFileProtocol + resolve(distDir, 'runtime/vite-node.mjs'))}`
+    `export { default } from ${JSON.stringify('file://' + resolve(distDir, 'runtime/vite-node.mjs'))}`
   )
   await fse.writeFile(
     resolve(ctx.nuxt.options.buildDir, 'dist/server/client.manifest.mjs'),
-    `export { default } from ${JSON.stringify(winFileProtocol + resolve(distDir, 'runtime/client.manifest.mjs'))}`
+    `export { default } from ${JSON.stringify('file://' + resolve(distDir, 'runtime/client.manifest.mjs'))}`
   )
 }
