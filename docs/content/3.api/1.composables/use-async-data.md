@@ -13,7 +13,7 @@ function useAsyncData(
   key: string,
   handler: (nuxtApp?: NuxtApp) => Promise<DataT>,
   options?: AsyncDataOptions<DataT>
-): AsyncData<DataT>
+): Promise<AsyncData<DataT>>
 
 type AsyncDataOptions<DataT> = {
   server?: boolean
@@ -35,7 +35,7 @@ type AsyncData<DataT> = {
 
 ## Params
 
-* **key**: a unique key to ensure that data fetching can be properly de-duplicated across requests. If you do not provide a key, then a key that is unique to the file and line number of the instance of `useAsyncData` will be generated for you.
+* **key**: a unique key to ensure that data fetching can be properly de-duplicated across requests. If you do not provide a key, then a key that is unique to the file name and line number of the instance of `useAsyncData` will be generated for you.
 * **handler**: an asynchronous function that returns a value
 * **options**:
   * _lazy_: whether to resolve the async function after loading the route, instead of blocking navigation (defaults to `false`)

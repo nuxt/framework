@@ -8,7 +8,7 @@ This composable provides a convenient wrapper around [`useAsyncData`](/api/compo
 function useFetch(
   url: string | Request | Ref<string | Request> | () => string | Request,
   options?: UseFetchOptions<DataT>
-): AsyncData<DataT>
+): Promise<AsyncData<DataT>>
 
 type UseFetchOptions = {
   method?: string
