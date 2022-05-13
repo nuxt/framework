@@ -21,6 +21,7 @@ function createKey (source: string) {
 const keyedFunctions = [
   'useState', 'useFetch', 'useAsyncData', 'useLazyAsyncData', 'useLazyFetch'
 ]
+const KEYED_FUNCTIONS_RE = new RegExp(`(${keyedFunctions.join('|')})`)
 
 export const composableKeysPlugin = (options: MagicKeysOptions = {}): Plugin => {
   return {
@@ -29,7 +30,7 @@ export const composableKeysPlugin = (options: MagicKeysOptions = {}): Plugin => 
     transform (code, id) {
       const { pathname } = parseURL(decodeURIComponent(pathToFileURL(id).href))
       if (!pathname.match(/\.([cm][jt]sx?|vue)/)) { return }
-      if (!keyedFunctions.some(f => code.includes(f))) { return }
+      if (!KEYED_FUNCTIONS_RE.test(code)) { return }
       const { 0: script = code, index: codeIndex = 0 } = code.match(/(?<=<script[^>]*>)[\S\s.]*?(?=<\/script>)/) || []
       const s = new MagicString(code)
       // https://github.com/unjs/unplugin/issues/90
