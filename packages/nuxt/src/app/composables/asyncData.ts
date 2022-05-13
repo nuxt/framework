@@ -72,9 +72,11 @@ export function useAsyncData<
   // eslint-disable-next-line prefer-const
   let [key, handler, options] = (typeof _key === 'string'
     ? [_key, _handler, _options]
-    : typeof _options === 'string'
-      ? [_options, _key, {}]
-      : [fallback, _key, _options]
+    : typeof _handler === 'string'
+      ? [_handler, _key, {}]
+      : typeof _options === 'string'
+        ? [_options, _key, {}]
+        : [fallback, _key, _options]
   ) as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
   // Validate arguments
   if (typeof key !== 'string') {

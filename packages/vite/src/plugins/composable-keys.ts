@@ -14,10 +14,21 @@ export interface ComposableKeysOptions {
   rootDir?: string
 }
 
+const hashMap: Record<string, string> = {}
+
 function createKey (source: string) {
-  const hash = crypto.createHash('md5')
-  hash.update(source)
-  return hash.digest('base64').toString()
+  let outputLength = 3
+  do {
+    const hash = crypto.createHash('md5')
+    hash.update(source)
+    const key = hash.digest('base64').toString().slice(0, outputLength)
+    if (key in hashMap && hashMap[key] !== source) {
+      outputLength++
+      continue
+    }
+    hashMap[key] = source
+    return key
+  } while (true)
 }
 
 const keyedFunctions = [
@@ -49,7 +60,7 @@ export const composableKeysPlugin = (options: ComposableKeysOptions = {}): Plugi
             const end = (node as any).end
             s.appendLeft(
               codeIndex + end - 1,
-              (node.arguments.length ? ', ' : '') + "'" + createKey(`${relativeID}-${codeIndex + end}`) + "'"
+              (node.arguments.length ? ', ' : '') + "'$" + createKey(`${relativeID}-${codeIndex + end}`) + "'"
             )
           }
         }
