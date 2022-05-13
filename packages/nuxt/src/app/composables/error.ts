@@ -1,4 +1,4 @@
-import { createError, H3Error } from 'h3'
+import { createError as _createError, H3Error } from 'h3'
 import { useNuxtApp, useState } from '#app'
 
 export const useError = () => {
@@ -6,13 +6,15 @@ export const useError = () => {
   return useState('error', () => process.server ? nuxtApp.ssrContext.error : nuxtApp.payload.error)
 }
 
-export const throwError = (_err: string | Error | Partial<H3Error>) => {
+export interface NuxtError extends H3Error {}
+
+export const throwError = (_err: string | Error | Partial<NuxtError>) => {
   const nuxtApp = useNuxtApp()
   const error = useError()
   const err = typeof _err === 'string'
     ? new Error(_err)
     : _err && typeof _err === 'object' && !('__nuxt_error' in _err)
-      ? createError(_err)
+      ? _createError(_err)
       : _err
   nuxtApp.callHook('app:error', err)
   if (process.server) {
@@ -34,4 +36,6 @@ export const clearError = async (options: { redirect?: string } = {}) => {
   error.value = null
 }
 
-export { createError }
+export const createError = (err: Partial<NuxtError>): NuxtError => {
+  return _createError(err)
+}
