@@ -65,7 +65,7 @@ export async function bundle (nuxt: Nuxt) {
           }
         },
         plugins: [
-          composableKeysPlugin({ sourcemap: nuxt.options.sourcemap }),
+          composableKeysPlugin({ sourcemap: nuxt.options.sourcemap, rootDir: nuxt.options.rootDir }),
           virtual(nuxt.vfs),
           DynamicBasePlugin.vite({ sourcemap: nuxt.options.sourcemap })
         ],

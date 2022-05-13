@@ -41,7 +41,11 @@ export async function bundle (nuxt: Nuxt) {
       sourcemap: nuxt.options.sourcemap,
       globalPublicPath: '__webpack_public_path__'
     }))
-    config.plugins.push(composableKeysPlugin.webpack({ useAcorn: true, sourcemap: nuxt.options.sourcemap }))
+    config.plugins.push(composableKeysPlugin.webpack({
+      useAcorn: true,
+      sourcemap: nuxt.options.sourcemap,
+      rootDir: nuxt.options.rootDir
+    }))
 
     // Create compiler
     const compiler = webpack(config)
