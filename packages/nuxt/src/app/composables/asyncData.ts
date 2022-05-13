@@ -70,7 +70,12 @@ export function useAsyncData<
   fallback?: string
 ): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
   // eslint-disable-next-line prefer-const
-  let [key, handler, options] = (typeof _key === 'string' ? [_key, _handler, _options] : typeof _options === 'string' ? [_options, _key, {}] : [fallback, _key, _options]) as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
+  let [key, handler, options] = (typeof _key === 'string'
+    ? [_key, _handler, _options]
+    : typeof _options === 'string'
+      ? [_options, _key, {}]
+      : [fallback, _key, _options]
+  ) as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
   // Validate arguments
   if (typeof key !== 'string') {
     throw new TypeError('asyncData key must be a string')
@@ -222,8 +227,12 @@ export function useLazyAsyncData<
   _options?: Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'lazy'>,
   fallback?: string
 ): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
-  // eslint-disable-next-line prefer-const
-  let [key, handler, options] = (typeof _key === 'string' ? [_key, _handler, _options] : typeof _options === 'string' ? [_options, _key, {}] : [fallback, _key, _options]) as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
+  const [key, handler, options] = (typeof _key === 'string'
+    ? [_key, _handler, _options]
+    : typeof _options === 'string'
+      ? [_options, _key, {}]
+      : [fallback, _key, _options]
+  ) as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
   return useAsyncData(key, handler, { ...options, lazy: true })
 }
 
