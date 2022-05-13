@@ -16,12 +16,6 @@ export const commonPresets: Preset[] = [
       'isVue2',
       'isVue3'
     ]
-  }),
-  defineUnimportPreset({
-    from: 'h3',
-    imports: [
-      'createError'
-    ]
   })
 ]
 
@@ -51,6 +45,7 @@ export const appPreset = defineUnimportPreset({
     'throwError',
     'clearError',
     'useError',
+    'createError',
     'defineNuxtLink'
   ]
 })

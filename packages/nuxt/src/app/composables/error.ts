@@ -33,3 +33,5 @@ export const clearError = async (options: { redirect?: string } = {}) => {
   }
   error.value = null
 }
+
+export { createError }
