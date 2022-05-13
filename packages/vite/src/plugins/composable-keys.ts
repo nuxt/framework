@@ -42,7 +42,7 @@ export const composableKeysPlugin = (options: ComposableKeysOptions = {}): Plugi
     enforce: 'post',
     transform (code, id) {
       const { pathname } = parseURL(decodeURIComponent(pathToFileURL(id).href))
-      if (!pathname.match(/\.([cm][jt]sx?|vue)/)) { return }
+      if (!pathname.match(/\.(m?[jt]sx?|vue)/)) { return }
       if (!KEYED_FUNCTIONS_RE.test(code)) { return }
       const { 0: script = code, index: codeIndex = 0 } = code.match(/(?<=<script[^>]*>)[\S\s.]*?(?=<\/script>)/) || []
       const s = new MagicString(code)
