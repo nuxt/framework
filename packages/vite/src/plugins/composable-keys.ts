@@ -22,7 +22,7 @@ const keyedFunctions = [
   'useState', 'useFetch', 'useAsyncData', 'useLazyAsyncData', 'useLazyFetch'
 ]
 
-export const magicKeysPlugin = (options: MagicKeysOptions = {}): Plugin => {
+export const composableKeysPlugin = (options: MagicKeysOptions = {}): Plugin => {
   return {
     name: 'nuxt:magic-keys',
     enforce: 'post',

@@ -12,7 +12,7 @@ import virtual from './plugins/virtual'
 import { DynamicBasePlugin } from './plugins/dynamic-base'
 import { warmupViteServer } from './utils/warmup'
 import { resolveCSSOptions } from './css'
-import { magicKeysPlugin } from './plugins/magic-keys'
+import { composableKeysPlugin } from './plugins/composable-keys'
 
 export interface ViteOptions extends InlineConfig {
   vue?: Options
@@ -65,7 +65,7 @@ export async function bundle (nuxt: Nuxt) {
           }
         },
         plugins: [
-          magicKeysPlugin({ sourcemap: nuxt.options.sourcemap }),
+          composableKeysPlugin({ sourcemap: nuxt.options.sourcemap }),
           virtual(nuxt.vfs),
           DynamicBasePlugin.vite({ sourcemap: nuxt.options.sourcemap })
         ],
