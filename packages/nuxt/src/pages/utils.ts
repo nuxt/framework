@@ -88,10 +88,13 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
     }
 
     parent.push(route)
+    parent.sort((a, b) => normalizePath(a.path).localeCompare(normalizePath(b.path)))
   }
 
   return prepareRoutes(routes)
 }
+
+const normalizePath = (path: string) => path.replace(/^\//, '').replace(/:/, 'z')
 
 function getRoutePath (tokens: SegmentToken[]): string {
   return tokens.reduce((path, token) => {
