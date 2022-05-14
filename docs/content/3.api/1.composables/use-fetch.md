@@ -34,7 +34,7 @@ type DataT = {
 ## Params
 
 * **Url**: The URL to fetch
-* **Options (from [ohmyfetch](https://github.com/unjs/ohmyfetch))**:
+* **Options (extends [ohmyfetch's FetchOptions](https://github.com/unjs/ohmyfetch/blob/main/src/fetch.ts#L26) & [AsyncDataOptions](https://github.dev/nuxt/framework/blob/main/packages/nuxt/src/app/composables/asyncData.ts#L14))**:
   * `method`: Request method
   * `params`: Query params
   * `body`: Request body - automatically stringified (if an object is passed).
