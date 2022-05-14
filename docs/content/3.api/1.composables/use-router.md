@@ -17,6 +17,9 @@ Within the template of a Vue component, you can access the router using `$router
 
  `useRouter` provides the following helper methods that we can roughly divide into four groups.
 
+::ReadMore{link="https://router.vuejs.org/api/#currentroute"}
+::
+
 ## Basic manipulation
 
 - **addRoute:** Add a new route to the router instance. `parentName` can be provided to add new route as the child of an existing route.
@@ -46,22 +49,14 @@ router.replace({ hash: "#bio" });
 ::ReadMore{link="https://developer.mozilla.org/en-US/docs/Web/API/History"}
 ::
 
-## The ones with the guards
+## Navigation guards
 
-- **afterEach:** Add a navigation guard that is executed after every navigation.
-- **beforeEach:** Add a navigation guard that executes before any navigation.
-- **beforeResolve:** Add a navigation guard that executes before navigation is about to be resolved.
+`useRouter` composable provides `afterEach`, `beforeEach` and `beforeResolve` helper methods that acts as nagivation guards.
 
-> When we need to use navigation guards in Nuxt however, it is recommended to use Route Middleware to achieve the same results as `beforeEach` helper method.
+However, Nuxt has a concept of **Route middleware** that simplifies the implementation of navigation guards and provides much better developer experience.
 
-```js [js]
-const router = useRouter();
-router.afterEach((to, from, failure) => {
- if (isNavigationFailure(failure)) {
-  console.log("failed navigation", failure);
- }
-});
-```
+::ReadMore{link="/guide/directory-structure/middleware"}
+::
 
 ## Promise and error handling
 
