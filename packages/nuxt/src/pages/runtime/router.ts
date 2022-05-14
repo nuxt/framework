@@ -185,7 +185,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       const initialRoute = router.resolve(initialURL)
       delete initialRoute.name
       await router.replace({
-        ...initialRoute,
+        ...router.resolve(initialURL),
+        name: undefined,
         force: true
       })
     } catch (error) {
