@@ -5,6 +5,7 @@ import MagicString from 'magic-string'
 
 interface DynamicBasePluginOptions {
   globalPublicPath?: string
+  sourcemap?: boolean
 }
 
 export const RelativeAssetPlugin = function (): Plugin {
@@ -80,24 +81,22 @@ export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePl
 
       if (id === 'vite/preload-helper') {
         // Define vite base path as buildAssetsUrl (i.e. including _nuxt/)
-        s.prepend('import { buildAssetsDir } from \'#build/paths.mjs\';\n')
-        s.replace(/const base = ['"]\/__NUXT_BASE__\/['"]/, 'const base = buildAssetsDir()')
+        s.prepend('import { buildAssetsURL } from \'#build/paths.mjs\';\n')
+        s.replace(/const base = ['"]\/__NUXT_BASE__\/['"]/, 'const base = buildAssetsURL()')
       }
 
       // Sanitize imports
       s.replace(/from *['"]\/__NUXT_BASE__(\/[^'"]*)['"]/g, 'from "$1"')
 
       // Dynamically compute string URLs featuring baseURL
-      for (const delimiter of ['`', "'", '"']) {
-        const delimiterRE = new RegExp(`(?<!(const base = |from *))${delimiter}([^${delimiter}]*)\\/__NUXT_BASE__\\/([^${delimiter}]*)${delimiter}`, 'g')
-        /* eslint-disable-next-line no-template-curly-in-string */
-        s.replace(delimiterRE, r => '`' + r.replace(/\/__NUXT_BASE__\//g, '${__publicAssetsURL()}').slice(1, -1) + '`')
-      }
+      const delimiterRE = /(?<!(const base = |from *))(`([^`]*)\/__NUXT_BASE__\/([^`]*)`|'([^\n']*)\/__NUXT_BASE__\/([^\n']*)'|"([^\n"]*)\/__NUXT_BASE__\/([^\n"]*)")/g
+      /* eslint-disable-next-line no-template-curly-in-string */
+      s.replace(delimiterRE, r => '`' + r.replace(/\/__NUXT_BASE__\//g, '${__publicAssetsURL()}').slice(1, -1) + '`')
 
       if (s.hasChanged()) {
         return {
           code: s.toString(),
-          map: s.generateMap({ source: id, includeContent: true })
+          map: options.sourcemap && s.generateMap({ source: id, includeContent: true })
         }
       }
     }

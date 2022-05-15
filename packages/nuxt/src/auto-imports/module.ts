@@ -1,10 +1,9 @@
 import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, useNuxt, addPluginTemplate, logger } from '@nuxt/kit'
 import { isAbsolute, join, relative, resolve, normalize } from 'pathe'
-import { createUnimport, Import, toImports, Unimport } from 'unimport'
+import { createUnimport, Import, scanDirExports, toImports, Unimport } from 'unimport'
 import { AutoImportsOptions, ImportPresetWithDeprecation } from '@nuxt/schema'
 import { TransformPlugin } from './transform'
 import { defaultPresets } from './presets'
-import { scanForComposables } from './composables'
 
 export default defineNuxtModule<Partial<AutoImportsOptions>>({
   meta: {
@@ -74,15 +73,16 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
       })
     } else {
       // Transform to inject imports in production mode
-      addVitePlugin(TransformPlugin.vite({ ctx, options }))
-      addWebpackPlugin(TransformPlugin.webpack({ ctx, options }))
+      addVitePlugin(TransformPlugin.vite({ ctx, options, sourcemap: nuxt.options.sourcemap }))
+      addWebpackPlugin(TransformPlugin.webpack({ ctx, options, sourcemap: nuxt.options.sourcemap }))
     }
 
     const regenerateAutoImports = async () => {
-      // Scan composables/
-      await scanForComposables(composablesDirs, ctx)
-      // Allow modules extending
+      ctx.clearDynamicImports()
       await ctx.modifyDynamicImports(async (imports) => {
+        // Scan composables/
+        imports.push(...await scanDirExports(composablesDirs))
+        // Modules extending
         await nuxt.callHook('autoImports:extend', imports)
       })
     }
