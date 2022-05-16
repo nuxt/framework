@@ -37,7 +37,7 @@ export default defineNuxtModule({
         nuxt.options.dir.middleware
       ].filter(Boolean)
 
-      const pathPattern = new RegExp(`^(${dirs.map(escapeRE).join('|')})/`)
+      const pathPattern = new RegExp(`(^|\\/)(${dirs.map(escapeRE).join('|')})/`)
       if (event !== 'change' && path.match(pathPattern)) {
         await nuxt.callHook('builder:generateApp')
       }
