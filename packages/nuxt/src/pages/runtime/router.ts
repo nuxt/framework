@@ -182,8 +182,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   nuxtApp.hooks.hookOnce('app:created', async () => {
     try {
-      const initialRoute = router.resolve(initialURL)
-      delete initialRoute.name
       await router.replace({
         ...router.resolve(initialURL),
         name: undefined,
