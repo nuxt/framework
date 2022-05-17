@@ -51,7 +51,7 @@ const getClientManifest = () => import('#build/dist/server/client.manifest.mjs')
 const getServerEntry = () => process.env.NUXT_NO_SSR ? Promise.resolve(null) : import('#build/dist/server/server.mjs').then(r => r.default || r)
 
 // -- SSR Renderer --
-const _getSSRRenderer = async () => {
+const getSSRRenderer = lazyCachedFunction(async () => {
   // Load client manifest
   const clientManifest = await getClientManifest()
   if (!clientManifest) { throw new Error('client.manifest is not available') }
@@ -61,20 +61,23 @@ const _getSSRRenderer = async () => {
   if (!createSSRApp) { throw new Error('Server bundle is not available') }
 
   // Create renderer
-  const renderToString = async (input, context) => {
-    const html = await _renderToString(input, context)
-    return `<div id="__nuxt">${html}</div>`
-  }
-  return createRenderer(createSSRApp, {
+  const renderer = createRenderer(createSSRApp, {
     clientManifest,
     renderToString,
     publicPath: buildAssetsURL()
   })
-}
 
-const getSSRRenderer = process.env.NUXT_VITE_NODE_OPTIONS
-  ? _getSSRRenderer // Do not cache in development
-  : lazyCachedFunction(_getSSRRenderer)
+  async function renderToString (input, context) {
+    const html = await _renderToString(input, context)
+    // In development with vite-node, the manifest is on-demand and will be available after rendering
+    if (process.env.NUXT_VITE_NODE_OPTIONS) {
+      renderer.rendererContext.updateManifest(await getClientManifest())
+    }
+    return `<div id="__nuxt">${html}</div>`
+  }
+
+  return renderer
+})
 
 // -- SPA Renderer --
 const getSPARenderer = lazyCachedFunction(async () => {
