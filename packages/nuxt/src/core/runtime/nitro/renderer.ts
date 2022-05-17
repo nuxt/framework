@@ -43,13 +43,15 @@ interface RenderResult {
 }
 
 // @ts-ignore
-const getClientManifest = () => import('#build/dist/server/client.manifest.mjs').then(r => r.default || r)
+const getClientManifest = () => import('#build/dist/server/client.manifest.mjs')
+  .then(r => r.default || r)
+  .then(r => typeof r === 'function' ? r() : r)
 
 // @ts-ignore
 const getServerEntry = () => process.env.NUXT_NO_SSR ? Promise.resolve(null) : import('#build/dist/server/server.mjs').then(r => r.default || r)
 
 // -- SSR Renderer --
-const getSSRRenderer = lazyCachedFunction(async () => {
+const _getSSRRenderer = async () => {
   // Load client manifest
   const clientManifest = await getClientManifest()
   if (!clientManifest) { throw new Error('client.manifest is not available') }
@@ -68,7 +70,11 @@ const getSSRRenderer = lazyCachedFunction(async () => {
     renderToString,
     publicPath: buildAssetsURL()
   })
-})
+}
+
+const getSSRRenderer = process.env.NUXT_VITE_NODE_OPTIONS
+  ? _getSSRRenderer // Do not cache in development
+  : lazyCachedFunction(_getSSRRenderer)
 
 // -- SPA Renderer --
 const getSPARenderer = lazyCachedFunction(async () => {
