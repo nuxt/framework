@@ -2,6 +2,7 @@ import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolve
 import { isAbsolute, join, relative, resolve, normalize } from 'pathe'
 import { createUnimport, Import, scanDirExports, toImports, Unimport } from 'unimport'
 import { AutoImportsOptions, ImportPresetWithDeprecation } from '@nuxt/schema'
+import escapeRE from 'escape-string-regexp'
 import { TransformPlugin } from './transform'
 import { defaultPresets } from './presets'
 
@@ -10,15 +11,18 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     name: 'auto-imports',
     configKey: 'autoImports'
   },
-  defaults: {
+  defaults: nuxt => ({
     presets: defaultPresets,
     global: false,
     imports: [],
     dirs: [],
     transform: {
+      include: nuxt.options._layers.map(
+        i => i.cwd && new RegExp(`(^|\\/)${escapeRE(i.cwd.split('node_modules/').pop())}(\\/|$)`)
+      ).filter(Boolean),
       exclude: undefined
     }
-  },
+  }),
   async setup (options, nuxt) {
     // Allow modules extending sources
     await nuxt.callHook('autoImports:sources', options.presets as ImportPresetWithDeprecation[])
