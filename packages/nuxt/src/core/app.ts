@@ -89,7 +89,7 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
     const middlewareFiles = await resolveFiles(config.srcDir, `${config.dir?.middleware || 'middleware'}/*{${nuxt.options.extensions.join(',')}}`)
     for (const file of middlewareFiles) {
       const name = getNameFromPath(file)
-      app.middleware[name] = { name, path: file, global: hasSuffix(file, '.global') }
+      app.middleware[name] = app.middleware[name] || { name, path: file, global: hasSuffix(file, '.global') }
     }
   }
 
