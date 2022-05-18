@@ -1,4 +1,4 @@
-import { resolve } from 'pathe'
+import { isAbsolute, relative, resolve } from 'pathe'
 import { createHooks } from 'hookable'
 import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
 import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule } from '@nuxt/kit'
@@ -65,6 +65,11 @@ async function initNuxt (nuxt: Nuxt) {
   // Add unctx transform
   addVitePlugin(UnctxTransformPlugin(nuxt).vite({ sourcemap: nuxt.options.sourcemap }))
   addWebpackPlugin(UnctxTransformPlugin(nuxt).webpack({ sourcemap: nuxt.options.sourcemap }))
+
+  // Transpile layers within node_modules
+  nuxt.options.build.transpile.push(...nuxt.options._layers.map(
+    i => i.cwd && i.cwd.includes('node_modules') && (isAbsolute(i.cwd) ? relative(nuxt.options.rootDir, i.cwd) : i.cwd)
+  ).filter(Boolean))
 
   // Init user modules
   await nuxt.callHook('modules:before', { nuxt } as ModuleContainer)
