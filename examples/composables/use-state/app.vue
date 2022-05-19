@@ -1,10 +1,12 @@
 <script setup>
 const counter = useState('counter', () => Math.round(Math.random() * 1000))
+const counterAlt = useState('counter');
 </script>
 
 <template>
   <NuxtExampleLayout example="composables/use-state">
     <div>Counter: {{ counter }}</div>
+    <div>Parallel Counter: {{ counterAlt }}</div>
     <div>
       <NButton class="font-mono" @click="counter++">
         +
