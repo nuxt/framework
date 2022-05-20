@@ -106,7 +106,6 @@ export function useAsyncData<
     }
     // Avoid fetching same key that is already fetched
     if (opts._initial && useInitialCache()) {
-
       // Prevent memory leak, no promise to resolve so key is never deleted
       delete nuxt._pendingAsyncData[key]
 
@@ -180,7 +179,7 @@ export function useAsyncData<
 
   // Allow directly awaiting on asyncData
   const asyncDataPromise = Promise.resolve(nuxt._asyncDataPromises[key]).then(() => asyncData) as AsyncData<DataT, DataE>
-  
+
   Object.assign(asyncDataPromise, asyncData)
 
   return asyncDataPromise as AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE>
