@@ -113,10 +113,14 @@ export function useAsyncData<
         }
         asyncData.data.value = result
         asyncData.error.value = null
+
+        return asyncData;
       })
       .catch((error: any) => {
         asyncData.error.value = error
         asyncData.data.value = unref(options.default())
+
+        return asyncData;
       })
       .finally(() => {
         asyncData.pending.value = false
@@ -166,7 +170,7 @@ export function useAsyncData<
   }
 
   // Allow directly awaiting on asyncData
-  const asyncDataPromise = Promise.resolve(nuxt._asyncDataPromises[key]).then(() => asyncData) as AsyncData<DataT, DataE>
+  const asyncDataPromise = Promise.resolve(nuxt._asyncDataPromises[key]).then(x => x) as AsyncData<DataT, DataE>
   Object.assign(asyncDataPromise, asyncData)
 
   return asyncDataPromise as AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE>
