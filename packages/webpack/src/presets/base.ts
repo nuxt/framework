@@ -14,7 +14,8 @@ export function base (ctx: WebpackConfigContext) {
     baseAlias,
     baseConfig,
     basePlugins,
-    baseResolve
+    baseResolve,
+    baseTranspile
   ])
 }
 
