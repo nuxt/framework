@@ -58,7 +58,7 @@ export interface NuxtApp {
   extensions: string[]
   plugins: NuxtPlugin[]
   layouts: Record<string, NuxtLayout>
-  middleware: Record<string, NuxtMiddleware>
+  middleware: NuxtMiddleware[]
   templates: NuxtTemplate[]
 }
 

@@ -108,8 +108,7 @@ export default defineNuxtModule({
       filename: 'types/middleware.d.ts',
       getContents: ({ app }: { app: NuxtApp }) => {
         const composablesFile = resolve(runtimeDir, 'composables')
-        const middleware = Object.values(app.middleware)
-        const namedMiddleware = middleware.filter(mw => !mw.global)
+        const namedMiddleware = app.middleware.filter(mw => !mw.global)
         return [
           'import type { NavigationGuard } from \'vue-router\'',
           `export type MiddlewareKey = ${namedMiddleware.map(mw => genString(mw.name)).join(' | ') || 'string'}`,

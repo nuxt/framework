@@ -84,14 +84,15 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   }
 
   // Resolve middleware/ from all config layers
-  app.middleware = {}
+  app.middleware = []
   for (const config of nuxt.options._layers.map(layer => layer.config)) {
     const middlewareFiles = await resolveFiles(config.srcDir, `${config.dir?.middleware || 'middleware'}/*{${nuxt.options.extensions.join(',')}}`)
-    for (const file of middlewareFiles) {
+    app.middleware.push(...middlewareFiles.map((file) => {
       const name = getNameFromPath(file)
-      app.middleware[name] = app.middleware[name] || { name, path: file, global: hasSuffix(file, '.global') }
-    }
+      return { name, path: file, global: hasSuffix(file, '.global') }
+    }))
   }
+  app.middleware = uniqueBy(app.middleware, 'name')
 
   // Resolve plugins
   app.plugins = [
