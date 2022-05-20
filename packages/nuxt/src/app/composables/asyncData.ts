@@ -85,11 +85,19 @@ export function useAsyncData<
 
   const useInitialCache = () => options.initialCache && nuxt.payload.data[key] !== undefined
 
-  const asyncData = {
+  let asyncData = {
     data: wrapInRef(nuxt.payload.data[key] ?? options.default()),
     pending: ref(!useInitialCache()),
     error: ref(nuxt.payload._errors[key] ?? null)
   } as AsyncData<DataT, DataE>
+
+  // If this query is pending, grab async data from store
+  // Otherwise, set our async data
+  if (nuxt._asyncDataPromises[key]) {
+    asyncData = nuxt._pendingAsyncData[key]
+  } else {
+    nuxt._pendingAsyncData[key] = asyncData
+  }
 
   asyncData.refresh = (opts = {}) => {
     // Avoid fetching same key more than once at a time
@@ -98,6 +106,10 @@ export function useAsyncData<
     }
     // Avoid fetching same key that is already fetched
     if (opts._initial && useInitialCache()) {
+
+      // Prevent memory leak, no promise to resolve so key is never deleted
+      delete nuxt._pendingAsyncData[key]
+
       return nuxt.payload.data[key]
     }
     asyncData.pending.value = true
@@ -113,14 +125,10 @@ export function useAsyncData<
         }
         asyncData.data.value = result
         asyncData.error.value = null
-
-        return asyncData
       })
       .catch((error: any) => {
         asyncData.error.value = error
         asyncData.data.value = unref(options.default())
-
-        return asyncData
       })
       .finally(() => {
         asyncData.pending.value = false
@@ -129,6 +137,7 @@ export function useAsyncData<
           nuxt.payload._errors[key] = true
         }
         delete nuxt._asyncDataPromises[key]
+        delete nuxt._pendingAsyncData[key]
       })
     return nuxt._asyncDataPromises[key]
   }
@@ -170,7 +179,8 @@ export function useAsyncData<
   }
 
   // Allow directly awaiting on asyncData
-  const asyncDataPromise = Promise.resolve(nuxt._asyncDataPromises[key]) as AsyncData<DataT, DataE>
+  const asyncDataPromise = Promise.resolve(nuxt._asyncDataPromises[key]).then(() => asyncData) as AsyncData<DataT, DataE>
+  
   Object.assign(asyncDataPromise, asyncData)
 
   return asyncDataPromise as AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE>

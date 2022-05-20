@@ -5,6 +5,7 @@ import { createHooks, Hookable } from 'hookable'
 import type { RuntimeConfig } from '@nuxt/schema'
 import { getContext } from 'unctx'
 import { legacyPlugin, LegacyContext } from './compat/legacy-app'
+import { AsyncData } from './composables/asyncData'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
@@ -46,6 +47,7 @@ interface _NuxtApp {
   [key: string]: any
 
   _asyncDataPromises?: Record<string, Promise<any>>
+  _pendingAsyncData?: Record<string, AsyncData<any, any>>
   _legacyContext?: LegacyContext
 
   ssrContext?: Record<string, any> & {
@@ -91,6 +93,7 @@ export function createNuxtApp (options: CreateOptions) {
     }),
     isHydrating: process.client,
     _asyncDataPromises: {},
+    _pendingAsyncData: {},
     ...options
   } as any as NuxtApp
 
