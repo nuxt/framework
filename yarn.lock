@@ -1692,10 +1692,10 @@ __metadata:
     execa: ^6.1.0
     get-port-please: ^2.5.0
     jiti: ^1.13.0
-    ohmyfetch: ^0.4.17
+    ohmyfetch: ^0.4.18
     playwright: ^1.22.1
     unbuild: latest
-    vitest: ^0.12.6
+    vitest: ^0.12.7
   peerDependencies:
     vue: 3.2.34
   languageName: unknown
@@ -1765,7 +1765,7 @@ __metadata:
     unbuild: latest
     unplugin: ^0.6.3
     vite: ^2.9.9
-    vite-node: ^0.12.6
+    vite-node: ^0.12.7
     vite-plugin-checker: ^0.4.6
     vue: 3.2.34
   peerDependencies:
@@ -10132,7 +10132,7 @@ __metadata:
     rimraf: ^3.0.2
     typescript: ^4.6.4
     unbuild: ^0.7.4
-    vitest: ^0.12.6
+    vitest: ^0.12.7
     vue-tsc: ^0.34.15
   languageName: unknown
   linkType: soft
@@ -10182,7 +10182,7 @@ __metadata:
     nitropack: ^0.4.4
     nuxi: ^3.0.0-rc.3
     ohash: ^0.1.0
-    ohmyfetch: ^0.4.17
+    ohmyfetch: ^0.4.18
     pathe: ^0.3.0
     perfect-debounce: ^0.1.3
     scule: ^0.2.1
@@ -10272,7 +10272,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ohmyfetch@npm:^0.4.15, ohmyfetch@npm:^0.4.16, ohmyfetch@npm:^0.4.17":
+"ohmyfetch@npm:^0.4.15, ohmyfetch@npm:^0.4.16":
   version: 0.4.17
   resolution: "ohmyfetch@npm:0.4.17"
   dependencies:
@@ -10281,6 +10281,18 @@ __metadata:
     ufo: ^0.8.3
     undici: ^5.0.0
   checksum: 021d74ec6cbce6e4e7efbeed12d87b4061442b3d4bc109f28cdd544db98baf9204314226522cf4a3b510926973ad34dbb956abf9473161c8d5dab67f42b1c506
+  languageName: node
+  linkType: hard
+
+"ohmyfetch@npm:^0.4.18":
+  version: 0.4.18
+  resolution: "ohmyfetch@npm:0.4.18"
+  dependencies:
+    destr: ^1.1.1
+    node-fetch-native: ^0.1.3
+    ufo: ^0.8.4
+    undici: ^5.2.0
+  checksum: 114258bf7b1548e1d79e9e420d502e9239b3d751b51efad30a6ac4b6f68bd377409378fdf180a31378bb384a31779c29f92e0a6a570bd5bbd648a5adb5cb28e6
   languageName: node
   linkType: hard
 
@@ -13351,7 +13363,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici@npm:^5.0.0":
+"undici@npm:^5.0.0, undici@npm:^5.2.0":
   version: 5.2.0
   resolution: "undici@npm:5.2.0"
   checksum: b7d6fe077c3ab13b7f7a0e5f4b70354b8489c5d37ca06c471754f9543c34501e3b29394b130afc8f066f11e465d6474ec665b2eb5a61052dc84baa97eeb9c7c3
@@ -13606,9 +13618,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:^0.12.6":
-  version: 0.12.6
-  resolution: "vite-node@npm:0.12.6"
+"vite-node@npm:^0.12.7":
+  version: 0.12.7
+  resolution: "vite-node@npm:0.12.7"
   dependencies:
     debug: ^4.3.4
     kolorist: ^1.5.1
@@ -13617,7 +13629,7 @@ __metadata:
     vite: ^2.9.8
   bin:
     vite-node: vite-node.mjs
-  checksum: 7414f8a7553591651bb8e47b5eebb0fd512c8d6a1b1806383bfbece787187ebdd5dd4834363830e50fbc1ff13bee3d7a912581209602942d27aa68311bf3964a
+  checksum: fbb9dc9f605c1c1a5c4a1b00a5b9e81e5242bc03011ab801eb0247c999150b0dc3915dea4aca4f4494453f7c7cc5aaed2d97eda4e6e6a99e67b18b2d59a5ab48
   languageName: node
   linkType: hard
 
@@ -13677,13 +13689,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.12.6":
-  version: 0.12.6
-  resolution: "vitest@npm:0.12.6"
+"vitest@npm:^0.12.7":
+  version: 0.12.7
+  resolution: "vitest@npm:0.12.7"
   dependencies:
     "@types/chai": ^4.3.1
     "@types/chai-subset": ^1.3.3
     chai: ^4.3.6
+    debug: ^4.3.4
     local-pkg: ^0.4.1
     tinypool: ^0.1.3
     tinyspy: ^0.3.2
@@ -13704,7 +13717,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 8a8d3bc61ef9324663ad47378fc70631a8514b1ccfdbf1a5efc50a90665875db15bb4b89a9877dbdc2d99cc5718274901e6982252fa20ace499b05451dc02508
+  checksum: 39f107da8d19bca8243e40536218176f331e979988949cc7dbbdeb585b7b5521c37c17f5297b72f05a579fa7733d4aaf146e09445c420a919e8706d53fe1515f
   languageName: node
   linkType: hard
 
