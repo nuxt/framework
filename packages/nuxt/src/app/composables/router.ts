@@ -60,7 +60,7 @@ export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}
   if (!to) {
     to = '/'
   }
-  if (isProcessingMiddleware()) {
+  if (process.client && isProcessingMiddleware()) {
     return to
   }
   const router = useRouter()
