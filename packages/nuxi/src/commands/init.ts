@@ -46,7 +46,7 @@ export default defineNuxtCommand({
       await tiged.clone(dstDir)
     } catch (e) {
       if (e.toString().includes('could not find commit hash')) {
-        consola.warn('Make sure you have installed `git` correctly')
+        consola.error(`Failed to init with template \`${src}\`, please check it's valid.`)
         process.exit(1)
       }
       throw e
