@@ -25,6 +25,6 @@ export interface MetaObject extends Record<string, any> {
   titleTemplate?: string | ((title: string) => string)
   title: string,
   
-  bodyAttr: Record<string, any>
-  htmlAttr: Record<string, any>
+  bodyAttrs: Record<string, any>
+  htmlAttrs: Record<string, any>
 }
