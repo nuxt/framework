@@ -200,6 +200,29 @@ export function refreshNuxtData (keys?: string | string[]): Promise<void> {
   return useNuxtApp().callHook('app:data:refresh', _keys)
 }
 
+export function clearNuxtCache (keys?: string | string[]): void {
+  if (process.server) {
+    return
+  }
+
+  const _keys = keys ? Array.isArray(keys) ? keys : [keys] : undefined
+  if (_keys === undefined) {
+    return
+  }
+
+  const nuxt = useNuxtApp()
+
+  _keys.forEach((key) => {
+    if (nuxt.payload.data[key] !== undefined) {
+      delete nuxt.payload.data[key]
+    }
+
+    if (nuxt.payload._errors[key] !== undefined) {
+      delete nuxt.payload._errors[key]
+    }
+  })
+}
+
 function pick (obj: Record<string, any>, keys: string[]) {
   const newObj = {}
   for (const key of keys) {
