@@ -200,7 +200,7 @@ export function refreshNuxtData (keys?: string | string[]): Promise<void> {
   return useNuxtApp().callHook('app:data:refresh', _keys)
 }
 
-export function clearNuxtCache (keys?: string | string[]): void {
+export function clearNuxtCache ({ keys }: {keys: string | string[]}): void {
   if (process.server) {
     return
   }
