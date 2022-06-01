@@ -1,7 +1,7 @@
 # `clearNuxtCache`
 
 ```ts
-clearNuxtCache(keys?: string | string[])
+clearNuxtCache ({ keys }: {keys: string | string[]})
 ```
 
 Available options:
