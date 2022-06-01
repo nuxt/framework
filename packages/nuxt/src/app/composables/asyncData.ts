@@ -212,15 +212,15 @@ export function clearNuxtCache (keys?: string | string[]): void {
 
   const nuxt = useNuxtApp()
 
-  _keys.forEach((key) => {
+  for (const key of _keys) {
     if (nuxt.payload.data[key] !== undefined) {
-      delete nuxt.payload.data[key]
+      nuxt.payload.data[key] = undefined
     }
 
     if (nuxt.payload._errors[key] !== undefined) {
-      delete nuxt.payload._errors[key]
+      nuxt.payload._errors[key] = undefined
     }
-  })
+  }
 }
 
 function pick (obj: Record<string, any>, keys: string[]) {
