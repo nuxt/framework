@@ -13,11 +13,11 @@ export async function build (nuxt: Nuxt) {
   if (nuxt.options.dev) {
     watch(nuxt)
     nuxt.hook('builder:watch', async (event, path) => {
-      if (event !== 'change' && /(^|\/)(app|error|plugins)\b/i.test(path)) {
-        if (path.match(/(^|\/)app\b/i)) {
+      if (event !== 'change' && /^(app\.|error\.|plugins\/|layouts\/)/i.test(path)) {
+        if (path.startsWith('app')) {
           app.mainComponent = null
         }
-        if (path.match(/(^|\/)error\b/i)) {
+        if (path.startsWith('error')) {
           app.errorComponent = null
         }
         await generateApp()
@@ -38,7 +38,7 @@ export async function build (nuxt: Nuxt) {
 }
 
 function watch (nuxt: Nuxt) {
-  const watcher = chokidar.watch([nuxt.options.srcDir, ...nuxt.options._layers.map(i => i.cwd)], {
+  const watcher = chokidar.watch(nuxt.options._layers.map(i => i.config.srcDir), {
     ...nuxt.options.watchers.chokidar,
     cwd: nuxt.options.srcDir,
     ignoreInitial: true,
