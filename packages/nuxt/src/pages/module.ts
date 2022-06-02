@@ -34,8 +34,7 @@ export default defineNuxtModule({
     nuxt.hook('builder:watch', async (event, path) => {
       const dirs = [
         nuxt.options.dir.pages,
-        nuxt.options.dir.layouts,
-        nuxt.options.dir.middleware
+        nuxt.options.dir.layouts
       ].filter(Boolean)
 
       const pathPattern = new RegExp(`^(${dirs.map(escapeRE).join('|')})/`)
