@@ -4,6 +4,13 @@ import type { ViteOptions } from './vite'
 import { distDir } from './dirs'
 
 export function resolveCSSOptions (nuxt: Nuxt): ViteOptions['css'] {
+  // Early return if user is taking control with a custom postcss config file
+  if (typeof nuxt.options.postcss.config === 'string') {
+    return {
+      postcss: nuxt.options.postcss.config
+    }
+  }
+
   const css: ViteOptions['css'] & { postcss: Exclude<ViteOptions['css']['postcss'], string> } = {
     postcss: {
       plugins: []
