@@ -5,7 +5,7 @@ export default {
   /** @version 3 */
   postcss: {
     /** Path to postcss config file. */
-    /** @type string | false */
+    /** @type {string | false} */
     config: false,
     /**
      * Options for configuring PostCSS plugins.
