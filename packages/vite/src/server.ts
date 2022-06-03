@@ -33,11 +33,18 @@ export async function buildServer (ctx: ViteBuildContext) {
         // Alias vue to ensure we're using the same context in development
         'vue/server-renderer': _resolve('vue/server-renderer'),
         'vue/compiler-sfc': _resolve('vue/compiler-sfc'),
+        ...ctx.nuxt.options.experimental.externalVue
+          ? {}
+          : {
+              '@vue/reactivity': _resolve(`@vue/reactivity/dist/reactivity.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
+              '@vue/shared': _resolve(`@vue/shared/dist/shared.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
+              'vue-router': _resolve(`vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`)
+            },
         vue: _resolve(`vue/dist/vue.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`)
       }
     },
     ssr: {
-      external: ['#internal/nitro', 'vue', 'vue-router'],
+      external: ctx.nuxt.options.experimental.externalVue ? ['#internal/nitro', 'vue', 'vue-router'] : [],
       noExternal: [
         ...ctx.nuxt.options.build.transpile,
         // TODO: Use externality for production (rollup) build
@@ -53,7 +60,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
-        external: ['#internal/nitro', 'vue', 'vue-router'],
+        external: ['#internal/nitro', ...ctx.nuxt.options.experimental.externalVue ? ['vue', 'vue-router'] : []],
         output: {
           entryFileNames: 'server.mjs',
           preferConst: true,
