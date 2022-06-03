@@ -1722,7 +1722,7 @@ __metadata:
     semver: ^7.3.7
     unbuild: latest
     unctx: ^1.1.4
-    unimport: ^0.2.5
+    unimport: ^0.2.6
     untyped: ^0.4.4
   languageName: unknown
   linkType: soft
@@ -1749,7 +1749,7 @@ __metadata:
     std-env: ^3.1.1
     ufo: ^0.8.4
     unbuild: latest
-    unimport: ^0.2.5
+    unimport: ^0.2.6
   languageName: unknown
   linkType: soft
 
@@ -1796,7 +1796,7 @@ __metadata:
     ohmyfetch: ^0.4.18
     playwright: ^1.22.2
     unbuild: latest
-    vitest: ^0.13.0
+    vitest: ^0.13.1
   peerDependencies:
     vue: ^3.2.36
   languageName: unknown
@@ -1844,7 +1844,7 @@ __metadata:
     "@vitejs/plugin-vue-jsx": ^1.3.10
     autoprefixer: ^10.4.7
     chokidar: ^3.5.3
-    cssnano: ^5.1.9
+    cssnano: ^5.1.10
     defu: ^6.0.0
     esbuild: ^0.14.42
     escape-string-regexp: ^5.0.0
@@ -1860,13 +1860,13 @@ __metadata:
     postcss: ^8.4.14
     postcss-import: ^14.1.0
     postcss-url: ^10.1.3
-    rollup: ^2.75.1
+    rollup: ^2.75.5
     rollup-plugin-visualizer: ^5.6.0
     ufo: ^0.8.4
     unbuild: latest
     unplugin: ^0.6.3
     vite: ^2.9.9
-    vite-node: ^0.13.0
+    vite-node: ^0.13.1
     vite-plugin-checker: ^0.4.6
     vue: 3.2.36
   peerDependencies:
@@ -1890,7 +1890,7 @@ __metadata:
     autoprefixer: ^10.4.7
     css-loader: ^6.7.1
     css-minimizer-webpack-plugin: ^4.0.0
-    cssnano: ^5.1.9
+    cssnano: ^5.1.10
     esbuild-loader: ^2.19.0
     escape-string-regexp: ^5.0.0
     file-loader: ^6.2.0
@@ -1917,7 +1917,7 @@ __metadata:
     vue: 3.2.36
     vue-loader: ^17.0.0
     vue-style-loader: ^4.1.3
-    webpack: ^5.72.1
+    webpack: ^5.73.0
     webpack-bundle-analyzer: ^4.5.0
     webpack-dev-middleware: ^5.3.3
     webpack-hot-middleware: ^2.25.1
@@ -2437,10 +2437,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^16.11.36":
-  version: 16.11.36
-  resolution: "@types/node@npm:16.11.36"
-  checksum: 878e8e2032869785dd4f73dd862042c7eb588fb9a27199f1b493a7029438ccb58f96e203c35c2e66e08307ca3f9767133cae888958c15e031982f7e9719e5e47
+"@types/node@npm:^16.11.38":
+  version: 16.11.38
+  resolution: "@types/node@npm:16.11.38"
+  checksum: 471df020162098602fd77014c458e84f01f7faff3cddcc2b7739312a8b4f103bc0fab3dfc03641233d9f627c47fd82dfabc9b86413ef680e193c36b9aed322e6
   languageName: node
   linkType: hard
 
@@ -2854,10 +2854,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/reset@npm:^0.35.2":
-  version: 0.35.2
-  resolution: "@unocss/reset@npm:0.35.2"
-  checksum: 658885fef560cf404147b8c0121ec9ca7946f67bac080cf9e2332805e35f83bb0e3ba3d2e9438f01a7ed0f6585ea5c3b5a22f367dc5fb882109011e21f5a5ae9
+"@unocss/reset@npm:^0.37.2":
+  version: 0.37.2
+  resolution: "@unocss/reset@npm:0.37.2"
+  checksum: 9f3411cf94579f6cb16fae93c425700fab2223e92b3e6012726ddaaf042bb60970a5c9d7deda0ef12885462ae2ae2fc0bdd8cc3c6bd74780222fbdf6fb62df51
   languageName: node
   linkType: hard
 
@@ -2964,45 +2964,45 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@volar/code-gen@npm:0.35.0":
-  version: 0.35.0
-  resolution: "@volar/code-gen@npm:0.35.0"
+"@volar/code-gen@npm:0.36.0":
+  version: 0.36.0
+  resolution: "@volar/code-gen@npm:0.36.0"
   dependencies:
-    "@volar/source-map": 0.35.0
-  checksum: 79365c317761e5083b2c98fea383d8f38828e220bf3c6f2f687cd4018c525668aaef0681a2ae42eb46c781cea6f7455684f025a51ccf40a2fabdd1ccbf361441
+    "@volar/source-map": 0.36.0
+  checksum: 8674b7ef3aab9158a4ee0d4aaa1bba0f3686a345b0474f024c5ab6e8918064f4d2694478e9ef49e24c97c01c73e63aa982829b554742944477a26077c4dd9882
   languageName: node
   linkType: hard
 
-"@volar/source-map@npm:0.35.0":
-  version: 0.35.0
-  resolution: "@volar/source-map@npm:0.35.0"
-  checksum: 98bcac1eb8385d8b105dffc2b1efcb6382a64a135c2df2b279cb64fea8e1c0cf9fe959b9064e26dc49de54291aeb6c44f20fcab7c01a2f03bdc2c3bcc98ce659
+"@volar/source-map@npm:0.36.0":
+  version: 0.36.0
+  resolution: "@volar/source-map@npm:0.36.0"
+  checksum: 5eb9b072ffbbe65aafb6f4c80d982b87a0152cd072e156aa820bc9abf08aad0bd0939d75a7186347e92a7ceec416e52d71d294d8b8e5140de450efb19d799393
   languageName: node
   linkType: hard
 
-"@volar/vue-code-gen@npm:0.35.0":
-  version: 0.35.0
-  resolution: "@volar/vue-code-gen@npm:0.35.0"
+"@volar/vue-code-gen@npm:0.36.0":
+  version: 0.36.0
+  resolution: "@volar/vue-code-gen@npm:0.36.0"
   dependencies:
-    "@volar/code-gen": 0.35.0
-    "@volar/source-map": 0.35.0
+    "@volar/code-gen": 0.36.0
+    "@volar/source-map": 0.36.0
     "@vue/compiler-core": ^3.2.36
     "@vue/compiler-dom": ^3.2.36
     "@vue/shared": ^3.2.36
-  checksum: 2cc77f628f5c0119a081b51bb48b3925fa69bd8b66e1c6bc0dfa225d2b4bf463698c210555121495e9af03f5d1672b96e7e12aed0b38474483f4d09d79a50698
+  checksum: 64cbfefb9fe5e6dd1df2ea28394d6730454327f3df189907caddda6f953476c7357e7b4a2974a1045a62cf235039979e839b857a908bce180d3a9ee429a494ae
   languageName: node
   linkType: hard
 
-"@volar/vue-typescript@npm:0.35.0":
-  version: 0.35.0
-  resolution: "@volar/vue-typescript@npm:0.35.0"
+"@volar/vue-typescript@npm:0.36.0":
+  version: 0.36.0
+  resolution: "@volar/vue-typescript@npm:0.36.0"
   dependencies:
-    "@volar/code-gen": 0.35.0
-    "@volar/source-map": 0.35.0
-    "@volar/vue-code-gen": 0.35.0
+    "@volar/code-gen": 0.36.0
+    "@volar/source-map": 0.36.0
+    "@volar/vue-code-gen": 0.36.0
     "@vue/compiler-sfc": ^3.2.36
     "@vue/reactivity": ^3.2.36
-  checksum: 0088717ddbaf46ffe9f159786b826810570e178058b39c048f2b929775e6e2af14acd497758b33b5549b3a3523793d70233a8a1008ad977353b139c9a5c96aef
+  checksum: 54208287589c0795cdf31cacd32dd9e1b1e8ff72d358991aaf0fc954de70b45f0238447f3d84420670bf9d92595928b5557d1c31f775e477c311d26f6cdb2194
   languageName: node
   linkType: hard
 
@@ -4888,6 +4888,45 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cssnano-preset-default@npm:^5.2.10":
+  version: 5.2.10
+  resolution: "cssnano-preset-default@npm:5.2.10"
+  dependencies:
+    css-declaration-sorter: ^6.2.2
+    cssnano-utils: ^3.1.0
+    postcss-calc: ^8.2.3
+    postcss-colormin: ^5.3.0
+    postcss-convert-values: ^5.1.2
+    postcss-discard-comments: ^5.1.2
+    postcss-discard-duplicates: ^5.1.0
+    postcss-discard-empty: ^5.1.1
+    postcss-discard-overridden: ^5.1.0
+    postcss-merge-longhand: ^5.1.5
+    postcss-merge-rules: ^5.1.2
+    postcss-minify-font-values: ^5.1.0
+    postcss-minify-gradients: ^5.1.1
+    postcss-minify-params: ^5.1.3
+    postcss-minify-selectors: ^5.2.1
+    postcss-normalize-charset: ^5.1.0
+    postcss-normalize-display-values: ^5.1.0
+    postcss-normalize-positions: ^5.1.0
+    postcss-normalize-repeat-style: ^5.1.0
+    postcss-normalize-string: ^5.1.0
+    postcss-normalize-timing-functions: ^5.1.0
+    postcss-normalize-unicode: ^5.1.0
+    postcss-normalize-url: ^5.1.0
+    postcss-normalize-whitespace: ^5.1.1
+    postcss-ordered-values: ^5.1.1
+    postcss-reduce-initial: ^5.1.0
+    postcss-reduce-transforms: ^5.1.0
+    postcss-svgo: ^5.1.0
+    postcss-unique-selectors: ^5.1.1
+  peerDependencies:
+    postcss: ^8.2.15
+  checksum: 7ea475c5065c9d66d09bfef42dca7358c5d21fda7863ded1a56dfd33bcfe98ac7d567bc964033e69ad2455a1fe6358f7c444605198d21538aacab711ef17e627
+  languageName: node
+  linkType: hard
+
 "cssnano-preset-default@npm:^5.2.8":
   version: 5.2.8
   resolution: "cssnano-preset-default@npm:5.2.8"
@@ -4927,51 +4966,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cssnano-preset-default@npm:^5.2.9":
-  version: 5.2.9
-  resolution: "cssnano-preset-default@npm:5.2.9"
-  dependencies:
-    css-declaration-sorter: ^6.2.2
-    cssnano-utils: ^3.1.0
-    postcss-calc: ^8.2.3
-    postcss-colormin: ^5.3.0
-    postcss-convert-values: ^5.1.1
-    postcss-discard-comments: ^5.1.1
-    postcss-discard-duplicates: ^5.1.0
-    postcss-discard-empty: ^5.1.1
-    postcss-discard-overridden: ^5.1.0
-    postcss-merge-longhand: ^5.1.5
-    postcss-merge-rules: ^5.1.1
-    postcss-minify-font-values: ^5.1.0
-    postcss-minify-gradients: ^5.1.1
-    postcss-minify-params: ^5.1.3
-    postcss-minify-selectors: ^5.2.0
-    postcss-normalize-charset: ^5.1.0
-    postcss-normalize-display-values: ^5.1.0
-    postcss-normalize-positions: ^5.1.0
-    postcss-normalize-repeat-style: ^5.1.0
-    postcss-normalize-string: ^5.1.0
-    postcss-normalize-timing-functions: ^5.1.0
-    postcss-normalize-unicode: ^5.1.0
-    postcss-normalize-url: ^5.1.0
-    postcss-normalize-whitespace: ^5.1.1
-    postcss-ordered-values: ^5.1.1
-    postcss-reduce-initial: ^5.1.0
-    postcss-reduce-transforms: ^5.1.0
-    postcss-svgo: ^5.1.0
-    postcss-unique-selectors: ^5.1.1
-  peerDependencies:
-    postcss: ^8.2.15
-  checksum: a93ecc41274456f2e482700df795d1e431142987d94ff54b3d0b49fe02f092945aa5eaf90d9f65f135ebea2b8c22efe71b944e489c8ef1a397a8257571bd6477
-  languageName: node
-  linkType: hard
-
 "cssnano-utils@npm:^3.1.0":
   version: 3.1.0
   resolution: "cssnano-utils@npm:3.1.0"
   peerDependencies:
     postcss: ^8.2.15
   checksum: 975c84ce9174cf23bb1da1e9faed8421954607e9ea76440cd3bb0c1bea7e17e490d800fca5ae2812d1d9e9d5524eef23ede0a3f52497d7ccc628e5d7321536f2
+  languageName: node
+  linkType: hard
+
+"cssnano@npm:^5.1.10":
+  version: 5.1.10
+  resolution: "cssnano@npm:5.1.10"
+  dependencies:
+    cssnano-preset-default: ^5.2.10
+    lilconfig: ^2.0.3
+    yaml: ^1.10.2
+  peerDependencies:
+    postcss: ^8.2.15
+  checksum: a09c915c92183335026181691d2dbc41fef88a095ebd5a53cfd3da761214d450b131ece8ca2357dfa526818f723ee03c4d55f4f7862bd742c11552343996c338
   languageName: node
   linkType: hard
 
@@ -4985,19 +4998,6 @@ __metadata:
   peerDependencies:
     postcss: ^8.2.15
   checksum: 8ff769094400447a5ecf708e1a10050daf450bcf08d9c778806bbc7b942d68e0fac7a8c3b41dbb820620dab7f0395838e74b1c1fe1dbca57fd8cf00f0d1f8555
-  languageName: node
-  linkType: hard
-
-"cssnano@npm:^5.1.9":
-  version: 5.1.9
-  resolution: "cssnano@npm:5.1.9"
-  dependencies:
-    cssnano-preset-default: ^5.2.9
-    lilconfig: ^2.0.3
-    yaml: ^1.10.2
-  peerDependencies:
-    postcss: ^8.2.15
-  checksum: 25932e83187bfffbe6116d4d5fef20f6bfa9fbd1cdc1145173bc757579740a4ae6b9d40ca67bdf7b644ff2c65784a1a168e1a3e08208120ab6c822056b356b95
   languageName: node
   linkType: hard
 
@@ -10305,9 +10305,9 @@ __metadata:
   resolution: "nuxt-framework@workspace:."
   dependencies:
     "@nuxtjs/eslint-config-typescript": ^10.0.0
-    "@types/node": ^16.11.36
+    "@types/node": ^16.11.38
     "@types/rimraf": ^3
-    "@unocss/reset": ^0.35.2
+    "@unocss/reset": ^0.37.2
     case-police: ^0.5.3
     changelogen: ^0.0.6
     eslint: ^8.16.0
@@ -10322,8 +10322,8 @@ __metadata:
     rimraf: ^3.0.2
     typescript: ^4.7.2
     unbuild: ^0.7.4
-    vitest: ^0.13.0
-    vue-tsc: ^0.35.0
+    vitest: ^0.13.1
+    vue-tsc: ^0.36.0
   languageName: unknown
   linkType: soft
 
@@ -10380,7 +10380,7 @@ __metadata:
     unbuild: latest
     unctx: ^1.1.4
     unenv: ^0.5.2
-    unimport: ^0.2.5
+    unimport: ^0.2.6
     unplugin: ^0.6.3
     untyped: ^0.4.4
     vue: ^3.2.36
@@ -11027,12 +11027,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss-convert-values@npm:^5.1.2":
+  version: 5.1.2
+  resolution: "postcss-convert-values@npm:5.1.2"
+  dependencies:
+    browserslist: ^4.20.3
+    postcss-value-parser: ^4.2.0
+  peerDependencies:
+    postcss: ^8.2.15
+  checksum: b1615daf12d3425bf4edee9451de402702f41019ccfc85f7883d87438becf533b3061a5a3567865029c534147a6c90e89b4c42ae6741c768c879a68d35aea812
+  languageName: node
+  linkType: hard
+
 "postcss-discard-comments@npm:^5.1.1":
   version: 5.1.1
   resolution: "postcss-discard-comments@npm:5.1.1"
   peerDependencies:
     postcss: ^8.2.15
   checksum: 578c3cb3e8c6194cf8b5f2170abd6636bf2fe1ec9ba6e03431f5a7e4aae22c6c6605a5e8e2731e824df07c1188f3defa2f4ba28da4adafe45c068af1189f1f2c
+  languageName: node
+  linkType: hard
+
+"postcss-discard-comments@npm:^5.1.2":
+  version: 5.1.2
+  resolution: "postcss-discard-comments@npm:5.1.2"
+  peerDependencies:
+    postcss: ^8.2.15
+  checksum: abfd064ebc27aeaf5037643dd51ffaff74d1fa4db56b0523d073ace4248cbb64ffd9787bd6924b0983a9d0bd0e9bf9f10d73b120e50391dc236e0d26c812fa2a
   languageName: node
   linkType: hard
 
@@ -11137,6 +11158,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss-merge-rules@npm:^5.1.2":
+  version: 5.1.2
+  resolution: "postcss-merge-rules@npm:5.1.2"
+  dependencies:
+    browserslist: ^4.16.6
+    caniuse-api: ^3.0.0
+    cssnano-utils: ^3.1.0
+    postcss-selector-parser: ^6.0.5
+  peerDependencies:
+    postcss: ^8.2.15
+  checksum: fcbc415999a35248dcce03064a5456123663507b05ff0f1de5c97b6effc68014ab0ffd5f06e71cf08d401f037932e271b7db33124c73260f3630a1441212a0c8
+  languageName: node
+  linkType: hard
+
 "postcss-minify-font-values@npm:^5.1.0":
   version: 5.1.0
   resolution: "postcss-minify-font-values@npm:5.1.0"
@@ -11182,6 +11217,17 @@ __metadata:
   peerDependencies:
     postcss: ^8.2.15
   checksum: 651fbac038aaba10efaf4ed793d008439042954e5025462c14964ce24ca4bde868bb25ee846a4ff41df8a719fb8ee9f159ef0a036f54e6a09ed937bcc6884cf0
+  languageName: node
+  linkType: hard
+
+"postcss-minify-selectors@npm:^5.2.1":
+  version: 5.2.1
+  resolution: "postcss-minify-selectors@npm:5.2.1"
+  dependencies:
+    postcss-selector-parser: ^6.0.5
+  peerDependencies:
+    postcss: ^8.2.15
+  checksum: 6fdbc84f99a60d56b43df8930707da397775e4c36062a106aea2fd2ac81b5e24e584a1892f4baa4469fa495cb87d1422560eaa8f6c9d500f9f0b691a5f95bab5
   languageName: node
   linkType: hard
 
@@ -12060,9 +12106,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.75.1":
-  version: 2.75.1
-  resolution: "rollup@npm:2.75.1"
+"rollup@npm:^2.75.5":
+  version: 2.75.5
+  resolution: "rollup@npm:2.75.5"
   dependencies:
     fsevents: ~2.3.2
   dependenciesMeta:
@@ -12070,7 +12116,7 @@ __metadata:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: a48d2df765cc87c2d351e9df2ce3483cdc406e583cee271af2c38fe9371ccbae8484f0c50af4ac9293667c3eded082297008934712079d53798ec2841eef0339
+  checksum: fa3e61959efbc88cda75315dc22f035489be9dda3ae7d45a3a474f19efc3661ef6f9849486c7ca51e1a3e2aedef91f4e3223e8123bbeaf155913533d071994d1
   languageName: node
   linkType: hard
 
@@ -12771,6 +12817,15 @@ __metadata:
   version: 2.0.1
   resolution: "strip-json-comments@npm:2.0.1"
   checksum: 1074ccb63270d32ca28edfb0a281c96b94dc679077828135141f27d52a5a398ef5e78bcf22809d23cadc2b81dfbe345eb5fd8699b385c8b1128907dec4a7d1e1
+  languageName: node
+  linkType: hard
+
+"strip-literal@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "strip-literal@npm:0.3.0"
+  dependencies:
+    acorn: ^8.7.1
+  checksum: efa3b393275395051003c20471e3df99821e18f547eb92617fb41f3644c299d23658c7bbc7140ad11090ee0f05ba81f54deee5d690bb2dd1fb2f2556696bfb48
   languageName: node
   linkType: hard
 
@@ -13487,9 +13542,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unimport@npm:^0.2.5":
-  version: 0.2.5
-  resolution: "unimport@npm:0.2.5"
+"unimport@npm:^0.2.6":
+  version: 0.2.6
+  resolution: "unimport@npm:0.2.6"
   dependencies:
     "@rollup/pluginutils": ^4.2.1
     escape-string-regexp: ^5.0.0
@@ -13499,8 +13554,9 @@ __metadata:
     mlly: ^0.5.2
     pathe: ^0.3.0
     scule: ^0.2.1
+    strip-literal: ^0.3.0
     unplugin: ^0.6.3
-  checksum: 212b1a00b883fce35663ddc083591e756c4705bc793e8427e71bd50215ee13a67ad8978b8cc65453b669e445bef0d8758541b091233cb00d280f5491033d0346
+  checksum: 54589515e85f7f2e4c55875a4e09024c07a9e17627faca28bdf970a271bcaeaa6d2592532d37cf349113f8a97a1933e0fb5322dcf58406b0cfd715413c5156a6
   languageName: node
   linkType: hard
 
@@ -13712,9 +13768,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "vite-node@npm:0.13.0"
+"vite-node@npm:^0.13.1":
+  version: 0.13.1
+  resolution: "vite-node@npm:0.13.1"
   dependencies:
     debug: ^4.3.4
     kolorist: ^1.5.1
@@ -13723,7 +13779,7 @@ __metadata:
     vite: ^2.9.9
   bin:
     vite-node: vite-node.mjs
-  checksum: 727a4ca4a8dcb46f8ee75373492242fe353fef5cea387e05bf43c27d2a916418cf65106beb34179dada04dfa9905e0125a23a163c96f44ffbcba0d8c6c16a1ed
+  checksum: c512428348a03f87f034528704a82e92784a5281f1f811beab6be8ca6c8c9606a891f8f5422e5f9981c47f7fb474402b88b1ac6c9c1d830f0e945fbcda390d5d
   languageName: node
   linkType: hard
 
@@ -13783,9 +13839,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "vitest@npm:0.13.0"
+"vitest@npm:^0.13.1":
+  version: 0.13.1
+  resolution: "vitest@npm:0.13.1"
   dependencies:
     "@types/chai": ^4.3.1
     "@types/chai-subset": ^1.3.3
@@ -13811,7 +13867,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: 78c35565cf75e8b0f7689e15a7f4370819ac39394b966711bcafc51a5a3e816034a5fa9726e038edb809dd77cf95441c6f991d8b1dde4fbdcbfb14b05921a5f0
+  checksum: 28006581e3c16f67838f1a7c2f08cd67415267849d5a2f46ece7fcceed683a1c2beb7c153d5e34e6891fd0f40d032ea0b3aa8775890f00c057fe0e91735114c7
   languageName: node
   linkType: hard
 
@@ -13961,16 +14017,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-tsc@npm:^0.35.0":
-  version: 0.35.0
-  resolution: "vue-tsc@npm:0.35.0"
+"vue-tsc@npm:^0.36.0":
+  version: 0.36.0
+  resolution: "vue-tsc@npm:0.36.0"
   dependencies:
-    "@volar/vue-typescript": 0.35.0
+    "@volar/vue-typescript": 0.36.0
   peerDependencies:
     typescript: "*"
   bin:
     vue-tsc: bin/vue-tsc.js
-  checksum: 32b05f3937264f49fbee1a38e8ef5fb56d21acf172273dfbe551f1771812f4bc2f6cbb47b354bfeb6f0d13aa3b11335f3eca9a1c5aeebbfb7c4f8724c18fb64e
+  checksum: 8e79d6f4f4f9e87342420a6e3b0273a938763b1761a5554e3eb874dae3c96c6ae6be23d62099adfe81c7ff6999946cebc37c3eb3f568c3d39abc852c2ce6da4a
   languageName: node
   linkType: hard
 
@@ -14111,7 +14167,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5, webpack@npm:^5.38.1, webpack@npm:^5.72.1":
+"webpack@npm:^5, webpack@npm:^5.38.1":
   version: 5.72.1
   resolution: "webpack@npm:5.72.1"
   dependencies:
@@ -14145,6 +14201,43 @@ __metadata:
   bin:
     webpack: bin/webpack.js
   checksum: d1eff085eee1c67a68f7bf1d077ea202c1e68a0de0e0866274984769838c3f224fbc64e847e1a1bbc6eba9fb6a9965098809cc0be9292b573767bb5d8d2df96e
+  languageName: node
+  linkType: hard
+
+"webpack@npm:^5.73.0":
+  version: 5.73.0
+  resolution: "webpack@npm:5.73.0"
+  dependencies:
+    "@types/eslint-scope": ^3.7.3
+    "@types/estree": ^0.0.51
+    "@webassemblyjs/ast": 1.11.1
+    "@webassemblyjs/wasm-edit": 1.11.1
+    "@webassemblyjs/wasm-parser": 1.11.1
+    acorn: ^8.4.1
+    acorn-import-assertions: ^1.7.6
+    browserslist: ^4.14.5
+    chrome-trace-event: ^1.0.2
+    enhanced-resolve: ^5.9.3
+    es-module-lexer: ^0.9.0
+    eslint-scope: 5.1.1
+    events: ^3.2.0
+    glob-to-regexp: ^0.4.1
+    graceful-fs: ^4.2.9
+    json-parse-even-better-errors: ^2.3.1
+    loader-runner: ^4.2.0
+    mime-types: ^2.1.27
+    neo-async: ^2.6.2
+    schema-utils: ^3.1.0
+    tapable: ^2.1.1
+    terser-webpack-plugin: ^5.1.3
+    watchpack: ^2.3.1
+    webpack-sources: ^3.2.3
+  peerDependenciesMeta:
+    webpack-cli:
+      optional: true
+  bin:
+    webpack: bin/webpack.js
+  checksum: aa434a241bad6176b68e1bf0feb1972da4dcbf27cb3d94ae24f6eb31acc37dceb9c4aae55e068edca75817bfe91f13cd20b023ac55d9b1b2f8b66a4037c9468f
   languageName: node
   linkType: hard
 
