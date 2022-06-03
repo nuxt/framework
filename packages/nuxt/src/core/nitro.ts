@@ -47,7 +47,10 @@ export async function initNitro (nuxt: Nuxt) {
       ...nuxt.options._layers
         .map(layer => join(layer.config.srcDir, layer.config.dir?.public || 'public'))
         .filter(dir => existsSync(dir))
-        .map(dir => ({ dir }))
+        .map(dir => ({ dir })),
+      {
+        dir: resolve(distDir, 'core/runtime/nitro/assets')
+      }
     ],
     prerender: {
       crawlLinks: nuxt.options._generate ? nuxt.options.generate.crawler : false,
