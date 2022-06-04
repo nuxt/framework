@@ -69,10 +69,10 @@ export default defineNuxtCommand({
     const isNuxt3OrBridge = infoObj.NuxtVersion.startsWith('3') || infoObj.BuildModules.includes('bridge')
 
     if (isNuxt3OrBridge) {
-      infoObj.Modules = listModules(nuxtConfig.modules)
+      infoObj['Modules'] = listModules(nuxtConfig.modules)
     } else {
-      infoObj.RuntimeModules = listModules(nuxtConfig.modules)
-      infoObj.BuildModules = listModules(nuxtConfig.buildModules)
+      infoObj['RuntimeModules'] = listModules(nuxtConfig.modules)
+      infoObj['BuildModules'] = listModules(nuxtConfig.buildModules)
     }
 
     console.log('RootDir:', rootDir)
