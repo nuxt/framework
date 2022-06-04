@@ -65,9 +65,9 @@ export default defineNuxtCommand({
       Builder: builder,
       UserConfig: Object.keys(nuxtConfig).map(key => '`' + key + '`').join(', ')
     }
-    
+
     const isNuxt3OrBridge = infoObj.NuxtVersion.startsWith('3') || infoObj.BuildModules.includes('bridge')
-    
+
     if (isNuxt3OrBridge) {
       infoObj.Modules = listModules(nuxtConfig.modules)
     } else {
@@ -91,7 +91,7 @@ export default defineNuxtCommand({
     const copied = await clipboardy.write(infoStr).then(() => true).catch(() => false)
     const splitter = '------------------------------'
     console.log(`Nuxt project info: ${copied ? '(copied to clipboard)' : ''}\n\n${splitter}\n${infoStr}${splitter}\n`)
-    
+
     const repo = isNuxt3OrBridge ? 'nuxt/framework' : 'nuxt/nuxt.js'
     console.log([
       `👉 Report an issue: https://github.com/${repo}/issues/new`,
