@@ -57,7 +57,7 @@ export default defineNuxtCommand({
       packageManager = 'unknown'
     }
 
-    const infoObj = {
+    let infoObj = {
       OperatingSystem: os.type(),
       NodeVersion: process.version,
       NuxtVersion: nuxtVersion,
