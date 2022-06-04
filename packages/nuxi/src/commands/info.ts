@@ -72,7 +72,7 @@ export default defineNuxtCommand({
       infoObj.Modules = listModules(nuxtConfig.modules)
     } else {
       infoObj.RuntimeModules = listModules(nuxtConfig.modules)
-      infoObj.BuildModules: listModules(nuxtConfig.buildModules)
+      infoObj.BuildModules = listModules(nuxtConfig.buildModules)
     }
 
     console.log('RootDir:', rootDir)
