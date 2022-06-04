@@ -66,13 +66,22 @@ export default defineNuxtCommand({
       UserConfig: Object.keys(nuxtConfig).map(key => '`' + key + '`').join(', ')
     }
 
-    const isNuxt3OrBridge = infoObj.NuxtVersion.startsWith('3') || infoObj.BuildModules.includes('bridge')
+    const runtimeModules = listModules(nuxtConfig.modules)
+    const buildModules = listModules(nuxtConfig.buildModules)
+
+    const isNuxt3OrBridge = infoObj.NuxtVersion.startsWith('3') || buildModules.includes('bridge')
 
     if (isNuxt3OrBridge) {
-      infoObj['Modules'] = listModules(nuxtConfig.modules)
+      infoObj = {
+        ...infoObj,
+        Modules: runtimeModules
+      }
     } else {
-      infoObj['RuntimeModules'] = listModules(nuxtConfig.modules)
-      infoObj['BuildModules'] = listModules(nuxtConfig.buildModules)
+      infoObj = {
+        ...infoObj,
+        RuntimeModules: runtimeModules,
+        BuildModules: buildModules
+      }
     }
 
     console.log('RootDir:', rootDir)
