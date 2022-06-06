@@ -2,7 +2,7 @@ import { computed, defineComponent, h, onBeforeUnmount, ref } from 'vue'
 import { useNuxtApp } from '#app'
 
 export default defineComponent({
-  name: 'NuxtLoadingBar',
+  name: 'NuxtLoadingIndicator',
   props: {
     throttle: {
       type: Number,
@@ -70,7 +70,7 @@ export default defineComponent({
     onBeforeUnmount(() => clear)
 
     return () => h('div', {
-      class: 'nuxt-progress',
+      class: 'nuxt-loading-indicator',
       style: {
         position: 'fixed',
         top: 0,

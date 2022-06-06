@@ -109,10 +109,10 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: resolve(nuxt.options.appDir, 'components/nuxt-link')
   })
 
-  // Add <NuxtLoadingBar>
+  // Add <NuxtLoadingIndicator>
   addComponent({
-    name: 'NuxtLoadingBar',
-    filePath: resolve(nuxt.options.appDir, 'components/nuxt-loading-bar')
+    name: 'NuxtLoadingIndicator',
+    filePath: resolve(nuxt.options.appDir, 'components/nuxt-loading-indicator')
   })
 
   for (const m of modulesToInstall) {
