@@ -38,6 +38,7 @@ export default defineNuxtCommand({
       port: args.port || args.p || process.env.NUXT_PORT,
       hostname: args.host || args.h || process.env.NUXT_HOST,
       https: Boolean(args.https),
+      baseURL: args.baseURL || process.env.NUXT_BASE_URL,
       certificate: (args['ssl-cert'] && args['ssl-key']) && {
         cert: args['ssl-cert'],
         key: args['ssl-key']
@@ -69,7 +70,9 @@ export default defineNuxtCommand({
         currentHandler = currentNuxt.server.app
         if (isRestart && args.clear !== false) {
           showBanner()
-          listener.showURL()
+          listener.showURL({
+            baseURL: currentNuxt.options.app.baseURL
+          })
         }
       } catch (err) {
         consola.error(`Cannot ${isRestart ? 'restart' : 'start'} nuxt: `, err)
