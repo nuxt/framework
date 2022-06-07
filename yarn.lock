@@ -4807,45 +4807,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cssnano-preset-default@npm:^5.2.10":
-  version: 5.2.10
-  resolution: "cssnano-preset-default@npm:5.2.10"
-  dependencies:
-    css-declaration-sorter: ^6.2.2
-    cssnano-utils: ^3.1.0
-    postcss-calc: ^8.2.3
-    postcss-colormin: ^5.3.0
-    postcss-convert-values: ^5.1.2
-    postcss-discard-comments: ^5.1.2
-    postcss-discard-duplicates: ^5.1.0
-    postcss-discard-empty: ^5.1.1
-    postcss-discard-overridden: ^5.1.0
-    postcss-merge-longhand: ^5.1.5
-    postcss-merge-rules: ^5.1.2
-    postcss-minify-font-values: ^5.1.0
-    postcss-minify-gradients: ^5.1.1
-    postcss-minify-params: ^5.1.3
-    postcss-minify-selectors: ^5.2.1
-    postcss-normalize-charset: ^5.1.0
-    postcss-normalize-display-values: ^5.1.0
-    postcss-normalize-positions: ^5.1.0
-    postcss-normalize-repeat-style: ^5.1.0
-    postcss-normalize-string: ^5.1.0
-    postcss-normalize-timing-functions: ^5.1.0
-    postcss-normalize-unicode: ^5.1.0
-    postcss-normalize-url: ^5.1.0
-    postcss-normalize-whitespace: ^5.1.1
-    postcss-ordered-values: ^5.1.1
-    postcss-reduce-initial: ^5.1.0
-    postcss-reduce-transforms: ^5.1.0
-    postcss-svgo: ^5.1.0
-    postcss-unique-selectors: ^5.1.1
-  peerDependencies:
-    postcss: ^8.2.15
-  checksum: 7ea475c5065c9d66d09bfef42dca7358c5d21fda7863ded1a56dfd33bcfe98ac7d567bc964033e69ad2455a1fe6358f7c444605198d21538aacab711ef17e627
-  languageName: node
-  linkType: hard
-
 "cssnano-preset-default@npm:^5.2.11":
   version: 5.2.11
   resolution: "cssnano-preset-default@npm:5.2.11"
@@ -4894,7 +4855,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cssnano@npm:^5.1.11":
+"cssnano@npm:^5.1.11, cssnano@npm:^5.1.8":
   version: 5.1.11
   resolution: "cssnano@npm:5.1.11"
   dependencies:
@@ -4904,19 +4865,6 @@ __metadata:
   peerDependencies:
     postcss: ^8.2.15
   checksum: 0fa4dec39c4d646032c2008e817643cad8d430d5063ecf6e7a076d7e5f9fa8ade24ba2adffcd44c7882fd8caeeb13b052b283e73c4fa7f58ca8626f35834ffe0
-  languageName: node
-  linkType: hard
-
-"cssnano@npm:^5.1.8":
-  version: 5.1.10
-  resolution: "cssnano@npm:5.1.10"
-  dependencies:
-    cssnano-preset-default: ^5.2.10
-    lilconfig: ^2.0.3
-    yaml: ^1.10.2
-  peerDependencies:
-    postcss: ^8.2.15
-  checksum: a09c915c92183335026181691d2dbc41fef88a095ebd5a53cfd3da761214d450b131ece8ca2357dfa526818f723ee03c4d55f4f7862bd742c11552343996c338
   languageName: node
   linkType: hard
 
@@ -11022,18 +10970,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-ordered-values@npm:^5.1.1":
-  version: 5.1.1
-  resolution: "postcss-ordered-values@npm:5.1.1"
-  dependencies:
-    cssnano-utils: ^3.1.0
-    postcss-value-parser: ^4.2.0
-  peerDependencies:
-    postcss: ^8.2.15
-  checksum: d56825ef03225ccaeff9704b86008d012b91b0ace4b219f6d443aca628b7f0a1da922abc4a3fb8ca802baf09320abaa983f278ac416e1caf2658d119491686a4
-  languageName: node
-  linkType: hard
-
 "postcss-ordered-values@npm:^5.1.2":
   version: 5.1.2
   resolution: "postcss-ordered-values@npm:5.1.2"
@@ -11752,21 +11688,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.59.0, rollup@npm:^2.70.1, rollup@npm:^2.72.1":
-  version: 2.75.5
-  resolution: "rollup@npm:2.75.5"
-  dependencies:
-    fsevents: ~2.3.2
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    rollup: dist/bin/rollup
-  checksum: fa3e61959efbc88cda75315dc22f035489be9dda3ae7d45a3a474f19efc3661ef6f9849486c7ca51e1a3e2aedef91f4e3223e8123bbeaf155913533d071994d1
-  languageName: node
-  linkType: hard
-
-"rollup@npm:^2.75.6":
+"rollup@npm:^2.59.0, rollup@npm:^2.70.1, rollup@npm:^2.72.1, rollup@npm:^2.75.6":
   version: 2.75.6
   resolution: "rollup@npm:2.75.6"
   dependencies:
@@ -13024,17 +12946,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.6.3":
-  version: 4.7.2
-  resolution: "typescript@npm:4.7.2"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 5163585e6b56410f77d5483b698d9489bbee8902c99029eb70cf6d21525a186530ce19a00951af84eefd4a131cc51d0959f5118e25e70ab61f45ac4057dbd1ef
-  languageName: node
-  linkType: hard
-
-"typescript@npm:^4.7.3":
+"typescript@npm:^4.6.3, typescript@npm:^4.7.3":
   version: 4.7.3
   resolution: "typescript@npm:4.7.3"
   bin:
@@ -13044,17 +12956,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>":
-  version: 4.7.2
-  resolution: "typescript@patch:typescript@npm%3A4.7.2#~builtin<compat/typescript>::version=4.7.2&hash=7ad353"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 7e2b9a9f4a70fb7616f1b0d986977f8e34a74f046202fa7f24fdee79589598277810fa216b3776c20c0683a9235872c73be34fdb93f67f98c1efaca40999422f
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@^4.7.3#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.3#~builtin<compat/typescript>":
   version: 4.7.3
   resolution: "typescript@patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=7ad353"
   bin:
@@ -13472,7 +13374,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.9.10":
+"vite@npm:^2.9.10, vite@npm:^2.9.9":
   version: 2.9.10
   resolution: "vite@npm:2.9.10"
   dependencies:
@@ -13498,35 +13400,6 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: 37a4eafdb0990e496a27903b0722f1a5d13c622338a885f66d9b4da955ac40cb567e7e8bc97aac50c3f2a385f10a2e03bc9d5c14bf8a8bd0a1fbf6321c0d3562
-  languageName: node
-  linkType: hard
-
-"vite@npm:^2.9.9":
-  version: 2.9.9
-  resolution: "vite@npm:2.9.9"
-  dependencies:
-    esbuild: ^0.14.27
-    fsevents: ~2.3.2
-    postcss: ^8.4.13
-    resolve: ^1.22.0
-    rollup: ^2.59.0
-  peerDependencies:
-    less: "*"
-    sass: "*"
-    stylus: "*"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  peerDependenciesMeta:
-    less:
-      optional: true
-    sass:
-      optional: true
-    stylus:
-      optional: true
-  bin:
-    vite: bin/vite.js
-  checksum: 9292b8ba510a393d0c61c407ebfb4eaa818b2d8d106b3476cdc94cb57a0c59348a535936d698db04b35910a1cfdb16aeaf872f0f995b54cf6d7ed31bc7886deb
   languageName: node
   linkType: hard
 
