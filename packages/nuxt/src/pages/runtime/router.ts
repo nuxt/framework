@@ -142,7 +142,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       const middleware = typeof entry === 'string' ? nuxtApp._middleware.named[entry] || await namedMiddleware[entry]?.().then(r => r.default || r) : entry
 
       if (process.dev && !middleware) {
-        console.warn(`Unknown middleware: ${entry}. Valid options are ${Object.keys(namedMiddleware).join(', ')}.`)
+        throw new Error(`Unknown middleware: '${entry}'. Valid middleware: ${Object.keys(namedMiddleware).map(mw => `'${mw}'`).join(', ')}.`)
       }
 
       const result = await callWithNuxt(nuxtApp, middleware, [to, from])
