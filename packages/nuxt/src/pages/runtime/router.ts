@@ -141,8 +141,11 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     for (const entry of middlewareEntries) {
       const middleware = typeof entry === 'string' ? nuxtApp._middleware.named[entry] || await namedMiddleware[entry]?.().then(r => r.default || r) : entry
 
-      if (process.dev && !middleware) {
-        throw new Error(`Unknown middleware: '${entry}'. Valid middleware: ${Object.keys(namedMiddleware).map(mw => `'${mw}'`).join(', ')}.`)
+      if (!middleware) {
+        if (process.dev) {
+          throw new Error(`Unknown middleware: '${entry}'. Valid middleware: ${Object.keys(namedMiddleware).map(mw => `'${mw}'`).join(', ')}.`)
+        }
+        throw new Error('Error processing route middleware.')
       }
 
       const result = await callWithNuxt(nuxtApp, middleware, [to, from])
