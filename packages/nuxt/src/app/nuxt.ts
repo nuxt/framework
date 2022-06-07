@@ -129,7 +129,7 @@ export function createNuxtApp (options: CreateOptions) {
 
   if (process.server) {
     // Expose to server renderer to create window.__NUXT__
-    nuxtApp.ssrContext = nuxtApp.ssrContext || {}
+    nuxtApp.ssrContext = nuxtApp.ssrContext || {} as any
     nuxtApp.ssrContext.payload = nuxtApp.payload
   }
 
