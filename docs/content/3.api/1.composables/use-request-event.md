@@ -5,6 +5,8 @@ Nuxt provides composables and utilities for first-class server-side-rendering su
 Within your pages, components, and plugins you can use `useRequestEvent` to access the incoming request.
 
 ```js
+import { useCookies } from 'h3'
+
 // Get underlying request event
 const event = useRequestEvent()
 
