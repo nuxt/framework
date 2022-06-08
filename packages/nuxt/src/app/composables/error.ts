@@ -11,11 +11,7 @@ export interface NuxtError extends H3Error {}
 export const throwError = (_err: string | Error | Partial<NuxtError>) => {
   const nuxtApp = useNuxtApp()
   const error = useError()
-  const err = typeof _err === 'string'
-    ? new Error(_err)
-    : _err && typeof _err === 'object' && !('__nuxt_error' in _err)
-      ? _createError(_err)
-      : _err
+  const err = typeof _err === 'string' ? new Error(_err) : createError(_err)
   nuxtApp.callHook('app:error', err)
   if (process.server) {
     nuxtApp.ssrContext.error = nuxtApp.ssrContext.error || err
@@ -37,5 +33,7 @@ export const clearError = async (options: { redirect?: string } = {}) => {
 }
 
 export const createError = (err: Partial<NuxtError>): NuxtError => {
-  return _createError(err)
+  return err && typeof err === 'object' && !('__nuxt_error' in err)
+    ? _createError(err)
+    : err as NuxtError
 }
