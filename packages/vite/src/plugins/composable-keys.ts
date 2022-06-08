@@ -1,10 +1,10 @@
-import crypto from 'node:crypto'
 import { pathToFileURL } from 'node:url'
 import type { Plugin } from 'vite'
 import { isAbsolute, relative } from 'pathe'
 import { parse } from 'acorn'
 import { walk } from 'estree-walker'
 import MagicString from 'magic-string'
+import { hash } from 'ohash'
 import type { CallExpression } from 'estree'
 import { parseURL } from 'ufo'
 
@@ -12,23 +12,6 @@ export interface ComposableKeysOptions {
   sourcemap?: boolean
   useAcorn?: boolean
   rootDir?: string
-}
-
-const hashMap: Record<string, string> = {}
-
-function createKey (source: string) {
-  let outputLength = 3
-  do {
-    const hash = crypto.createHash('md5')
-    hash.update(source)
-    const key = hash.digest('base64').toString().slice(0, outputLength)
-    if (key in hashMap && hashMap[key] !== source) {
-      outputLength++
-      continue
-    }
-    hashMap[key] = source
-    return key
-  } while (true)
 }
 
 const keyedFunctions = [
@@ -60,7 +43,7 @@ export const composableKeysPlugin = (options: ComposableKeysOptions = {}): Plugi
             const end = (node as any).end
             s.appendLeft(
               codeIndex + end - 1,
-              (node.arguments.length ? ', ' : '') + "'$" + createKey(`${relativeID}-${codeIndex + end}`) + "'"
+              (node.arguments.length ? ', ' : '') + "'$" + hash(`${relativeID}-${codeIndex + end}`) + "'"
             )
           }
         }
