@@ -6,7 +6,7 @@ Within your pages, components and plugins you can use `throwError` to throw an e
 
 **Parameters:**
 
-- `error`: `string | Error | Partial<H3Error>`
+- `error`: `string | Error | Partial<{ cause, data, message, name, stack, statusCode, statusMessage }>`
 
 ```js
 throwError("😱 Oh no, an error has been thrown.")
