@@ -11,7 +11,7 @@ export type PickFrom<T, K extends Array<string>> = T extends Array<any>
   ? keyof T extends K[number]
     ? T // Exact same keys as the target, skip Pick
     : Pick<T, K[number]>
-  : T;
+  : T
 
 export type KeysOf<T> = Array<keyof T extends string ? keyof T : string>
 export type KeyOfRes<Transform extends _Transform> = KeysOf<ReturnType<Transform>>
