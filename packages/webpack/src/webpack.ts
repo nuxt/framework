@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
+import { writeFile } from 'node:fs/promises'
 import pify from 'pify'
 import webpack from 'webpack'
 import webpackDevMiddleware, { API } from 'webpack-dev-middleware'
@@ -8,6 +9,7 @@ import type { Compiler, Watching } from 'webpack'
 import type { Nuxt } from '@nuxt/schema'
 import { joinURL } from 'ufo'
 import { logger, useNuxt } from '@nuxt/kit'
+import { resolve } from 'pathe'
 import { DynamicBasePlugin } from '../../vite/src/plugins/dynamic-base'
 import { createMFS } from './utils/mfs'
 import { registerVirtualModules } from './virtual-modules'
@@ -62,6 +64,11 @@ export async function bundle (nuxt: Nuxt) {
 
   for (const c of compilers) {
     await compile(c)
+  }
+
+  // Write stub file to enable rollup to resolve it for dynamic import
+  if (!nuxt.options.ssr) {
+    await writeFile(resolve(nuxt.options.buildDir, 'dist/server/server.mjs'), 'export default () => {}')
   }
 }
 
