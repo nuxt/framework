@@ -20,7 +20,7 @@ export const writeTypes = async (nuxt: Nuxt) => {
       noEmit: true,
       resolveJsonModule: true,
       allowSyntheticDefaultImports: true,
-      types: ['node'],
+      types: ['node', 'vite/client'],
       baseUrl: relative(nuxt.options.buildDir, nuxt.options.rootDir),
       paths: {}
     },
