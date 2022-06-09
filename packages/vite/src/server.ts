@@ -47,7 +47,7 @@ export async function buildServer (ctx: ViteBuildContext) {
         /\.(es|esm|esm-browser|esm-bundler).js$/,
         '/__vue-jsx',
         '#app',
-        /nuxt3\/(dist|src|app)/,
+        /(nuxt|nuxt3)\/(dist|src|app)/,
         /@nuxt\/nitro\/(dist|src)/
       ]
     },
@@ -55,7 +55,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
-        external: ['#nitro'],
+        external: ['#internal/nitro'],
         output: {
           entryFileNames: 'server.mjs',
           preferConst: true,
@@ -80,10 +80,18 @@ export async function buildServer (ctx: ViteBuildContext) {
     ]
   } as ViteOptions)
 
+  // Add type-checking
+  if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
+    const checker = await import('vite-plugin-checker').then(r => r.default)
+    ctx.config.plugins.push(checker({ typescript: true }))
+  }
+
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
 
-  // TODO: Do we still need this?
-  ctx.nuxt.hook('build:done', async () => {
+  ctx.nuxt.hook('nitro:build:before', async () => {
+    if (ctx.nuxt.options.dev) {
+      return
+    }
     const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
 
     // Remove public files that have been duplicated into buildAssetsDir

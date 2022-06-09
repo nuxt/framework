@@ -1,16 +1,17 @@
-<h1>
-  <img src="./.github/logo.svg" height="60" >
- </h1>
+![NuxtJS-Logo-Dark](.github/logo-light.svg#gh-dark-mode-only)
+![NuxtJS-Logo-Light](.github/logo.svg#gh-light-mode-only)
 
  <p>
   <a href="https://github.com/nuxt/framework/actions?query=branch%3Amain+event%3Apush"><img src="https://github.com/nuxt/framework/workflows/ci/badge.svg?branch=main&event=push" alt="CI Status"></a>
-  <a href="https://www.npmjs.com/package/nuxt3"><img src="https://badgen.net/npm/dm/nuxt3" alt="Downloads"></a>
-  <a href="https://www.npmjs.com/package/nuxt3"><img src="https://badgen.net/npm/v/nuxt3" alt="Version"></a>
-  <a href="https://www.npmjs.com/package/nuxt3"><img src="https://badgen.net/npm/license/nuxt3" alt="License"></a>
+  <a href="https://www.npmjs.com/package/nuxt/v/rc"><img src="https://badgen.net/npm/dm/nuxt" alt="Downloads"></a>
+  <a href="https://www.npmjs.com/package/nuxt/v/rc"><img src="https://badgen.net/npm/v/nuxt/rc" alt="Version"></a>
+  <a href="https://www.npmjs.com/package/nuxt"><img src="https://badgen.net/npm/license/nuxt3" alt="License"></a>
   <a href="https://discord.nuxtjs.org/"><img src="https://badgen.net/badge/Discord/join-us/7289DA" alt="Discord"></a>
  </p>
 
-Welcome to Nuxt 3 repository ✨
+Welcome to Nuxt 3 repository: **The Hybrid Vue Framework** ✨
+
+Nuxt's goal is to make web development intuitive and performant with a great developer experience in mind, learn more in the ["What is Nuxt?"](https://v3.nuxtjs.org/guide/concepts/introduction) section of our documentation.
 
 <table>
 <tbody>
@@ -56,7 +57,7 @@ Learn more about in our documentation on [how to contribute to Nuxt](https://v3.
 
 ## 📖 Documentation
 
-We are using [Docus](https://nuxtlabs.com/docus) for documentation (*It is planned to be open sourced it in the following weeks*).
+We are using [Docus](https://nuxtlabs.com/docus) for documentation (*It is planned to be open sourced in the following weeks*).
 
 We recommend to install the [Docus extension](https://marketplace.visualstudio.com/items?itemName=NuxtLabs.docus) for VS Code.
 
@@ -69,4 +70,4 @@ The pages are generated from [docs/content/](./docs/content), you can start edit
 
 ## License
 
-[MIT](https://github.com/nuxt/nuxt.js/blob/dev/LICENSE)
+[MIT](./LICENSE)

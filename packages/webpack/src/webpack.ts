@@ -1,4 +1,4 @@
-import type { IncomingMessage, ServerResponse } from 'http'
+import type { IncomingMessage, ServerResponse } from 'node:http'
 import pify from 'pify'
 import webpack from 'webpack'
 import webpackDevMiddleware, { API } from 'webpack-dev-middleware'
@@ -18,7 +18,7 @@ import { createWebpackConfigContext, applyPresets, getWebpackConfig } from './ut
 // const plugins: string[] = []
 
 export async function bundle (nuxt: Nuxt) {
-  await registerVirtualModules()
+  registerVirtualModules()
 
   const webpackConfigs = [client, ...nuxt.options.ssr ? [server] : []].map((preset) => {
     const ctx = createWebpackConfigContext(nuxt)
@@ -34,6 +34,7 @@ export async function bundle (nuxt: Nuxt) {
   // Configure compilers
   const compilers = webpackConfigs.map((config) => {
     config.plugins.push(DynamicBasePlugin.webpack({
+      sourcemap: nuxt.options.sourcemap,
       globalPublicPath: '__webpack_public_path__'
     }))
 

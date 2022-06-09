@@ -4,6 +4,7 @@ import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
 import defu from 'defu'
+import { RuntimeConfig } from '../types/config'
 
 export default {
   /**
@@ -345,7 +346,7 @@ export default {
    *   // Will register file from project server-middleware directory to handle /server-middleware/* requires
    *   { path: '/server-middleware', handler: '~/server-middleware/index.js' },
    *   // We can create custom instances too, but only in development mode, they are ignored for the production bundle.
-   *   { path: '/static2', handler: serveStatic(__dirname + '/static2') }
+   *   { path: '/static2', handler: serveStatic(fileURLToPath(new URL('./static2', import.meta.url))) }
    * ]
    * ```
    *
@@ -392,8 +393,9 @@ export default {
    *   }
    * }
    * ```
+   *
    * @version 2
-   * @version 3
+   * @deprecated Use `serverHandlers` instead
    */
   serverMiddleware: {
     $resolve: (val: any) => {
@@ -515,12 +517,11 @@ export default {
    *
    * @example
    * ```js
-   * import { resolve } from 'pathe'
    * export default {
    *   alias: {
-   *     'images': resolve(__dirname, './assets/images'),
-   *     'style': resolve(__dirname, './assets/style'),
-   *     'data': resolve(__dirname, './assets/other/data')
+   *     'images': fileURLToPath(new URL('./assets/images', import.meta.url)),
+   *     'style': fileURLToPath(new URL('./assets/style', import.meta.url)),
+   *     'data': fileURLToPath(new URL('./assets/other/data', import.meta.url))
    *   }
    * }
    * ```
@@ -669,9 +670,9 @@ export default {
    * object in `nuxt.config` (as below).
    *
    * @example
-   * ```js
-   * import fs from 'fs'
-   * import path from 'path'
+   * ```js'node:fs'
+   * import fs from 'node:fs'
+   * import path from 'node:path'
    * export default {
    *   hooks: {
    *     build: {
@@ -695,63 +696,56 @@ export default {
   /**
    * Runtime config allows passing dynamic config and environment variables to the Nuxt app context.
    *
-   * The value of this object is accessible from server only using `$config` or `useRuntimeConfig`.
-   * It will override `publicRuntimeConfig` on the server-side.
+   * The value of this object is accessible from server only using `useRuntimeConfig`.
    *
-   * It should hold _private_ environment variables (that should not be exposed on the frontend).
+   * It mainly should hold _private_ configuration which is not exposed on the frontend.
    * This could include a reference to your API secret tokens.
    *
+   * Anything under `public` and `app` will be exposed to the frontend as well.
+   *
    * Values are automatically replaced by matching env variables at runtime, e.g. setting an environment
-   * variable `API_SECRET=my-api-key` would overwrite the value in the example below.
-   * Note that the env variable has to be named exactly the same as the config key.
+   * variable `API_KEY=my-api-key PUBLIC_BASE_URL=/foo/` would overwrite the two values in the example below.
    *
    * @example
    * ```js
    * export default {
-   *   privateRuntimeConfig: {
-   *     API_SECRET: '' // Default to an empty string, automatically loaded at runtime using process.env.API_SECRET
+   *  runtimeConfig: {
+   *     apiKey: '' // Default to an empty string, automatically set at runtime using process.env.NUXT_API_KEY
+   *     public: {
+   *        baseURL: '' // Exposed to the frontend as well.
+   *     }
    *   }
    * }
    * ```
+   * @type {typeof import('../src/types/config').RuntimeConfig}
+   * @version 3
+   */
+  runtimeConfig: {
+    $resolve: (val: RuntimeConfig, get) => defu(val, {
+      ...get('publicRuntimeConfig'),
+      ...get('privateRuntimeConfig'),
+      public: get('publicRuntimeConfig'),
+      app: {
+        baseURL: get('app').baseURL,
+        buildAssetsDir: get('app').buildAssetsDir,
+        cdnURL: get('app').cdnURL,
+      }
+    })
+  },
+
+  /**
    * @type {typeof import('../src/types/config').PrivateRuntimeConfig}
    * @version 2
    * @version 3
+   * @deprecated Use `runtimeConfig` option
    */
   privateRuntimeConfig: {},
 
   /**
-   * Runtime config allows passing dynamic config and environment variables to the Nuxt app context.
-   *
-   * The value of this object is accessible from both client and server using `$config` or `useRuntimeConfig`.
-   *
-   * It should hold env variables that are _public_ as they will be accessible on the frontend. This could include a
-   * reference to your public URL.
-   *
-   * Values are automatically replaced by matching env variables at runtime, e.g. setting an environment
-   * variable `BASE_URL=https://some-other-url.org` would overwrite the value in the example below.
-   * Note that the env variable has to be named exactly the same as the config key.
-   *
-   * @example
-   * ```js
-   * export default {
-   *   publicRuntimeConfig: {
-   *     BASE_URL: 'https://nuxtjs.org'
-   *   }
-   * }
-   * ```
    * @type {typeof import('../src/types/config').PublicRuntimeConfig}
    * @version 2
    * @version 3
+   * @deprecated Use `runtimeConfig` option with `public` key (`runtimeConfig.public.*`)
    */
-  publicRuntimeConfig: {
-    $resolve: (val: Record<string, any> = {}, get) => ({
-      ...val,
-      app: {
-        baseURL: get('app.baseURL'),
-        buildAssetsDir: get('app.buildAssetsDir'),
-        cdnURL: get('app.cdnURL'),
-        ...val.app || {},
-      }
-    })
-  }
+  publicRuntimeConfig: {}
 }

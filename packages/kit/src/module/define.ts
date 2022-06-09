@@ -1,4 +1,4 @@
-import { promises as fsp } from 'fs'
+import { promises as fsp } from 'node:fs'
 import defu from 'defu'
 import { applyDefaults } from 'untyped'
 import { dirname } from 'pathe'
@@ -26,7 +26,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
     // @ts-ignore TODO: Remove non-meta fallbacks in RC
     definition.meta.name = definition.meta.name || definition.name
     // @ts-ignore
-    definition.meta.configKey = definition.meta.configKey || definition.configKey || definition.meta.name
+    definition.meta.configKey = definition.configKey || definition.meta.name
   }
 
   // Resolves module options from inline options, [configKey] in nuxt.config, defaults and schema
