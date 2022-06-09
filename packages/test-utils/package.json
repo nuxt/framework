@@ -19,15 +19,15 @@
     "execa": "^6.1.0",
     "get-port-please": "^2.5.0",
     "jiti": "^1.13.0",
-    "ohmyfetch": "^0.4.17"
+    "ohmyfetch": "^0.4.18"
   },
   "devDependencies": {
-    "playwright": "^1.22.0",
+    "playwright": "^1.22.2",
     "unbuild": "latest",
-    "vitest": "^0.12.4"
+    "vitest": "^0.14.1"
   },
   "peerDependencies": {
-    "vue": "3.2.33"
+    "vue": "^3.2.37"
   },
   "engines": {
     "node": "^14.16.0 || ^16.11.0 || ^17.0.0 || ^18.0.0"
