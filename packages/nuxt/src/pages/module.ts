@@ -51,7 +51,10 @@ export default defineNuxtModule({
     })
 
     nuxt.hook('autoImports:extend', (autoImports) => {
-      autoImports.push({ name: 'definePageMeta', as: 'definePageMeta', from: resolve(runtimeDir, 'composables') })
+      autoImports.push(
+        { name: 'definePageMeta', as: 'definePageMeta', from: resolve(runtimeDir, 'composables') },
+        { name: 'useLink', as: 'useLink', from: 'vue-router' }
+      )
     })
 
     // Extract macros from pages

@@ -3,8 +3,6 @@ import { sendRedirect } from 'h3'
 import { joinURL } from 'ufo'
 import { useNuxtApp, useRuntimeConfig } from '#app'
 
-export { useLink } from 'vue-router'
-
 export const useRouter = () => {
   return useNuxtApp()?.$router as Router
 }
