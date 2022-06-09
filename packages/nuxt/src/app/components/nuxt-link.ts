@@ -9,6 +9,27 @@ const firstNonUndefined = <T>(...args: T[]): T => args.find(arg => arg !== undef
 type CallbackFn = () => void
 type Lazy<T> = () => Promise<T>
 
+const requestIdleCallback = process.client
+  ? window.requestIdleCallback || function (cb) {
+    const start = Date.now()
+    const idleDeadline = {
+      didTimeout: false,
+      timeRemaining () {
+        return Math.max(0, 50 - (Date.now() - start))
+      }
+    }
+    return window.setTimeout(function () {
+      cb(idleDeadline)
+    }, 1)
+  }
+  : (() => {}) as any as Window['requestIdleCallback']
+
+const cancelIdleCallback = process.client
+  ? window.cancelIdleCallback || function (id) {
+    clearTimeout(id)
+  }
+  : (() => {}) as any as Window['cancelIdleCallback']
+
 let observer: IntersectionObserver | null = null
 const callbacks = new Map<Element, CallbackFn>()
 function observe (element: Element, callback: CallbackFn) {
