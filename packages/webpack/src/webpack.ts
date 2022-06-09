@@ -22,7 +22,7 @@ import { createWebpackConfigContext, applyPresets, getWebpackConfig } from './ut
 const composableKeysPlugin = createUnplugin(_composableKeysPlugin as any)
 
 export async function bundle (nuxt: Nuxt) {
-  await registerVirtualModules()
+  registerVirtualModules()
 
   const webpackConfigs = [client, ...nuxt.options.ssr ? [server] : []].map((preset) => {
     const ctx = createWebpackConfigContext(nuxt)
