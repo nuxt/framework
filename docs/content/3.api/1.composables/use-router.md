@@ -1,21 +1,8 @@
 # `useRouter`
 
-The `useRouter` composable returns the router instance and must be called in a `setup` function, plugin, or route middleware.
+The `useRouter` composable returns the router instance and must be called in a `setup` function, plugin, or route middleware. (Within the template of a Vue component, you can access the router using `$router` instead.)
 
-Within the template of a Vue component, you can access the router using `$router` and you can access router in setup() function using `useRouter()` composable.
-
-`useRouter` provides collection of methods to help you manipulate Vue router dynamically.
-
-```html [~/pages/*.vue]
-
-<script setup>
- const router = useRouter();
- router.push({ path: "/home" });
-</script>
-
-````
-
- `useRouter` provides the following helper methods that we can roughly divide into four groups.
+If you have a `pages/` folder, `useRouter` is identical in behavior to the one provided by `vue-router`. Feel free to read the router documentation for more information on what each method does.
 
 ::ReadMore{link="https://router.vuejs.org/api/#currentroute"}
 ::
@@ -32,8 +19,8 @@ Within the template of a Vue component, you can access the router using `$router
 - **back:** Go back in history if possible, same as `router.go(-1)`.
 - **forward:** Go forward in history if possible, same as `router.go(1)`.
 - **go:** Move forward or backward through the history without the hierarchical restrictions enforced in `router.back()` and `router.forward()`.
-- **push:** Programmatically navigate to a new URL by pushing an entry in the history stack.
-- **replace:** Programmatically navigate to a new URL by replacing the current entry in the routes history stack.
+- **push:** Programmatically navigate to a new URL by pushing an entry in the history stack. **It is recommended to use [`navigateTo`](http://v3.nuxtjs.org/api/utils/navigate-to#navigateto) instead.**
+- **replace:** Programmatically navigate to a new URL by replacing the current entry in the routes history stack. **It is recommended to use [`navigateTo`](http://v3.nuxtjs.org/api/utils/navigate-to#navigateto) instead.**
 
 > TIP: `router.addRoute()` adds route details into an array of routes and it is useful while building Nuxt plugins while `router.push()` on the other hand, triggers a new navigation immediately and it is useful in Nuxt Page components, Vue components and composable.
 
@@ -53,7 +40,7 @@ router.replace({ hash: "#bio" });
 
 `useRouter` composable provides `afterEach`, `beforeEach` and `beforeResolve` helper methods that acts as nagivation guards.
 
-However, Nuxt has a concept of **Route middleware** that simplifies the implementation of navigation guards and provides much better developer experience.
+However, Nuxt has a concept of **route middleware** that simplifies the implementation of navigation guards and provides a better developer experience.
 
 ::ReadMore{link="/guide/directory-structure/middleware"}
 ::
@@ -69,18 +56,7 @@ However, Nuxt has a concept of **Route middleware** that simplifies the implemen
 
 ## Universal router instance
 
-Nuxt also provides a universal router instance that is different from `useRouter()`. This router instance is independent of Vue router, and provides similar helper methods as `useRouter` composable.
-
-You can use `useNuxtApp()` composable to access this router instance.
-
-```js [js]
-const NuxtApp = useNuxtApp();
-const router = NuxtApp.$router;
-// router.push()
-// router.onError()
-// router.getRoutes()
-// ...and so on
-```
+If you do not have a `pages/` folder, then `useRouter` will return a universal router instance with similar helper methods, but be aware that not all features may be supported or behave in exactly the same way as with `vue-router`.
 
 ::ReadMore{link="/guide/features/routing"}
 ::
