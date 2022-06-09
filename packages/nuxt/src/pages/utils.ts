@@ -95,7 +95,7 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
   return prepareRoutes(routes)
 }
 
-const getSortablePath = (path: string) => path.replace(/^\//, '').replace(/:/, 'z')
+const getSortablePath = (path: string) => path.replace(/^\//, '').replace(/:/, 'Z')
 
 function getRoutePath (tokens: SegmentToken[]): string {
   return tokens.reduce((path, token) => {
