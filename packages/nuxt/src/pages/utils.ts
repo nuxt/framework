@@ -88,13 +88,14 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
     }
 
     parent.push(route)
-    parent.sort((a, b) => normalizePath(a.path).localeCompare(normalizePath(b.path)))
+    // TODO: https://github.com/vuejs/router/issues/1435
+    parent.sort((a, b) => getSortablePath(a.path).localeCompare(getSortablePath(b.path)))
   }
 
   return prepareRoutes(routes)
 }
 
-const normalizePath = (path: string) => path.replace(/^\//, '').replace(/:/, 'z')
+const getSortablePath = (path: string) => path.replace(/^\//, '').replace(/:/, '~')
 
 function getRoutePath (tokens: SegmentToken[]): string {
   return tokens.reduce((path, token) => {
