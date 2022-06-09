@@ -8,8 +8,8 @@ Within your pages, components, and plugins you can use `useRequestEvent` to acce
 // Get underlying request event
 const event = useRequestEvent()
 
-// Get cookies for the event
-const cookies = useCookies(event)
+// Get the URL
+const url = event.req.url
 ```
 
 ::alert{icon=👉}
