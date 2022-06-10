@@ -148,7 +148,7 @@ export default defineEventHandler((event)=>{
   let counter = useCookie(event, 'counter') || 0
 
   // Increase counter cookie by 1
-  setCookie(res, 'counter', ++counter)
+  setCookie(event, 'counter', ++counter)
 
   // Send JSON response
   return { counter }
