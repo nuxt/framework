@@ -125,7 +125,7 @@ async function initNuxt (nuxt: Nuxt) {
 
   await nuxt.callHook('modules:done', { nuxt } as ModuleContainer)
 
-  await addModuleTranspiles()
+  addModuleTranspiles()
 
   // Init nitro
   await initNitro(nuxt)

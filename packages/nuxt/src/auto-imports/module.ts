@@ -37,7 +37,10 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     // Create a context to share state between module internals
     const ctx = createUnimport({
       presets: options.presets,
-      imports: options.imports
+      imports: options.imports,
+      addons: {
+        vueTemplate: true
+      }
     })
 
     // composables/ dirs from all layers
