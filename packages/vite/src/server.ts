@@ -6,6 +6,7 @@ import { logger, resolveModule, isIgnored } from '@nuxt/kit'
 import fse from 'fs-extra'
 import { debounce } from 'perfect-debounce'
 import { withoutTrailingSlash } from 'ufo'
+import replace from '@rollup/plugin-replace'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
@@ -20,12 +21,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     define: {
       'process.server': true,
-      'process.client': false,
-      'typeof window': '"undefined"',
-      'typeof document': '"undefined"',
-      'typeof navigator': '"undefined"',
-      'typeof location': '"undefined"',
-      'typeof XMLHttpRequest': '"undefined"'
+      'process.client': false
     },
     resolve: {
       alias: {
@@ -86,6 +82,14 @@ export async function buildServer (ctx: ViteBuildContext) {
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
       RelativeAssetPlugin(),
       vuePlugin(ctx.config.vue),
+      replace({
+        'typeof window': '"undefined"',
+        'typeof document': '"undefined"',
+        'typeof navigator': '"undefined"',
+        'typeof location': '"undefined"',
+        'typeof XMLHttpRequest': '"undefined"',
+        preventAssignment: true
+      }),
       viteJsxPlugin()
     ]
   } as ViteOptions)
