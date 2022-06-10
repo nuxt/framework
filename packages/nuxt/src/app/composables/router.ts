@@ -60,7 +60,8 @@ export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}
   if (!to) {
     to = '/'
   }
-  if (isProcessingMiddleware()) {
+  // Early redirect on client-side since only possible option is redirectCode and not applied
+  if (process.client && isProcessingMiddleware()) {
     return to
   }
   const router = useRouter()
@@ -68,7 +69,7 @@ export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}
     const nuxtApp = useNuxtApp()
     if (nuxtApp.ssrContext && nuxtApp.ssrContext.event) {
       const redirectLocation = joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
-      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext.event, redirectLocation, options.redirectCode || 301))
+      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext.event, redirectLocation, options.redirectCode || 302))
     }
   }
   // Client-side redirection using vue-router
