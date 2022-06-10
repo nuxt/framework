@@ -3003,7 +3003,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/devtools-api@npm:^6.0.0":
+"@vue/devtools-api@npm:^6.1.4":
   version: 6.1.4
   resolution: "@vue/devtools-api@npm:6.1.4"
   checksum: 027bb138b03ec7147dd15e5d0ef28d5b72c822530396cc8a86bc6fdb049dc6850314b9e897e497064e3ed47fad229a18141f56b8b8ca3d41092a576dc5b6538d
@@ -10012,7 +10012,7 @@ __metadata:
     vue: ^3.2.37
     vue-bundle-renderer: ^0.3.9
     vue-meta: next
-    vue-router: ^4.0.16
+    vue-router: edge
   bin:
     nuxi: ./bin/nuxt.mjs
     nuxt: ./bin/nuxt.mjs
@@ -13539,14 +13539,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-router@npm:^4.0.16":
-  version: 4.0.16
-  resolution: "vue-router@npm:4.0.16"
+"vue-router@npm:edge":
+  version: 4.1.0-9e62c00
+  resolution: "vue-router@npm:4.1.0-9e62c00"
   dependencies:
-    "@vue/devtools-api": ^6.0.0
+    "@vue/devtools-api": ^6.1.4
   peerDependencies:
     vue: ^3.2.0
-  checksum: 4b8e417c96404d4f4c69539112dfafc52f3b2427db3663d5129413a9b65aafdb95889d756af4c6d08a84d7f9e80cc0ae4667383f2c090f27c27ea4b5d83c4cec
+  checksum: 5955fe9d91701574b72da9a107a765225e37fbed49552f5a5a84b9f8d5855908703c5cc67bf0ed101f15e647a5c06feb61dcb4742647b44de38c589fcefcd41d
   languageName: node
   linkType: hard
 

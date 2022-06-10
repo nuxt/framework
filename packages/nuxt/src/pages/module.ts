@@ -78,6 +78,25 @@ export default defineNuxtModule({
       }
     })
 
+    addTemplate({
+      filename: 'types/router.d.ts',
+      async getContents () {
+        const pages = await resolvePagesRoutes()
+        await nuxt.callHook('pages:extend', pages)
+        const { routes, imports } = normalizeRoutes(pages)
+        return [
+          ...imports,
+          "import { Router, RouterConfig, RouterOptions } from 'vue-router'",
+          `declare const routes = ${routes} as const`,
+          "declare module 'vue-router' {",
+          'export interface Config {',
+          "  Router: Router<Omit<RouterOptions, 'routes'> & { routes: typeof routes }>",
+          '}',
+          '}'
+        ].join('\n')
+      }
+    })
+
     // Add router options template
     addTemplate({
       filename: 'router.options.mjs',
@@ -157,6 +176,7 @@ export default defineNuxtModule({
     nuxt.hook('prepare:types', ({ references }) => {
       references.push({ path: resolve(nuxt.options.buildDir, 'types/middleware.d.ts') })
       references.push({ path: resolve(nuxt.options.buildDir, 'types/layouts.d.ts') })
+      references.push({ path: resolve(nuxt.options.buildDir, 'types/router.d.ts') })
     })
   }
 })

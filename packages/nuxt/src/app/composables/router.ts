@@ -1,10 +1,10 @@
-import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure } from 'vue-router'
+import type { RouterTyped, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure } from 'vue-router'
 import { sendRedirect } from 'h3'
 import { joinURL } from 'ufo'
 import { useNuxtApp, useRuntimeConfig } from '#app'
 
 export const useRouter = () => {
-  return useNuxtApp()?.$router as Router
+  return useNuxtApp()?.$router as RouterTyped
 }
 
 export const useRoute = () => {
