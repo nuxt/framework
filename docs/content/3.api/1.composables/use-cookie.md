@@ -150,7 +150,7 @@ export default (req, res) => {
   let counter = useCookie(req, 'counter') || 0
 
   // Increase counter cookie by 1
-  setCookie(res, 'counter', ++counter)
+  setCookie(req, 'counter', ++counter)
 
   // Send JSON response
   return { counter }
