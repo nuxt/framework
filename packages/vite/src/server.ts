@@ -44,7 +44,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       }
     },
     ssr: {
-      external: ctx.nuxt.options.experimental.externalVue ? ['#internal/nitro', 'vue', 'vue-router'] : [],
+      external: ctx.nuxt.options.experimental.externalVue ? ['#internal/nitro', 'vue', 'vue-router'] : ['#internal/nitro'],
       noExternal: [
         ...ctx.nuxt.options.build.transpile,
         // TODO: Use externality for production (rollup) build
