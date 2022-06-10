@@ -143,7 +143,7 @@ You can use `useCookie` and `setCookie` from [`h3`](https://github.com/unjs/h3) 
 **Example:**
 
 ```js
-export default defineEventHandler((event)=>{
+export default defineEventHandler(event => {
   // Read counter cookie
   let counter = useCookie(event, 'counter') || 0
 
