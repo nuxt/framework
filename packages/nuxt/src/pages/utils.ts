@@ -88,10 +88,14 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
     }
 
     parent.push(route)
+    // TODO: https://github.com/vuejs/router/issues/1435
+    parent.sort((a, b) => getSortablePath(a.path).localeCompare(getSortablePath(b.path)))
   }
 
   return prepareRoutes(routes)
 }
+
+const getSortablePath = (path: string) => path.replace(/^\//, '').replace(/:/, 'Z')
 
 function getRoutePath (tokens: SegmentToken[]): string {
   return tokens.reduce((path, token) => {
@@ -207,14 +211,6 @@ function prepareRoutes (routes: NuxtPage[], parent?: NuxtPage) {
       route.name = route.name.replace(/-index$/, '')
     }
 
-    if (route.path === '/') {
-      // Remove ? suffix when index page at same level
-      routes.forEach((siblingRoute) => {
-        if (siblingRoute.path.endsWith('?')) {
-          siblingRoute.path = siblingRoute.path.slice(0, -1)
-        }
-      })
-    }
     // Remove leading / if children route
     if (parent && route.path.startsWith('/')) {
       route.path = route.path.slice(1)
