@@ -1710,7 +1710,7 @@ __metadata:
     ohmyfetch: ^0.4.18
     playwright: ^1.22.2
     unbuild: latest
-    vitest: ^0.14.1
+    vitest: ^0.14.2
   peerDependencies:
     vue: ^3.2.37
   languageName: unknown
@@ -1779,8 +1779,8 @@ __metadata:
     ufo: ^0.8.4
     unbuild: latest
     unplugin: ^0.7.0
-    vite: ^2.9.10
-    vite-node: ^0.14.1
+    vite: ^2.9.11
+    vite-node: ^0.14.2
     vite-plugin-checker: ^0.4.6
     vue: 3.2.37
   peerDependencies:
@@ -10147,7 +10147,7 @@ __metadata:
     rimraf: ^3.0.2
     typescript: ^4.7.3
     unbuild: ^0.7.4
-    vitest: ^0.14.1
+    vitest: ^0.14.2
     vue-tsc: ^0.37.3
   languageName: unknown
   linkType: soft
@@ -13510,9 +13510,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:^0.14.1":
-  version: 0.14.1
-  resolution: "vite-node@npm:0.14.1"
+"vite-node@npm:^0.14.2":
+  version: 0.14.2
+  resolution: "vite-node@npm:0.14.2"
   dependencies:
     debug: ^4.3.4
     kolorist: ^1.5.1
@@ -13521,7 +13521,7 @@ __metadata:
     vite: ^2.9.9
   bin:
     vite-node: vite-node.mjs
-  checksum: 391f09c0d68613879ccaf8592209d51bd816ca7f7d0c6f5c2c9f643a0643e930d61c2187b7739f2496d0f0e313fff9409c801852749ef19cc3c23ca03034733a
+  checksum: 1830dedd952c1f5adcaf60262f5c20f1bf73866517fd2c6434dbc8f32553afc8662de2fd4092ca629c7ba3bfe8d04a1c988a00af74f87e7c35535e6799860e09
   languageName: node
   linkType: hard
 
@@ -13552,7 +13552,36 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^2.9.10, vite@npm:^2.9.9":
+"vite@npm:^2.9.11":
+  version: 2.9.11
+  resolution: "vite@npm:2.9.11"
+  dependencies:
+    esbuild: ^0.14.27
+    fsevents: ~2.3.2
+    postcss: ^8.4.13
+    resolve: ^1.22.0
+    rollup: ^2.59.0
+  peerDependencies:
+    less: "*"
+    sass: "*"
+    stylus: "*"
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    less:
+      optional: true
+    sass:
+      optional: true
+    stylus:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 9ab34275420ac2daf9d5e6309cc1b3a66ba57defac981d3ee433384bd997c54a519b1e700459650b4869855963b3ccbac4521ac26541fcd8b789a998ec89c5a6
+  languageName: node
+  linkType: hard
+
+"vite@npm:^2.9.9":
   version: 2.9.10
   resolution: "vite@npm:2.9.10"
   dependencies:
@@ -13581,9 +13610,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^0.14.1":
-  version: 0.14.1
-  resolution: "vitest@npm:0.14.1"
+"vitest@npm:^0.14.2":
+  version: 0.14.2
+  resolution: "vitest@npm:0.14.2"
   dependencies:
     "@types/chai": ^4.3.1
     "@types/chai-subset": ^1.3.3
@@ -13609,7 +13638,7 @@ __metadata:
       optional: true
   bin:
     vitest: vitest.mjs
-  checksum: de2e225f56a0c8168637a4e9d579a47caed7b8edaf42be85e5e775c8da85b7e6ecfa713c72511aaac51adfce9e33bbf74de1531be832010bec22bb5c1a5d820b
+  checksum: 9678822b0ccc4b31f93e4454972177df85b9857355affbc2e9f3b8f54507d0f9500783c3788c9f39681718a59f5a5bd7848bc7198a2a906a0a28d9328a2bb9cb
   languageName: node
   linkType: hard
 
