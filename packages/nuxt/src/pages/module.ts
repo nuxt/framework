@@ -4,7 +4,7 @@ import { resolve } from 'pathe'
 import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
 import { distDir } from '../dirs'
-import { resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
+import { resolvePagesRoutes, normalizeRoutes, resolveMiddleware, genSafeImportName } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
 
 export default defineNuxtModule({
@@ -113,8 +113,8 @@ export default defineNuxtModule({
         const namedMiddleware = middleware.filter(mw => !mw.global)
         const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
         return [
-          ...globalMiddleware.map(mw => genImport(mw.path, getImportName(mw.name))),
-          `export const globalMiddleware = ${genArrayFromRaw(globalMiddleware.map(mw => getImportName(mw.name)))}`,
+          ...globalMiddleware.map(mw => genImport(mw.path, genSafeImportName(mw.name))),
+          `export const globalMiddleware = ${genArrayFromRaw(globalMiddleware.map(mw => genSafeImportName(mw.name)))}`,
           `export const namedMiddleware = ${namedMiddlewareObject}`
         ].join('\n')
       }
