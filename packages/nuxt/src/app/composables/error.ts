@@ -32,8 +32,8 @@ export const clearError = async (options: { redirect?: string } = {}) => {
   error.value = null
 }
 
+const isNuxtError = (err: object): err is NuxtError => err && typeof err === 'object' && ('__nuxt_error' in err)
+
 export const createError = (err: Partial<NuxtError>): NuxtError => {
-  return err && typeof err === 'object' && !('__nuxt_error' in err)
-    ? _createError(err)
-    : err as NuxtError
+  return isNuxtError(err) ? err : _createError(err)
 }
