@@ -144,7 +144,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
     transform: {
       include: options._layers
         .filter(i => i.cwd)
-        .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd.split('node_modules/').pop())}(\\/|$)`))
+        .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd.split('node_modules/').pop())}(\\/|$)(?!node_modules\\/)`))
     }
   }])
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))
