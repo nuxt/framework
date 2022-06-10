@@ -96,19 +96,39 @@ describe('pages:generateRoutesFromFiles', () => {
     {
       description: 'should generate correct dynamic routes',
       files: [
+          `${pagesDir}/index.vue`,
           `${pagesDir}/[slug].vue`,
           `${pagesDir}/[[foo]]`,
           `${pagesDir}/[[foo]]/index.vue`,
           `${pagesDir}/[bar]/index.vue`,
-          `${pagesDir}/sub/[slug].vue`,
+          `${pagesDir}/nonopt/[slug].vue`,
+          `${pagesDir}/opt/[[slug]].vue`,
           `${pagesDir}/[[sub]]/route-[slug].vue`
       ],
       output: [
         {
-          name: 'slug',
-          path: '/:slug',
-          file: `${pagesDir}/[slug].vue`,
+          name: 'index',
+          path: '/',
+          file: `${pagesDir}/index.vue`,
           children: []
+        },
+        {
+          name: 'nonopt-slug',
+          path: '/nonopt/:slug',
+          file: `${pagesDir}/nonopt/[slug].vue`,
+          children: []
+        },
+        {
+          name: 'opt-slug',
+          path: '/opt/:slug?',
+          file: `${pagesDir}/opt/[[slug]].vue`,
+          children: []
+        },
+        {
+          children: [],
+          name: 'bar',
+          file: 'pages/[bar]/index.vue',
+          path: '/:bar'
         },
         {
           children: [
@@ -124,15 +144,9 @@ describe('pages:generateRoutesFromFiles', () => {
           path: '/:foo?'
         },
         {
-          children: [],
-          name: 'bar',
-          file: 'pages/[bar]/index.vue',
-          path: '/:bar'
-        },
-        {
-          name: 'sub-slug',
-          path: '/sub/:slug',
-          file: `${pagesDir}/sub/[slug].vue`,
+          name: 'slug',
+          path: '/:slug',
+          file: `${pagesDir}/[slug].vue`,
           children: []
         },
         {
@@ -145,8 +159,14 @@ describe('pages:generateRoutesFromFiles', () => {
     },
     {
       description: 'should generate correct catch-all route',
-      files: [`${pagesDir}/[...slug].vue`],
+      files: [`${pagesDir}/[...slug].vue`, `${pagesDir}/index.vue`],
       output: [
+        {
+          name: 'index',
+          path: '/',
+          file: `${pagesDir}/index.vue`,
+          children: []
+        },
         {
           name: 'slug',
           path: '/:slug(.*)*',
