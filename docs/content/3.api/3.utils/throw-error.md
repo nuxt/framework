@@ -22,13 +22,11 @@ The thrown error is set in the state using [`useError()`](/api/composables/use-e
 
 ## Throwing errors in API routes
 
-You can use `createError` from [`h3`](https://github.com/unjs/h3) package to trigger error handling in server API routes.
+You can use the auto-imported `createError` from [`h3`](https://github.com/unjs/h3) package to trigger error handling in server API routes.
 
 **Example:**
 
 ```js
-import { createError } from 'h3'
-
 export default eventHandler(() => {
   throw createError({
     statusCode: 404,
