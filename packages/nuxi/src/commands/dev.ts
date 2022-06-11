@@ -19,6 +19,10 @@ export default defineNuxtCommand({
   async invoke (args) {
     process.env.NODE_ENV = process.env.NODE_ENV || 'development'
 
+    if (process.env.NODE_ENV !== 'development') {
+      console.warn(`Starting dev server in \`${process.env.NODE_ENV}\` mode. This is not recommended.`)
+    }
+
     const { listen } = await import('listhen')
     let currentHandler
     let loadingMessage = 'Nuxt is starting...'

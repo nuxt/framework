@@ -13,6 +13,11 @@ export default defineNuxtCommand({
   },
   async invoke (args) {
     process.env.NODE_ENV = process.env.NODE_ENV || 'production'
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(`Building nuxt in \`${process.env.NODE_ENV}\` mode. This is not recommended.`)
+    }
+
     const rootDir = resolve(args._[0] || '.')
 
     const { loadNuxt, buildNuxt } = await loadKit(rootDir)
