@@ -3,6 +3,7 @@ import consola from 'consola'
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
 import { clearDir } from '../utils/fs'
+import { overrideEnv } from '../utils/env'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -12,11 +13,7 @@ export default defineNuxtCommand({
     description: 'Build nuxt for production deployment'
   },
   async invoke (args) {
-    if (process.env.NODE_ENV && process.env.NODE_ENV !== 'production') {
-      console.info('Setting NODE_ENV to `production`.')
-    }
-
-    process.env.NODE_ENV = 'production'
+    overrideEnv('production')
 
     const rootDir = resolve(args._[0] || '.')
 
