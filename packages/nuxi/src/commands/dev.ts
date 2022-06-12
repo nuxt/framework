@@ -17,11 +17,11 @@ export default defineNuxtCommand({
     description: 'Run nuxt development server'
   },
   async invoke (args) {
-    process.env.NODE_ENV = process.env.NODE_ENV || 'development'
-
-    if (process.env.NODE_ENV !== 'development') {
-      console.warn(`Starting dev server in \`${process.env.NODE_ENV}\` mode. This is not recommended.`)
+    if (process.env.NODE_ENV && process.env.NODE_ENV !== 'development') {
+      console.info('Setting NODE_ENV to `development`.')
     }
+
+    process.env.NODE_ENV = 'development'
 
     const { listen } = await import('listhen')
     let currentHandler

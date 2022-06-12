@@ -14,11 +14,11 @@ export default defineNuxtCommand({
     description: 'Build nuxt and analyze production bundle (experimental)'
   },
   async invoke (args) {
-    process.env.NODE_ENV = process.env.NODE_ENV || 'production'
-
-    if (process.env.NODE_ENV !== 'production') {
-      console.warn(`Building nuxt for analysis in \`${process.env.NODE_ENV}\` mode. This is not recommended.`)
+    if (process.env.NODE_ENV && process.env.NODE_ENV !== 'production') {
+      console.info('Setting NODE_ENV to `production`.')
     }
+
+    process.env.NODE_ENV = 'production'
 
     const rootDir = resolve(args._[0] || '.')
     const statsDir = join(rootDir, '.nuxt/stats')
