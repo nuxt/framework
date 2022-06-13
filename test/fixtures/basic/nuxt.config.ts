@@ -28,6 +28,8 @@ export default defineNuxtConfig({
     }
   },
   experimental: {
+    // TODO: enable by default or work around the need for this
+    externalVue: true,
     reactivityTransform: true
   }
 })
