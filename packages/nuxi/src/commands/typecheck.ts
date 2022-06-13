@@ -19,9 +19,9 @@ export default defineNuxtCommand({
     const { loadNuxt } = await loadKit(rootDir)
     const nuxt = await loadNuxt({ rootDir, config: { _prepare: true } })
 
-    // Generate types and close nuxt instance
+    // Generate types and build nuxt instance
     await writeTypes(nuxt)
-    await nuxt.close()
+    await buildNuxt(nuxt)
 
     // Prefer local install if possible
     const hasLocalInstall = tryResolveModule('typescript', rootDir) && tryResolveModule('vue-tsc/package.json', rootDir)
