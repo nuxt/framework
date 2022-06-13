@@ -50,7 +50,14 @@ export function recoverContextFromEnv () {
 }
 
 export function exposeContextToEnv () {
-  const ctx = { ...currentContext }
-  delete ctx.nuxt
-  process.env.NUXT_TEST_CONTEXT = JSON.stringify(ctx)
+  const {
+    options,
+    browser,
+    url
+  } = currentContext
+  process.env.NUXT_TEST_CONTEXT = JSON.stringify({
+    options,
+    browser,
+    url
+  })
 }
