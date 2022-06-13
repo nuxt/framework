@@ -29,7 +29,7 @@ function extractCSS (ctx: WebpackConfigContext) {
     config.plugins.push(new MiniCssExtractPlugin({
       filename: fileName(ctx, 'css'),
       chunkFilename: fileName(ctx, 'css'),
-      ...options.webpack.extractCSS
+      ...options.webpack.extractCSS === true ? {} : options.webpack.extractCSS
     }))
   }
 }
