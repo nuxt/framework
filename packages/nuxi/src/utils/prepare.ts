@@ -20,7 +20,7 @@ export const writeTypes = async (nuxt: Nuxt) => {
       noEmit: true,
       resolveJsonModule: true,
       allowSyntheticDefaultImports: true,
-      types: ['node', 'vite/client'],
+      types: ['node'],
       baseUrl: relative(nuxt.options.buildDir, nuxt.options.rootDir),
       paths: {}
     },
@@ -71,6 +71,16 @@ export const writeTypes = async (nuxt: Nuxt) => {
   const declarations: string[] = []
 
   await nuxt.callHook('prepare:types', { references, declarations, tsConfig })
+
+  const builder = nuxt.options.builder as ('@nuxt/webpack-builder' | '@nuxt/vite-builder')
+
+  if (builder === '@nuxt/vite-builder') {
+    references.push({ types: 'vite/client' })
+  }
+
+  if (builder === '@nuxt/webpack-builder') {
+    references.push({ types: 'webpack/module' })
+  }
 
   const declaration = [
     ...references.map((ref) => {
