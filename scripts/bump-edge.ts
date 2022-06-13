@@ -53,6 +53,7 @@ async function loadWorkspace (dir: string) {
   }
 
   const rename = (from: string, to: string) => {
+    find(from).data._name = find(from).data.name
     find(from).data.name = to
     for (const pkg of packages) {
       pkg.updateDeps((dep) => {
@@ -95,9 +96,8 @@ async function main () {
 
   for (const pkg of workspace.packages.filter(p => !p.data.private)) {
     workspace.setVersion(pkg.data.name, `${pkg.data.version}-${date}.${commit}`)
-    if (pkg.data.name !== 'nuxt3' /* TODO: Hardcoded! */) {
-      workspace.rename(pkg.data.name, pkg.data.name + '-edge')
-    }
+    const newname = pkg.data.name === 'nuxt' ? 'nuxt3' : (pkg.data.name + '-edge')
+    workspace.rename(pkg.data.name, newname)
   }
 
   await workspace.save()

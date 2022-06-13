@@ -41,7 +41,6 @@ type DataT = {
   * _pick_: only pick specified keys in this array from the `handler` function result
   * _watch_: watch reactive sources to auto-refresh
   * _initialCache_: When set to `false`, will skip payload cache for initial fetch. (defaults to `true`)
-  * _default_: A function that returns the default value (before the handler function returns its value).
 
 Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the route before the data has been fetched. Consider using `lazy: true` and implementing a loading state instead for a snappier user experience.
 
@@ -57,12 +56,9 @@ By default, Nuxt waits until a `refresh` is finished before it can be executed a
 ## Example
 
 ```ts
-const { data, pending, error, refresh } = useAsyncData(
+const { data, pending, error, refresh } = await useAsyncData(
   'mountains',
-  () => $fetch('https://api.nuxtjs.dev/mountains),
-  {
-    pick: ['title']
-  }
+  () => $fetch('https://api.nuxtjs.dev/mountains')
 )
 ```
 

@@ -1,10 +1,11 @@
 import { ConfigSchema } from '../../schema/config'
 import type { ResolvedConfig } from 'c12'
 
-type DeepPartial<T> = T extends Record<string, any> ? { [P in keyof T]?: DeepPartial<T[P]> | T[P] } : T
+type DeepPartial<T> = T extends Record<string, any> ? { [P in keyof T]?: DeepPartial<T[P]> } : T
 
 /** User configuration in `nuxt.config` file */
-export interface NuxtConfig extends DeepPartial<ConfigSchema> {
+export interface NuxtConfig extends DeepPartial<Omit<ConfigSchema, 'vite'>> {
+  vite?: ConfigSchema['vite']
   [key: string]: any
 }
 
@@ -15,15 +16,12 @@ export interface NuxtOptions extends ConfigSchema {
 
 type RuntimeConfigNamespace = Record<string, any>
 
-/** @deprecated use RuntimeConfig interface */
 export interface PublicRuntimeConfig extends RuntimeConfigNamespace { }
 
+// TODO: remove before release of 3.0.0
 /** @deprecated use RuntimeConfig interface */
-export interface PrivateRuntimeConfig extends PublicRuntimeConfig { }
+export interface PrivateRuntimeConfig extends RuntimeConfigNamespace { }
 
-type LegacyRuntimeConfig = PublicRuntimeConfig & Partial<PrivateRuntimeConfig>
-
-export interface RuntimeConfig extends LegacyRuntimeConfig, RuntimeConfigNamespace {
-  app: RuntimeConfigNamespace
-  public: RuntimeConfigNamespace
+export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamespace {
+  public: PublicRuntimeConfig
 }

@@ -42,7 +42,7 @@ counter.value = counter.value || Math.round(Math.random() * 1000)
 </script>
 ```
 
-:button-link[Open on StackBlitz]{href="https://stackblitz.com/github/nuxt/framework/tree/main/examples/use-cookie?terminal=dev" blank}
+:button-link[Open on StackBlitz]{href="https://stackblitz.com/github/nuxt/framework/tree/main/examples/composables/use-cookie?terminal=dev&file=app.vue" blank}
 
 ## Options
 
@@ -143,18 +143,16 @@ You can use `useCookie` and `setCookie` from [`h3`](https://github.com/unjs/h3) 
 **Example:**
 
 ```js
-import { useCookie, setCookie } from 'h3'
-
-export default (req, res) => {
+export default defineEventHandler(event => {
   // Read counter cookie
-  let counter = useCookie(req, 'counter') || 0
+  let counter = useCookie(event, 'counter') || 0
 
   // Increase counter cookie by 1
-  setCookie(res, 'counter', ++counter)
+  setCookie(event, 'counter', ++counter)
 
   // Send JSON response
   return { counter }
-}
+})
 ```
 
 :LinkExample{link="/examples/composables/use-cookie"}

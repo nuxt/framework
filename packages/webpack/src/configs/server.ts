@@ -40,6 +40,7 @@ function serverStandalone (ctx: WebpackConfigContext) {
   const inline = [
     'src/',
     '#app',
+    'nuxt',
     'nuxt3',
     '!',
     '-!',
@@ -48,7 +49,7 @@ function serverStandalone (ctx: WebpackConfigContext) {
     '#',
     ...ctx.options.build.transpile
   ]
-  const external = ['#nitro']
+  const external = ['#internal/nitro']
 
   if (!Array.isArray(ctx.config.externals)) { return }
   ctx.config.externals.push(({ request }, cb) => {

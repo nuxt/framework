@@ -346,7 +346,7 @@ export default {
    *   // Will register file from project server-middleware directory to handle /server-middleware/* requires
    *   { path: '/server-middleware', handler: '~/server-middleware/index.js' },
    *   // We can create custom instances too, but only in development mode, they are ignored for the production bundle.
-   *   { path: '/static2', handler: serveStatic(__dirname + '/static2') }
+   *   { path: '/static2', handler: serveStatic(fileURLToPath(new URL('./static2', import.meta.url))) }
    * ]
    * ```
    *
@@ -393,8 +393,9 @@ export default {
    *   }
    * }
    * ```
+   *
    * @version 2
-   * @version 3
+   * @deprecated Use `serverHandlers` instead
    */
   serverMiddleware: {
     $resolve: (val: any) => {
@@ -516,12 +517,11 @@ export default {
    *
    * @example
    * ```js
-   * import { resolve } from 'pathe'
    * export default {
    *   alias: {
-   *     'images': resolve(__dirname, './assets/images'),
-   *     'style': resolve(__dirname, './assets/style'),
-   *     'data': resolve(__dirname, './assets/other/data')
+   *     'images': fileURLToPath(new URL('./assets/images', import.meta.url)),
+   *     'style': fileURLToPath(new URL('./assets/style', import.meta.url)),
+   *     'data': fileURLToPath(new URL('./assets/other/data', import.meta.url))
    *   }
    * }
    * ```
@@ -710,7 +710,7 @@ export default {
    * ```js
    * export default {
    *  runtimeConfig: {
-   *     apiKey: '' // Default to an empty string, automatically loaded at runtime using process.env.NUXT_API_SECRET
+   *     apiKey: '' // Default to an empty string, automatically set at runtime using process.env.NUXT_API_KEY
    *     public: {
    *        baseURL: '' // Exposed to the frontend as well.
    *     }
@@ -726,9 +726,9 @@ export default {
       ...get('privateRuntimeConfig'),
       public: get('publicRuntimeConfig'),
       app: {
-        baseURL: get('app.baseURL'),
-        buildAssetsDir: get('app.buildAssetsDir'),
-        cdnURL: get('app.cdnURL'),
+        baseURL: get('app').baseURL,
+        buildAssetsDir: get('app').buildAssetsDir,
+        cdnURL: get('app').cdnURL,
       }
     })
   },
