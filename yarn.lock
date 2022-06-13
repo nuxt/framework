@@ -48,7 +48,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.17.7, @babel/core@npm:^7.17.9, @babel/core@npm:^7.18.2":
+"@babel/core@npm:^7.17.7, @babel/core@npm:^7.17.9, @babel/core@npm:^7.18.5":
   version: 7.18.5
   resolution: "@babel/core@npm:7.18.5"
   dependencies:
@@ -1791,7 +1791,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nuxt/webpack-builder@workspace:packages/webpack"
   dependencies:
-    "@babel/core": ^7.18.2
+    "@babel/core": ^7.18.5
     "@nuxt/friendly-errors-webpack-plugin": ^2.5.2
     "@nuxt/kit": ^3.0.0-rc.4
     "@nuxt/schema": ^3.0.0-rc.4
@@ -2765,10 +2765,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/reset@npm:^0.38.2":
-  version: 0.38.2
-  resolution: "@unocss/reset@npm:0.38.2"
-  checksum: b15b62ec6d0e5519ce752a6a26c1f9a6011d4d40aa0f504aa2713d749c017c433634d1c7c522031046d6ccfce21097b97606d9e3d07056188c37b95a8e45deb1
+"@unocss/reset@npm:^0.39.0":
+  version: 0.39.0
+  resolution: "@unocss/reset@npm:0.39.0"
+  checksum: 0c5ba21348781d79d1b0aab48cf884ff30e944eedbde7b98b1d73d37bf605b139220a0945473605ad4307c8d240c6b7664cf4cc32a8c4ac5b3bf956ead00ad37
   languageName: node
   linkType: hard
 
@@ -2875,45 +2875,45 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@volar/code-gen@npm:0.37.5":
-  version: 0.37.5
-  resolution: "@volar/code-gen@npm:0.37.5"
+"@volar/code-gen@npm:0.37.7":
+  version: 0.37.7
+  resolution: "@volar/code-gen@npm:0.37.7"
   dependencies:
-    "@volar/source-map": 0.37.5
-  checksum: 4978825d1885942d50da2b5d2cbf7e0b0377bff133c991aecd2271eb2fb3270ded72b2e296e789cc9bacb72841bf1c86bff9450bc795e0f2675b57c5e438bfe0
+    "@volar/source-map": 0.37.7
+  checksum: 199ab25a78bdb111a72d7efbd98336b5172aa0c89abd23cba8cc6d29ac19cf4c6c677178e63c0409821d8e6123bb3f140de4f765dd5f3e5646893f1925e1a330
   languageName: node
   linkType: hard
 
-"@volar/source-map@npm:0.37.5":
-  version: 0.37.5
-  resolution: "@volar/source-map@npm:0.37.5"
-  checksum: ebce4972e4e0544447c02622dfd6fb25649bde53c9a9ef138ff218d63aed9dff2b16e84fb72ae811018de2314b1f818bf1db0365ec38a58f2bd9e176da6d618d
+"@volar/source-map@npm:0.37.7":
+  version: 0.37.7
+  resolution: "@volar/source-map@npm:0.37.7"
+  checksum: f2809d73260d01d3b9fc234aeb38701528a487ed6a9b090ee9022713854876993987c0f8b84fb940a05028a77c9fbaa70185dd5b366146afb2ff01a90b3304fb
   languageName: node
   linkType: hard
 
-"@volar/vue-code-gen@npm:0.37.5":
-  version: 0.37.5
-  resolution: "@volar/vue-code-gen@npm:0.37.5"
+"@volar/vue-code-gen@npm:0.37.7":
+  version: 0.37.7
+  resolution: "@volar/vue-code-gen@npm:0.37.7"
   dependencies:
-    "@volar/code-gen": 0.37.5
-    "@volar/source-map": 0.37.5
+    "@volar/code-gen": 0.37.7
+    "@volar/source-map": 0.37.7
     "@vue/compiler-core": ^3.2.37
     "@vue/compiler-dom": ^3.2.37
     "@vue/shared": ^3.2.37
-  checksum: 5fb21b6bc97175408594da18ebe12c5d3c71769d21dceb262e8839c89c63519a85ead5cc8c7aac4b2c7efaefb58142989f15cb42c9b083d0080682b5a3d419ff
+  checksum: c8e2f93729836b1e43e4e1e00dd1837bdf9173e21ca31a1930a40a818b1469b680c8c01a8eab9fdd8608c20ec3c2fdcb486317bbf15d48922b9893c584fdddac
   languageName: node
   linkType: hard
 
-"@volar/vue-typescript@npm:0.37.5":
-  version: 0.37.5
-  resolution: "@volar/vue-typescript@npm:0.37.5"
+"@volar/vue-typescript@npm:0.37.7":
+  version: 0.37.7
+  resolution: "@volar/vue-typescript@npm:0.37.7"
   dependencies:
-    "@volar/code-gen": 0.37.5
-    "@volar/source-map": 0.37.5
-    "@volar/vue-code-gen": 0.37.5
+    "@volar/code-gen": 0.37.7
+    "@volar/source-map": 0.37.7
+    "@volar/vue-code-gen": 0.37.7
     "@vue/compiler-sfc": ^3.2.37
     "@vue/reactivity": ^3.2.37
-  checksum: 702c42644b9655da20cff7d0df544d9c3453e6b06e2a5b535a70d1849b7f76c8ea69167af67aa0f169c6f6ef8a841db8532519139087faac7ee88aa173b7b711
+  checksum: 8aacf07679d5c660aa21259ebd53531d581ce5ec5f92885b7cfe7494ba9f65be1ef3da784738edd8676ed148fbe0da7619094d19bcf9c0522623ca00e17100fd
   languageName: node
   linkType: hard
 
@@ -8337,7 +8337,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lerna@npm:^5.1.1":
+"lerna@npm:^5.1.2":
   version: 5.1.2
   resolution: "lerna@npm:5.1.2"
   dependencies:
@@ -9892,7 +9892,7 @@ __metadata:
     "@nuxtjs/eslint-config-typescript": ^10.0.0
     "@types/node": ^16.11.39
     "@types/rimraf": ^3
-    "@unocss/reset": ^0.38.2
+    "@unocss/reset": ^0.39.0
     case-police: ^0.5.3
     changelogen: ^0.1.1
     eslint: ^8.17.0
@@ -9901,7 +9901,7 @@ __metadata:
     expect-type: ^0.13.0
     globby: ^13.1.2
     jiti: ^1.13.0
-    lerna: ^5.1.1
+    lerna: ^5.1.2
     markdownlint-cli: ^0.31.1
     pathe: ^0.3.0
     rimraf: ^3.0.2
@@ -13510,15 +13510,15 @@ __metadata:
   linkType: hard
 
 "vue-tsc@npm:^0.37.5":
-  version: 0.37.5
-  resolution: "vue-tsc@npm:0.37.5"
+  version: 0.37.7
+  resolution: "vue-tsc@npm:0.37.7"
   dependencies:
-    "@volar/vue-typescript": 0.37.5
+    "@volar/vue-typescript": 0.37.7
   peerDependencies:
     typescript: "*"
   bin:
     vue-tsc: bin/vue-tsc.js
-  checksum: f45fb59cf99efc605c967484cc95ccd2fcb07661177ac11309281389f7afb53867c3c5df7a750319ca981e6be621c86f58a432e0d45b4c1e797bcc6c4f7d6e89
+  checksum: e9e5f10e94fec3ddeeccbb912e6a3e2955d4c19df38cae762d2c0f4713f71867ca035d50203bb954b684db0d172ebfa56f02e3b538b216ee58812c42bd799884
   languageName: node
   linkType: hard
 
