@@ -34,15 +34,25 @@ export default defineComponent({
           if (!routeProps.Component) { return }
 
           const key = generateRouteKey(props.pageKey, routeProps)
+          const pageComponent = h(Component, { key, routeProps, pageKey: key } as {})
+          const transitionProps = routeProps.route.meta.pageTransition ?? defaultPageTransition
 
-          return _wrapIf(Transition, routeProps.route.meta.pageTransition ?? defaultPageTransition,
+          if (process.dev && process.client && transitionProps && pageComponent) {
+            setTimeout(() => {
+              if (pageComponent.el?.nodeName === '#comment') {
+                console.error(`\`${pageComponent.type.__file}\` does not have a single root node and will cause errors when navigating between routes.`)
+              }
+            })
+          }
+
+          return _wrapIf(Transition, transitionProps,
             wrapInKeepAlive(routeProps.route.meta.keepalive, isNested && nuxtApp.isHydrating
             // Include route children in parent suspense
-              ? h(Component, { key, routeProps, pageKey: key } as {})
+              ? pageComponent
               : h(Suspense, {
                 onPending: () => nuxtApp.callHook('page:start', routeProps.Component),
                 onResolve: () => nuxtApp.callHook('page:finish', routeProps.Component)
-              }, { default: () => h(Component, { key, routeProps, pageKey: key } as {}) })
+              }, { default: () => pageComponent })
             )).default()
         }
       })

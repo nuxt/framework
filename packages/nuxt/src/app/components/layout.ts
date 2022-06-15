@@ -24,9 +24,23 @@ export default defineComponent({
         console.warn(`Invalid layout \`${layout}\` selected.`)
       }
 
+      const transitionProps = route.meta.layoutTransition ?? defaultLayoutTransition
+
       // We avoid rendering layout transition if there is no layout to render
-      return _wrapIf(Transition, hasLayout && (route.meta.layoutTransition ?? defaultLayoutTransition),
-        _wrapIf(layouts[layout], hasLayout, context.slots)
+      return _wrapIf(Transition, hasLayout && (transitionProps),
+        {
+          default: () => {
+            const layoutComponent = _wrapIf(layouts[layout], hasLayout, context.slots).default()
+            if (process.dev && process.client && hasLayout && transitionProps) {
+              setTimeout(() => {
+                if (layoutComponent.el?.nodeName === '#comment') {
+                  console.error(`Layout \`${layout}\` does not have a single root node and will cause errors when navigating between routes.`)
+                }
+              })
+            }
+            return layoutComponent
+          }
+        }
       ).default()
     }
   }
