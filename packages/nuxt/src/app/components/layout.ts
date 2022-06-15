@@ -1,4 +1,4 @@
-import { defineComponent, isRef, Ref, Transition } from 'vue'
+import { defineComponent, isRef, nextTick, Ref, Transition } from 'vue'
 import { _wrapIf } from './utils'
 import { useRoute } from '#app'
 // @ts-ignore
@@ -32,7 +32,7 @@ export default defineComponent({
           default: () => {
             const layoutComponent = _wrapIf(layouts[layout], hasLayout, context.slots).default()
             if (process.dev && process.client && hasLayout && transitionProps) {
-              setTimeout(() => {
+              nextTick(() => {
                 if (layoutComponent.el?.nodeName === '#comment') {
                   console.error(`Layout \`${layout}\` does not have a single root node and will cause errors when navigating between routes.`)
                 }
