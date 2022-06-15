@@ -10,15 +10,9 @@
     "gendocs": "jiti ./scripts/gen-docs.ts"
   },
   "dependencies": {
-    "@docus/nuxt3-docs": "0.0.7",
-    "fs-extra": "^10.1.0",
+    "@docus/nuxt3-docs": "0.0.8",
     "jiti": "^1.13.0",
-    "nuxt": "^3.0.0-rc.4",
-    "pathe": "^0.3.0",
-    "rimraf": "^3.0.2",
-    "scule": "^0.2.1",
-    "untyped": "^0.4.4",
-    "vue-plausible": "^1.3.1"
+    "nuxt": "^3.0.0-rc.4"
   },
   "packageManager": "yarn@3.2.1"
 }
