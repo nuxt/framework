@@ -197,7 +197,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
 
       const nodeRef = ref<HTMLElement>(null)
       const setNodeRef = (ref: object | null) => {
-        nodeRef.value = ref || '$el' in ref ? (ref as { $el: HTMLElement }).$el : null
+        nodeRef.value = ref && '$el' in ref ? (ref as { $el: HTMLElement }).$el : null
       }
 
       // Resolving `to` value from `to` and `href` props
