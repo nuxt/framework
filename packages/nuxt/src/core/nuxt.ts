@@ -125,7 +125,7 @@ async function initNuxt (nuxt: Nuxt) {
 
   await nuxt.callHook('modules:done', { nuxt } as ModuleContainer)
 
-  // Normalize any Windows paths (\ => /)
+  // Normalize windows transpile paths added by modules
   nuxt.options.build.transpile = nuxt.options.build.transpile.map(t => typeof t === 'string' ? normalize(t) : t)
 
   addModuleTranspiles()
