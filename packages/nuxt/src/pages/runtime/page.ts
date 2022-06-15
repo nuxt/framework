@@ -40,7 +40,8 @@ export default defineComponent({
           if (process.dev && process.client && transitionProps && pageComponent) {
             setTimeout(() => {
               if (pageComponent.el?.nodeName === '#comment') {
-                console.error(`\`${pageComponent.type.__file}\` does not have a single root node and will cause errors when navigating between routes.`)
+                const filename = (pageComponent.type as any).__file
+                console.error(`\`${filename}\` does not have a single root node and will cause errors when navigating between routes.`)
               }
             })
           }
