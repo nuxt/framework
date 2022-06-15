@@ -9,7 +9,7 @@ const firstNonUndefined = <T>(...args: T[]): T => args.find(arg => arg !== undef
 type CallbackFn = () => void
 type Lazy<T> = () => Promise<T>
 
-const requestIdleCallback = process.client
+const requestIdleCallback: Window['requestIdleCallback'] = process.client
   ? window.requestIdleCallback || function (cb) {
     const start = Date.now()
     const idleDeadline = {
@@ -22,13 +22,13 @@ const requestIdleCallback = process.client
       cb(idleDeadline)
     }, 1)
   }
-  : (() => {}) as any as Window['requestIdleCallback']
+  : (() => {}) as any
 
-const cancelIdleCallback = process.client
+const cancelIdleCallback: Window['cancelIdleCallback'] = process.client
   ? window.cancelIdleCallback || function (id) {
     clearTimeout(id)
   }
-  : (() => {}) as any as Window['cancelIdleCallback']
+  : () => {}
 
 let observer: IntersectionObserver | null = null
 const callbacks = new Map<Element, CallbackFn>()
@@ -143,7 +143,6 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
         default: undefined,
         required: false
       },
-
       noPrefetch: {
         type: Boolean as PropType<boolean>,
         default: undefined,
