@@ -32,8 +32,13 @@ export const clearError = async (options: { redirect?: string } = {}) => {
   error.value = null
 }
 
-const isNuxtError = (err?: string | object): err is NuxtError => err && typeof err === 'object' && ('__nuxt_error' in err)
+export const isNuxtError = (err?: string | object): err is NuxtError => err && typeof err === 'object' && ('__nuxt_error' in err)
 
 export const createError = (err: string | Partial<NuxtError>): NuxtError => {
-  return isNuxtError(err) ? err : _createError(err)
+  const _err: NuxtError = _createError(err)
+  if (typeof err === 'string' || (!isNuxtError(err) && !err.statusMessage)) {
+    _err.statusMessage = 'Internal Server Error'
+  }
+  ;(_err as any).__nuxt_error = true
+  return _err
 }
