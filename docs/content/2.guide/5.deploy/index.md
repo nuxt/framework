@@ -1,7 +1,4 @@
 ---
-layout:
-  aside: true
-  asideClass: ''
-navigation:
-  redirect: /guide/deploy/node-server
+navigation: false
+redirect: /guide/deploy/node-server
 ---

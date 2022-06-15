@@ -1,0 +1,5 @@
+aside:
+  level: 1
+  filter:
+    - /bridge
+    - /migration

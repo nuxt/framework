@@ -1,7 +1,5 @@
 ---
 title: Concepts
-layout.aside: true
-layout.asideClass: ''
-navigation.redirect: /guide/concepts/introduction
-# navigation.collapse: true
+navigation: false
+redirect: /guide/concepts/introduction
 ---

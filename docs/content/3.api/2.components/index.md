@@ -1,6 +1,5 @@
 ---
 title: Components
-layout.aside: true
-layout.asideClass: ''
-navigation.redirect: /api/components/nuxt-page
+navigation: false
+redirect: /api/components/nuxt-page
 ---

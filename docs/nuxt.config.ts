@@ -1,11 +1,22 @@
 import { resolve } from 'node:path'
-import { withDocus } from '@docus/app'
+import { defineNuxtConfig } from 'nuxt'
 
-export default withDocus({
-  /**
-   * Has to specify rootDir as we use nuxt-extend
-   */
-  rootDir: __dirname,
+export default defineNuxtConfig({
+  extends: ['./node_modules/@docus/docs-theme'],
+
+  theme: {
+    title: 'Nuxt 3',
+    description: 'The Hybrid Vue Framework',
+    url: 'https://v3.nuxtjs.org',
+    credits: false,
+    layout: 'docs',
+    twitter: 'nuxt_js',
+    socials: {
+      twitter: 'nuxt_js',
+      github: 'nuxt/framework'
+    }
+  },
+
   head: {
     titleTemplate: 'Nuxt 3 - %s',
     link: [
@@ -54,28 +65,57 @@ export default withDocus({
       class: ['min-w-xs']
     }
   },
+
   loading: {
     color: '#00DC82'
   },
+
   css: [resolve(__dirname, './assets/nuxt.css')],
-  windicss: {
-    root: resolve(__dirname),
-    config: resolve(__dirname, 'windi.config.js')
-  },
-  /**
-   * Modules
-   */
-  buildModules: [
-    '@nuxt/typescript-build',
+
+  modules: [
     '@docus/github',
     'vue-plausible'
   ],
-  plugins: [
-    '~/plugins/mq'
-  ],
+
   publicRuntimeConfig: {
     plausible: {
       domain: process.env.PLAUSIBLE_DOMAIN
     }
+  },
+
+  github: {
+    repo: 'nuxt/framework',
+    branch: 'main',
+    dir: 'docs'
+  },
+
+  tailwindcss: {
+    config: {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#d6ffee',
+              100: '#acffdd',
+              200: '#83ffcc',
+              300: '#30ffaa',
+              400: '#00dc82',
+              500: '#00bd6f',
+              600: '#009d5d',
+              700: '#007e4a',
+              800: '#005e38',
+              900: '#003f25'
+            }
+          }
+        }
+      }
+    }
+  },
+
+  algolia: {
+    appId: '1V8G7N9GF0',
+    apiKey: '60a01900a4b726d667eab75b6f337592',
+    indexName: 'nuxtjs',
+    facetFilters: ['tags:v3']
   }
 })

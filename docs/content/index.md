@@ -1,16 +1,18 @@
 ---
 navigation: false
-template: Page
+layout: fluid
 title: The Hybrid Vue Framework
 description: 'Build your next application with Vue 3 and experience hybrid rendering, with an improved directory structure and new features Nuxt 3 is an open source framework making web development simple and powerful.'
 ---
 
-::HomeHero
+::BlockHero
 ---
-primary:
-  text: Star on GitHub
-  url: https://github.com/nuxt/framework
-  icon: IconGitHub
+cta:
+  - Get started
+  - /getting-started/quick-start
+secondary:
+  - Star on GitHub →
+  - https://github.com/nuxt/framework
 ---
 
 #title
@@ -20,14 +22,16 @@ The Hybrid [Vue]{.text-primary} Framework
 Build your next application with Vue 3 and experience hybrid rendering, powerful data fetching and new features.
 Nuxt 3 is an open source framework making web development simple and powerful.
 
-#secondary-button
-:button-link[Get started]{ href="/getting-started/quick-start" size="medium" aria-label="Get started" }
+#right
+::div{.flex .items-center .justify-center}
+  ::ellipsis
+  ::
+  ::gem
+  ::
+::
 ::
 
-::home-features{.dark:bg-secondary-darkest .bg-gray-50}
----
-category: Discover
----
+::card-grid
 #title
 With new features
 
@@ -35,112 +39,114 @@ With new features
 Nuxt 3 has been re-architected with a smaller core and optimized for faster performance and better developer experience.
 
 #default
-  ::section-content-item
+  ::card
   ---
   title: Lighter
   description: Up to 75x smaller server deployments and smaller client bundle targeting modern browsers.
-  image: IconFeather
-  imageClass: w-10 h-10
+  icon: IconFeather
   ---
   ::
-  ::section-content-item
+
+  ::card
   ---
   title: Faster
   description: 'Optimized cold start with dynamic server code-splitting, powered by nitro.'
-  image: IconRabbit
-  imageClass: w-10 h-10
+  icon: IconRabbit
   ---
   ::
-  ::section-content-item
+
+  ::card
   ---
   soon: true
   title: Hybrid
   description: 'Incremental Static Generation and other advanced modes are now possible.'
-  image: IconHybrid
-  imageClass: w-10 h-10
+  icon: IconHybrid
   ---
   ::
-  ::section-content-item
+
+  ::card
   ---
   title: Suspense
   description: 'Fetch data in any component, before or after navigation.'
-  image: IconSuspense
-  imageClass: w-10 h-10
+  icon: IconSuspense
   ---
   ::
-  ::section-content-item
+
+  ::card
   ---
   title: Composition API
   description: "Use the Composition API and Nuxt 3's composables for true code re-usability."
-  image: IconCAPI
-  imageClass: w-10 h-10
+  icon: IconCAPI
   ---
   ::
-  ::section-content-item
+
+  ::card
   ---
   title: Nuxt CLI
   description: 'A new zero-dependency experience for easy scaffolding and module integration.'
-  image: IconCLI
-  imageClass: w-10 h-10
+  icon: IconCLI
   ---
   ::
-  ::section-content-item
+
+  ::card
   ---
   soon: true
   title: Nuxt DevTools
   description: 'Work faster with info and quick fixes right in the browser.'
-  image: IconDevtools
-  imageClass: w-10 h-10
+  icon: IconDevtools
   ---
   ::
-  ::section-content-item
+
+  ::card
   ---
   title: Nuxt Kit
   description: 'Brand new module development with TypeScript and cross-version compatibility.'
-  image: IconKit
-  imageClass: w-10 h-10
+  icon: IconKit
   ---
   ::
-  ::section-content-item
+
+  ::card
   ---
   title: Webpack 5
   description: 'Faster build time and smaller bundle size, with no configuration required.'
-  image: IconWebpack
-  imageClass: w-10 h-10
+  icon: IconWebpack
   ---
   ::
-  ::section-content-item
+
+  ::card
   ---
   title: Vite
   description: 'Experience lightning fast HMR by using Vite as your bundler.'
-  image: IconVite
-  imageClass: w-10 h-10
+  icon: IconVite
   ---
   ::
-  ::section-content-item
+
+  ::card
   ---
   title: Vue 3
   description: 'Vue 3 is a solid foundation for your next web app.'
-  image: IconVue
-  imageClass: w-10 h-10
+  icon: IconVue
   ---
   ::
-  ::section-content-item
+
+  ::card
   ---
   title: TypeScript
   description: 'Built with native TypeScript and ESM - no extra steps required.'
-  image: IconTypeScript
-  imageClass: w-10 h-10
+  icon: IconTypeScript
   ---
   ::
-#bottom
-  :button-link[Get started]{ href="/getting-started" size="medium" aria-label="Get started" }
 ::
 
-::section{.py-20 .text-lg}
+::div{.bg-gray-50 .dark:bg-gray-900}
+
+::container{padded .py-20 .text-lg}
   ::nuxt-container{.text-justify}
-    :icon-nuxt-nitro{.h-32}
-    :headline[Nitro Engine]
+    ::div{.flex .items-center .justify-center}
+      :icon-nuxt-nitro{.h-32 .lg:h-48}
+    ::
+
+    [Nitro Engine]{.u-text-gray-900 .text-center .text-4xl .font-extrabold .tracking-tight .sm:text-5xl .lg:text-left .lg:text-6xl}
 
     We worked for 9 months on Nuxt's new server engine for Nuxt: [**Nitro**](/guide/concepts/server-engine). It unlocks new **full-stack capabilities** to Nuxt server and beyond.
 
@@ -156,10 +162,15 @@ Nuxt 3 has been re-architected with a smaller core and optimized for faster perf
   ::
 ::
 
-::section{.dark:bg-secondary-darkest .bg-gray-50 .py-20 .text-justify}
+::
+
+::container{padded .py-20 .text-justify}
   ::nuxt-container{.text-justify}
-    :icon-nuxt-bridge{.h-32}
-    :headline[Nuxt Bridge]
+    ::div{.flex .items-center .justify-center}
+      :icon-nuxt-bridge{.h-32 .lg:h-48}
+    ::
+
+    [Nuxt Bridge]{.u-text-gray-900 .text-center .text-4xl .font-extrabold .tracking-tight .sm:text-5xl .lg:text-left .lg:text-6xl}
 
     We moved to [Vue 3](https://vuejs.org/) and re-wrote Nuxt after 4 years of development to make it a strong foundation for the future.
 

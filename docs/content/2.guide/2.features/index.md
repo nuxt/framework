@@ -1,6 +1,5 @@
 ---
 title: Features
-layout.aside: true
-layout.asideClass: ''
-navigation.redirect: /guide/features/views
+navigation: false
+redirect: /guide/features/views
 ---
