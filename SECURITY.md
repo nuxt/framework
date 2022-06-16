@@ -1,6 +1,6 @@
 # Security Policy
 
-# Reporting a Vulnerability
+## Reporting a Vulnerability
 
 To report a vulnerability, please send an email to **security@nuxtjs.org** or submit it for a bounty via [Huntr](https://huntr.dev/bounties/disclose/?target=https://github.com/nuxt/framework).
 
