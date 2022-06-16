@@ -19,12 +19,14 @@ type AsyncDataOptions = {
   pick?: string[]
   watch?: WatchSource[]
   initialCache?: boolean
+  immediate?: boolean
 }
 
 type DataT = {
   data: Ref<DataT>
   pending: Ref<boolean>
   refresh: () => Promise<void>
+  execute: () => Promise<void>
   error: Ref<any>
 }
 ```
@@ -41,6 +43,7 @@ type DataT = {
   * _pick_: only pick specified keys in this array from the `handler` function result
   * _watch_: watch reactive sources to auto-refresh
   * _initialCache_: When set to `false`, will skip payload cache for initial fetch. (defaults to `true`)
+  * _immediate_: When set to `false`, will prevent the request from firing immediately. (defaults to `true`)
 
 Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the route before the data has been fetched. Consider using `lazy: true` and implementing a loading state instead for a snappier user experience.
 
@@ -49,6 +52,7 @@ Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the rout
 * **data**: the result of the asynchronous function that is passed in
 * **pending**: a boolean indicating whether the data is still being fetched
 * **refresh**: a function that can be used to refresh the data returned by the `handler` function
+* **execute**: a function that can be used to initially fetch the data returned by the `handler` function (use with `immediate: false`)
 * **error**: an error object if the data fetching failed
 
 By default, Nuxt waits until a `refresh` is finished before it can be executed again. Passing `true` as parameter skips that wait.

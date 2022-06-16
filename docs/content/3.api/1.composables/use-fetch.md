@@ -19,6 +19,7 @@ type UseFetchOptions = {
   baseURL?: string,
   server?: boolean
   lazy?: boolean
+  immediate?: boolean
   default?: () => DataT
   transform?: (input: DataT) => DataT
   pick?: string[]
@@ -28,6 +29,7 @@ type DataT = {
   data: Ref<DataT>
   pending: Ref<boolean>
   refresh: () => Promise<void>
+  execute: () => Promise<void>
   error: Ref<Error | boolean>
 }
 ```
@@ -48,12 +50,14 @@ type DataT = {
   * `default`: A factory function to set the default value of the data, before the async function resolves - particularly useful with the `lazy: true` option.
   * `pick`: Only pick specified keys in this array from the `handler` function result.
   * `transform`: A function that can be used to alter `handler` function result after resolving.
+  * `immediate`: When set to `false`, will prevent the request from firing immediately. (defaults to `true`)
 
 ## Return values
 
 * **data**: the result of the asynchronous function that is passed in
 * **pending**: a boolean indicating whether the data is still being fetched
 * **refresh**: a function that can be used to refresh the data returned by the `handler` function
+* **execute**: a function that can be used to initially fetch the data returned by the `handler` function (use with `immediate: false`)
 * **error**: an error object if the data fetching failed
 
 By default, Nuxt waits until a `refresh` is finished before it can be executed again. Passing `true` as parameter skips that wait.
