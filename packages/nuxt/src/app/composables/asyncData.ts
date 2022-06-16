@@ -30,6 +30,7 @@ export interface AsyncDataOptions<
   pick?: PickKeys
   watch?: MultiWatchSources
   initialCache?: boolean
+  immediate?: boolean
 }
 
 export interface RefreshOptions {
@@ -40,6 +41,7 @@ export interface _AsyncData<DataT, ErrorT> {
   data: Ref<DataT>
   pending: Ref<boolean>
   refresh: (opts?: RefreshOptions) => Promise<void>
+  execute: () => Promise<void>
   error: Ref<ErrorT>
 }
 
@@ -73,6 +75,7 @@ export function useAsyncData<
   }
   options.lazy = options.lazy ?? (options as any).defer ?? false
   options.initialCache = options.initialCache ?? true
+  options.immediate = options.immediate ?? true
 
   // Setup nuxt instance payload
   const nuxt = useNuxtApp()
@@ -138,10 +141,19 @@ export function useAsyncData<
 
   const initialFetch = () => asyncData.refresh({ _initial: true })
 
+  asyncData.execute = () => {
+    if (options.immediate) {
+      return asyncData.refresh()
+    }
+    // prevent _initial to be true by default upon the 2nd call
+    asyncData.execute = asyncData.refresh
+    return initialFetch()
+  }
+
   const fetchOnServer = options.server !== false && nuxt.payload.serverRendered
 
   // Server side
-  if (process.server && fetchOnServer) {
+  if (process.server && fetchOnServer && options.immediate) {
     const promise = initialFetch()
     onServerPrefetch(() => promise)
   }
@@ -151,11 +163,11 @@ export function useAsyncData<
     if (fetchOnServer && nuxt.isHydrating && key in nuxt.payload.data) {
       // 1. Hydration (server: true): no fetch
       asyncData.pending.value = false
-    } else if (instance && nuxt.payload.serverRendered && (nuxt.isHydrating || options.lazy)) {
+    } else if (instance && nuxt.payload.serverRendered && (nuxt.isHydrating || options.lazy) && options.immediate) {
       // 2. Initial load (server: false): fetch on mounted
       // 3. Navigation (lazy: true): fetch on mounted
       instance._nuxtOnBeforeMountCbs.push(initialFetch)
-    } else {
+    } else if (options.immediate) {
       // 4. Navigation (lazy: false) - or plugin usage: await fetch
       initialFetch()
     }
