@@ -1,4 +1,6 @@
-# `useHydration`
+---
+title: "useHydration"
+---
 
 ::ReadMore{link="/guide/features/data-fetching"}
 ::
