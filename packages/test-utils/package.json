@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/test-utils",
-  "version": "3.0.0-rc.3",
+  "version": "3.0.0-rc.4",
   "repository": "nuxt/framework",
   "license": "MIT",
   "type": "module",
@@ -13,8 +13,8 @@
     "prepack": "unbuild"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.0.0-rc.3",
-    "@nuxt/schema": "^3.0.0-rc.3",
+    "@nuxt/kit": "^3.0.0-rc.4",
+    "@nuxt/schema": "^3.0.0-rc.4",
     "defu": "^6.0.0",
     "execa": "^6.1.0",
     "get-port-please": "^2.5.0",
@@ -24,10 +24,10 @@
   "devDependencies": {
     "playwright": "^1.22.2",
     "unbuild": "latest",
-    "vitest": "^0.13.1"
+    "vitest": "^0.15.1"
   },
   "peerDependencies": {
-    "vue": "^3.2.36"
+    "vue": "^3.2.37"
   },
   "engines": {
     "node": "^14.16.0 || ^16.11.0 || ^17.0.0 || ^18.0.0"
