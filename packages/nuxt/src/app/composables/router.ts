@@ -56,18 +56,22 @@ export interface NavigateToOptions {
   redirectCode?: number
 }
 
+const getPath = (to: RouteLocationRaw): string => {
+  if (typeof to === 'string') {
+    return to
+  }
+  if ('path' in to) {
+    return to.path
+  }
+  return ''
+}
+
 export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}): Promise<void | NavigationFailure> | RouteLocationRaw => {
   if (!to) {
     to = '/'
   }
 
-  /* TODO: External link logic here */
-  const path = typeof to === 'string'
-    ? to
-    : 'path' in to
-      ? to.path
-      : ''
-
+  const path = getPath(to)
   const isExternalLink = path.startsWith('http')
 
   if (process.client && isProcessingMiddleware()) {
