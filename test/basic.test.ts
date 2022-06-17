@@ -395,7 +395,7 @@ describe('dynamic paths', () => {
 
 // HMR should be at the last
 if (isDev()) {
-  describe('hmr', async () => {
+  describe('hmr', () => {
     it('should work', async () => {
       const { page, pageErrors, consoleLogs } = await renderPage('/')
 
