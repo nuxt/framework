@@ -64,6 +64,7 @@ export async function buildServer (ctx: ViteBuildContext) {
         output: {
           entryFileNames: 'server.mjs',
           preferConst: true,
+          inlineDynamicImports: false,
           format: 'module'
         },
         onwarn (warning, rollupWarn) {
