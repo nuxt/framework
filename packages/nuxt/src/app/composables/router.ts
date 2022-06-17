@@ -1,6 +1,6 @@
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure } from 'vue-router'
 import { sendRedirect } from 'h3'
-import { joinURL } from 'ufo'
+import { hasProtocol, joinURL } from 'ufo'
 import { useNuxtApp, useRuntimeConfig } from '#app'
 
 export const useRouter = () => {
@@ -66,23 +66,13 @@ const getPath = (to: RouteLocationRaw): string => {
   return '/'
 }
 
-const isExternalLink = (str: string): boolean => {
-  try {
-    // eslint-disable-next-line no-new
-    new URL(str)
-    return true
-  } catch {
-    return false
-  }
-}
-
 export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}): Promise<void | NavigationFailure> | RouteLocationRaw => {
   if (!to) {
     to = '/'
   }
 
   const toPath = getPath(to)
-  const isExternal = isExternalLink(toPath)
+  const isExternal = hasProtocol(toPath, true)
 
   if (!isExternal && isProcessingMiddleware()) {
     return to
