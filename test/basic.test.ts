@@ -1,5 +1,5 @@
 import { promises as fsp } from 'node:fs'
-import { afterEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { setup, fetch, $fetch, startServer, isDev } from '@nuxt/test-utils'
 import { join } from 'pathe'
 import { expectNoClientErrors, fixturesDir, pollingForHMR, renderPage } from './utils'
