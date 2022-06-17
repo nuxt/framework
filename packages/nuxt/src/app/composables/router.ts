@@ -81,8 +81,8 @@ export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}
     to = '/'
   }
 
-  const path = getPath(to)
-  const isExternal = isExternalLink(path)
+  const toPath = getPath(to)
+  const isExternal = isExternalLink(toPath)
 
   if (!isExternal && isProcessingMiddleware()) {
     return to
@@ -92,17 +92,17 @@ export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}
   if (process.server) {
     const nuxtApp = useNuxtApp()
     if (nuxtApp.ssrContext && nuxtApp.ssrContext.event) {
-      const redirectLocation = isExternal ? path : joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
+      const redirectLocation = isExternal ? toPath : joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
       return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext.event, redirectLocation, options.redirectCode || 301))
     }
   }
   // Client-side redirection using vue-router
   if (isExternal) {
     if (options.replace) {
-      location.replace(path)
+      location.replace(toPath)
       return
     }
-    location.href = path
+    location.href = toPath
     return
   }
 
