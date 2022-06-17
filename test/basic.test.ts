@@ -2,7 +2,7 @@ import { promises as fsp } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { setup, fetch, $fetch, startServer, isDev } from '@nuxt/test-utils'
 import { join } from 'pathe'
-import { expectNoClientErrors, fixturesDir, pollingForHMR, renderPage } from './utils'
+import { expectNoClientErrors, fixturesDir, expectWithPolling, renderPage } from './utils'
 
 const fixturePath = join(fixturesDir, 'basic')
 await setup({
@@ -416,10 +416,10 @@ if (isDev()) {
       indexVue += '<style scoped>\nh1 { color: red }\n</style>'
       await fsp.writeFile(join(fixturePath, 'pages/index.vue'), indexVue)
 
-      await pollingForHMR(async () => {
-        // title HMR
-        expect(await page.title()).toBe('Basic fixture HMR - Fixture')
-      })
+      await expectWithPolling(
+        () => page.title(),
+        'Basic fixture HMR - Fixture'
+      )
 
       // content HMR
       const h1 = await page.$('h1')

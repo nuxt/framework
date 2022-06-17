@@ -52,18 +52,19 @@ export async function expectNoClientErrors (path: string) {
   expect(consoleLogWarnings).toEqual([])
 }
 
-export async function pollingForHMR (
-  check: () => Promise<void> | void,
+export async function expectWithPolling (
+  get: () => Promise<string> | string,
+  expected: string,
   retries = process.env.CI ? 50 : 30,
   delay = process.env.CI ? 300 : 100
 ) {
-  try {
-    return await check()
-  } catch (e) {
-    if (retries <= 0) {
-      throw e
+  let result: string | undefined
+  for (let i = retries; i >= 0; i--) {
+    result = await get()
+    if (result === expected) {
+      break
     }
     await new Promise(resolve => setTimeout(resolve, delay))
-    return pollingForHMR(check, retries - 1, delay)
   }
+  expect(result).toEqual(expected)
 }
