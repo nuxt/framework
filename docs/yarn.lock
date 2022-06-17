@@ -5925,14 +5925,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mlly@npm:^0.3.6":
-  version: 0.3.19
-  resolution: "mlly@npm:0.3.19"
-  checksum: 85d646936d5d94b6783e12257adb64ceac9ece32ccaa33d911d44f0c265a91d4f34092beb39641cd108c14a4228f56fc591af60412f65964c72561fbd244ad36
-  languageName: node
-  linkType: hard
-
-"mlly@npm:^0.5.1, mlly@npm:^0.5.2":
+"mlly@npm:^0.5.3":
   version: 0.5.3
   resolution: "mlly@npm:0.5.3"
   dependencies:
