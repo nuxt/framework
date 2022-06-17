@@ -1,4 +1,6 @@
-# `nuxi preview`
+---
+title: "nuxi preview"
+---
 
 ```{bash}
 npx nuxi preview [rootDir]

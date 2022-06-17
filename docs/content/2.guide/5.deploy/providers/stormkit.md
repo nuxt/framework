@@ -1,8 +1,7 @@
 ---
 icon: IconCloud
+title: "StormKit"
 ---
-
-# StormKit
 
 How to deploy Nuxt to [StormKit](https://www.stormkit.io/).
 

@@ -1,8 +1,7 @@
 ---
 icon: LogoAzure
+title: "Azure"
 ---
-
-# Azure
 
 How to deploy to [Azure Static Web Apps](https://azure.microsoft.com/en-us/services/app-service/static/) or [Azure Functions](https://azure.microsoft.com/en-us/services/functions).
 

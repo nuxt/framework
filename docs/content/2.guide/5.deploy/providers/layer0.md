@@ -1,8 +1,7 @@
 ---
 icon: IconCloud
+title: "Layer0"
 ---
-
-# Layer0
 
 Nitro provides a built-in preset to generate output format compatible with [Layer0](https://www.layer0.co/).
 

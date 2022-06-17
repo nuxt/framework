@@ -1,6 +1,11 @@
-# `useFetch`
+---
+title: "useFetch"
+description: "A convenient wrapper around useAsyncData and $fetch."
+---
 
-This composable provides a convenient wrapper around [`useAsyncData`](/api/composables/use-async-data) and [`$fetch`](/api/utils/$fetch). It automatically generates a key based on URL and fetch options, as well as infers API response type.
+This composable provides a convenient wrapper around [`useAsyncData`](/api/composables/use-async-data) and [`$fetch`](/api/utils/$fetch).
+
+It automatically generates a key based on URL and fetch options, as well as infers API response type.
 
 ## Type
 

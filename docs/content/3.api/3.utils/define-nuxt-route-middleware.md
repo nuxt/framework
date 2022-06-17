@@ -1,4 +1,6 @@
-# `defineNuxtRouteMiddleware`
+---
+title: "defineNuxtRouteMiddleware"
+---
 
 ::ReadMore{link="/guide/features/routing"}
 ::

@@ -1,8 +1,7 @@
 ---
 icon: IconCloud
+title: "DigitalOcean"
 ---
-
-# DigitalOcean
 
 Nitro supports deploying on the [Digital Ocean App Platform](https://docs.digitalocean.com/products/app-platform/) with minimal configuration.
 

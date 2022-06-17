@@ -1,5 +1,5 @@
 ---
-title: Going further
+title: "Going further"
 navigation: false
 redirect: /guide/going-further/tooling
 ---

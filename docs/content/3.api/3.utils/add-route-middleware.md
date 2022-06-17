@@ -1,4 +1,6 @@
-# `addRouteMiddleware`
+---
+title: "addRouteMiddleware"
+---
 
 ::ReadMore{link="/guide/features/routing"}
 ::

@@ -1,6 +1,7 @@
-# `useRequestEvent`
-
-Nuxt provides composables and utilities for first-class server-side-rendering support.
+---
+title: "useRequestEvent"
+description: "Nuxt provides composables and utilities for first-class server-side-rendering support."
+---
 
 Within your pages, components, and plugins you can use `useRequestEvent` to access the incoming request.
 

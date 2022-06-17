@@ -1,4 +1,6 @@
-# `useHead`
+---
+title: "useHead"
+---
 
 ::ReadMore{link="/guide/features/head-management"}
 

@@ -1,5 +1,5 @@
 ---
-title: 'Directory structure'
+title: "Directory structure"
 navigation: false
 redirect: /guide/directory-structure/nuxt
 ---

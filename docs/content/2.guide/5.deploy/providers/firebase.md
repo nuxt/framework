@@ -1,8 +1,7 @@
 ---
 icon: LogoFirebase
+title: "Firebase Hosting"
 ---
-
-# Firebase Hosting
 
 How to deploy Nuxt to [Firebase Hosting](https://firebase.google.com/docs/hosting).
 

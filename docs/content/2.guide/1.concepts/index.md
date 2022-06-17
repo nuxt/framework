@@ -1,5 +1,5 @@
 ---
-title: Concepts
+title: "Concepts"
 navigation: false
 redirect: /guide/concepts/introduction
 ---

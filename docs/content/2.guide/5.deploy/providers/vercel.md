@@ -1,8 +1,7 @@
 ---
 icon: LogoVercel
+title: "Vercel"
 ---
-
-# Vercel
 
 Nuxt on Vercel supports server-rendered pages and API routes.
 

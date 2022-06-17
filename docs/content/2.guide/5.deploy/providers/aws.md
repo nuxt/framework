@@ -1,8 +1,7 @@
 ---
 icon: IconCloud
+title: "AWS"
 ---
-
-# AWS
 
 How to deploy Nuxt to [AWS Lambda](https://aws.amazon.com/lambda/)
 

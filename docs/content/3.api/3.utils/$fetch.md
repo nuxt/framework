@@ -1,4 +1,6 @@
-# `$fetch`
+---
+title: "$fetch"
+---
 
 ::ReadMore{link="/guide/features/data-fetching"}
 ::

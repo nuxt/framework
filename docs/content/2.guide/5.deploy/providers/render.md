@@ -1,8 +1,7 @@
 ---
 icon: IconCloud
+title: "Render"
 ---
-
-# Render
 
 How to deploy Nuxt to [Render](https://render.com/)
 

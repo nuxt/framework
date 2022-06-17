@@ -1,6 +1,7 @@
-# `useRequestHeaders`
-
-Nuxt provides composables and utilities for first-class server-side-rendering support.
+---
+title: "useRequestHeaders"
+description: "Nuxt provides composables and utilities for first-class server-side-rendering support."
+---
 
 Within your pages, components, and plugins you can use `useRequestHeaders` to access the incoming request headers.
 
