@@ -60,19 +60,38 @@ export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}
   if (!to) {
     to = '/'
   }
-  // Early redirect on client-side since only possible option is redirectCode and not applied
+
+  /* TODO: External link logic here */
+  const path = typeof to === 'string'
+    ? to
+    : 'path' in to
+      ? to.path
+      : ''
+
+  const isExternalLink = path.startsWith('http')
+
   if (process.client && isProcessingMiddleware()) {
-    return to
+    // TODO: What should we do here when link is external?
+    return isExternalLink ? {} : to
   }
   const router = useRouter()
   if (process.server) {
     const nuxtApp = useNuxtApp()
     if (nuxtApp.ssrContext && nuxtApp.ssrContext.event) {
-      const redirectLocation = joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
+      const redirectLocation = isExternalLink ? path : joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
       return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext.event, redirectLocation, options.redirectCode || 302))
     }
   }
   // Client-side redirection using vue-router
+  if (isExternalLink) {
+    if (options.replace) {
+      location.replace(path)
+      return
+    }
+    location.href = path
+    return
+  }
+
   return options.replace ? router.replace(to) : router.push(to)
 }
 
