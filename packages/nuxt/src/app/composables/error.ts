@@ -36,9 +36,6 @@ export const isNuxtError = (err?: string | object): err is NuxtError => err && t
 
 export const createError = (err: string | Partial<NuxtError>): NuxtError => {
   const _err: NuxtError = _createError(err)
-  if (typeof err === 'string' || (!isNuxtError(err) && !err.statusMessage)) {
-    _err.statusMessage = 'Internal Server Error'
-  }
   ;(_err as any).__nuxt_error = true
   return _err
 }
