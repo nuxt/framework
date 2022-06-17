@@ -436,9 +436,5 @@ if (isDev()) {
       expect(consoleLogErrors).toEqual([])
       expect(consoleLogWarnings).toEqual([])
     }, 30_000)
-
-    afterEach(async () => {
-      await git.checkout(fixturePath)
-    })
   })
 }
