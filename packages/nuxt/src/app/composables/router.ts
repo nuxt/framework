@@ -66,28 +66,38 @@ const getPath = (to: RouteLocationRaw): string => {
   return ''
 }
 
+const isExternalLink = (str: string): boolean => {
+  try {
+    // eslint-disable-next-line no-new
+    new URL(str)
+    return true
+  } catch {
+    return false
+  }
+}
+
 export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}): Promise<void | NavigationFailure> | RouteLocationRaw => {
   if (!to) {
     to = '/'
   }
 
   const path = getPath(to)
-  const isExternalLink = path.startsWith('http')
+  const isExternal = isExternalLink(path)
 
   if (process.client && isProcessingMiddleware()) {
     // TODO: What should we do here when link is external?
-    return isExternalLink ? {} : to
+    return isExternal ? {} : to
   }
   const router = useRouter()
   if (process.server) {
     const nuxtApp = useNuxtApp()
     if (nuxtApp.ssrContext && nuxtApp.ssrContext.event) {
-      const redirectLocation = isExternalLink ? path : joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
-      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext.event, redirectLocation, options.redirectCode || 302))
+      const redirectLocation = isExternal ? path : joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
+      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext.event, redirectLocation, options.redirectCode || 301))
     }
   }
   // Client-side redirection using vue-router
-  if (isExternalLink) {
+  if (isExternal) {
     if (options.replace) {
       location.replace(path)
       return
