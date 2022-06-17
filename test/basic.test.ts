@@ -357,6 +357,8 @@ describe('dynamic paths', () => {
         [
           "./logo.svg",
           "../public.svg",
+          "../public.svg",
+          "../public.svg",
         ]
       `)
   })
