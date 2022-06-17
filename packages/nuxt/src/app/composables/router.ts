@@ -84,10 +84,10 @@ export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}
   const path = getPath(to)
   const isExternal = isExternalLink(path)
 
-  if (process.client && isProcessingMiddleware()) {
-    // TODO: What should we do here when link is external?
-    return isExternal ? {} : to
+  if (!isExternal && isProcessingMiddleware()) {
+    return to
   }
+
   const router = useRouter()
   if (process.server) {
     const nuxtApp = useNuxtApp()
