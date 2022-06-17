@@ -63,7 +63,7 @@ const getPath = (to: RouteLocationRaw): string => {
   if ('path' in to) {
     return to.path
   }
-  return ''
+  return '/'
 }
 
 const isExternalLink = (str: string): boolean => {
