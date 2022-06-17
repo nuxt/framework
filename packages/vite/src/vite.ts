@@ -79,12 +79,14 @@ export async function bundle (nuxt: Nuxt) {
           watch: {
             ignored: isIgnored
           },
-          hmr: {
-            // https://github.com/nuxt/framework/issues/4191
-            protocol: 'ws',
-            clientPort: hmrPort,
-            port: hmrPort
-          },
+          hmr: nuxt.options.dev
+            ? {
+                // https://github.com/nuxt/framework/issues/4191
+                protocol: 'ws',
+                clientPort: hmrPort,
+                port: hmrPort
+              }
+            : false,
           fs: {
             allow: [
               nuxt.options.appDir
