@@ -2,9 +2,9 @@ import { extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
 import { NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
-import { genImport, genDynamicImport, genArrayFromRaw } from 'knitwork'
+import { genImport, genDynamicImport, genArrayFromRaw, genSafeVariableName } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
-import { getImportName, uniqueBy } from '../core/utils'
+import { uniqueBy } from '../core/utils'
 
 enum SegmentParserState {
   initial,
@@ -88,14 +88,10 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
     }
 
     parent.push(route)
-    // TODO: https://github.com/vuejs/router/issues/1435
-    parent.sort((a, b) => getSortablePath(a.path).localeCompare(getSortablePath(b.path)))
   }
 
   return prepareRoutes(routes)
 }
-
-const getSortablePath = (path: string) => path.replace(/^\//, '').replace(/:/, 'Z')
 
 function getRoutePath (tokens: SegmentToken[]): string {
   return tokens.reduce((path, token) => {
@@ -233,7 +229,7 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
     imports: metaImports,
     routes: genArrayFromRaw(routes.map((route) => {
       const file = normalize(route.file)
-      const metaImportName = getImportName(file) + 'Meta'
+      const metaImportName = genSafeVariableName(file) + 'Meta'
       metaImports.add(genImport(`${file}?macro=true`, [{ name: 'meta', as: metaImportName }]))
       return {
         ...Object.fromEntries(Object.entries(route).map(([key, value]) => [key, JSON.stringify(value)])),

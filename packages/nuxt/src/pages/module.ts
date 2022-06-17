@@ -34,10 +34,11 @@ export default defineNuxtModule({
     nuxt.hook('builder:watch', async (event, path) => {
       const dirs = [
         nuxt.options.dir.pages,
-        nuxt.options.dir.layouts
+        nuxt.options.dir.layouts,
+        nuxt.options.dir.middleware
       ].filter(Boolean)
 
-      const pathPattern = new RegExp(`^(${dirs.map(escapeRE).join('|')})/`)
+      const pathPattern = new RegExp(`(^|\\/)(${dirs.map(escapeRE).join('|')})/`)
       if (event !== 'change' && path.match(pathPattern)) {
         await nuxt.callHook('builder:generateApp')
       }
