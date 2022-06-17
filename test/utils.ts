@@ -55,8 +55,8 @@ export async function expectNoClientErrors (path: string) {
 export async function expectWithPolling (
   get: () => Promise<string> | string,
   expected: string,
-  retries = process.env.CI ? 50 : 30,
-  delay = process.env.CI ? 300 : 100
+  retries = process.env.CI ? 100 : 30,
+  delay = process.env.CI ? 500 : 100
 ) {
   let result: string | undefined
   for (let i = retries; i >= 0; i--) {
