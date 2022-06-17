@@ -1,5 +1,8 @@
-import { getBrowser, url, useTestContext } from '@nuxt/test-utils'
+import { fileURLToPath } from 'node:url'
+import { getBrowser, isDev, url, useTestContext } from '@nuxt/test-utils'
 import { expect } from 'vitest'
+
+export const fixturesDir = fileURLToPath(new URL(isDev() ? './fixtures-temp' : './fixtures', import.meta.url))
 
 export async function renderPage (path = '/') {
   const ctx = useTestContext()

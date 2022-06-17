@@ -1,12 +1,10 @@
-import { fileURLToPath } from 'node:url'
 import { promises as fsp } from 'node:fs'
 import { afterEach, describe, expect, it } from 'vitest'
-// import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer, isDev } from '@nuxt/test-utils'
 import { join } from 'pathe'
-import { expectNoClientErrors, pollingForHMR, renderPage } from './utils'
+import { expectNoClientErrors, fixturesDir, pollingForHMR, renderPage } from './utils'
 
-const fixturePath = fileURLToPath(new URL('./fixtures/basic', import.meta.url))
+const fixturePath = join(fixturesDir, 'basic')
 await setup({
   rootDir: fixturePath,
   server: true,
@@ -398,13 +396,6 @@ describe('dynamic paths', () => {
 // HMR should be at the last
 if (isDev()) {
   describe('hmr', async () => {
-    const { default: Git } = await import('simple-git')
-    const git = Git()
-    const diff = await git.diffSummary(fixturePath)
-    if (diff.changed !== 0) {
-      throw new Error('Fixture has uncommitted changes, please commit them before running HMR tests')
-    }
-
     it('should work', async () => {
       const { page, pageErrors, consoleLogs } = await renderPage('/')
 

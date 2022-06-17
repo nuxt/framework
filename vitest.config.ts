@@ -11,6 +11,7 @@ export default defineConfig({
     tsconfigRaw: '{}'
   },
   test: {
+    globalSetup: 'test/setup.ts',
     testTimeout: isWindows ? 60000 : 10000,
     maxThreads: process.env.NUXT_TEST_DEV ? 1 : undefined,
     minThreads: process.env.NUXT_TEST_DEV ? 1 : undefined

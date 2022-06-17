@@ -541,22 +541,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@kwsites/file-exists@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@kwsites/file-exists@npm:1.1.1"
-  dependencies:
-    debug: ^4.1.1
-  checksum: 4ff945de7293285133aeae759caddc71e73c4a44a12fac710fdd4f574cce2671a3f89d8165fdb03d383cfc97f3f96f677d8de3c95133da3d0e12a123a23109fe
-  languageName: node
-  linkType: hard
-
-"@kwsites/promise-deferred@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@kwsites/promise-deferred@npm:1.1.1"
-  checksum: 07455477a0123d9a38afb503739eeff2c5424afa8d3dbdcc7f9502f13604488a4b1d9742fc7288832a52a6422cf1e1c0a1d51f69a39052f14d27c9a0420b6629
-  languageName: node
-  linkType: hard
-
 "@lerna/add@npm:5.1.4":
   version: 5.1.4
   resolution: "@lerna/add@npm:5.1.4"
@@ -10180,7 +10164,6 @@ __metadata:
     markdownlint-cli: ^0.31.1
     pathe: ^0.3.0
     rimraf: ^3.0.2
-    simple-git: ^3.6.0
     typescript: ^4.7.3
     unbuild: ^0.7.4
     vitest: ^0.15.1
@@ -12205,17 +12188,6 @@ __metadata:
   version: 3.0.7
   resolution: "signal-exit@npm:3.0.7"
   checksum: a2f098f247adc367dffc27845853e9959b9e88b01cb301658cfe4194352d8d2bb32e18467c786a7fe15f1d44b233ea35633d076d5e737870b7139949d1ab6318
-  languageName: node
-  linkType: hard
-
-"simple-git@npm:^3.6.0":
-  version: 3.6.0
-  resolution: "simple-git@npm:3.6.0"
-  dependencies:
-    "@kwsites/file-exists": ^1.1.1
-    "@kwsites/promise-deferred": ^1.1.1
-    debug: ^4.3.3
-  checksum: a6bd4eaefe7ab9137deff7a2b29dd4f7dc02f4be00afce75b4ee5eec1b06a1b0253cf46cb326db84d960144358ddc7df75f9cefc18207ade7bdb3f2bc60bbbfd
   languageName: node
   linkType: hard
 
