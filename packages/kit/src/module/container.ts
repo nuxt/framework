@@ -62,7 +62,7 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
     },
 
     addLayout (tmpl: NuxtTemplate, name?: string) {
-      return addLayout(nuxt, name)
+      return addLayout(tmpl, name)
     },
 
     addErrorLayout (dst: string) {
