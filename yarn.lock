@@ -1814,7 +1814,7 @@ __metadata:
     ufo: ^0.8.5
     unbuild: latest
     unplugin: ^0.7.0
-    vite: ^3.0.0-alpha.13
+    vite: ^3.0.0-alpha.14
     vite-node: ^0.15.1
     vite-plugin-checker: ^0.4.6
     vue: 3.2.37
@@ -12435,7 +12435,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"resolve@npm:^1.22.1":
+  version: 1.22.1
+  resolution: "resolve@npm:1.22.1"
+  dependencies:
+    is-core-module: ^2.9.0
+    path-parse: ^1.0.7
+    supports-preserve-symlinks-flag: ^1.0.0
+  bin:
+    resolve: bin/resolve
+  checksum: 07af5fc1e81aa1d866cbc9e9460fbb67318a10fa3c4deadc35c3ad8a898ee9a71a86a65e4755ac3195e0ea0cfbe201eb323ebe655ce90526fd61917313a34e4e
+  languageName: node
+  linkType: hard
+
 "resolve@patch:resolve@^1.1.7#~builtin<compat/resolve>, resolve@patch:resolve@^1.10.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.10.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.17.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.19.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.20.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.22.0#~builtin<compat/resolve>":
+  version: 1.22.1
+  resolution: "resolve@patch:resolve@npm%3A1.22.1#~builtin<compat/resolve>::version=1.22.1&hash=07638b"
+  dependencies:
+    is-core-module: ^2.9.0
+    path-parse: ^1.0.7
+    supports-preserve-symlinks-flag: ^1.0.0
+  bin:
+    resolve: bin/resolve
+  checksum: 5656f4d0bedcf8eb52685c1abdf8fbe73a1603bb1160a24d716e27a57f6cecbe2432ff9c89c2bd57542c3a7b9d14b1882b73bfe2e9d7849c9a4c0b8b39f02b8b
+  languageName: node
+  linkType: hard
+
+"resolve@patch:resolve@^1.22.1#~builtin<compat/resolve>":
   version: 1.22.1
   resolution: "resolve@patch:resolve@npm%3A1.22.1#~builtin<compat/resolve>::version=1.22.1&hash=07638b"
   dependencies:
@@ -14372,14 +14398,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^3.0.0-alpha.13":
-  version: 3.0.0-alpha.13
-  resolution: "vite@npm:3.0.0-alpha.13"
+"vite@npm:^3.0.0-alpha.14":
+  version: 3.0.0-alpha.14
+  resolution: "vite@npm:3.0.0-alpha.14"
   dependencies:
     esbuild: ^0.14.43
     fsevents: ~2.3.2
     postcss: ^8.4.14
-    resolve: ^1.22.0
+    resolve: ^1.22.1
     rollup: ^2.75.6
   peerDependencies:
     less: "*"
@@ -14400,7 +14426,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 96c359f2654298c100c5f49494071b2c3bc64f768805c7e128c08d8d7b2a5a5d34d1eac0c81d5086a0bf8be029a7bb5a1d617467dfdcf87f1d8e15011822a428
+  checksum: 55f7867d73b31b72522533253e1d77ef1f429bbc257ed9f5d48da89c4c5fd2ee460c27c1276adce7b82e39984984e35a91cb93af870ffdda8caf6c3914be0f31
   languageName: node
   linkType: hard
 

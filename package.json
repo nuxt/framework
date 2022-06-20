@@ -43,7 +43,7 @@
     "nuxi": "link:./packages/nuxi",
     "nuxt": "link:./packages/nuxt",
     "nuxt3": "link:./packages/nuxt",
-    "vite": "^3.0.0-alpha.13",
+    "vite": "^3.0.0-alpha.14",
     "@vitejs/plugin-vue": "^3.0.0-alpha.2",
     "unbuild": "^0.7.4"
   },
