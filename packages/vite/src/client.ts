@@ -5,6 +5,7 @@ import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { Connect } from 'vite'
 import { logger } from '@nuxt/kit'
 import { joinURL } from 'ufo'
+import { getPort } from 'get-port-please'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { analyzePlugin } from './plugins/analyze'
 import { wpfs } from './utils/wpfs'
@@ -15,6 +16,11 @@ import { RelativeAssetPlugin } from './plugins/dynamic-base'
 import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
+  const hmrPortDefault = 5173 // Vite's default HMR port
+  const hmrPort = await getPort({
+    port: hmrPortDefault,
+    ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
+  })
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     define: {
       'process.server': false,
@@ -50,9 +56,21 @@ export async function buildClient (ctx: ViteBuildContext) {
     ],
     appType: 'custom',
     server: {
+      hmr: {
+        // https://github.com/nuxt/framework/issues/4191
+        protocol: 'ws',
+        clientPort: hmrPort,
+        port: hmrPort
+      },
       middlewareMode: true
     }
   } as ViteOptions)
+
+  // In build mode we explicitly override any vite options that vite is relying on
+  // to detect whether to inject production or development code (such as HMR code)
+  if (!ctx.nuxt.options.dev) {
+    clientConfig.server.hmr = false
+  }
 
   // Add analyze plugin if needed
   if (ctx.nuxt.options.build.analyze) {
