@@ -26,7 +26,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     resolve: {
       alias: {
         '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/server'),
-        ...ctx.nuxt.options.experimental.externalVue
+        ...ctx.nuxt.options.experimental.externalVue || ctx.nuxt.options.dev
           ? {}
           : {
               '@vue/reactivity': _resolve(`@vue/reactivity/dist/reactivity.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
@@ -39,7 +39,9 @@ export async function buildServer (ctx: ViteBuildContext) {
       }
     },
     ssr: {
-      external: ctx.nuxt.options.experimental.externalVue ? ['#internal/nitro', '#internal/nitro/utils', 'vue', 'vue-router'] : ['#internal/nitro', '#internal/nitro/utils'],
+      external: ctx.nuxt.options.experimental.externalVue
+        ? ['#internal/nitro', '#internal/nitro/utils', 'vue', 'vue-router']
+        : ['#internal/nitro', '#internal/nitro/utils'],
       noExternal: [
         ...ctx.nuxt.options.build.transpile,
         // TODO: Use externality for production (rollup) build
