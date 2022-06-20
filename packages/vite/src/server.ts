@@ -6,6 +6,7 @@ import { logger, resolveModule, isIgnored } from '@nuxt/kit'
 import fse from 'fs-extra'
 import { debounce } from 'perfect-debounce'
 import replace from '@rollup/plugin-replace'
+import { joinURL } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
@@ -13,11 +14,19 @@ import { prepareDevServerEntry } from './vite-node'
 import { isCSS } from './utils'
 import { bundleRequest } from './dev-bundler'
 import { writeManifest } from './manifest'
-import { DynamicBasePlugin, RelativeAssetPlugin } from './plugins/dynamic-base'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
+    base: ctx.nuxt.options.dev
+      ? joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
+      : undefined,
+    experimental: {
+      buildAdvancedBaseOptions: {
+        assets: { runtime: (url: string) => `buildAssetsURL(${url})` },
+        public: { runtime: (url: string) => `publicAssetsURL(${url})` }
+      }
+    },
     define: {
       'process.server': true,
       'process.client': false
@@ -80,8 +89,6 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
-      RelativeAssetPlugin({ buildAssetsDir: ctx.nuxt.options.app.buildAssetsDir }),
-      DynamicBasePlugin.vite({ sourcemap: ctx.nuxt.options.sourcemap }),
       vuePlugin(ctx.config.vue),
       replace({
         'typeof window': '"undefined"',

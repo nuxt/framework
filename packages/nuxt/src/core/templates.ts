@@ -211,7 +211,10 @@ export const publicPathTemplate: NuxtTemplate = {
       'export const publicAssetsURL = (...path) => {',
       '  const publicBase = appConfig.cdnURL || appConfig.baseURL',
       '  return path.length ? joinURL(publicBase, ...path) : publicBase',
-      '}'
+      '}',
+
+      'globalThis.buildAssetsURL = buildAssetsURL',
+      'globalThis.publicAssetsURL = publicAssetsURL'
     ].filter(Boolean).join('\n')
   }
 }

@@ -5,7 +5,8 @@ import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { Connect } from 'vite'
 import { logger } from '@nuxt/kit'
 import { getPort } from 'get-port-please'
-import { joinURL, withoutLeadingSlash } from 'ufo'
+import { joinURL, withLeadingSlash, withoutLeadingSlash, withTrailingSlash } from 'ufo'
+import escapeRE from 'escape-string-regexp'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { analyzePlugin } from './plugins/analyze'
 import { wpfs } from './utils/wpfs'
@@ -82,10 +83,11 @@ export async function buildClient (ctx: ViteBuildContext) {
   const viteServer = await vite.createServer(clientConfig)
   ctx.clientServer = viteServer
   await ctx.nuxt.callHook('vite:serverCreated', viteServer, { isClient: true, isServer: false })
-
+  const BASE_RE = new RegExp(`^${escapeRE(withTrailingSlash(withLeadingSlash(joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir))))}`)
   const viteMiddleware: Connect.NextHandleFunction = (req, res, next) => {
     // Workaround: vite devmiddleware modifies req.url
     const originalURL = req.url
+    req.url = req.url.replace(BASE_RE, '/')
     viteServer.middlewares.handle(req, res, (err) => {
       req.url = originalURL
       next(err)
