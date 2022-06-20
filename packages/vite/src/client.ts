@@ -1,18 +1,17 @@
-import { resolve } from 'pathe'
+import { join, resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { Connect } from 'vite'
 import { logger } from '@nuxt/kit'
-import { joinURL } from 'ufo'
 import { getPort } from 'get-port-please'
+import { joinURL, withoutLeadingSlash } from 'ufo'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { analyzePlugin } from './plugins/analyze'
 import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
-import { RelativeAssetPlugin } from './plugins/dynamic-base'
 import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
@@ -22,6 +21,7 @@ export async function buildClient (ctx: ViteBuildContext) {
     ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
   })
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
+    base: ctx.nuxt.options.dev ? undefined : './',
     define: {
       'process.server': false,
       'process.client': true,
@@ -36,8 +36,9 @@ export async function buildClient (ctx: ViteBuildContext) {
     build: {
       rollupOptions: {
         output: {
-          chunkFileNames: ctx.nuxt.options.dev ? undefined : '[name]-[hash].mjs',
-          entryFileNames: ctx.nuxt.options.dev ? 'entry.mjs' : '[name]-[hash].mjs'
+          assetFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].[ext]')),
+          chunkFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].mjs')),
+          entryFileNames: ctx.nuxt.options.dev ? 'entry.mjs' : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].mjs'))
         }
       },
       manifest: true,
@@ -47,7 +48,6 @@ export async function buildClient (ctx: ViteBuildContext) {
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'client'),
       vuePlugin(ctx.config.vue),
       viteJsxPlugin(),
-      RelativeAssetPlugin(),
       devStyleSSRPlugin({
         rootDir: ctx.nuxt.options.rootDir,
         buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)

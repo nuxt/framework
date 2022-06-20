@@ -1,20 +1,19 @@
-import { resolve, join, normalize } from 'pathe'
+import { resolve, normalize } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import { logger, resolveModule, isIgnored } from '@nuxt/kit'
 import fse from 'fs-extra'
 import { debounce } from 'perfect-debounce'
-import { withoutTrailingSlash } from 'ufo'
 import replace from '@rollup/plugin-replace'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { prepareDevServerEntry } from './vite-node'
-import { isCSS, isDirectory, readDirRecursively } from './utils'
+import { isCSS } from './utils'
 import { bundleRequest } from './dev-bundler'
 import { writeManifest } from './manifest'
-import { RelativeAssetPlugin } from './plugins/dynamic-base'
+import { DynamicBasePlugin, RelativeAssetPlugin } from './plugins/dynamic-base'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
@@ -81,7 +80,8 @@ export async function buildServer (ctx: ViteBuildContext) {
     },
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
-      RelativeAssetPlugin(),
+      RelativeAssetPlugin({ buildAssetsDir: ctx.nuxt.options.app.buildAssetsDir }),
+      DynamicBasePlugin.vite({ sourcemap: ctx.nuxt.options.sourcemap }),
       vuePlugin(ctx.config.vue),
       replace({
         'typeof window': '"undefined"',
@@ -102,37 +102,6 @@ export async function buildServer (ctx: ViteBuildContext) {
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
-
-  ctx.nuxt.hook('nitro:build:before', async () => {
-    if (ctx.nuxt.options.dev) {
-      return
-    }
-    const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
-
-    // Remove public files that have been duplicated into buildAssetsDir
-    // TODO: Add option to configure this behavior in vite
-    const publicDir = join(ctx.nuxt.options.srcDir, ctx.nuxt.options.dir.public)
-    let publicFiles: string[] = []
-    if (await isDirectory(publicDir)) {
-      publicFiles = readDirRecursively(publicDir).map(r => r.replace(publicDir, ''))
-      for (const file of publicFiles) {
-        try {
-          fse.rmSync(join(clientDist, file))
-        } catch {}
-      }
-    }
-
-    // Copy doubly-nested /_nuxt/_nuxt files into buildAssetsDir
-    // TODO: Workaround vite issue
-    if (await isDirectory(clientDist)) {
-      const nestedAssetsPath = withoutTrailingSlash(join(clientDist, ctx.nuxt.options.app.buildAssetsDir))
-
-      if (await isDirectory(nestedAssetsPath)) {
-        await fse.copy(nestedAssetsPath, clientDist, { recursive: true })
-        await fse.remove(nestedAssetsPath)
-      }
-    }
-  })
 
   const onBuild = () => ctx.nuxt.callHook('build:resources', wpfs)
 

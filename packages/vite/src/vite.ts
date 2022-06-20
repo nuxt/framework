@@ -9,7 +9,6 @@ import { sanitizeFilePath } from 'mlly'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
-import { DynamicBasePlugin } from './plugins/dynamic-base'
 import { warmupViteServer } from './utils/warmup'
 import { resolveCSSOptions } from './css'
 import { composableKeysPlugin } from './plugins/composable-keys'
@@ -67,8 +66,7 @@ export async function bundle (nuxt: Nuxt) {
             ...Object.fromEntries([';', '(', '{', '}', ' ', '\t', '\n'].map(d => [`${d}global.`, `${d}globalThis.`])),
             preventAssignment: true
           }),
-          virtual(nuxt.vfs),
-          DynamicBasePlugin.vite({ sourcemap: nuxt.options.sourcemap })
+          virtual(nuxt.vfs)
         ],
         vue: {
           reactivityTransform: nuxt.options.experimental.reactivityTransform

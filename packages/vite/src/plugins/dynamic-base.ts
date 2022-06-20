@@ -2,18 +2,23 @@ import { createUnplugin } from 'unplugin'
 import escapeRE from 'escape-string-regexp'
 import type { Plugin } from 'vite'
 import MagicString from 'magic-string'
+import { joinURL, withoutTrailingSlash } from 'ufo'
 
 interface DynamicBasePluginOptions {
   globalPublicPath?: string
   sourcemap?: boolean
 }
 
-export const RelativeAssetPlugin = function (): Plugin {
+interface RelativeAssetPluginOptions {
+  buildAssetsDir: string
+}
+
+export const RelativeAssetPlugin = function (options: RelativeAssetPluginOptions): Plugin {
   return {
     name: 'nuxt:vite-relative-asset',
     generateBundle (_, bundle) {
-      const generatedAssets = Object.entries(bundle).filter(([_, asset]) => asset.type === 'asset').map(([key]) => escapeRE(key))
-      const assetRE = new RegExp(`\\/__NUXT_BASE__\\/(${generatedAssets.join('|')})`, 'g')
+      const assetBaseRE = new RegExp(`${escapeRE(withoutTrailingSlash(joinURL('/__NUXT_BASE__', options.buildAssetsDir)))}`, 'g')
+      const publicBaseRE = /\/__NUXT_BASE__/g
 
       for (const file in bundle) {
         const asset = bundle[file]
@@ -28,11 +33,11 @@ export const RelativeAssetPlugin = function (): Plugin {
         }
         if (asset.type === 'asset' && typeof asset.source === 'string' && asset.fileName.endsWith('.css')) {
           const depth = file.split('/').length - 1
-          const assetBase = depth === 0 ? '.' : Array.from({ length: depth }).map(() => '..').join('/')
-          const publicBase = Array.from({ length: depth + 1 }).map(() => '..').join('/')
+          const assetBase = depth === 1 ? '.' : Array.from({ length: depth - 1 }).map(() => '..').join('/')
+          const publicBase = Array.from({ length: depth }).map(() => '..').join('/')
           asset.source = asset.source
-            .replace(assetRE, r => r.replace(/\/__NUXT_BASE__/g, assetBase))
-            .replace(/\/__NUXT_BASE__/g, publicBase)
+            .replace(assetBaseRE, assetBase)
+            .replace(publicBaseRE, publicBase)
         }
         if (asset.type === 'chunk' && typeof asset.code === 'string') {
           asset.code = asset.code
