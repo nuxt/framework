@@ -76,9 +76,7 @@ export async function bundle (nuxt: Nuxt) {
           reactivityTransform: nuxt.options.experimental.reactivityTransform
         },
         server: {
-          watch: {
-            ignored: isIgnored
-          },
+          watch: nuxt.options.dev ? { ignored: isIgnored } : {},
           hmr: nuxt.options.dev
             ? {
                 // https://github.com/nuxt/framework/issues/4191
