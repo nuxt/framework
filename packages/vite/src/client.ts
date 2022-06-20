@@ -16,7 +16,7 @@ import { RelativeAssetPlugin } from './plugins/dynamic-base'
 import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
-  const hmrPortDefault = 5173 // Vite's default HMR port
+  const hmrPortDefault = 24678 // Vite's default HMR port
   const hmrPort = await getPort({
     port: hmrPortDefault,
     ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
