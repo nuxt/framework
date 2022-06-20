@@ -76,15 +76,13 @@ export async function bundle (nuxt: Nuxt) {
           reactivityTransform: nuxt.options.experimental.reactivityTransform
         },
         server: {
-          watch: nuxt.options.dev ? { ignored: isIgnored } : {},
-          hmr: nuxt.options.dev
-            ? {
-                // https://github.com/nuxt/framework/issues/4191
-                protocol: 'ws',
-                clientPort: hmrPort,
-                port: hmrPort
-              }
-            : false,
+          watch: { ignored: isIgnored },
+          hmr: {
+            // https://github.com/nuxt/framework/issues/4191
+            protocol: 'ws',
+            clientPort: hmrPort,
+            port: hmrPort
+          },
           fs: {
             allow: [
               nuxt.options.appDir
@@ -94,6 +92,13 @@ export async function bundle (nuxt: Nuxt) {
       } as ViteOptions,
       nuxt.options.vite
     )
+  }
+
+  // In build mode we explicitly override any vite options that vite is relying on
+  // to detect whether to inject production or development code (such as HMR code)
+  if (!nuxt.options.dev) {
+    ctx.config.server.hmr = false
+    ctx.config.server.watch = undefined
   }
 
   await nuxt.callHook('vite:extend', ctx)
