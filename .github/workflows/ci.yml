@@ -26,7 +26,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: 'yarn-bump'
 
       - name: Install dependencies
         run: yarn --immutable
@@ -53,7 +52,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: 'yarn-bump'
 
       - name: Install dependencies
         run: yarn --immutable
@@ -74,7 +72,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: 'yarn-bump'
 
       - name: Install dependencies
         run: yarn --immutable
@@ -98,7 +95,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: 'yarn-bump'
 
       - name: Install dependencies
         run: yarn --immutable
@@ -130,7 +126,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: 'yarn-bump'
 
       - name: Install dependencies
         run: yarn --immutable
@@ -156,7 +151,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: 'yarn-bump'
 
       - name: Install dependencies
         run: yarn --immutable
@@ -194,7 +188,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-          cache: 'yarn-bump'
 
       - name: Install dependencies
         run: yarn --immutable
