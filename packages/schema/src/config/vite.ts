@@ -1,5 +1,5 @@
 import { resolve } from 'pathe'
-import { joinURL, withoutLeadingSlash } from 'ufo'
+import { withoutLeadingSlash } from 'ufo'
 
 export default {
   /**
