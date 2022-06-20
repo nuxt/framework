@@ -48,6 +48,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       }),
       viteNodePlugin(ctx)
     ],
+    appType: 'custom',
     server: {
       middlewareMode: true
     }
