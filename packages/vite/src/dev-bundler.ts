@@ -1,7 +1,7 @@
 import { pathToFileURL } from 'node:url'
 import { existsSync } from 'node:fs'
 import { builtinModules } from 'node:module'
-import { resolve } from 'pathe'
+import { isAbsolute, resolve } from 'pathe'
 import * as vite from 'vite'
 import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults } from 'externality'
 import { genDynamicImport, genObjectFromRawEntries } from 'knitwork'
@@ -77,7 +77,7 @@ async function transformRequest (opts: TransformOptions, id: string) {
   if (await isExternal(opts, withoutVersionQuery)) {
     const path = builtinModules.includes(withoutVersionQuery.split('node:').pop())
       ? withoutVersionQuery
-      : pathToFileURL(withoutVersionQuery).href
+      : isAbsolute(withoutVersionQuery) ? pathToFileURL(withoutVersionQuery).href : withoutVersionQuery
     return {
       code: `(global, module, _, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) =>
 ${genDynamicImport(path, { wrapper: false })}
