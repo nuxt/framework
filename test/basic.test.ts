@@ -10,6 +10,21 @@ await setup({
   browser: true
 })
 
+const rebuildAndRestart = async () => {
+  await stopServer()
+
+  await setup({
+    rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
+    server: true,
+    browser: true
+  })
+
+  await loadFixture()
+  await buildFixture()
+
+  await startServer()
+}
+
 describe('server api', () => {
   it('should serialize', async () => {
     expect(await $fetch('/api/hello')).toBe('Hello API')
@@ -153,22 +168,15 @@ describe('head tags', () => {
 
     expect(html).not.toContain('<script src="/config.js"></script')
 
-    await stopServer()
-
-    await setup({
-      rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
-      server: true,
-      browser: true
-    })
-
-    await loadFixture()
-    await buildFixture()
-
-    await startServer()
+    await rebuildAndRestart()
 
     html = await $fetch('/')
 
     expect(html).toContain('<script src="/config.js"></script')
+
+    process.env.SSR_ENABLED = 'true'
+
+    await rebuildAndRestart()
   })
 })
 
