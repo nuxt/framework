@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 // import { isWindows } from 'std-env'
-import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
+import { setup, fetch, $fetch, startServer, buildFixture, stopServer, loadFixture } from '@nuxt/test-utils'
 import { expectNoClientErrors } from './utils'
 
 await setup({
@@ -144,6 +144,31 @@ describe('head tags', () => {
     expect(index).toContain('<meta charset="utf-8">')
     // should render <Head> components
     expect(index).toContain('<title>Basic fixture - Fixture</title>')
+  })
+
+  it('should render global scripts in html for ssr disabled', async () => {
+    process.env.SSR_ENABLED = 'false'
+
+    let html = await $fetch('/')
+
+    expect(html).not.toContain('<script src="/config.js"></script')
+
+    await stopServer()
+
+    await setup({
+      rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
+      server: true,
+      browser: true
+    })
+
+    await loadFixture()
+    await buildFixture()
+
+    await startServer()
+
+    html = await $fetch('/')
+
+    expect(html).toContain('<script src="/config.js"></script')
   })
 })
 

@@ -29,5 +29,18 @@ export default defineNuxtConfig({
   },
   experimental: {
     reactivityTransform: true
+  },
+  ssr: process.env.SSR_ENABLED !== 'false',
+  app: {
+    head: {
+      script: process.env.SSR_ENABLED === 'false'
+        ? [
+            {
+            // injects the config based on the environment
+              src: '/config.js'
+            }
+          ]
+        : []
+    }
   }
 })
