@@ -177,7 +177,7 @@ describe('head tags', () => {
     process.env.SSR_ENABLED = 'true'
 
     await rebuildAndRestart()
-  })
+  }, 20000)
 })
 
 describe('navigate', () => {
