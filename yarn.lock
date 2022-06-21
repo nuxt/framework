@@ -45,9 +45,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.17.10, @babel/core@npm:^7.17.7, @babel/core@npm:^7.18.5":
-  version: 7.18.5
-  resolution: "@babel/core@npm:7.18.5"
+"@babel/core@npm:^7.17.7, @babel/core@npm:^7.17.9, @babel/core@npm:^7.18.6":
+  version: 7.18.6
+  resolution: "@babel/core@npm:7.18.6"
   dependencies:
     "@ampproject/remapping": ^2.1.0
     "@babel/code-frame": ^7.18.6
@@ -68,9 +68,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.17.7, @babel/core@npm:^7.17.9, @babel/core@npm:^7.18.6":
-  version: 7.18.6
-  resolution: "@babel/core@npm:7.18.6"
+"@babel/core@npm:^7.17.7, @babel/core@npm:^7.18.5":
+  version: 7.18.5
+  resolution: "@babel/core@npm:7.18.5"
   dependencies:
     "@ampproject/remapping": ^2.1.0
     "@babel/code-frame": ^7.18.6
@@ -337,6 +337,19 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: 627211f1658870274fcabf38a71bb08ae219e3ac672423083574fabe2c857f28d39243cb7279adada8468c912a7beebc0622770ed66885a1e33b84ccc8bfd7df
+  languageName: node
+  linkType: hard
+
+"@babel/plugin-transform-typescript@npm:^7.18.4":
+  version: 7.18.4
+  resolution: "@babel/plugin-transform-typescript@npm:7.18.4"
+  dependencies:
+    "@babel/helper-create-class-features-plugin": ^7.18.6
+    "@babel/helper-plugin-utils": ^7.18.6
+    "@babel/plugin-syntax-typescript": ^7.18.6
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 9dc070304688dd183b2abb6bdac6f4b1939df7cc8caf32c57327bf90de26abce2130c5d807e82e25287d3a3e23f7532c9f7afd44a2e7bb815cae92015d352925
   languageName: node
   linkType: hard
 
@@ -1695,8 +1708,8 @@ __metadata:
     std-env: ^3.1.1
     ufo: ^0.8.5
     unbuild: latest
-    unimport: ^0.4.4
-    vite: ^2.9.14
+    unimport: ^0.3.0
+    vite: ^3.0.0-beta.0
   languageName: unknown
   linkType: soft
 
@@ -1787,8 +1800,8 @@ __metadata:
     "@nuxt/schema": ^3.0.0-rc.4
     "@rollup/plugin-replace": ^4.0.0
     "@types/cssnano": ^5
-    "@vitejs/plugin-vue": ^3.0.0-alpha.2
-    "@vitejs/plugin-vue-jsx": ^2.0.0-alpha.1
+    "@vitejs/plugin-vue": ^3.0.0-beta.0
+    "@vitejs/plugin-vue-jsx": ^2.0.0-beta.0
     autoprefixer: ^10.4.7
     chokidar: ^3.5.3
     cssnano: ^5.1.12
@@ -1814,8 +1827,8 @@ __metadata:
     ufo: ^0.8.5
     unbuild: latest
     unplugin: ^0.7.0
-    vite: ^3.0.0-alpha.14
-    vite-node: ^0.15.1
+    vite: ^3.0.0-beta.0
+    vite-node: ^0.15.2
     vite-plugin-checker: ^0.4.6
     vue: 3.2.37
   peerDependencies:
@@ -3090,29 +3103,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue-jsx@npm:^2.0.0-alpha.1":
-  version: 2.0.0-alpha.1
-  resolution: "@vitejs/plugin-vue-jsx@npm:2.0.0-alpha.1"
+"@vitejs/plugin-vue-jsx@npm:^2.0.0-beta.0":
+  version: 2.0.0-beta.0
+  resolution: "@vitejs/plugin-vue-jsx@npm:2.0.0-beta.0"
   dependencies:
-    "@babel/core": ^7.17.10
+    "@babel/core": ^7.18.5
     "@babel/plugin-syntax-import-meta": ^7.10.4
-    "@babel/plugin-transform-typescript": ^7.16.8
-    "@rollup/pluginutils": ^4.2.1
+    "@babel/plugin-transform-typescript": ^7.18.4
     "@vue/babel-plugin-jsx": ^1.1.1
   peerDependencies:
     vite: ^3.0.0-alpha
     vue: ^3.0.0
-  checksum: 8b92f50ba16bbcad88c7a6870f615d2d79523499a5a105733822b2110849f633b512ac25fed0fa0784d8de7daec0621c76bfae13fe2b041ac76c6fde6079aec1
+  checksum: eda947b9447f56779b0835eed3c6d2741d1de6fa9eeb25995c20d28d39885fc7e41761018cff7eb69a641f29e16070111e45d90044114e9287ec61da146c5452
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:^3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@vitejs/plugin-vue@npm:3.0.0-alpha.2"
+"@vitejs/plugin-vue@npm:^3.0.0-beta.0":
+  version: 3.0.0-beta.0
+  resolution: "@vitejs/plugin-vue@npm:3.0.0-beta.0"
   peerDependencies:
     vite: ^3.0.0-alpha
     vue: ^3.2.25
-  checksum: f8f7c6e4ce6016a5b8cc7ab2c499cd1e6872eeebb5da4ab4b99a94e2b78b8f24c244acab7400bf82ea6edcc1c88a9f4eb04a42f0586f4aba92921ab11d560017
+  checksum: bee67c397cd2b618385c59c85ce07557af68200215708b5809e2c4255edeeffd73ca17ebc158eb01adbaa941ab2a6dea3f202b050a713b1e39ff3dd1587e2f97
   languageName: node
   linkType: hard
 
@@ -14398,9 +14410,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^3.0.0-alpha.14":
-  version: 3.0.0-alpha.14
-  resolution: "vite@npm:3.0.0-alpha.14"
+"vite@npm:^3.0.0-beta.0":
+  version: 3.0.0-beta.0
+  resolution: "vite@npm:3.0.0-beta.0"
   dependencies:
     esbuild: ^0.14.43
     fsevents: ~2.3.2
@@ -14426,7 +14438,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 55f7867d73b31b72522533253e1d77ef1f429bbc257ed9f5d48da89c4c5fd2ee460c27c1276adce7b82e39984984e35a91cb93af870ffdda8caf6c3914be0f31
+  checksum: 83fe4d96cbe747e689bcbe8c2d0e6bd72c3598553bff36b7dad12e6a60a22083d37fe8556dc76d6a280c3505f2d31df2d1915948ed72a55bb98b0caeab692715
   languageName: node
   linkType: hard
 
