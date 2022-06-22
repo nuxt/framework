@@ -1,7 +1,6 @@
-import { useQuery } from 'h3'
-import { parseURL } from 'ufo'
+import { useQuery } from "h3";
 
-export default req => ({
-  path: '/api/hello' + parseURL(req.url).pathname,
-  query: useQuery(req)
-})
+export default event => ({
+  path: "/api/" + event.context.params.hello,
+  query: useQuery(event)
+});
