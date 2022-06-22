@@ -39,7 +39,6 @@
     "@nuxt/test-utils": "link:./packages/test-utils",
     "@nuxt/vite": "link:./packages/vite",
     "@nuxt/webpack": "link:./packages/webpack",
-    "jiti": "^1.14.0",
     "nuxi": "link:./packages/nuxi",
     "nuxt": "link:./packages/nuxt",
     "nuxt3": "link:./packages/nuxt",
