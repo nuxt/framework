@@ -108,20 +108,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   }
 
   const error = useError()
-  router.afterEach(async (to) => {
-    if (process.client && !nuxtApp.isHydrating && error.value) {
-      // Clear any existing errors
-      await callWithNuxt(nuxtApp, clearError)
-    }
-    if (to.matched.length === 0) {
-      callWithNuxt(nuxtApp, throwError, [createError({
-        statusCode: 404,
-        statusMessage: `Page not found: ${to.fullPath}`
-      })])
-    } else if (process.server && to.matched[0].name === '404' && nuxtApp.ssrContext) {
-      nuxtApp.ssrContext.res.statusCode = 404
-    }
-  })
 
   try {
     if (process.server) {
@@ -155,8 +141,11 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     for (const entry of middlewareEntries) {
       const middleware = typeof entry === 'string' ? nuxtApp._middleware.named[entry] || await namedMiddleware[entry]?.().then(r => r.default || r) : entry
 
-      if (process.dev && !middleware) {
-        console.warn(`Unknown middleware: ${entry}. Valid options are ${Object.keys(namedMiddleware).join(', ')}.`)
+      if (!middleware) {
+        if (process.dev) {
+          throw new Error(`Unknown route middleware: '${entry}'. Valid middleware: ${Object.keys(namedMiddleware).map(mw => `'${mw}'`).join(', ')}.`)
+        }
+        throw new Error(`Unknown route middleware: '${entry}'.`)
       }
 
       const result = await callWithNuxt(nuxtApp, middleware, [to, from])
@@ -175,7 +164,18 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   router.afterEach(async (to) => {
     delete nuxtApp._processingMiddleware
 
-    if (process.server) {
+    if (process.client && !nuxtApp.isHydrating && error.value) {
+      // Clear any existing errors
+      await callWithNuxt(nuxtApp, clearError)
+    }
+    if (to.matched.length === 0) {
+      callWithNuxt(nuxtApp, throwError, [createError({
+        statusCode: 404,
+        statusMessage: `Page not found: ${to.fullPath}`
+      })])
+    } else if (process.server && to.matched[0].name === '404' && nuxtApp.ssrContext) {
+      nuxtApp.ssrContext.res.statusCode = 404
+    } else if (process.server) {
       const currentURL = to.fullPath || '/'
       if (!isEqual(currentURL, initialURL)) {
         await callWithNuxt(nuxtApp, navigateTo, [currentURL])
@@ -187,6 +187,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     try {
       await router.replace({
         ...router.resolve(initialURL),
+        name: undefined, // #4920, #$4982
         force: true
       })
     } catch (error) {

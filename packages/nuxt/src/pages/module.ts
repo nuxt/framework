@@ -1,10 +1,10 @@
 import { existsSync } from 'node:fs'
 import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin, findPath } from '@nuxt/kit'
 import { resolve } from 'pathe'
-import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
+import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries, genSafeVariableName } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
 import { distDir } from '../dirs'
-import { resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
+import { resolvePagesRoutes, normalizeRoutes, resolveMiddleware } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
 
 export default defineNuxtModule({
@@ -33,11 +33,10 @@ export default defineNuxtModule({
     nuxt.hook('builder:watch', async (event, path) => {
       const dirs = [
         nuxt.options.dir.pages,
-        nuxt.options.dir.layouts,
         nuxt.options.dir.middleware
       ].filter(Boolean)
 
-      const pathPattern = new RegExp(`^(${dirs.map(escapeRE).join('|')})/`)
+      const pathPattern = new RegExp(`(^|\\/)(${dirs.map(escapeRE).join('|')})/`)
       if (event !== 'change' && path.match(pathPattern)) {
         await nuxt.callHook('builder:generateApp')
       }
@@ -117,8 +116,8 @@ export default defineNuxtModule({
         const namedMiddleware = middleware.filter(mw => !mw.global)
         const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
         return [
-          ...globalMiddleware.map(mw => genImport(mw.path, getImportName(mw.name))),
-          `export const globalMiddleware = ${genArrayFromRaw(globalMiddleware.map(mw => getImportName(mw.name)))}`,
+          ...globalMiddleware.map(mw => genImport(mw.path, genSafeVariableName(mw.name))),
+          `export const globalMiddleware = ${genArrayFromRaw(globalMiddleware.map(mw => genSafeVariableName(mw.name)))}`,
           `export const namedMiddleware = ${namedMiddlewareObject}`
         ].join('\n')
       }

@@ -1,5 +1,5 @@
-import { defineComponent, h, inject, provide, Suspense, Transition, nextTick } from 'vue'
-import { RouteLocationNormalizedLoaded, RouterView } from 'vue-router'
+import { DefineComponent, defineComponent, h, inject, nextTick, provide, Suspense, Transition } from 'vue'
+import { RouteLocationNormalized, RouteLocationNormalizedLoaded, RouterView } from 'vue-router'
 
 import { generateRouteKey, RouterViewSlotProps, wrapInKeepAlive } from './utils'
 import { useNuxtApp } from '#app'
@@ -9,13 +9,20 @@ const isNestedKey = Symbol('isNested')
 
 export default defineComponent({
   name: 'NuxtPage',
+  inheritAttrs: false,
   props: {
+    name: {
+      type: String
+    },
+    route: {
+      type: Object as () => RouteLocationNormalized
+    },
     pageKey: {
       type: [Function, String] as unknown as () => string | ((route: RouteLocationNormalizedLoaded) => string),
       default: null
     }
   },
-  setup (props) {
+  setup (props, { attrs }) {
     const nuxtApp = useNuxtApp()
 
     const isNested = inject(isNestedKey, false)
@@ -42,7 +49,7 @@ export default defineComponent({
     }
 
     return () => {
-      return h(RouterView, {}, {
+      return h(RouterView, { name: props.name, route: props.route, ...attrs }, {
         default: (routeProps: RouterViewSlotProps) => routeProps.Component &&
             _wrapIf(Transition, getTransitionProps(routeProps),
               wrapInKeepAlive(routeProps.route.meta.keepalive,
@@ -59,6 +66,11 @@ export default defineComponent({
       })
     }
   }
-})
+}) as DefineComponent<{
+  name?: string,
+  route?: RouteLocationNormalized
+  pageKey?: string | ((route: RouteLocationNormalizedLoaded) => string)
+  [key: string]: any
+}>
 
 const defaultPageTransition = { name: 'page', mode: 'out-in' }
