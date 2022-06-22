@@ -31,18 +31,6 @@ export interface ExtendConfigOptions {
 
 export interface ExtendWebpackConfigOptions extends ExtendConfigOptions {
   /**
-   * Install plugin on server side
-   *
-   * @default true
-   */
-  server?: boolean
-  /**
-   * Install plugin on client side
-   *
-   * @default true
-   */
-  client?: boolean
-  /**
    * Install plugin on modern build
    *
    * @default true
