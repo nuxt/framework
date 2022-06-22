@@ -1,6 +1,4 @@
-import { useQuery } from 'h3'
-
-export default event => ({
+export default defineEventHandler(event => ({
   path: '/api/' + event.context.params.hello,
   query: useQuery(event)
-})
+}))
