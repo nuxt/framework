@@ -42,7 +42,7 @@
     "nuxi": "link:./packages/nuxi",
     "nuxt": "link:./packages/nuxt",
     "nuxt3": "link:./packages/nuxt",
-    "vite": "~3.0.0-beta.0",
+    "vite": "~3.0.0-beta.1",
     "@vitejs/plugin-vue": "~3.0.0-beta.0",
     "@vitejs/plugin-vue-jsx": "~2.0.0-beta.0",
     "unbuild": "^0.7.4"

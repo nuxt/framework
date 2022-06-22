@@ -1709,7 +1709,7 @@ __metadata:
     ufo: ^0.8.5
     unbuild: latest
     unimport: ^0.3.0
-    vite: ^3.0.0-beta.0
+    vite: ~3.0.0-beta.1
   languageName: unknown
   linkType: soft
 
@@ -1800,8 +1800,8 @@ __metadata:
     "@nuxt/schema": ^3.0.0-rc.4
     "@rollup/plugin-replace": ^4.0.0
     "@types/cssnano": ^5
-    "@vitejs/plugin-vue": ^3.0.0-beta.0
-    "@vitejs/plugin-vue-jsx": ^2.0.0-beta.0
+    "@vitejs/plugin-vue": ~3.0.0-beta.0
+    "@vitejs/plugin-vue-jsx": ~2.0.0-beta.0
     autoprefixer: ^10.4.7
     chokidar: ^3.5.3
     cssnano: ^5.1.12
@@ -1827,7 +1827,7 @@ __metadata:
     ufo: ^0.8.5
     unbuild: latest
     unplugin: ^0.7.0
-    vite: ^3.0.0-beta.0
+    vite: ~3.0.0-beta.1
     vite-node: ^0.15.2
     vite-plugin-checker: ^0.4.6
     vue: 3.2.37
@@ -3103,7 +3103,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue-jsx@npm:^2.0.0-beta.0":
+"@vitejs/plugin-vue-jsx@npm:~2.0.0-beta.0":
   version: 2.0.0-beta.0
   resolution: "@vitejs/plugin-vue-jsx@npm:2.0.0-beta.0"
   dependencies:
@@ -3118,7 +3118,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue@npm:^3.0.0-beta.0":
+"@vitejs/plugin-vue@npm:~3.0.0-beta.0":
   version: 3.0.0-beta.0
   resolution: "@vitejs/plugin-vue@npm:3.0.0-beta.0"
   peerDependencies:
@@ -14410,9 +14410,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^3.0.0-beta.0":
-  version: 3.0.0-beta.0
-  resolution: "vite@npm:3.0.0-beta.0"
+"vite@npm:~3.0.0-beta.1":
+  version: 3.0.0-beta.1
+  resolution: "vite@npm:3.0.0-beta.1"
   dependencies:
     esbuild: ^0.14.43
     fsevents: ~2.3.2
@@ -14438,7 +14438,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 83fe4d96cbe747e689bcbe8c2d0e6bd72c3598553bff36b7dad12e6a60a22083d37fe8556dc76d6a280c3505f2d31df2d1915948ed72a55bb98b0caeab692715
+  checksum: 9a2ec7a25d35ef8af2107da010f8994d373726d3a275bdf0378c58e853a7acd1d59ce4c8d073eac609ddee8f66882b1a89b3898c964808827615eaf20c3bdbf6
   languageName: node
   linkType: hard
 
