@@ -4,6 +4,3 @@ cover:
   alt: "Nuxt 3 cover image"
 aside:
   level: 1
-  filter:
-    - /bridge
-    - /migration
