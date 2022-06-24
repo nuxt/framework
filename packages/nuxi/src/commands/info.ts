@@ -57,16 +57,30 @@ export default defineNuxtCommand({
       packageManager = 'unknown'
     }
 
-    const infoObj = {
+    const baseInfoObj = {
       OperatingSystem: os.type(),
       NodeVersion: process.version,
       NuxtVersion: nuxtVersion,
       PackageManager: packageManager,
       Builder: builder,
-      UserConfig: Object.keys(nuxtConfig).map(key => '`' + key + '`').join(', '),
-      RuntimeModules: listModules(nuxtConfig.modules),
-      BuildModules: listModules(nuxtConfig.buildModules)
+      UserConfig: Object.keys(nuxtConfig).map(key => '`' + key + '`').join(', ')
     }
+
+    const runtimeModules = listModules(nuxtConfig.modules)
+    const buildModules = listModules(nuxtConfig.buildModules)
+
+    const isNuxt3OrBridge = baseInfoObj.NuxtVersion.startsWith('3') || buildModules.includes('bridge')
+
+    const infoObj = isNuxt3OrBridge
+      ? {
+          ...baseInfoObj,
+          Modules: runtimeModules
+        }
+      : {
+          ...baseInfoObj,
+          RuntimeModules: runtimeModules,
+          BuildModules: buildModules
+        }
 
     console.log('RootDir:', rootDir)
 
@@ -85,7 +99,6 @@ export default defineNuxtCommand({
     const splitter = '------------------------------'
     console.log(`Nuxt project info: ${copied ? '(copied to clipboard)' : ''}\n\n${splitter}\n${infoStr}${splitter}\n`)
 
-    const isNuxt3OrBridge = infoObj.NuxtVersion.startsWith('3') || infoObj.BuildModules.includes('bridge')
     const repo = isNuxt3OrBridge ? 'nuxt/framework' : 'nuxt/nuxt.js'
     console.log([
       `👉 Report an issue: https://github.com/${repo}/issues/new`,
