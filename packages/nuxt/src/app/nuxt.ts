@@ -6,7 +6,7 @@ import type { RuntimeConfig } from '@nuxt/schema'
 import { getContext } from 'unctx'
 import type { SSRContext } from 'vue-bundle-renderer'
 import type { CompatibilityEvent } from 'h3'
-import { legacyPlugin, LegacyContext } from './compat/legacy-app'
+import type { LegacyContext } from './compat/legacy-app'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
@@ -192,15 +192,15 @@ export function normalizePlugins (_plugins: Array<Plugin | LegacyPlugin>) {
     if (typeof plugin !== 'function') {
       return () => {}
     }
-    if (isLegacyPlugin(plugin)) {
+    if (process.dev && isLegacyPlugin(plugin)) {
       needsLegacyContext = true
       return (nuxtApp: NuxtApp) => plugin(nuxtApp._legacyContext!, nuxtApp.provide)
     }
     return plugin
   })
 
-  if (needsLegacyContext) {
-    plugins.unshift(legacyPlugin)
+  if (process.dev && needsLegacyContext && !plugins.some(p => (p as any).__legacyPlugin)) {
+    console.warn('Either wrap all your plugins in `defineNuxtPlugin` or enable `experimental.legacyPlugins` to use legacy format Nuxt plugins.')
   }
 
   return plugins as Plugin[]

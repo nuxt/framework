@@ -23,6 +23,12 @@ export default {
      * Externalize `vue`, `@vue/*` and `vue-router` when build
      * @see https://github.com/nuxt/framework/issues/4084
      */
-    externalVue: false
+    externalVue: false,
+
+    /**
+     * Inject layer normalizing Nuxt 3 app to a Nuxt 2-format context in order to support legacy plugins
+     * that take (ctx, inject) as arguments.
+     */
+    legacyPlugins: false
   }
 }

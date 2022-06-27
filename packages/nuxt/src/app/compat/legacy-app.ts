@@ -3,7 +3,7 @@ import type { App } from 'vue'
 import type { Component } from '@vue/runtime-core'
 import mockContext from 'unenv/runtime/mock/proxy'
 import type { RouteLocationNormalized, Router } from 'vue-router'
-import { NuxtApp, useRuntimeConfig } from '../nuxt'
+import { defineNuxtPlugin, NuxtApp, useRuntimeConfig } from '../nuxt'
 
 type Store = any
 
@@ -132,7 +132,7 @@ const staticFlags = {
   modern: false
 }
 
-export const legacyPlugin = (nuxtApp: NuxtApp) => {
+const legacyPlugin = defineNuxtPlugin((nuxtApp: NuxtApp) => {
   nuxtApp._legacyContext = new Proxy(nuxtApp, {
     get (nuxt, p: keyof LegacyContext | keyof LegacyContext['ssrContext']) {
       // Unsupported keys
@@ -212,4 +212,8 @@ export const legacyPlugin = (nuxtApp: NuxtApp) => {
       window[`$${nuxtApp.globalName}`] = legacyApp
     })
   }
-}
+})
+
+;(legacyPlugin as any).__legacyPlugin = true
+
+export default legacyPlugin
