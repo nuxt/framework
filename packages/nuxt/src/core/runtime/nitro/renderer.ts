@@ -148,18 +148,22 @@ export default eventHandler(async (event) => {
     await ssrContext.nuxt.hooks.callHook('app:rendered')
   }
 
+  await renderMeta(rendered, ssrContext)
+
   const html = await renderHTML(ssrContext.payload, rendered, ssrContext)
   event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   return html
 })
 
-async function renderHTML (payload: any, rendered: RenderResult, ssrContext: NuxtSSRContext) {
-  const state = `<script>window.__NUXT__=${devalue(payload)}</script>`
-
+async function renderMeta (rendered: RenderResult, ssrContext: NuxtSSRContext) {
   rendered.meta = rendered.meta || {}
   if (ssrContext.renderMeta) {
     Object.assign(rendered.meta, await ssrContext.renderMeta())
   }
+}
+
+function renderHTML (payload: any, rendered: RenderResult, ssrContext: NuxtSSRContext) {
+  const state = `<script>window.__NUXT__=${devalue(payload)}</script>`
 
   return htmlTemplate({
     HTML_ATTRS: (rendered.meta.htmlAttrs || ''),
