@@ -213,8 +213,8 @@ export const publicPathTemplate: NuxtTemplate = {
       '  return path.length ? joinURL(publicBase, ...path) : publicBase',
       '}',
 
-      'globalThis.buildAssetsURL = buildAssetsURL',
-      'globalThis.publicAssetsURL = publicAssetsURL'
+      'globalThis.__buildAssetsURL = buildAssetsURL',
+      'globalThis.__publicAssetsURL = publicAssetsURL'
     ].filter(Boolean).join('\n')
   }
 }

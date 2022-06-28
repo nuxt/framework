@@ -6,7 +6,7 @@ import { logger, resolveModule, isIgnored } from '@nuxt/kit'
 import fse from 'fs-extra'
 import { debounce } from 'perfect-debounce'
 import replace from '@rollup/plugin-replace'
-import { joinURL } from 'ufo'
+import { joinURL, withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
@@ -22,9 +22,19 @@ export async function buildServer (ctx: ViteBuildContext) {
       ? joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
       : undefined,
     experimental: {
-      buildAdvancedBaseOptions: {
-        assets: { runtime: (url: string) => `buildAssetsURL(${url})` },
-        public: { runtime: (url: string) => `publicAssetsURL(${url})` }
+      renderBuiltUrl: (filename, { type, hostType }) => {
+        if (hostType !== 'js') {
+          // In CSS we only use relative paths until we craft a clever runtime CSS hack
+          return { relative: true }
+        }
+        switch (type) {
+          case 'public':
+            return { runtime: `__publicAssetsURL(${JSON.stringify(filename)})` }
+          case 'asset': {
+            const relativeFilename = filename.replace(withTrailingSlash(withoutLeadingSlash(ctx.nuxt.options.app.buildAssetsDir)), '')
+            return { runtime: `__buildAssetsURL(${JSON.stringify(relativeFilename)})` }
+          }
+        }
       }
     },
     define: {

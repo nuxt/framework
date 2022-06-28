@@ -22,7 +22,15 @@ export async function buildClient (ctx: ViteBuildContext) {
     ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
   })
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
-    base: ctx.nuxt.options.dev ? undefined : './',
+    experimental: {
+      renderBuiltUrl: (filename, { type, hostType }) => {
+        if (hostType !== 'js' || type === 'asset') {
+          // In CSS we only use relative paths until we craft a clever runtime CSS hack
+          return { relative: true }
+        }
+        return { runtime: `__publicAssetsURL(${JSON.stringify(filename)})` }
+      }
+    },
     define: {
       'process.server': false,
       'process.client': true,

@@ -1709,7 +1709,7 @@ __metadata:
     ufo: ^0.8.5
     unbuild: latest
     unimport: ^0.3.0
-    vite: ~3.0.0-beta.1
+    vite: ~3.0.0-beta.5
   languageName: unknown
   linkType: soft
 
@@ -1827,7 +1827,7 @@ __metadata:
     ufo: ^0.8.5
     unbuild: latest
     unplugin: ^0.7.0
-    vite: ~3.0.0-beta.1
+    vite: ~3.0.0-beta.5
     vite-node: ^0.15.2
     vite-plugin-checker: ^0.4.6
     vue: 3.2.37
@@ -14410,11 +14410,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:~3.0.0-beta.1":
-  version: 3.0.0-beta.1
-  resolution: "vite@npm:3.0.0-beta.1"
+"vite@npm:~3.0.0-beta.5":
+  version: 3.0.0-beta.5
+  resolution: "vite@npm:3.0.0-beta.5"
   dependencies:
-    esbuild: ^0.14.43
+    esbuild: ^0.14.47
     fsevents: ~2.3.2
     postcss: ^8.4.14
     resolve: ^1.22.1
@@ -14438,7 +14438,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 9a2ec7a25d35ef8af2107da010f8994d373726d3a275bdf0378c58e853a7acd1d59ce4c8d073eac609ddee8f66882b1a89b3898c964808827615eaf20c3bdbf6
+  checksum: 93a19bae089007236813e2ee95f9fdf342b8abc76a3c39ef2fd08f2bdbe2801bfb3473c7c1812253aad04fd2bda198b5e77bf24b4fb525d72b0003ee15fb4d42
   languageName: node
   linkType: hard
 
