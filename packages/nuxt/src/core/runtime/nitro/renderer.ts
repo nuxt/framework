@@ -111,6 +111,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
 export default eventHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? useQuery(event) : null
+  const customRender = event.req.url?.startsWith('/__nuxt_render') ? useQuery(event) : null
   const url = ssrError?.url as string || event.req.url!
 
   // Initialize ssr context
@@ -122,8 +123,11 @@ export default eventHandler(async (event) => {
     runtimeConfig: useRuntimeConfig(),
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
     error: ssrError,
+    render: customRender
+      ? { components: JSON.parse(customRender.components as string || '[]') }
+      : undefined,
     nuxt: undefined, /* NuxtApp */
-    payload: undefined
+    payload: customRender ? { state: JSON.parse(customRender.state as string || '{}') } : undefined
   }
 
   // Render app
@@ -149,6 +153,22 @@ export default eventHandler(async (event) => {
   }
 
   await renderMeta(rendered, ssrContext)
+
+  // Render server components
+  if (ssrContext.teleports?.['render-target-0']) {
+    const components = Object.entries(ssrContext.teleports)
+      .filter(([key]) => key.startsWith('render-target'))
+      .map(([, value]) => ({ html: value.replace(/<!--teleport anchor-->$/, '') }))
+
+    event.res.setHeader('Content-Type', 'application/json')
+
+    return {
+      rendered: components,
+      state: ssrContext.payload,
+      // TODO: head integration
+      meta: {}
+    }
+  }
 
   const html = await renderHTML(ssrContext.payload, rendered, ssrContext)
   event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
