@@ -1,12 +1,14 @@
 <template>
   <Suspense @resolve="onResolve">
     <ErrorComponent v-if="error" :error="error" />
+    <RenderComponents v-else-if="componentsToRender" :components="componentsToRender" />
     <App v-else />
   </Suspense>
 </template>
 
 <script setup>
-import { onErrorCaptured } from 'vue'
+import { onErrorCaptured, useSSRContext } from 'vue'
+import RenderComponents from './render-components'
 import { callWithNuxt, throwError, useError, useNuxtApp } from '#app'
 // @ts-ignore
 import ErrorComponent from '#build/error-component.mjs'
@@ -28,4 +30,7 @@ onErrorCaptured((err, target, info) => {
     callWithNuxt(nuxtApp, throwError, [err])
   }
 })
+
+// server component rendering
+const componentsToRender = process.server && useSSRContext().render?.components
 </script>
