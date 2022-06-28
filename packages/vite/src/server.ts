@@ -2,7 +2,7 @@ import { resolve, join, normalize } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
-import { logger, resolveModule } from '@nuxt/kit'
+import { logger, resolveModule, isIgnored } from '@nuxt/kit'
 import fse from 'fs-extra'
 import { debounce } from 'perfect-debounce'
 import { withoutTrailingSlash } from 'ufo'
@@ -71,6 +71,9 @@ export async function buildServer (ctx: ViteBuildContext) {
             rollupWarn(warning)
           }
         }
+      },
+      watch: {
+        exclude: ctx.nuxt.options.ignore
       }
     },
     server: {
@@ -88,7 +91,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Add type-checking
   if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
     const checker = await import('vite-plugin-checker').then(r => r.default)
-    ctx.config.plugins.push(checker({ typescript: true }))
+    serverConfig.plugins.push(checker({ typescript: true }))
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
@@ -176,7 +179,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     // Watch
     viteServer.watcher.on('all', (_event, file) => {
       file = normalize(file) // Fix windows paths
-      if (file.indexOf(ctx.nuxt.options.buildDir) === 0) { return }
+      if (file.indexOf(ctx.nuxt.options.buildDir) === 0 || isIgnored(file)) { return }
       doBuild()
     })
     // ctx.nuxt.hook('builder:watch', () => doBuild())
