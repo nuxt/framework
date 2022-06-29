@@ -15,6 +15,8 @@ export interface UseFetchOptions<
   key?: string
 }
 
+const GET = 'GET'
+
 export function useFetch<
   ResT = void,
   ErrorT = Error,
@@ -29,7 +31,17 @@ export function useFetch<
   if (process.dev && opts.transform && !opts.key) {
     console.warn('[nuxt] You should provide a key for `useFetch` when using a custom transform function.')
   }
-  const key = '$f_' + (opts.key || hash([request, { ...opts, transform: null }]))
+  let key: string
+  if (!opts.method || opts.method.toUpperCase() === GET) {
+    key = '$f_' + (opts.key || hash([request, { ...opts, transform: null }]))
+  } else {
+    // Using custom key for payload (non-GET) HTTP requests,
+    // fixes call to a hash function that can't recognize `FormData` as valid object
+    key = '$f_' + (opts.key || `${opts.method}${request}`)
+    // Disable initial cache for payload (non-GET) methods
+    opts.initialCache = false
+  }
+
   const _request = computed(() => {
     let r = request as Ref<FetchRequest> | FetchRequest | (() => FetchRequest)
     if (typeof r === 'function') {
