@@ -30,9 +30,6 @@ export async function bundle (nuxt: Nuxt) {
     nuxt,
     config: vite.mergeConfig(
       {
-        legacy: {
-          buildRollupPluginCommonjs: !nuxt.options.experimental.externalVue && !nuxt.options.dev
-        },
         resolve: {
           alias: {
             ...nuxt.options.alias,

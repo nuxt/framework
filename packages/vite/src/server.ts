@@ -41,6 +41,9 @@ export async function buildServer (ctx: ViteBuildContext) {
       'process.server': true,
       'process.client': false
     },
+    legacy: {
+      buildRollupPluginCommonjs: !ctx.nuxt.options.experimental.externalVue && !ctx.nuxt.options.dev
+    },
     resolve: {
       alias: {
         '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/server'),
