@@ -29,7 +29,7 @@ export function createClientOnly (component) {
         if (mounted.value) {
           return h(component, attrs, slots)
         }
-        return h('div')
+        return h('div', { class: attrs.class, style: attrs.style })
       }
     }
   })
