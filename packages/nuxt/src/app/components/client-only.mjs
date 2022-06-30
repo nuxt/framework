@@ -20,7 +20,7 @@ export default defineComponent({
 
 export function createClientOnly (component) {
   return defineComponent({
-    name: component.__name || 'ClientOnlyWrapper',
+    name: 'ClientOnlyWrapper',
     inheritAttrs: false,
     setup (_props, { attrs, slots }) {
       const mounted = ref(false)
