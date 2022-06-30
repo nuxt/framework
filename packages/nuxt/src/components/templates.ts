@@ -26,14 +26,19 @@ const createImportMagicComments = (options: ImportMagicCommentsOptions) => {
 export const componentsPluginTemplate = {
   filename: 'components.plugin.mjs',
   getContents ({ options }: { options: ComponentsTemplateOptions }) {
+    const genComponentsObject = (components: Component[]) => genObjectFromRawEntries(components.map((c) => {
+      const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
+      const comment = createImportMagicComments(c)
+
+      return [c.pascalName, `defineAsyncComponent(${genDynamicImport(c.filePath, { comment })}.then(c => ${exp}))`]
+    }))
     return `import { defineAsyncComponent } from 'vue'
 
-const components = ${genObjectFromRawEntries(options.components.filter(c => c.global === true).map((c) => {
-  const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
-  const comment = createImportMagicComments(c)
-
-  return [c.pascalName, `defineAsyncComponent(${genDynamicImport(c.filePath, { comment })}.then(c => ${exp}))`]
-}))}
+const components = {
+  ...${genComponentsObject(options.components.filter(c => c.global === true && c.mode !== 'server'))},
+  // We need to register server components globally
+  ...process.server ? ${genComponentsObject(options.components.filter(c => c.mode === 'server'))} : {},
+}
 
 export default function (nuxtApp) {
   for (const name in components) {

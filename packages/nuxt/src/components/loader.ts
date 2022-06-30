@@ -1,4 +1,4 @@
-import { pathToFileURL } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL } from 'ufo'
 import { Component, ComponentsOptions } from '@nuxt/schema'
@@ -16,6 +16,7 @@ interface LoaderOptions {
 export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
   const exclude = options.transform?.exclude || []
   const include = options.transform?.include || []
+  const serverComponentRuntime = fileURLToPath(new URL('./runtime/server-component', import.meta.url))
 
   return {
     name: 'nuxt:components-loader',
@@ -48,6 +49,20 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
         if (component) {
           const identifier = map.get(component) || `__nuxt_component_${num++}`
           map.set(component, identifier)
+
+          const isServerOnly = component.mode === 'server' &&
+            !components.some(c => c.pascalName === component.pascalName && c.mode === 'client')
+          if (isServerOnly) {
+            imports.add(genImport(serverComponentRuntime, [{
+              name: options.mode === 'client'
+                ? 'createClientHandler'
+                : 'createServerRenderer',
+              as: 'createServerComponent'
+            }]))
+            imports.add(`const ${identifier} = createServerComponent(${JSON.stringify(name)})`)
+            return identifier
+          }
+
           const isClientOnly = component.mode === 'client'
           if (isClientOnly) {
             imports.add(genImport('#app/components/client-only', [{ name: 'createClientOnly' }]))
@@ -82,8 +97,8 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
 function findComponent (components: Component[], name: string, mode: LoaderOptions['mode']) {
   const id = pascalCase(name).replace(/["']/g, '')
   const component = components.find(component => id === component.pascalName && ['all', mode, undefined].includes(component.mode))
-  if (!component && components.some(component => id === component.pascalName)) {
-    return components.find(component => component.pascalName === 'ServerPlaceholder')
+  if (!component) {
+    return components.find(component => id === component.pascalName)
   }
   return component
 }
