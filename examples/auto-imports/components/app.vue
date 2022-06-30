@@ -1,6 +1,6 @@
 <script setup>
 const foo = ref(0)
-const externalState = useState('other')
+const sharedState = useState('other')
 </script>
 
 <template>
@@ -18,11 +18,11 @@ const externalState = useState('other')
       </ClientAndServer>
       <JustClient />
       <ServerOnlyComponent :foo="foo" />
-      <div class="my-2 gap-2 flex flex-row justify-center">
-        <NButton @click="foo = foo + 5">
+      <div class="my-2 gap-2 flex flex-row justify-center items-center">
+        <NButton @click="foo++">
           Increase prop
         </NButton>
-        <NButton @click="externalState++">
+        <NButton @click="sharedState++">
           Increase external state (won't immediately trigger rerender)
         </NButton>
       </div>
