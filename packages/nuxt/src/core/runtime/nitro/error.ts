@@ -30,7 +30,6 @@ export default <NitroErrorHandler> async function errorhandler (_error, event) {
 
   // JSON response
   if (isJsonRequest(event)) {
-    event.res.setHeader('Content-Type', 'application/json')
     event.res.end(JSON.stringify(errorObject))
     return
   }

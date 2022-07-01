@@ -171,8 +171,6 @@ export default eventHandler(async (event) => {
       .filter(([key]) => key.startsWith('render-target'))
       .map(([, value]) => ({ html: value.replace(/<!--teleport anchor-->$/, '') }))
 
-    event.res.setHeader('Content-Type', 'application/json')
-
     const result: ComponentRenderResult = {
       rendered: components,
       state: ssrContext.payload.state,
