@@ -6,6 +6,7 @@ export default defineComponent({
   },
   async setup (props) {
     // TODO: https://github.com/vuejs/core/issues/6207
+    // @ts-expect-error private loading api
     await Promise.all(props.components.map(c => resolveComponent(c.name).__asyncLoader?.()))
     return () => props.components.map(
       (c, index) => createBlock(Teleport as any, { to: `render-target-${index}` }, [
