@@ -1,6 +1,6 @@
-import { resolveComponent, defineComponent, ref, h, createBlock, watch, onBeforeUnmount, createElementVNode } from 'vue'
+import { resolveComponent, defineComponent, ref, h, createBlock, watch, createElementVNode } from 'vue'
 import { withQuery } from 'ufo'
-import { useNuxtApp } from '#app'
+import { useNuxtApp, ComponentRenderResult } from '#app'
 
 export const createServerRenderer = (name: string) => defineComponent({
   inheritAttrs: false,
@@ -12,11 +12,6 @@ export const createServerRenderer = (name: string) => defineComponent({
   }
 })
 
-interface RenderResult {
-  state: Record<string, any>
-  rendered: Array<{ html: string }>
-  style?: string
-}
 export const createClientHandler = (name: string) => defineComponent({
   name: name + '-wrapper',
   inheritAttrs: false,
@@ -28,12 +23,9 @@ export const createClientHandler = (name: string) => defineComponent({
     const currentHTML = ref<string>('<!---->')
 
     const parserElement = document.createElement('div')
-    const injectorElement = document.createElement('div')
-    document.body.appendChild(injectorElement)
-    onBeforeUnmount(() => document.body.removeChild(injectorElement))
 
     async function updateHTML (props: Record<string, any>) {
-      const result = await $fetch<RenderResult>(withQuery('/__nuxt_render', {
+      const result = await $fetch<ComponentRenderResult>(withQuery('/__nuxt_render', {
         state: JSON.stringify({ ...nuxtApp.payload.state, error: undefined }),
         components: JSON.stringify([{ name, props }])
       }))
@@ -44,13 +36,14 @@ export const createClientHandler = (name: string) => defineComponent({
       }
 
       // Update CSS
-      parserElement.innerHTML = (result.style || '')
+      parserElement.innerHTML = (result.style || '') + (result.script || '')
       const html = document.documentElement.innerHTML
       for (const child of parserElement.childNodes) {
         if (!(child instanceof HTMLElement)) { continue }
-        if (html.includes(child.outerHTML)) { child.remove() }
+        if (!html.includes(child.outerHTML)) {
+          document.head.appendChild(child)
+        }
       }
-      injectorElement.innerHTML = parserElement.innerHTML
 
       // Update HTML
       currentHTML.value = result.rendered[0].html

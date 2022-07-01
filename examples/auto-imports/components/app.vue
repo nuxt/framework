@@ -23,7 +23,7 @@ const sharedState = useState('other')
           Increase prop
         </NButton>
         <NButton @click="sharedState++">
-          Increase external state (won't immediately trigger rerender)
+          Shared state ({{ sharedState }})
         </NButton>
       </div>
       <NuxtWithPrefix class="mt-6" />

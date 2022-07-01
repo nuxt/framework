@@ -260,3 +260,10 @@ export function useRuntimeConfig (): RuntimeConfig {
 function defineGetter<K extends string | number | symbol, V> (obj: Record<K, V>, key: K, val: V) {
   Object.defineProperty(obj, key, { get: () => val })
 }
+
+export interface ComponentRenderResult {
+  state: Record<string, any>
+  rendered: Array<{ html: string }>
+  style?: string
+  script?: string
+}
