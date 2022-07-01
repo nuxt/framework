@@ -1,10 +1,11 @@
 import { statSync } from 'node:fs'
 import { resolve, basename } from 'pathe'
-import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { componentsPluginTemplate, componentsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
-import { loaderPlugin } from './loader'
+import { loaderPlugin } from './plugins/loader'
+import { stripServerComponentsPlugin } from './plugins/server-components'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
 const isDirectory = (p: string) => { try { return statSync(p).isDirectory() } catch (_e) { return false } }
@@ -129,6 +130,16 @@ export default defineNuxtModule<ComponentsOptions>({
     })
 
     const getComponents = () => options.components
+
+    addVitePlugin(stripServerComponentsPlugin.vite({
+      getComponents,
+      sourcemap: nuxt.options.sourcemap
+    }), { server: false })
+    addWebpackPlugin(stripServerComponentsPlugin.webpack({
+      getComponents,
+      sourcemap: nuxt.options.sourcemap
+    }), { server: false })
+
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       config.plugins = config.plugins || []
       config.plugins.push(loaderPlugin.vite({

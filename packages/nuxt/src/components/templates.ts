@@ -33,11 +33,15 @@ export const componentsPluginTemplate = {
       return [c.pascalName, `defineAsyncComponent(${genDynamicImport(c.filePath, { comment })}.then(c => ${exp}))`]
     }))
     return `import { defineAsyncComponent } from 'vue'
+// Only render CSS for server components
+const serverComponents = ${genComponentsObject(options.components.filter(
+  c => c.mode === 'server' && !options.components.some(o => o.mode === 'client' && o.pascalName === c.pascalName))
+)}
 
 const components = {
   ...${genComponentsObject(options.components.filter(c => c.global === true && c.mode !== 'server'))},
   // We need to register server components globally
-  ...process.server ? ${genComponentsObject(options.components.filter(c => c.mode === 'server'))} : {},
+  ...process.server ? serverComponents : {},
 }
 
 export default function (nuxtApp) {

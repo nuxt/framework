@@ -16,7 +16,7 @@ interface LoaderOptions {
 export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
   const exclude = options.transform?.exclude || []
   const include = options.transform?.include || []
-  const serverComponentRuntime = fileURLToPath(new URL('./runtime/server-component', import.meta.url))
+  const serverComponentRuntime = fileURLToPath(new URL('../runtime/server-component', import.meta.url))
 
   return {
     name: 'nuxt:components-loader',
