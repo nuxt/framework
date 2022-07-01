@@ -245,6 +245,6 @@ function defineGetter<K extends string | number | symbol, V> (obj: Record<K, V>,
 export interface ComponentRenderResult {
   state: Record<string, any>
   rendered: Array<{ html: string }>
-  style?: string
-  script?: string
+  styles?: string
+  scripts?: string
 }

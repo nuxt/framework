@@ -174,8 +174,8 @@ export default eventHandler(async (event) => {
     const result: ComponentRenderResult = {
       rendered: components,
       state: ssrContext.payload.state,
-      style: rendered.renderStyles() + (ssrContext.styles || ''),
-      script: (rendered.meta.bodyScriptsPrepend || '') + rendered.renderScripts() + (rendered.meta.bodyScripts || '')
+      styles: rendered.renderStyles() + (ssrContext.styles || ''),
+      scripts: (rendered.meta.bodyScriptsPrepend || '') + rendered.renderScripts() + (rendered.meta.bodyScripts || '')
     }
 
     return result
