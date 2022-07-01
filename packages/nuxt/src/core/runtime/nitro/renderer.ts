@@ -3,7 +3,7 @@ import { eventHandler, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
 
-import type { NuxtApp } from '#app'
+import type { NuxtApp, ComponentRenderResult } from '#app'
 
 // @ts-ignore
 import { useRuntimeConfig } from '#internal/nitro'
@@ -162,12 +162,14 @@ export default eventHandler(async (event) => {
 
     event.res.setHeader('Content-Type', 'application/json')
 
-    return {
+    const result: ComponentRenderResult = {
       rendered: components,
-      state: ssrContext.payload,
-      // TODO: head integration
-      meta: {}
+      state: ssrContext.payload.state,
+      style: rendered.renderStyles() + (ssrContext.styles || ''),
+      script: (rendered.meta.bodyScriptsPrepend || '') + rendered.renderScripts() + (rendered.meta.bodyScripts || '')
     }
+
+    return result
   }
 
   const html = await renderHTML(ssrContext.payload, rendered, ssrContext)
