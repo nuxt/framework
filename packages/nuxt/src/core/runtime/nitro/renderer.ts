@@ -120,7 +120,11 @@ function parseRenderQuery (event: CompatibilityEvent) {
 export default eventHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? useQuery(event) : null
-  const customRender = event.req.url?.startsWith('/__nuxt_render') ? event.req.method === 'GET' ? parseRenderQuery(event) : await useBody(event) : null
+  const customRender = event.req.url?.startsWith('/__nuxt_render')
+    ? event.req.method === 'GET'
+      ? parseRenderQuery(event)
+      : await useBody(event)
+    : null
   const url = ssrError?.url as string || event.req.url!
 
   // Initialize ssr context
