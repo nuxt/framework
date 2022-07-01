@@ -1,6 +1,7 @@
 import { createRenderer } from 'vue-bundle-renderer'
-import { eventHandler, useBody, useQuery } from 'h3'
+import { CompatibilityEvent, eventHandler, useBody, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
+import destr from 'destr'
 import { renderToString as _renderToString } from 'vue/server-renderer'
 
 import type { NuxtApp, ComponentRenderResult } from '#app'
@@ -108,10 +109,18 @@ const getSPARenderer = lazyCachedFunction(async () => {
   return { renderToString }
 })
 
+function parseRenderQuery (event: CompatibilityEvent) {
+  const query = useQuery(event)
+  return {
+    components: destr(query.components),
+    state: destr(query.state)
+  }
+}
+
 export default eventHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? useQuery(event) : null
-  const customRender = event.req.url?.startsWith('/__nuxt_render') ? event.req.method === 'GET' ? useQuery(event) : await useBody(event) : null
+  const customRender = event.req.url?.startsWith('/__nuxt_render') ? event.req.method === 'GET' ? parseRenderQuery(event) : await useBody(event) : null
   const url = ssrError?.url as string || event.req.url!
 
   // Initialize ssr context
@@ -123,11 +132,9 @@ export default eventHandler(async (event) => {
     runtimeConfig: useRuntimeConfig(),
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
     error: ssrError,
-    render: customRender
-      ? { components: JSON.parse(customRender.components as string || '[]') }
-      : undefined,
     nuxt: undefined, /* NuxtApp */
-    payload: customRender ? { state: JSON.parse(customRender.state as string || '{}') } : undefined
+    render: customRender ? { components: customRender.components } : undefined,
+    payload: customRender ? { state: customRender.state } : undefined
   }
 
   // Render app
