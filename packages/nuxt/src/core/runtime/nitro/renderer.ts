@@ -1,5 +1,5 @@
 import { createRenderer } from 'vue-bundle-renderer'
-import { eventHandler, useQuery } from 'h3'
+import { eventHandler, useBody, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
 
@@ -111,7 +111,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
 export default eventHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? useQuery(event) : null
-  const customRender = event.req.url?.startsWith('/__nuxt_render') ? useQuery(event) : null
+  const customRender = event.req.url?.startsWith('/__nuxt_render') ? event.req.method === 'GET' ? useQuery(event) : await useBody(event) : null
   const url = ssrError?.url as string || event.req.url!
 
   // Initialize ssr context
