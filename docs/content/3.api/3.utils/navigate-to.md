@@ -39,7 +39,7 @@ return navigateTo({
 
 `navigateTo` redirects to the given path and sets the redirect code to `302` by default when the redirect takes place on the server side. 
 
-This default behaviour can be modified by providing different `redirectCode` as an optional parameter.
+This default behavior can be modified by providing different `redirectCode` as an optional parameter.
 
 ### Example: Route middleware
 
@@ -52,9 +52,9 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
 - **replace:** type: boolean
 
-By default, `navigateTo` pushes the given route into Vue router instance on.
+By default, `navigateTo` pushes the given route into Vue router instance.
 
-This behaviour can be changed by setting `replace` to `true`, to indicate that given route should be replaced.
+This behavior can be changed by setting `replace` to `true`, to indicate that given route should be replaced.
 
 ```js
 <script setup>
