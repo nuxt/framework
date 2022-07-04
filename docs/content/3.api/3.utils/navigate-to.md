@@ -16,20 +16,20 @@
 
 ```js
 <script setup>    
-    // string
-    return navigateTo('/search')
+// string
+return navigateTo('/search')
 
-    // route object
-    return navigateTo({ path: '/search' })
-    
-    // route object with query parameters
-    return navigateTo({
-        path: '/search',
-        query: {
-            name: name.value,
-            type: type.value
-        }
-    })
+// route object
+return navigateTo({ path: '/search' })
+
+// route object with query parameters
+return navigateTo({
+    path: '/search',
+    query: {
+        name: name.value,
+        type: type.value
+    }
+})
 </script>
 ```
 
