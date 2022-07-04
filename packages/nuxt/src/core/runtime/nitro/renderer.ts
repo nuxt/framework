@@ -1,9 +1,9 @@
 import { createRenderer } from 'vue-bundle-renderer'
-import type { SSRContext } from 'vue-bundle-renderer'
-import { CompatibilityEvent, eventHandler, useQuery } from 'h3'
+import { eventHandler, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
-import { RuntimeConfig } from '@nuxt/schema'
 import { renderToString as _renderToString } from 'vue/server-renderer'
+
+import type { NuxtApp } from '#app'
 
 // @ts-ignore
 import { useRuntimeConfig } from '#internal/nitro'
@@ -12,20 +12,7 @@ import { buildAssetsURL } from '#paths'
 // @ts-ignore
 import htmlTemplate from '#build/views/document.template.mjs'
 
-interface NuxtSSRContext extends SSRContext {
-  url: string
-  noSSR: boolean
-  redirected: boolean
-  event: CompatibilityEvent
-  req: CompatibilityEvent['req']
-  res: CompatibilityEvent['res']
-  runtimeConfig: RuntimeConfig
-  error?: any
-  nuxt?: any
-  payload?: any
-  teleports?: { body?: string }
-  renderMeta?: () => Promise<any>
-}
+type NuxtSSRContext = NuxtApp['ssrContext']
 
 interface RenderResult {
   html: any
@@ -43,7 +30,9 @@ interface RenderResult {
 }
 
 // @ts-ignore
-const getClientManifest = () => import('#build/dist/server/client.manifest.mjs').then(r => r.default || r)
+const getClientManifest = () => import('#build/dist/server/client.manifest.mjs')
+  .then(r => r.default || r)
+  .then(r => typeof r === 'function' ? r() : r)
 
 // @ts-ignore
 const getServerEntry = () => process.env.NUXT_NO_SSR ? Promise.resolve(null) : import('#build/dist/server/server.mjs').then(r => r.default || r)
@@ -59,15 +48,22 @@ const getSSRRenderer = lazyCachedFunction(async () => {
   if (!createSSRApp) { throw new Error('Server bundle is not available') }
 
   // Create renderer
-  const renderToString = async (input, context) => {
-    const html = await _renderToString(input, context)
-    return `<div id="__nuxt">${html}</div>`
-  }
-  return createRenderer(createSSRApp, {
+  const renderer = createRenderer(createSSRApp, {
     clientManifest,
     renderToString,
     publicPath: buildAssetsURL()
   })
+
+  async function renderToString (input, context) {
+    const html = await _renderToString(input, context)
+    // In development with vite-node, the manifest is on-demand and will be available after rendering
+    if (process.dev && process.env.NUXT_VITE_NODE_OPTIONS) {
+      renderer.rendererContext.updateManifest(await getClientManifest())
+    }
+    return `<div id="__nuxt">${html}</div>`
+  }
+
+  return renderer
 })
 
 // -- SPA Renderer --
@@ -126,7 +122,6 @@ export default eventHandler(async (event) => {
     runtimeConfig: useRuntimeConfig(),
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
     error: ssrError,
-    redirected: undefined,
     nuxt: undefined, /* NuxtApp */
     payload: undefined
   }
@@ -140,7 +135,7 @@ export default eventHandler(async (event) => {
   // If we error on rendering error page, we bail out and directly return to the error handler
   if (!rendered) { return }
 
-  if (ssrContext.redirected || event.res.writableEnded) {
+  if (event.res.writableEnded) {
     return
   }
 

@@ -96,19 +96,27 @@ describe('pages:generateRoutesFromFiles', () => {
     {
       description: 'should generate correct dynamic routes',
       files: [
+          `${pagesDir}/index.vue`,
           `${pagesDir}/[slug].vue`,
           `${pagesDir}/[[foo]]`,
           `${pagesDir}/[[foo]]/index.vue`,
           `${pagesDir}/[bar]/index.vue`,
-          `${pagesDir}/sub/[slug].vue`,
+          `${pagesDir}/nonopt/[slug].vue`,
+          `${pagesDir}/opt/[[slug]].vue`,
           `${pagesDir}/[[sub]]/route-[slug].vue`
       ],
       output: [
         {
-          name: 'slug',
-          path: '/:slug',
-          file: `${pagesDir}/[slug].vue`,
+          name: 'index',
+          path: '/',
+          file: `${pagesDir}/index.vue`,
           children: []
+        },
+        {
+          children: [],
+          name: 'slug',
+          file: 'pages/[slug].vue',
+          path: '/:slug'
         },
         {
           children: [
@@ -130,9 +138,15 @@ describe('pages:generateRoutesFromFiles', () => {
           path: '/:bar'
         },
         {
-          name: 'sub-slug',
-          path: '/sub/:slug',
-          file: `${pagesDir}/sub/[slug].vue`,
+          name: 'nonopt-slug',
+          path: '/nonopt/:slug',
+          file: `${pagesDir}/nonopt/[slug].vue`,
+          children: []
+        },
+        {
+          name: 'opt-slug',
+          path: '/opt/:slug?',
+          file: `${pagesDir}/opt/[[slug]].vue`,
           children: []
         },
         {
@@ -145,12 +159,18 @@ describe('pages:generateRoutesFromFiles', () => {
     },
     {
       description: 'should generate correct catch-all route',
-      files: [`${pagesDir}/[...slug].vue`],
+      files: [`${pagesDir}/[...slug].vue`, `${pagesDir}/index.vue`],
       output: [
         {
           name: 'slug',
           path: '/:slug(.*)*',
           file: `${pagesDir}/[...slug].vue`,
+          children: []
+        },
+        {
+          name: 'index',
+          path: '/',
+          file: `${pagesDir}/index.vue`,
           children: []
         }
       ]

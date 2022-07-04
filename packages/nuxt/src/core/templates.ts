@@ -1,6 +1,6 @@
 import { templateUtils } from '@nuxt/kit'
 import type { Nuxt, NuxtApp, NuxtTemplate } from '@nuxt/schema'
-import { genArrayFromRaw, genDynamicImport, genExport, genImport, genObjectFromRawEntries, genString } from 'knitwork'
+import { genArrayFromRaw, genDynamicImport, genExport, genImport, genObjectFromRawEntries, genString, genSafeVariableName } from 'knitwork'
 
 import { isAbsolute, join, relative } from 'pathe'
 import { resolveSchema, generateTypes } from 'untyped'
@@ -50,7 +50,7 @@ export const clientPluginTemplate = {
     const clientPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'server')
     return [
       templateUtils.importSources(clientPlugins.map(p => p.src)),
-      `export default ${genArrayFromRaw(clientPlugins.map(p => templateUtils.importName(p.src)))}`
+      `export default ${genArrayFromRaw(clientPlugins.map(p => genSafeVariableName(p.src)))}`
     ].join('\n')
   }
 }
@@ -64,7 +64,7 @@ export const serverPluginTemplate = {
       templateUtils.importSources(serverPlugins.map(p => p.src)),
       `export default ${genArrayFromRaw([
         'preload',
-        ...serverPlugins.map(p => templateUtils.importName(p.src))
+        ...serverPlugins.map(p => genSafeVariableName(p.src))
       ])}`
     ].join('\n')
   }
@@ -159,13 +159,28 @@ export const schemaTemplate = {
 // Add layouts template
 export const layoutTemplate: NuxtTemplate = {
   filename: 'layouts.mjs',
-  getContents ({ app }) {
+  getContents ({ app }: TemplateContext) {
     const layoutsObject = genObjectFromRawEntries(Object.values(app.layouts).map(({ name, file }) => {
       return [name, `defineAsyncComponent(${genDynamicImport(file)})`]
     }))
     return [
       'import { defineAsyncComponent } from \'vue\'',
           `export default ${layoutsObject}`
+    ].join('\n')
+  }
+}
+
+// Add middleware template
+export const middlewareTemplate: NuxtTemplate = {
+  filename: 'middleware.mjs',
+  getContents ({ app }: TemplateContext) {
+    const globalMiddleware = app.middleware.filter(mw => mw.global)
+    const namedMiddleware = app.middleware.filter(mw => !mw.global)
+    const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
+    return [
+      ...globalMiddleware.map(mw => genImport(mw.path, genSafeVariableName(mw.name))),
+      `export const globalMiddleware = ${genArrayFromRaw(globalMiddleware.map(mw => genSafeVariableName(mw.name)))}`,
+      `export const namedMiddleware = ${namedMiddlewareObject}`
     ].join('\n')
   }
 }

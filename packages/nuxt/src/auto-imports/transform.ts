@@ -15,14 +15,9 @@ export const TransformPlugin = createUnplugin(({ ctx, options, sourcemap }: {ctx
       const exclude = options.transform?.exclude || [/[\\/]node_modules[\\/]/]
       const include = options.transform?.include || []
 
-      // Exclude node_modules by default
-      if (exclude.some(pattern => id.match(pattern))) {
+      // Custom includes - exclude node_modules by default
+      if (exclude.some(pattern => id.match(pattern)) && !include.some(pattern => id.match(pattern))) {
         return false
-      }
-
-      // Custom includes
-      if (include.some(pattern => id.match(pattern))) {
-        return true
       }
 
       // vue files
@@ -39,7 +34,7 @@ export const TransformPlugin = createUnplugin(({ ctx, options, sourcemap }: {ctx
       }
     },
     async transform (_code, id) {
-      const { code, s } = await ctx.injectImports(_code)
+      const { code, s } = await ctx.injectImports(_code, id)
       if (code === _code) {
         return
       }
