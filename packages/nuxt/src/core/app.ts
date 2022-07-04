@@ -4,7 +4,6 @@ import defu from 'defu'
 import type { Nuxt, NuxtApp, NuxtPlugin } from '@nuxt/schema'
 import { findPath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils, tryResolveModule } from '@nuxt/kit'
 
-import { distDir } from '../dirs'
 import * as defaultTemplates from './templates'
 import { getNameFromPath, hasSuffix, uniqueBy } from './utils'
 
