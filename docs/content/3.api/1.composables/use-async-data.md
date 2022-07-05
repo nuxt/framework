@@ -51,7 +51,7 @@ Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the rout
 * **refresh**: a function that can be used to refresh the data returned by the `handler` function
 * **error**: an error object if the data fetching failed
 
-By default, Nuxt waits until a `refresh` is finished before it can be executed again. Passing `true` as parameter skips that wait.
+By default, Nuxt waits until a `refresh` is finished before it can be executed again. Passing `{ force: true }` as parameter skips that wait.
 
 ## Example
 
