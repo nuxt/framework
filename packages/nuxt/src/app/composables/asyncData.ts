@@ -45,138 +45,186 @@ export interface _AsyncData<DataT, ErrorT> {
 
 export type AsyncData<Data, Error> = _AsyncData<Data, Error> & Promise<_AsyncData<Data, Error>>
 
-const getDefault = () => null
-
 export function useAsyncData<
   DataT,
-  DataE = Error,
+  ErrorT = Error,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   key: string,
   handler: (ctx?: NuxtApp) => Promise<DataT>,
   options: AsyncDataOptions<DataT, Transform, PickKeys> = {}
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
-  // Validate arguments
-  if (typeof key !== 'string') {
-    throw new TypeError('asyncData key must be a string')
-  }
-  if (typeof handler !== 'function') {
-    throw new TypeError('asyncData handler must be a function')
-  }
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | null | true> {
+
+   // Validate arguments
+  if (typeof key !== 'string') { throw new TypeError('asyncData key must be a string') }
+
+  if (typeof handler !== 'function') { throw new TypeError('asyncData handler must be a function') }
+
+  type _Return = AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT>
 
   // Apply defaults
-  options = { server: true, default: getDefault, ...options }
+  options = { server: true, default: () => null, ...options }
+
   // TODO: remove support for `defer` in Nuxt 3 RC
   if ((options as any).defer) {
-    console.warn('[useAsyncData] `defer` has been renamed to `lazy`. Support for `defer` will be removed in RC.')
+    console.warn(
+      '[useAsyncData] `defer` has been renamed to `lazy`. Support for `defer` will be removed in RC.'
+    )
   }
+
   options.lazy = options.lazy ?? (options as any).defer ?? false
   options.initialCache = options.initialCache ?? true
 
   // Setup nuxt instance payload
   const nuxt = useNuxtApp()
 
-  // Setup hook callbacks once per instance
-  const instance = getCurrentInstance()
-  if (instance && !instance._nuxtOnBeforeMountCbs) {
-    const cbs = instance._nuxtOnBeforeMountCbs = []
-    if (instance && process.client) {
-      onBeforeMount(() => {
-        cbs.forEach((cb) => { cb() })
-        cbs.splice(0, cbs.length)
-      })
-      onUnmounted(() => cbs.splice(0, cbs.length))
+  // Grab the payload for this key
+  let payload: AsyncData<DataT, ErrorT> = nuxt._asyncDataPayloads[key]
+
+  // If there's no payload
+  if (!payload) {    
+    payload = {
+      data: wrapInRef(unref(options.default())),
+      pending: ref(true),
+      error: ref(null)
+    } as AsyncData<DataT, ErrorT>
+
+    nuxt._asyncDataPayloads[key] = payload
+
+    nuxt.hook("app:rendered", () => {
+        delete nuxt._asyncDataPayloads[key]
+    })
+  }
+
+  const tagAlongOrRun = <T>(
+    run: (ctx?: NuxtApp) => Promise<T>
+  ): [boolean, Promise<T>] => {
+
+    // Nobody else has run the promise yet! Let everyone know
+    if (nuxt._asyncDataPromises[key] == undefined) {
+      nuxt._asyncDataPromises[key] = run(nuxt)
+      return [false, nuxt._asyncDataPromises[key]]
+    } else {
+      return [true, nuxt._asyncDataPromises[key]]
     }
   }
 
-  const useInitialCache = () => options.initialCache && nuxt.payload.data[key] !== undefined
+  payload.refresh = async (refresh_options: RefreshOptions | true) => {
 
-  const asyncData = {
-    data: wrapInRef(nuxt.payload.data[key] ?? options.default()),
-    pending: ref(!useInitialCache()),
-    error: ref(nuxt.payload._errors[key] ?? null)
-  } as AsyncData<DataT, DataE>
+    // The documentation states passing `true` to refresh will not wait for other refreshes to be executed
+    // In reality this would not happen, as you cannot pass true to refresh, and if you passed it as _inital = true
+    // Your refresh function would then use cache, which defeats the purpose of refresh
+    const skip = refresh_options === true
 
-  asyncData.refresh = (opts = {}) => {
-    // Avoid fetching same key more than once at a time
-    if (nuxt._asyncDataPromises[key]) {
-      return nuxt._asyncDataPromises[key]
+    // Check if a refresh is already in progress, if it is just tag along
+    // Otherwise grab a new promise from the handler
+    let promise: Promise<any> = null
+    let isTagAlong = false
+
+    if (skip) { 
+        promise = handler(nuxt)
     }
-    // Avoid fetching same key that is already fetched
-    if (opts._initial && useInitialCache()) {
-      return nuxt.payload.data[key]
+    else { 
+        [isTagAlong, promise] = tagAlongOrRun(handler)
     }
-    asyncData.pending.value = true
-    // TODO: Cancel previous promise
-    // TODO: Handle immediate errors
-    nuxt._asyncDataPromises[key] = Promise.resolve(handler(nuxt))
-      .then((result) => {
-        if (options.transform) {
-          result = options.transform(result)
-        }
-        if (options.pick) {
-          result = pick(result, options.pick) as DataT
-        }
-        asyncData.data.value = result
-        asyncData.error.value = null
-      })
-      .catch((error: any) => {
-        asyncData.error.value = error
-        asyncData.data.value = unref(options.default())
-      })
-      .finally(() => {
-        asyncData.pending.value = false
-        nuxt.payload.data[key] = asyncData.data.value
-        if (asyncData.error.value) {
-          nuxt.payload._errors[key] = true
-        }
-        delete nuxt._asyncDataPromises[key]
-      })
-    return nuxt._asyncDataPromises[key]
+
+    promise = promise.then(x => [true, x])
+
+    // Catch any errors and return
+    const [success, result]: [boolean, DataT | ErrorT] = await promise.catch(x => [false, x as ErrorT])
+
+    // If we just tagged along, we don't need to do any processing, the original request will do it
+    if (isTagAlong) { return }
+
+    // If the promise is rejected give the user the error
+    // Also tell nuxt something went wrong
+    if (!success) {
+      payload.error.value = result as ErrorT
+      nuxt.payload._errors[key] = true
+    }
+
+    // If our promise resolved update our payload!
+    else {
+      let data = result as DataT
+
+      if (options.transform) { data = options.transform(data) }
+
+      if (options.pick) { data = pick(data, options.pick) as DataT }
+
+      payload.data.value = data
+      payload.error.value = null
+    }
+
+    // Cache our data for the next time! This will use the default value if error
+    nuxt.payload.data[key] = payload.data.value
+
+    // No matter what the promise has now resolved.
+    payload.pending.value = false
   }
 
-  const initialFetch = () => asyncData.refresh({ _initial: true })
-
+  // Should/Have we fetched on the server?
   const fetchOnServer = options.server !== false && nuxt.payload.serverRendered
 
-  // Server side
-  if (process.server && fetchOnServer) {
-    const promise = initialFetch()
-    onServerPrefetch(() => promise)
-  }
+  let promise = Promise.resolve()
 
-  // Client side
-  if (process.client) {
+  // If we are using the cache
+  if (options.initialCache && nuxt.payload.data[key]) {
+    payload.data.value = nuxt.payload.data[key]
+    payload.pending.value = false
+  } else if (process.server && fetchOnServer) {
+
+    // Make our promise resolve when the refresh is complete
+    promise = payload.refresh({ _initial: false })
+
+    // Our refresh will always skip cache, our RefreshOptions don't matter
+    onServerPrefetch(() => promise)
+  } else if (process.client) {
+    const instance = getCurrentInstance()
+    if (instance && !instance._nuxtOnBeforeMountCbs) {
+      const cbs = (instance._nuxtOnBeforeMountCbs = [])
+
+      onBeforeMount(() => {
+        cbs.forEach((cb) => {
+          cb()
+        })
+        cbs.splice(0, cbs.length)
+      })
+
+      onUnmounted(() => cbs.splice(0, cbs.length))
+    }
+
+    // 1. Hydration (server: true): no fetch
     if (fetchOnServer && nuxt.isHydrating && key in nuxt.payload.data) {
-      // 1. Hydration (server: true): no fetch
-      asyncData.pending.value = false
+      payload.pending.value = false
+
+    // 2. Initial load (server: false): fetch on mounted
+    // 3. Navigation (lazy: true): fetch on mounted
     } else if (instance && nuxt.payload.serverRendered && (nuxt.isHydrating || options.lazy)) {
-      // 2. Initial load (server: false): fetch on mounted
-      // 3. Navigation (lazy: true): fetch on mounted
-      instance._nuxtOnBeforeMountCbs.push(initialFetch)
+      instance._nuxtOnBeforeMountCbs.push(() => payload.refresh({ _initial: false }))
+
+    // 4. Navigation (lazy: false) - or plugin usage: await fetch
     } else {
-      // 4. Navigation (lazy: false) - or plugin usage: await fetch
-      initialFetch()
+      promise = payload.refresh({ _initial: false })
     }
+
     if (options.watch) {
-      watch(options.watch, () => asyncData.refresh())
+      watch(options.watch, () => payload.refresh())
     }
+
     const off = nuxt.hook('app:data:refresh', (keys) => {
       if (!keys || keys.includes(key)) {
-        return asyncData.refresh()
+        return payload.refresh()
       }
     })
+
     if (instance) {
       onUnmounted(off)
     }
   }
 
-  // Allow directly awaiting on asyncData
-  const asyncDataPromise = Promise.resolve(nuxt._asyncDataPromises[key]).then(() => asyncData) as AsyncData<DataT, DataE>
-  Object.assign(asyncDataPromise, asyncData)
-
-  return asyncDataPromise as AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE>
+  // Combine our promise with the payload so pending is still returned if the function is not awaited
+  return Object.assign(promise.then(() => payload), payload) as _Return
 }
 
 export function useLazyAsyncData<

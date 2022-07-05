@@ -7,6 +7,7 @@ import { getContext } from 'unctx'
 import type { SSRContext } from 'vue-bundle-renderer'
 import type { CompatibilityEvent } from 'h3'
 import { legacyPlugin, LegacyContext } from './compat/legacy-app'
+import { AsyncData } from './composables'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
@@ -48,6 +49,7 @@ interface _NuxtApp {
   [key: string]: any
 
   _asyncDataPromises?: Record<string, Promise<any>>
+  _asyncDataPayloads?: Record<string, AsyncData<any, any>>
   _legacyContext?: LegacyContext
 
   ssrContext?: SSRContext & {
@@ -105,6 +107,7 @@ export function createNuxtApp (options: CreateOptions) {
     }),
     isHydrating: process.client,
     _asyncDataPromises: {},
+    _asyncDataPayloads: {},
     ...options
   } as any as NuxtApp
 
