@@ -111,7 +111,6 @@ export function useAsyncData<
   }
 
   payload.refresh = async (refreshOptions: RefreshOptions) => {
-
     refreshOptions = refreshOptions ?? { _initial: false, force: false }
 
     // Check if a refresh is already in progress, if it is just tag along
@@ -152,8 +151,7 @@ export function useAsyncData<
 
     // Cache our data if its the inital fetch, or we're running on the server
     // We don't need to cache client `refresh` calls, but we should cache server `refresh` calls
-    if (refreshOptions._initial || process.server)
-    {
+    if (refreshOptions._initial || process.server) {
       nuxt.payload.data[key] = payload.data.value
     }
 
@@ -177,7 +175,6 @@ export function useAsyncData<
     // Make our promise resolve when the refresh is complete
     promise = payload.refresh({ _initial: true })
 
-    // Our refresh will always skip cache, our RefreshOptions don't matter
     onServerPrefetch(() => promise)
   } else if (process.client) {
     const instance = getCurrentInstance()

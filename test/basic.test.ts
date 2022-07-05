@@ -137,9 +137,7 @@ describe('useAsyncData', () => {
   })
 
   it('two requests resolve and sync', async () => {
-    await $fetch('/useAsyncData/refresh', { onResponseError: async (ctx) => {
-      console.error(ctx)
-    }})
+    await $fetch('/useAsyncData/refresh')
   })
 
   it('two requests made at once resolve and sync', async () => {
