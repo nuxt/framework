@@ -127,6 +127,26 @@ describe('pages', () => {
   })
 })
 
+describe('useAsyncData', () => {
+  it('single request resolves', async () => {
+    await expectNoClientErrors('/useAsyncData/single')
+  })
+
+  it('two requests resolve', async () => {
+    await expectNoClientErrors('/useAsyncData/double')
+  })
+
+  it('two requests resolve and sync', async () => {
+    await $fetch('/useAsyncData/refresh', { onResponseError: async (ctx) => {
+      console.error(ctx)
+    }})
+  })
+
+  it('two requests made at once resolve and sync', async () => {
+    await expectNoClientErrors('/useAsyncData/promise-all')
+  })
+})
+
 describe('head tags', () => {
   it('should render tags', async () => {
     const html = await $fetch('/head')
