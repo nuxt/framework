@@ -55,8 +55,7 @@ export function useAsyncData<
   handler: (ctx?: NuxtApp) => Promise<DataT>,
   options: AsyncDataOptions<DataT, Transform, PickKeys> = {}
 ): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | null | true> {
-
-   // Validate arguments
+  // Validate arguments
   if (typeof key !== 'string') { throw new TypeError('asyncData key must be a string') }
 
   if (typeof handler !== 'function') { throw new TypeError('asyncData handler must be a function') }
@@ -83,7 +82,7 @@ export function useAsyncData<
   let payload: AsyncData<DataT, ErrorT> = nuxt._asyncDataPayloads[key]
 
   // If there's no payload
-  if (!payload) {    
+  if (!payload) {
     payload = {
       data: wrapInRef(unref(options.default())),
       pending: ref(true),
@@ -92,17 +91,16 @@ export function useAsyncData<
 
     nuxt._asyncDataPayloads[key] = payload
 
-    nuxt.hook("app:rendered", () => {
-        delete nuxt._asyncDataPayloads[key]
+    nuxt.hook('app:rendered', () => {
+      delete nuxt._asyncDataPayloads[key]
     })
   }
 
   const tagAlongOrRun = <T>(
     run: (ctx?: NuxtApp) => Promise<T>
   ): [boolean, Promise<T>] => {
-
     // Nobody else has run the promise yet! Let everyone know
-    if (nuxt._asyncDataPromises[key] == undefined) {
+    if (nuxt._asyncDataPromises[key] === undefined) {
       nuxt._asyncDataPromises[key] = run(nuxt)
       return [false, nuxt._asyncDataPromises[key]]
     } else {
@@ -110,23 +108,21 @@ export function useAsyncData<
     }
   }
 
-  payload.refresh = async (refresh_options: RefreshOptions | true) => {
-
+  payload.refresh = async (refreshOptions: RefreshOptions | true) => {
     // The documentation states passing `true` to refresh will not wait for other refreshes to be executed
     // In reality this would not happen, as you cannot pass true to refresh, and if you passed it as _inital = true
     // Your refresh function would then use cache, which defeats the purpose of refresh
-    const skip = refresh_options === true
+    const skip = refreshOptions === true
 
     // Check if a refresh is already in progress, if it is just tag along
     // Otherwise grab a new promise from the handler
     let promise: Promise<any> = null
     let isTagAlong = false
 
-    if (skip) { 
-        promise = handler(nuxt)
-    }
-    else { 
-        [isTagAlong, promise] = tagAlongOrRun(handler)
+    if (skip) {
+      promise = handler(nuxt)
+    } else {
+      [isTagAlong, promise] = tagAlongOrRun(handler)
     }
 
     promise = promise.then(x => [true, x])
@@ -142,10 +138,8 @@ export function useAsyncData<
     if (!success) {
       payload.error.value = result as ErrorT
       nuxt.payload._errors[key] = true
-    }
-
-    // If our promise resolved update our payload!
-    else {
+    } else {
+      // If our promise resolved update our payload!
       let data = result as DataT
 
       if (options.transform) { data = options.transform(data) }
@@ -173,7 +167,6 @@ export function useAsyncData<
     payload.data.value = nuxt.payload.data[key]
     payload.pending.value = false
   } else if (process.server && fetchOnServer) {
-
     // Make our promise resolve when the refresh is complete
     promise = payload.refresh({ _initial: false })
 
