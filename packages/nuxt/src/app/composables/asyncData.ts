@@ -33,7 +33,8 @@ export interface AsyncDataOptions<
 }
 
 export interface RefreshOptions {
-  _initial?: boolean
+  _initial?: boolean,
+  force?: boolean
 }
 
 export interface _AsyncData<DataT, ErrorT> {
@@ -101,6 +102,7 @@ export function useAsyncData<
   ): [boolean, Promise<T>] => {
     // Nobody else has run the promise yet! Let everyone know
     if (nuxt._asyncDataPromises[key] === undefined) {
+      // Remove the promise when its finished
       nuxt._asyncDataPromises[key] = run(nuxt)
       return [false, nuxt._asyncDataPromises[key]]
     } else {
@@ -108,18 +110,16 @@ export function useAsyncData<
     }
   }
 
-  payload.refresh = async (refreshOptions: RefreshOptions | true) => {
-    // The documentation states passing `true` to refresh will not wait for other refreshes to be executed
-    // In reality this would not happen, as you cannot pass true to refresh, and if you passed it as _inital = true
-    // Your refresh function would then use cache, which defeats the purpose of refresh
-    const skip = refreshOptions === true
+  payload.refresh = async (refreshOptions: RefreshOptions) => {
+
+    refreshOptions = refreshOptions ?? { _initial: false, force: false }
 
     // Check if a refresh is already in progress, if it is just tag along
     // Otherwise grab a new promise from the handler
     let promise: Promise<any> = null
     let isTagAlong = false
 
-    if (skip) {
+    if (refreshOptions.force) {
       promise = handler(nuxt)
     } else {
       [isTagAlong, promise] = tagAlongOrRun(handler)
@@ -150,11 +150,18 @@ export function useAsyncData<
       payload.error.value = null
     }
 
-    // Cache our data for the next time! This will use the default value if error
-    nuxt.payload.data[key] = payload.data.value
+    // Cache our data if its the inital fetch, or we're running on the server
+    // We don't need to cache client `refresh` calls, but we should cache server `refresh` calls
+    if (refreshOptions._initial || process.server)
+    {
+      nuxt.payload.data[key] = payload.data.value
+    }
 
     // No matter what the promise has now resolved.
     payload.pending.value = false
+
+    // Remove the promise so we don't try tag along
+    delete nuxt._asyncDataPromises[key]
   }
 
   // Should/Have we fetched on the server?
@@ -168,7 +175,7 @@ export function useAsyncData<
     payload.pending.value = false
   } else if (process.server && fetchOnServer) {
     // Make our promise resolve when the refresh is complete
-    promise = payload.refresh({ _initial: false })
+    promise = payload.refresh({ _initial: true })
 
     // Our refresh will always skip cache, our RefreshOptions don't matter
     onServerPrefetch(() => promise)
@@ -194,11 +201,11 @@ export function useAsyncData<
     // 2. Initial load (server: false): fetch on mounted
     // 3. Navigation (lazy: true): fetch on mounted
     } else if (instance && nuxt.payload.serverRendered && (nuxt.isHydrating || options.lazy)) {
-      instance._nuxtOnBeforeMountCbs.push(() => payload.refresh({ _initial: false }))
+      instance._nuxtOnBeforeMountCbs.push(() => payload.refresh({ _initial: true }))
 
     // 4. Navigation (lazy: false) - or plugin usage: await fetch
     } else {
-      promise = payload.refresh({ _initial: false })
+      promise = payload.refresh({ _initial: true })
     }
 
     if (options.watch) {
