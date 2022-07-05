@@ -1,8 +1,9 @@
-import { resolve } from 'node:path'
 import { execa } from 'execa'
 import { getRandomPort, waitForPort } from 'get-port-please'
 import { fetch as _fetch, $fetch as _$fetch, FetchOptions } from 'ohmyfetch'
 import * as _kit from '@nuxt/kit'
+import { resolve } from 'pathe'
+import { stringifyQuery } from 'vue-router'
 import { useTestContext } from './context'
 
 // @ts-ignore type cast
@@ -68,10 +69,27 @@ export function $fetch (path: string, options?: FetchOptions) {
   return _$fetch(url(path), options)
 }
 
+export function $fetchComponent (filepath: string, props?: Record<string, any>) {
+  return $fetch(componentTestUrl(filepath, props))
+}
+
+export function componentTestUrl (filepath: string, props?: Record<string, any>) {
+  const ctx = useTestContext()
+  filepath = resolve(ctx.options.rootDir, filepath)
+  const path = stringifyQuery({
+    path: filepath,
+    props: JSON.stringify(props)
+  })
+  return `/__nuxt_component_test__/?${path}`
+}
+
 export function url (path: string) {
   const ctx = useTestContext()
   if (!ctx.url) {
     throw new Error('url is not availabe (is server option enabled?)')
+  }
+  if (path.startsWith(ctx.url)) {
+    return path
   }
   return ctx.url + path
 }

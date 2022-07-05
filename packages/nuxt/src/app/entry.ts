@@ -26,7 +26,13 @@ const plugins = normalizePlugins(_plugins)
 if (process.server) {
   entry = async function createNuxtAppServer (ssrContext: CreateOptions['ssrContext']) {
     const vueApp = createApp(RootComponent)
-    vueApp.component('App', AppComponent)
+    if (process.dev && ssrContext.url.startsWith('/__nuxt_component_test__/')) {
+      // @ts-ignore
+      vueApp.component('App', await import('#build/test-component-wrapper.mjs')
+        .then(r => r.default(ssrContext.url)))
+    } else {
+      vueApp.component('App', AppComponent)
+    }
 
     const nuxt = createNuxtApp({ vueApp, ssrContext })
 
@@ -54,7 +60,14 @@ if (process.client) {
   entry = async function initApp () {
     const isSSR = Boolean(window.__NUXT__?.serverRendered)
     const vueApp = isSSR ? createSSRApp(RootComponent) : createApp(RootComponent)
-    vueApp.component('App', AppComponent)
+
+    if (process.dev && window.location.pathname.startsWith('/__nuxt_component_test__/')) {
+      // @ts-ignore
+      vueApp.component('App', await import('#build/test-component-wrapper.mjs')
+        .then(r => r.default(window.location.href)))
+    } else {
+      vueApp.component('App', AppComponent)
+    }
 
     const nuxt = createNuxtApp({ vueApp })
 

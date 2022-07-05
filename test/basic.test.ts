@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 // import { isWindows } from 'std-env'
-import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
+import { setup, fetch, $fetch, startServer, $fetchComponent } from '@nuxt/test-utils'
 import { expectNoClientErrors } from './utils'
 
 await setup({
@@ -389,5 +389,15 @@ describe('dynamic paths', () => {
       // TODO: webpack does not yet support dynamic static paths
       expect(url.startsWith('https://example.com/_cdn/') || url === 'https://example.com/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
     }
+  })
+})
+
+describe.runIf(process.env.NUXT_TEST_DEV)('component testing', () => {
+  it('should work', async () => {
+    const comp1 = await $fetchComponent('components/SugarCounter.vue', { count: 42 })
+    expect(comp1).toContain('42 x 2 = 84')
+
+    const comp2 = await $fetchComponent('components/SugarCounter.vue', { count: 100 })
+    expect(comp2).toContain('100 x 2 = 200')
   })
 })
