@@ -48,31 +48,29 @@ export type AsyncData<Data, Error> = _AsyncData<Data, Error> & Promise<_AsyncDat
 
 export function useAsyncData<
   DataT,
-  ErrorT = Error,
+  DataE = Error,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   key: string,
   handler: (ctx?: NuxtApp) => Promise<DataT>,
   options: AsyncDataOptions<DataT, Transform, PickKeys> = {}
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | null | true> {
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
   // Validate arguments
-  if (typeof key !== 'string') { throw new TypeError('asyncData key must be a string') }
+  if (typeof key !== 'string') {
+    throw new TypeError('asyncData key must be a string')
+  }
 
-  if (typeof handler !== 'function') { throw new TypeError('asyncData handler must be a function') }
-
-  type _Return = AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT>
+  if (typeof handler !== 'function') {
+    throw new TypeError('asyncData handler must be a function')
+  }
 
   // Apply defaults
   options = { server: true, default: () => null, ...options }
-
   // TODO: remove support for `defer` in Nuxt 3 RC
   if ((options as any).defer) {
-    console.warn(
-      '[useAsyncData] `defer` has been renamed to `lazy`. Support for `defer` will be removed in RC.'
-    )
+    console.warn('[useAsyncData] `defer` has been renamed to `lazy`. Support for `defer` will be removed in RC.')
   }
-
   options.lazy = options.lazy ?? (options as any).defer ?? false
   options.initialCache = options.initialCache ?? true
 
@@ -80,7 +78,7 @@ export function useAsyncData<
   const nuxt = useNuxtApp()
 
   // Grab the payload for this key
-  let payload: AsyncData<DataT, ErrorT> = nuxt._asyncDataPayloads[key]
+  let payload: AsyncData<DataT, DataE> = nuxt._asyncDataPayloads[key]
 
   // If there's no payload
   if (!payload) {
@@ -88,7 +86,7 @@ export function useAsyncData<
       data: wrapInRef(unref(options.default())),
       pending: ref(true),
       error: ref(null)
-    } as AsyncData<DataT, ErrorT>
+    } as AsyncData<DataT, DataE>
 
     nuxt._asyncDataPayloads[key] = payload
 
@@ -127,7 +125,7 @@ export function useAsyncData<
     promise = promise.then(x => [true, x])
 
     // Catch any errors and return
-    const [success, result]: [boolean, DataT | ErrorT] = await promise.catch(x => [false, x as ErrorT])
+    const [success, result]: [boolean, DataT | DataE] = await promise.catch(x => [false, x as DataE])
 
     // If we just tagged along, we don't need to do any processing, the original request will do it
     if (isTagAlong) { return }
@@ -135,7 +133,7 @@ export function useAsyncData<
     // If the promise is rejected give the user the error
     // Also tell nuxt something went wrong
     if (!success) {
-      payload.error.value = result as ErrorT
+      payload.error.value = result as DataE
       nuxt.payload._errors[key] = true
     } else {
       // If our promise resolved update our payload!
@@ -191,17 +189,15 @@ export function useAsyncData<
       onUnmounted(() => cbs.splice(0, cbs.length))
     }
 
-    // 1. Hydration (server: true): no fetch
     if (fetchOnServer && nuxt.isHydrating && key in nuxt.payload.data) {
+      // 1. Hydration (server: true): no fetch
       payload.pending.value = false
-
-    // 2. Initial load (server: false): fetch on mounted
-    // 3. Navigation (lazy: true): fetch on mounted
     } else if (instance && nuxt.payload.serverRendered && (nuxt.isHydrating || options.lazy)) {
+      // 2. Initial load (server: false): fetch on mounted
+      // 3. Navigation (lazy: true): fetch on mounted
       instance._nuxtOnBeforeMountCbs.push(() => payload.refresh({ _initial: true }))
-
-    // 4. Navigation (lazy: false) - or plugin usage: await fetch
     } else {
+      // 4. Navigation (lazy: false) - or plugin usage: await fetch
       promise = payload.refresh({ _initial: true })
     }
 
@@ -221,7 +217,7 @@ export function useAsyncData<
   }
 
   // Combine our promise with the payload so pending is still returned if the function is not awaited
-  return Object.assign(promise.then(() => payload), payload) as _Return
+  return Object.assign(promise.then(() => payload), payload) as AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE>
 }
 
 export function useLazyAsyncData<
