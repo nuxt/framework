@@ -1,5 +1,5 @@
 export const useSleep = () => useAsyncData('sleep', async () => {
-  await new Promise((resolve, _) => setTimeout(resolve, 50))
+  await new Promise(resolve => setTimeout(resolve, 50))
 
   return 'Slept!'
 })
