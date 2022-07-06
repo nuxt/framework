@@ -85,14 +85,10 @@ async function initNuxt (nuxt: Nuxt) {
 
   if (!nuxt.options.dev) {
     // Add tree-shaking optimisations for SSR - build time only
-    nuxt.hook('vite:extendConfig', (config, { isServer }) => {
-      config.plugins.push(TreeShakePlugin.vite(getTreeshakeOptions(isServer)))
-    })
-    nuxt.hook('webpack:config', (configs) => {
-      for (const config of configs) {
-        config.plugins.push(TreeShakePlugin.webpack(getTreeshakeOptions(config.name === 'server')))
-      }
-    })
+    addVitePlugin(TreeShakePlugin.vite(getTreeshakeOptions(true)), { client: false })
+    addVitePlugin(TreeShakePlugin.vite(getTreeshakeOptions(false)), { server: false })
+    addWebpackPlugin(TreeShakePlugin.webpack(getTreeshakeOptions(true)), { client: false })
+    addWebpackPlugin(TreeShakePlugin.webpack(getTreeshakeOptions(false)), { server: false })
   }
 
   // Transpile layers within node_modules
