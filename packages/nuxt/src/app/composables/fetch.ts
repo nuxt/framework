@@ -27,7 +27,7 @@ export function useFetch<
   opts: UseFetchOptions<_ResT, Transform, PickKeys> = {}
 ) {
   if (process.dev && !opts.key && Object.values(opts).some(v => typeof v === 'function' || v instanceof Blob)) {
-    console.warn('[nuxt] You should provide a key for `useFetch` when passing options that are not serializable to JSON.')
+    console.warn('[nuxt] [useFetch] You should provide a key when passing options that are not serializable to JSON:', opts)
   }
   const key = '$f_' + (opts.key || hash([request, { ...opts, transform: null }]))
   const _request = computed(() => {
