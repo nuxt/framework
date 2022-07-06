@@ -14,6 +14,7 @@ import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
 import { ImportProtectionPlugin, vueAppPatterns } from './plugins/import-protection'
 import { UnctxTransformPlugin } from './plugins/unctx'
+import { TreeShakePlugin } from './plugins/tree-shake'
 import { addModuleTranspiles } from './modules'
 import { initNitro } from './nitro'
 
@@ -66,6 +67,33 @@ async function initNuxt (nuxt: Nuxt) {
   // Add unctx transform
   addVitePlugin(UnctxTransformPlugin(nuxt).vite({ sourcemap: nuxt.options.sourcemap }))
   addWebpackPlugin(UnctxTransformPlugin(nuxt).webpack({ sourcemap: nuxt.options.sourcemap }))
+
+  const getTreeshakeOptions = (isServer: boolean) => ({
+    sourcemap: nuxt.options.sourcemap,
+    treeShake: {
+      onBeforeMount: isServer,
+      onMounted: isServer,
+      onBeforeUpdate: isServer,
+      onRenderTracked: isServer /* || !nuxt.options.dev */,
+      onRenderTriggered: isServer /* || !nuxt.options.dev */,
+      onActivated: isServer,
+      onDeactivated: isServer,
+      onBeforeUnmount: isServer,
+      onServerPrefetch: !isServer
+    }
+  })
+
+  if (!nuxt.options.dev) {
+    // Add tree-shaking optimisations for SSR - build time only
+    nuxt.hook('vite:extendConfig', (config, { isServer }) => {
+      config.plugins.push(TreeShakePlugin.vite(getTreeshakeOptions(isServer)))
+    })
+    nuxt.hook('webpack:config', (configs) => {
+      for (const config of configs) {
+        config.plugins.push(TreeShakePlugin.webpack(getTreeshakeOptions(config.name === 'server')))
+      }
+    })
+  }
 
   // Transpile layers within node_modules
   nuxt.options.build.transpile.push(
