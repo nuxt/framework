@@ -35,11 +35,19 @@ export function useFetch<
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   request: Ref<ReqT> | ReqT | (() => ReqT),
-  _opts?: string | UseFetchOptions<_ResT, Transform, PickKeys>,
-  _fallback?: string
+  arg1?: string | UseFetchOptions<_ResT, Transform, PickKeys>,
+  arg2?: string
 ) {
-  const [opts, fallback] = (typeof _opts === 'string' ? [{}, _opts] : [_opts, _fallback])
-  const key = '$f_' + (typeof opts.key === 'string' ? opts.key : typeof request === 'string' && !opts.transform && !opts.default ? hash([request, opts]) : fallback)
+  const [opts, autoKey] = typeof arg1 === 'string' ? [{}, arg1] : [arg1, arg2]
+  const _key = opts.key || autoKey
+  if (!_key || typeof _key !== 'string') {
+    throw new TypeError('[nuxt] [useFetch] key must be a string: ' + _key)
+  }
+  if (!request) {
+    throw new Error('[nuxt] [useFetch] request is missing.')
+  }
+  const key = '$f' + _key
+
   const _request = computed(() => {
     let r = request as Ref<FetchRequest> | FetchRequest | (() => FetchRequest)
     if (typeof r === 'function') {
@@ -104,14 +112,15 @@ export function useLazyFetch<
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   request: Ref<ReqT> | ReqT | (() => ReqT),
-  _opts?: string | Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'lazy'>,
-  _fallback?: string
+  arg1?: string | Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'lazy'>,
+  arg2?: string
 ) {
-  const [opts, fallback] = (typeof _opts === 'string' ? [{}, _opts] : [_opts, _fallback])
+  const [opts, autoKey] = typeof arg1 === 'string' ? [{}, arg1] : [arg1, arg2]
+
   return useFetch<ResT, ErrorT, ReqT, _ResT, Transform, PickKeys>(request, {
     ...opts,
     lazy: true
   },
   // @ts-ignore
-  fallback)
+  autoKey)
 }

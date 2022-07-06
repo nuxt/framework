@@ -10,8 +10,12 @@ import { useNuxtApp } from '#app'
  */
 export function useState <T> (key: string, init?: (() => T | Ref<T>)): Ref<T>
 export function useState <T> (init?: (() => T | Ref<T>)): Ref<T>
-export function useState <T> (_key?: string | (() => T | Ref<T>), _init?: string | (() => T | Ref<T>)): Ref<T> {
-  const [key, init] = (typeof _key === 'string' ? [_key, _init] : [_init, _key]) as [string, (() => T | Ref<T>)]
+export function useState <T> (...args): Ref<T> {
+  const [_key, init] = (typeof args[0] === 'string' ? args : [args[1] /* auto key */, args[0]]) as [string, (() => T | Ref<T>)]
+  if (!_key || typeof _key !== 'string') { throw new TypeError('[nuxt] [useState] key must be a string: ' + _key) }
+  if (init && typeof init !== 'function') { throw new Error('[nuxt] [useState] init must be a function: ' + init) }
+  const key = '$s' + _key
+
   const nuxt = useNuxtApp()
   const state = toRef(nuxt.payload.state, key)
   if (state.value === undefined && init) {

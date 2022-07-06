@@ -70,24 +70,19 @@ export function useAsyncData<
   DataE = Error,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-> (
-  ...args: [
-    _key: string | ((ctx?: NuxtApp) => Promise<DataT>),
-    _handler?: ((ctx?: NuxtApp) => Promise<DataT>) | AsyncDataOptions<DataT, Transform, PickKeys> | string,
-    _options?: AsyncDataOptions<DataT, Transform, PickKeys> | string,
-    fallback?: string
-  ]
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
-  if (typeof args[0] !== 'string') { args.unshift(args.pop()) }
+> (...args): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
+  const autoKey = typeof args[args.length - 1] === 'string' ? args.pop() : undefined
+  if (typeof args[0] !== 'string') { args.unshift(autoKey) }
 
   // eslint-disable-next-line prefer-const
-  let [key, handler, options] = args as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
+  let [key, handler, options = {}] = args as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
+
   // Validate arguments
   if (typeof key !== 'string') {
-    throw new TypeError('asyncData key must be a string')
+    throw new TypeError('[nuxt] [asyncData] key must be a string.')
   }
   if (typeof handler !== 'function') {
-    throw new TypeError('asyncData handler must be a function')
+    throw new TypeError('[nuxt] [asyncData] handler must be a function.')
   }
 
   // Apply defaults
@@ -229,16 +224,9 @@ export function useLazyAsyncData<
   DataE = Error,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-> (
-  ...args: [
-    _key: string | ((ctx?: NuxtApp) => Promise<DataT>),
-    _handler?: ((ctx?: NuxtApp) => Promise<DataT>) | AsyncDataOptions<DataT, Transform, PickKeys> | string,
-    _options?: Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'lazy'>,
-    fallback?: string
-  ]
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
-  if (typeof args[0] !== 'string') { args.unshift(args.pop()) }
-
+> (...args): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
+  const autoKey = typeof args[args.length - 1] === 'string' ? args.pop() : undefined
+  if (typeof args[0] !== 'string') { args.unshift(autoKey) }
   const [key, handler, options] = args as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
   return useAsyncData(key, handler, { ...options, lazy: true })
 }
