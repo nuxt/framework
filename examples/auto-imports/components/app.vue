@@ -1,3 +1,8 @@
+<script setup>
+const foo = ref(0)
+const sharedState = useState('other')
+</script>
+
 <template>
   <NuxtExampleLayout example="auto-imports/components">
     <h1 class="text-xl opacity-50">
@@ -12,6 +17,15 @@
         <div>[Slot]</div>
       </ClientAndServer>
       <JustClient />
+      <ServerOnlyComponent :foo="foo" />
+      <div class="my-2 gap-2 flex flex-row justify-center items-center">
+        <NButton @click="foo++">
+          Increase prop
+        </NButton>
+        <NButton @click="sharedState++">
+          Shared state ({{ sharedState }})
+        </NButton>
+      </div>
       <NuxtWithPrefix class="mt-6" />
     </div>
   </NuxtExampleLayout>

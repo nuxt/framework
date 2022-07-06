@@ -64,6 +64,9 @@ interface _NuxtApp {
     payload: _NuxtApp['payload']
     teleports?: Record<string, string>
     renderMeta?: () => Promise<NuxtMeta> | NuxtMeta
+    render?: {
+      components: Array<{ name: string, props?: Record<string, any> }>
+    }
   }
   payload: {
     serverRendered?: boolean
@@ -101,6 +104,7 @@ export function createNuxtApp (options: CreateOptions) {
       data: {},
       state: {},
       _errors: {},
+      ...options.ssrContext?.payload || {},
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
     isHydrating: process.client,
@@ -255,4 +259,11 @@ export function useRuntimeConfig (): RuntimeConfig {
 
 function defineGetter<K extends string | number | symbol, V> (obj: Record<K, V>, key: K, val: V) {
   Object.defineProperty(obj, key, { get: () => val })
+}
+
+export interface ComponentRenderResult {
+  state: Record<string, any>
+  rendered: Array<{ html: string }>
+  style?: string
+  script?: string
 }
