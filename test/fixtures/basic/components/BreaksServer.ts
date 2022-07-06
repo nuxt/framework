@@ -1,3 +1,4 @@
+// @ts-ignore
 window.test = true
 
 export default () => ({
