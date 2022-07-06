@@ -60,7 +60,6 @@ export function useAsyncData<
   if (typeof key !== 'string') {
     throw new TypeError('asyncData key must be a string')
   }
-
   if (typeof handler !== 'function') {
     throw new TypeError('asyncData handler must be a function')
   }
@@ -78,17 +77,17 @@ export function useAsyncData<
   const nuxt = useNuxtApp()
 
   // Grab the payload for this key
-  let payload: AsyncData<DataT, DataE> = nuxt._asyncDataPayloads[key]
+  let asyncData: AsyncData<DataT, DataE> = nuxt._asyncDataPayloads[key]
 
   // If there's no payload
-  if (!payload) {
-    payload = {
+  if (!asyncData) {
+    asyncData = {
       data: wrapInRef(unref(options.default())),
       pending: ref(true),
       error: ref(null)
     } as AsyncData<DataT, DataE>
 
-    nuxt._asyncDataPayloads[key] = payload
+    nuxt._asyncDataPayloads[key] = asyncData
 
     nuxt.hook('app:rendered', () => {
       delete nuxt._asyncDataPayloads[key]
@@ -108,7 +107,7 @@ export function useAsyncData<
     }
   }
 
-  payload.refresh = async (refreshOptions: RefreshOptions) => {
+  asyncData.refresh = async (refreshOptions: RefreshOptions) => {
     refreshOptions = refreshOptions ?? { _initial: false, force: false }
 
     // Check if a refresh is already in progress, if it is just tag along
@@ -133,7 +132,7 @@ export function useAsyncData<
     // If the promise is rejected give the user the error
     // Also tell nuxt something went wrong
     if (!success) {
-      payload.error.value = result as DataE
+      asyncData.error.value = result as DataE
       nuxt.payload._errors[key] = true
     } else {
       // If our promise resolved update our payload!
@@ -143,18 +142,18 @@ export function useAsyncData<
 
       if (options.pick) { data = pick(data, options.pick) as DataT }
 
-      payload.data.value = data
-      payload.error.value = null
+      asyncData.data.value = data
+      asyncData.error.value = null
     }
 
     // Cache our data if its the inital fetch, or we're running on the server
     // We don't need to cache client `refresh` calls, but we should cache server `refresh` calls
     if (refreshOptions._initial || process.server) {
-      nuxt.payload.data[key] = payload.data.value
+      nuxt.payload.data[key] = asyncData.data.value
     }
 
     // No matter what the promise has now resolved.
-    payload.pending.value = false
+    asyncData.pending.value = false
 
     // Remove the promise so we don't try tag along
     delete nuxt._asyncDataPromises[key]
@@ -167,11 +166,11 @@ export function useAsyncData<
 
   // If we are using the cache
   if (options.initialCache && nuxt.payload.data[key]) {
-    payload.data.value = nuxt.payload.data[key]
-    payload.pending.value = false
+    asyncData.data.value = nuxt.payload.data[key]
+    asyncData.pending.value = false
   } else if (process.server && fetchOnServer) {
     // Make our promise resolve when the refresh is complete
-    promise = payload.refresh({ _initial: true })
+    promise = asyncData.refresh({ _initial: true })
 
     onServerPrefetch(() => promise)
   } else if (process.client) {
@@ -191,23 +190,23 @@ export function useAsyncData<
 
     if (fetchOnServer && nuxt.isHydrating && key in nuxt.payload.data) {
       // 1. Hydration (server: true): no fetch
-      payload.pending.value = false
+      asyncData.pending.value = false
     } else if (instance && nuxt.payload.serverRendered && (nuxt.isHydrating || options.lazy)) {
       // 2. Initial load (server: false): fetch on mounted
       // 3. Navigation (lazy: true): fetch on mounted
-      instance._nuxtOnBeforeMountCbs.push(() => payload.refresh({ _initial: true }))
+      instance._nuxtOnBeforeMountCbs.push(() => asyncData.refresh({ _initial: true }))
     } else {
       // 4. Navigation (lazy: false) - or plugin usage: await fetch
-      promise = payload.refresh({ _initial: true })
+      promise = asyncData.refresh({ _initial: true })
     }
 
     if (options.watch) {
-      watch(options.watch, () => payload.refresh())
+      watch(options.watch, () => asyncData.refresh())
     }
 
     const off = nuxt.hook('app:data:refresh', (keys) => {
       if (!keys || keys.includes(key)) {
-        return payload.refresh()
+        return asyncData.refresh()
       }
     })
 
@@ -217,7 +216,7 @@ export function useAsyncData<
   }
 
   // Combine our promise with the payload so pending is still returned if the function is not awaited
-  return Object.assign(promise.then(() => payload), payload) as AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE>
+  return Object.assign(promise.then(() => asyncData), asyncData) as AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE>
 }
 
 export function useLazyAsyncData<
