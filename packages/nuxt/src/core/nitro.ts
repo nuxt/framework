@@ -100,6 +100,10 @@ export async function initNitro (nuxt: Nuxt) {
     }
   })
 
+  if (!nuxt.options.ssr) {
+    nitroConfig.alias['#build/dist/server/server.mjs'] = resolve(distDir, 'core/runtime/nitro/stub')
+  }
+
   // Extend nitro config with hook
   await nuxt.callHook('nitro:config', nitroConfig)
 
