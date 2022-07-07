@@ -1816,7 +1816,6 @@ __metadata:
     "@types/webpack-dev-middleware": ^5.0.2
     "@types/webpack-hot-middleware": ^2.25.6
     "@types/webpack-virtual-modules": ^0
-    acorn: ^8.7.1
     autoprefixer: ^10.4.7
     css-loader: ^6.7.1
     css-minimizer-webpack-plugin: ^4.0.0
