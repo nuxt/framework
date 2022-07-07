@@ -1648,7 +1648,7 @@ __metadata:
     semver: ^7.3.7
     unbuild: latest
     unctx: ^1.1.4
-    unimport: ^0.4.1
+    unimport: ^0.4.3
     untyped: ^0.4.4
   languageName: unknown
   linkType: soft
@@ -1675,7 +1675,7 @@ __metadata:
     std-env: ^3.1.1
     ufo: ^0.8.4
     unbuild: latest
-    unimport: ^0.4.1
+    unimport: ^0.4.3
     vite: ^2.9.13
   languageName: unknown
   linkType: soft
@@ -9885,7 +9885,7 @@ __metadata:
     unbuild: latest
     unctx: ^1.1.4
     unenv: ^0.5.2
-    unimport: ^0.4.1
+    unimport: ^0.4.3
     unplugin: ^0.7.1
     untyped: ^0.4.4
     vue: ^3.2.37
@@ -12905,9 +12905,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unimport@npm:^0.4.1":
-  version: 0.4.1
-  resolution: "unimport@npm:0.4.1"
+"unimport@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "unimport@npm:0.4.3"
   dependencies:
     "@rollup/pluginutils": ^4.2.1
     escape-string-regexp: ^5.0.0
@@ -12919,7 +12919,7 @@ __metadata:
     scule: ^0.2.1
     strip-literal: ^0.4.0
     unplugin: ^0.7.1
-  checksum: 169d1d98eddda8f4c477bf592d3179be3812c4f82e817e14b358259ed3289dd529a9c6105de69bb7b422bcb77351291f667097a9e87abcfc5ebcfe339722e641
+  checksum: f4215eb7d5c9b6ef09f7a239780da904b5908a0f05bfd71f540d39440ef72b53f8cdde4a6c6267844dcc028fbf28afd74142abd8c005590134400bd4c85f4f15
   languageName: node
   linkType: hard
 

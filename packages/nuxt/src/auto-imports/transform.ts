@@ -12,7 +12,7 @@ export const TransformPlugin = createUnplugin(({ ctx, options, sourcemap }: {ctx
       const { pathname, search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
       const { type, macro } = parseQuery(search)
 
-      const exclude = options.transform?.exclude || [/[\\/]node_modules[\\/]/]
+      const exclude = options.transform?.exclude || []
       const include = options.transform?.include || []
 
       // Custom includes - exclude node_modules by default
@@ -34,7 +34,13 @@ export const TransformPlugin = createUnplugin(({ ctx, options, sourcemap }: {ctx
       }
     },
     async transform (_code, id) {
-      const { code, s } = await ctx.injectImports(_code, id)
+      const isNodeModule = id.match(/[\\/]node_modules[\\/]/)
+      // For modules in node_modules, we only transform `#imports` but not doing auto-imports
+      if (isNodeModule && !_code.match(/(['"])#imports\1/)) {
+        return
+      }
+
+      const { code, s } = await ctx.injectImports(_code, id, { autoImport: !isNodeModule })
       if (code === _code) {
         return
       }

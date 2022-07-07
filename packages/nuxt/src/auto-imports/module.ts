@@ -38,6 +38,7 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     const ctx = createUnimport({
       presets: options.presets,
       imports: options.imports,
+      virtualImports: ['#imports'],
       addons: {
         vueTemplate: true
       }
@@ -56,11 +57,11 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     composablesDirs = composablesDirs.map(dir => normalize(dir))
 
     // Support for importing from '#imports'
-    addTemplate({
-      filename: 'imports.mjs',
-      getContents: () => ctx.toExports()
-    })
-    nuxt.options.alias['#imports'] = join(nuxt.options.buildDir, 'imports')
+    // addTemplate({
+    //   filename: 'imports.mjs',
+    //   getContents: () => ctx.toExports()
+    // })
+    // nuxt.options.alias['#imports'] = join(nuxt.options.buildDir, 'imports')
 
     // Transpile and injection
     // @ts-ignore temporary disabled due to #746
