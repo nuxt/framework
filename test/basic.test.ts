@@ -377,11 +377,11 @@ describe('selective rendering of global components', () => {
         }
       ])
     }))
-    expect(result.rendered[0].html).toMatchInlineSnapshot(`
+    expect(result.rendered[0].html.replace(/&quot;/g, '"')).toMatchInlineSnapshot(`
       "<pre>    false
           3487
-          &quot;something&quot;
-          {&quot;foo&quot;:42,&quot;bar&quot;:false,&quot;me&quot;:&quot;hi&quot;}
+          \\"something\\"
+          {\\"foo\\":42,\\"bar\\":false,\\"me\\":\\"hi\\"}
           Was router enabled: false
         </pre>"
     `)
