@@ -61,7 +61,7 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     //   filename: 'imports.mjs',
     //   getContents: () => ctx.toExports()
     // })
-    // nuxt.options.alias['#imports'] = join(nuxt.options.buildDir, 'imports')
+    nuxt.options.alias['#imports'] = join(nuxt.options.buildDir, 'imports')
 
     // Transpile and injection
     // @ts-ignore temporary disabled due to #746
