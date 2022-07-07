@@ -228,7 +228,8 @@ export function useLazyAsyncData<
   const autoKey = typeof args[args.length - 1] === 'string' ? args.pop() : undefined
   if (typeof args[0] !== 'string') { args.unshift(autoKey) }
   const [key, handler, options] = args as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
-  return useAsyncData(key, handler, { ...options, lazy: true })
+  // @ts-ignore
+  return useAsyncData(key, handler, { ...options, lazy: true }, null)
 }
 
 export function refreshNuxtData (keys?: string | string[]): Promise<void> {

@@ -35,7 +35,7 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
       }), {
         enter (node: CallExpression) {
           if (node.type !== 'CallExpression' || node.callee.type !== 'Identifier') { return }
-          if (keyedFunctions.includes(node.callee.name)) {
+          if (keyedFunctions.includes(node.callee.name) && node.arguments.length < 4) {
             const end = (node as any).end
             s.appendLeft(
               codeIndex + end - 1,
