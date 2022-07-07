@@ -1,10 +1,66 @@
-import { defineComponent, h, resolveComponent, PropType, computed, DefineComponent } from 'vue'
-import { RouteLocationRaw, Router } from 'vue-router'
+import { defineComponent, h, ref, onBeforeUnmount, onMounted, resolveComponent, PropType, computed, DefineComponent } from 'vue'
+import { RouteLocationRaw, Router, RouteComponent } from 'vue-router'
 import { hasProtocol } from 'ufo'
 
 import { useRouter } from '#app'
 
 const firstNonUndefined = <T>(...args: T[]): T => args.find(arg => arg !== undefined)
+
+type CallbackFn = () => void
+type Lazy<T> = () => Promise<T>
+
+const requestIdleCallback: Window['requestIdleCallback'] = process.client
+  ? window.requestIdleCallback || function (cb) {
+    const start = Date.now()
+    const idleDeadline = {
+      didTimeout: false,
+      timeRemaining () {
+        return Math.max(0, 50 - (Date.now() - start))
+      }
+    }
+    return window.setTimeout(function () {
+      cb(idleDeadline)
+    }, 1)
+  }
+  : (() => {}) as any
+
+const cancelIdleCallback: Window['cancelIdleCallback'] = process.client
+  ? window.cancelIdleCallback || function (id) {
+    clearTimeout(id)
+  }
+  : () => {}
+
+let observer: IntersectionObserver | null = null
+const callbacks = new Map<Element, CallbackFn>()
+function observe (element: Element, callback: CallbackFn) {
+  if (!observer) {
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const callback = callbacks.get(entry.target)
+        const isVisible = entry.isIntersecting || entry.intersectionRatio > 0
+
+        if (isVisible) {
+          callback?.()
+        }
+      })
+    })
+  }
+
+  callbacks.set(element, callback)
+  observer.observe(element)
+
+  return function unobserve () {
+    callbacks.delete(element)
+    observer.unobserve(element)
+
+    if (callbacks.size === 0) {
+      observer.disconnect()
+      observer = null
+    }
+  }
+}
+
+const prefetcheds = new Set()
 
 const DEFAULT_EXTERNAL_REL_ATTRIBUTE = 'noopener noreferrer'
 
@@ -13,6 +69,7 @@ export type NuxtLinkOptions = {
   externalRelAttribute?: string | null;
   activeClass?: string;
   exactActiveClass?: string;
+  prefetchedClass?: string
 }
 
 export type NuxtLinkProps = {
@@ -26,9 +83,13 @@ export type NuxtLinkProps = {
   rel?: string;
   noRel?: boolean;
 
+  prefetch?: boolean
+  noPrefetch?: boolean
+
   // Styling
   activeClass?: string;
   exactActiveClass?: string;
+  prefetchedClass?: string
 
   // Vue Router's `<RouterLink>` additional props
   replace?: boolean;
@@ -76,6 +137,18 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
         required: false
       },
 
+      // Prefetching
+      prefetch: {
+        type: Boolean as PropType<boolean>,
+        default: undefined,
+        required: false
+      },
+      noPrefetch: {
+        type: Boolean as PropType<boolean>,
+        default: undefined,
+        required: false
+      },
+
       // Styling
       activeClass: {
         type: String as PropType<string>,
@@ -83,6 +156,11 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
         required: false
       },
       exactActiveClass: {
+        type: String as PropType<string>,
+        default: undefined,
+        required: false
+      },
+      prefetchedClass: {
         type: String as PropType<string>,
         default: undefined,
         required: false
@@ -117,6 +195,11 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
     setup (props, { slots }) {
       const router = useRouter() as Router | undefined
 
+      const nodeRef = ref<HTMLElement>(null)
+      const setNodeRef = (ref: object | null) => {
+        nodeRef.value = ref && '$el' in ref ? (ref as { $el: HTMLElement }).$el : null
+      }
+
       // Resolving `to` value from `to` and `href` props
       const to = computed<string | RouteLocationRaw>(() => {
         checkPropConflicts(props, 'to', 'href')
@@ -144,13 +227,68 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
         return to.value === '' || hasProtocol(to.value, true)
       })
 
+      const prefetched = ref(false)
+      const shouldPrefetch = computed(() => {
+        checkPropConflicts(props, 'prefetch', 'noPrefetch')
+
+        return props.prefetch == null
+          ? props.noPrefetch == null ? true : !props.noPrefetch
+          : props.prefetch
+      })
+
+      let idleId: number
+      let unobserve: ReturnType<typeof observe> | null = null
+
+      const prefetch = () => {
+        const cn = navigator.connection as any
+        if (cn && (cn.saveData || /2g/.test(cn.effectiveType))) { return }
+
+        const components = router.resolve(to.value).matched
+          .map(component => component.components.default)
+          .filter(component => typeof component === 'function' && !prefetcheds.has(component))
+
+        const promises = []
+        components.forEach((component: Lazy<RouteComponent>) => {
+          const promise = component()
+          if (promise instanceof Promise) {
+            promise.catch(() => {})
+          }
+          promises.push(promise)
+          prefetcheds.add(component)
+        })
+
+        Promise.all(promises).then(() => {
+          prefetched.value = true
+        })
+      }
+
+      onMounted(() => {
+        if (!shouldPrefetch.value) { return }
+
+        idleId = requestIdleCallback(() => {
+          unobserve = observe(nodeRef.value, () => {
+            prefetch()
+
+            unobserve?.()
+            unobserve = null
+          })
+        })
+      })
+
+      onBeforeUnmount(() => {
+        cancelIdleCallback(idleId)
+        unobserve?.()
+      })
+
       return () => {
         if (!isExternal.value) {
           // Internal link
           return h(
             resolveComponent('RouterLink'),
             {
+              ref: setNodeRef,
               to: to.value,
+              class: prefetched.value && (props.prefetchedClass || options.prefetchedClass),
               activeClass: props.activeClass || options.activeClass,
               exactActiveClass: props.exactActiveClass || options.exactActiveClass,
               replace: props.replace,
