@@ -178,9 +178,31 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
 
         const navigate = () => navigateTo(href, { replace: props.replace })
 
-        return props.custom
-          ? slots.default && slots.default({ href, rel, target, navigate, isActive: false, isExactActive: false })
-          : h('a', { href, rel, target }, slots.default?.())
+        // https://router.vuejs.org/api/#custom
+        if (props.custom) {
+          if (!slots.default) { return null }
+          const url = new URL(href)
+          return slots.default({
+            href,
+            navigate,
+            route: {
+              path: url.pathname,
+              fullPath: url.href,
+              query: Object.fromEntries(url.searchParams.entries()),
+              hash: url.hash,
+              params: {},
+              matched: [],
+              meta: {},
+              href
+            },
+            rel,
+            target,
+            isActive: false,
+            isExactActive: false
+          })
+        }
+
+        return h('a', { href, rel, target }, slots.default?.())
       }
     }
   }) as unknown as DefineComponent<NuxtLinkProps>
