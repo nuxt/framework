@@ -18,13 +18,13 @@
     "defu": "^6.0.0",
     "execa": "^6.1.0",
     "get-port-please": "^2.5.0",
-    "jiti": "^1.13.0",
+    "jiti": "^1.14.0",
     "ohmyfetch": "^0.4.18"
   },
   "devDependencies": {
-    "playwright": "^1.22.2",
+    "playwright": "^1.23.1",
     "unbuild": "latest",
-    "vitest": "^0.14.2"
+    "vitest": "^0.17.1"
   },
   "peerDependencies": {
     "vue": "^3.2.37"
