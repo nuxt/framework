@@ -9,32 +9,40 @@ interface TreeShakeTemplatePluginOptions {
   getComponents(): Component[]
 }
 
-export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplatePluginOptions) => ({
-  name: 'nuxt:tree-shake-template',
-  enforce: 'pre',
-  transformInclude (id) {
-    const { pathname } = parseURL(decodeURIComponent(pathToFileURL(id).href))
-    return pathname.endsWith('.vue')
-  },
-  transform (code, id) {
-    const components = options.getComponents()
-    const clientOnlyComponents = components
-      .filter(c => c.mode === 'client' && !components.some(other => other.mode !== 'client' && other.pascalName === c.pascalName))
-      .map(c => `c.pascalName}|${c.kebabName}`)
-      .map(component => `<(${component})[^>]*>[\\s\\S]*?<\\/(${component})>`)
-    clientOnlyComponents.push('<(client-only|ClientOnly)[^>]*>[\\s\\S]*?<\\/(client-only|ClientOnly)>')
+export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplatePluginOptions) => {
+  const regexpMap = new WeakMap<Component[], RegExp>()
+  return {
+    name: 'nuxt:tree-shake-template',
+    enforce: 'pre',
+    transformInclude (id) {
+      const { pathname } = parseURL(decodeURIComponent(pathToFileURL(id).href))
+      return pathname.endsWith('.vue')
+    },
+    transform (code, id) {
+      const components = options.getComponents()
 
-    const COMPONENTS_RE = new RegExp(`(${clientOnlyComponents.join('|')})`, 'g')
-    const s = new MagicString(code)
+      if (!regexpMap.has(components)) {
+        const clientOnlyComponents = components
+          .filter(c => c.mode === 'client' && !components.some(other => other.mode !== 'client' && other.pascalName === c.pascalName))
+          .map(c => `c.pascalName}|${c.kebabName}`)
+          .map(component => `<(${component})[^>]*>[\\s\\S]*?<\\/(${component})>`)
+        clientOnlyComponents.push('<(client-only|ClientOnly)[^>]*>[\\s\\S]*?<\\/(client-only|ClientOnly)>')
 
-    // Do not render client-only slots on SSR, but preserve attributes
-    s.replace(COMPONENTS_RE, r => r.replace(/<([^ ]*)[ >][\s\S]*$/, '<$1 />'))
+        regexpMap.set(components, new RegExp(`(${clientOnlyComponents.join('|')})`, 'g'))
+      }
 
-    if (s.hasChanged()) {
-      return {
-        code: s.toString(),
-        map: options.sourcemap && s.generateMap({ source: id, includeContent: true })
+      const COMPONENTS_RE = regexpMap.get(components)
+      const s = new MagicString(code)
+
+      // Do not render client-only slots on SSR, but preserve attributes
+      s.replace(COMPONENTS_RE, r => r.replace(/<([^ ]*)[ >][\s\S]*$/, '<$1 />'))
+
+      if (s.hasChanged()) {
+        return {
+          code: s.toString(),
+          map: options.sourcemap && s.generateMap({ source: id, includeContent: true })
+        }
       }
     }
   }
-}))
+})
