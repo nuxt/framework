@@ -1,18 +1,18 @@
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure } from 'vue-router'
 import { sendRedirect } from 'h3'
 import { joinURL } from 'ufo'
-import { useNuxtApp, useRuntimeConfig } from '#app'
+import { useNuxtApp, useRuntimeConfig, isIndividualRender } from '#app'
 
 export const useRouter = () => {
-  return useNuxtApp()?.$router as Router
+  return isIndividualRender() ? null : useNuxtApp()?.$router as Router
 }
 
 export const useRoute = () => {
-  return useNuxtApp()._route as RouteLocationNormalizedLoaded
+  return isIndividualRender() ? null : useNuxtApp()._route as RouteLocationNormalizedLoaded
 }
 
 export const useActiveRoute = () => {
-  return useNuxtApp()._activeRoute as RouteLocationNormalizedLoaded
+  return isIndividualRender() ? null : useNuxtApp()._activeRoute as RouteLocationNormalizedLoaded
 }
 
 export interface RouteMiddleware {

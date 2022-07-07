@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { onErrorCaptured, useSSRContext } from 'vue'
+import { onErrorCaptured } from 'vue'
 import RenderComponents from './render-components'
 import { callWithNuxt, throwError, useError, useNuxtApp } from '#app'
 // @ts-ignore
@@ -32,5 +32,5 @@ onErrorCaptured((err, target, info) => {
 })
 
 // server component rendering
-const componentsToRender = process.server && useSSRContext().render?.components
+const componentsToRender = process.server && nuxtApp.ssrContext?.render?.components
 </script>

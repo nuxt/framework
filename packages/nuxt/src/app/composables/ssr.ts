@@ -15,3 +15,5 @@ export function useRequestHeaders (include?) {
 export function useRequestEvent (nuxtApp: NuxtApp = useNuxtApp()): CompatibilityEvent {
   return nuxtApp.ssrContext?.event as CompatibilityEvent
 }
+
+export const isIndividualRender = () => process.server && useNuxtApp().ssrContext.url.startsWith('/__nuxt_render')
