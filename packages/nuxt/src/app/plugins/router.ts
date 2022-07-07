@@ -1,7 +1,7 @@
 import { reactive, h } from 'vue'
 import { parseURL, parseQuery, withoutBase, isEqual, joinURL } from 'ufo'
 import { createError } from 'h3'
-import { defineNuxtPlugin } from '..'
+import { defineNuxtPlugin, isIndividualRender } from '..'
 import { callWithNuxt } from '../nuxt'
 import { clearError, navigateTo, throwError, useRuntimeConfig } from '#app'
 // @ts-ignore
@@ -88,6 +88,9 @@ interface Router {
 }
 
 export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
+  // Self-disable if we are rendering a component with no URL context
+  if (isIndividualRender()) { return }
+
   const initialURL = process.client
     ? withoutBase(window.location.pathname, useRuntimeConfig().app.baseURL) + window.location.search + window.location.hash
     : nuxtApp.ssrContext.url
