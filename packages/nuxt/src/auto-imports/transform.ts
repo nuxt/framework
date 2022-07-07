@@ -12,15 +12,16 @@ export const TransformPlugin = createUnplugin(({ ctx, options, sourcemap }: {ctx
       const { pathname, search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
       const { type, macro } = parseQuery(search)
 
-      const exclude = options.transform?.exclude || []
-      const include = options.transform?.include || []
-
-      // Custom includes - exclude node_modules by default
-      if (exclude.some(pattern => id.match(pattern)) && !include.some(pattern => id.match(pattern))) {
+      // Included
+      if (options.transform?.include?.some(pattern => id.match(pattern))) {
+        return true
+      }
+      // Excluded
+      if (options.transform?.exclude?.some(pattern => id.match(pattern))) {
         return false
       }
 
-      // vue files
+      // Vue files
       if (
         pathname.endsWith('.vue') &&
         (type === 'template' || type === 'script' || macro || !search)
@@ -28,25 +29,24 @@ export const TransformPlugin = createUnplugin(({ ctx, options, sourcemap }: {ctx
         return true
       }
 
-      // js files
+      // JavaScript files
       if (pathname.match(/\.((c|m)?j|t)sx?$/g)) {
         return true
       }
     },
-    async transform (_code, id) {
+    async transform (code, id) {
       const isNodeModule = id.match(/[\\/]node_modules[\\/]/)
       // For modules in node_modules, we only transform `#imports` but not doing auto-imports
-      if (isNodeModule && !_code.match(/(['"])#imports\1/)) {
+      if (isNodeModule && !code.match(/(['"])#imports\1/)) {
         return
       }
 
-      const { code, s } = await ctx.injectImports(_code, id, { autoImport: !isNodeModule })
-      if (code === _code) {
-        return
-      }
-      return {
-        code,
-        map: sourcemap && s.generateMap({ source: id, includeContent: true })
+      const { s } = await ctx.injectImports(code, id, { autoImport: !isNodeModule })
+      if (s.hasChanged()) {
+        return {
+          code: s.toString(),
+          map: sourcemap && s.generateMap({ source: id, includeContent: true })
+        }
       }
     }
   }
