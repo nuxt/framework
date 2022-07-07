@@ -22,52 +22,17 @@ export default defineComponent({
     }
   },
   setup (props) {
-    const percent = ref(0)
-    const show = ref(false)
-    const step = computed(() => 10000 / props.duration)
+    const indicator = useLoadingIndicator({
+      duration: props.duration,
+      throttle: props.throttle
+    })
 
-    let _timer: any = null
-    let _throttle: any = null
-
-    function clear () {
-      clearInterval(_timer)
-      clearTimeout(_throttle)
-      _timer = null
-      _throttle = null
-    }
-    function start () {
-      clear()
-      percent.value = 0
-      if (props.throttle) { _throttle = setTimeout(startTimer, props.throttle) } else { startTimer() }
-    }
-    function increase (num: number) {
-      percent.value = Math.min(100, percent.value + num)
-    }
-    function finish () {
-      percent.value = 100
-      hide()
-    }
-    function hide () {
-      clear()
-      setTimeout(() => {
-        show.value = false
-        setTimeout(() => {
-          percent.value = 0
-        }, 400)
-      }, 500)
-    }
-    function startTimer () {
-      show.value = true
-      _timer = setInterval(() => {
-        increase(step.value)
-      }, 100)
-    }
-
-    // Hooks
+    // Hook to app lifecycle
+    // TODO: Use unified loading API
     const nuxtApp = useNuxtApp()
-    nuxtApp.hook('page:start', start)
-    nuxtApp.hook('page:finish', finish)
-    onBeforeUnmount(() => clear)
+    nuxtApp.hook('page:start', indicator.start)
+    nuxtApp.hook('page:finish', indicator.finish)
+    onBeforeUnmount(() => indicator.clear)
 
     return () => h('div', {
       class: 'nuxt-loading-indicator',
@@ -77,14 +42,79 @@ export default defineComponent({
         right: 0,
         left: 0,
         pointerEvents: 'none',
-        width: `${percent.value}%`,
+        width: `${indicator.progress.value}%`,
         height: `${props.height}px`,
-        opacity: show.value ? 1 : 0,
+        opacity: indicator.isLoading.value ? 1 : 0,
         background: props.color,
-        backgroundSize: `${(100 / percent.value) * 100}% auto`,
+        backgroundSize: `${(100 / indicator.progress.value) * 100}% auto`,
         transition: 'width 0.1s, height 0.4s, opacity 0.4s',
         zIndex: 999999
       }
     })
   }
 })
+
+function useLoadingIndicator (opts: {
+  duration: number,
+  throttle: number
+}) {
+  const progress = ref(0)
+  const isLoading = ref(false)
+  const step = computed(() => 10000 / opts.duration)
+
+  let _timer: any = null
+  let _throttle: any = null
+
+  function start () {
+    clear()
+    progress.value = 0
+    isLoading.value = true
+    if (opts.throttle) {
+      if (process.client) {
+        _throttle = setTimeout(_startTimer, opts.throttle)
+      }
+    } else {
+      _startTimer()
+    }
+  }
+
+  function finish () {
+    progress.value = 100
+    _hide()
+  }
+
+  function clear () {
+    clearInterval(_timer)
+    clearTimeout(_throttle)
+    _timer = null
+    _throttle = null
+  }
+
+  function _increase (num: number) {
+    progress.value = Math.min(100, progress.value + num)
+  }
+
+  function _hide () {
+    clear()
+    if (process.client) {
+      setTimeout(() => {
+        isLoading.value = false
+        setTimeout(() => { progress.value = 0 }, 400)
+      }, 500)
+    }
+  }
+
+  function _startTimer () {
+    if (process.client) {
+      _timer = setInterval(() => { _increase(step.value) }, 100)
+    }
+  }
+
+  return {
+    progress,
+    isLoading,
+    start,
+    finish,
+    clear
+  }
+}
