@@ -181,20 +181,10 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
         // https://router.vuejs.org/api/#custom
         if (props.custom) {
           if (!slots.default) { return null }
-          const url = new URL(href)
           return slots.default({
             href,
             navigate,
-            route: {
-              path: url.pathname,
-              fullPath: url.href,
-              query: Object.fromEntries(url.searchParams.entries()),
-              hash: url.hash,
-              params: {},
-              matched: [],
-              meta: {},
-              href
-            },
+            route: router.resolve(href),
             rel,
             target,
             isActive: false,
