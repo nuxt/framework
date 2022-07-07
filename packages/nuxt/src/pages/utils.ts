@@ -1,10 +1,10 @@
-import { basename, extname, normalize, relative, resolve } from 'pathe'
+import { extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
-import { NuxtMiddleware, NuxtPage } from '@nuxt/schema'
+import { NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
-import { kebabCase, pascalCase } from 'scule'
-import { genImport, genDynamicImport, genArrayFromRaw } from 'knitwork'
+import { genImport, genDynamicImport, genArrayFromRaw, genSafeVariableName } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
+import { uniqueBy } from '../core/utils'
 
 enum SegmentParserState {
   initial,
@@ -88,14 +88,10 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
     }
 
     parent.push(route)
-    // TODO: https://github.com/vuejs/router/issues/1435
-    parent.sort((a, b) => getSortablePath(a.path).localeCompare(getSortablePath(b.path)))
   }
 
   return prepareRoutes(routes)
 }
-
-const getSortablePath = (path: string) => path.replace(/^\//, '').replace(/:/, 'Z')
 
 function getRoutePath (tokens: SegmentToken[]): string {
   return tokens.reduce((path, token) => {
@@ -233,7 +229,7 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
     imports: metaImports,
     routes: genArrayFromRaw(routes.map((route) => {
       const file = normalize(route.file)
-      const metaImportName = getImportName(file) + 'Meta'
+      const metaImportName = genSafeVariableName(file) + 'Meta'
       metaImports.add(genImport(`${file}?macro=true`, [{ name: 'meta', as: metaImportName }]))
       return {
         ...Object.fromEntries(Object.entries(route).map(([key, value]) => [key, JSON.stringify(value)])),
@@ -244,44 +240,4 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
       }
     }))
   }
-}
-
-export async function resolveMiddleware (): Promise<NuxtMiddleware[]> {
-  const nuxt = useNuxt()
-
-  const middlewareDirs = nuxt.options._layers.map(
-    layer => resolve(layer.config.srcDir, layer.config.dir?.middleware || 'middleware')
-  )
-
-  const allMiddlewares = (await Promise.all(
-    middlewareDirs.map(async (dir) => {
-      const files = await resolveFiles(dir, `*{${nuxt.options.extensions.join(',')}}`)
-      return files.map(path => ({ name: getNameFromPath(path), path, global: hasSuffix(path, '.global') }))
-    })
-  )).flat()
-
-  return uniqueBy(allMiddlewares, 'name')
-}
-
-function getNameFromPath (path: string) {
-  return kebabCase(basename(path).replace(extname(path), '')).replace(/["']/g, '').replace('.global', '')
-}
-
-function hasSuffix (path: string, suffix: string) {
-  return basename(path).replace(extname(path), '').endsWith(suffix)
-}
-
-export function getImportName (name: string) {
-  return pascalCase(name).replace(/[^\w]/g, r => '_' + r.charCodeAt(0))
-}
-
-function uniqueBy <T, K extends keyof T> (arr: T[], key: K) {
-  const res: T[] = []
-  const seen = new Set<T[K]>()
-  for (const item of arr) {
-    if (seen.has(item[key])) { continue }
-    seen.add(item[key])
-    res.push(item)
-  }
-  return res
 }

@@ -29,6 +29,7 @@ export async function initNitro (nuxt: Nuxt) {
     handlers,
     devHandlers: [],
     baseURL: nuxt.options.app.baseURL,
+    virtual: {},
     runtimeConfig: {
       ...nuxt.options.runtimeConfig,
       nitro: {
@@ -58,16 +59,26 @@ export async function initNitro (nuxt: Nuxt) {
     sourcemap: nuxt.options.sourcemap,
     externals: {
       inline: [
-        ...(nuxt.options.dev ? [] : ['vue', '@vue/', '@nuxt/', nuxt.options.buildDir]),
+        ...(nuxt.options.dev
+          ? []
+          : [
+              ...nuxt.options.experimental.externalVue ? [] : ['vue', '@vue/'],
+              '@nuxt/',
+              nuxt.options.buildDir
+            ]),
         'nuxt/dist',
         'nuxt3/dist'
       ]
     },
     alias: {
-      'vue/compiler-sfc': 'vue/compiler-sfc',
-      'vue/server-renderer': 'vue/server-renderer',
-      vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`),
+      ...nuxt.options.experimental.externalVue
+        ? {}
+        : {
 
+            'vue/compiler-sfc': 'vue/compiler-sfc',
+            'vue/server-renderer': 'vue/server-renderer',
+            vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
+          },
       // Vue 3 mocks
       'estree-walker': 'unenv/runtime/mock/proxy',
       '@babel/parser': 'unenv/runtime/mock/proxy',
@@ -89,6 +100,11 @@ export async function initNitro (nuxt: Nuxt) {
       plugins: []
     }
   })
+
+  // Add fallback server for `ssr: false`
+  if (!nuxt.options.ssr) {
+    nitroConfig.virtual['#build/dist/server/server.mjs'] = 'export default () => {}'
+  }
 
   // Extend nitro config with hook
   await nuxt.callHook('nitro:config', nitroConfig)

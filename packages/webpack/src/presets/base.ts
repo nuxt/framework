@@ -14,7 +14,8 @@ export function base (ctx: WebpackConfigContext) {
     baseAlias,
     baseConfig,
     basePlugins,
-    baseResolve
+    baseResolve,
+    baseTranspile
   ])
 }
 
@@ -149,7 +150,8 @@ export function baseTranspile (ctx: WebpackConfigContext) {
 
   const transpile = [
     /\.vue\.js/i, // include SFCs in node_modules
-    /consola\/src/
+    /consola\/src/,
+    /vue-demi/
   ]
 
   for (let pattern of options.build.transpile) {
@@ -157,9 +159,7 @@ export function baseTranspile (ctx: WebpackConfigContext) {
       pattern = pattern(ctx)
     }
     if (typeof pattern === 'string') {
-      const posixModule = pattern.replace(/\\/g, '/')
-      // TODO: should only do for clientside? (hint: pathNormalize)
-      transpile.push(new RegExp(escapeRegExp(normalize(posixModule))))
+      transpile.push(new RegExp(escapeRegExp(normalize(pattern))))
     } else if (pattern instanceof RegExp) {
       transpile.push(pattern)
     }

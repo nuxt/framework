@@ -2,7 +2,7 @@ import { resolve, join, normalize } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
-import { logger, resolveModule } from '@nuxt/kit'
+import { logger, resolveModule, isIgnored } from '@nuxt/kit'
 import fse from 'fs-extra'
 import { debounce } from 'perfect-debounce'
 import { withoutTrailingSlash } from 'ufo'
@@ -30,16 +30,21 @@ export async function buildServer (ctx: ViteBuildContext) {
     resolve: {
       alias: {
         '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/server'),
-        // Alias vue
+        // Alias vue to ensure we're using the same context in development
         'vue/server-renderer': _resolve('vue/server-renderer'),
         'vue/compiler-sfc': _resolve('vue/compiler-sfc'),
-        '@vue/reactivity': _resolve(`@vue/reactivity/dist/reactivity.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
-        '@vue/shared': _resolve(`@vue/shared/dist/shared.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
-        'vue-router': _resolve(`vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
+        ...ctx.nuxt.options.experimental.externalVue
+          ? {}
+          : {
+              '@vue/reactivity': _resolve(`@vue/reactivity/dist/reactivity.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
+              '@vue/shared': _resolve(`@vue/shared/dist/shared.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
+              'vue-router': _resolve(`vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`)
+            },
         vue: _resolve(`vue/dist/vue.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`)
       }
     },
     ssr: {
+      external: ctx.nuxt.options.experimental.externalVue ? ['#internal/nitro', 'vue', 'vue-router'] : ['#internal/nitro'],
       noExternal: [
         ...ctx.nuxt.options.build.transpile,
         // TODO: Use externality for production (rollup) build
@@ -55,10 +60,12 @@ export async function buildServer (ctx: ViteBuildContext) {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
-        external: ['#internal/nitro'],
+        external: ['#internal/nitro', ...ctx.nuxt.options.experimental.externalVue ? ['vue', 'vue-router'] : []],
         output: {
           entryFileNames: 'server.mjs',
           preferConst: true,
+          // TODO: https://github.com/vitejs/vite/pull/8641
+          inlineDynamicImports: false,
           format: 'module'
         },
         onwarn (warning, rollupWarn) {
@@ -66,6 +73,9 @@ export async function buildServer (ctx: ViteBuildContext) {
             rollupWarn(warning)
           }
         }
+      },
+      watch: {
+        exclude: ctx.nuxt.options.ignore
       }
     },
     server: {
@@ -83,7 +93,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Add type-checking
   if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
     const checker = await import('vite-plugin-checker').then(r => r.default)
-    ctx.config.plugins.push(checker({ typescript: true }))
+    serverConfig.plugins.push(checker({ typescript: true }))
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
@@ -171,7 +181,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     // Watch
     viteServer.watcher.on('all', (_event, file) => {
       file = normalize(file) // Fix windows paths
-      if (file.indexOf(ctx.nuxt.options.buildDir) === 0) { return }
+      if (file.indexOf(ctx.nuxt.options.buildDir) === 0 || isIgnored(file)) { return }
       doBuild()
     })
     // ctx.nuxt.hook('builder:watch', () => doBuild())

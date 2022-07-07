@@ -244,6 +244,14 @@ describe('reactivity transform', () => {
   })
 })
 
+describe('server tree shaking', () => {
+  it('should work', async () => {
+    const html = await $fetch('/client')
+
+    expect(html).toContain('This page should not crash when rendered')
+  })
+})
+
 describe('extends support', () => {
   describe('layouts & pages', () => {
     it('extends foo/layouts/default & foo/pages/index', async () => {
@@ -318,6 +326,14 @@ describe('extends support', () => {
   })
 })
 
+describe('automatically keyed composables', () => {
+  it('should automatically generate keys', async () => {
+    const html = await $fetch('/keyed-composables')
+    expect(html).toContain('true')
+    expect(html).not.toContain('false')
+  })
+})
+
 describe('dynamic paths', () => {
   if (process.env.NUXT_TEST_DEV) {
     // TODO:
@@ -348,6 +364,8 @@ describe('dynamic paths', () => {
     expect(imageUrls).toMatchInlineSnapshot(`
         [
           "./logo.svg",
+          "../public.svg",
+          "../public.svg",
           "../public.svg",
         ]
       `)

@@ -1,9 +1,10 @@
-import { resolve } from 'pathe'
+import { normalize, resolve } from 'pathe'
 import { createHooks } from 'hookable'
 import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
 import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule } from '@nuxt/kit'
 // Temporary until finding better placement
 /* eslint-disable import/no-restricted-paths */
+import escapeRE from 'escape-string-regexp'
 import pagesModule from '../pages/module'
 import metaModule from '../head/module'
 import componentsModule from '../components/module'
@@ -13,6 +14,7 @@ import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
 import { ImportProtectionPlugin, vueAppPatterns } from './plugins/import-protection'
 import { UnctxTransformPlugin } from './plugins/unctx'
+import { TreeShakePlugin } from './plugins/tree-shake'
 import { addModuleTranspiles } from './modules'
 import { initNitro } from './nitro'
 
@@ -65,6 +67,22 @@ async function initNuxt (nuxt: Nuxt) {
   // Add unctx transform
   addVitePlugin(UnctxTransformPlugin(nuxt).vite({ sourcemap: nuxt.options.sourcemap }))
   addWebpackPlugin(UnctxTransformPlugin(nuxt).webpack({ sourcemap: nuxt.options.sourcemap }))
+
+  if (!nuxt.options.dev) {
+    const removeFromServer = ['onBeforeMount', 'onMounted', 'onBeforeUpdate', 'onRenderTracked', 'onRenderTriggered', 'onActivated', 'onDeactivated', 'onBeforeUnmount']
+    const removeFromClient = ['onServerPrefetch', 'onRenderTracked', 'onRenderTriggered']
+
+    // Add tree-shaking optimisations for SSR - build time only
+    addVitePlugin(TreeShakePlugin.vite({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromServer }), { client: false })
+    addVitePlugin(TreeShakePlugin.vite({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromClient }), { server: false })
+    addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromServer }), { client: false })
+    addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromClient }), { server: false })
+  }
+
+  // Transpile layers within node_modules
+  nuxt.options.build.transpile.push(
+    ...nuxt.options._layers.filter(i => i.cwd && i.cwd.includes('node_modules')).map(i => i.cwd)
+  )
 
   // Init user modules
   await nuxt.callHook('modules:before', { nuxt } as ModuleContainer)
@@ -119,6 +137,9 @@ async function initNuxt (nuxt: Nuxt) {
 
   await nuxt.callHook('modules:done', { nuxt } as ModuleContainer)
 
+  // Normalize windows transpile paths added by modules
+  nuxt.options.build.transpile = nuxt.options.build.transpile.map(t => typeof t === 'string' ? normalize(t) : t)
+
   addModuleTranspiles()
 
   // Init nitro
@@ -133,7 +154,14 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   // Temporary until finding better placement for each
   options.appDir = options.alias['#app'] = resolve(distDir, 'app')
   options._majorVersion = 3
-  options._modules.push(pagesModule, metaModule, componentsModule, autoImportsModule)
+  options._modules.push(pagesModule, metaModule, componentsModule)
+  options._modules.push([autoImportsModule, {
+    transform: {
+      include: options._layers
+        .filter(i => i.cwd && i.cwd.includes('node_modules'))
+        .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd.split('node_modules/').pop())}(\\/|$)(?!node_modules\\/)`))
+    }
+  }])
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))
   options.build.transpile.push('@nuxt/ui-templates')
   options.alias['vue-demi'] = resolve(options.appDir, 'compat/vue-demi')

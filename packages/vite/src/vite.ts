@@ -13,6 +13,7 @@ import virtual from './plugins/virtual'
 import { DynamicBasePlugin } from './plugins/dynamic-base'
 import { warmupViteServer } from './utils/warmup'
 import { resolveCSSOptions } from './css'
+import { composableKeysPlugin } from './plugins/composable-keys'
 
 export interface ViteOptions extends InlineConfig {
   vue?: Options
@@ -65,6 +66,7 @@ export async function bundle (nuxt: Nuxt) {
           }
         },
         plugins: [
+          composableKeysPlugin.vite({ sourcemap: nuxt.options.sourcemap, rootDir: nuxt.options.rootDir }),
           replace({
             ...Object.fromEntries([';', '(', '{', '}', ' ', '\t', '\n'].map(d => [`${d}global.`, `${d}globalThis.`])),
             preventAssignment: true
@@ -76,9 +78,7 @@ export async function bundle (nuxt: Nuxt) {
           reactivityTransform: nuxt.options.experimental.reactivityTransform
         },
         server: {
-          watch: {
-            ignored: isIgnored
-          },
+          watch: { ignored: isIgnored },
           hmr: {
             // https://github.com/nuxt/framework/issues/4191
             protocol: 'ws',
@@ -94,6 +94,13 @@ export async function bundle (nuxt: Nuxt) {
       } as ViteOptions,
       nuxt.options.vite
     )
+  }
+
+  // In build mode we explicitly override any vite options that vite is relying on
+  // to detect whether to inject production or development code (such as HMR code)
+  if (!nuxt.options.dev) {
+    ctx.config.server.hmr = false
+    ctx.config.server.watch = undefined
   }
 
   await nuxt.callHook('vite:extend', ctx)
