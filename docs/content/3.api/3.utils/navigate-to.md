@@ -4,7 +4,6 @@
 
 `navigateTo` is available on both server side and client side. It can be used within plugins, middleware or can be called directly to perform page navigation.
 
-
 ## Usage
 
 ```ts
@@ -40,7 +39,6 @@ return navigateTo({
 </script>
 ```
 
-
 ### Within route middleware
 
 ```js
@@ -59,7 +57,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
 ::ReadMore{link="/guide/directory-structure/middleware"}
 ::
 
-
 ### Options
 
 #### `redirectCode`
@@ -70,7 +67,6 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
 This default behavior can be modified by providing different `redirectCode` as an optional parameter. Commonly [`301` Moved Permanently](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/301) can be used for permant redirections.
 
-
 #### `replace`
 
 - Type: Boolean
@@ -78,4 +74,3 @@ This default behavior can be modified by providing different `redirectCode` as a
 By default, `navigateTo` pushes the given route into Vue router instance on client-side.
 
 This behavior can be changed by setting `replace` to `true`, to indicate that given route should be replaced.
-
