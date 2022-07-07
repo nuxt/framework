@@ -2,7 +2,9 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 // import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
+import { withQuery } from 'ufo'
 import { expectNoClientErrors } from './utils'
+import { ComponentRenderResult } from '#app'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
@@ -331,6 +333,71 @@ describe('automatically keyed composables', () => {
     const html = await $fetch('/keyed-composables')
     expect(html).toContain('true')
     expect(html).not.toContain('false')
+  })
+})
+
+describe('selective rendering of global components', () => {
+  it('renders components with route', async () => {
+    const result: ComponentRenderResult = await $fetch(withQuery('/__nuxt_render', {
+      url: '/foo',
+      state: JSON.stringify({}),
+      components: JSON.stringify([
+        { name: 'RouteComponent' }
+      ])
+    }))
+    expect(result.rendered[0].html).toMatchInlineSnapshot(`
+      "<pre>    Route: /foo
+        </pre>"
+    `)
+    expect(result.state).toMatchInlineSnapshot(`
+      {
+        "error": null,
+      }
+    `)
+    expect(Object.keys(result)).toMatchInlineSnapshot(`
+      [
+        "rendered",
+        "state",
+        "styles",
+        "scripts",
+      ]
+    `)
+  })
+  it('renders pure components', async () => {
+    const result: ComponentRenderResult = await $fetch(withQuery('/__nuxt_render', {
+      components: JSON.stringify([
+        {
+          name: 'PureComponent',
+          props: {
+            bool: false,
+            number: 3487,
+            str: 'something',
+            obj: { foo: 42, bar: false, me: 'hi' }
+          }
+        }
+      ])
+    }))
+    expect(result.rendered[0].html).toMatchInlineSnapshot(`
+      "<pre>    false
+          3487
+          &quot;something&quot;
+          {&quot;foo&quot;:42,&quot;bar&quot;:false,&quot;me&quot;:&quot;hi&quot;}
+          Was router enabled: false
+        </pre>"
+    `)
+    expect(result.state).toMatchInlineSnapshot(`
+      {
+        "error": null,
+      }
+    `)
+    expect(Object.keys(result)).toMatchInlineSnapshot(`
+      [
+        "rendered",
+        "state",
+        "styles",
+        "scripts",
+      ]
+    `)
   })
 })
 
