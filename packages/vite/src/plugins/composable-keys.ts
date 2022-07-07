@@ -1,7 +1,6 @@
 import { pathToFileURL } from 'node:url'
-import type { Plugin } from 'vite'
+import { createUnplugin } from 'unplugin'
 import { isAbsolute, relative } from 'pathe'
-import { parse } from 'acorn'
 import { walk } from 'estree-walker'
 import MagicString from 'magic-string'
 import { hash } from 'ohash'
@@ -10,7 +9,6 @@ import { parseURL } from 'ufo'
 
 export interface ComposableKeysOptions {
   sourcemap?: boolean
-  useAcorn?: boolean
   rootDir?: string
 }
 
@@ -19,7 +17,7 @@ const keyedFunctions = [
 ]
 const KEYED_FUNCTIONS_RE = new RegExp(`(${keyedFunctions.join('|')})`)
 
-export const composableKeysPlugin = (options: ComposableKeysOptions = {}): Plugin => {
+export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptions = {}) => {
   return {
     name: 'nuxt:composable-keys',
     enforce: 'post',
@@ -31,12 +29,10 @@ export const composableKeysPlugin = (options: ComposableKeysOptions = {}): Plugi
       const s = new MagicString(code)
       // https://github.com/unjs/unplugin/issues/90
       const relativeID = isAbsolute(id) ? relative(options.rootDir, id) : id
-      walk(options.useAcorn
-        ? parse(script, {
-          sourceType: 'module',
-          ecmaVersion: 'latest'
-        })
-        : this.parse(script), {
+      walk(this.parse(script, {
+        sourceType: 'module',
+        ecmaVersion: 'latest'
+      }), {
         enter (node: CallExpression) {
           if (node.type !== 'CallExpression' || node.callee.type !== 'Identifier') { return }
           if (keyedFunctions.includes(node.callee.name)) {
@@ -56,4 +52,4 @@ export const composableKeysPlugin = (options: ComposableKeysOptions = {}): Plugi
       }
     }
   }
-}
+})

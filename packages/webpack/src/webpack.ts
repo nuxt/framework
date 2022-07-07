@@ -8,9 +8,8 @@ import type { Compiler, Watching } from 'webpack'
 import type { Nuxt } from '@nuxt/schema'
 import { joinURL } from 'ufo'
 import { logger, useNuxt } from '@nuxt/kit'
-import { createUnplugin } from 'unplugin'
 import { DynamicBasePlugin } from '../../vite/src/plugins/dynamic-base'
-import { composableKeysPlugin as _composableKeysPlugin } from '../../vite/src/plugins/composable-keys'
+import { composableKeysPlugin } from '../../vite/src/plugins/composable-keys'
 import { createMFS } from './utils/mfs'
 import { registerVirtualModules } from './virtual-modules'
 import { client, server } from './configs'
@@ -18,8 +17,6 @@ import { createWebpackConfigContext, applyPresets, getWebpackConfig } from './ut
 
 // TODO: Support plugins
 // const plugins: string[] = []
-
-const composableKeysPlugin = createUnplugin(_composableKeysPlugin as any)
 
 export async function bundle (nuxt: Nuxt) {
   registerVirtualModules()
@@ -42,7 +39,6 @@ export async function bundle (nuxt: Nuxt) {
       globalPublicPath: '__webpack_public_path__'
     }))
     config.plugins.push(composableKeysPlugin.webpack({
-      useAcorn: true,
       sourcemap: nuxt.options.sourcemap,
       rootDir: nuxt.options.rootDir
     }))

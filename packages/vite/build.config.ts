@@ -10,7 +10,6 @@ export default defineBuildConfig({
     'vue'
   ],
   externals: [
-    'acorn',
     '@nuxt/schema'
   ]
 })
