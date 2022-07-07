@@ -35,7 +35,7 @@ export const TransformPlugin = createUnplugin(({ ctx, options, sourcemap }: {ctx
       }
     },
     async transform (code, id) {
-      const isNodeModule = id.match(/[\\/]node_modules[\\/]/)
+      const isNodeModule = id.match(/[\\/]node_modules[\\/]/) && !options.transform?.include?.some(pattern => id.match(pattern))
       // For modules in node_modules, we only transform `#imports` but not doing auto-imports
       if (isNodeModule && !code.match(/(['"])#imports\1/)) {
         return
