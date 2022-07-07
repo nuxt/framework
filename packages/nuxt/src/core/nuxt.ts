@@ -68,27 +68,15 @@ async function initNuxt (nuxt: Nuxt) {
   addVitePlugin(UnctxTransformPlugin(nuxt).vite({ sourcemap: nuxt.options.sourcemap }))
   addWebpackPlugin(UnctxTransformPlugin(nuxt).webpack({ sourcemap: nuxt.options.sourcemap }))
 
-  const getTreeshakeOptions = (isServer: boolean) => ({
-    sourcemap: nuxt.options.sourcemap,
-    treeShake: {
-      onBeforeMount: isServer,
-      onMounted: isServer,
-      onBeforeUpdate: isServer,
-      onRenderTracked: isServer /* || !nuxt.options.dev */,
-      onRenderTriggered: isServer /* || !nuxt.options.dev */,
-      onActivated: isServer,
-      onDeactivated: isServer,
-      onBeforeUnmount: isServer,
-      onServerPrefetch: !isServer
-    }
-  })
-
   if (!nuxt.options.dev) {
+    const removeFromServer = ['onBeforeMount', 'onMounted', 'onBeforeUpdate', 'onRenderTracked', 'onRenderTriggered', 'onActivated', 'onDeactivated', 'onBeforeUnmount']
+    const removeFromClient = ['onServerPrefetch', 'onRenderTracked', 'onRenderTriggered']
+
     // Add tree-shaking optimisations for SSR - build time only
-    addVitePlugin(TreeShakePlugin.vite(getTreeshakeOptions(true)), { client: false })
-    addVitePlugin(TreeShakePlugin.vite(getTreeshakeOptions(false)), { server: false })
-    addWebpackPlugin(TreeShakePlugin.webpack(getTreeshakeOptions(true)), { client: false })
-    addWebpackPlugin(TreeShakePlugin.webpack(getTreeshakeOptions(false)), { server: false })
+    addVitePlugin(TreeShakePlugin.vite({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromServer }), { client: false })
+    addVitePlugin(TreeShakePlugin.vite({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromClient }), { server: false })
+    addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromServer }), { client: false })
+    addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromClient }), { server: false })
   }
 
   // Transpile layers within node_modules

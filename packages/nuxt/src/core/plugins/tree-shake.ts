@@ -6,12 +6,11 @@ import { createUnplugin } from 'unplugin'
 
 interface TreeShakePluginOptions {
   sourcemap?: boolean
-  treeShake: Record<string, boolean>
+  treeShake: string[]
 }
 
 export const TreeShakePlugin = createUnplugin((options: TreeShakePluginOptions) => {
-  const fnsToShake = Object.entries(options.treeShake).filter(([, value]) => value).map(([key]) => key)
-  const COMPOSABLE_RE = new RegExp(`($|\\s*)(${fnsToShake.join('|')})(?=\\()`, 'g')
+  const COMPOSABLE_RE = new RegExp(`($|\\s*)(${options.treeShake.join('|')})(?=\\()`, 'g')
 
   return {
     name: 'nuxt:server-treeshake:transfrom',
@@ -31,10 +30,12 @@ export const TreeShakePlugin = createUnplugin((options: TreeShakePluginOptions) 
       }
     },
     transform (code, id) {
+      if (!code.match(COMPOSABLE_RE)) { return }
+
       const s = new MagicString(code)
       const strippedCode = stripLiteral(code)
       for (const match of strippedCode.matchAll(COMPOSABLE_RE) || []) {
-        s.overwrite(match.index, match.index + match[0].length, `/*#__PURE__*/ false && ${match[0]}`)
+        s.overwrite(match.index, match.index + match[0].length, `(() => {}) || /*#__PURE__*/ false && ${match[0]}`)
       }
 
       if (s.hasChanged()) {
