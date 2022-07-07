@@ -9,7 +9,7 @@ import {
 import { createError } from 'h3'
 import { withoutBase, isEqual } from 'ufo'
 import NuxtPage from './page'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, throwError, clearError, navigateTo, useError } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, throwError, clearError, navigateTo, useError, isIndividualRender } from '#app'
 // @ts-ignore
 import routes from '#build/routes'
 // @ts-ignore
@@ -49,17 +49,21 @@ function createCurrentLocation (
 }
 
 export default defineNuxtPlugin(async (nuxtApp) => {
+  const baseURL = useRuntimeConfig().app.baseURL
+  const initialURL = process.server ? nuxtApp.ssrContext.url : createCurrentLocation(baseURL, window.location)
+
+  // Self-disable if we are rendering a component with no URL context
+  if (isIndividualRender()) { return }
+
   nuxtApp.vueApp.component('NuxtPage', NuxtPage)
   // TODO: remove before release - present for backwards compatibility & intentionally undocumented
   nuxtApp.vueApp.component('NuxtNestedPage', NuxtPage)
   nuxtApp.vueApp.component('NuxtChild', NuxtPage)
 
-  const baseURL = useRuntimeConfig().app.baseURL
   const routerHistory = process.client
     ? createWebHistory(baseURL)
     : createMemoryHistory(baseURL)
 
-  const initialURL = process.server ? nuxtApp.ssrContext.url : createCurrentLocation(baseURL, window.location)
   const router = createRouter({
     ...routerOptions,
     history: routerHistory,

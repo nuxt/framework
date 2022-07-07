@@ -112,6 +112,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
 function parseRenderQuery (event: CompatibilityEvent) {
   const query = useQuery(event)
   return {
+    ...query,
     components: destr(query.components),
     state: destr(query.state)
   }
@@ -125,7 +126,7 @@ export default eventHandler(async (event) => {
       ? parseRenderQuery(event)
       : await useBody(event)
     : null
-  const url = ssrError?.url as string || event.req.url!
+  const url: string = ssrError?.url as string || customRender?.url || event.req.url!
 
   // Initialize ssr context
   const ssrContext: NuxtSSRContext = {
@@ -137,8 +138,8 @@ export default eventHandler(async (event) => {
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
     error: ssrError,
     nuxt: undefined, /* NuxtApp */
-    render: customRender ? { components: customRender.components } : undefined,
-    payload: customRender ? { state: customRender.state } : undefined
+    render: customRender ? { components: customRender.components || [] } : undefined,
+    payload: customRender ? { state: customRender.state || {} } : undefined
   }
 
   // Render app
