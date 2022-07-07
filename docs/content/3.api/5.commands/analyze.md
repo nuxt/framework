@@ -12,3 +12,5 @@ The `analyze` command builds Nuxt and analyzes the production bundle (experiment
 Option        | Default          | Description
 -------------------------|-----------------|------------------
 `rootDir` | `.` | The directory of the target application.
+
+This command sets `process.env.NODE_ENV` to `production`.
