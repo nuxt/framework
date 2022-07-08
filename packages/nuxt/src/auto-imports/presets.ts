@@ -35,7 +35,6 @@ export const appPreset = defineUnimportPreset({
     'useCookie',
     'useRequestHeaders',
     'useRequestEvent',
-    'isIndividualRender',
     'useRouter',
     'useRoute',
     'useActiveRoute',

@@ -46,6 +46,8 @@ interface _NuxtApp {
 
   [key: string]: any
 
+  /** @private */
+  _isIndividualRender?: boolean
   _asyncDataPromises?: Record<string, Promise<any>>
 
   ssrContext?: SSRContext & {
@@ -103,6 +105,7 @@ export function createNuxtApp (options: CreateOptions) {
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
     isHydrating: process.client,
+    _isIndividualRender: !!options.ssrContext?.render,
     _asyncDataPromises: {},
     ...options
   } as any as NuxtApp
