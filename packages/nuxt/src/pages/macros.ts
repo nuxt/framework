@@ -48,7 +48,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       if (scriptImport) {
         // https://github.com/vuejs/vue-loader/pull/1911
         // https://github.com/vitejs/vite/issues/8473
-        const parsed = parseURL(scriptImport.specifier.replace('?macro=true', ''))
+        const parsed = parseURL(decodeURIComponent(pathToFileURL(scriptImport.specifier.replace('?macro=true', '')).href))
         const specifier = withQuery(parsed.pathname, { macro: 'true', ...parseQuery(parsed.search) })
         s.overwrite(0, code.length, `export { meta } from "${specifier}"`)
         return result()
