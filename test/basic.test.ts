@@ -351,7 +351,7 @@ describe('selective rendering of global components', () => {
     `)
     expect(result.state).toMatchInlineSnapshot(`
       {
-        "error": null,
+        "$serror": null,
       }
     `)
     expect(Object.keys(result)).toMatchInlineSnapshot(`
@@ -387,7 +387,7 @@ describe('selective rendering of global components', () => {
     `)
     expect(result.state).toMatchInlineSnapshot(`
       {
-        "error": null,
+        "$serror": null,
       }
     `)
     expect(Object.keys(result)).toMatchInlineSnapshot(`
