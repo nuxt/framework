@@ -1720,7 +1720,7 @@ __metadata:
     ufo: ^0.8.5
     unbuild: latest
     unimport: ^0.4.1
-    vite: ~3.0.0-beta.7
+    vite: ~3.0.0-beta.8
   languageName: unknown
   linkType: soft
 
@@ -1838,7 +1838,7 @@ __metadata:
     ufo: ^0.8.5
     unbuild: latest
     unplugin: ^0.7.1
-    vite: ~3.0.0-beta.7
+    vite: ~3.0.0-beta.8
     vite-node: ^0.17.0
     vite-plugin-checker: ^0.4.7
     vue: 3.2.37
@@ -14748,7 +14748,39 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 04e670f1bc332d50a0b7d7a2bc3fc7b01370e2a7e1a706d27f9ed57b681558beca06a8681da45b393eeaa6725fb84457176acad4c7c7bb653167d5eea50425d8
+  checksum: 22c66cbcf69a428c0844d76158ac8e65337915b741105e68461427b880dd345eb1f8573c766bdfdeb4c2d3df7b84f85833663b4b3fe8f20f7d7b381f952c4726
+  languageName: node
+  linkType: hard
+
+"vite@npm:~3.0.0-beta.8":
+  version: 3.0.0-beta.8
+  resolution: "vite@npm:3.0.0-beta.8"
+  dependencies:
+    esbuild: ^0.14.47
+    fsevents: ~2.3.2
+    postcss: ^8.4.14
+    resolve: ^1.22.1
+    rollup: ^2.75.6
+  peerDependencies:
+    less: "*"
+    sass: "*"
+    stylus: "*"
+    terser: ^5.4.0
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    less:
+      optional: true
+    sass:
+      optional: true
+    stylus:
+      optional: true
+    terser:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 22c66cbcf69a428c0844d76158ac8e65337915b741105e68461427b880dd345eb1f8573c766bdfdeb4c2d3df7b84f85833663b4b3fe8f20f7d7b381f952c4726
   languageName: node
   linkType: hard
 
