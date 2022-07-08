@@ -144,7 +144,7 @@ const ${hashId(chunk.id + '-' + chunk.code)} = ${chunk.code}
 `).join('\n')
 
   const manifestCode = `const __modules__ = ${
-    genObjectFromRawEntries(chunks.map(chunk => [chunk.id, hashId(chunk.id)]))
+    genObjectFromRawEntries(chunks.map(chunk => [chunk.id, hashId(chunk.id + '-' + chunk.code)]))
   }`
 
   // https://github.com/vitejs/vite/blob/main/packages/vite/src/node/ssr/ssrModuleLoader.ts
