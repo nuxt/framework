@@ -105,7 +105,7 @@ export function createNuxtApp (options: CreateOptions) {
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
     isHydrating: process.client,
-    _isIndividualRender: !!options.ssrContext?.render,
+    _isIndividualRender: process.server && options.ssrContext?.url.startsWith('/__nuxt_render'),
     _asyncDataPromises: {},
     ...options
   } as any as NuxtApp
