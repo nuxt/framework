@@ -140,7 +140,7 @@ export async function bundleRequest (opts: TransformOptions, entryURL: string) {
 // Parents: \n${listIds(chunk.parents)}
 // Dependencies: \n${listIds(chunk.deps)}
 // --------------------
-const ${hashId(chunk.code)} = ${chunk.code}
+const ${hashId(chunk.id + '-' + chunk.code)} = ${chunk.code}
 `).join('\n')
 
   const manifestCode = `const __modules__ = ${
