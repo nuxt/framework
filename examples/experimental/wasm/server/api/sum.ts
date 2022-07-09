@@ -1,15 +1,13 @@
 import { useQuery, defineLazyHandler } from 'h3'
 
 export default defineLazyHandler(async () => {
-  const {
-    exports: { sum }
-  } = await loadWasmInstance(
+  const { exports: { sum } } = await loadWasmInstance(
     // @ts-ignore
     () => import('~/server/wasm/sum.wasm')
   )
 
-  return (req) => {
-    const { a = 0, b = 0 } = useQuery(req)
+  return (event) => {
+    const { a = 0, b = 0 } = useQuery(event)
     return { sum: sum(a, b) }
   }
 })
