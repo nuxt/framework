@@ -1,7 +1,9 @@
-import { useQuery, lazyHandle } from 'h3'
+import { useQuery, defineLazyHandler } from 'h3'
 
-export default lazyHandle(async () => {
-  const { exports: { sum } } = await loadWasmInstance(
+export default defineLazyHandler(async () => {
+  const {
+    exports: { sum }
+  } = await loadWasmInstance(
     // @ts-ignore
     () => import('~/server/wasm/sum.wasm')
   )
