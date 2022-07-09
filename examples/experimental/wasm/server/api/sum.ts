@@ -1,4 +1,4 @@
-import { useQuery, defineLazyHandler } from 'h3'
+import { defineLazyHandler } from 'h3'
 
 export default defineLazyHandler(async () => {
   const { exports: { sum } } = await loadWasmInstance(
