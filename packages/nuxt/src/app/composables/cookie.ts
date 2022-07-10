@@ -54,7 +54,7 @@ function readRawCookies (opts: CookieOptions = {}): Record<string, string> {
 }
 
 function serializeCookie (name: string, value: any, opts: CookieSerializeOptions = {}) {
-  if (value === null || value === undefined) {
+  if (value == null) {
     return serialize(name, value, { ...opts, maxAge: -1 })
   }
   return serialize(name, value, opts)
