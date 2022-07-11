@@ -62,9 +62,9 @@ export default defineNuxtModule({
             for (const page of pages) {
               // Skip dynamic paths
               if (page.path.includes(':')) { continue }
-              const path = joinURL(currentPath, page.path)
-              prerenderRoutes.add(path)
-              if (page.children) { processPages(page.children, path) }
+              const route = joinURL(currentPath, page.path)
+              prerenderRoutes.add(route)
+              if (page.children) { processPages(page.children, route) }
             }
           }
           processPages(pages)
