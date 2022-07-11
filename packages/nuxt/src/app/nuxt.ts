@@ -205,6 +205,10 @@ export function defineNuxtPlugin<T> (plugin: Plugin<T>) {
 export function callWithNuxt<T extends (...args: any[]) => any> (nuxt: NuxtApp | _NuxtApp, setup: T, args?: Parameters<T>) {
   const fn = () => args ? setup(...args as Parameters<T>) : setup()
   if (process.server) {
+    if (!nuxtAppCtx.use()) {
+      // set instance to unctx, #5740
+      nuxtAppCtx.set(nuxt)
+    }
     return nuxtAppCtx.callAsync<ReturnType<T>>(nuxt, fn)
   } else {
     // In client side we could assume nuxt app is singleton
