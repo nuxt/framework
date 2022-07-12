@@ -183,27 +183,32 @@ export async function applyPlugins (nuxtApp: NuxtApp, plugins: Plugin[]) {
 export function normalizePlugins (_plugins: Plugin[]) {
   let hasUnwrappedPlugin = false
   let hasLegacyInject = false
+  let hasInvalidPlugin = false
 
   const plugins = _plugins.map((plugin) => {
     if (typeof plugin !== 'function') {
-      return () => {}
+      hasInvalidPlugin = true
+      return null
     }
     if (plugin.length > 1) {
-      hasUnwrappedPlugin = true
-      return () => {}
+      hasLegacyInject = true
+      return null
     }
     if (!isNuxtPlugin(plugin)) {
-      hasLegacyInject = true
+      hasUnwrappedPlugin = true
+      // Allow usage without wrapper but warn
     }
     return plugin
-  })
+  }).filter(Boolean)
 
   if (process.dev && hasLegacyInject) {
-    console.warn('[nuxt] You are using a legacy Nuxt 2 format plugin which takes a second argument. It has been ignored, and in the future may throw a fatal error.')
+    console.warn('[warn] [nuxt] You are using a plugin with legacy Nuxt 2 format which takes a second argument. It has been ignored, and in the future may throw a fatal error.')
   }
-
+  if (process.dev && hasInvalidPlugin) {
+    console.warn('[warn] [nuxt] Some plugins are not exposing a function and skipped.')
+  }
   if (process.dev && hasUnwrappedPlugin) {
-    console.warn('[nuxt] You are using a plugin that has not been wrapped in `defineNuxtPlugin`. It is advised to wrap your plugins as in the future this may enable enhancements.')
+    console.warn('[warn] [nuxt] You are using a plugin that has not been wrapped in `defineNuxtPlugin`. It is advised to wrap your plugins as in the future this may enable enhancements.')
   }
 
   return plugins as Plugin[]
