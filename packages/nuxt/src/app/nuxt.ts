@@ -189,13 +189,13 @@ export function normalizePlugins (_plugins: Plugin[]) {
     }
     if (plugin.length > 1) {
       needsLegacyContext = true
-      return (nuxtApp: NuxtApp) => (plugin as any)(nuxtApp, nuxtApp.provide)
+      return () => {}
     }
     return plugin
   })
 
   if (process.dev && needsLegacyContext) {
-    console.warn('[nuxt] You are using a legacy Nuxt 2 format plugin which takes a second argument. In the future this will throw a fatal error.')
+    console.warn('[nuxt] You are using a legacy Nuxt 2 format plugin which takes a second argument. It has been ignored, and in the future may throw a fatal error.')
   }
 
   return plugins as Plugin[]
