@@ -203,7 +203,7 @@ export function normalizePlugins (_plugins: Plugin[]) {
   }
 
   if (process.dev && isUnwrappedPlugin) {
-    console.warn('[nuxt] You are using a plugin that has not been wrapped in `defineNuxtPlugin`. It is advised to wrap your plugins as in future this may enable enhancements.')
+    console.warn('[nuxt] You are using a plugin that has not been wrapped in `defineNuxtPlugin`. It is advised to wrap your plugins as in the future this may enable enhancements.')
   }
 
   return plugins as Plugin[]
