@@ -51,6 +51,12 @@ export default defineNuxtCommand({
     const { loadNuxt, buildNuxt } = await loadKit(rootDir)
 
     let currentNuxt: Nuxt
+    const showURL = () => {
+      listener.showURL({
+        // TODO: Normalize URL with trailing slash within schema
+        baseURL: withTrailingSlash(currentNuxt?.options.app.baseURL) || '/'
+      })
+    }
     const load = async (isRestart: boolean, reason?: string) => {
       try {
         loadingMessage = `${reason ? reason + '. ' : ''}${isRestart ? 'Restarting' : 'Starting'} nuxt...`
@@ -63,9 +69,7 @@ export default defineNuxtCommand({
         }
         currentNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
         if (!isRestart) {
-          listener.showURL({
-            baseURL: currentNuxt.options.app.baseURL
-          })
+          showURL()
         }
 
         await currentNuxt.ready()
@@ -77,9 +81,7 @@ export default defineNuxtCommand({
         currentHandler = currentNuxt.server.app
         if (isRestart && args.clear !== false) {
           showBanner()
-          listener.showURL({
-            baseURL: currentNuxt.options.app.baseURL
-          })
+          showURL()
         }
       } catch (err) {
         consola.error(`Cannot ${isRestart ? 'restart' : 'start'} nuxt: `, err)
