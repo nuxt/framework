@@ -112,7 +112,8 @@ export async function initNitro (nuxt: Nuxt) {
     patterns: [
       ...['#app', /^#build(\/|$)/]
         .map(p => [p, 'Vue app aliases are not allowed in server routes.']) as [RegExp | string, string][]
-    ]
+    ],
+    exclude: [/core[\\/]runtime[\\/]nitro[\\/]renderer/]
   }))
 
   // Extend nitro config with hook
