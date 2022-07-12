@@ -181,12 +181,22 @@ export async function applyPlugins (nuxtApp: NuxtApp, plugins: Plugin[]) {
 }
 
 export function normalizePlugins (_plugins: Plugin[]) {
+  let needsLegacyContext = false
+
   const plugins = _plugins.map((plugin) => {
     if (typeof plugin !== 'function') {
       return () => {}
     }
+    if (plugin.length > 1) {
+      needsLegacyContext = true
+      return (nuxtApp: NuxtApp) => (plugin as any)(nuxtApp, nuxtApp.provide)
+    }
     return plugin
   })
+
+  if (process.dev && needsLegacyContext) {
+    console.warn('[nuxt] You are using a legacy Nuxt 2 format plugin which takes a second argument. In the future this will throw a fatal error.')
+  }
 
   return plugins as Plugin[]
 }
