@@ -234,6 +234,26 @@ describe('layouts', () => {
     expect(html).toContain('with-layout.vue')
     expect(html).toContain('Custom Layout:')
   })
+
+  it('should apply desktop layout', async () => {
+    const html = await $fetch('/with-desktop-layout')
+
+    // Snapshot
+    // expect(html).toMatchInlineSnapshot()
+
+    expect(html).toContain('with-desktop-layout.vue')
+    expect(html).toContain('Desktop Layout:')
+  })
+
+  it('should apply mobile layout', async () => {
+    const html = await $fetch('/with-mobile-layout')
+
+    // Snapshot
+    // expect(html).toMatchInlineSnapshot()
+
+    expect(html).toContain('with-mobile-layout.vue')
+    expect(html).toContain('Mobile Layout:')
+  })
 })
 
 describe('reactivity transform', () => {
