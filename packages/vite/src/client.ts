@@ -45,6 +45,7 @@ export async function buildClient (ctx: ViteBuildContext) {
     build: {
       rollupOptions: {
         output: {
+          // https://github.com/vitejs/vite/tree/main/packages/vite/src/node/build.ts#L464-L478
           assetFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].[ext]')),
           chunkFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].mjs')),
           entryFileNames: ctx.nuxt.options.dev ? 'entry.mjs' : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].mjs'))
