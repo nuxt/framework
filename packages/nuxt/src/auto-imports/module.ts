@@ -57,10 +57,10 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     composablesDirs = composablesDirs.map(dir => normalize(dir))
 
     // Support for importing from '#imports'
-    // addTemplate({
-    //   filename: 'imports.mjs',
-    //   getContents: () => ctx.toExports()
-    // })
+    addTemplate({
+      filename: 'imports.mjs',
+      getContents: () => ctx.toExports() + '\nthrow new Error("`#imports` should be transformed with real imports. There seems to be something wrong with the auto-imports plugin.")'
+    })
     nuxt.options.alias['#imports'] = join(nuxt.options.buildDir, 'imports')
 
     // Transpile and injection
