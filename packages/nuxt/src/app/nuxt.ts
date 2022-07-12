@@ -181,34 +181,34 @@ export async function applyPlugins (nuxtApp: NuxtApp, plugins: Plugin[]) {
 }
 
 export function normalizePlugins (_plugins: Plugin[]) {
-  let hasUnwrappedPlugin = false
-  let hasLegacyInject = false
-  let hasInvalidPlugin = false
+  const unwrappedPlugins = []
+  const legacyInjectPlugins = []
+  const invalidPlugins = []
 
   const plugins = _plugins.map((plugin) => {
     if (typeof plugin !== 'function') {
-      hasInvalidPlugin = true
+      invalidPlugins.push(plugin)
       return null
     }
     if (plugin.length > 1) {
-      hasLegacyInject = true
+      legacyInjectPlugins.push(plugin)
       return null
     }
     if (!isNuxtPlugin(plugin)) {
-      hasUnwrappedPlugin = true
+      unwrappedPlugins.push(plugin)
       // Allow usage without wrapper but warn
     }
     return plugin
   }).filter(Boolean)
 
-  if (process.dev && hasLegacyInject) {
-    console.warn('[warn] [nuxt] You are using a plugin with legacy Nuxt 2 format which takes a second argument. It has been ignored, and in the future may throw a fatal error.')
+  if (process.dev && legacyInjectPlugins.length) {
+    console.warn('[warn] [nuxt] You are using a plugin with legacy Nuxt 2 format (context, inject). It has been ignored, and in the future may throw a fatal error:', legacyInjectPlugins.map(p => p.name || p).join(','))
   }
-  if (process.dev && hasInvalidPlugin) {
-    console.warn('[warn] [nuxt] Some plugins are not exposing a function and skipped.')
+  if (process.dev && invalidPlugins.length) {
+    console.warn('[warn] [nuxt] Some plugins are not exposing a function and skipped:', invalidPlugins)
   }
-  if (process.dev && hasUnwrappedPlugin) {
-    console.warn('[warn] [nuxt] You are using a plugin that has not been wrapped in `defineNuxtPlugin`. It is advised to wrap your plugins as in the future this may enable enhancements.')
+  if (process.dev && unwrappedPlugins.length) {
+    console.warn('[warn] [nuxt] You are using a plugin that has not been wrapped in `defineNuxtPlugin`. It is advised to wrap your plugins as in the future this may enable enhancements:', unwrappedPlugins.map(p => p.name || p).join(','))
   }
 
   return plugins as Plugin[]
