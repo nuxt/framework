@@ -210,7 +210,9 @@ export default {
     /** Each item in the array maps to a newly-created `<style>` element, where object properties map to attributes. */
     style: [],
     /** Each item in the array maps to a newly-created `<script>` element, where object properties map to attributes. */
-    script: []
+    script: [],
+    charset: 'utf-8',
+    viewport: 'width=device-width, initial-scale=1'
   },
 
   /**
