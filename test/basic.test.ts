@@ -2,6 +2,7 @@ import { promises as fsp } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { setup, fetch, $fetch, startServer, isDev } from '@nuxt/test-utils'
 import { join } from 'pathe'
+import { isWindows } from 'std-env'
 import { expectNoClientErrors, fixturesDir, expectWithPolling, renderPage } from './utils'
 
 const fixturePath = join(fixturesDir, 'basic')
@@ -451,6 +452,6 @@ if (isDev()) {
       expect(pageErrors).toEqual([])
       expect(consoleLogErrors).toEqual([])
       expect(consoleLogWarnings).toEqual([])
-    }, 30_000)
+    }, isWindows ? 60_000 : 30_000)
   })
 }
