@@ -5,7 +5,7 @@ toc: false
 ---
 
 ::alert{type=info icon=💡}
-`components/myNuxtLink.js` defines a custom `<NuxtLink>`.
+`components/MyNuxtLink.ts` defines a custom `<NuxtLink>`.
 ::
 
 ::ReadMore{link="/api/components/nuxt-link"}
