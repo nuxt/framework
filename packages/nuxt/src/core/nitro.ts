@@ -29,6 +29,7 @@ export async function initNitro (nuxt: Nuxt) {
     handlers,
     devHandlers: [],
     baseURL: nuxt.options.app.baseURL,
+    virtual: {},
     runtimeConfig: {
       ...nuxt.options.runtimeConfig,
       nitro: {
@@ -100,6 +101,21 @@ export async function initNitro (nuxt: Nuxt) {
     }
   })
 
+  // Add fallback server for `ssr: false`
+  if (!nuxt.options.ssr) {
+    nitroConfig.virtual['#build/dist/server/server.mjs'] = 'export default () => {}'
+  }
+
+  // Register nuxt protection patterns
+  nitroConfig.rollupConfig.plugins.push(ImportProtectionPlugin.rollup({
+    rootDir: nuxt.options.rootDir,
+    patterns: [
+      ...['#app', /^#build(\/|$)/]
+        .map(p => [p, 'Vue app aliases are not allowed in server routes.']) as [RegExp | string, string][]
+    ],
+    exclude: [/core[\\/]runtime[\\/]nitro[\\/]renderer/]
+  }))
+
   // Extend nitro config with hook
   await nuxt.callHook('nitro:config', nitroConfig)
 
@@ -114,18 +130,6 @@ export async function initNitro (nuxt: Nuxt) {
 
   // Connect hooks
   nuxt.hook('close', () => nitro.hooks.callHook('close'))
-
-  // Register nuxt protection patterns
-  nitro.hooks.hook('rollup:before', (nitro) => {
-    const plugin = ImportProtectionPlugin.rollup({
-      rootDir: nuxt.options.rootDir,
-      patterns: [
-        ...['#app', /^#build(\/|$)/]
-          .map(p => [p, 'Vue app aliases are not allowed in server routes.']) as [RegExp | string, string][]
-      ]
-    })
-    nitro.options.rollupConfig.plugins.push(plugin)
-  })
 
   // Setup handlers
   const devMidlewareHandler = dynamicEventHandler()
