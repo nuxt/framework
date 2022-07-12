@@ -48,7 +48,7 @@ export async function bundle (nuxt: Nuxt) {
           entries: [
             resolve(nuxt.options.appDir, 'entry.ts')
           ],
-          include: ['vue', 'vue-router']
+          include: ['vue']
         },
         css: resolveCSSOptions(nuxt),
         build: {
