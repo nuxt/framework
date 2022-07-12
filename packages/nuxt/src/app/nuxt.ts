@@ -181,28 +181,28 @@ export async function applyPlugins (nuxtApp: NuxtApp, plugins: Plugin[]) {
 }
 
 export function normalizePlugins (_plugins: Plugin[]) {
-  let isUnwrappedPlugin = false
-  let needsLegacyInject = false
+  let hasUnwrappedPlugin = false
+  let hasLegacyInject = false
 
   const plugins = _plugins.map((plugin) => {
     if (typeof plugin !== 'function') {
       return () => {}
     }
     if (plugin.length > 1) {
-      needsLegacyInject = true
+      hasUnwrappedPlugin = true
       return () => {}
     }
     if (!isNuxtPlugin(plugin)) {
-      isUnwrappedPlugin = true
+      hasLegacyInject = true
     }
     return plugin
   })
 
-  if (process.dev && needsLegacyInject) {
+  if (process.dev && hasLegacyInject) {
     console.warn('[nuxt] You are using a legacy Nuxt 2 format plugin which takes a second argument. It has been ignored, and in the future may throw a fatal error.')
   }
 
-  if (process.dev && isUnwrappedPlugin) {
+  if (process.dev && hasUnwrappedPlugin) {
     console.warn('[nuxt] You are using a plugin that has not been wrapped in `defineNuxtPlugin`. It is advised to wrap your plugins as in the future this may enable enhancements.')
   }
 
