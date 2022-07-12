@@ -192,7 +192,11 @@ export function normalizePlugins (_plugins: Plugin[]) {
     }
     if (plugin.length > 1) {
       legacyInjectPlugins.push(plugin)
-      return null
+      // Allow usage without wrapper but warn
+      // TODO: Skip invalid in next releases
+      // @ts-ignore
+      return (nuxtApp: NuxtApp) => plugin(nuxtApp, nuxtApp.provide)
+      // return null
     }
     if (!isNuxtPlugin(plugin)) {
       unwrappedPlugins.push(plugin)
@@ -202,7 +206,7 @@ export function normalizePlugins (_plugins: Plugin[]) {
   }).filter(Boolean)
 
   if (process.dev && legacyInjectPlugins.length) {
-    console.warn('[warn] [nuxt] You are using a plugin with legacy Nuxt 2 format (context, inject). It has been ignored, and in the future may throw a fatal error:', legacyInjectPlugins.map(p => p.name || p).join(','))
+    console.warn('[warn] [nuxt] You are using a plugin with legacy Nuxt 2 format (context, inject) which is likely to be broken. In the future they will be ignored:', legacyInjectPlugins.map(p => p.name || p).join(','))
   }
   if (process.dev && invalidPlugins.length) {
     console.warn('[warn] [nuxt] Some plugins are not exposing a function and skipped:', invalidPlugins)
