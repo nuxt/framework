@@ -34,12 +34,12 @@ export default defineNuxtCommand({
     }
 
     const listener = await listen(serverHandler, {
+      showURL: false,
       clipboard: args.clipboard,
       open: args.open || args.o,
       port: args.port || args.p || process.env.NUXT_PORT,
       hostname: args.host || args.h || process.env.NUXT_HOST,
       https: Boolean(args.https),
-      baseURL: args.baseURL || process.env.NUXT_BASE_URL,
       certificate: (args['ssl-cert'] && args['ssl-key']) && {
         cert: args['ssl-cert'],
         key: args['ssl-key']
@@ -62,6 +62,12 @@ export default defineNuxtCommand({
           await currentNuxt.close()
         }
         currentNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
+        if (!isRestart) {
+          listener.showURL({
+            baseURL: currentNuxt.options.app.baseURL
+          })
+        }
+
         await currentNuxt.ready()
         await currentNuxt.hooks.callHook('listen', listener.server, listener)
         await Promise.all([
