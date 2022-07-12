@@ -111,6 +111,37 @@ export default {
         })
       }
     },
+
+    /**
+     * Default values for layout transitions.
+     *
+     * This can be overridden with `definePageMeta` on an individual page.
+     * Only JSON-serializable values are allowed.
+     *
+     * @see https://vuejs.org/api/built-in-components.html#transition
+     * @type {boolean | typeof import('vue').TransitionProps}
+     */
+    layoutTransition: { name: 'layout', mode: 'out-in' },
+    /**
+     * Default values for page transitions.
+     *
+     * This can be overridden with `definePageMeta` on an individual page.
+     * Only JSON-serializable values are allowed.
+     *
+     * @see https://vuejs.org/api/built-in-components.html#transition
+     * @type {boolean | typeof import('vue').TransitionProps}
+     */
+    pageTransition: { name: 'page', mode: 'out-in' },
+    /**
+     * Default values for KeepAlive configuration between pages.
+     *
+     * This can be overridden with `definePageMeta` on an individual page.
+     * Only JSON-serializable values are allowed.
+     *
+     * @see https://vuejs.org/api/built-in-components.html#keepalive
+     * @type {boolean | typeof import('vue').KeepAliveProps}
+     */
+    keepalive: false,
   },
   /**
    * The path to a templated HTML file for rendering Nuxt responses.

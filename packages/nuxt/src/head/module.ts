@@ -1,8 +1,6 @@
 import { resolve } from 'pathe'
-import { addPlugin, addTemplate, defineNuxtModule } from '@nuxt/kit'
-import defu from 'defu'
+import { addPlugin, defineNuxtModule } from '@nuxt/kit'
 import { distDir } from '../dirs'
-import type { MetaObject } from './runtime'
 
 export default defineNuxtModule({
   meta: {
@@ -20,19 +18,6 @@ export default defineNuxtModule({
 
     // Add #head alias
     nuxt.options.alias['#head'] = runtimeDir
-
-    // Global meta -for Bridge, this is necessary to repeat here
-    // and in packages/schema/src/config/_app.ts
-    const globalMeta: MetaObject = defu(nuxt.options.app.head, {
-      charset: options.charset,
-      viewport: options.viewport
-    })
-
-    // Add global meta configuration
-    addTemplate({
-      filename: 'meta.config.mjs',
-      getContents: () => 'export default ' + JSON.stringify({ globalMeta })
-    })
 
     // Add generic plugin
     addPlugin({ src: resolve(runtimeDir, 'plugin') })

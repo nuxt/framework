@@ -70,6 +70,14 @@ export const serverPluginTemplate = {
   }
 }
 
+// Add app configuration
+export const appConfigTemplate = {
+  filename: 'app.config.mjs',
+  getContents: (ctx: TemplateContext) => {
+    return Object.entries(ctx.nuxt.options.app).map(([k, v]) => `export const ${k} = ${JSON.stringify(v)}`).join('\n\n')
+  }
+}
+
 export const appViewTemplate = {
   filename: 'views/document.template.mjs',
   write: true,
