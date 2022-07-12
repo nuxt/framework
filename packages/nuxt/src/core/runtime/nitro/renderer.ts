@@ -58,7 +58,6 @@ const getSSRRenderer = lazyCachedFunction(async () => {
     const html = await _renderToString(input, context)
     // In development with vite-node, the manifest is on-demand and will be available after rendering
     if (process.env.NUXT_VITE_NODE_OPTIONS) {
-      console.log('HII')
       renderer.rendererContext.updateManifest(await getClientManifest())
     }
     return `<div id="__nuxt">${html}</div>`
