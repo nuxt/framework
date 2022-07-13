@@ -28,7 +28,7 @@ export async function buildClient (ctx: ViteBuildContext) {
           // In CSS we only use relative paths until we craft a clever runtime CSS hack
           return { relative: true }
         }
-        return { runtime: `__publicAssetsURL(${JSON.stringify(filename)})` }
+        return { runtime: `globalThis.__publicAssetsURL(${JSON.stringify(filename)})` }
       }
     },
     define: {
