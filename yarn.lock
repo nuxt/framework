@@ -1629,7 +1629,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nuxt/kit@workspace:packages/kit"
   dependencies:
-    "@nuxt/schema": ^3.0.0-rc.4
+    "@nuxt/schema": ^3.0.0-rc.5
     "@types/lodash.template": ^4
     "@types/semver": ^7
     c12: ^0.2.8
@@ -1714,8 +1714,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nuxt/test-utils@workspace:packages/test-utils"
   dependencies:
-    "@nuxt/kit": ^3.0.0-rc.4
-    "@nuxt/schema": ^3.0.0-rc.4
+    "@nuxt/kit": ^3.0.0-rc.5
+    "@nuxt/schema": ^3.0.0-rc.5
     defu: ^6.0.0
     execa: ^6.1.0
     get-port-please: ^2.5.0
@@ -1759,12 +1759,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/vite-builder@^3.0.0-rc.4, @nuxt/vite-builder@workspace:packages/vite":
+"@nuxt/vite-builder@^3.0.0-rc.5, @nuxt/vite-builder@workspace:packages/vite":
   version: 0.0.0-use.local
   resolution: "@nuxt/vite-builder@workspace:packages/vite"
   dependencies:
-    "@nuxt/kit": ^3.0.0-rc.4
-    "@nuxt/schema": ^3.0.0-rc.4
+    "@nuxt/kit": ^3.0.0-rc.5
+    "@nuxt/schema": ^3.0.0-rc.5
     "@rollup/plugin-replace": ^4.0.0
     "@types/cssnano": ^5
     "@vitejs/plugin-vue": ^3.0.0
@@ -1809,8 +1809,8 @@ __metadata:
   dependencies:
     "@babel/core": ^7.18.6
     "@nuxt/friendly-errors-webpack-plugin": ^2.5.2
-    "@nuxt/kit": ^3.0.0-rc.4
-    "@nuxt/schema": ^3.0.0-rc.4
+    "@nuxt/kit": ^3.0.0-rc.5
+    "@nuxt/schema": ^3.0.0-rc.5
     "@types/pify": ^5.0.1
     "@types/webpack-bundle-analyzer": ^4.4.1
     "@types/webpack-dev-middleware": ^5.0.2
@@ -1832,6 +1832,7 @@ __metadata:
     memfs: ^3.4.7
     mini-css-extract-plugin: ^2.6.1
     mlly: ^0.5.4
+    ohash: ^0.1.0
     pathe: ^0.3.2
     pify: ^6.0.0
     postcss: ^8.4.14
@@ -5234,9 +5235,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.172":
-  version: 1.4.187
-  resolution: "electron-to-chromium@npm:1.4.187"
-  checksum: 258be88d92b3f34ffba8ea1d90ecc918f6aa74954af67d0439a649648a17738dad3042ef3f26be141177f5ffb0c5c90dfcaa18ae4dba7bc2937ff21d64a9acb6
+  version: 1.4.188
+  resolution: "electron-to-chromium@npm:1.4.188"
+  checksum: 7c18659273e51b72dbaba31bb50e160e33dc794907e749e0eb9ba56f954cb9d63c27db5ceebec6c566a3300fdceb2deabd5b528b967de5c1f78382089871ad2f
   languageName: node
   linkType: hard
 
@@ -9148,9 +9149,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitropack@npm:^0.4.10":
-  version: 0.4.10
-  resolution: "nitropack@npm:0.4.10"
+"nitropack@npm:^0.4.11":
+  version: 0.4.11
+  resolution: "nitropack@npm:0.4.11"
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@netlify/functions": ^1.0.0
@@ -9214,7 +9215,7 @@ __metadata:
   bin:
     nitro: dist/cli.mjs
     nitropack: dist/cli.mjs
-  checksum: 3f8538485c3160aec56135f7dbece37431cb4c710a7d3d0a5c4c1963e60507fbcb52fed3338dd6fd6a1ffb06e93fddbb38abadb0e736afe0708a00d31408fc0f
+  checksum: dfb5cf53511527a5cb858d7372dbdee4da3d7a854515de832a2b8d31f944de32c10f707e2a4dbaf36f58d8cbaaed899c1600d56aff675fc62aa9681d539eb6f4
   languageName: node
   linkType: hard
 
@@ -9584,8 +9585,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nuxi@workspace:packages/nuxi"
   dependencies:
-    "@nuxt/kit": ^3.0.0-rc.4
-    "@nuxt/schema": ^3.0.0-rc.4
+    "@nuxt/kit": ^3.0.0-rc.5
+    "@nuxt/schema": ^3.0.0-rc.5
     "@types/clear": ^0
     "@types/mri": ^1.1.1
     "@types/semver": ^7
@@ -9666,11 +9667,11 @@ __metadata:
   resolution: "nuxt@workspace:packages/nuxt"
   dependencies:
     "@nuxt/devalue": ^2.0.0
-    "@nuxt/kit": ^3.0.0-rc.4
-    "@nuxt/schema": ^3.0.0-rc.4
+    "@nuxt/kit": ^3.0.0-rc.5
+    "@nuxt/schema": ^3.0.0-rc.5
     "@nuxt/telemetry": ^2.1.3
     "@nuxt/ui-templates": ^0.2.1
-    "@nuxt/vite-builder": ^3.0.0-rc.4
+    "@nuxt/vite-builder": ^3.0.0-rc.5
     "@types/fs-extra": ^9.0.13
     "@types/hash-sum": ^1.0.0
     "@vue/reactivity": ^3.2.37
@@ -9689,8 +9690,8 @@ __metadata:
     knitwork: ^0.1.2
     magic-string: ^0.26.2
     mlly: ^0.5.4
-    nitropack: ^0.4.10
-    nuxi: ^3.0.0-rc.4
+    nitropack: ^0.4.11
+    nuxi: ^3.0.0-rc.5
     ohash: ^0.1.0
     ohmyfetch: ^0.4.18
     pathe: ^0.3.2
@@ -10294,23 +10295,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.23.2":
-  version: 1.23.2
-  resolution: "playwright-core@npm:1.23.2"
+"playwright-core@npm:1.23.3":
+  version: 1.23.3
+  resolution: "playwright-core@npm:1.23.3"
   bin:
     playwright: cli.js
-  checksum: 7e5c7adbc436c68e5de8535508746c2734393f77948c08ff1df7d21eaa518cd00d82f49c936b2776be6958dc2d7f18985582d72690ffeee7a59006267e22a391
+  checksum: e83cf0b05d791ded54e155fc8cb5689dcb57e02f315f23f5955d769fbb40685ce085218debbc6e617280b0d432e857631762c010586dfd19a6f14a5149384ecd
   languageName: node
   linkType: hard
 
 "playwright@npm:^1.23.2":
-  version: 1.23.2
-  resolution: "playwright@npm:1.23.2"
+  version: 1.23.3
+  resolution: "playwright@npm:1.23.3"
   dependencies:
-    playwright-core: 1.23.2
+    playwright-core: 1.23.3
   bin:
     playwright: cli.js
-  checksum: 19b32fcc77375366643ac45009dd5a6d25a6a64258aa11da6030fd7bc6bf54366f3740fd7886ed5b03860ac48c4278b7cbd1483e924e3367ad2d3434efe57358
+  checksum: 4562fbc3e5027b84cac2dcbc3119593bf61012548adfb4bafb6b8c8b6e7ae605c2c45c494b4ef82d82651487fd3cdc6767ca56af0092bc8d5cc7177489ed473d
   languageName: node
   linkType: hard
 
