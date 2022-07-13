@@ -101,6 +101,13 @@ export async function bundle (nuxt: Nuxt) {
   if (!nuxt.options.dev) {
     ctx.config.server.hmr = false
     ctx.config.server.watch = undefined
+
+    ctx.config.plugins.push({
+      name: 'nuxt:close-vite-watcher',
+      configureServer (server) {
+        return server?.watcher?.close()
+      }
+    })
   }
 
   await nuxt.callHook('vite:extend', ctx)
