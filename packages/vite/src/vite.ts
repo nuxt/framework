@@ -85,6 +85,15 @@ export async function bundle (nuxt: Nuxt) {
   // to detect whether to inject production or development code (such as HMR code)
   if (!nuxt.options.dev) {
     ctx.config.server.watch = undefined
+
+    // TODO: Workaround for vite watching tsconfig changes
+    // https://github.com/nuxt/framework/pull/5875
+    ctx.config.plugins.push({
+      name: 'nuxt:close-vite-watcher',
+      configureServer (server) {
+        return server?.watcher?.close()
+      }
+    })
   }
 
   await nuxt.callHook('vite:extend', ctx)
