@@ -29,7 +29,7 @@ export async function buildServer (ctx: ViteBuildContext) {
         }
         switch (type) {
           case 'public':
-            return { runtime: `__publicAssetsURL(${JSON.stringify(filename)})` }
+            return { runtime: `globalThis.__publicAssetsURL(${JSON.stringify(filename)})` }
           case 'asset': {
             const relativeFilename = filename.replace(withTrailingSlash(withoutLeadingSlash(ctx.nuxt.options.app.buildAssetsDir)), '')
             return { runtime: `globalThis.__buildAssetsURL(${JSON.stringify(relativeFilename)})` }
