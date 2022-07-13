@@ -48,7 +48,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.17.7, @babel/core@npm:^7.17.9, @babel/core@npm:^7.18.6":
+"@babel/core@npm:^7.17.7, @babel/core@npm:^7.18.6":
   version: 7.18.6
   resolution: "@babel/core@npm:7.18.6"
   dependencies:
@@ -307,7 +307,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-typescript@npm:^7.16.8":
+"@babel/plugin-transform-typescript@npm:^7.18.8":
   version: 7.18.8
   resolution: "@babel/plugin-transform-typescript@npm:7.18.8"
   dependencies:
@@ -1768,7 +1768,7 @@ __metadata:
     "@rollup/plugin-replace": ^4.0.0
     "@types/cssnano": ^5
     "@vitejs/plugin-vue": ^2.3.3
-    "@vitejs/plugin-vue-jsx": ^1.3.10
+    "@vitejs/plugin-vue-jsx": ^2.0.0
     autoprefixer: ^10.4.7
     chokidar: ^3.5.3
     cssnano: ^5.1.12
@@ -2895,17 +2895,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue-jsx@npm:^1.3.10":
-  version: 1.3.10
-  resolution: "@vitejs/plugin-vue-jsx@npm:1.3.10"
+"@vitejs/plugin-vue-jsx@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@vitejs/plugin-vue-jsx@npm:2.0.0"
   dependencies:
-    "@babel/core": ^7.17.9
+    "@babel/core": ^7.18.6
     "@babel/plugin-syntax-import-meta": ^7.10.4
-    "@babel/plugin-transform-typescript": ^7.16.8
-    "@rollup/pluginutils": ^4.2.0
+    "@babel/plugin-transform-typescript": ^7.18.8
     "@vue/babel-plugin-jsx": ^1.1.1
-    hash-sum: ^2.0.0
-  checksum: 868e90363e1234be43c3ced5097c8da430b9feed526c1f6c2dcc8a0546182e942018e6b5e1a0c16c66810b82cd17fa3a8e04ba969db6f253c6f7c490dce83a0b
+  peerDependencies:
+    vite: ^3.0.0
+    vue: ^3.0.0
+  checksum: 197b0dd0263b5b7df22a055155da6d9b7f21098f7de43e94589ce8daa494c12c9850157bc4e228a766fbe602aafa5935e4bef0edec9158a0507cee5581f0a067
   languageName: node
   linkType: hard
 
