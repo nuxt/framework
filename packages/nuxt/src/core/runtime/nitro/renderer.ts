@@ -167,8 +167,8 @@ export default eventHandler(async (event) => {
   await renderMeta(rendered, ssrContext)
 
   // Render server components
-  if (ssrContext.teleports?.['render-target-0']) {
-    const components = Object.entries(ssrContext.teleports)
+  if (customRender) {
+    const components = Object.entries(ssrContext.teleports || [])
       .filter(([key]) => key.startsWith('render-target'))
       .map(([, value]) => ({ html: value.replace(/<!--teleport anchor-->$/, '') }))
 
