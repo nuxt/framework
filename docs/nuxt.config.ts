@@ -1,5 +1,5 @@
 import { defineNuxtConfig } from 'nuxt'
 
 export default defineNuxtConfig({
-  extends: ['./node_modules/@docus/nuxt3-docs']
+  extends: ['./node_modules/@nuxt-themes/nuxt3-docs']
 })
