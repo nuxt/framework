@@ -211,7 +211,17 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     // set vue esm on client
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       if (isClient) {
-        config.resolve.alias.vue = 'vue/dist/vue.esm-bundler'
+        if (Array.isArray(config.resolve.alias)) {
+          config.resolve.alias.push({
+            find: 'vue',
+            replacement: 'vue/dist/vue.esm-bundler'
+          })
+        } else {
+          config.resolve.alias = {
+            ...config.resolve.alias,
+            vue: 'vue/dist/vue.esm-bundler'
+          }
+        }
       }
     })
     nuxt.hook('webpack:config', (configuration) => {
