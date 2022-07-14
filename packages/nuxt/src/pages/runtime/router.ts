@@ -50,7 +50,7 @@ function createCurrentLocation (
 
 export default defineNuxtPlugin(async (nuxtApp) => {
   // Self-disable if we are rendering a component with no URL context
-  if (nuxtApp._isIndividualRender) { return }
+  if (nuxtApp._isolatedRender) { return }
 
   nuxtApp.vueApp.component('NuxtPage', NuxtPage)
   // TODO: remove before release - present for backwards compatibility & intentionally undocumented

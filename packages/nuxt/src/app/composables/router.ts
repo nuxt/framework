@@ -5,17 +5,17 @@ import { useNuxtApp, useRuntimeConfig } from '#app'
 
 export const useRouter = () => {
   const nuxtApp = useNuxtApp()
-  return !nuxtApp || nuxtApp?._isIndividualRender ? null : nuxtApp.$router as Router
+  return !nuxtApp || nuxtApp?._isolatedRender ? null : nuxtApp.$router as Router
 }
 
 export const useRoute = () => {
   const nuxtApp = useNuxtApp()
-  return nuxtApp._isIndividualRender ? null : nuxtApp._route as RouteLocationNormalizedLoaded
+  return nuxtApp._isolatedRender ? null : nuxtApp._route as RouteLocationNormalizedLoaded
 }
 
 export const useActiveRoute = () => {
   const nuxtApp = useNuxtApp()
-  return nuxtApp._isIndividualRender ? null : nuxtApp._activeRoute as RouteLocationNormalizedLoaded
+  return nuxtApp._isolatedRender ? null : nuxtApp._activeRoute as RouteLocationNormalizedLoaded
 }
 
 export interface RouteMiddleware {

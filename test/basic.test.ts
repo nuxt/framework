@@ -338,7 +338,7 @@ describe('automatically keyed composables', () => {
 
 describe('selective rendering of global components', () => {
   it('renders components with route', async () => {
-    const result: ComponentRenderResult = await $fetch(withQuery('/__nuxt_render', {
+    const result: ComponentRenderResult = await $fetch(withQuery('/__nuxt_isolated_render', {
       url: '/foo',
       state: JSON.stringify({}),
       components: JSON.stringify([
@@ -364,7 +364,7 @@ describe('selective rendering of global components', () => {
     `)
   })
   it('renders pure components', async () => {
-    const result: ComponentRenderResult = await $fetch(withQuery('/__nuxt_render', {
+    const result: ComponentRenderResult = await $fetch(withQuery('/__nuxt_isolated_render', {
       components: JSON.stringify([
         {
           name: 'PureComponent',

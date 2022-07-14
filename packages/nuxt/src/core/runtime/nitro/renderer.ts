@@ -121,12 +121,10 @@ function parseRenderQuery (event: CompatibilityEvent) {
 export default eventHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? useQuery(event) : null
-  const customRender = event.req.url?.startsWith('/__nuxt_render')
-    ? event.req.method === 'GET'
-      ? parseRenderQuery(event)
-      : await useBody(event)
+  const isolatedRenderCtx = event.req.url?.startsWith('/__nuxt_isolated_render')
+    ? event.req.method === 'GET' ? parseRenderQuery(event) : await useBody(event)
     : null
-  const url: string = ssrError?.url as string || customRender?.url || event.req.url!
+  const url: string = ssrError?.url as string || isolatedRenderCtx?.url || event.req.url!
 
   // Initialize ssr context
   const ssrContext: NuxtSSRContext = {
@@ -138,8 +136,8 @@ export default eventHandler(async (event) => {
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
     error: ssrError,
     nuxt: undefined, /* NuxtApp */
-    render: customRender ? { components: customRender.components || [] } : undefined,
-    payload: customRender ? { state: customRender.state || {} } : undefined
+    render: isolatedRenderCtx ? { components: isolatedRenderCtx.components || [] } : undefined,
+    payload: isolatedRenderCtx ? { state: isolatedRenderCtx.state || {} } : undefined
   }
 
   // Render app
@@ -167,7 +165,7 @@ export default eventHandler(async (event) => {
   await renderMeta(rendered, ssrContext)
 
   // Render server components
-  if (customRender) {
+  if (isolatedRenderCtx) {
     const components = Object.entries(ssrContext.teleports || [])
       .filter(([key]) => key.startsWith('render-target'))
       .map(([, value]) => ({ html: value.replace(/<!--teleport anchor-->$/, '') }))
