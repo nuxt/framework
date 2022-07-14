@@ -8,13 +8,5 @@
   </div>
 </template>
 
-<script setup>
-const $router = useRouter()
-$router.push({
-  path: '/hello',
-  query: {
-    name: 'John Doe'
-  },
-  hash: '#hash'
-})
-</script>
+<style scoped>
+</style>
