@@ -25,8 +25,8 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
         const clientOnlyComponents = components
           .filter(c => c.mode === 'client' && !components.some(other => other.mode !== 'client' && other.pascalName === c.pascalName))
           .map(c => `${c.pascalName}|${c.kebabName}`)
+          .concat('ClientOnly|client-only')
           .map(component => `<(${component})[^>]*>[\\s\\S]*?<\\/(${component})>`)
-        clientOnlyComponents.push('<(client-only|ClientOnly)[^>]*>[\\s\\S]*?<\\/(client-only|ClientOnly)>')
 
         regexpMap.set(components, new RegExp(`(${clientOnlyComponents.join('|')})`, 'g'))
       }
