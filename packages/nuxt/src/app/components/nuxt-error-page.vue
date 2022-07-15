@@ -3,6 +3,8 @@
 </template>
 
 <script setup>
+import { defineAsyncComponent } from 'vue'
+
 const props = defineProps({
   error: Object
 })
@@ -40,5 +42,5 @@ const getErrorTemplate = process.dev
   ? () => import('@nuxt/ui-templates/templates/error-dev.vue').then(r => r.default || r)
   : () => import('@nuxt/ui-templates/templates/error-500.vue').then(r => r.default || r)
 
-const ErrorTemplate = is404 ? await get404Template() : await getErrorTemplate()
+const ErrorTemplate = defineAsyncComponent(is404 ? get404Template : getErrorTemplate)
 </script>
