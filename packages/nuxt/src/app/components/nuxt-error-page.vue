@@ -37,5 +37,6 @@ const statusMessage = error.statusMessage ?? (is404 ? 'Page Not Found' : 'Intern
 const description = error.message || error.toString()
 const stack = process.dev && !is404 ? error.description || `<pre>${stacktrace}</pre>` : undefined
 
+// TODO: Investigate tree-shaking issues
 const ErrorTemplate = is404 ? Error404 : process.dev ? await import('@nuxt/ui-templates/templates/error-dev.vue').then(r => r.default || r) : Error500
 </script>
