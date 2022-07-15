@@ -3,9 +3,6 @@
 </template>
 
 <script setup>
-import Error404 from '@nuxt/ui-templates/templates/error-404.vue'
-import Error500 from '@nuxt/ui-templates/templates/error-500.vue'
-
 const props = defineProps({
   error: Object
 })
@@ -24,8 +21,8 @@ const stacktrace = (error.stack || '')
     return {
       text,
       internal: (line.includes('node_modules') && !line.includes('.cache')) ||
-          line.includes('internal') ||
-          line.includes('new Promise')
+        line.includes('internal') ||
+        line.includes('new Promise')
     }
   }).map(i => `<span class="stack${i.internal ? ' internal' : ''}">${i.text}</span>`).join('\n')
 
@@ -37,6 +34,11 @@ const statusMessage = error.statusMessage ?? (is404 ? 'Page Not Found' : 'Intern
 const description = error.message || error.toString()
 const stack = process.dev && !is404 ? error.description || `<pre>${stacktrace}</pre>` : undefined
 
-// TODO: Investigate tree-shaking issues
-const ErrorTemplate = is404 ? Error404 : process.dev ? await import('@nuxt/ui-templates/templates/error-dev.vue').then(r => r.default || r) : Error500
+// TODO: Investigate side-effect issue with imports
+const get404Template = () => import('@nuxt/ui-templates/templates/error-404.vue')
+const getErrorTemplate = process.dev
+  ? () => import('@nuxt/ui-templates/templates/error-dev.vue').then(r => r.default || r)
+  : () => import('@nuxt/ui-templates/templates/error-500.vue').then(r => r.default || r)
+
+const ErrorTemplate = is404 ? await get404Template() : await getErrorTemplate()
 </script>
