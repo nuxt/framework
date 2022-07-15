@@ -1,9 +1,10 @@
 import { createRenderer } from 'vue-bundle-renderer'
-import { eventHandler, useQuery } from 'h3'
+import { CompatibilityEvent, eventHandler, useBody, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
+import destr from 'destr'
 import { renderToString as _renderToString } from 'vue/server-renderer'
 
-import type { NuxtApp } from '#app'
+import type { NuxtApp, ComponentRenderResult } from '#app'
 
 // @ts-ignore
 import { useRuntimeConfig } from '#internal/nitro'
@@ -108,10 +109,22 @@ const getSPARenderer = lazyCachedFunction(async () => {
   return { renderToString }
 })
 
+function parseRenderQuery (event: CompatibilityEvent) {
+  const query = useQuery(event)
+  return {
+    ...query,
+    components: destr(query.components),
+    state: destr(query.state)
+  }
+}
+
 export default eventHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? useQuery(event) : null
-  const url = ssrError?.url as string || event.req.url!
+  const isolatedRenderCtx = event.req.url?.startsWith('/__nuxt_isolated_render')
+    ? event.req.method === 'GET' ? parseRenderQuery(event) : await useBody(event)
+    : null
+  const url: string = ssrError?.url as string || isolatedRenderCtx?.url || event.req.url!
 
   // Initialize ssr context
   const ssrContext: NuxtSSRContext = {
@@ -123,7 +136,8 @@ export default eventHandler(async (event) => {
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
     error: ssrError,
     nuxt: undefined, /* NuxtApp */
-    payload: undefined
+    render: isolatedRenderCtx ? { components: isolatedRenderCtx.components || [] } : undefined,
+    payload: isolatedRenderCtx ? { state: isolatedRenderCtx.state || {} } : undefined
   }
 
   // Render app
@@ -148,18 +162,38 @@ export default eventHandler(async (event) => {
     await ssrContext.nuxt.hooks.callHook('app:rendered')
   }
 
+  await renderMeta(rendered, ssrContext)
+
+  // Render server components
+  if (isolatedRenderCtx) {
+    const components = Object.entries(ssrContext.teleports || [])
+      .filter(([key]) => key.startsWith('render-target'))
+      .map(([, value]) => ({ html: value.replace(/<!--teleport anchor-->$/, '') }))
+
+    const result: ComponentRenderResult = {
+      rendered: components,
+      state: ssrContext.payload.state,
+      styles: rendered.renderStyles() + (ssrContext.styles || ''),
+      scripts: (rendered.meta.bodyScriptsPrepend || '') + rendered.renderScripts() + (rendered.meta.bodyScripts || '')
+    }
+
+    return result
+  }
+
   const html = await renderHTML(ssrContext.payload, rendered, ssrContext)
   event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   return html
 })
 
-async function renderHTML (payload: any, rendered: RenderResult, ssrContext: NuxtSSRContext) {
-  const state = `<script>window.__NUXT__=${devalue(payload)}</script>`
-
+async function renderMeta (rendered: RenderResult, ssrContext: NuxtSSRContext) {
   rendered.meta = rendered.meta || {}
   if (ssrContext.renderMeta) {
     Object.assign(rendered.meta, await ssrContext.renderMeta())
   }
+}
+
+function renderHTML (payload: any, rendered: RenderResult, ssrContext: NuxtSSRContext) {
+  const state = `<script>window.__NUXT__=${devalue(payload)}</script>`
 
   return htmlTemplate({
     HTML_ATTRS: (rendered.meta.htmlAttrs || ''),

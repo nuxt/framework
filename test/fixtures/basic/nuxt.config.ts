@@ -2,6 +2,10 @@ import { defineNuxtConfig } from 'nuxt'
 import { addComponent } from '@nuxt/kit'
 
 export default defineNuxtConfig({
+  components: [
+    { path: '~/components/global', global: true },
+    '~/components'
+  ],
   buildDir: process.env.NITRO_BUILD_DIR,
   builder: process.env.TEST_WITH_WEBPACK ? 'webpack' : 'vite',
   extends: [

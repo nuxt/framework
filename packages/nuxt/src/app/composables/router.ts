@@ -4,15 +4,18 @@ import { joinURL } from 'ufo'
 import { useNuxtApp, useRuntimeConfig } from '#app'
 
 export const useRouter = () => {
-  return useNuxtApp()?.$router as Router
+  const nuxtApp = useNuxtApp()
+  return !nuxtApp || nuxtApp?._isolatedRender ? null : nuxtApp.$router as Router
 }
 
 export const useRoute = () => {
-  return useNuxtApp()._route as RouteLocationNormalizedLoaded
+  const nuxtApp = useNuxtApp()
+  return nuxtApp._isolatedRender ? null : nuxtApp._route as RouteLocationNormalizedLoaded
 }
 
 export const useActiveRoute = () => {
-  return useNuxtApp()._activeRoute as RouteLocationNormalizedLoaded
+  const nuxtApp = useNuxtApp()
+  return nuxtApp._isolatedRender ? null : nuxtApp._activeRoute as RouteLocationNormalizedLoaded
 }
 
 export interface RouteMiddleware {
