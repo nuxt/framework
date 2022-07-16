@@ -129,6 +129,20 @@ export async function bundle (nuxt: Nuxt) {
       .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
       .catch(logger.error)
   })
+
+  // Use single watcher instance shared between client and server
+  // https://github.com/nuxt/framework/issues/2047
+  // TODO: Not needed for MacOS
+  let viteWatcher
+  nuxt.hook('vite:serverCreated', async (server: vite.ViteDevServer) => {
+    if (viteWatcher) {
+      await server.watcher.close()
+      server.watcher = viteWatcher
+    } else {
+      viteWatcher = server.watcher
+    }
+  })
+
   await buildClient(ctx)
   await buildServer(ctx)
 }
