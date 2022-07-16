@@ -6,6 +6,7 @@ import { logger, isIgnored } from '@nuxt/kit'
 import type { Options } from '@vitejs/plugin-vue'
 import replace from '@rollup/plugin-replace'
 import { sanitizeFilePath } from 'mlly'
+import { watch } from 'chokidar'
 import { getPort } from 'get-port-please'
 import { buildClient } from './client'
 import { buildServer } from './server'
@@ -130,18 +131,25 @@ export async function bundle (nuxt: Nuxt) {
       .catch(logger.error)
   })
 
-  // Use single watcher instance shared between client and server
+  if (process.dev) {
+    // Use single watcher instance shared between client and server
   // https://github.com/nuxt/framework/issues/2047
   // TODO: Not needed for MacOS
-  let viteWatcher
-  nuxt.hook('vite:serverCreated', async (server: vite.ViteDevServer) => {
-    if (viteWatcher) {
-      await server.watcher.close()
-      server.watcher = viteWatcher
-    } else {
-      viteWatcher = server.watcher
+    const watchOptions = {
+      ignored: [
+        '**/node_modules/**',
+        '**/.git/**'
+      ],
+      ignoreInitial: true,
+      ignorePermissionErrors: true,
+      disableGlobbing: true
     }
-  })
+    const watcher = watch(nuxt.options.rootDir, watchOptions)
+    nuxt.hook('vite:serverCreated', async (server: vite.ViteDevServer) => {
+      await server.watcher.close()
+      server.watcher = watcher
+    })
+  }
 
   await buildClient(ctx)
   await buildServer(ctx)
