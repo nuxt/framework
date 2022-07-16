@@ -24,8 +24,8 @@ interface RenderResult {
     bodyAttrs: string,
     headAttrs: string,
     headTags: string,
-    bodyScriptsPrepend : string,
-    bodyScripts : string
+    bodyScriptsPrepend: string,
+    bodyScripts: string
   }>
 }
 
@@ -86,7 +86,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
       entryFiles = clientManifest.initial.map(file => ({ file }))
     }
 
-    return Promise.resolve({
+    const rendered: RenderResult = {
       html: '<div id="__nuxt"></div>',
       renderResourceHints: () => '',
       renderStyles: () =>
@@ -102,7 +102,13 @@ const getSPARenderer = lazyCachedFunction(async () => {
             return `<script ${isMJS ? 'type="module"' : ''} src="${buildAssetsURL(file)}"></script>`
           })
           .join('')
-    })
+    }
+
+    if (config.meta) {
+      rendered.meta = config.meta
+    }
+
+    return Promise.resolve(rendered)
   }
 
   return { renderToString }
@@ -172,7 +178,7 @@ async function renderHTML (payload: any, rendered: RenderResult, ssrContext: Nux
   })
 }
 
-function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
+function lazyCachedFunction<T> (fn: () => Promise<T>): () => Promise<T> {
   let res: Promise<T> | null = null
   return () => {
     if (res === null) {

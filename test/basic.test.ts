@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 // import { isWindows } from 'std-env'
-import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
+import { setup, fetch, $fetch, startServer, buildFixture, stopServer, loadFixture } from '@nuxt/test-utils'
 import { expectNoClientErrors } from './utils'
 
 await setup({
@@ -9,6 +9,21 @@ await setup({
   server: true,
   browser: true
 })
+
+const rebuildAndRestart = async () => {
+  await stopServer()
+
+  await setup({
+    rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
+    server: true,
+    browser: true
+  })
+
+  await loadFixture()
+  await buildFixture()
+
+  await startServer()
+}
 
 describe('server api', () => {
   it('should serialize', async () => {
@@ -145,6 +160,24 @@ describe('head tags', () => {
     // should render <Head> components
     expect(index).toContain('<title>Basic fixture - Fixture</title>')
   })
+
+  it('should render global scripts in html for ssr disabled', async () => {
+    process.env.SSR_ENABLED = 'false'
+
+    let html = await $fetch('/')
+
+    expect(html).not.toContain('<script src="/config.js"></script')
+
+    await rebuildAndRestart()
+
+    html = await $fetch('/')
+
+    expect(html).toContain('<script src="/config.js"></script')
+
+    process.env.SSR_ENABLED = 'true'
+
+    await rebuildAndRestart()
+  }, 20000)
 })
 
 describe('navigate', () => {

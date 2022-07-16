@@ -1,5 +1,7 @@
+import { ref } from 'vue'
 import { resolve } from 'pathe'
 import { addPlugin, addTemplate, defineNuxtModule } from '@nuxt/kit'
+import { createHead, renderHeadToString } from '@vueuse/head'
 import defu from 'defu'
 import { distDir } from '../dirs'
 import type { MetaObject } from './runtime'
@@ -27,6 +29,17 @@ export default defineNuxtModule({
       charset: options.charset,
       viewport: options.viewport
     })
+
+    if (!nuxt.options.ssr) {
+      nuxt.addHooks({
+        'nitro:config': (nitro) => {
+          const head = createHead()
+          head.addHeadObjs(ref(globalMeta))
+
+          nitro.runtimeConfig.meta = renderHeadToString(head)
+        }
+      })
+    }
 
     // Add global meta configuration
     addTemplate({
