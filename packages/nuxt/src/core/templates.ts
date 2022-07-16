@@ -1,8 +1,8 @@
 import { templateUtils } from '@nuxt/kit'
 import type { Nuxt, NuxtApp, NuxtTemplate } from '@nuxt/schema'
 import { genArrayFromRaw, genDynamicImport, genExport, genImport, genObjectFromRawEntries, genString, genSafeVariableName } from 'knitwork'
+import { resolve, isAbsolute, join, relative } from 'pathe'
 
-import { isAbsolute, join, relative } from 'pathe'
 import { resolveSchema, generateTypes } from 'untyped'
 import escapeRE from 'escape-string-regexp'
 
@@ -37,6 +37,11 @@ export const rootComponentTemplate = {
 export const errorComponentTemplate = {
   filename: 'error-component.mjs',
   getContents: (ctx: TemplateContext) => genExport(ctx.app.errorComponent, ['default'])
+}
+// TODO: Use an alias
+export const testComponentWrapperTemplate = {
+  filename: 'test-component-wrapper.mjs',
+  getContents: (ctx: TemplateContext) => genExport(resolve(ctx.nuxt.options.appDir, 'components/test-component-wrapper'), ['default'])
 }
 
 export const cssTemplate = {
