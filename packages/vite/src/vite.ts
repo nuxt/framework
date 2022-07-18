@@ -55,6 +55,9 @@ export async function bundle (nuxt: Nuxt) {
           rollupOptions: {
             output: { sanitizeFileName: sanitizeFilePath },
             input: resolve(nuxt.options.appDir, 'entry')
+          },
+          watch: {
+            exclude: nuxt.options.ignore
           }
         },
         plugins: [
@@ -85,15 +88,7 @@ export async function bundle (nuxt: Nuxt) {
   // to detect whether to inject production or development code (such as HMR code)
   if (!nuxt.options.dev) {
     ctx.config.server.watch = undefined
-
-    // TODO: Workaround for vite watching tsconfig changes
-    // https://github.com/nuxt/framework/pull/5875
-    ctx.config.plugins.push({
-      name: 'nuxt:close-vite-watcher',
-      configureServer (server) {
-        return server?.watcher?.close()
-      }
-    })
+    ctx.config.build.watch = undefined
   }
 
   await nuxt.callHook('vite:extend', ctx)
@@ -113,6 +108,7 @@ export async function bundle (nuxt: Nuxt) {
       .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
       .catch(logger.error)
   })
+
   await buildClient(ctx)
   await buildServer(ctx)
 }

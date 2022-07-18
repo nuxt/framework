@@ -89,26 +89,28 @@ export async function buildClient (ctx: ViteBuildContext) {
 
   await ctx.nuxt.callHook('vite:extendConfig', clientConfig, { isClient: true, isServer: false })
 
-  const viteServer = await vite.createServer(clientConfig)
-  ctx.clientServer = viteServer
-  await ctx.nuxt.callHook('vite:serverCreated', viteServer, { isClient: true, isServer: false })
-  const BASE_RE = new RegExp(`^${escapeRE(withTrailingSlash(withLeadingSlash(joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir))))}`)
-  const viteMiddleware: Connect.NextHandleFunction = (req, res, next) => {
-    // Workaround: vite devmiddleware modifies req.url
-    const originalURL = req.url
-    req.url = req.url.replace(BASE_RE, '/')
-    viteServer.middlewares.handle(req, res, (err) => {
-      req.url = originalURL
-      next(err)
+  if (ctx.nuxt.options.dev) {
+    // Dev
+    const viteServer = await vite.createServer(clientConfig)
+    ctx.clientServer = viteServer
+    await ctx.nuxt.callHook('vite:serverCreated', viteServer, { isClient: true, isServer: false })
+    const BASE_RE = new RegExp(`^${escapeRE(withTrailingSlash(withLeadingSlash(joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir))))}`)
+    const viteMiddleware: Connect.NextHandleFunction = (req, res, next) => {
+      // Workaround: vite devmiddleware modifies req.url
+      const originalURL = req.url
+      req.url = req.url.replace(BASE_RE, '/')
+      viteServer.middlewares.handle(req, res, (err) => {
+        req.url = originalURL
+        next(err)
+      })
+    }
+    await ctx.nuxt.callHook('server:devMiddleware', viteMiddleware)
+
+    ctx.nuxt.hook('close', async () => {
+      await viteServer.close()
     })
-  }
-  await ctx.nuxt.callHook('server:devMiddleware', viteMiddleware)
-
-  ctx.nuxt.hook('close', async () => {
-    await viteServer.close()
-  })
-
-  if (!ctx.nuxt.options.dev) {
+  } else {
+    // Build
     const start = Date.now()
     await vite.build(clientConfig)
     await ctx.nuxt.callHook('build:resources', wpfs)
