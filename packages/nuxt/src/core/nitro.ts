@@ -99,6 +99,9 @@ export async function initNitro (nuxt: Nuxt) {
     },
     rollupConfig: {
       plugins: []
+    },
+    autoImport: {
+      exclude: [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/, /[\\/]\.nuxt[\\/]/]
     }
   })
 
