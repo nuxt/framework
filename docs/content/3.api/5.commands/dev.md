@@ -1,7 +1,7 @@
 # `nuxi dev`
 
 ```{bash}
-npx nuxi dev [rootDir] [--clipboard] [--open, -o] [--no-clear] [--port, -p] [--host, -h] [--https] [--ssl-cert] [--ssl-key]
+npx nuxi dev [rootDir] [--clipboard] [--open, -o] [--no-clear] [--port, -p] [--host, -h] [--https] [--ssl-cert] [--ssl-key] [--ui-templates]
 ```
 
 The `dev` command starts a development server with hot module replacement at [http://localhost:3000](https://localhost:3000)
@@ -17,6 +17,7 @@ Option        | Default          | Description
 `--https` | `false` | Listen with `https` protocol with a self-signed certificate by default.
 `--ssl-cert` |`null` | Specify a certificate for https.
 `--ssl-key` |`null` | Specify the key for the https certificate.
+`--ui-templates` | `@nuxt/ui-templates` | Specify UI templates module which exports a template for the loading page.
 
 The port and host can also be set via NUXT_PORT, PORT, NUXT_HOST or HOST environment variables.
 

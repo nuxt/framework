@@ -14,7 +14,7 @@ import { defineNuxtCommand } from './index'
 export default defineNuxtCommand({
   meta: {
     name: 'dev',
-    usage: 'npx nuxi dev [rootDir] [--clipboard] [--open, -o] [--port, -p] [--host, -h] [--https] [--ssl-cert] [--ssl-key]',
+    usage: 'npx nuxi dev [rootDir] [--clipboard] [--open, -o] [--port, -p] [--host, -h] [--https] [--ssl-cert] [--ssl-key] [--ui-templates]',
     description: 'Run nuxt development server'
   },
   async invoke (args) {
@@ -24,7 +24,7 @@ export default defineNuxtCommand({
     let currentHandler
     let loadingMessage = 'Nuxt is starting...'
     const loadingHandler = async (_req, res) => {
-      const { loading: loadingTemplate } = await importModule('@nuxt/ui-templates')
+      const { loading: loadingTemplate } = await importModule(args['ui-templates'] || '@nuxt/ui-templates')
       res.setHeader('Content-Type', 'text/html; charset=UTF-8')
       res.statusCode = 503 // Service Unavailable
       res.end(loadingTemplate({ loading: loadingMessage }))
