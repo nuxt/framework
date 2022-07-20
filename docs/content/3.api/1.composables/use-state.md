@@ -10,7 +10,7 @@ useState<T>(key: string, init?: () => T | Ref<T>): Ref<T>
 * **T**: (typescript only) Specify the type of state
 
 ::alert{type=warning}
-Because the ref `useState` creates will be persisted from server to client, it is important that it does not contain anything (on server side) that cannot be serialized to JSON, such as a class or function. Once loaded on the client, it behaves as a normal ref and does not have this limitation.
+Because the ref `useState` will be persisted from server to client, it is important that it does not contain anything (on server side) that cannot be serialized to JSON, such as a class or function. Once loaded on the client, it behaves as a normal ref and does not have this limitation.
 ::
 
 ::ReadMore{link="/guide/features/state-management"}
