@@ -98,7 +98,7 @@ const starts = {
   "'": "'"
 }
 
-const quotes = ['"', "'"]
+const QUOTE_RE = /["']/
 
 function extractObject (code: string) {
   // Strip comments
@@ -109,7 +109,7 @@ function extractObject (code: string) {
   do {
     if (stack[0] === code[0] && result.slice(-1) !== '\\') {
       stack.shift()
-    } else if (code[0] in starts && !quotes.includes(stack[0])) {
+    } else if (code[0] in starts && !QUOTE_RE.test(stack[0])) {
       stack.unshift(starts[code[0]])
     }
     result += code[0]
