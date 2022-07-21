@@ -17,6 +17,7 @@ If you throw an error created with `createError`:
 
 ```vue [pages/movies/[slug].vue]
 <script setup>
+import {createError} from "h3"
 const route = useRoute()
 const { data } = await useFetch(`/api/movies/${route.params.slug}`)
 if (!data.value) {
