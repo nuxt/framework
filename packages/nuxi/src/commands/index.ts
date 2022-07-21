@@ -1,4 +1,5 @@
 import type { Argv } from 'mri'
+import { EntityKeys } from '../utils/entities'
 
 const _rDefault = r => r.default || r
 
@@ -19,6 +20,10 @@ export const commands = {
   test: () => import('./test').then(_rDefault),
   add: () => import('./add').then(_rDefault),
   new: () => import('./add').then(_rDefault)
+}
+
+for (const key of EntityKeys) {
+  commands[key] = () => import('./entities').then(r => r.default(key))
 }
 
 export type Command = keyof typeof commands
