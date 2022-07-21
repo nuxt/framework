@@ -10,7 +10,7 @@ export interface NuxtError extends H3Error {
   fatal?: boolean
 }
 
-export const throwError = (_err: string | Error | Partial<NuxtError>) => {
+export const showError = (_err: string | Error | Partial<NuxtError>) => {
   const err = createError(_err)
   err.fatal = true
 
@@ -29,6 +29,9 @@ export const throwError = (_err: string | Error | Partial<NuxtError>) => {
 
   return err
 }
+
+/** @deprecated Use `throw createError()` or `showError` */
+export const throwError = showError
 
 export const clearError = async (options: { redirect?: string } = {}) => {
   const nuxtApp = useNuxtApp()
