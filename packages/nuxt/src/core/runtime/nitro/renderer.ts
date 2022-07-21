@@ -8,8 +8,6 @@ import type { NuxtApp } from '#app'
 import { useRuntimeConfig, useNitroApp } from '#internal/nitro'
 // @ts-ignore
 import { buildAssetsURL } from '#paths'
-// @ts-ignore
-import htmlTemplate from '#build/views/document.template.mjs'
 
 export type NuxtSSRContext = NuxtApp['ssrContext']
 
@@ -170,14 +168,7 @@ export default eventHandler(async (event) => {
   await nitroApp.hooks.callHook('nuxt:app:rendered', rendered)
 
   // Construct HTML template
-  const html = htmlTemplate({
-    HTML_ATTRS: joinMeta(rendered.meta.htmlAttrs),
-    HEAD_ATTRS: '', // TODO: Remove?
-    HEAD: joinMeta(rendered.meta.head),
-    BODY_ATTRS: joinMeta(rendered.meta.bodyAttrs),
-    BODY_PREPEND: joinMeta(rendered.meta.bodyPreprend),
-    APP: rendered.body + joinMeta(rendered.meta.bodyAppend)
-  })
+  const html = renderHTMLDocument(rendered)
   await nitroApp.hooks.callHook('nuxt:app:rendered:html', { html })
 
   // Send HTML response
@@ -202,4 +193,17 @@ function normalizeMeta (meta: string[]) {
 
 function joinMeta (meta: string[]) {
   return meta.join('')
+}
+
+function renderHTMLDocument (rendered: NuxtRenderContext) {
+  return `<!DOCTYPE html>
+<html ${joinMeta(rendered.meta.htmlAttrs)}>
+<head>
+  ${joinMeta(rendered.meta.head)}
+</head>
+<body ${joinMeta(rendered.meta.bodyAttrs)}>${joinMeta(rendered.meta.bodyPreprend)}
+${rendered.body}
+  ${joinMeta(rendered.meta.bodyAppend)}
+</body>
+</html>`
 }
