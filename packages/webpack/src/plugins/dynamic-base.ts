@@ -6,22 +6,25 @@ interface DynamicBasePluginOptions {
   sourcemap?: boolean
 }
 
-export const DynamicBasePlugin = createUnplugin(function (options: DynamicBasePluginOptions = {}) {
+const defaults: DynamicBasePluginOptions = {
+  globalPublicPath: '__webpack_public_path__',
+  sourcemap: true
+}
+
+export const DynamicBasePlugin = createUnplugin((options: DynamicBasePluginOptions = {}) => {
+  options = { ...defaults, ...options }
   return {
     name: 'nuxt:dynamic-base-path',
     enforce: 'post',
     transform (code, id) {
-      const s = new MagicString(code)
-
-      if (options.globalPublicPath && id.includes('paths.mjs') && code.includes('const appConfig = ')) {
-        s.append(`${options.globalPublicPath} = buildAssetsURL();\n`)
+      if (!id.includes('paths.mjs') || !code.includes('const appConfig = ')) {
+        return
       }
-
-      if (s.hasChanged()) {
-        return {
-          code: s.toString(),
-          map: options.sourcemap && s.generateMap({ source: id, includeContent: true })
-        }
+      const s = new MagicString(code)
+      s.append(`${options.globalPublicPath} = buildAssetsURL();\n`)
+      return {
+        code: s.toString(),
+        map: options.sourcemap && s.generateMap({ source: id, includeContent: true })
       }
     }
   }
