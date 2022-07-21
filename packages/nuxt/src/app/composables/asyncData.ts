@@ -29,7 +29,7 @@ export interface AsyncDataOptions<
   transform?: Transform
   pick?: PickKeys
   watch?: MultiWatchSources
-  initialCache?: boolean,
+  initialCache?: boolean
   immediate?: boolean
 }
 

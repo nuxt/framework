@@ -22,7 +22,7 @@ type AsyncDataOptions<DataT> = {
   transform?: (input: DataT) => DataT
   pick?: string[]
   watch?: WatchSource[]
-  initialCache?: boolean,
+  initialCache?: boolean
   immediate?: boolean
 }
 
