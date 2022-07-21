@@ -69,9 +69,6 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
         s.prepend([...imports, ''].join('\n'))
       }
 
-      if (id.includes('app.vue')) {
-        console.log({ plugin: 'components', code: s.toString() })
-      }
       if (s.hasChanged()) {
         return {
           code: s.toString(),
