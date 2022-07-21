@@ -6,9 +6,7 @@ export const useError = () => {
   return useState('error', () => process.server ? nuxtApp.ssrContext.error : nuxtApp.payload.error)
 }
 
-export interface NuxtError extends H3Error {
-  fatal?: boolean
-}
+export interface NuxtError extends H3Error {}
 
 export const showError = (_err: string | Error | Partial<NuxtError>) => {
   const err = createError(_err)
@@ -47,9 +45,6 @@ export const isNuxtError = (err?: string | object): err is NuxtError => err && t
 
 export const createError = (err: string | Partial<NuxtError>): NuxtError => {
   const _err: NuxtError = _createError(err)
-  if (err && typeof err === 'object' && err.fatal) {
-    _err.fatal = true
-  }
   ;(_err as any).__nuxt_error = true
   return _err
 }
