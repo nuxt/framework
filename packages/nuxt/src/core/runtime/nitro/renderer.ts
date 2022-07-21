@@ -144,23 +144,23 @@ export default eventHandler(async (event) => {
     ssrContext,
     body: _rendered.html, // TODO: Rename to _rendered.body in next vue-bundle-renderer
     meta: {
-      htmlAttrs: [renderedMeta.htmlAttrs || ''],
-      bodyAttrs: [renderedMeta.bodyAttrs || ''],
-      head: [
-        renderedMeta.headTags || '',
+      htmlAttrs: normalizeMeta([renderedMeta.htmlAttrs]),
+      bodyAttrs: normalizeMeta([renderedMeta.bodyAttrs]),
+      head: normalizeMeta([
+        renderedMeta.headTags,
         _rendered.renderResourceHints(),
         _rendered.renderStyles(),
-        ssrContext.styles || ''
-      ],
-      bodyPreprend: [
+        ssrContext.styles
+      ]),
+      bodyPreprend: normalizeMeta([
         renderedMeta.bodyScriptsPrepend,
         ssrContext.teleports?.body
-      ],
-      bodyAppend: [
+      ]),
+      bodyAppend: normalizeMeta([
         `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
         _rendered.renderScripts(),
-        renderedMeta.bodyScripts || ''
-      ]
+        renderedMeta.bodyScripts
+      ])
     }
   }
 
@@ -196,6 +196,10 @@ function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
   }
 }
 
+function normalizeMeta (meta: string[]) {
+  return meta.filter(Boolean).map(i => i.trim())
+}
+
 function joinMeta (meta: string[]) {
-  return meta.filter(Boolean).map(i => i.trim()).join('')
+  return meta.join('')
 }
