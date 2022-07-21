@@ -26,13 +26,12 @@ export async function buildServer (ctx: ViteBuildContext) {
           // In CSS we only use relative paths until we craft a clever runtime CSS hack
           return { relative: true }
         }
-        switch (type) {
-          case 'public':
-            return { runtime: `globalThis.__publicAssetsURL(${JSON.stringify(filename)})` }
-          case 'asset': {
-            const relativeFilename = filename.replace(withTrailingSlash(withoutLeadingSlash(ctx.nuxt.options.app.buildAssetsDir)), '')
-            return { runtime: `globalThis.__buildAssetsURL(${JSON.stringify(relativeFilename)})` }
-          }
+        if (type === 'public') {
+          return { runtime: `globalThis.__publicAssetsURL(${JSON.stringify(filename)})` }
+        }
+        if (type === 'asset') {
+          const relativeFilename = filename.replace(withTrailingSlash(withoutLeadingSlash(ctx.nuxt.options.app.buildAssetsDir)), '')
+          return { runtime: `globalThis.__buildAssetsURL(${JSON.stringify(relativeFilename)})` }
         }
       }
     },
