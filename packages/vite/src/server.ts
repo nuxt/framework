@@ -73,9 +73,6 @@ export async function buildServer (ctx: ViteBuildContext) {
             rollupWarn(warning)
           }
         }
-      },
-      watch: {
-        exclude: ctx.nuxt.options.ignore
       }
     },
     server: {
@@ -93,7 +90,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Add type-checking
   if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
     const checker = await import('vite-plugin-checker').then(r => r.default)
-    serverConfig.plugins.push(checker({ typescript: true }))
+    serverConfig.plugins.push(checker({ vueTsc: true }))
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
