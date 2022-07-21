@@ -24,7 +24,7 @@ if (process.dev && results && results.some(i => i && 'then' in i)) {
 const error = useError()
 onErrorCaptured((err, target, info) => {
   nuxtApp.hooks.callHook('vue:error', err, target, info).catch(hookError => console.error('[nuxt] Error in `vue:error` hook', hookError))
-  if (process.server || isNuxtError(err)) {
+  if (process.server || (isNuxtError(err) && err.fatal)) {
     callWithNuxt(nuxtApp, throwError, [err])
   }
 })
