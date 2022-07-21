@@ -49,10 +49,10 @@ export const clientPluginTemplate = {
   getContents (ctx: TemplateContext) {
     const clientPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'server')
     const rootDir = ctx.nuxt.options.rootDir
-    const { variables, imports } = templateUtils.importSources(clientPlugins.map(p => p.src), rootDir)
+    const { imports, exports } = templateUtils.importSources(clientPlugins.map(p => p.src), rootDir)
     return [
       ...imports,
-      `export default ${genArrayFromRaw(variables)}`
+      `export default ${genArrayFromRaw(exports)}`
     ].join('\n')
   }
 }
@@ -62,13 +62,13 @@ export const serverPluginTemplate = {
   getContents (ctx: TemplateContext) {
     const serverPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'client')
     const rootDir = ctx.nuxt.options.rootDir
-    const { variables, imports } = templateUtils.importSources(serverPlugins.map(p => p.src), rootDir)
+    const { imports, exports } = templateUtils.importSources(serverPlugins.map(p => p.src), rootDir)
     return [
       "import preload from '#app/plugins/preload.server'",
       ...imports,
       `export default ${genArrayFromRaw([
         'preload',
-        ...variables
+        ...exports
       ])}`
     ].join('\n')
   }
