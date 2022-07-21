@@ -4,6 +4,7 @@ import { genSafeVariableName, genDynamicImport, genImport } from 'knitwork'
 
 import type { NuxtTemplate } from '@nuxt/schema'
 import { relative } from 'pathe'
+import { hash } from 'ohash'
 
 export async function compileTemplate (template: NuxtTemplate, ctx: any) {
   const data = { ...ctx, options: template.options }
@@ -30,15 +31,15 @@ const importSources = (sources: string | string[], root: string, { lazy = false 
   }
   const variables: string[] = []
   const imports: string[] = []
-  sources.forEach((src) => {
+  for (const src of sources) {
     const path = relative(root, src)
-    const variable = genSafeVariableName(path)
+    const variable = genSafeVariableName(path) + hash(path)
     variables.push(variable)
     imports.push(lazy
       ? `const ${variable} = ${genDynamicImport(src, { comment: `webpackChunkName: ${JSON.stringify(src)}` })}`
       : genImport(src, variable)
     )
-  })
+  }
   return {
     variables,
     imports
