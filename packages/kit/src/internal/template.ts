@@ -3,6 +3,7 @@ import lodashTemplate from 'lodash.template'
 import { genSafeVariableName, genDynamicImport, genImport } from 'knitwork'
 
 import type { NuxtTemplate } from '@nuxt/schema'
+import { relative } from 'pathe'
 
 export async function compileTemplate (template: NuxtTemplate, ctx: any) {
   const data = { ...ctx, options: template.options }
@@ -23,16 +24,25 @@ export async function compileTemplate (template: NuxtTemplate, ctx: any) {
 
 const serialize = (data: any) => JSON.stringify(data, null, 2).replace(/"{(.+)}"(?=,?$)/gm, r => JSON.parse(r).replace(/^{(.*)}$/, '$1'))
 
-const importSources = (sources: string | string[], { lazy = false } = {}) => {
+const importSources = (sources: string | string[], root: string, { lazy = false } = {}) => {
   if (!Array.isArray(sources)) {
     sources = [sources]
   }
-  return sources.map((src) => {
-    if (lazy) {
-      return `const ${genSafeVariableName(src)} = ${genDynamicImport(src, { comment: `webpackChunkName: ${JSON.stringify(src)}` })}`
-    }
-    return genImport(src, genSafeVariableName(src))
-  }).join('\n')
+  const variables: string[] = []
+  const imports: string[] = []
+  sources.forEach((src) => {
+    const path = relative(root, src)
+    const variable = genSafeVariableName(path)
+    variables.push(variable)
+    imports.push(lazy
+      ? `const ${variable} = ${genDynamicImport(src, { comment: `webpackChunkName: ${JSON.stringify(src)}` })}`
+      : genImport(src, variable)
+    )
+  })
+  return {
+    variables,
+    imports
+  }
 }
 
 export const templateUtils = { serialize, importName: genSafeVariableName, importSources }
