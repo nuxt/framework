@@ -2,31 +2,27 @@ import { createRenderer } from 'vue-bundle-renderer'
 import { eventHandler, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
-
 import type { NuxtApp } from '#app'
 
 // @ts-ignore
-import { useRuntimeConfig } from '#internal/nitro'
+import { useRuntimeConfig, useNitroApp } from '#internal/nitro'
 // @ts-ignore
 import { buildAssetsURL } from '#paths'
 // @ts-ignore
 import htmlTemplate from '#build/views/document.template.mjs'
 
-type NuxtSSRContext = NuxtApp['ssrContext']
+export type NuxtSSRContext = NuxtApp['ssrContext']
 
-interface RenderResult {
-  html: any
-  renderResourceHints: () => string
-  renderStyles: () => string
-  renderScripts: () => string
-  meta?: Partial<{
-    htmlAttrs?: string,
-    bodyAttrs: string,
-    headAttrs: string,
-    headTags: string,
-    bodyScriptsPrepend : string,
-    bodyScripts : string
-  }>
+export interface NuxtRenderContext {
+  ssrContext: NuxtSSRContext
+  body: string
+  meta: {
+    htmlAttrs: string[]
+    head: string[]
+    bodyAttrs: string[]
+    bodyPreprend: string[]
+    bodyAppend: string[]
+  }
 }
 
 // @ts-ignore
@@ -128,49 +124,67 @@ export default eventHandler(async (event) => {
 
   // Render app
   const renderer = (process.env.NUXT_NO_SSR || ssrContext.noSSR) ? await getSPARenderer() : await getSSRRenderer()
-  const rendered = await renderer.renderToString(ssrContext).catch((e) => {
-    if (!ssrError) { throw e }
-  }) as RenderResult
-
-  // If we error on rendering error page, we bail out and directly return to the error handler
-  if (!rendered) { return }
-
-  if (event.res.writableEnded) {
-    return
-  }
+  const _rendered = await renderer.renderToString(ssrContext).catch((err) => {
+    if (!ssrError) { throw err }
+  })
 
   // Handle errors
+  if (!_rendered) {
+    return
+  }
   if (ssrContext.error && !ssrError) {
     throw ssrContext.error
   }
 
-  if (ssrContext.nuxt?.hooks) {
-    await ssrContext.nuxt.hooks.callHook('app:rendered')
+  // Render meta
+  const renderedMeta = await ssrContext.renderMeta()
+
+  // Create render conrtext
+  const rendered: NuxtRenderContext = {
+    ssrContext,
+    body: _rendered.html, // TODO: Rename to _rendered.body in next vue-bundle-renderer
+    meta: {
+      htmlAttrs: [renderedMeta.htmlAttrs || ''],
+      bodyAttrs: [renderedMeta.bodyAttrs || ''],
+      head: [
+        renderedMeta.headTags || '',
+        _rendered.renderResourceHints(),
+        _rendered.renderStyles(),
+        ssrContext.styles || ''
+      ],
+      bodyPreprend: [
+        renderedMeta.bodyScriptsPrepend,
+        ssrContext.teleports?.body
+      ],
+      bodyAppend: [
+        `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
+        _rendered.renderScripts(),
+        renderedMeta.bodyScripts || ''
+      ]
+    }
   }
 
-  const html = await renderHTML(ssrContext.payload, rendered, ssrContext)
+  // Allow hooking into the rendered result
+  const nitroApp = useNitroApp()
+  await ssrContext.nuxt.hooks.callHook('app:rendered', rendered)
+  await nitroApp.hooks.callHook('nuxt:app:rendered', rendered)
+
+  // Construct HTML template
+  const html = htmlTemplate({
+    HTML_ATTRS: joinMeta(rendered.meta.htmlAttrs),
+    HEAD_ATTRS: '', // TODO: Remove?
+    HEAD: joinMeta(rendered.meta.head),
+    BODY_ATTRS: joinMeta(rendered.meta.bodyAttrs),
+    BODY_PREPEND: joinMeta(rendered.meta.bodyPreprend),
+    APP: rendered.body + joinMeta(rendered.meta.bodyAppend)
+  })
+  await nitroApp.hooks.callHook('nuxt:app:rendered:html', { html })
+
+  // Send HTML response
+  if (event.res.writableEnded) { return }
   event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   return html
 })
-
-async function renderHTML (payload: any, rendered: RenderResult, ssrContext: NuxtSSRContext) {
-  const state = `<script>window.__NUXT__=${devalue(payload)}</script>`
-
-  rendered.meta = rendered.meta || {}
-  if (ssrContext.renderMeta) {
-    Object.assign(rendered.meta, await ssrContext.renderMeta())
-  }
-
-  return htmlTemplate({
-    HTML_ATTRS: (rendered.meta.htmlAttrs || ''),
-    HEAD_ATTRS: (rendered.meta.headAttrs || ''),
-    HEAD: (rendered.meta.headTags || '') +
-      rendered.renderResourceHints() + rendered.renderStyles() + (ssrContext.styles || ''),
-    BODY_ATTRS: (rendered.meta.bodyAttrs || ''),
-    BODY_PREPEND: (ssrContext.teleports?.body || ''),
-    APP: (rendered.meta.bodyScriptsPrepend || '') + rendered.html + state + rendered.renderScripts() + (rendered.meta.bodyScripts || '')
-  })
-}
 
 function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
   let res: Promise<T> | null = null
@@ -180,4 +194,8 @@ function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
     }
     return res
   }
+}
+
+function joinMeta (meta: string[]) {
+  return meta.filter(Boolean).map(i => i.trim()).join('')
 }
