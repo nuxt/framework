@@ -23,7 +23,8 @@ type UseFetchOptions = {
   transform?: (input: DataT) => DataT
   pick?: string[]
   watch?: WatchSource[]
-  initialCache?: boolean
+  initialCache?: boolean,
+  immediate?: boolean
 }
 
 type AsyncData<DataT> = {
@@ -52,6 +53,7 @@ type AsyncData<DataT> = {
   * `watch`: watch reactive sources to auto-refresh
   * `initialCache`: When set to `false`, will skip payload cache for initial fetch. (defaults to `true`)
   * `transform`: A function that can be used to alter `handler` function result after resolving.
+  * `immediate`: When set to `false`, will prevent the request from firing until the `refresh` function is called.
 
 ::alert{type=warning}
 If you provide a function or ref as the `url` parameter, or if you provide functions as arguments to the `options` parameter, then the `useFetch` call will not match other `useFetch` calls elsewhere in your codebase, even if the options seem to be identical. If you wish to force a match, you may provide your own key in `options`.

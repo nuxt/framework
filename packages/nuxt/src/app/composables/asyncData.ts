@@ -29,7 +29,8 @@ export interface AsyncDataOptions<
   transform?: Transform
   pick?: PickKeys
   watch?: MultiWatchSources
-  initialCache?: boolean
+  initialCache?: boolean,
+  immediate?: boolean
 }
 
 export interface RefreshOptions {
@@ -95,6 +96,7 @@ export function useAsyncData<
   }
   options.lazy = options.lazy ?? (options as any).defer ?? false
   options.initialCache = options.initialCache ?? true
+  options.immediate = options.immediate ?? true
 
   // Setup nuxt instance payload
   const nuxt = useNuxtApp()
@@ -163,23 +165,29 @@ export function useAsyncData<
   const fetchOnServer = options.server !== false && nuxt.payload.serverRendered
 
   // Server side
-  if (process.server && fetchOnServer) {
+  if (process.server && fetchOnServer && options.immediate) {
     const promise = initialFetch()
     onServerPrefetch(() => promise)
   }
 
   // Client side
   if (process.client) {
-    if (fetchOnServer && nuxt.isHydrating && key in nuxt.payload.data) {
-      // 1. Hydration (server: true): no fetch
-      asyncData.pending.value = false
-    } else if (instance && nuxt.payload.serverRendered && (nuxt.isHydrating || options.lazy)) {
-      // 2. Initial load (server: false): fetch on mounted
-      // 3. Navigation (lazy: true): fetch on mounted
-      instance._nuxtOnBeforeMountCbs.push(initialFetch)
-    } else {
-      // 4. Navigation (lazy: false) - or plugin usage: await fetch
-      initialFetch()
+    if (options.immediate) {
+      if (fetchOnServer && nuxt.isHydrating && key in nuxt.payload.data) {
+        // 1. Hydration (server: true): no fetch
+        asyncData.pending.value = false
+      } else if (
+        instance &&
+        nuxt.payload.serverRendered &&
+        (nuxt.isHydrating || options.lazy)
+      ) {
+        // 2. Initial load (server: false): fetch on mounted
+        // 3. Navigation (lazy: true): fetch on mounted
+        instance._nuxtOnBeforeMountCbs.push(initialFetch)
+      } else {
+        // 4. Navigation (lazy: false) - or plugin usage: await fetch
+        initialFetch()
+      }
     }
     if (options.watch) {
       watch(options.watch, () => asyncData.refresh())

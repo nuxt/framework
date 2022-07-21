@@ -22,7 +22,8 @@ type AsyncDataOptions<DataT> = {
   transform?: (input: DataT) => DataT
   pick?: string[]
   watch?: WatchSource[]
-  initialCache?: boolean
+  initialCache?: boolean,
+  immediate?: boolean
 }
 
 type AsyncData<DataT> = {
@@ -45,6 +46,7 @@ type AsyncData<DataT> = {
   * _pick_: only pick specified keys in this array from the `handler` function result
   * _watch_: watch reactive sources to auto-refresh
   * _initialCache_: When set to `false`, will skip payload cache for initial fetch. (defaults to `true`)
+  * _immediate_: When set to `false`, will prevent the request from firing until the `refresh` function is called.
 
 Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the route before the data has been fetched. Consider using `lazy: true` and implementing a loading state instead for a snappier user experience.
 
