@@ -5,7 +5,7 @@ import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import { logger, resolveModule, isIgnored } from '@nuxt/kit'
 import fse from 'fs-extra'
 import { debounce } from 'perfect-debounce'
-import { joinURL, withoutLeadingSlash, withTrailingSlash } from 'ufo'
+import { joinURL, withLeadingSlash, withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
@@ -18,7 +18,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     base: ctx.nuxt.options.dev
-      ? joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
+      ? joinURL(ctx.nuxt.options.app.baseURL.replace(/^\./, '') || '/', ctx.nuxt.options.app.buildAssetsDir)
       : undefined,
     experimental: {
       renderBuiltUrl: (filename, { type, hostType }) => {
