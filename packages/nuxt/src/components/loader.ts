@@ -23,7 +23,7 @@ function isVueTemplate (id: string) {
   const query = parseQuery(search)
 
   // Query `?vue&type=template` (in Webpack or external template)
-  return 'vue' in query && query.type === 'template'
+  return 'vue' in query && (query.type === 'template' || 'setup' in query || 'macro' in query)
 }
 
 export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
