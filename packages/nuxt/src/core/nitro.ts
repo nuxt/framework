@@ -119,12 +119,12 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
             vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
           },
       // Vue 3 mocks
-      'estree-walker': 'unenv/runtime/mock/proxy',
-      '@babel/parser': 'unenv/runtime/mock/proxy',
-      "@vue/compiler-core": (nuxt.options.runtimeCompiler && !nuxt.options.dev) ? "@vue/compiler-core" : "unenv/runtime/mock/proxy",
-      "@vue/compiler-dom": (nuxt.options.runtimeCompiler && !nuxt.options.dev) ? "@vue/compiler-dom" : "unenv/runtime/mock/proxy",
-      "@vue/compiler-ssr": (nuxt.options.runtimeCompiler && !nuxt.options.dev) ? "@vue/compiler-ssr" : "unenv/runtime/mock/proxy",
-      "@vue/devtools-api": (nuxt.options.runtimeCompiler && !nuxt.options.dev) ? "@vue/devtools-api" : 'vue-devtools-stub',
+      'estree-walker': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? 'estree-walker' : 'unenv/runtime/mock/proxy',
+      '@babel/parser': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@babel/parser' : 'unenv/runtime/mock/proxy',
+      '@vue/compiler-core': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@vue/compiler-core' : 'unenv/runtime/mock/proxy',
+      '@vue/compiler-dom': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@vue/compiler-dom' : 'unenv/runtime/mock/proxy',
+      '@vue/compiler-ssr': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@vue/compiler-ssr' : 'unenv/runtime/mock/proxy',
+      '@vue/devtools-api': 'unenv/runtime/mock/proxy-cjs',
 
       // Paths
       '#paths': resolve(distDir, 'core/runtime/nitro/paths'),
