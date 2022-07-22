@@ -25,7 +25,8 @@ export const TransformPlugin = createUnplugin(({ ctx, options, sourcemap }: {ctx
       // Vue files
       if (
         id.endsWith('.vue') ||
-        ('vue' in query && (query.type === 'template' || query.type === 'script' || query.macro))
+        'macro' in query ||
+        ('vue' in query && (query.type === 'template' || query.type === 'script' || 'setup' in query))
       ) {
         return true
       }

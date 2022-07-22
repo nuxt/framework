@@ -20,10 +20,24 @@ function isVueTemplate (id: string) {
   }
 
   const { search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
+  if (!search) {
+    return false
+  }
+
   const query = parseQuery(search)
 
+  // Macro
+  if (query.macro) {
+    return true
+  }
+
+  // Non-Vue or Styles
+  if (!('vue' in query) || query.type === 'style') {
+    return false
+  }
+
   // Query `?vue&type=template` (in Webpack or external template)
-  return 'vue' in query && (query.type === 'template' || 'setup' in query || 'macro' in query)
+  return true
 }
 
 export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
