@@ -15,9 +15,12 @@ If you throw an error created with `createError`:
 
 ### Example
 
+::StabilityEdge{title="Auto import of createError"}
+In the current version, add `import { createError } from 'h3'` in order to use `createError`.
+::
+
 ```vue [pages/movies/[slug].vue]
 <script setup>
-import {createError} from "h3"
 const route = useRoute()
 const { data } = await useFetch(`/api/movies/${route.params.slug}`)
 if (!data.value) {
