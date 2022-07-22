@@ -10,6 +10,7 @@ const _require = createRequire(import.meta.url)
 interface ImportProtectionOptions {
   rootDir: string
   patterns: [importPattern: string | RegExp, warning?: string][]
+  exclude?: Array<RegExp | string>
 }
 
 export const vueAppPatterns = (nuxt: Nuxt) => [
@@ -20,15 +21,18 @@ export const vueAppPatterns = (nuxt: Nuxt) => [
     [new RegExp(`^${escapeRE(m)}$`), 'Importing directly from module entry points is not allowed.']),
   ...[/(^|node_modules\/)@nuxt\/kit/, /^nitropack/]
     .map(i => [i, 'This module cannot be imported in the Vue part of your app.']),
-  [new RegExp(escapeRE(resolve(nuxt.options.srcDir, (nuxt.options.dir as any).server || 'server'))), 'Importing from server middleware is not allowed in the Vue part of your app.']
+  [new RegExp(escapeRE(resolve(nuxt.options.srcDir, (nuxt.options.dir as any).server || 'server')) + '\\/(api|routes|middleware|plugins)\\/'), 'Importing from server is not allowed in the Vue part of your app.']
 ] as ImportProtectionOptions['patterns']
 
 export const ImportProtectionPlugin = createUnplugin(function (options: ImportProtectionOptions) {
   const cache: Record<string, Map<string | RegExp, boolean>> = {}
+  const importersToExclude = options?.exclude || []
   return {
     name: 'nuxt:import-protection',
     enforce: 'pre',
     resolveId (id, importer) {
+      if (importersToExclude.some(p => typeof p === 'string' ? importer === p : p.test(importer))) { return }
+
       const invalidImports = options.patterns.filter(([pattern]) => pattern instanceof RegExp ? pattern.test(id) : pattern === id)
       let matched: boolean
       for (const match of invalidImports) {

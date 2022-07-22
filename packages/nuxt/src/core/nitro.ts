@@ -29,6 +29,7 @@ export async function initNitro (nuxt: Nuxt) {
     handlers,
     devHandlers: [],
     baseURL: nuxt.options.app.baseURL,
+    virtual: {},
     runtimeConfig: {
       ...nuxt.options.runtimeConfig,
       nitro: {
@@ -40,10 +41,7 @@ export async function initNitro (nuxt: Nuxt) {
       generateTsConfig: false
     },
     publicAssets: [
-      {
-        baseURL: nuxt.options.app.buildAssetsDir,
-        dir: resolve(nuxt.options.buildDir, 'dist/client')
-      },
+      { dir: resolve(nuxt.options.buildDir, 'dist/client') },
       ...nuxt.options._layers
         .map(layer => join(layer.config.srcDir, layer.config.dir?.public || 'public'))
         .filter(dir => existsSync(dir))
@@ -58,23 +56,33 @@ export async function initNitro (nuxt: Nuxt) {
     sourcemap: nuxt.options.sourcemap,
     externals: {
       inline: [
-        ...(nuxt.options.dev ? [] : ['vue', '@vue/', '@nuxt/', nuxt.options.buildDir]),
+        ...(nuxt.options.dev
+          ? []
+          : [
+              ...nuxt.options.experimental.externalVue ? [] : ['vue', '@vue/'],
+              '@nuxt/',
+              nuxt.options.buildDir
+            ]),
         'nuxt/dist',
         'nuxt3/dist'
       ]
     },
     alias: {
-      'vue/compiler-sfc': 'vue/compiler-sfc',
-      'vue/server-renderer': 'vue/server-renderer',
-      vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`),
+      ...nuxt.options.experimental.externalVue
+        ? {}
+        : {
 
+            'vue/compiler-sfc': 'vue/compiler-sfc',
+            'vue/server-renderer': 'vue/server-renderer',
+            vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
+          },
       // Vue 3 mocks
       'estree-walker': 'unenv/runtime/mock/proxy',
       '@babel/parser': 'unenv/runtime/mock/proxy',
       '@vue/compiler-core': 'unenv/runtime/mock/proxy',
       '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
       '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
-      '@vue/devtools-api': 'unenv/runtime/mock/proxy',
+      '@vue/devtools-api': 'unenv/runtime/mock/proxy-cjs',
 
       // Paths
       '#paths': resolve(distDir, 'core/runtime/nitro/paths'),
@@ -83,12 +91,28 @@ export async function initNitro (nuxt: Nuxt) {
       ...nuxt.options.alias
     },
     replace: {
-      'process.env.NUXT_NO_SSR': nuxt.options.ssr === false
+      'process.env.NUXT_NO_SSR': nuxt.options.ssr === false,
+      'process.dev': nuxt.options.dev
     },
     rollupConfig: {
       plugins: []
     }
   })
+
+  // Add fallback server for `ssr: false`
+  if (!nuxt.options.ssr) {
+    nitroConfig.virtual['#build/dist/server/server.mjs'] = 'export default () => {}'
+  }
+
+  // Register nuxt protection patterns
+  nitroConfig.rollupConfig.plugins.push(ImportProtectionPlugin.rollup({
+    rootDir: nuxt.options.rootDir,
+    patterns: [
+      ...['#app', /^#build(\/|$)/]
+        .map(p => [p, 'Vue app aliases are not allowed in server routes.']) as [RegExp | string, string][]
+    ],
+    exclude: [/core[\\/]runtime[\\/]nitro[\\/]renderer/]
+  }))
 
   // Extend nitro config with hook
   await nuxt.callHook('nitro:config', nitroConfig)
@@ -105,18 +129,6 @@ export async function initNitro (nuxt: Nuxt) {
   // Connect hooks
   nuxt.hook('close', () => nitro.hooks.callHook('close'))
 
-  // Register nuxt protection patterns
-  nitro.hooks.hook('rollup:before', (nitro) => {
-    const plugin = ImportProtectionPlugin.rollup({
-      rootDir: nuxt.options.rootDir,
-      patterns: [
-        ...['#app', /^#build(\/|$)/]
-          .map(p => [p, 'Vue app aliases are not allowed in server routes.']) as [RegExp | string, string][]
-      ]
-    })
-    nitro.options.rollupConfig.plugins.push(plugin)
-  })
-
   // Setup handlers
   const devMidlewareHandler = dynamicEventHandler()
   nitro.options.devHandlers.unshift({ handler: devMidlewareHandler })
@@ -129,7 +141,7 @@ export async function initNitro (nuxt: Nuxt) {
 
   // Add typed route responses
   nuxt.hook('prepare:types', async (opts) => {
-    if (nuxt.options._prepare) {
+    if (!nuxt.options.dev) {
       await scanHandlers(nitro)
       await writeTypes(nitro)
     }

@@ -4,7 +4,8 @@ import type { App, onErrorCaptured, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import type { RuntimeConfig } from '@nuxt/schema'
 import { getContext } from 'unctx'
-import { legacyPlugin, LegacyContext } from './compat/legacy-app'
+import type { SSRContext } from 'vue-bundle-renderer'
+import type { CompatibilityEvent } from 'h3'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
@@ -46,13 +47,24 @@ interface _NuxtApp {
   [key: string]: any
 
   _asyncDataPromises?: Record<string, Promise<any>>
-  _legacyContext?: LegacyContext
 
-  ssrContext?: Record<string, any> & {
+  ssrContext?: SSRContext & {
+    url: string
+    event: CompatibilityEvent
+    /** @deprecated Use `event` instead. */
+    req?: CompatibilityEvent['req']
+    /** @deprecated Use `event` instead. */
+    res?: CompatibilityEvent['res']
+    runtimeConfig: RuntimeConfig
+    noSSR: boolean
+    error?: any
+    nuxt: _NuxtApp
+    payload: _NuxtApp['payload']
+    teleports?: Record<string, string>
     renderMeta?: () => Promise<NuxtMeta> | NuxtMeta
   }
   payload: {
-    serverRendered?: true
+    serverRendered?: boolean
     data?: Record<string, any>
     state?: Record<string, any>
     rendered?: Function
@@ -68,9 +80,6 @@ export const NuxtPluginIndicator = '__nuxt_plugin'
 export interface Plugin<Injections extends Record<string, any> = Record<string, any>> {
   (nuxt: _NuxtApp): Promise<void> | Promise<{ provide?: Injections }> | void | { provide?: Injections }
   [NuxtPluginIndicator]?: true
-}
-export interface LegacyPlugin {
-  (context: LegacyContext, provide: NuxtApp['provide']): Promise<void> | void
 }
 
 export interface CreateOptions {
@@ -115,7 +124,7 @@ export function createNuxtApp (options: CreateOptions) {
 
   if (process.server) {
     // Expose to server renderer to create window.__NUXT__
-    nuxtApp.ssrContext = nuxtApp.ssrContext || {}
+    nuxtApp.ssrContext = nuxtApp.ssrContext || {} as any
     nuxtApp.ssrContext.payload = nuxtApp.payload
   }
 
@@ -171,22 +180,39 @@ export async function applyPlugins (nuxtApp: NuxtApp, plugins: Plugin[]) {
   }
 }
 
-export function normalizePlugins (_plugins: Array<Plugin | LegacyPlugin>) {
-  let needsLegacyContext = false
+export function normalizePlugins (_plugins: Plugin[]) {
+  const unwrappedPlugins = []
+  const legacyInjectPlugins = []
+  const invalidPlugins = []
 
   const plugins = _plugins.map((plugin) => {
     if (typeof plugin !== 'function') {
-      return () => {}
+      invalidPlugins.push(plugin)
+      return null
     }
-    if (isLegacyPlugin(plugin)) {
-      needsLegacyContext = true
-      return (nuxtApp: NuxtApp) => plugin(nuxtApp._legacyContext!, nuxtApp.provide)
+    if (plugin.length > 1) {
+      legacyInjectPlugins.push(plugin)
+      // Allow usage without wrapper but warn
+      // TODO: Skip invalid in next releases
+      // @ts-ignore
+      return (nuxtApp: NuxtApp) => plugin(nuxtApp, nuxtApp.provide)
+      // return null
+    }
+    if (!isNuxtPlugin(plugin)) {
+      unwrappedPlugins.push(plugin)
+      // Allow usage without wrapper but warn
     }
     return plugin
-  })
+  }).filter(Boolean)
 
-  if (needsLegacyContext) {
-    plugins.unshift(legacyPlugin)
+  if (process.dev && legacyInjectPlugins.length) {
+    console.warn('[warn] [nuxt] You are using a plugin with legacy Nuxt 2 format (context, inject) which is likely to be broken. In the future they will be ignored:', legacyInjectPlugins.map(p => p.name || p).join(','))
+  }
+  if (process.dev && invalidPlugins.length) {
+    console.warn('[warn] [nuxt] Some plugins are not exposing a function and skipped:', invalidPlugins)
+  }
+  if (process.dev && unwrappedPlugins.length) {
+    console.warn('[warn] [nuxt] You are using a plugin that has not been wrapped in `defineNuxtPlugin`. It is advised to wrap your plugins as in the future this may enable enhancements:', unwrappedPlugins.map(p => p.name || p).join(','))
   }
 
   return plugins as Plugin[]
@@ -197,8 +223,8 @@ export function defineNuxtPlugin<T> (plugin: Plugin<T>) {
   return plugin
 }
 
-export function isLegacyPlugin (plugin: unknown): plugin is LegacyPlugin {
-  return !plugin[NuxtPluginIndicator]
+export function isNuxtPlugin (plugin: unknown) {
+  return typeof plugin === 'function' && NuxtPluginIndicator in plugin
 }
 
 /**
@@ -222,17 +248,17 @@ export function callWithNuxt<T extends (...args: any[]) => any> (nuxt: NuxtApp |
  * Returns the current Nuxt instance.
  */
 export function useNuxtApp () {
-  const vm = getCurrentInstance()
+  const nuxtAppInstance = nuxtAppCtx.use()
 
-  if (!vm) {
-    const nuxtAppInstance = nuxtAppCtx.use()
-    if (!nuxtAppInstance) {
+  if (!nuxtAppInstance) {
+    const vm = getCurrentInstance()
+    if (!vm) {
       throw new Error('nuxt instance unavailable')
     }
-    return nuxtAppInstance
+    return vm.appContext.app.$nuxt as NuxtApp
   }
 
-  return vm.appContext.app.$nuxt as NuxtApp
+  return nuxtAppInstance
 }
 
 export function useRuntimeConfig (): RuntimeConfig {

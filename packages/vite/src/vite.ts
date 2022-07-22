@@ -4,14 +4,14 @@ import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
 import { logger, isIgnored } from '@nuxt/kit'
 import type { Options } from '@vitejs/plugin-vue'
+import replace from '@rollup/plugin-replace'
 import { sanitizeFilePath } from 'mlly'
-import { getPort } from 'get-port-please'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
-import { DynamicBasePlugin } from './plugins/dynamic-base'
 import { warmupViteServer } from './utils/warmup'
 import { resolveCSSOptions } from './css'
+import { composableKeysPlugin } from './plugins/composable-keys'
 
 export interface ViteOptions extends InlineConfig {
   vue?: Options
@@ -26,12 +26,6 @@ export interface ViteBuildContext {
 }
 
 export async function bundle (nuxt: Nuxt) {
-  const hmrPortDefault = 24678 // Vite's default HMR port
-  const hmrPort = await getPort({
-    port: hmrPortDefault,
-    ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
-  })
-
   const ctx: ViteBuildContext = {
     nuxt,
     config: vite.mergeConfig(
@@ -61,25 +55,24 @@ export async function bundle (nuxt: Nuxt) {
           rollupOptions: {
             output: { sanitizeFileName: sanitizeFilePath },
             input: resolve(nuxt.options.appDir, 'entry')
+          },
+          watch: {
+            exclude: nuxt.options.ignore
           }
         },
         plugins: [
-          virtual(nuxt.vfs),
-          DynamicBasePlugin.vite({ sourcemap: nuxt.options.sourcemap })
+          composableKeysPlugin.vite({ sourcemap: nuxt.options.sourcemap, rootDir: nuxt.options.rootDir }),
+          replace({
+            ...Object.fromEntries([';', '(', '{', '}', ' ', '\t', '\n'].map(d => [`${d}global.`, `${d}globalThis.`])),
+            preventAssignment: true
+          }),
+          virtual(nuxt.vfs)
         ],
         vue: {
           reactivityTransform: nuxt.options.experimental.reactivityTransform
         },
         server: {
-          watch: {
-            ignored: isIgnored
-          },
-          hmr: {
-            // https://github.com/nuxt/framework/issues/4191
-            protocol: 'ws',
-            clientPort: hmrPort,
-            port: hmrPort
-          },
+          watch: { ignored: isIgnored },
           fs: {
             allow: [
               nuxt.options.appDir
@@ -91,13 +84,20 @@ export async function bundle (nuxt: Nuxt) {
     )
   }
 
+  // In build mode we explicitly override any vite options that vite is relying on
+  // to detect whether to inject production or development code (such as HMR code)
+  if (!nuxt.options.dev) {
+    ctx.config.server.watch = undefined
+    ctx.config.build.watch = undefined
+  }
+
   await nuxt.callHook('vite:extend', ctx)
 
   nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer, env) => {
     // Invalidate virtual modules when templates are re-generated
     ctx.nuxt.hook('app:templatesGenerated', () => {
       for (const [id, mod] of server.moduleGraph.idToModuleMap) {
-        if (id.startsWith('\x00virtual:')) {
+        if (id.startsWith('virtual:')) {
           server.moduleGraph.invalidateModule(mod)
         }
       }
@@ -108,6 +108,7 @@ export async function bundle (nuxt: Nuxt) {
       .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
       .catch(logger.error)
   })
+
   await buildClient(ctx)
   await buildServer(ctx)
 }

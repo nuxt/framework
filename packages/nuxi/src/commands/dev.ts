@@ -8,6 +8,7 @@ import { showBanner } from '../utils/banner'
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
 import { importModule } from '../utils/cjs'
+import { overrideEnv } from '../utils/env'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -17,7 +18,7 @@ export default defineNuxtCommand({
     description: 'Run nuxt development server'
   },
   async invoke (args) {
-    process.env.NODE_ENV = process.env.NODE_ENV || 'development'
+    overrideEnv('development')
 
     const { listen } = await import('listhen')
     let currentHandler
@@ -33,6 +34,7 @@ export default defineNuxtCommand({
     }
 
     const listener = await listen(serverHandler, {
+      showURL: false,
       clipboard: args.clipboard,
       open: args.open || args.o,
       port: args.port || args.p || process.env.NUXT_PORT,
@@ -49,6 +51,12 @@ export default defineNuxtCommand({
     const { loadNuxt, buildNuxt } = await loadKit(rootDir)
 
     let currentNuxt: Nuxt
+    const showURL = () => {
+      listener.showURL({
+        // TODO: Normalize URL with trailing slash within schema
+        baseURL: withTrailingSlash(currentNuxt?.options.app.baseURL) || '/'
+      })
+    }
     const load = async (isRestart: boolean, reason?: string) => {
       try {
         loadingMessage = `${reason ? reason + '. ' : ''}${isRestart ? 'Restarting' : 'Starting'} nuxt...`
@@ -60,6 +68,10 @@ export default defineNuxtCommand({
           await currentNuxt.close()
         }
         currentNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
+        if (!isRestart) {
+          showURL()
+        }
+
         await currentNuxt.ready()
         await currentNuxt.hooks.callHook('listen', listener.server, listener)
         await Promise.all([
@@ -69,7 +81,7 @@ export default defineNuxtCommand({
         currentHandler = currentNuxt.server.app
         if (isRestart && args.clear !== false) {
           showBanner()
-          listener.showURL()
+          showURL()
         }
       } catch (err) {
         consola.error(`Cannot ${isRestart ? 'restart' : 'start'} nuxt: `, err)
@@ -82,25 +94,28 @@ export default defineNuxtCommand({
     // TODO: Watcher service, modules, and requireTree
     const dLoad = debounce(load)
     const watcher = chokidar.watch([rootDir], { ignoreInitial: true, depth: 1 })
-    watcher.on('all', (event, file) => {
+    watcher.on('all', (event, _file) => {
       if (!currentNuxt) { return }
-      if (normalize(file).startsWith(withTrailingSlash(normalize(currentNuxt.options.buildDir)))) { return }
+      const file = normalize(_file)
+      const buildDir = withTrailingSlash(normalize(currentNuxt.options.buildDir))
+      if (file.startsWith(buildDir)) { return }
+      const relativePath = relative(rootDir, file)
       if (file.match(/(nuxt\.config\.(js|ts|mjs|cjs)|\.nuxtignore|\.env|\.nuxtrc)$/)) {
-        dLoad(true, `${relative(rootDir, file)} updated`)
+        dLoad(true, `${relativePath} updated`)
       }
 
       const isDirChange = ['addDir', 'unlinkDir'].includes(event)
       const isFileChange = ['add', 'unlink'].includes(event)
       const reloadDirs = [currentNuxt.options.dir.pages, 'components', 'composables']
+        .map(d => resolve(currentNuxt.options.srcDir, d))
 
       if (isDirChange) {
-        const dir = reloadDirs.find(dir => file.endsWith(dir))
-        if (dir) {
-          dLoad(true, `Directory \`${dir}/\` ${event === 'addDir' ? 'created' : 'removed'}`)
+        if (reloadDirs.includes(file)) {
+          dLoad(true, `Directory \`${relativePath}/\` ${event === 'addDir' ? 'created' : 'removed'}`)
         }
       } else if (isFileChange) {
         if (file.match(/(app|error)\.(js|ts|mjs|jsx|tsx|vue)$/)) {
-          dLoad(true, `\`${relative(rootDir, file)}\` ${event === 'add' ? 'created' : 'removed'}`)
+          dLoad(true, `\`${relativePath}\` ${event === 'add' ? 'created' : 'removed'}`)
         }
       }
     })

@@ -41,6 +41,7 @@ describe('pages', () => {
     // composables auto import
     expect(html).toContain('Composable | foo: auto imported from ~/components/foo.ts')
     expect(html).toContain('Composable | bar: auto imported from ~/components/useBar.ts')
+    expect(html).toContain('Composable | template: auto imported from ~/components/template.ts')
     // should import components
     expect(html).toContain('This is a custom component with a named export.')
 
@@ -243,6 +244,14 @@ describe('reactivity transform', () => {
   })
 })
 
+describe('server tree shaking', () => {
+  it('should work', async () => {
+    const html = await $fetch('/client')
+
+    expect(html).toContain('This page should not crash when rendered')
+  })
+})
+
 describe('extends support', () => {
   describe('layouts & pages', () => {
     it('extends foo/layouts/default & foo/pages/index', async () => {
@@ -317,6 +326,14 @@ describe('extends support', () => {
   })
 })
 
+describe('automatically keyed composables', () => {
+  it('should automatically generate keys', async () => {
+    const html = await $fetch('/keyed-composables')
+    expect(html).toContain('true')
+    expect(html).not.toContain('false')
+  })
+})
+
 describe('dynamic paths', () => {
   if (process.env.NUXT_TEST_DEV) {
     // TODO:
@@ -347,6 +364,8 @@ describe('dynamic paths', () => {
     expect(imageUrls).toMatchInlineSnapshot(`
         [
           "./logo.svg",
+          "../public.svg",
+          "../public.svg",
           "../public.svg",
         ]
       `)

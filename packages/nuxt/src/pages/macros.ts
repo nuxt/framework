@@ -3,6 +3,7 @@ import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL, withQuery } from 'ufo'
 import { findStaticImports, findExports } from 'mlly'
 import MagicString from 'magic-string'
+import { isAbsolute } from 'pathe'
 
 export interface TransformMacroPluginOptions {
   macros: Record<string, string>
@@ -46,7 +47,11 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       // with workaround for vue-loader bug: https://github.com/vuejs/vue-loader/pull/1911
       const scriptImport = findStaticImports(code).find(i => parseQuery(i.specifier.replace('?macro=true', '')).type === 'script')
       if (scriptImport) {
-        const specifier = withQuery(scriptImport.specifier.replace('?macro=true', ''), { macro: 'true' })
+        // https://github.com/vuejs/vue-loader/pull/1911
+        // https://github.com/vitejs/vite/issues/8473
+        const url = isAbsolute(scriptImport.specifier) ? pathToFileURL(scriptImport.specifier).href : scriptImport.specifier
+        const parsed = parseURL(decodeURIComponent(url).replace('?macro=true', ''))
+        const specifier = withQuery(parsed.pathname, { macro: 'true', ...parseQuery(parsed.search) })
         s.overwrite(0, code.length, `export { meta } from "${specifier}"`)
         return result()
       }
@@ -93,6 +98,8 @@ const starts = {
   "'": "'"
 }
 
+const QUOTE_RE = /["']/
+
 function extractObject (code: string) {
   // Strip comments
   code = code.replace(/^\s*\/\/.*$/gm, '')
@@ -102,7 +109,7 @@ function extractObject (code: string) {
   do {
     if (stack[0] === code[0] && result.slice(-1) !== '\\') {
       stack.shift()
-    } else if (code[0] in starts) {
+    } else if (code[0] in starts && !QUOTE_RE.test(stack[0])) {
       stack.unshift(starts[code[0]])
     }
     result += code[0]

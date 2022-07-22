@@ -16,15 +16,15 @@
     "@docus/theme": "1.2.2",
     "@nuxt/typescript-build": "^2.1.0",
     "fs-extra": "^10.1.0",
-    "jiti": "^1.13.0",
-    "pathe": "^0.3.0",
+    "jiti": "^1.14.0",
+    "pathe": "^0.3.2",
     "rimraf": "^3.0.2",
     "scule": "^0.2.1",
     "untyped": "^0.4.4",
     "vue-mq": "^1.0.1",
-    "vue-plausible": "^1.3.1"
+    "vue-plausible": "^1.3.2"
   },
   "dependencies": {
-    "three": "^0.140.2"
+    "three": "^0.142.0"
   }
 }
