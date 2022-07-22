@@ -13,6 +13,19 @@ interface LoaderOptions {
   transform?: ComponentsOptions['transform']
 }
 
+function isVueTemplate (id: string) {
+  // Bare `.vue` file (in Vite)
+  if (id.endsWith('.vue')) {
+    return true
+  }
+
+  const { search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
+  const query = parseQuery(search)
+
+  // Query `?vue&type=template` (in Webpack or external template)
+  return 'vue' in query && query.type === 'template'
+}
+
 export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
   const exclude = options.transform?.exclude || []
   const include = options.transform?.include || []
@@ -27,12 +40,7 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
       if (include.some(pattern => id.match(pattern))) {
         return true
       }
-
-      const { pathname, search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
-      const query = parseQuery(search)
-      // we only transform render functions
-      // from `type=template` (in Webpack) and bare `.vue` file (in Vite)
-      return pathname.endsWith('.vue') && (query.type === 'template' || !!query.macro || !search)
+      return isVueTemplate(id)
     },
     transform (code, id) {
       const components = options.getComponents()
