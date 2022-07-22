@@ -1,0 +1,17 @@
+{
+  "name": "example-pinia",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "devDependencies": {
+    "nuxt": "npm:nuxt3@latest"
+  },
+  "dependencies": {
+    "@pinia/nuxt": "^0.1.9",
+    "pinia": "^2.0.14"
+  }
+}
