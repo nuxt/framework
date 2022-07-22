@@ -6,10 +6,10 @@
 </template>
 
 <script setup>
-import { onErrorCaptured } from 'vue'
-import { callWithNuxt, throwError, useError, useNuxtApp } from '#app'
-// @ts-ignore
-import ErrorComponent from '#build/error-component.mjs'
+import { defineAsyncComponent, onErrorCaptured } from 'vue'
+import { callWithNuxt, isNuxtError, showError, useError, useNuxtApp } from '#app'
+
+const ErrorComponent = defineAsyncComponent(() => import('#build/error-component.mjs'))
 
 const nuxtApp = useNuxtApp()
 const onResolve = () => nuxtApp.callHook('app:suspense:resolve')
@@ -24,8 +24,8 @@ if (process.dev && results && results.some(i => i && 'then' in i)) {
 const error = useError()
 onErrorCaptured((err, target, info) => {
   nuxtApp.hooks.callHook('vue:error', err, target, info).catch(hookError => console.error('[nuxt] Error in `vue:error` hook', hookError))
-  if (process.server) {
-    callWithNuxt(nuxtApp, throwError, [err])
+  if (process.server || (isNuxtError(err) && (err.fatal || err.unhandled))) {
+    callWithNuxt(nuxtApp, showError, [err])
   }
 })
 </script>
