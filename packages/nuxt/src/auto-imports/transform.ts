@@ -10,7 +10,7 @@ export const TransformPlugin = createUnplugin(({ ctx, options, sourcemap }: {ctx
     enforce: 'post',
     transformInclude (id) {
       const { pathname, search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
-      const { type, macro } = parseQuery(search)
+      const query = parseQuery(search)
 
       const exclude = options.transform?.exclude || [/[\\/]node_modules[\\/]/]
       const include = options.transform?.include || []
@@ -22,8 +22,8 @@ export const TransformPlugin = createUnplugin(({ ctx, options, sourcemap }: {ctx
 
       // vue files
       if (
-        pathname.endsWith('.vue') &&
-        (type === 'template' || type === 'script' || macro || !search)
+        id.endsWith('.vue') ||
+        ('vue' in query && (query.type === 'template' || query.type === 'script' || query.macro))
       ) {
         return true
       }
