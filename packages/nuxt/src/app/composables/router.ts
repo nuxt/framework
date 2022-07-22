@@ -1,6 +1,6 @@
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure } from 'vue-router'
 import { sendRedirect } from 'h3'
-import { joinURL } from 'ufo'
+import { hasProtocol, joinURL, parseURL } from 'ufo'
 import { useNuxtApp, useRuntimeConfig } from '#app'
 
 export const useRouter = () => {
@@ -53,26 +53,65 @@ const isProcessingMiddleware = () => {
 
 export interface NavigateToOptions {
   replace?: boolean
-  redirectCode?: number
+  redirectCode?: number,
+  allowExternal?: boolean
+}
+
+const getPath = (to: RouteLocationRaw): string => {
+  if (typeof to === 'string') {
+    return to
+  }
+  if ('path' in to) {
+    return to.path
+  }
+  return '/'
 }
 
 export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}): Promise<void | NavigationFailure> | RouteLocationRaw => {
   if (!to) {
     to = '/'
   }
-  // Early redirect on client-side since only possible option is redirectCode and not applied
-  if (process.client && isProcessingMiddleware()) {
+
+  const toPath = getPath(to)
+  const isExternal = hasProtocol(toPath, true)
+  const hasScriptProtocol = parseURL(toPath).protocol === 'script:'
+
+  if (hasScriptProtocol) {
+    throw new Error('Cannot navigate to an URL with script protocol')
+  }
+
+  if (!isExternal && isProcessingMiddleware()) {
     return to
   }
+
   const router = useRouter()
   if (process.server) {
     const nuxtApp = useNuxtApp()
     if (nuxtApp.ssrContext && nuxtApp.ssrContext.event) {
-      const redirectLocation = joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
-      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext.event, redirectLocation, options.redirectCode || 302))
+      if (isExternal && !options.allowExternal) {
+        throw new Error('Redirecting to external URL without `allowExternal: true` is not allowed.')
+      }
+      const redirectLocation = isExternal ? toPath : joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
+      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext.event, redirectLocation, options.redirectCode || 301))
     }
   }
+
   // Client-side redirection using vue-router
+  if (isExternal) {
+    if (!options.allowExternal) {
+      const response = window.confirm(`Do you want to get redirected to ${toPath}?`)
+      if (!response) {
+        return
+      }
+    }
+    if (options.replace) {
+      location.replace(toPath)
+      return
+    }
+    location.href = toPath
+    return
+  }
+
   return options.replace ? router.replace(to) : router.push(to)
 }
 
