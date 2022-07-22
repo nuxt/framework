@@ -63,7 +63,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
 
       const global = /\.(global)$/.test(fileName) || dir.global
       const mode = fileName.match(/(?<=\.)(client|server)(\.global)?$/)?.[1] as 'client' | 'server' || 'all'
-      fileName = fileName.replace(/(\.client|server)?(\.global)?$/, '')
+      fileName = fileName.replace(/(\.(client|server))?(\.global)?$/, '')
 
       if (fileName.toLowerCase() === 'index') {
         fileName = dir.pathPrefix === false ? basename(dirname(filePath)) : '' /* inherits from path */
