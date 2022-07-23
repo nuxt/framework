@@ -115,6 +115,7 @@ export default defineNuxtModule({
       filename: 'router.options.mjs',
       getContents: async () => {
         // Check for router options
+        const defaultOptsFile = resolve(distDir, 'pages/routing/default-router.options')
         const routerOptionsFiles = (await Promise.all(nuxt.options._layers.map(
           async layer => await findPath(resolve(layer.config.srcDir, 'app/router.options'))
         ))).filter(Boolean)
@@ -124,8 +125,11 @@ export default defineNuxtModule({
 
         return [
           ...routerOptionsFiles.map((file, index) => genImport(file, `routerOptions${index}`)),
+          defaultOptsFile ? genImport(defaultOptsFile, 'defaultOptions') : '',
+
           `const configRouterOptions = ${configRouterOptions}`,
           'export default {',
+          '...(defaultOptions || {}),',
           '...configRouterOptions,',
           // We need to reverse spreading order to respect layers priority
           ...routerOptionsFiles.map((_, index) => `...routerOptions${index},`).reverse(),
