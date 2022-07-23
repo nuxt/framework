@@ -6,6 +6,7 @@ import { logger, isIgnored } from '@nuxt/kit'
 import type { Options } from '@vitejs/plugin-vue'
 import replace from '@rollup/plugin-replace'
 import { sanitizeFilePath } from 'mlly'
+import { getPort } from 'get-port-please'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
@@ -26,6 +27,11 @@ export interface ViteBuildContext {
 }
 
 export async function bundle (nuxt: Nuxt) {
+  const hmrPortDefault = 24678 // Vite's default HMR port
+  const hmrPort = await getPort({
+    port: hmrPortDefault,
+    ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
+  })
   const ctx: ViteBuildContext = {
     nuxt,
     config: vite.mergeConfig(
@@ -72,6 +78,12 @@ export async function bundle (nuxt: Nuxt) {
           reactivityTransform: nuxt.options.experimental.reactivityTransform
         },
         server: {
+          hmr: {
+            // https://github.com/nuxt/framework/issues/4191
+            protocol: 'ws',
+            clientPort: hmrPort,
+            port: hmrPort
+          },
           watch: { ignored: isIgnored },
           fs: {
             allow: [
@@ -88,6 +100,7 @@ export async function bundle (nuxt: Nuxt) {
   // to detect whether to inject production or development code (such as HMR code)
   if (!nuxt.options.dev) {
     ctx.config.server.watch = undefined
+    ctx.config.server.hmr = false
     ctx.config.build.watch = undefined
   }
 
