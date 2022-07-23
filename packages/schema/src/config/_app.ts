@@ -26,7 +26,12 @@ export default {
      * @type {import('@vue/compiler-core').CompilerOptions}
      * @version 3
      */
-    compilerOptions: {}
+    compilerOptions: {},
+    /**
+     * enable runtime compiler
+     * @version 3
+     */
+    runtimeCompiler: false
   },
 
   /**

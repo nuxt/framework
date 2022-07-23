@@ -77,11 +77,11 @@ export async function initNitro (nuxt: Nuxt) {
             vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
           },
       // Vue 3 mocks
-      'estree-walker': 'unenv/runtime/mock/proxy',
-      '@babel/parser': 'unenv/runtime/mock/proxy',
-      '@vue/compiler-core': 'unenv/runtime/mock/proxy',
-      '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
-      '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
+      'estree-walker': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? 'estree-walker' : 'unenv/runtime/mock/proxy',
+      '@babel/parser': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@babel/parser' : 'unenv/runtime/mock/proxy',
+      '@vue/compiler-core': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@vue/compiler-core' : 'unenv/runtime/mock/proxy',
+      '@vue/compiler-dom': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@vue/compiler-dom' : 'unenv/runtime/mock/proxy',
+      '@vue/compiler-ssr': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@vue/compiler-ssr' : 'unenv/runtime/mock/proxy',
       '@vue/devtools-api': 'unenv/runtime/mock/proxy-cjs',
 
       // Paths
@@ -96,6 +96,18 @@ export async function initNitro (nuxt: Nuxt) {
     },
     rollupConfig: {
       plugins: []
+    },
+    commonJS: {
+      dynamicRequireTargets: (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev)
+      // TODO prefer using absolute path
+        ? [
+            './node_modules/vue',
+            './node_modules/@vue/compiler-core',
+            './node_modules/@vue/compiler-dom',
+            './node_modules/@vue/compiler-ssr',
+            './node_modules/vue/server-renderer'
+          ]
+        : []
     }
   })
 
@@ -128,6 +140,50 @@ export async function initNitro (nuxt: Nuxt) {
 
   // Connect hooks
   nuxt.hook('close', () => nitro.hooks.callHook('close'))
+
+  // Register nuxt protection patterns
+  nitro.hooks.hook('rollup:before', (nitro) => {
+    const plugin = ImportProtectionPlugin.rollup({
+      rootDir: nuxt.options.rootDir,
+      patterns: [
+        ...['#app', /^#build(\/|$)/]
+          .map(p => [p, 'Vue app aliases are not allowed in server routes.']) as [RegExp | string, string][]
+      ]
+    })
+    nitro.options.rollupConfig.plugins.push(plugin)
+  })
+
+  // Enable runtime compiler client side
+  if (nuxt.options.vue.runtimeCompiler) {
+    // set vue esm on client
+    nuxt.hook('vite:extendConfig', (config, { isClient }) => {
+      if (isClient) {
+        if (Array.isArray(config.resolve.alias)) {
+          config.resolve.alias.push({
+            find: 'vue',
+            replacement: 'vue/dist/vue.esm-bundler'
+          })
+        } else {
+          config.resolve.alias = {
+            ...config.resolve.alias,
+            vue: 'vue/dist/vue.esm-bundler'
+          }
+        }
+      }
+    })
+    nuxt.hook('webpack:config', (configuration) => {
+      const clientConfig = configuration.find(config => config.name === 'client')
+      if (!clientConfig.resolve) { clientConfig.resolve.alias = {} }
+      if (Array.isArray(clientConfig.resolve.alias)) {
+        clientConfig.resolve.alias.push({
+          name: 'vue',
+          alias: 'vue/dist/vue.esm-bundler'
+        })
+      } else {
+        clientConfig.resolve.alias.vue = 'vue/dist/vue.esm-bundler'
+      }
+    })
+  }
 
   // Setup handlers
   const devMidlewareHandler = dynamicEventHandler()
