@@ -4,6 +4,8 @@ import { RouteLocationNormalized, RouteLocationNormalizedLoaded, RouterView } fr
 import { generateRouteKey, RouterViewSlotProps, wrapInKeepAlive } from './utils'
 import { useNuxtApp } from '#app'
 import { _wrapIf } from '#app/components/utils'
+// @ts-ignore
+import { pageTransition as defaultPageTransition, keepalive as defaultKeepaliveConfig } from '#build/app.config.mjs'
 
 const isNestedKey = Symbol('isNested')
 
@@ -32,7 +34,7 @@ export default defineComponent({
       return h(RouterView, { name: props.name, route: props.route, ...attrs }, {
         default: (routeProps: RouterViewSlotProps) => routeProps.Component &&
             _wrapIf(Transition, routeProps.route.meta.pageTransition ?? defaultPageTransition,
-              wrapInKeepAlive(routeProps.route.meta.keepalive,
+              wrapInKeepAlive(routeProps.route.meta.keepalive ?? defaultKeepaliveConfig,
                 isNested && nuxtApp.isHydrating
                   // Include route children in parent suspense
                   ? h(routeProps.Component, { key: generateRouteKey(props.pageKey, routeProps) } as {})
@@ -50,5 +52,3 @@ export default defineComponent({
   pageKey?: string | ((route: RouteLocationNormalizedLoaded) => string)
   [key: string]: any
 }>
-
-const defaultPageTransition = { name: 'page', mode: 'out-in' }
