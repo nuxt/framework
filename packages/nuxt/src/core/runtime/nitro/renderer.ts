@@ -198,12 +198,12 @@ function normalizeMeta (meta: string[]) {
   return meta.filter(Boolean).map(i => i.trim())
 }
 
-function joinTags (meta: string[]) {
-  return meta.join('')
+function joinTags (tags: string[]) {
+  return tags.join('')
 }
 
-function joinAttrs (meta: string[]) {
-  return meta.join(' ')
+function joinAttrs (chunks: string[]) {
+  return chunks.join(' ')
 }
 
 function renderHTMLDocument (rendered: NuxtRenderContext) {
