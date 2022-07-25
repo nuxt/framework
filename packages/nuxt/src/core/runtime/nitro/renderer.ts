@@ -198,19 +198,18 @@ function normalizeMeta (meta: string[]) {
   return meta.filter(Boolean).map(i => i.trim())
 }
 
-function joinMeta (meta: string[]) {
+function joinTags (meta: string[]) {
   return meta.join('')
+}
+
+function joinMeta (meta: string[]) {
+  return meta.join(' ')
 }
 
 function renderHTMLDocument (rendered: NuxtRenderContext) {
   return `<!DOCTYPE html>
 <html ${joinMeta(rendered.html.htmlAttrs)}>
-<head>
-  ${joinMeta(rendered.html.head)}
-</head>
-<body ${joinMeta(rendered.html.bodyAttrs)}>${joinMeta(rendered.html.bodyPreprend)}
-${joinMeta(rendered.html.body)}
-  ${joinMeta(rendered.html.bodyAppend)}
-</body>
+<head>${joinTags(rendered.html.head)}</head>
+<body ${joinMeta(rendered.html.bodyAttrs)}>${joinTags(rendered.html.bodyPreprend)}${joinTags(rendered.html.body)}${joinTags(rendered.html.bodyAppend)}</body>
 </html>`
 }
