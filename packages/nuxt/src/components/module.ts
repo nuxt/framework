@@ -13,7 +13,7 @@ function compareDirByPathLength ({ path: pathA }, { path: pathB }) {
   return pathB.split(/[\\/]/).filter(Boolean).length - pathA.split(/[\\/]/).filter(Boolean).length
 }
 
-const DEFAULT_COMPONENTS_DIRS_RE = /^(components|global)$/
+const DEFAULT_COMPONENTS_DIRS_RE = /\/components$|\/components\/global$/
 
 export default defineNuxtModule<ComponentsOptions>({
   meta: {
@@ -70,7 +70,7 @@ export default defineNuxtModule<ComponentsOptions>({
         dirOptions.level = Number(dirOptions.level || 0)
 
         const present = isDirectory(dirPath)
-        if (!present && !DEFAULT_COMPONENTS_DIRS_RE.test(basename(dirOptions.path))) {
+        if (!present && !DEFAULT_COMPONENTS_DIRS_RE.test(dirOptions.path)) {
           // eslint-disable-next-line no-console
           console.warn('Components directory not found: `' + dirPath + '`')
         }
