@@ -83,7 +83,9 @@ const getSPARenderer = lazyCachedFunction(async () => {
     if ('all' in clientManifest && 'initial' in clientManifest) {
       // Upgrade legacy manifest (also see normalizeClientManifest in vue-bundle-renderer)
       // https://github.com/nuxt-contrib/vue-bundle-renderer/issues/12
-      entryFiles = clientManifest.initial.map(file => ({ file }))
+      entryFiles = clientManifest.initial.map(file =>
+        file.endsWith('css') ? { css: file } : { file }
+      )
     }
 
     return Promise.resolve({
@@ -97,6 +99,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
           .join(''),
       renderScripts: () =>
         entryFiles
+          .filter(({ file }) => file != null)
           .map(({ file }) => {
             const isMJS = !file.endsWith('.js')
             return `<script ${isMJS ? 'type="module"' : ''} src="${buildAssetsURL(file)}"></script>`
