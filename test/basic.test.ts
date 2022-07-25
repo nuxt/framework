@@ -382,10 +382,32 @@ describe('dynamic paths', () => {
     await startServer()
 
     const html = await $fetch('/foo/assets')
+    for (const match of html.matchAll(/(href|src)="(.`*?)"/g)) {
+      const url = match[2]
+      expect(
+        url.startsWith('/foo/_other/') ||
+        url === '/foo/public.svg' ||
+        // TODO: webpack does not yet support dynamic static paths
+        (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
+      ).toBeTruthy()
+    }
+  })
+
+  it('should allow setting relative baseURL', async () => {
+    delete process.env.NUXT_APP_BUILD_ASSETS_DIR
+    process.env.NUXT_APP_BASE_URL = './'
+    await startServer()
+
+    const html = await $fetch('/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
-      // TODO: webpack does not yet support dynamic static paths
-      expect(url.startsWith('/foo/_other/') || url === '/foo/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
+      expect(
+        url.startsWith('./_nuxt/') ||
+        url === './public.svg' ||
+        // TODO: webpack does not yet support dynamic static paths
+        (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
+      ).toBeTruthy()
+      expect(url.startsWith('./_nuxt/_nuxt')).toBeFalsy()
     }
   })
 
@@ -407,8 +429,12 @@ describe('dynamic paths', () => {
     const html = await $fetch('/foo/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
-      // TODO: webpack does not yet support dynamic static paths
-      expect(url.startsWith('https://example.com/_cdn/') || url === 'https://example.com/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
+      expect(
+        url.startsWith('https://example.com/_cdn/') ||
+        url === 'https://example.com/public.svg' ||
+        // TODO: webpack does not yet support dynamic static paths
+        (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
+      ).toBeTruthy()
     }
   })
 })
