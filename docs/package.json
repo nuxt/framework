@@ -10,10 +10,14 @@
     "gendocs": "jiti ./scripts/gen-docs.ts"
   },
   "dependencies": {
-    "@nuxt-themes/nuxt3-docs": "1.0.2",
+    "@nuxt-themes/nuxt3-docs": "1.0.3",
     "@nuxthq/studio": "npm:@nuxthq/studio-edge@latest",
     "jiti": "^1.14.0",
     "nuxt": "^3.0.0-rc.5"
+  },
+  "resolutions": {
+    "@docsearch/js": "3.1.0",
+    "@docsearch/css": "3.1.0"
   },
   "packageManager": "yarn@3.2.1"
 }
