@@ -194,8 +194,8 @@ function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
   }
 }
 
-function normalizeMeta (meta: string[]) {
-  return meta.filter(Boolean).map(i => i.trim())
+function normalizeChunks (chunks: string[]) {
+  return chunks.filter(Boolean).map(i => i.trim())
 }
 
 function joinTags (tags: string[]) {
