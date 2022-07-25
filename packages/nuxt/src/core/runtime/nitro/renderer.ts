@@ -100,7 +100,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
           .join(''),
       renderScripts: () =>
         entryFiles
-          .filter(({ file }) => file != null)
+          .filter(({ file }) => file)
           .map(({ file }) => {
             const isMJS = !file.endsWith('.js')
             return `<script ${isMJS ? 'type="module"' : ''} src="${buildAssetsURL(file)}"></script>`
