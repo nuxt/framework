@@ -1,11 +1,10 @@
-import { existsSync } from 'node:fs'
 import { resolve, relative, normalize } from 'pathe'
 import chokidar from 'chokidar'
 import { debounce } from 'perfect-debounce'
 import type { Nuxt } from '@nuxt/schema'
 import consola from 'consola'
 import { withTrailingSlash } from 'ufo'
-import { loadDotenv } from 'c12'
+import { setupDotenv } from 'c12'
 import { showBanner } from '../utils/banner'
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
@@ -36,10 +35,7 @@ export default defineNuxtCommand({
     }
 
     const rootDir = resolve(args._[0] || '.')
-
-    if (existsSync(resolve(rootDir, '.env'))) {
-      process.env = await loadDotenv({ cwd: rootDir, fileName: '.env', env: process.env })
-    }
+    await setupDotenv({ cwd: rootDir })
 
     const listener = await listen(serverHandler, {
       showURL: false,

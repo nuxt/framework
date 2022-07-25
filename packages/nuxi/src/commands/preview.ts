@@ -1,7 +1,7 @@
 import { existsSync, promises as fsp } from 'node:fs'
 import { dirname, relative } from 'node:path'
 import { execa } from 'execa'
-import { loadDotenv } from 'c12'
+import { setupDotenv } from 'c12'
 import { resolve } from 'pathe'
 import consola from 'consola'
 
@@ -35,10 +35,8 @@ export default defineNuxtCommand({
       process.exit(1)
     }
 
-    if (existsSync(resolve(rootDir, '.env'))) {
-      consola.info('Loading `.env`. This will not be loaded when running the server in production.')
-      process.env = await loadDotenv({ cwd: rootDir, fileName: '.env', env: process.env })
-    }
+    consola.info('Loading `.env`. This will not be loaded when running the server in production.')
+    await setupDotenv({ cwd: rootDir })
 
     consola.info('Starting preview command:', nitroJSON.commands.preview)
     const [command, ...commandArgs] = nitroJSON.commands.preview.split(' ')
