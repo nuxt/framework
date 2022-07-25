@@ -202,14 +202,14 @@ function joinTags (meta: string[]) {
   return meta.join('')
 }
 
-function joinMeta (meta: string[]) {
+function joinAttrs (meta: string[]) {
   return meta.join(' ')
 }
 
 function renderHTMLDocument (rendered: NuxtRenderContext) {
   return `<!DOCTYPE html>
-<html ${joinMeta(rendered.html.htmlAttrs)}>
+<html ${joinAttrs(rendered.html.htmlAttrs)}>
 <head>${joinTags(rendered.html.head)}</head>
-<body ${joinMeta(rendered.html.bodyAttrs)}>${joinTags(rendered.html.bodyPreprend)}${joinTags(rendered.html.body)}${joinTags(rendered.html.bodyAppend)}</body>
+<body ${joinAttrs(rendered.html.bodyAttrs)}>${joinTags(rendered.html.bodyPreprend)}${joinTags(rendered.html.body)}${joinTags(rendered.html.bodyAppend)}</body>
 </html>`
 }
