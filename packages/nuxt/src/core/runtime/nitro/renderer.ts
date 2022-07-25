@@ -161,7 +161,7 @@ export default eventHandler(async (event) => {
       // TODO: Rename to _rendered.body in next vue-bundle-renderer
         _rendered.html
       ],
-      bodyAppend: normalizeMeta([
+      bodyAppend: normalizeChunks([
       `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
       _rendered.renderScripts(),
       renderedMeta.bodyScripts
