@@ -84,6 +84,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
       // Upgrade legacy manifest (also see normalizeClientManifest in vue-bundle-renderer)
       // https://github.com/nuxt-contrib/vue-bundle-renderer/issues/12
       entryFiles = clientManifest.initial.map(file =>
+        // Webpack manifest fix with SPA renderer
         file.endsWith('css') ? { css: file } : { file }
       )
     }
