@@ -1,4 +1,4 @@
-# `nuxi build`
+# `nuxi cleanup`
 
 ```{bash}
 npx nuxi clean|cleanup [rootDir]
