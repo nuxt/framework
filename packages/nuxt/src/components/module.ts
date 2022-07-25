@@ -1,5 +1,5 @@
 import { statSync } from 'node:fs'
-import { resolve, basename } from 'pathe'
+import { resolve } from 'pathe'
 import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { componentsPluginTemplate, componentsTemplate, componentsTypeTemplate } from './templates'
