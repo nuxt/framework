@@ -1,8 +1,7 @@
 ---
 icon: LogoCloudFlare
+title: "Cloudflare Workers"
 ---
-
-# Cloudflare Workers
 
 How to deploy Nuxt to [Cloudflare Workers](https://workers.cloudflare.com/).
 

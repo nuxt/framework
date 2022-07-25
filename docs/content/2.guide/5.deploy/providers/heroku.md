@@ -1,8 +1,7 @@
 ---
 icon: IconCloud
+title: "Heroku"
 ---
-
-# Heroku
 
 How to deploy Nuxt to [Heroku](https://www.heroku.com/).
 

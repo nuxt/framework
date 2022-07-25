@@ -1,4 +1,6 @@
-# `nuxi dev`
+---
+title: "nuxi dev"
+---
 
 ```{bash}
 npx nuxi dev [rootDir] [--clipboard] [--open, -o] [--no-clear] [--port, -p] [--host, -h] [--https] [--ssl-cert] [--ssl-key]

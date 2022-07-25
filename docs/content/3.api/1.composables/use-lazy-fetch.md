@@ -1,4 +1,6 @@
-# `useLazyFetch`
+---
+title: "useLazyFetch"
+---
 
 ## Description
 

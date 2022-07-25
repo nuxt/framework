@@ -1,6 +1,7 @@
-# `nuxi add`
-
-Scaffold an entity into your Nuxt application.
+---
+title: "nuxi add"
+description: "Scaffold an entity into your Nuxt application."
+---
 
 ```{bash}
 npx nuxi add [--cwd] [--force] <TEMPLATE> <NAME>

@@ -1,8 +1,7 @@
 ---
 icon: LogoNetlify
+title: "Netlify"
 ---
-
-# Netlify
 
 How to deploy Nuxt to [Netlify](https://www.netlify.com/).
 

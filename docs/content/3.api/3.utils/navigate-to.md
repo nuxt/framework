@@ -1,4 +1,6 @@
-# `navigateTo`
+---
+title: "navigateTo"
+---
 
 `navigateTo` is a router helper function that allows creating programmatic navigation for users to navigate within Nuxt application.
 

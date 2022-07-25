@@ -1,6 +1,7 @@
-# `nuxi analyze`
-
-Analyze the production bundle or your Nuxt application.
+---
+title: "nuxi analyze"
+description: "Analyze the production bundle or your Nuxt application."
+---
 
 ```{bash}
 npx nuxi analyze [rootDir]

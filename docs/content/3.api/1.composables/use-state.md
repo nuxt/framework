@@ -1,4 +1,6 @@
-# `useState`
+---
+title: "useState"
+---
 
 ```ts
 useState<T>(init?: () => T | Ref<T>): Ref<T>

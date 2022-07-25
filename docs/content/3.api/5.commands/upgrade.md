@@ -1,4 +1,6 @@
-# `nuxi upgrade`
+---
+title: "nuxi upgrade"
+---
 
 ```{bash}
 npx nuxi upgrade [--force|-f]

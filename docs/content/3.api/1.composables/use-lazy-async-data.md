@@ -1,4 +1,6 @@
-# `useLazyAsyncData`
+---
+title: "useLazyAsyncData"
+---
 
 ## Description
 

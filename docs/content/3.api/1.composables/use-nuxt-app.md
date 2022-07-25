@@ -1,4 +1,6 @@
-# `useNuxtApp`
+---
+title: "useNuxtApp"
+---
 
 ::NeedContribution
 ::

@@ -1,4 +1,6 @@
-# `abortNavigation`
+---
+title: "abortNavigation"
+---
 
 ```ts
 abortNavigation(err?: Error | string): false

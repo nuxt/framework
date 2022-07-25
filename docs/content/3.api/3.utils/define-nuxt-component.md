@@ -1,4 +1,6 @@
-# `defineNuxtComponent`
+---
+title: "defineNuxtComponent"
+---
 
 ::NeedContribution
 ::

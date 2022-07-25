@@ -1,4 +1,6 @@
-# `nuxi info`
+---
+title: "nuxi info"
+---
 
 ```{bash}
 npx nuxi info [rootDir]
