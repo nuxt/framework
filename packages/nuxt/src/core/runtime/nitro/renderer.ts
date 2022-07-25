@@ -204,7 +204,7 @@ function joinMeta (meta: string[]) {
 
 function renderHTMLDocument (rendered: NuxtRenderContext) {
   return `<!DOCTYPE html>
-<html ${joinMeta(rendered.html.meta.htmlAttrs)}>
+<html ${joinMeta(rendered.html.html.htmlAttrs)}>
 <head>
   ${joinMeta(rendered.html.head)}
 </head>
