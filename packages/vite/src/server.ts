@@ -1,3 +1,4 @@
+import { resolveTSConfig } from 'pkg-types'
 import { resolve, normalize } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
@@ -18,7 +19,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     base: ctx.nuxt.options.dev
-      ? joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
+      ? joinURL(ctx.nuxt.options.app.baseURL.replace(/^\.\//, '/') || '/', ctx.nuxt.options.app.buildAssetsDir)
       : undefined,
     experimental: {
       renderBuiltUrl: (filename, { type, hostType }) => {
@@ -107,7 +108,11 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Add type-checking
   if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
     const checker = await import('vite-plugin-checker').then(r => r.default)
-    serverConfig.plugins.push(checker({ vueTsc: true }))
+    serverConfig.plugins.push(checker({
+      vueTsc: {
+        tsconfigPath: await resolveTSConfig(ctx.nuxt.options.rootDir)
+      }
+    }))
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
