@@ -95,7 +95,6 @@ export async function buildServer (ctx: ViteBuildContext) {
       }
     },
     server: {
-      hmr: false,
       // https://github.com/vitest-dev/vitest/issues/229#issuecomment-1002685027
       preTransformRequests: false
     },
