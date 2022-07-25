@@ -145,15 +145,15 @@ export default eventHandler(async (event) => {
   const rendered: NuxtRenderContext = {
     ssrContext,
     html: {
-      htmlAttrs: normalizeMeta([renderedMeta.htmlAttrs]),
-      head: normalizeMeta([
+      htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
+      head: normalizeChunks([
         renderedMeta.headTags,
         _rendered.renderResourceHints(),
         _rendered.renderStyles(),
         ssrContext.styles
       ]),
-      bodyAttrs: normalizeMeta([renderedMeta.bodyAttrs]),
-      bodyPreprend: normalizeMeta([
+      bodyAttrs: normalizeChunks([renderedMeta.bodyAttrs]),
+      bodyPreprend: normalizeChunks([
         renderedMeta.bodyScriptsPrepend,
         ssrContext.teleports?.body
       ]),
