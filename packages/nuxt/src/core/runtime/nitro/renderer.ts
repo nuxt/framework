@@ -13,12 +13,12 @@ export type NuxtSSRContext = NuxtApp['ssrContext']
 
 export interface NuxtRenderContext {
   ssrContext: NuxtSSRContext
-  body: string
-  meta: {
+  html: {
     htmlAttrs: string[]
     head: string[]
     bodyAttrs: string[]
     bodyPreprend: string[]
+    body: string[]
     bodyAppend: string[]
   }
 }
@@ -144,24 +144,27 @@ export default eventHandler(async (event) => {
   // Create render conrtext
   const rendered: NuxtRenderContext = {
     ssrContext,
-    body: _rendered.html, // TODO: Rename to _rendered.body in next vue-bundle-renderer
-    meta: {
+    html: {
       htmlAttrs: normalizeMeta([renderedMeta.htmlAttrs]),
-      bodyAttrs: normalizeMeta([renderedMeta.bodyAttrs]),
       head: normalizeMeta([
         renderedMeta.headTags,
         _rendered.renderResourceHints(),
         _rendered.renderStyles(),
         ssrContext.styles
       ]),
+      bodyAttrs: normalizeMeta([renderedMeta.bodyAttrs]),
       bodyPreprend: normalizeMeta([
         renderedMeta.bodyScriptsPrepend,
         ssrContext.teleports?.body
       ]),
+      body: [
+      // TODO: Rename to _rendered.body in next vue-bundle-renderer
+        _rendered.html
+      ],
       bodyAppend: normalizeMeta([
-        `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
-        _rendered.renderScripts(),
-        renderedMeta.bodyScripts
+      `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
+      _rendered.renderScripts(),
+      renderedMeta.bodyScripts
       ])
     }
   }
@@ -201,13 +204,13 @@ function joinMeta (meta: string[]) {
 
 function renderHTMLDocument (rendered: NuxtRenderContext) {
   return `<!DOCTYPE html>
-<html ${joinMeta(rendered.meta.htmlAttrs)}>
+<html ${joinMeta(rendered.html.meta.htmlAttrs)}>
 <head>
-  ${joinMeta(rendered.meta.head)}
+  ${joinMeta(rendered.html.head)}
 </head>
-<body ${joinMeta(rendered.meta.bodyAttrs)}>${joinMeta(rendered.meta.bodyPreprend)}
-${rendered.body}
-  ${joinMeta(rendered.meta.bodyAppend)}
+<body ${joinMeta(rendered.html.bodyAttrs)}>${joinMeta(rendered.html.bodyPreprend)}
+${joinMeta(rendered.html.body)}
+  ${joinMeta(rendered.html.bodyAppend)}
 </body>
 </html>`
 }
