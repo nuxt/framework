@@ -108,8 +108,11 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Add type-checking
   if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
     const checker = await import('vite-plugin-checker').then(r => r.default)
-    serverConfig.plugins.push(checker({ vueTsc: { tsconfigPath: await resolveTSConfig(ctx.nuxt.options.rootDir)
- } }))
+    serverConfig.plugins.push(checker({
+      vueTsc: {
+        tsconfigPath: await resolveTSConfig(ctx.nuxt.options.rootDir)
+      }
+    }))
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
