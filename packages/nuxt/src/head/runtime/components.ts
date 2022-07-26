@@ -86,7 +86,7 @@ export const Script = defineComponent({
   }))
 })
 
-// <script>
+// <noscript>
 export const NoScript = defineComponent({
   name: 'NoScript',
   inheritAttrs: false,
