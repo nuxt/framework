@@ -19,18 +19,20 @@ export default defineComponent({
 })
 
 export function createClientOnly (component) {
-  return defineComponent({
-    name: 'ClientOnlyWrapper',
-    inheritAttrs: false,
-    setup (_props, { attrs, slots }) {
+  const { setup } = component
+  return {
+    ...component,
+    setup (props, ctx) {
+      const res = setup?.(props, ctx) || {}
+
       const mounted = ref(false)
       onMounted(() => { mounted.value = true })
-      return () => {
-        if (mounted.value) {
-          return h(component, attrs, slots)
-        }
-        return h('div', { class: attrs.class, style: attrs.style })
-      }
+
+      return Promise.resolve(res)
+        .then(() => ({ ...res, mounted }))
+    },
+    render (ctx, cache, props, state, data, options) {
+      return state.mounted ? component.render(ctx, cache, props, state, data, options) : h('div', { class: options.$attrs.class, style: options.$attrs.style })
     }
-  })
+  }
 }
