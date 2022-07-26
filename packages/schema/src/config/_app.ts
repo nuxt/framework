@@ -195,8 +195,7 @@ export default {
     meta: [],
     link: [],
     style: [],
-    script: [],
-    noscript: []
+    script: []
   },
 
   /**
