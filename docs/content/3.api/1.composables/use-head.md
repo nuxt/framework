@@ -43,6 +43,6 @@ export default {
 * **link**: array, each item maps to a newly-created `<link>` element, where object properties map to attributes.
 * **style**: array, each item maps to a newly-created `<style>` element, where object properties map to attributes.
 * **script**: array, each item maps to a newly-created `<script>` element, where object properties map to attributes.
-* **noscript**: array, each item maps to a newly-created `<noscript>` element, where object properties map to 
+* **noscript**: array, each item maps to a newly-created `<noscript>` element, where object properties map to attributes
 
 All elements in the meta object are optional. You can also pass only single values.
