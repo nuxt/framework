@@ -32,7 +32,9 @@ export function createClientOnly (component) {
         .then(() => ({ ...res, mounted }))
     },
     render (ctx, cache, props, state, data, options) {
-      return ctx.mounted ? component.render(ctx, cache, props, state, data, options) : h('div', { class: options.$attrs.class, style: options.$attrs.style })
+      return ctx.mounted
+        ? h(component.render(ctx, cache, props, state, data, options))
+        : h('div', { class: ctx.$attrs?.class, style: ctx.$attrs?.style })
     }
   }
 }
