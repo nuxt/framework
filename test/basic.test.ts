@@ -44,6 +44,8 @@ describe('pages', () => {
     expect(html).toContain('Composable | template: auto imported from ~/components/template.ts')
     // should import components
     expect(html).toContain('This is a custom component with a named export.')
+    // should apply attributes to client-only components
+    expect(html).toContain('<div style="color:red;" class="client-only"></div>')
 
     await expectNoClientErrors('/')
   })

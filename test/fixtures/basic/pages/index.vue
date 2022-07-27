@@ -14,6 +14,7 @@
     </NuxtLink>
     <SugarCounter :count="12" />
     <CustomComponent />
+    <ClientWrapped ref="clientRef" style="color: red;" class="client-only" />
   </div>
 </template>
 
@@ -24,4 +25,9 @@ const config = useRuntimeConfig()
 
 const foo = useFoo()
 const bar = useBar()
+const clientRef = ref()
+
+onMounted(() => {
+  clientRef.value.exposedFunc()
+})
 </script>
