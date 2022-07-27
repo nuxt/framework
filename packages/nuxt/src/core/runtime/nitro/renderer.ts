@@ -23,6 +23,13 @@ export interface NuxtRenderContext {
   }
 }
 
+export interface NuxtRenderResponse {
+  body: string,
+  statusCode: number,
+  statusMessage?: string,
+  headers: Record<string, string>
+}
+
 // @ts-ignore
 const getClientManifest = () => import('#build/dist/server/client.manifest.mjs')
   .then(r => r.default || r)
@@ -175,7 +182,7 @@ export default eventHandler(async (event) => {
   await nitroApp.hooks.callHook('nuxt:app:rendered', rendered)
 
   // Construct HTML response
-  const response = {
+  const response: NuxtRenderResponse = {
     body: renderHTMLDocument(rendered),
     statusCode: event.res.statusCode,
     statusMessage: event.res.statusMessage,
