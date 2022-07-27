@@ -93,6 +93,10 @@ export default {
      *       // <style type="text/css">:root { color: red }</style>
      *       { children: ':root { color: red }', type: 'text/css' }
      *     ]
+     *     noscript: [
+     *       // <noscript>Javascript is required</noscript>
+     *       { children: 'Javascript is required' }
+     *     ]
      *   }
      * }
      * ```
@@ -107,7 +111,8 @@ export default {
           meta: [],
           link: [],
           style: [],
-          script: []
+          script: [],
+          noscript: []
         })
       }
     },
