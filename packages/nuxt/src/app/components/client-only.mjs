@@ -20,21 +20,21 @@ export default defineComponent({
 
 export function createClientOnly (component) {
   const { setup } = component
-  return {
+  return defineComponent({
     ...component,
     setup (props, ctx) {
       const res = setup?.(props, ctx) || {}
 
-      const mounted = ref(false)
-      onMounted(() => { mounted.value = true })
+      const mounted$ = ref(false)
+      onMounted(() => { mounted$.value = true })
 
       return Promise.resolve(res)
-        .then(() => ({ ...res, mounted }))
+        .then(() => ({ ...res, mounted$ }))
     },
     render (ctx, cache, props, state, data, options) {
-      return ctx.mounted
+      return ctx.mounted$
         ? h(component.render(ctx, cache, props, state, data, options))
-        : h('div', { class: ctx.$attrs?.class, style: ctx.$attrs?.style })
+        : h('div', ctx.$attrs)
     }
-  }
+  })
 }
