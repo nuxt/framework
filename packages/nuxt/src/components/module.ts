@@ -32,7 +32,9 @@ export default defineNuxtModule<ComponentsOptions>({
     }
 
     const getComponents: getComponentsT = (mode) => {
-      return context.components.filter(c => c.mode === mode || c.mode === 'all')
+      return (mode && mode !== 'all')
+        ? context.components.filter(c => c.mode === mode || c.mode === 'all')
+        : context.components
     }
 
     const normalizeDirs = (dir: any, cwd: string) => {
@@ -125,8 +127,9 @@ export default defineNuxtModule<ComponentsOptions>({
 
     // Scan components and add to plugin
     nuxt.hook('app:templates', async () => {
-      context.components = await scanComponents(componentDirs, nuxt.options.srcDir!)
-      await nuxt.callHook('components:extend', context.components)
+      const newComponents = await scanComponents(componentDirs, nuxt.options.srcDir!)
+      await nuxt.callHook('components:extend', newComponents)
+      context.components = newComponents
     })
 
     nuxt.hook('prepare:types', ({ references }) => {
