@@ -4,6 +4,10 @@ function exposedFunc () {
 }
 
 defineExpose({ exposedFunc })
+
+await new Promise(resolve => setTimeout(resolve, 300))
+
+onMounted(() => { console.log('mounted') })
 </script>
 
 <template>
