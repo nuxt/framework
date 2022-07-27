@@ -27,10 +27,10 @@ export function createClientOnly (component) {
       onMounted(() => { mounted.value = true })
 
       return Promise.resolve(setup?.(props, ctx) || {})
-        .then((res) => {
-          const render = res && typeof res === 'function' ? res : component.render
-          return (ctx, cache, props, state, data, options) =>
-            mounted.value ? h(render(ctx, cache, props, state, data, options)) : h('div', ctx.$attrs)
+        .then((setupState) => {
+          const render = setupState && typeof setupState === 'function' ? res : component.render
+          return (ctx, cache, props, _, data, options) =>
+            mounted.value ? h(render(ctx, cache, props, setupState, data, options)) : h('div', ctx.$attrs)
         })
     }
   })
