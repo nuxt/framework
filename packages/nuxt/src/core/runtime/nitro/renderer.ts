@@ -174,14 +174,35 @@ export default eventHandler(async (event) => {
   await ssrContext.nuxt.hooks.callHook('app:rendered', rendered)
   await nitroApp.hooks.callHook('nuxt:app:rendered', rendered)
 
-  // Construct HTML template
-  const html = renderHTMLDocument(rendered)
-  await nitroApp.hooks.callHook('nuxt:app:rendered:html', { html })
+  // Construct HTML response
+  const response = {
+    body: renderHTMLDocument(rendered),
+    statusCode: null,
+    statusMessage: null,
+    headers: {
+      'Content-Type': 'text/html;charset=UTF-8',
+      'X-Powered-By': 'Nuxt'
+    }
+  }
+
+  // Allow extending the response
+  await nitroApp.hooks.callHook('nuxt:app:response', { response })
 
   // Send HTML response
-  if (event.res.writableEnded) { return }
-  event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
-  return html
+  if (!event.res.headersSent) {
+    for (const header in response.headers) {
+      event.res.setHeader(header, response.headers[header])
+    }
+    if (response.statusCode) {
+      event.res.statusCode = response.statusCode
+    }
+    if (response.statusMessage) {
+      event.res.statusMessage = response.statusMessage
+    }
+  }
+  if (!event.res.writableEnded) {
+    event.res.end(response.body)
+  }
 })
 
 function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
