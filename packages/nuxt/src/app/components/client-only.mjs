@@ -23,16 +23,15 @@ export function createClientOnly (component) {
   return defineComponent({
     ...component,
     setup (props, ctx) {
-      const mounted$ = ref(false)
-      onMounted(() => { mounted$.value = true })
+      const mounted = ref(false)
+      onMounted(() => { mounted.value = true })
 
       return Promise.resolve(setup?.(props, ctx) || {})
-        .then(res => ({ ...res, mounted$ }))
-    },
-    render (ctx, cache, props, state, data, options) {
-      return ctx.mounted$
-        ? h(component.render(ctx, cache, props, state, data, options))
-        : h('div', ctx.$attrs)
+        .then((res) => {
+          const render = res && typeof res === 'function' ? res : component.render
+          return (ctx, cache, props, state, data, options) =>
+            mounted.value ? h(render(ctx, cache, props, state, data, options)) : h('div', ctx.$attrs)
+        })
     }
   })
 }
