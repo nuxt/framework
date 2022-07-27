@@ -15,6 +15,8 @@ function compareDirByPathLength ({ path: pathA }, { path: pathB }) {
 
 const DEFAULT_COMPONENTS_DIRS_RE = /\/components$|\/components\/global$/
 
+type getComponentsT = (mode?: 'client' | 'server' | 'all') => Component[]
+
 export default defineNuxtModule<ComponentsOptions>({
   meta: {
     name: 'components',
@@ -25,7 +27,13 @@ export default defineNuxtModule<ComponentsOptions>({
   },
   setup (componentOptions, nuxt) {
     let componentDirs = []
-    const components: Component[] = []
+    const context = {
+      components: [] as Component[]
+    }
+
+    const getComponents: getComponentsT = (mode) => {
+      return context.components.filter(c => c.mode === mode || c.mode === 'all')
+    }
 
     const normalizeDirs = (dir: any, cwd: string) => {
       if (Array.isArray(dir)) {
@@ -95,17 +103,14 @@ export default defineNuxtModule<ComponentsOptions>({
       nuxt.options.build!.transpile!.push(...componentDirs.filter(dir => dir.transpile).map(dir => dir.path))
     })
 
-    const context = { components }
-
-    addTemplate({
-      ...componentsTypeTemplate,
-      options: { context }
-    })
-
-    addPluginTemplate({
-      ...componentsPluginTemplate,
-      options: { context }
-    })
+    // components.d.ts
+    addTemplate({ ...componentsTypeTemplate, options: { getComponents } })
+    // components.plugin.mjs
+    addPluginTemplate({ ...componentsPluginTemplate, options: { getComponents } })
+    // components.server.mjs
+    addTemplate({ ...componentsTemplate, filename: 'components.server.mjs', options: { getComponents, mode: 'server' } })
+    // components.client.mjs
+    addTemplate({ ...componentsTemplate, filename: 'components.client.mjs', options: { getComponents, mode: 'client' } })
 
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       const mode = isClient ? 'client' : 'server'
@@ -117,8 +122,6 @@ export default defineNuxtModule<ComponentsOptions>({
         config.resolve.alias['#components'] = resolve(nuxt.options.buildDir, `components.${mode}.mjs`)
       }
     })
-    addTemplate({ ...componentsTemplate, filename: 'components.server.mjs', options: { context, mode: 'server' } })
-    addTemplate({ ...componentsTemplate, filename: 'components.client.mjs', options: { context, mode: 'client' } })
 
     // Scan components and add to plugin
     nuxt.hook('app:templates', async () => {
@@ -141,7 +144,6 @@ export default defineNuxtModule<ComponentsOptions>({
       }
     })
 
-    const getComponents = () => context.components
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       config.plugins = config.plugins || []
       config.plugins.push(loaderPlugin.vite({
@@ -150,7 +152,10 @@ export default defineNuxtModule<ComponentsOptions>({
         mode: isClient ? 'client' : 'server'
       }))
       if (nuxt.options.experimental.treeshakeClientOnly) {
-        config.plugins.push(TreeShakeTemplatePlugin.vite({ sourcemap: nuxt.options.sourcemap, getComponents }))
+        config.plugins.push(TreeShakeTemplatePlugin.vite({
+          sourcemap: nuxt.options.sourcemap,
+          getComponents
+        }))
       }
     })
     nuxt.hook('webpack:config', (configs) => {
@@ -162,7 +167,10 @@ export default defineNuxtModule<ComponentsOptions>({
           mode: config.name === 'client' ? 'client' : 'server'
         }))
         if (nuxt.options.experimental.treeshakeClientOnly) {
-          config.plugins.push(TreeShakeTemplatePlugin.webpack({ sourcemap: nuxt.options.sourcemap, getComponents }))
+          config.plugins.push(TreeShakeTemplatePlugin.webpack({
+            sourcemap: nuxt.options.sourcemap,
+            getComponents
+          }))
         }
       })
     })

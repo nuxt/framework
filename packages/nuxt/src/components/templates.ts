@@ -5,7 +5,7 @@ import { genDynamicImport, genExport, genObjectFromRawEntries } from 'knitwork'
 export interface ComponentsTemplateContext {
   nuxt: Nuxt
   options: {
-    context: { components: Component[] }
+    getComponents: (mode?: 'client' | 'server' | 'all') => Component[]
     mode?: 'client' | 'server'
   }
 }
@@ -28,7 +28,7 @@ const createImportMagicComments = (options: ImportMagicCommentsOptions) => {
 export const componentsPluginTemplate = {
   filename: 'components.plugin.mjs',
   getContents ({ options }: ComponentsTemplateContext) {
-    const globalComponents = options.context.components.filter(c => c.global === true)
+    const globalComponents = options.getComponents().filter(c => c.global === true)
 
     return `import { defineAsyncComponent } from 'vue'
 import { defineNuxtPlugin } from '#app'
@@ -51,23 +51,20 @@ export default defineNuxtPlugin(nuxtApp => {
 }
 
 export const componentsTemplate = {
+  // components.[server|client].mjs'
   getContents ({ options }: ComponentsTemplateContext) {
-    const components = options.context.components
     return [
       'import { defineAsyncComponent } from \'vue\'',
-      ...components.flatMap((c) => {
+      ...options.getComponents(options.mode).flatMap((c) => {
         const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
         const comment = createImportMagicComments(c)
-
-        // Exclude client/server-only components from other build
-        if (c.mode !== 'all' && c.mode !== options.mode) { return [] }
 
         return [
           genExport(c.filePath, [{ name: c.export, as: c.pascalName }]),
           `export const Lazy${c.pascalName} = defineAsyncComponent(${genDynamicImport(c.filePath, { comment })}.then(c => ${exp}))`
         ]
       }),
-      `export const componentNames = ${JSON.stringify(components.map(c => c.pascalName))}`
+      `export const componentNames = ${JSON.stringify(options.getComponents().map(c => c.pascalName))}`
     ].join('\n')
   }
 }
@@ -76,7 +73,7 @@ export const componentsTypeTemplate = {
   filename: 'components.d.ts',
   getContents: ({ options, nuxt }: ComponentsTemplateContext) => {
     const buildDir = nuxt.options.buildDir
-    const componentTypes = options.context.components.map(c => [
+    const componentTypes = options.getComponents().map(c => [
       c.pascalName,
       `typeof ${genDynamicImport(isAbsolute(c.filePath) ? relative(buildDir, c.filePath) : c.filePath, { wrapper: false })}['${c.export}']`
     ])
