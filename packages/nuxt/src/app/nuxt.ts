@@ -6,6 +6,8 @@ import type { RuntimeConfig } from '@nuxt/schema'
 import { getContext } from 'unctx'
 import type { SSRContext } from 'vue-bundle-renderer'
 import type { CompatibilityEvent } from 'h3'
+// eslint-disable-next-line import/no-restricted-paths
+import type { NuxtRenderContext } from '../core/runtime/nitro/renderer'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
@@ -23,7 +25,7 @@ export interface RuntimeNuxtHooks {
   'app:created': (app: App<Element>) => HookResult
   'app:beforeMount': (app: App<Element>) => HookResult
   'app:mounted': (app: App<Element>) => HookResult
-  'app:rendered': () => HookResult
+  'app:rendered': (ctx: NuxtRenderContext) => HookResult
   'app:redirected': () => HookResult
   'app:suspense:resolve': (Component?: VNode) => HookResult
   'app:error': (err: any) => HookResult
@@ -181,12 +183,39 @@ export async function applyPlugins (nuxtApp: NuxtApp, plugins: Plugin[]) {
 }
 
 export function normalizePlugins (_plugins: Plugin[]) {
+  const unwrappedPlugins = []
+  const legacyInjectPlugins = []
+  const invalidPlugins = []
+
   const plugins = _plugins.map((plugin) => {
     if (typeof plugin !== 'function') {
-      return () => {}
+      invalidPlugins.push(plugin)
+      return null
+    }
+    if (plugin.length > 1) {
+      legacyInjectPlugins.push(plugin)
+      // Allow usage without wrapper but warn
+      // TODO: Skip invalid in next releases
+      // @ts-ignore
+      return (nuxtApp: NuxtApp) => plugin(nuxtApp, nuxtApp.provide)
+      // return null
+    }
+    if (!isNuxtPlugin(plugin)) {
+      unwrappedPlugins.push(plugin)
+      // Allow usage without wrapper but warn
     }
     return plugin
-  })
+  }).filter(Boolean)
+
+  if (process.dev && legacyInjectPlugins.length) {
+    console.warn('[warn] [nuxt] You are using a plugin with legacy Nuxt 2 format (context, inject) which is likely to be broken. In the future they will be ignored:', legacyInjectPlugins.map(p => p.name || p).join(','))
+  }
+  if (process.dev && invalidPlugins.length) {
+    console.warn('[warn] [nuxt] Some plugins are not exposing a function and skipped:', invalidPlugins)
+  }
+  if (process.dev && unwrappedPlugins.length) {
+    console.warn('[warn] [nuxt] You are using a plugin that has not been wrapped in `defineNuxtPlugin`. It is advised to wrap your plugins as in the future this may enable enhancements:', unwrappedPlugins.map(p => p.name || p).join(','))
+  }
 
   return plugins as Plugin[]
 }
@@ -194,6 +223,10 @@ export function normalizePlugins (_plugins: Plugin[]) {
 export function defineNuxtPlugin<T> (plugin: Plugin<T>) {
   plugin[NuxtPluginIndicator] = true
   return plugin
+}
+
+export function isNuxtPlugin (plugin: unknown) {
+  return typeof plugin === 'function' && NuxtPluginIndicator in plugin
 }
 
 /**

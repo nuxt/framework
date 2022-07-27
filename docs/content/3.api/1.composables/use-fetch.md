@@ -1,6 +1,6 @@
 # `useFetch`
 
-This composable provides a convenient wrapper around [`useAsyncData`](/api/composables/use-async-data) and [`$fetch`](/api/utils/$fetch). It automatically generates a key based on URL and fetch options, as well as infers API response type.
+This composable provides a convenient wrapper around [`useAsyncData`](/api/composables/use-async-data) and [`$fetch`](/api/utils/$fetch). It automatically generates a key based on URL and fetch options, provides type hints for request url based on server routes, and infers API response type.
 
 ## Type
 
@@ -23,6 +23,7 @@ type UseFetchOptions = {
   transform?: (input: DataT) => DataT
   pick?: string[]
   watch?: WatchSource[]
+  initialCache?: boolean
 }
 
 type AsyncData<DataT> = {
@@ -49,6 +50,7 @@ type AsyncData<DataT> = {
   * `default`: A factory function to set the default value of the data, before the async function resolves - particularly useful with the `lazy: true` option.
   * `pick`: Only pick specified keys in this array from the `handler` function result.
   * `watch`: watch reactive sources to auto-refresh
+  * `initialCache`: When set to `false`, will skip payload cache for initial fetch. (defaults to `true`)
   * `transform`: A function that can be used to alter `handler` function result after resolving.
 
 ::alert{type=warning}

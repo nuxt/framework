@@ -5,9 +5,11 @@ import fse from 'fs-extra'
 import { resolve } from 'pathe'
 import { addServerMiddleware } from '@nuxt/kit'
 import type { Plugin as VitePlugin, ViteDevServer } from 'vite'
+import { resolve as resolveModule } from 'mlly'
 import { distDir } from './dirs'
 import type { ViteBuildContext } from './vite'
 import { isCSS } from './utils'
+import { createIsExternal } from './utils/external'
 
 // TODO: Remove this in favor of registerViteNodeMiddleware
 // after Nitropack or h3 fixed for adding middlewares after setup
@@ -56,15 +58,29 @@ function createViteNodeMiddleware (ctx: ViteBuildContext) {
   }))
 
   app.use('/module', defineLazyEventHandler(() => {
-    const node: ViteNodeServer = new ViteNodeServer(ctx.ssrServer, {
+    const viteServer = ctx.ssrServer
+    const node: ViteNodeServer = new ViteNodeServer(viteServer, {
       deps: {
         inline: [
           /\/(nuxt|nuxt3)\//,
           /^#/,
           ...ctx.nuxt.options.build.transpile as string[]
         ]
+      },
+      transformMode: {
+        ssr: [/.*/],
+        web: []
       }
     })
+    const isExternal = createIsExternal(viteServer, ctx.nuxt.options.rootDir)
+    node.shouldExternalize = async (id: string) => {
+      const result = await isExternal(id)
+      if (result?.external) {
+        return resolveModule(result.id, { url: ctx.nuxt.options.rootDir })
+      }
+      return false
+    }
+
     return async (event) => {
       const moduleId = decodeURI(event.req.url).substring(1)
       if (moduleId === '/') {
@@ -78,7 +94,7 @@ function createViteNodeMiddleware (ctx: ViteBuildContext) {
   return app.nodeHandler
 }
 
-export async function prepareDevServerEntry (ctx: ViteBuildContext) {
+export async function initViteNodeServer (ctx: ViteBuildContext) {
   let entryPath = resolve(ctx.nuxt.options.appDir, 'entry.async.mjs')
   if (!fse.existsSync(entryPath)) {
     entryPath = resolve(ctx.nuxt.options.appDir, 'entry.async')

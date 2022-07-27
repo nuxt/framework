@@ -41,10 +41,7 @@ export async function initNitro (nuxt: Nuxt) {
       generateTsConfig: false
     },
     publicAssets: [
-      {
-        baseURL: nuxt.options.app.buildAssetsDir,
-        dir: resolve(nuxt.options.buildDir, 'dist/client')
-      },
+      { dir: resolve(nuxt.options.buildDir, 'dist/client') },
       ...nuxt.options._layers
         .map(layer => join(layer.config.srcDir, layer.config.dir?.public || 'public'))
         .filter(dir => existsSync(dir))
@@ -85,7 +82,7 @@ export async function initNitro (nuxt: Nuxt) {
       '@vue/compiler-core': 'unenv/runtime/mock/proxy',
       '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
       '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
-      '@vue/devtools-api': 'unenv/runtime/mock/proxy',
+      '@vue/devtools-api': 'unenv/runtime/mock/proxy-cjs',
 
       // Paths
       '#paths': resolve(distDir, 'core/runtime/nitro/paths'),
@@ -144,7 +141,7 @@ export async function initNitro (nuxt: Nuxt) {
 
   // Add typed route responses
   nuxt.hook('prepare:types', async (opts) => {
-    if (nuxt.options._prepare) {
+    if (!nuxt.options.dev) {
       await scanHandlers(nitro)
       await writeTypes(nitro)
     }
