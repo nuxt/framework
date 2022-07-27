@@ -177,8 +177,8 @@ export default eventHandler(async (event) => {
   // Construct HTML response
   const response = {
     body: renderHTMLDocument(rendered),
-    statusCode: null,
-    statusMessage: null,
+    statusCode: event.res.statusCode,
+    statusMessage: event.res.statusMessage,
     headers: {
       'Content-Type': 'text/html;charset=UTF-8',
       'X-Powered-By': 'Nuxt'
@@ -193,12 +193,8 @@ export default eventHandler(async (event) => {
     for (const header in response.headers) {
       event.res.setHeader(header, response.headers[header])
     }
-    if (response.statusCode) {
-      event.res.statusCode = response.statusCode
-    }
-    if (response.statusMessage) {
-      event.res.statusMessage = response.statusMessage
-    }
+    event.res.statusCode = response.statusCode
+    event.res.statusMessage = response.statusMessage
   }
   if (!event.res.writableEnded) {
     event.res.end(response.body)
