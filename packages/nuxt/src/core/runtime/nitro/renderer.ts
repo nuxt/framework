@@ -178,7 +178,7 @@ export default eventHandler(async (event) => {
 
   // Allow hooking into the rendered result
   const nitroApp = useNitroApp()
-  await ssrContext.nuxt.hooks.callHook('app:rendered', rendered)
+  await ssrContext.nuxt?.hooks.callHook('app:rendered', rendered)
   await nitroApp.hooks.callHook('nuxt:app:rendered', rendered)
 
   // Construct HTML response
