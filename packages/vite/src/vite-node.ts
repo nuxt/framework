@@ -3,8 +3,8 @@ import { createApp, createError, defineEventHandler, defineLazyEventHandler } fr
 import { ViteNodeServer } from 'vite-node/server'
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
-import { addServerMiddleware } from '@nuxt/kit'
-import type { Plugin as VitePlugin, ViteDevServer } from 'vite'
+import { addDevServerHandler } from '@nuxt/kit'
+import type { Manifest, Plugin as VitePlugin, ViteDevServer } from 'vite'
 import { resolve as resolveModule } from 'mlly'
 import { distDir } from './dirs'
 import type { ViteBuildContext } from './vite'
@@ -24,29 +24,31 @@ export function viteNodePlugin (ctx: ViteBuildContext): VitePlugin {
 }
 
 export function registerViteNodeMiddleware (ctx: ViteBuildContext) {
-  addServerMiddleware({
+  addDevServerHandler({
     route: '/__nuxt_vite_node__/',
     handler: createViteNodeMiddleware(ctx)
   })
 }
 
 function getManifest (server: ViteDevServer) {
-  const ids = Array.from(server.moduleGraph.urlToModuleMap.keys())
+  const css = Array.from(server.moduleGraph.urlToModuleMap.keys())
     .filter(i => isCSS(i))
 
-  const entries = [
-    '@vite/client',
-    'entry.mjs',
-    ...ids.map(i => i.slice(1))
-  ]
-
-  return {
-    publicPath: '',
-    all: entries,
-    initial: entries,
-    async: [],
-    modules: {}
+  const manifest: Manifest = {
+    '@vite/client.mjs': {
+      file: '@vite/client.mjs',
+      css,
+      assets: [],
+      dynamicImports: [],
+      isEntry: true
+    },
+    'entry.mjs': {
+      file: 'entry.mjs',
+      isEntry: true
+    }
   }
+
+  return manifest
 }
 
 function createViteNodeMiddleware (ctx: ViteBuildContext) {

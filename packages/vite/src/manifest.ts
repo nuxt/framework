@@ -1,27 +1,28 @@
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
-import { joinURL, withoutLeadingSlash, withTrailingSlash } from 'ufo'
+import { withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import escapeRE from 'escape-string-regexp'
+import { Manifest } from 'vite'
 import type { ViteBuildContext } from './vite'
 
-export async function writeManifest (ctx: ViteBuildContext, extraEntries: string[] = []) {
+export async function writeManifest (ctx: ViteBuildContext, css: string[] = []) {
   // Write client manifest for use in vue-bundle-renderer
   const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
   const serverDist = resolve(ctx.nuxt.options.buildDir, 'dist/server')
 
-  const entries = [
-    '@vite/client',
-    'entry.mjs',
-    ...extraEntries
-  ]
-
-  // Legacy dev manifest
-  const devClientManifest = {
-    publicPath: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir),
-    all: entries,
-    initial: entries,
-    async: [],
-    modules: {}
+  const devClientManifest: Manifest = {
+    '@vite/client.mjs': {
+      isEntry: true,
+      file: '@vite/client.mjs',
+      css,
+      // placeholders for future use
+      assets: [],
+      dynamicImports: []
+    },
+    'entry.mjs': {
+      isEntry: true,
+      file: 'entry.mjs'
+    }
   }
 
   const clientManifest = ctx.nuxt.options.dev

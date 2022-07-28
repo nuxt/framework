@@ -1,4 +1,5 @@
 import { createRenderer } from 'vue-bundle-renderer'
+import type { Manifest } from 'vite'
 import { eventHandler, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
@@ -31,7 +32,7 @@ export interface NuxtRenderResponse {
 }
 
 // @ts-ignore
-const getClientManifest = () => import('#build/dist/server/client.manifest.mjs')
+const getClientManifest: () => Promise<Manifest> = () => import('#build/dist/server/client.manifest.mjs')
   .then(r => r.default || r)
   .then(r => typeof r === 'function' ? r() : r)
 
@@ -41,8 +42,8 @@ const getServerEntry = () => import('#build/dist/server/server.mjs').then(r => r
 // -- SSR Renderer --
 const getSSRRenderer = lazyCachedFunction(async () => {
   // Load client manifest
-  const clientManifest = await getClientManifest()
-  if (!clientManifest) { throw new Error('client.manifest is not available') }
+  const manifest = await getClientManifest()
+  if (!manifest) { throw new Error('client.manifest is not available') }
 
   // Load server bundle
   const createSSRApp = await getServerEntry()
@@ -50,9 +51,9 @@ const getSSRRenderer = lazyCachedFunction(async () => {
 
   // Create renderer
   const renderer = createRenderer(createSSRApp, {
-    clientManifest,
+    manifest,
     renderToString,
-    publicPath: buildAssetsURL()
+    buildAssetsURL
   })
 
   async function renderToString (input, context) {
@@ -69,7 +70,15 @@ const getSSRRenderer = lazyCachedFunction(async () => {
 
 // -- SPA Renderer --
 const getSPARenderer = lazyCachedFunction(async () => {
-  const clientManifest = await getClientManifest()
+  const manifest = await getClientManifest()
+
+  const renderer = createRenderer(() => () => {}, {
+    manifest,
+    renderToString: () => '<div id="__nuxt"></div>',
+    buildAssetsURL
+  })
+  const result = await renderer.renderToString({})
+
   const renderToString = (ssrContext: NuxtSSRContext) => {
     const config = useRuntimeConfig()
     ssrContext.payload = {
@@ -79,35 +88,8 @@ const getSPARenderer = lazyCachedFunction(async () => {
         app: config.app
       }
     }
-
-    let entryFiles = Object.values(clientManifest).filter((fileValue: any) => fileValue.isEntry)
-    if ('all' in clientManifest && 'initial' in clientManifest) {
-      // Upgrade legacy manifest (also see normalizeClientManifest in vue-bundle-renderer)
-      // https://github.com/nuxt-contrib/vue-bundle-renderer/issues/12
-      entryFiles = clientManifest.initial.map(file =>
-        // Webpack manifest fix with SPA renderer
-        file.endsWith('css') ? { css: file } : { file }
-      )
-    }
-
-    return Promise.resolve({
-      html: '<div id="__nuxt"></div>',
-      renderResourceHints: () => '',
-      renderStyles: () =>
-        entryFiles
-          .flatMap(({ css }) => css)
-          .filter(css => css != null)
-          .map(file => `<link rel="stylesheet" href="${buildAssetsURL(file)}">`)
-          .join(''),
-      renderScripts: () =>
-        entryFiles
-          .filter(({ file }) => file)
-          .map(({ file }) => {
-            const isMJS = !file.endsWith('.js')
-            return `<script ${isMJS ? 'type="module"' : ''} src="${buildAssetsURL(file)}"></script>`
-          })
-          .join('')
-    })
+    ssrContext.renderMeta = ssrContext.renderMeta ?? (() => ({}))
+    return Promise.resolve(result)
   }
 
   return { renderToString }
