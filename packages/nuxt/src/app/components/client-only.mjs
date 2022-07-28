@@ -1,4 +1,4 @@
-import { ref, onMounted, defineComponent, createElementBlock, h } from 'vue'
+import { ref, onMounted, defineComponent, createElementBlock, h, Fragment } from 'vue'
 
 export default defineComponent({
   name: 'ClientOnly',
@@ -29,8 +29,15 @@ export function createClientOnly (component) {
       return Promise.resolve(setup?.(props, ctx) || {})
         .then((setupState) => {
           const render = setupState && typeof setupState === 'function' ? setupState : component.render
-          return (ctx, cache, props, _, data, options) =>
-            mounted.value ? h(render(ctx, cache, props, setupState, data, options)) : h('div', ctx.$attrs)
+          return (_ctx, cache, _props, _, data, options) => {
+            if (mounted.value) {
+              if (process.dev) {
+                return h(render(_ctx, cache, _props, setupState, data, options))
+              }
+              return h(Fragment, [render(props, ctx)])
+            }
+            return h('div', ctx.$attrs)
+          }
         })
     }
   })
