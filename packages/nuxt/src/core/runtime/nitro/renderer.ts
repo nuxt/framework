@@ -146,9 +146,9 @@ export default eventHandler(async (event) => {
   }
 
   // Render meta
-  const renderedMeta = await ssrContext.renderMeta()
+  const renderedMeta = await ssrContext.renderMeta?.() ?? {}
 
-  // Create render conrtext
+  // Create render context
   const rendered: NuxtRenderContext = {
     ssrContext,
     html: {
