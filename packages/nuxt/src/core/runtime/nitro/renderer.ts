@@ -49,12 +49,16 @@ const getSSRRenderer = lazyCachedFunction(async () => {
   const createSSRApp = await getServerEntry()
   if (!createSSRApp) { throw new Error('Server bundle is not available') }
 
-  // Create renderer
-  const renderer = createRenderer(createSSRApp, {
+  // Allow customizing options for renderer
+  const nitroApp = useNitroApp()
+  const options = {
     manifest,
     renderToString,
     buildAssetsURL
-  })
+  }
+  nitroApp.hooks.callHook('nuxt:render:options', options)
+  // Create renderer
+  const renderer = createRenderer(createSSRApp, options)
 
   async function renderToString (input, context) {
     const html = await _renderToString(input, context)
@@ -72,11 +76,16 @@ const getSSRRenderer = lazyCachedFunction(async () => {
 const getSPARenderer = lazyCachedFunction(async () => {
   const manifest = await getClientManifest()
 
-  const renderer = createRenderer(() => () => {}, {
+  // Allow customizing options for renderer
+  const nitroApp = useNitroApp()
+  const options = {
     manifest,
     renderToString: () => '<div id="__nuxt"></div>',
     buildAssetsURL
-  })
+  }
+  nitroApp.hooks.callHook('nuxt:render:options', options)
+  // Create SPA renderer and cache the result for all requests
+  const renderer = createRenderer(() => () => {}, options)
   const result = await renderer.renderToString({})
 
   const renderToString = (ssrContext: NuxtSSRContext) => {
