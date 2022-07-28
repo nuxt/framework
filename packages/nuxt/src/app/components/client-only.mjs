@@ -19,25 +19,32 @@ export default defineComponent({
 })
 
 export function createClientOnly (component) {
-  const { setup } = component
+  const { setup, render: _render } = component
+  if (process.dev) {
+    // override the component render, used only in dev to ensure devtools can retrieve the setupState
+    component.render = (ctx, cache, props, state, data, options) => {
+      return ctx.mounted$
+        ? h(_render(ctx, cache, props, state, data, options))
+        : h('div', ctx.$attrs)
+    }
+  }
   return defineComponent({
     ...component,
     setup (props, ctx) {
-      const mounted = ref(false)
-      onMounted(() => { mounted.value = true })
+      const mounted$ = ref(false)
+      onMounted(() => { mounted$.value = true })
 
       return Promise.resolve(setup?.(props, ctx) || {})
         .then((setupState) => {
           const render = setupState && typeof setupState === 'function' ? setupState : component.render
-          return (_ctx, cache, _props, _, data, options) => {
-            if (mounted.value) {
-              if (process.dev) {
-                return h(render(_ctx, cache, _props, setupState, data, options))
+          return process.dev && typeof setupState !== 'function'
+            ? { ...setupState, mounted$ }
+            : () => {
+                return mounted$.value
+                // use Fragment to avoid oldChildren is null issue
+                  ? h(Fragment, [render(props, ctx)])
+                  : h('div', ctx.$attrs)
               }
-              return h(Fragment, [render(props, ctx)])
-            }
-            return h('div', ctx.$attrs)
-          }
         })
     }
   })
