@@ -3,7 +3,7 @@ import { createApp, createError, defineEventHandler, defineLazyEventHandler } fr
 import { ViteNodeServer } from 'vite-node/server'
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
-import { addDevServerHandler } from '@nuxt/kit'
+import { addDevServerHandler, addServerMiddleware } from '@nuxt/kit'
 import type { Manifest, Plugin as VitePlugin, ViteDevServer } from 'vite'
 import { resolve as resolveModule } from 'mlly'
 import { distDir } from './dirs'
@@ -24,7 +24,7 @@ export function viteNodePlugin (ctx: ViteBuildContext): VitePlugin {
 }
 
 export function registerViteNodeMiddleware (ctx: ViteBuildContext) {
-  addDevServerHandler({
+  addServerMiddleware({
     route: '/__nuxt_vite_node__/',
     handler: createViteNodeMiddleware(ctx)
   })
