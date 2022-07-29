@@ -58,7 +58,7 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   // Resolve main (app.vue)
   if (!app.mainComponent) {
     app.mainComponent = await findPath(
-      nuxt.options._layers.flatMap((layer) => [`${layer.config.srcDir}/App`, `${layer.config.srcDir}/app`])
+      nuxt.options._layers.flatMap(layer => [`${layer.config.srcDir}/App`, `${layer.config.srcDir}/app`])
     )
   }
   if (!app.mainComponent) {
