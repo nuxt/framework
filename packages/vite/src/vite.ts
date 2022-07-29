@@ -2,14 +2,13 @@ import * as vite from 'vite'
 import { resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
-import { logger, isIgnored } from '@nuxt/kit'
+import { isIgnored } from '@nuxt/kit'
 import type { Options } from '@vitejs/plugin-vue'
 import replace from '@rollup/plugin-replace'
 import { sanitizeFilePath } from 'mlly'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
-import { warmupViteServer } from './utils/warmup'
 import { resolveCSSOptions } from './css'
 import { composableKeysPlugin } from './plugins/composable-keys'
 
@@ -93,7 +92,7 @@ export async function bundle (nuxt: Nuxt) {
 
   await nuxt.callHook('vite:extend', ctx)
 
-  nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer, env) => {
+  nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer) => {
     // Invalidate virtual modules when templates are re-generated
     ctx.nuxt.hook('app:templatesGenerated', () => {
       for (const [id, mod] of server.moduleGraph.idToModuleMap) {
@@ -102,11 +101,6 @@ export async function bundle (nuxt: Nuxt) {
         }
       }
     })
-
-    const start = Date.now()
-    warmupViteServer(server, ['/entry.mjs'])
-      .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
-      .catch(logger.error)
   })
 
   await buildClient(ctx)
