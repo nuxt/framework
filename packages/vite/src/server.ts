@@ -141,10 +141,10 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Initialize plugins
   await viteServer.pluginContainer.buildStart({})
 
-  if (ctx.config.viteNode) {
+  if (ctx.config.serverBundler !== 'legacy') {
     await import('./vite-node').then(r => r.initViteNodeServer(ctx))
   } else {
-    logger.info('Vite server using legacy `dev-bundler`...')
+    logger.info('Vite server using legacy server bundler...')
     await import('./dev-bundler').then(r => r.initViteDevBundler(ctx, onBuild))
   }
 }

@@ -8,7 +8,7 @@ export default {
    * See https://vitejs.dev/config for more information.
    * Please note that not all vite options are supported in Nuxt.
    *
-   * @type {typeof import('vite').UserConfig}
+   * @type {typeof import('vite').UserConfig & { serverBundler?: 'vite-node' | 'legacy' }}
    * @version 3
    */
   vite: {
@@ -82,7 +82,9 @@ export default {
     },
     /**
      * Use vite-node for on-demand server chunk loading
+     * 
+     * @types {'vite-node' | 'legacy'}
      */
-    viteNode: true
+    serverBundler: 'vite-node'
   }
 }
