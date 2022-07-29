@@ -1,13 +1,14 @@
 import { ConfigSchema } from '../../schema/config'
 import type { ResolvedConfig } from 'c12'
-import { UserConfig } from 'vite'
-import { Options as VuePluginOptions } from '@vitejs/plugin-vue'
+import type { UserConfig as ViteUserConfig } from 'vite'
+import type { Options as VuePluginOptions } from '@vitejs/plugin-vue'
 
 type DeepPartial<T> = T extends Function ? T : T extends Record<string, any> ? { [P in keyof T]?: DeepPartial<T[P]> } : T
 
 /** User configuration in `nuxt.config` file */
 export interface NuxtConfig extends DeepPartial<Omit<ConfigSchema, 'vite'>> {
-  vite?: ConfigSchema['vite']
+  // Avoid  DeepPartial for vite config inteface (https://github.com/nuxt/framework/pull/4772)
+  vite?: ViteConfig
   [key: string]: any
 }
 
@@ -28,7 +29,7 @@ export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamesp
   public: PublicRuntimeConfig
 }
 
-export interface ViteConfig extends UserConfig {
+export interface ViteConfig extends ViteUserConfig {
   /**
    * Options passed to @vitejs/plugin-vue
    * @see https://github.com/vitejs/vite/tree/main/packages/plugin-vue
