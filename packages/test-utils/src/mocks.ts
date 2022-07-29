@@ -6,7 +6,7 @@ const mockFnVitest = async () => {
   return vitest.vi.fn()
 }
 
-const mockFnJest = async () =>{
+const mockFnJest = async () => {
   const jest = await import('jest')
   return jest.fn()
 }
@@ -16,12 +16,18 @@ export const mockFnMaps = {
   vitest: mockFnVitest
 }
 
+export async function mockFn () {
+  const { runner } = useTestContext().options
+
+  return await mockFnMaps[runner]()
+}
+
 export async function mockLogger (): typeof consola {
   const mock = {}
-  const mockFn = await mockFnMaps[useTestContext().options.runner]()
+  const fn = await mockFn()
 
   consola.mockTypes((type) => {
-    mock[type] = mock[type] || mockFn
+    mock[type] = mock[type] || fn
     return mock[type]
   })
 
