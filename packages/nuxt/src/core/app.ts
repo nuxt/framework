@@ -57,7 +57,13 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
 export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   // Resolve main (app.vue)
   if (!app.mainComponent) {
-    app.mainComponent = await findPath(['~/App', '~/app'])
+    for (const config of nuxt.options._layers.map(layer => layer.config)) {
+      const mainComponent = await findPath([`${config.srcDir}/App`, `${config.srcDir}/app`])
+      if (mainComponent) {
+        app.mainComponent = mainComponent
+        break
+      }
+    }
   }
   if (!app.mainComponent) {
     app.mainComponent = tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')
