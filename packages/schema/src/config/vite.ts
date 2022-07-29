@@ -31,14 +31,6 @@ export default {
     publicDir: {
       $resolve: (val, get) => val ?? resolve(get('srcDir'), get('dir').public),
     },
-    vue: {
-      isProduction: {
-        $resolve: (val, get) => val ?? !get('dev'),
-      },
-      template: { compilerOptions: {
-        $resolve: (val, get) => val ?? get('vue').compilerOptions }
-      },
-    },
     optimizeDeps: {
       exclude: {
         $resolve: (val, get) => [
@@ -73,6 +65,24 @@ export default {
           ]
         }
       }
-    }
+    },
+
+    // Extended options
+    /**
+     * Options passed to @vitejs/plugin-vue
+     * @see https://github.com/vitejs/vite/tree/main/packages/plugin-vue
+     */
+    vue: {
+      isProduction: {
+        $resolve: (val, get) => val ?? !get('dev'),
+      },
+      template: { compilerOptions: {
+        $resolve: (val, get) => val ?? get('vue').compilerOptions }
+      },
+    },
+    /**
+     * Use vite-node for on-demand server chunk loading
+     */
+    viteNode: true
   }
 }

@@ -9,11 +9,6 @@ export default {
     },
 
     /**
-     * Use vite-node for on-demand server chunk loading
-     */
-    viteNode: process.env.EXPERIMENTAL_VITE_NODE ? true : false,
-
-    /**
      * Enable Vue's reactivity transform
      * @see https://vuejs.org/guide/extras/reactivity-transform.html
      */
@@ -30,5 +25,20 @@ export default {
      * @see https://github.com/nuxt/framework/pull/5750
      */
     treeshakeClientOnly: false,
+
+    /**
+     * Use vite-node for on-demand server chunk loading
+     * 
+     * @deprecated use `vite.viteNode`
+     */
+    viteNode: {
+      $resolve: (val) => {
+        if (val === true)
+          console.warn('`vite-node` is now enabled by default. You can safely remove `experimental.viteNode` from your config.')
+        else if (val === false)
+          console.warn('`vite-node` is now enabled by default. To disable it, set `vite.viteNode` to `false` instead.')
+        return val
+      }
+    },
   }
 }

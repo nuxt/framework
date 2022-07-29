@@ -141,10 +141,10 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Initialize plugins
   await viteServer.pluginContainer.buildStart({})
 
-  if (ctx.nuxt.options.experimental.viteNode) {
-    logger.info('Vite server using experimental `vite-node`...')
+  if (ctx.config.viteNode) {
     await import('./vite-node').then(r => r.initViteNodeServer(ctx))
   } else {
+    logger.info('Vite server using legacy `dev-bundler`...')
     await import('./dev-bundler').then(r => r.initViteDevBundler(ctx, onBuild))
   }
 }

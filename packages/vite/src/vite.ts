@@ -16,6 +16,7 @@ import { composableKeysPlugin } from './plugins/composable-keys'
 export interface ViteOptions extends InlineConfig {
   vue?: Options
   ssr?: SSROptions
+  viteNode?: boolean
 }
 
 export interface ViteBuildContext {
