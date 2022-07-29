@@ -92,7 +92,7 @@ describe('pages:generateRoutesFromFiles', () => {
       description: 'should generate correct id for catchall (order 2)',
       files: [
         `${pagesDir}/stories/[id].vue`,
-          `${pagesDir}/[...stories].vue`
+        `${pagesDir}/[...stories].vue`
       ],
       output: [
         {
