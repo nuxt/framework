@@ -151,7 +151,7 @@ async function isDirectory (path: string) {
   return (await fsp.lstat(path)).isDirectory()
 }
 
-export async function resolveFiles (path: string, pattern: string | string[]) {
-  const files = await globby(pattern, { cwd: path, followSymbolicLinks: true })
+export async function resolveFiles (path: string, pattern: string | string[], followSymbolicLinks: boolean = true) {
+  const files = await globby(pattern, { cwd: path, followSymbolicLinks })
   return files.map(p => resolve(path, p)).filter(p => !isIgnored(p)).sort()
 }
