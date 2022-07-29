@@ -16,12 +16,12 @@ export const mockFnMaps = {
   vitest: mockFnVitest
 }
 
-export function mockLogger (): typeof consola {
+export async function mockLogger (): typeof consola {
   const mock = {}
-  const mockFn = mockFnMaps[useTestContext().options.runner]
+  const mockFn = await mockFnMaps[useTestContext().options.runner]()
 
   consola.mockTypes((type) => {
-    mock[type] = mock[type] || mockFn()
+    mock[type] = mock[type] || mockFn
     return mock[type]
   })
 
