@@ -24,19 +24,18 @@ export function createClientOnly (component) {
     // override the component render (non <script setup> component)
     component.render = (ctx, cache, props, state, data, options) => {
       return state.mounted$
-        ? h(Fragment, [_render(ctx, cache, props, state, data, options)])
+        ? h(Fragment, null, [h(_render(ctx, cache, props, state, data, options, ctx), ctx.$attrs ?? ctx._.attrs)])
         : h('div', ctx.$attrs ?? ctx._.attrs)
     }
   } else if (_template) {
     // handle runtime-compiler template
     component.template = `
       <template v-if="mounted$">${_template}</template>
-      <template v-else><div v-bind="$attrs"></div></template>
+      <template v-else><div></div></template>
     `
   }
   return defineComponent({
     ...component,
-    inheritAttrs: false,
     setup (props, ctx) {
       const mounted$ = ref(false)
       onMounted(() => { mounted$.value = true })
@@ -48,7 +47,7 @@ export function createClientOnly (component) {
             : () => {
                 return mounted$.value
                 // use Fragment to avoid oldChildren is null issue
-                  ? h(Fragment, [setupState(props, ctx)])
+                  ? h(Fragment, null, [h(setupState(props, ctx), ctx.attrs)])
                   : h('div', ctx.attrs)
               }
         })
