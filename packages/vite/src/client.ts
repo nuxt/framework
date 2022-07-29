@@ -9,7 +9,6 @@ import { joinURL, withLeadingSlash, withoutLeadingSlash, withTrailingSlash } fro
 import escapeRE from 'escape-string-regexp'
 import defu from 'defu'
 import { cacheDirPlugin } from './plugins/cache-dir'
-import { analyzePlugin } from './plugins/analyze'
 import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
@@ -87,7 +86,7 @@ export async function buildClient (ctx: ViteBuildContext) {
 
   // Add analyze plugin if needed
   if (ctx.nuxt.options.build.analyze) {
-    clientConfig.plugins.push(...analyzePlugin(ctx))
+    clientConfig.plugins.push(...await import('./plugins/analyze').then(r => r.analyzePlugin(ctx)))
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', clientConfig, { isClient: true, isServer: false })

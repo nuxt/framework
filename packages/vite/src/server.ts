@@ -8,6 +8,7 @@ import { joinURL, withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
+import { initViteNodeServer } from './vite-node'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = (id: string) => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
@@ -142,7 +143,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   await viteServer.pluginContainer.buildStart({})
 
   if (ctx.config.serverBundler !== 'legacy') {
-    await import('./vite-node').then(r => r.initViteNodeServer(ctx))
+    initViteNodeServer(ctx)
   } else {
     logger.info('Vite server using legacy server bundler...')
     await import('./dev-bundler').then(r => r.initViteDevBundler(ctx, onBuild))
