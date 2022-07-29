@@ -1,7 +1,7 @@
 import { requireModule } from '@nuxt/kit'
 import type { Nuxt } from '@nuxt/schema'
 import type { ViteOptions } from './vite'
-import { distDir } from './dirs'
+import { distDir } from './utils/dirs'
 
 export function resolveCSSOptions (nuxt: Nuxt): ViteOptions['css'] {
   const css: ViteOptions['css'] & { postcss: Exclude<ViteOptions['css']['postcss'], string> } = {
