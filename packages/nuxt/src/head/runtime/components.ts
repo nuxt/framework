@@ -70,6 +70,7 @@ export const Script = defineComponent({
       default: undefined
     },
     defer: Boolean,
+    fetchpriority: String,
     integrity: String,
     nomodule: Boolean,
     nonce: String,
@@ -118,6 +119,7 @@ export const Link = defineComponent({
     as: String,
     crossorigin: String,
     disabled: Boolean,
+    fetchpriority: String,
     href: String,
     hreflang: String,
     imagesizes: String,
