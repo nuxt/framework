@@ -8,7 +8,7 @@ export default {
    * See https://vitejs.dev/config for more information.
    * Please note that not all vite options are supported in Nuxt.
    *
-   * @type {typeof import('vite').UserConfig & { serverBundler?: 'vite-node' | 'legacy' }}
+   * @type {typeof import('../src/types/config').ViteConfig}
    * @version 3
    */
   vite: {
@@ -68,10 +68,6 @@ export default {
     },
 
     // Extended options
-    /**
-     * Options passed to @vitejs/plugin-vue
-     * @see https://github.com/vitejs/vite/tree/main/packages/plugin-vue
-     */
     vue: {
       isProduction: {
         $resolve: (val, get) => val ?? !get('dev'),
@@ -80,11 +76,6 @@ export default {
         $resolve: (val, get) => val ?? get('vue').compilerOptions }
       },
     },
-    /**
-     * Use vite-node for on-demand server chunk loading
-     * 
-     * @types {'vite-node' | 'legacy'}
-     */
     serverBundler: 'vite-node'
   }
 }
