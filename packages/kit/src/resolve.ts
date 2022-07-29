@@ -28,7 +28,7 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
   path = normalize(path)
 
   // Fast return if the path exists
-  if (isAbsolute(path) && existsSync(path)) {
+  if (isAbsolute(path) && existsSync(path) && !(await fsp.lstat(path)).isDirectory()) {
     return path
   }
 
