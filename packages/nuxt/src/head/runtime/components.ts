@@ -1,8 +1,10 @@
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import type { SetupContext } from 'vue'
 import { useHead } from './composables'
 
 type Props = Readonly<Record<string, any>>
+
+type ReferrerPolicy = '' | 'no-referrer' | 'no-referrer-when-downgrade' | 'same-origin' | 'origin' | 'strict-origin' | 'origin-when-cross-origin' | 'strict-origin-when-cross-origin' | 'unsafe-url'
 
 const removeUndefinedProps = (props: Props) =>
   Object.fromEntries(Object.entries(props).filter(([, value]) => value !== undefined))
@@ -73,7 +75,7 @@ export const Script = defineComponent({
     integrity: String,
     nomodule: Boolean,
     nonce: String,
-    referrerpolicy: String,
+    referrerpolicy: String as PropType<ReferrerPolicy>,
     src: String,
     type: String,
     /** @deprecated **/
@@ -128,7 +130,7 @@ export const Link = defineComponent({
       type: Boolean,
       default: undefined
     },
-    referrerpolicy: String,
+    referrerpolicy: String as PropType<ReferrerPolicy>,
     rel: String,
     sizes: String,
     title: String,
