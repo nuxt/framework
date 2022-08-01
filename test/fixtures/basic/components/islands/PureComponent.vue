@@ -20,3 +20,9 @@ try {
     Was router enabled: {{ wasRouter }}
   </pre>
 </template>
+
+<style scoped>
+:root {
+  color: blue
+}
+</style>

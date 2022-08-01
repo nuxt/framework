@@ -8,10 +8,13 @@
 
 <script setup>
 import { defineAsyncComponent, onErrorCaptured } from 'vue'
-import RenderComponents from './render-components'
 import { callWithNuxt, isNuxtError, showError, useError, useNuxtApp } from '#app'
 
 const ErrorComponent = defineAsyncComponent(() => import('#build/error-component.mjs'))
+const RenderComponents = process.server
+  ? defineAsyncComponent(() => import('./render-components').then(r => r.default || r))
+  // Generate client-side CSS chunks - TODO: https://github.com/nuxt/framework/pull/5688
+  : () => import('#build/components-islands.mjs')
 
 const nuxtApp = useNuxtApp()
 const onResolve = () => nuxtApp.callHook('app:suspense:resolve')

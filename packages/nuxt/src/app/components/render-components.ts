@@ -1,4 +1,7 @@
-import { createBlock, defineComponent, h, resolveComponent, Teleport } from 'vue'
+import { createBlock, defineComponent, h, Teleport } from 'vue'
+
+// @ts-ignore
+import * as islandComponents from '#build/components-islands.mjs'
 
 export default defineComponent({
   props: {
@@ -7,12 +10,12 @@ export default defineComponent({
   async setup (props) {
     // TODO: https://github.com/vuejs/core/issues/6207
     await Promise.all(props.components.map((c) => {
-      const component = resolveComponent(c.name)
+      const component = islandComponents[c.name]
       return component && typeof component === 'object' && component.__asyncLoader?.()
     }))
     return () => props.components.map(
       (c, index) => createBlock(Teleport as any, { to: `render-target-${index}` }, [
-        h(resolveComponent(c.name), c.props)
+        h(islandComponents[c.name] || 'span', c.props)
       ])
     )
   }

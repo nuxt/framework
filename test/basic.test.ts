@@ -344,7 +344,7 @@ describe('automatically keyed composables', () => {
   })
 })
 
-describe('selective rendering of global components', () => {
+describe('selective rendering of islands components', () => {
   it('renders components with route', async () => {
     const result: NuxtComponentRenderResult = await $fetch(withQuery('/__nuxt_isolated_render', {
       url: '/foo',
@@ -385,7 +385,7 @@ describe('selective rendering of global components', () => {
         }
       ])
     }))
-    expect(result.rendered[0].html.replace(/&quot;/g, '"')).toMatchInlineSnapshot(`
+    expect(result.rendered[0].html.replace(/&quot;/g, '"').replace(/ data-v-\w+>/, '>')).toMatchInlineSnapshot(`
       "<pre>    false
           3487
           \\"something\\"
@@ -398,6 +398,10 @@ describe('selective rendering of global components', () => {
         "$serror": null,
       }
     `)
+    // TODO: fix bundle renderer issue with webpack
+    if (!process.env.TEST_WITH_WEBPACK) {
+      expect(result.styles).toMatch(/PureComponent[^"']*.css/)
+    }
     expect(Object.keys(result)).toMatchInlineSnapshot(`
       [
         "rendered",

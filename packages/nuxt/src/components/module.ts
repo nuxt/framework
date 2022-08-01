@@ -2,7 +2,7 @@ import { statSync } from 'node:fs'
 import { resolve } from 'pathe'
 import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
-import { componentsPluginTemplate, componentsTemplate, componentsTypeTemplate } from './templates'
+import { componentsPluginTemplate, componentsTemplate, componentsIslandsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
 import { loaderPlugin } from './loader'
 import { TreeShakeTemplatePlugin } from './tree-shake'
@@ -13,7 +13,7 @@ function compareDirByPathLength ({ path: pathA }, { path: pathB }) {
   return pathB.split(/[\\/]/).filter(Boolean).length - pathA.split(/[\\/]/).filter(Boolean).length
 }
 
-const DEFAULT_COMPONENTS_DIRS_RE = /\/components$|\/components\/global$/
+const DEFAULT_COMPONENTS_DIRS_RE = /\/components(\/global|\/islands)?$/
 
 type getComponentsT = (mode?: 'client' | 'server' | 'all') => Component[]
 
@@ -43,6 +43,7 @@ export default defineNuxtModule<ComponentsOptions>({
       }
       if (dir === true || dir === undefined) {
         return [
+          { path: resolve(cwd, 'components/islands'), island: true },
           { path: resolve(cwd, 'components/global'), global: true },
           { path: resolve(cwd, 'components') }
         ]
@@ -124,6 +125,9 @@ export default defineNuxtModule<ComponentsOptions>({
         config.resolve.alias['#components'] = resolve(nuxt.options.buildDir, `components.${mode}.mjs`)
       }
     })
+
+    // Register islands import
+    addTemplate({ ...componentsIslandsTemplate, filename: 'components-islands.mjs', options: { getComponents } })
 
     // Scan components and add to plugin
     nuxt.hook('app:templates', async () => {

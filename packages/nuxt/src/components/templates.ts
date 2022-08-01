@@ -69,6 +69,18 @@ export const componentsTemplate = {
   }
 }
 
+export const componentsIslandsTemplate = {
+  getContents ({ options }: ComponentsTemplateContext) {
+    return options.getComponents().filter(c => c.island === true).map(
+      (c) => {
+        const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
+        const comment = createImportMagicComments(c)
+        return `export const ${c.pascalName} = defineAsyncComponent(${genDynamicImport(c.filePath, { comment })}.then(c => ${exp}))`
+      }
+    ).join('\n')
+  }
+}
+
 export const componentsTypeTemplate = {
   filename: 'components.d.ts',
   getContents: ({ options, nuxt }: ComponentsTemplateContext) => {
