@@ -40,6 +40,8 @@ type LinkRelationship =
   | "stylesheet"
   | String;
 
+type Target = "_blank" | "_self" | "_parent" | "_top" | String;
+
 export {
   Props,
   FetchPriority,
@@ -47,4 +49,5 @@ export {
   HTTPEquiv,
   ReferrerPolicy,
   LinkRelationship,
+  Target
 };

@@ -8,6 +8,7 @@ import type {
   HTTPEquiv,
   ReferrerPolicy,
   LinkRelationship,
+  Target,
 } from "./types.ts";
 
 const removeUndefinedProps = (props: Props) =>
@@ -153,7 +154,7 @@ export const Link = defineComponent({
     /** @deprecated **/
     methods: String,
     /** @deprecated **/
-    target: String,
+    target: String as PropType<Target>,
   },
   setup: setupForUseMeta((link) => ({
     link: [link],
@@ -167,7 +168,7 @@ export const Base = defineComponent({
   props: {
     ...globalProps,
     href: String,
-    target: String,
+    target: String as PropType<Targets>,
   },
   setup: setupForUseMeta((base) => ({
     base,
