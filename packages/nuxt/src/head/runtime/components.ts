@@ -21,12 +21,12 @@ const setupForUseMeta =
     metaFactory: (props: Props, ctx: SetupContext) => Record<string, any>,
     renderChild?: boolean
   ) =>
-  (props: Props, ctx: SetupContext) => {
-    useHead(() =>
-      metaFactory({ ...removeUndefinedProps(props), ...ctx.attrs }, ctx)
-    );
-    return () => (renderChild ? ctx.slots.default?.() : null);
-  };
+    (props: Props, ctx: SetupContext) => {
+      useHead(() =>
+        metaFactory({ ...removeUndefinedProps(props), ...ctx.attrs }, ctx)
+      );
+      return () => (renderChild ? ctx.slots.default?.() : null);
+    };
 
 const globalProps = {
   accesskey: String,
