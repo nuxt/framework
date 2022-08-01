@@ -1,11 +1,12 @@
 import { statSync } from 'node:fs'
 import { resolve } from 'pathe'
-import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { componentsPluginTemplate, componentsTemplate, componentsIslandsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
 import { loaderPlugin } from './loader'
 import { TreeShakeTemplatePlugin } from './tree-shake'
+import { stripServerComponentsPlugin } from './plugins/server-components'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
 const isDirectory = (p: string) => { try { return statSync(p).isDirectory() } catch (_e) { return false } }
@@ -128,6 +129,11 @@ export default defineNuxtModule<ComponentsOptions>({
 
     // Register islands import
     addTemplate({ ...componentsIslandsTemplate, filename: 'components-islands.mjs', options: { getComponents } })
+
+    // Strip server component chunks (for example, islands) from client build
+
+    addVitePlugin(stripServerComponentsPlugin.vite({ getComponents, sourcemap: nuxt.options.sourcemap }), { server: false })
+    addWebpackPlugin(stripServerComponentsPlugin.webpack({ getComponents, sourcemap: nuxt.options.sourcemap }), { server: false })
 
     // Scan components and add to plugin
     nuxt.hook('app:templates', async () => {
