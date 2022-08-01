@@ -1,5 +1,6 @@
 import { ViteNodeRunner } from 'vite-node/client'
 import { $fetch } from 'ohmyfetch'
+import consola from 'consola'
 import { getViteNodeOptions } from './vite-node-shared.mjs'
 
 const viteNodeOptions = getViteNodeOptions()
@@ -15,6 +16,7 @@ const runner = new ViteNodeRunner({
 })
 
 let render
+let previousError = null
 
 export default async (ssrContext) => {
   // Workaround for stub mode
@@ -27,6 +29,13 @@ export default async (ssrContext) => {
     if (!key.includes('/node_modules/')) {
       runner.moduleCache.delete(key)
     }
+  }
+  if (ssrContext.error) {
+    previousError = ssrContext.error
+  } else if (previousError) {
+    previousError = null
+    consola.clear()
+    consola.success('Rendered ' + ssrContext.url)
   }
   return result
 }
