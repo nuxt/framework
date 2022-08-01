@@ -15,6 +15,7 @@ export const useRoute = () => {
   return useNuxtApp()._route
 }
 
+/** @deprecated Use `useRoute` instead. */
 export const useActiveRoute = () => {
   return useNuxtApp()._route as RouteLocationNormalizedLoaded
 }
