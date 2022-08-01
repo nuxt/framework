@@ -77,7 +77,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   })
 
   // Allows suspending the route object until page navigation completes
-  // https://github.com/vuejs/vue-router-next/blob/master/src/router.ts#L1192-L1200
   const _route = shallowRef(router.resolve(initialURL) as RouteLocation)
   const syncCurrentRoute = () => { _route.value = router.currentRoute.value }
   nuxtApp.hook('page:finish', syncCurrentRoute)
@@ -89,7 +88,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     }
   })
 
-  // https://github.com/vuejs/vue-router-next/blob/master/src/router.ts#L1192-L1200
+  // https://github.com/vuejs/router/blob/main/packages/router/src/router.ts#L1225-L1233
   const route = {}
   for (const key in _route.value) {
     route[key] = computed(() => _route.value[key])
