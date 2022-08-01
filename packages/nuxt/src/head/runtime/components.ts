@@ -168,7 +168,7 @@ export const Base = defineComponent({
   props: {
     ...globalProps,
     href: String,
-    target: String as PropType<Targets>,
+    target: String as PropType<Target>,
   },
   setup: setupForUseMeta((base) => ({
     base,
