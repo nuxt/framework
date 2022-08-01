@@ -152,6 +152,6 @@ async function isDirectory (path: string) {
 }
 
 export async function resolveFiles (path: string, pattern: string | string[], opts: { followSymbolicLinks?: boolean } = {}) {
-  const files = await globby(pattern, { cwd: path, followSymbolicLinks: opts?.followSymbolicLinks || true })
+  const files = await globby(pattern, { cwd: path, followSymbolicLinks: opts.followSymbolicLinks ?? true })
   return files.map(p => resolve(path, p)).filter(p => !isIgnored(p)).sort()
 }
