@@ -1,13 +1,13 @@
-type Props = Readonly<Record<string, any>>;
+type Props = Readonly<Record<string, any>>
 
-type FetchPriority = "high" | "low" | "auto";
-type CrossOrigin = "" | "anonymous" | "use-credentials";
+type FetchPriority = "high" | "low" | "auto"
+type CrossOrigin = "" | "anonymous" | "use-credentials"
 type HTTPEquiv =
   | "content-security-policy"
   | "content-type"
   | "default-style"
   | "refresh"
-  | "x-ua-compatible";
+  | "x-ua-compatible"
 type ReferrerPolicy =
   | ""
   | "no-referrer"
@@ -17,7 +17,7 @@ type ReferrerPolicy =
   | "strict-origin"
   | "origin-when-cross-origin"
   | "strict-origin-when-cross-origin"
-  | "unsafe-url";
+  | "unsafe-url"
 type LinkRelationship =
   | "alternate"
   | "author"
@@ -38,9 +38,9 @@ type LinkRelationship =
   | "prev"
   | "search"
   | "stylesheet"
-  | String;
+  | String
 
-type Target = "_blank" | "_self" | "_parent" | "_top" | String;
+type Target = "_blank" | "_self" | "_parent" | "_top" | String
 
 export {
   Props,
@@ -50,4 +50,4 @@ export {
   ReferrerPolicy,
   LinkRelationship,
   Target
-};
+}
