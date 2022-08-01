@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest'
 // import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
 import { withQuery } from 'ufo'
+import type { NuxtComponentRenderResult } from '../packages/nuxt/src/core/runtime/nitro/renderer'
 import { expectNoClientErrors } from './utils'
-import { ComponentRenderResult } from '#app'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
@@ -46,6 +46,8 @@ describe('pages', () => {
     expect(html).toContain('Composable | template: auto imported from ~/components/template.ts')
     // should import components
     expect(html).toContain('This is a custom component with a named export.')
+    expect(html).toContain('global component registered automatically')
+    expect(html).toContain('global component via suffix')
 
     await expectNoClientErrors('/')
   })
@@ -147,6 +149,12 @@ describe('head tags', () => {
     // should render <Head> components
     expect(index).toContain('<title>Basic fixture - Fixture</title>')
   })
+
+  // TODO: Doesn't adds header in test environment
+  // it.todo('should render stylesheet link tag (SPA mode)', async () => {
+  //   const html = await $fetch('/head', { headers: { 'x-nuxt-no-ssr': '1' } })
+  //   expect(html).toMatch(/<link rel="stylesheet" href="\/_nuxt\/[^>]*.css"/)
+  // })
 })
 
 describe('navigate', () => {
@@ -338,7 +346,7 @@ describe('automatically keyed composables', () => {
 
 describe('selective rendering of global components', () => {
   it('renders components with route', async () => {
-    const result: ComponentRenderResult = await $fetch(withQuery('/__nuxt_isolated_render', {
+    const result: NuxtComponentRenderResult = await $fetch(withQuery('/__nuxt_isolated_render', {
       url: '/foo',
       state: JSON.stringify({}),
       components: JSON.stringify([
@@ -364,7 +372,7 @@ describe('selective rendering of global components', () => {
     `)
   })
   it('renders pure components', async () => {
-    const result: ComponentRenderResult = await $fetch(withQuery('/__nuxt_isolated_render', {
+    const result: NuxtComponentRenderResult = await $fetch(withQuery('/__nuxt_isolated_render', {
       components: JSON.stringify([
         {
           name: 'PureComponent',
@@ -444,10 +452,32 @@ describe('dynamic paths', () => {
     await startServer()
 
     const html = await $fetch('/foo/assets')
+    for (const match of html.matchAll(/(href|src)="(.`*?)"/g)) {
+      const url = match[2]
+      expect(
+        url.startsWith('/foo/_other/') ||
+        url === '/foo/public.svg' ||
+        // TODO: webpack does not yet support dynamic static paths
+        (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
+      ).toBeTruthy()
+    }
+  })
+
+  it('should allow setting relative baseURL', async () => {
+    delete process.env.NUXT_APP_BUILD_ASSETS_DIR
+    process.env.NUXT_APP_BASE_URL = './'
+    await startServer()
+
+    const html = await $fetch('/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
-      // TODO: webpack does not yet support dynamic static paths
-      expect(url.startsWith('/foo/_other/') || url === '/foo/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
+      expect(
+        url.startsWith('./_nuxt/') ||
+        url === './public.svg' ||
+        // TODO: webpack does not yet support dynamic static paths
+        (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
+      ).toBeTruthy()
+      expect(url.startsWith('./_nuxt/_nuxt')).toBeFalsy()
     }
   })
 
@@ -469,8 +499,12 @@ describe('dynamic paths', () => {
     const html = await $fetch('/foo/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
-      // TODO: webpack does not yet support dynamic static paths
-      expect(url.startsWith('https://example.com/_cdn/') || url === 'https://example.com/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
+      expect(
+        url.startsWith('https://example.com/_cdn/') ||
+        url === 'https://example.com/public.svg' ||
+        // TODO: webpack does not yet support dynamic static paths
+        (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
+      ).toBeTruthy()
     }
   })
 })

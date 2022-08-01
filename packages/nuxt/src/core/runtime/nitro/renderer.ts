@@ -4,30 +4,39 @@ import devalue from '@nuxt/devalue'
 import destr from 'destr'
 import { renderToString as _renderToString } from 'vue/server-renderer'
 
-import type { NuxtApp, ComponentRenderResult } from '#app'
+import type { NuxtApp } from '#app'
 
 // @ts-ignore
-import { useRuntimeConfig } from '#internal/nitro'
+import { useRuntimeConfig, useNitroApp } from '#internal/nitro'
 // @ts-ignore
 import { buildAssetsURL } from '#paths'
-// @ts-ignore
-import htmlTemplate from '#build/views/document.template.mjs'
 
-type NuxtSSRContext = NuxtApp['ssrContext']
+export type NuxtSSRContext = NuxtApp['ssrContext']
 
-interface RenderResult {
-  html: any
-  renderResourceHints: () => string
-  renderStyles: () => string
-  renderScripts: () => string
-  meta?: Partial<{
-    htmlAttrs?: string,
-    bodyAttrs: string,
-    headAttrs: string,
-    headTags: string,
-    bodyScriptsPrepend : string,
-    bodyScripts : string
-  }>
+export interface NuxtRenderContext {
+  ssrContext: NuxtSSRContext
+  html: {
+    htmlAttrs: string[]
+    head: string[]
+    bodyAttrs: string[]
+    bodyPreprend: string[]
+    body: string[]
+    bodyAppend: string[]
+  }
+}
+
+export interface NuxtComponentRenderResult {
+  state: Record<string, any>
+  rendered: Array<{ html: string }>
+  styles?: string
+  scripts?: string
+}
+
+export interface NuxtRenderResponse {
+  body: string,
+  statusCode: number,
+  statusMessage?: string,
+  headers: Record<string, string>
 }
 
 // @ts-ignore
@@ -84,7 +93,10 @@ const getSPARenderer = lazyCachedFunction(async () => {
     if ('all' in clientManifest && 'initial' in clientManifest) {
       // Upgrade legacy manifest (also see normalizeClientManifest in vue-bundle-renderer)
       // https://github.com/nuxt-contrib/vue-bundle-renderer/issues/12
-      entryFiles = clientManifest.initial.map(file => ({ file }))
+      entryFiles = clientManifest.initial.map(file =>
+        // Webpack manifest fix with SPA renderer
+        file.endsWith('css') ? { css: file } : { file }
+      )
     }
 
     return Promise.resolve({
@@ -98,6 +110,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
           .join(''),
       renderScripts: () =>
         entryFiles
+          .filter(({ file }) => file)
           .map(({ file }) => {
             const isMJS = !file.endsWith('.js')
             return `<script ${isMJS ? 'type="module"' : ''} src="${buildAssetsURL(file)}"></script>`
@@ -142,27 +155,22 @@ export default eventHandler(async (event) => {
 
   // Render app
   const renderer = (process.env.NUXT_NO_SSR || ssrContext.noSSR) ? await getSPARenderer() : await getSSRRenderer()
-  const rendered = await renderer.renderToString(ssrContext).catch((e) => {
-    if (!ssrError) { throw e }
-  }) as RenderResult
-
-  // If we error on rendering error page, we bail out and directly return to the error handler
-  if (!rendered) { return }
-
-  if (event.res.writableEnded) {
-    return
-  }
+  const _rendered = await renderer.renderToString(ssrContext).catch((err) => {
+    if (!ssrError) { throw err }
+  })
 
   // Handle errors
+  if (!_rendered) {
+    return
+  }
   if (ssrContext.error && !ssrError) {
     throw ssrContext.error
   }
 
-  if (ssrContext.nuxt?.hooks) {
-    await ssrContext.nuxt.hooks.callHook('app:rendered')
-  }
+  // Render meta
+  const renderedMeta = await ssrContext.renderMeta?.() ?? {}
 
-  await renderMeta(rendered, ssrContext)
+  const nitroApp = useNitroApp()
 
   // Render server components
   if (isolatedRenderCtx) {
@@ -170,41 +178,78 @@ export default eventHandler(async (event) => {
       .filter(([key]) => key.startsWith('render-target'))
       .map(([, value]) => ({ html: value.replace(/<!--teleport anchor-->$/, '') }))
 
-    const result: ComponentRenderResult = {
+    const result: NuxtComponentRenderResult = {
       rendered: components,
       state: ssrContext.payload.state,
-      styles: rendered.renderStyles() + (ssrContext.styles || ''),
-      scripts: (rendered.meta.bodyScriptsPrepend || '') + rendered.renderScripts() + (rendered.meta.bodyScripts || '')
+      styles: _rendered.renderStyles() + (ssrContext.styles || ''),
+      scripts: (renderedMeta.bodyScriptsPrepend || '') + _rendered.renderScripts() + (renderedMeta.bodyScripts || '')
     }
+
+    // Allow hooking into the rendered result
+    await ssrContext.nuxt?.hooks.callHook('component:rendered', result)
+    await nitroApp.hooks.callHook('nuxt:component:rendered', result)
 
     return result
   }
 
-  const html = await renderHTML(ssrContext.payload, rendered, ssrContext)
-  event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
-  return html
-})
-
-async function renderMeta (rendered: RenderResult, ssrContext: NuxtSSRContext) {
-  rendered.meta = rendered.meta || {}
-  if (ssrContext.renderMeta) {
-    Object.assign(rendered.meta, await ssrContext.renderMeta())
+  // Create render context
+  const rendered: NuxtRenderContext = {
+    ssrContext,
+    html: {
+      htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
+      head: normalizeChunks([
+        renderedMeta.headTags,
+        _rendered.renderResourceHints(),
+        _rendered.renderStyles(),
+        ssrContext.styles
+      ]),
+      bodyAttrs: normalizeChunks([renderedMeta.bodyAttrs]),
+      bodyPreprend: normalizeChunks([
+        renderedMeta.bodyScriptsPrepend,
+        ssrContext.teleports?.body
+      ]),
+      body: [
+      // TODO: Rename to _rendered.body in next vue-bundle-renderer
+        _rendered.html
+      ],
+      bodyAppend: normalizeChunks([
+      `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
+      _rendered.renderScripts(),
+      renderedMeta.bodyScripts
+      ])
+    }
   }
-}
 
-function renderHTML (payload: any, rendered: RenderResult, ssrContext: NuxtSSRContext) {
-  const state = `<script>window.__NUXT__=${devalue(payload)}</script>`
+  // Allow hooking into the rendered result
+  await ssrContext.nuxt?.hooks.callHook('app:rendered', rendered)
+  await nitroApp.hooks.callHook('nuxt:app:rendered', rendered)
 
-  return htmlTemplate({
-    HTML_ATTRS: (rendered.meta.htmlAttrs || ''),
-    HEAD_ATTRS: (rendered.meta.headAttrs || ''),
-    HEAD: (rendered.meta.headTags || '') +
-      rendered.renderResourceHints() + rendered.renderStyles() + (ssrContext.styles || ''),
-    BODY_ATTRS: (rendered.meta.bodyAttrs || ''),
-    BODY_PREPEND: (ssrContext.teleports?.body || ''),
-    APP: (rendered.meta.bodyScriptsPrepend || '') + rendered.html + state + rendered.renderScripts() + (rendered.meta.bodyScripts || '')
-  })
-}
+  // Construct HTML response
+  const response: NuxtRenderResponse = {
+    body: renderHTMLDocument(rendered),
+    statusCode: event.res.statusCode,
+    statusMessage: event.res.statusMessage,
+    headers: {
+      'Content-Type': 'text/html;charset=UTF-8',
+      'X-Powered-By': 'Nuxt'
+    }
+  }
+
+  // Allow extending the response
+  await nitroApp.hooks.callHook('nuxt:app:response', { response })
+
+  // Send HTML response
+  if (!event.res.headersSent) {
+    for (const header in response.headers) {
+      event.res.setHeader(header, response.headers[header])
+    }
+    event.res.statusCode = response.statusCode
+    event.res.statusMessage = response.statusMessage
+  }
+  if (!event.res.writableEnded) {
+    event.res.end(response.body)
+  }
+})
 
 function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
   let res: Promise<T> | null = null
@@ -214,4 +259,24 @@ function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
     }
     return res
   }
+}
+
+function normalizeChunks (chunks: string[]) {
+  return chunks.filter(Boolean).map(i => i.trim())
+}
+
+function joinTags (tags: string[]) {
+  return tags.join('')
+}
+
+function joinAttrs (chunks: string[]) {
+  return chunks.join(' ')
+}
+
+function renderHTMLDocument (rendered: NuxtRenderContext) {
+  return `<!DOCTYPE html>
+<html ${joinAttrs(rendered.html.htmlAttrs)}>
+<head>${joinTags(rendered.html.head)}</head>
+<body ${joinAttrs(rendered.html.bodyAttrs)}>${joinTags(rendered.html.bodyPreprend)}${joinTags(rendered.html.body)}${joinTags(rendered.html.bodyAppend)}</body>
+</html>`
 }

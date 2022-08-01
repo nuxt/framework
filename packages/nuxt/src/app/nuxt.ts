@@ -6,6 +6,8 @@ import type { RuntimeConfig } from '@nuxt/schema'
 import { getContext } from 'unctx'
 import type { SSRContext } from 'vue-bundle-renderer'
 import type { CompatibilityEvent } from 'h3'
+// eslint-disable-next-line import/no-restricted-paths
+import type { NuxtComponentRenderResult, NuxtRenderContext } from '../core/runtime/nitro/renderer'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
@@ -23,12 +25,13 @@ export interface RuntimeNuxtHooks {
   'app:created': (app: App<Element>) => HookResult
   'app:beforeMount': (app: App<Element>) => HookResult
   'app:mounted': (app: App<Element>) => HookResult
-  'app:rendered': () => HookResult
+  'app:rendered': (ctx: NuxtRenderContext) => HookResult
   'app:redirected': () => HookResult
   'app:suspense:resolve': (Component?: VNode) => HookResult
   'app:error': (err: any) => HookResult
   'app:error:cleared': (options: { redirect?: string }) => HookResult
   'app:data:refresh': (keys?: string[]) => HookResult
+  'component:rendered': (ctx: NuxtComponentRenderResult) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
   'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
@@ -274,11 +277,4 @@ export function useRuntimeConfig (): RuntimeConfig {
 
 function defineGetter<K extends string | number | symbol, V> (obj: Record<K, V>, key: K, val: V) {
   Object.defineProperty(obj, key, { get: () => val })
-}
-
-export interface ComponentRenderResult {
-  state: Record<string, any>
-  rendered: Array<{ html: string }>
-  styles?: string
-  scripts?: string
 }
