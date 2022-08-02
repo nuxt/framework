@@ -1,9 +1,10 @@
 {
   "name": "nuxi",
-  "version": "3.0.0-rc.4",
+  "version": "3.0.0-rc.6",
   "repository": "nuxt/framework",
   "license": "MIT",
   "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./dist/index.mjs",
     "./cli": "./bin/nuxi.mjs"
@@ -17,8 +18,8 @@
     "prepack": "unbuild"
   },
   "devDependencies": {
-    "@nuxt/kit": "^3.0.0-rc.4",
-    "@nuxt/schema": "^3.0.0-rc.4",
+    "@nuxt/kit": "^3.0.0-rc.6",
+    "@nuxt/schema": "^3.0.0-rc.6",
     "@types/clear": "^0",
     "@types/mri": "^1.1.1",
     "@types/semver": "^7",
@@ -34,12 +35,12 @@
     "flat": "^5.0.2",
     "jiti": "^1.14.0",
     "listhen": "^0.2.13",
-    "mlly": "^0.5.4",
+    "mlly": "^0.5.5",
     "mri": "^1.2.0",
-    "pathe": "^0.3.2",
+    "pathe": "^0.3.3",
     "perfect-debounce": "^0.1.3",
     "pkg-types": "^0.3.3",
-    "scule": "^0.2.1",
+    "scule": "^0.3.2",
     "semver": "^7.3.7",
     "superb": "^4.0.0",
     "tiged": "^2.12.0",

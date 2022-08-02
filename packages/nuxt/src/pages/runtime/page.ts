@@ -50,19 +50,30 @@ export default defineComponent({
 
     return () => {
       return h(RouterView, { name: props.name, route: props.route, ...attrs }, {
-        default: (routeProps: RouterViewSlotProps) => routeProps.Component &&
-            _wrapIf(Transition, getTransitionProps(routeProps),
-              wrapInKeepAlive(routeProps.route.meta.keepalive,
-                isNested && nuxtApp.isHydrating
-                  // Include route children in parent suspense
-                  ? h(routeProps.Component, { key: generateRouteKey(props.pageKey, routeProps) } as {})
-                  : h(Suspense, {
-                    onPending: () => nuxtApp.callHook('page:start', routeProps.Component),
-                    onResolve: () => {
-                      nextTick(() => nuxtApp.callHook('page:finish', routeProps.Component))
-                    }
-                  }, { default: () => h(routeProps.Component, { key: generateRouteKey(props.pageKey, routeProps) } as {}) })
-              )).default()
+        default: (routeProps: RouterViewSlotProps) => {
+          if (!routeProps.Component) { return }
+
+          const Component = defineComponent({
+            setup () {
+              provide('_route', routeProps.route)
+              return () => h(routeProps.Component, {
+                key: generateRouteKey(props.pageKey, routeProps)
+              } as {})
+            }
+          })
+
+          return _wrapIf(Transition, getTransitionProps(routeProps),
+            wrapInKeepAlive(routeProps.route.meta.keepalive, isNested && nuxtApp.isHydrating
+            // Include route children in parent suspense
+              ? h(Component)
+              : h(Suspense, {
+                onPending: () => nuxtApp.callHook('page:start', routeProps.Component),
+                onResolve: () => {
+                  nextTick(() => nuxtApp.callHook('page:finish', routeProps.Component))
+                }
+              }, { default: () => h(Component) })
+            )).default()
+        }
       })
     }
   }

@@ -14,11 +14,20 @@
     </NuxtLink>
     <SugarCounter :count="12" />
     <CustomComponent />
+    <component :is="`test${'-'.toString()}global`" />
+    <component :is="`with${'-'.toString()}suffix`" />
   </div>
 </template>
 
 <script setup>
+import { useRuntimeConfig } from '#imports'
+
 const config = useRuntimeConfig()
+
+// reset title template example
+useHead({
+  titleTemplate: null
+})
 
 const foo = useFoo()
 const bar = useBar()

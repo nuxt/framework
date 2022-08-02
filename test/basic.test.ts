@@ -44,6 +44,8 @@ describe('pages', () => {
     expect(html).toContain('Composable | template: auto imported from ~/components/template.ts')
     // should import components
     expect(html).toContain('This is a custom component with a named export.')
+    expect(html).toContain('global component registered automatically')
+    expect(html).toContain('global component via suffix')
 
     await expectNoClientErrors('/')
   })
@@ -129,22 +131,29 @@ describe('pages', () => {
 
 describe('head tags', () => {
   it('should render tags', async () => {
-    const html = await $fetch('/head')
-    expect(html).toContain('<title>Using a dynamic component - Fixture</title>')
-    expect(html).not.toContain('<meta name="description" content="first">')
-    expect(html).toContain('<meta charset="utf-16">')
-    expect(html).not.toContain('<meta charset="utf-8">')
-    expect(html).toContain('<meta name="description" content="overriding with an inline useHead call">')
-    expect(html).toMatch(/<html[^>]*class="html-attrs-test"/)
-    expect(html).toMatch(/<body[^>]*class="body-attrs-test"/)
-    expect(html).toContain('script>console.log("works with useMeta too")</script>')
+    const headHtml = await $fetch('/head')
+    expect(headHtml).toContain('<title>Using a dynamic component - Title Template Fn Change</title>')
+    expect(headHtml).not.toContain('<meta name="description" content="first">')
+    expect(headHtml).toContain('<meta charset="utf-16">')
+    expect(headHtml).not.toContain('<meta charset="utf-8">')
+    expect(headHtml).toContain('<meta name="description" content="overriding with an inline useHead call">')
+    expect(headHtml).toMatch(/<html[^>]*class="html-attrs-test"/)
+    expect(headHtml).toMatch(/<body[^>]*class="body-attrs-test"/)
+    expect(headHtml).toContain('script>console.log("works with useMeta too")</script>')
+    expect(headHtml).toContain('<script src="https://a-body-appended-script.com" data-meta-body="true"></script></body>')
 
-    const index = await $fetch('/')
+    const indexHtml = await $fetch('/')
     // should render charset by default
-    expect(index).toContain('<meta charset="utf-8">')
+    expect(indexHtml).toContain('<meta charset="utf-8">')
     // should render <Head> components
-    expect(index).toContain('<title>Basic fixture - Fixture</title>')
+    expect(indexHtml).toContain('<title>Basic fixture</title>')
   })
+
+  // TODO: Doesn't adds header in test environment
+  // it.todo('should render stylesheet link tag (SPA mode)', async () => {
+  //   const html = await $fetch('/head', { headers: { 'x-nuxt-no-ssr': '1' } })
+  //   expect(html).toMatch(/<link rel="stylesheet" href="\/_nuxt\/[^>]*.css"/)
+  // })
 })
 
 describe('navigate', () => {
@@ -244,6 +253,14 @@ describe('reactivity transform', () => {
   })
 })
 
+describe('server tree shaking', () => {
+  it('should work', async () => {
+    const html = await $fetch('/client')
+
+    expect(html).toContain('This page should not crash when rendered')
+  })
+})
+
 describe('extends support', () => {
   describe('layouts & pages', () => {
     it('extends foo/layouts/default & foo/pages/index', async () => {
@@ -318,6 +335,14 @@ describe('extends support', () => {
   })
 })
 
+describe('automatically keyed composables', () => {
+  it('should automatically generate keys', async () => {
+    const html = await $fetch('/keyed-composables')
+    expect(html).toContain('true')
+    expect(html).not.toContain('false')
+  })
+})
+
 describe('dynamic paths', () => {
   if (process.env.NUXT_TEST_DEV) {
     // TODO:
@@ -361,10 +386,32 @@ describe('dynamic paths', () => {
     await startServer()
 
     const html = await $fetch('/foo/assets')
+    for (const match of html.matchAll(/(href|src)="(.`*?)"/g)) {
+      const url = match[2]
+      expect(
+        url.startsWith('/foo/_other/') ||
+        url === '/foo/public.svg' ||
+        // TODO: webpack does not yet support dynamic static paths
+        (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
+      ).toBeTruthy()
+    }
+  })
+
+  it('should allow setting relative baseURL', async () => {
+    delete process.env.NUXT_APP_BUILD_ASSETS_DIR
+    process.env.NUXT_APP_BASE_URL = './'
+    await startServer()
+
+    const html = await $fetch('/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
-      // TODO: webpack does not yet support dynamic static paths
-      expect(url.startsWith('/foo/_other/') || url === '/foo/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
+      expect(
+        url.startsWith('./_nuxt/') ||
+        url === './public.svg' ||
+        // TODO: webpack does not yet support dynamic static paths
+        (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
+      ).toBeTruthy()
+      expect(url.startsWith('./_nuxt/_nuxt')).toBeFalsy()
     }
   })
 
@@ -386,8 +433,12 @@ describe('dynamic paths', () => {
     const html = await $fetch('/foo/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
-      // TODO: webpack does not yet support dynamic static paths
-      expect(url.startsWith('https://example.com/_cdn/') || url === 'https://example.com/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
+      expect(
+        url.startsWith('https://example.com/_cdn/') ||
+        url === 'https://example.com/public.svg' ||
+        // TODO: webpack does not yet support dynamic static paths
+        (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
+      ).toBeTruthy()
     }
   })
 })
