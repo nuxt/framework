@@ -25,6 +25,11 @@ import { useRuntimeConfig } from '#imports'
 
 const config = useRuntimeConfig()
 
+// reset title template example
+useHead({
+  titleTemplate: null
+})
+
 const foo = useFoo()
 const bar = useBar()
 const clientRef = ref()
