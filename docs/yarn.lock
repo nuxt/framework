@@ -766,8 +766,8 @@ __metadata:
   linkType: hard
 
 "@nuxt-themes/docus@npm:@nuxt-themes/docus-edge@latest":
-  version: 3.0.0-9755a1e
-  resolution: "@nuxt-themes/docus-edge@npm:3.0.0-9755a1e"
+  version: 3.0.0-60e7c1f
+  resolution: "@nuxt-themes/docus-edge@npm:3.0.0-60e7c1f"
   dependencies:
     "@iconify/vue": ^3.2.1
     "@nuxt-themes/config": "npm:@nuxt-themes/config-edge@latest"
@@ -789,7 +789,7 @@ __metadata:
     pkg-types: ^0.3.3
     tailwindcss: ^3.1.6
     vue-plausible: ^1.3.2
-  checksum: 2a47e779bef3e1d24c9ba1ef3ad7278cbeff82aaa2095e5e3d2fe095d117bbbc74b5b9bc3f3d76be2fe06b6cef3e7bec7244367089fe70344018d22efb4144e0
+  checksum: 25b8b6fb614af202f2fb9dda39cb810d6e48b96c15ff3346ba3a5280a19def0869beee2151a9b5216a83a18d12230b69f7848762a52e9a4acd6ac4c0cfac048a
   languageName: node
   linkType: hard
 
