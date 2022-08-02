@@ -140,7 +140,7 @@ describe('head tags', () => {
     expect(html).toMatch(/<html[^>]*class="html-attrs-test"/)
     expect(html).toMatch(/<body[^>]*class="body-attrs-test"/)
     expect(html).toContain('script>console.log("works with useMeta too")</script>')
-    expect(html).toContain('<script src="https://a-body-appended-script.com" data-meta-body="true"></script></body>')
+    expect(html).toContain('<script src="https://a-body-appended-script.com" data-meta-body></script></body>')
 
     const index = await $fetch('/')
     // should render charset by default
