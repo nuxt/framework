@@ -42,6 +42,6 @@ export type LinkRelationship =
   | 'prev'
   | 'search'
   | 'stylesheet'
-  | string
+  | (string & {})
 
-export type Target = '_blank' | '_self' | '_parent' | '_top' | string
+export type Target = '_blank' | '_self' | '_parent' | '_top' | (string & {})
