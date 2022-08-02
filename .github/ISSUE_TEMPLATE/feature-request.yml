@@ -8,7 +8,7 @@ body:
         Thank you for taking the time to fill out this feature request!
 
         Please carefully read the contribution docs before suggesting a new feature
-        👉 https://v3.nuxtjs.org/community/contribution
+        👉 https://v3.nuxtjs.org/community/contribution/#creating-an-issue
   - type: textarea
     id: feature-description
     attributes:
@@ -25,3 +25,13 @@ body:
       options:
         - label: Would you be willing to help implement this feature?
         - label: Could this feature be implemented as a module?
+  - type: checkboxes
+    id: required-info
+    attributes:
+      label: Final checks
+      description: Before submitting, please make sure you do the following
+      options:
+        - label: Read the [contribution guide](https://v3.nuxtjs.org/community/contribution).
+          required: true
+        - label: Check existing [discussions](https://github.com/nuxt/framework/discussions) and [issues](https://github.com/nuxt/framework/issues).
+          required: true
