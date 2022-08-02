@@ -22,9 +22,9 @@ export function createClientOnly (component) {
   const { setup, render: _render, template: _template } = component
   if (_render) {
     // override the component render (non <script setup> component)
-    component.render = (ctx, cache, props, state, data, options) => {
+    component.render = (ctx, ...args) => {
       return state.mounted$
-        ? h(Fragment, null, [h(_render(ctx, cache, props, state, data, options, ctx), ctx.$attrs ?? ctx._.attrs)])
+        ? h(Fragment, null, [h(_render(ctx, ...args), ctx.$attrs ?? ctx._.attrs)])
         : h('div', ctx.$attrs ?? ctx._.attrs)
     }
   } else if (_template) {
