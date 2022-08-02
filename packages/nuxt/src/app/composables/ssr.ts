@@ -17,7 +17,7 @@ export function useRequestEvent (nuxtApp: NuxtApp = useNuxtApp()): Compatibility
 }
 
 export function setResponseStatus (code: number, message?: string) {
-  const event = useRequestEvent()
+  const event = process.server && useRequestEvent()
   if (event) {
     event.res.statusCode = code
     if (message) {
