@@ -9,7 +9,7 @@ import type {
   ReferrerPolicy,
   LinkRelationship,
   Target
-} from "./types.ts"
+} from './types'
 
 const removeUndefinedProps = (props: Props) =>
   Object.fromEntries(Object.entries(props).filter(([, value]) => value !== undefined))
@@ -73,7 +73,7 @@ export const Script = defineComponent({
     ...globalProps,
     async: Boolean,
     crossorigin: {
-      type: [Boolean, String as PropType<CrossOrigin>],
+      type: [Boolean, String as () => CrossOrigin],
       default: undefined
     },
     defer: Boolean,
