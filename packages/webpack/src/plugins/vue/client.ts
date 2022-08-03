@@ -3,7 +3,7 @@
  * https://github.com/vuejs/vue/blob/dev/src/server/webpack-plugin/client.js
  */
 
-import { normalizeClientManifest } from 'vue-bundle-renderer/legacy'
+import { normalizeWebpackManifest } from 'vue-bundle-renderer'
 import { dirname } from 'pathe'
 import hash from 'hash-sum'
 import { uniq } from 'lodash-es'
@@ -110,7 +110,7 @@ export default class VueSSRClientPlugin {
         }
       })
 
-      const src = JSON.stringify(normalizeClientManifest(manifest), null, 2)
+      const src = JSON.stringify(normalizeWebpackManifest(manifest), null, 2)
 
       await fse.mkdirp(dirname(this.options.filename))
       await fse.writeFile(this.options.filename, src)

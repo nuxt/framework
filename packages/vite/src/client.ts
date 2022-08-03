@@ -102,7 +102,7 @@ export async function buildClient (ctx: ViteBuildContext) {
     const viteMiddleware: Connect.NextHandleFunction = (req, res, next) => {
       // Workaround: vite devmiddleware modifies req.url
       const originalURL = req.url
-      req.url = req.url.replace(BASE_RE, '/').replace('@vite/client.mjs', '@vite/client')
+      req.url = req.url.replace(BASE_RE, '/')
       viteServer.middlewares.handle(req, res, (err) => {
         req.url = originalURL
         next(err)

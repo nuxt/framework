@@ -2,7 +2,7 @@ import fse from 'fs-extra'
 import { resolve } from 'pathe'
 import { withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import escapeRE from 'escape-string-regexp'
-import { Manifest } from 'vite'
+import { normalizeViteManifest, Manifest } from 'vue-bundle-renderer'
 import type { ViteBuildContext } from './vite'
 
 export async function writeManifest (ctx: ViteBuildContext, css: string[] = []) {
@@ -11,17 +11,21 @@ export async function writeManifest (ctx: ViteBuildContext, css: string[] = []) 
   const serverDist = resolve(ctx.nuxt.options.buildDir, 'dist/server')
 
   const devClientManifest: Manifest = {
-    '@vite/client.mjs': {
+    '@vite/client': {
       isEntry: true,
-      file: '@vite/client.mjs',
+      file: '@vite/client',
       css,
       // placeholders for future use
       assets: [],
-      dynamicImports: []
+      dynamicImports: [],
+      module: true,
+      resourceType: 'script'
     },
     'entry.mjs': {
       isEntry: true,
-      file: 'entry.mjs'
+      file: 'entry.mjs',
+      module: true,
+      resourceType: 'script'
     }
   }
 
@@ -44,6 +48,7 @@ export async function writeManifest (ctx: ViteBuildContext, css: string[] = []) 
   }
 
   await fse.mkdirp(serverDist)
-  await fse.writeFile(resolve(serverDist, 'client.manifest.json'), JSON.stringify(clientManifest, null, 2), 'utf8')
-  await fse.writeFile(resolve(serverDist, 'client.manifest.mjs'), 'export default ' + JSON.stringify(clientManifest, null, 2), 'utf8')
+  const manifest = normalizeViteManifest(clientManifest)
+  await fse.writeFile(resolve(serverDist, 'client.manifest.json'), JSON.stringify(manifest, null, 2), 'utf8')
+  await fse.writeFile(resolve(serverDist, 'client.manifest.mjs'), 'export default ' + JSON.stringify(manifest, null, 2), 'utf8')
 }

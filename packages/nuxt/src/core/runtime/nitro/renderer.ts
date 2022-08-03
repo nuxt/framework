@@ -1,4 +1,4 @@
-import { createRenderer } from 'vue-bundle-renderer'
+import { createRenderer } from 'vue-bundle-renderer/runtime'
 import type { Manifest } from 'vite'
 import { eventHandler, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'

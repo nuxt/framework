@@ -4,7 +4,8 @@ import { ViteNodeServer } from 'vite-node/server'
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
 import { addServerMiddleware } from '@nuxt/kit'
-import type { Manifest, Plugin as VitePlugin, ViteDevServer } from 'vite'
+import type { Plugin as VitePlugin, ViteDevServer } from 'vite'
+import type { Manifest } from 'vue-bundle-renderer'
 import { resolve as resolveModule } from 'mlly'
 import { distDir } from './dirs'
 import type { ViteBuildContext } from './vite'
@@ -35,16 +36,20 @@ function getManifest (server: ViteDevServer) {
     .filter(i => isCSS(i))
 
   const manifest: Manifest = {
-    '@vite/client.mjs': {
-      file: '@vite/client.mjs',
+    '@vite/client': {
+      file: '@vite/client',
       css,
       assets: [],
       dynamicImports: [],
-      isEntry: true
+      isEntry: true,
+      module: true,
+      resourceType: 'script'
     },
     'entry.mjs': {
       file: 'entry.mjs',
-      isEntry: true
+      isEntry: true,
+      module: true,
+      resourceType: 'script'
     }
   }
 
