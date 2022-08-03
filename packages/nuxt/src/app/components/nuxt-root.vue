@@ -7,8 +7,8 @@
 </template>
 
 <script setup>
-import { defineAsyncComponent, onErrorCaptured } from 'vue'
-import { callWithNuxt, isNuxtError, showError, useError, useNuxtApp } from '#app'
+import { defineAsyncComponent, onErrorCaptured, provide } from 'vue'
+import { callWithNuxt, isNuxtError, showError, useError, useRoute, useNuxtApp } from '#app'
 
 const ErrorComponent = defineAsyncComponent(() => import('#build/error-component.mjs'))
 const RenderComponents = process.server
@@ -18,6 +18,9 @@ const RenderComponents = process.server
 
 const nuxtApp = useNuxtApp()
 const onResolve = () => nuxtApp.callHook('app:suspense:resolve')
+
+// Inject default route (outside of pages) as active route
+provide('_route', useRoute())
 
 // vue:setup hook
 const results = nuxtApp.hooks.callHookWith(hooks => hooks.map(hook => hook()), 'vue:setup')

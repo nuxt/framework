@@ -1,3 +1,4 @@
+import { getCurrentInstance, inject } from 'vue'
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure } from 'vue-router'
 import { sendRedirect } from 'h3'
 import { joinURL } from 'ufo'
@@ -10,12 +11,19 @@ export const useRouter = () => {
 
 export const useRoute = () => {
   const nuxtApp = useNuxtApp()
-  return nuxtApp._isolatedRender ? null : nuxtApp._route as RouteLocationNormalizedLoaded
+  if (nuxtApp._isolatedRender) {
+    return null
+  }
+  if (getCurrentInstance()) {
+    return inject<RouteLocationNormalizedLoaded>('_route', nuxtApp._route)
+  }
+  return nuxtApp._route as RouteLocationNormalizedLoaded
 }
 
+/** @deprecated Use `useRoute` instead. */
 export const useActiveRoute = () => {
   const nuxtApp = useNuxtApp()
-  return nuxtApp._isolatedRender ? null : nuxtApp._activeRoute as RouteLocationNormalizedLoaded
+  return nuxtApp._isolatedRender ? null : nuxtApp._route as RouteLocationNormalizedLoaded
 }
 
 export interface RouteMiddleware {
