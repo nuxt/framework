@@ -49,7 +49,9 @@ export const appPreset = defineUnimportPreset({
     'isNuxtError',
     'useError',
     'createError',
-    'defineNuxtLink'
+    'defineNuxtLink',
+    'defineAppConfig',
+    'useAppConfig'
   ]
 })
 

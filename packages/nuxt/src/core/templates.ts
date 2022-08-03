@@ -176,6 +176,18 @@ export const useRuntimeConfig = () => window?.__NUXT__?.config || {}
 `
 }
 
+export const appConfigTemplate: NuxtTemplate = {
+  filename: 'app.config.mjs',
+  write: true,
+  getContents: ({ app }) => {
+    return `
+import defu from 'defu'
+${app.configs.map((id, index) => `import ${`cfg${index}`} from ${JSON.stringify(id)}`).join('\n')}
+export default defu(${app.configs.map((_id, index) => `cfg${index}`).join(', ')})
+`
+  }
+}
+
 export const publicPathTemplate: NuxtTemplate = {
   filename: 'paths.mjs',
   getContents ({ nuxt }) {

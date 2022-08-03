@@ -1,10 +1,14 @@
 <script setup lang="ts">
+const appConfig = useAppConfig()
+watch(appConfig, () => {
+  console.log('App config updated:', appConfig)
+})
 </script>
 
 <template>
   <!-- Edit this file to play around with Nuxt but never commit changes! -->
   <div>
-    Nuxt 3 Playground
+    Hello World {{ appConfig }}
   </div>
 </template>
 

@@ -21,12 +21,19 @@ type RuntimeConfigNamespace = Record<string, any>
 
 export interface PublicRuntimeConfig extends RuntimeConfigNamespace { }
 
+export interface AppConfig extends RuntimeConfigNamespace {
+  baseURL: string
+  buildAssetsDir: string
+  cdnURL: string
+}
+
 // TODO: remove before release of 3.0.0
 /** @deprecated use RuntimeConfig interface */
 export interface PrivateRuntimeConfig extends RuntimeConfigNamespace { }
 
 export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamespace {
   public: PublicRuntimeConfig
+  app: AppConfig
 }
 
 export interface ViteConfig extends ViteUserConfig {
