@@ -146,9 +146,9 @@ export default eventHandler(async (event) => {
   }
 
   // Render meta
-  const renderedMeta = await ssrContext.renderMeta()
+  const renderedMeta = await ssrContext.renderMeta?.() ?? {}
 
-  // Create render conrtext
+  // Create render context
   const rendered: NuxtRenderContext = {
     ssrContext,
     html: {
@@ -171,6 +171,7 @@ export default eventHandler(async (event) => {
       bodyAppend: normalizeChunks([
       `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
       _rendered.renderScripts(),
+      // Note: bodyScripts may contain tags other than <script>
       renderedMeta.bodyScripts
       ])
     }
@@ -178,7 +179,7 @@ export default eventHandler(async (event) => {
 
   // Allow hooking into the rendered result
   const nitroApp = useNitroApp()
-  await ssrContext.nuxt.hooks.callHook('app:rendered', rendered)
+  await ssrContext.nuxt?.hooks.callHook('app:rendered', rendered)
   await nitroApp.hooks.callHook('nuxt:app:rendered', rendered)
 
   // Construct HTML response
