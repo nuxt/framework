@@ -444,6 +444,13 @@ describe('dynamic paths', () => {
       ).toBeTruthy()
     }
   })
+
+  it('restore server', async () => {
+    process.env.NUXT_APP_BASE_URL = undefined
+    process.env.NUXT_APP_CDN_URL = undefined
+    process.env.NUXT_APP_BUILD_ASSETS_DIR = undefined
+    await startServer()
+  })
 })
 
 describe('app config', () => {
