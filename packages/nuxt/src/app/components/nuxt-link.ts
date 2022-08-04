@@ -176,11 +176,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
           // converts `""` to `null` to prevent the attribute from being added as empty (`rel=""`)
           : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, href ? DEFAULT_EXTERNAL_REL_ATTRIBUTE : '') || null
 
-        const navigate = () => {
-          if (href) {
-            navigateTo(href, { replace: props.replace })
-          }
-        }
+        const navigate = () => navigateTo(href, { replace: props.replace })
 
         // https://router.vuejs.org/api/#custom
         if (props.custom) {
@@ -190,7 +186,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
           return slots.default({
             href,
             navigate,
-            route: href ? router.resolve(href) : undefined,
+            route: router.resolve(href!),
             rel,
             target,
             isActive: false,

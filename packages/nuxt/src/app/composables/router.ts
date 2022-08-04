@@ -61,7 +61,7 @@ export interface NavigateToOptions {
   redirectCode?: number
 }
 
-export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}): Promise<void | NavigationFailure> | RouteLocationRaw => {
+export const navigateTo = (to: RouteLocationRaw | undefined | null, options: NavigateToOptions = {}): Promise<void | NavigationFailure> | RouteLocationRaw => {
   if (!to) {
     to = '/'
   }
