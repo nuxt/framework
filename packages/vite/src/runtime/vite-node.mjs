@@ -29,7 +29,7 @@ export default async (ssrContext) => {
     runner.moduleCache.delete(key)
   }
 
-  // Execute SSR bundle on-demand
+  // Execute SSR bundle on demand
   render = render || (await runner.executeFile(viteNodeOptions.entryPath)).default
   const result = await render(ssrContext)
   return result
