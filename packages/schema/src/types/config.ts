@@ -43,10 +43,10 @@ export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamesp
 // -- App Config --
 export interface AppConfig extends Record<string, any> {
   /** @deprecated reserved */
-  private: never
+  private?: never
   /** @deprecated reserved */
-  nuxt: never
+  nuxt?: never
   /** @deprecated reserved */
-  nitro: never
+  nitro?: never
 }
 
