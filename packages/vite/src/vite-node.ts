@@ -78,7 +78,7 @@ function createViteNodeMiddleware (ctx: ViteBuildContext, invalidates: Set<strin
     // When a file has been invalidated, we also invalidate the entry module
     if (invalidates.size) {
       for (const key of ctx.ssrServer.moduleGraph.fileToModulesMap.keys()) {
-        if (key.startsWith(ctx.nuxt.options.appDir)) {
+        if (key.startsWith(ctx.nuxt.options.appDir + '/entry')) {
           invalidates.add(key)
         }
       }
