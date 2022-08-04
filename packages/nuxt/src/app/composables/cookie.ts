@@ -3,6 +3,7 @@ import { parse, serialize, CookieParseOptions, CookieSerializeOptions } from 'co
 import { appendHeader } from 'h3'
 import type { CompatibilityEvent } from 'h3'
 import destr from 'destr'
+import { isEqual } from 'ohash'
 import { useRequestEvent } from './ssr'
 import { useNuxtApp } from '#app'
 
@@ -33,7 +34,7 @@ export function useCookie <T = string> (name: string, _opts?: CookieOptions<T>):
   } else if (process.server) {
     const nuxtApp = useNuxtApp()
     const writeFinalCookieValue = () => {
-      if (cookie.value !== cookies[name]) {
+      if (!isEqual(cookie.value, cookies[name])) {
         writeServerCookie(useRequestEvent(nuxtApp), name, cookie.value, opts)
       }
     }
