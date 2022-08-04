@@ -87,9 +87,12 @@ const Component = defineComponent({
     }
 
     return () => {
-      vnode = h(props.routeProps.Component)
+      if (process.dev && process.client) {
+        vnode = h(props.routeProps.Component)
+        return vnode
+      }
 
-      return vnode
+      return h(props.routeProps.Component)
     }
   }
 })

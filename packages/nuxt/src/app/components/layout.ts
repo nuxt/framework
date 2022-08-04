@@ -16,6 +16,18 @@ export default defineComponent({
   setup (props, context) {
     const route = useRoute()
 
+    let vnode: VNode
+    let _layout: string | false
+    if (process.dev && process.client) {
+      onMounted(() => {
+        nextTick(() => {
+          if (_layout && ['#comment', '#text'].includes(vnode?.el?.nodeName)) {
+            console.error(`\`${_layout}\` does not have a single root node and will cause errors when navigating between routes.`)
+          }
+        })
+      })
+    }
+
     return () => {
       const layout = (isRef(props.name) ? props.name.value : props.name) ?? route.meta.layout as string ?? 'default'
 
@@ -26,27 +38,18 @@ export default defineComponent({
 
       const transitionProps = route.meta.layoutTransition ?? defaultLayoutTransition
 
-      let vnode: VNode
-      if (process.dev && process.client && transitionProps) {
-        onMounted(() => {
-          nextTick(() => {
-            if (['#comment', '#text'].includes(vnode?.el?.nodeName)) {
-              const filename = (vnode?.type as any).__file
-              console.error(`\`${filename}\` does not have a single root node and will cause errors when navigating between routes.`)
-            }
-          })
-        })
-      }
-
       // We avoid rendering layout transition if there is no layout to render
-      return _wrapIf(Transition, hasLayout && transitionProps,
-        {
-          default: () => {
+      return _wrapIf(Transition, hasLayout && transitionProps, {
+        default: () => {
+          if (process.dev && process.client && transitionProps) {
+            _layout = layout
             vnode = _wrapIf(layouts[layout], hasLayout, context.slots).default()
             return vnode
           }
+
+          return _wrapIf(layouts[layout], hasLayout, context.slots).default()
         }
-      ).default()
+      }).default()
     }
   }
 })
