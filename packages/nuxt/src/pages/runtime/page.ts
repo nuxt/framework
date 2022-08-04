@@ -58,6 +58,7 @@ export default defineComponent({
 const defaultPageTransition = { name: 'page', mode: 'out-in' }
 
 const Component = defineComponent({
+  // eslint-disable-next-line vue/require-prop-types
   props: ['routeProps', 'pageKey'],
   setup (props) {
     // Prevent reactivity when the page will be rerendered in a different suspense fork
