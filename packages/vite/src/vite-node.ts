@@ -47,13 +47,13 @@ export function registerViteNodeMiddleware (ctx: ViteBuildContext) {
   })
 }
 
-function getManifest (server: ViteDevServer) {
-  const ids = Array.from(server.moduleGraph.urlToModuleMap.keys())
+function getManifest (ctx: ViteBuildContext) {
+  const ids = Array.from(ctx.ssrServer.moduleGraph.urlToModuleMap.keys())
     .filter(i => isCSS(i))
 
   const entries = [
     '@vite/client',
-    'entry.mjs',
+    ctx.entry,
     ...ids.map(i => i.slice(1))
   ]
 
@@ -70,7 +70,7 @@ function createViteNodeMiddleware (ctx: ViteBuildContext, invalidates: Set<strin
   const app = createApp()
 
   app.use('/manifest', defineEventHandler(() => {
-    const manifest = getManifest(ctx.ssrServer)
+    const manifest = getManifest(ctx)
     return manifest
   }))
 
