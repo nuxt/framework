@@ -14,26 +14,27 @@ import { createIsExternal } from './utils/external'
 // TODO: Remove this in favor of registerViteNodeMiddleware
 // after Nitropack or h3 fixed for adding middlewares after setup
 export function viteNodePlugin (ctx: ViteBuildContext): VitePlugin {
-  const invalidateIDs = new Set<string>()
+  // Store the invalidates for the next rendering
+  const invalidates = new Set<string>()
   return {
     name: 'nuxt:vite-node-server',
     enforce: 'post',
     configureServer (server) {
-      server.middlewares.use('/__nuxt_vite_node__', createViteNodeMiddleware(ctx, invalidateIDs))
+      server.middlewares.use('/__nuxt_vite_node__', createViteNodeMiddleware(ctx, invalidates))
     },
     handleHotUpdate ({ file, server }) {
-      function markMod (mod: ModuleNode) {
-        if (invalidateIDs.has(mod.id)) {
+      function markInvalidate (mod: ModuleNode) {
+        if (invalidates.has(mod.id)) {
           return
         }
-        invalidateIDs.add(mod.id)
+        invalidates.add(mod.id)
         for (const importer of mod.importers) {
-          markMod(importer)
+          markInvalidate(importer)
         }
       }
       const mods = server.moduleGraph.getModulesByFile(file) || []
       for (const mod of mods) {
-        markMod(mod)
+        markInvalidate(mod)
       }
     }
   }
@@ -65,7 +66,7 @@ function getManifest (server: ViteDevServer) {
   }
 }
 
-function createViteNodeMiddleware (ctx: ViteBuildContext, invalidateIDs: Set<string> = new Set()) {
+function createViteNodeMiddleware (ctx: ViteBuildContext, invalidates: Set<string> = new Set()) {
   const app = createApp()
 
   app.use('/manifest', defineEventHandler(() => {
@@ -75,15 +76,15 @@ function createViteNodeMiddleware (ctx: ViteBuildContext, invalidateIDs: Set<str
 
   app.use('/invalidates', defineEventHandler(() => {
     // When a file has been invalidate, we also invalidate the entry module
-    if (invalidateIDs.size) {
+    if (invalidates.size) {
       for (const key of ctx.ssrServer.moduleGraph.fileToModulesMap.keys()) {
         if (key.startsWith(ctx.nuxt.options.appDir)) {
-          invalidateIDs.add(key)
+          invalidates.add(key)
         }
       }
     }
-    const ids = Array.from(invalidateIDs)
-    invalidateIDs.clear()
+    const ids = Array.from(invalidates)
+    invalidates.clear()
     return ids
   }))
 
