@@ -62,13 +62,13 @@ const Component = defineComponent({
   props: ['routeProps', 'pageKey'],
   setup (props) {
     // Prevent reactivity when the page will be rerendered in a different suspense fork
-    const firstKey = props.pageKey
-    const firstRoute = props.routeProps.route
+    const previousKey = props.pageKey
+    const previousRoute = props.routeProps.route
 
     // Provide a reactive route within the page
     const route = {}
     for (const key in props.routeProps.route) {
-      route[key] = computed(() => firstKey === props.pageKey ? props.routeProps.route[key] : firstRoute[key])
+      route[key] = computed(() => previousKey === props.pageKey ? props.routeProps.route[key] : previousRoute[key])
     }
 
     provide('_route', reactive(route))
