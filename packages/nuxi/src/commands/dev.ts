@@ -116,7 +116,7 @@ export default defineNuxtCommand({
           dLoad(true, `Directory \`${relativePath}/\` ${event === 'addDir' ? 'created' : 'removed'}`)
         }
       } else if (isFileChange) {
-        if (file.match(/(app|error)\.(js|ts|mjs|jsx|tsx|vue)$/)) {
+        if (file.match(/(app|error|app\.config)\.(js|ts|mjs|jsx|tsx|vue)$/)) {
           dLoad(true, `\`${relativePath}\` ${event === 'add' ? 'created' : 'removed'}`)
         }
       }
