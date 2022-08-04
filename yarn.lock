@@ -1894,6 +1894,7 @@ __metadata:
     vite-node: ^0.20.3
     vite-plugin-checker: ^0.4.9
     vue: 3.2.37
+    vue-bundle-renderer: ^0.4.0
   peerDependencies:
     vue: ^3.2.37
   languageName: unknown
@@ -1942,6 +1943,7 @@ __metadata:
     unplugin: ^0.8.1
     url-loader: ^4.1.1
     vue: 3.2.37
+    vue-bundle-renderer: ^0.4.0
     vue-loader: ^17.0.0
     webpack: ^5.74.0
     webpack-bundle-analyzer: ^4.5.0
