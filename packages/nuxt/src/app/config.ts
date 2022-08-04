@@ -31,6 +31,11 @@ if (process.dev) {
       for (const key in newConfig) {
         appConfig[key] = newConfig[key]
       }
+      for (const key in appConfig) {
+        if (!(key in newConfig)) {
+          delete appConfig[key]
+        }
+      }
     }
   }
 
