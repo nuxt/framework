@@ -90,8 +90,9 @@ interface Router {
 export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   const initialURL = process.client
     ? withoutBase(window.location.pathname, useRuntimeConfig().app.baseURL) + window.location.search + window.location.hash
-    : nuxtApp.ssrContext.url
-  const routes = []
+    : nuxtApp.ssrContext!.url
+
+  const routes: Route[] = []
 
   const hooks: { [key in keyof RouterHooks]: RouterHooks[key][] } = {
     'navigate:before': [],
@@ -194,7 +195,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
         const route = router.resolve(props.to)
         return props.custom
           ? slots.default?.({ href: props.to, navigate, route })
-          : h('a', { href: props.to, onClick: (e) => { e.preventDefault(); return navigate() } }, slots)
+          : h('a', { href: props.to, onClick: (e: MouseEvent) => { e.preventDefault(); return navigate() } }, slots)
       }
     }
   })

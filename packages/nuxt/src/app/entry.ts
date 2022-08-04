@@ -35,7 +35,7 @@ if (process.server) {
       await nuxt.hooks.callHook('app:created', vueApp)
     } catch (err) {
       await nuxt.callHook('app:error', err)
-      ssrContext.error = ssrContext.error || err
+      ssrContext!.error ||= err
     }
 
     return vueApp
@@ -81,7 +81,7 @@ if (process.client) {
     }
   }
 
-  entry().catch((error) => {
+  entry().catch((error: unknown) => {
     console.error('Error while mounting app:', error) // eslint-disable-line no-console
   })
 }

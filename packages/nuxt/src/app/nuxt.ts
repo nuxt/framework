@@ -48,7 +48,7 @@ interface _NuxtApp {
 
   [key: string]: any
 
-  _asyncDataPromises?: Record<string, Promise<any>>
+  _asyncDataPromises: Record<string, Promise<any> | undefined>
 
   ssrContext?: SSRContext & {
     url: string
@@ -67,8 +67,8 @@ interface _NuxtApp {
   }
   payload: {
     serverRendered?: boolean
-    data?: Record<string, any>
-    state?: Record<string, any>
+    data: Record<string, any>
+    state: Record<string, any>
     rendered?: Function
     [key: string]: any
   }
@@ -127,23 +127,23 @@ export function createNuxtApp (options: CreateOptions) {
   if (process.server) {
     // Expose to server renderer to create window.__NUXT__
     nuxtApp.ssrContext = nuxtApp.ssrContext || {} as any
-    nuxtApp.ssrContext.payload = nuxtApp.payload
+    nuxtApp.ssrContext!.payload = nuxtApp.payload
   }
 
   // Expose client runtime-config to the payload
   if (process.server) {
     nuxtApp.payload.config = {
-      public: options.ssrContext.runtimeConfig.public,
-      app: options.ssrContext.runtimeConfig.app
+      public: options.ssrContext!.runtimeConfig.public,
+      app: options.ssrContext!.runtimeConfig.app
     }
   }
 
   // Expose runtime config
   const runtimeConfig = process.server
-    ? options.ssrContext.runtimeConfig
+    ? options.ssrContext!.runtimeConfig
     : reactive(nuxtApp.payload.config)
 
-  // Backward compatibilty following #4254
+  // Backward compatibility following #4254
   const compatibilityConfig = new Proxy(runtimeConfig, {
     get (target, prop) {
       if (prop === 'public') {
@@ -183,9 +183,9 @@ export async function applyPlugins (nuxtApp: NuxtApp, plugins: Plugin[]) {
 }
 
 export function normalizePlugins (_plugins: Plugin[]) {
-  const unwrappedPlugins = []
-  const legacyInjectPlugins = []
-  const invalidPlugins = []
+  const unwrappedPlugins: Plugin[] = []
+  const legacyInjectPlugins: Plugin[] = []
+  const invalidPlugins: Plugin[] = []
 
   const plugins = _plugins.map((plugin) => {
     if (typeof plugin !== 'function') {
