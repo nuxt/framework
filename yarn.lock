@@ -1728,15 +1728,15 @@ __metadata:
     jiti: ^1.14.0
     knitwork: ^0.1.2
     lodash.template: ^4.5.0
-    mlly: ^0.5.6
-    ohash: ^0.1.4
+    mlly: ^0.5.7
+    ohash: ^0.1.5
     pathe: ^0.3.3
     pkg-types: ^0.3.3
     scule: ^0.3.2
     semver: ^7.3.7
     unbuild: latest
-    unctx: ^1.1.4
-    unimport: ^0.6.4
+    unctx: ^2.0.0
+    unimport: ^0.6.5
     untyped: ^0.4.4
   languageName: unknown
   linkType: soft
@@ -1763,7 +1763,7 @@ __metadata:
     std-env: ^3.1.1
     ufo: ^0.8.5
     unbuild: latest
-    unimport: ^0.6.4
+    unimport: ^0.6.5
     vite: ~3.0.4
   languageName: unknown
   linkType: soft
@@ -1870,8 +1870,8 @@ __metadata:
     h3: ^0.7.13
     knitwork: ^0.1.2
     magic-string: ^0.26.2
-    mlly: ^0.5.6
-    ohash: ^0.1.4
+    mlly: ^0.5.7
+    ohash: ^0.1.5
     pathe: ^0.3.3
     perfect-debounce: ^0.1.3
     pkg-types: ^0.3.3
@@ -1882,7 +1882,7 @@ __metadata:
     rollup-plugin-visualizer: ^5.7.1
     ufo: ^0.8.5
     unbuild: latest
-    unplugin: ^0.8.0
+    unplugin: ^0.8.1
     vite: ~3.0.4
     vite-node: ^0.20.3
     vite-plugin-checker: ^0.4.9
@@ -1920,8 +1920,8 @@ __metadata:
     magic-string: ^0.26.2
     memfs: ^3.4.7
     mini-css-extract-plugin: ^2.6.1
-    mlly: ^0.5.6
-    ohash: ^0.1.4
+    mlly: ^0.5.7
+    ohash: ^0.1.5
     pathe: ^0.3.3
     pify: ^6.0.0
     postcss: ^8.4.14
@@ -1932,7 +1932,7 @@ __metadata:
     time-fix-plugin: ^2.0.7
     ufo: ^0.8.5
     unbuild: latest
-    unplugin: ^0.8.0
+    unplugin: ^0.8.1
     url-loader: ^4.1.1
     vue: 3.2.37
     vue-loader: ^17.0.0
@@ -2884,10 +2884,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/reset@npm:^0.45.1":
-  version: 0.45.1
-  resolution: "@unocss/reset@npm:0.45.1"
-  checksum: 647f28f006f26ce516ddb98f4f6e43f4f668dc477dfce47c4a8ac1b3b772f53e54fe35fe409ea0d49423dfdbf1236ec685a3d2bfd4fca4265f9eb2906b5c372b
+"@unocss/reset@npm:^0.45.3":
+  version: 0.45.3
+  resolution: "@unocss/reset@npm:0.45.3"
+  checksum: 119217f2bffb6f1e0f906ac37600531c496c2a3927d74da0c649fbdfb27f0c6a80c43e7766a8b7ce23c07642cf118ac47a8e13400aa13471c8e53a91146d1302
   languageName: node
   linkType: hard
 
@@ -3529,7 +3529,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.0.4, acorn@npm:^8.5.0, acorn@npm:^8.6.0, acorn@npm:^8.7.0, acorn@npm:^8.7.1, acorn@npm:^8.8.0":
+"acorn@npm:^8.0.4, acorn@npm:^8.5.0, acorn@npm:^8.6.0, acorn@npm:^8.7.1, acorn@npm:^8.8.0":
   version: 8.8.0
   resolution: "acorn@npm:8.8.0"
   bin:
@@ -9365,14 +9365,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mlly@npm:^0.5.6":
-  version: 0.5.6
-  resolution: "mlly@npm:0.5.6"
+"mlly@npm:^0.5.7":
+  version: 0.5.7
+  resolution: "mlly@npm:0.5.7"
   dependencies:
     acorn: ^8.8.0
     pathe: ^0.3.3
     pkg-types: ^0.3.3
-  checksum: 2f2361329436252fa76d173874c5f2f8b2b3e13822257e1bbaee58ff999beb5bcfa45291ae2ddcb36dabbba164324a756438b1ba601493c632255c778325ba2b
+  checksum: 776098c5606f8b16eacae223203154cad6a96e6068e289ab709a35c194d9dd5a36f5a1f414cb4f5953fc1b355864c0d87306288c0bbd4c95e1b055f9c4b9f67e
   languageName: node
   linkType: hard
 
@@ -9881,7 +9881,7 @@ __metadata:
     fsevents: ~2.3.2
     jiti: ^1.14.0
     listhen: ^0.2.13
-    mlly: ^0.5.6
+    mlly: ^0.5.7
     mri: ^1.2.0
     pathe: ^0.3.3
     perfect-debounce: ^0.1.3
@@ -9906,7 +9906,7 @@ __metadata:
     "@nuxtjs/eslint-config-typescript": ^10.0.0
     "@types/node": ^16.11.47
     "@types/rimraf": ^3
-    "@unocss/reset": ^0.45.1
+    "@unocss/reset": ^0.45.3
     case-police: ^0.5.6
     changelogen: ^0.1.1
     eslint: ^8.21.0
@@ -9967,10 +9967,10 @@ __metadata:
     hookable: ^5.1.1
     knitwork: ^0.1.2
     magic-string: ^0.26.2
-    mlly: ^0.5.6
+    mlly: ^0.5.7
     nitropack: ^0.4.12
     nuxi: ^3.0.0-rc.6
-    ohash: ^0.1.4
+    ohash: ^0.1.5
     ohmyfetch: ^0.4.18
     pathe: ^0.3.3
     perfect-debounce: ^0.1.3
@@ -9978,10 +9978,10 @@ __metadata:
     strip-literal: ^0.4.0
     ufo: ^0.8.5
     unbuild: latest
-    unctx: ^1.1.4
+    unctx: ^2.0.0
     unenv: ^0.5.2
-    unimport: ^0.6.4
-    unplugin: ^0.8.0
+    unimport: ^0.6.5
+    unplugin: ^0.8.1
     untyped: ^0.4.4
     vue: ^3.2.37
     vue-bundle-renderer: ^0.3.9
@@ -10085,10 +10085,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ohash@npm:^0.1.0, ohash@npm:^0.1.4":
+"ohash@npm:^0.1.0":
   version: 0.1.4
   resolution: "ohash@npm:0.1.4"
   checksum: 859ac69ea02201f7aef4c5ee6d3b9ef009c9e58c24fb4fa67477e7bc431fa7a2bf74d8b814472da55a8e87c318f0c36081dddc729b71aa09a7e336381d4be636
+  languageName: node
+  linkType: hard
+
+"ohash@npm:^0.1.5":
+  version: 0.1.5
+  resolution: "ohash@npm:0.1.5"
+  checksum: 116c9bdf658866862e1ea9eaa24661d5dae36690dbf5168a73e9bd5625f5abf14c56c2963f5ff261dd153dca87ea037453687a126739f6f1cabf845b0a0b5383
   languageName: node
   linkType: hard
 
@@ -12990,15 +12997,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unctx@npm:^1.1.4":
-  version: 1.1.4
-  resolution: "unctx@npm:1.1.4"
+"unctx@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "unctx@npm:2.0.0"
   dependencies:
-    acorn: ^8.7.0
-    estree-walker: ^2.0.2
-    magic-string: ^0.26.1
-    unplugin: ^0.6.1
-  checksum: 5b42fae7af0ab02279a313d14ac9df6026a758e44692c384781b1a4e198396bb7f3f31b9291f6fb9669cc485e81716ac228c245d5d3a40a43f6d917818137257
+    acorn: ^8.8.0
+    estree-walker: ^3.0.1
+    magic-string: ^0.26.2
+    unplugin: ^0.8.0
+  checksum: 4b5d76b8ddd0f480a91a812feacdc3f8a2b0d41409258af6c26ab66177a76c0f6df4840dece1fede4bed097217736847bb9771c9c1b53327753537462d2f2caa
   languageName: node
   linkType: hard
 
@@ -13039,21 +13046,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unimport@npm:^0.6.4":
-  version: 0.6.4
-  resolution: "unimport@npm:0.6.4"
+"unimport@npm:^0.6.5":
+  version: 0.6.5
+  resolution: "unimport@npm:0.6.5"
   dependencies:
     "@rollup/pluginutils": ^4.2.1
     escape-string-regexp: ^5.0.0
     fast-glob: ^3.2.11
     local-pkg: ^0.4.2
     magic-string: ^0.26.2
-    mlly: ^0.5.5
-    pathe: ^0.3.2
+    mlly: ^0.5.7
+    pathe: ^0.3.3
     scule: ^0.3.2
     strip-literal: ^0.4.0
-    unplugin: ^0.8.0
-  checksum: 2ce55190e74965fc161d3a0cddde0fd71bb6eb98b952c85f9163046959c0cf6f157ee2005a966ec422701bcd81362372bb034b815804fc71a484d636aa7e62c0
+    unplugin: ^0.8.1
+  checksum: 9f50e3b3ad70c360691958d3001115f284d8f993c07ae1fbec0b321af24fb654636ed25a9f4860364cf855946e2b73e415a57ffcdf6531594755127d74df67e8
   languageName: node
   linkType: hard
 
@@ -13133,31 +13140,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin@npm:^0.6.1":
-  version: 0.6.3
-  resolution: "unplugin@npm:0.6.3"
-  dependencies:
-    chokidar: ^3.5.3
-    webpack-sources: ^3.2.3
-    webpack-virtual-modules: ^0.4.3
-  peerDependencies:
-    esbuild: ">=0.13"
-    rollup: ^2.50.0
-    vite: ^2.3.0
-    webpack: 4 || 5
-  peerDependenciesMeta:
-    esbuild:
-      optional: true
-    rollup:
-      optional: true
-    vite:
-      optional: true
-    webpack:
-      optional: true
-  checksum: 14e1f9c941e87e97fdda3efc745183e027de7d8b88eed8be5fa0708c2ec5dd114cc10e569c4b9dd2dafc89ba84d8bf90935d01e02cef510b7faedaa8af2b081f
-  languageName: node
-  linkType: hard
-
 "unplugin@npm:^0.7.0, unplugin@npm:^0.7.2":
   version: 0.7.2
   resolution: "unplugin@npm:0.7.2"
@@ -13184,9 +13166,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "unplugin@npm:0.8.0"
+"unplugin@npm:^0.8.0, unplugin@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "unplugin@npm:0.8.1"
   dependencies:
     acorn: ^8.8.0
     chokidar: ^3.5.3
@@ -13206,7 +13188,7 @@ __metadata:
       optional: true
     webpack:
       optional: true
-  checksum: 116052627de4b015ce6b856bfb589647390591cd4bd49120475ea591e14706d8ce3992f522192b222c6956a08afe361abd76d8139d028323fecc9821a5d8e5e5
+  checksum: 95bbed0425c42add3718f203d2cd2d8e97ae33bc0403b88cd800a12fb3f4cc5f681d108f4e64cd6cdf00b6715e538c913fd408b86c22a226b7e179c8d560e314
   languageName: node
   linkType: hard
 
@@ -13723,7 +13705,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-virtual-modules@npm:^0.4.3, webpack-virtual-modules@npm:^0.4.4":
+"webpack-virtual-modules@npm:^0.4.4":
   version: 0.4.4
   resolution: "webpack-virtual-modules@npm:0.4.4"
   checksum: 6720b4c47d76dc9cbaff557562506c192da7560a90395e9918a418e257a0c0cda9f5e3ac92107ec0789f8f23ad942313bd8cdebc95031d0adef1032bf6142bc7
