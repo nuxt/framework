@@ -1,7 +1,13 @@
 // import { defineAppConfig } from '#imports'
-// console.log(defineAppConfig)
+import type { AppConfig } from '@nuxt/schema'
 
-export default ({
-  test: 'boo4',
-  nested: { x: 4 }
+const defineAppConfig = (config: AppConfig) => config
+
+export default defineAppConfig({
+  custom: '123',
+  nested: {
+    foo: {
+      bar: 'fdfdf'
+    }
+  }
 })

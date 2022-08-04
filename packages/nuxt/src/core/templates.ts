@@ -127,6 +127,15 @@ export const schemaTemplate = {
           allowExtraKeys: false,
           indentation: 2
         }),
+      generateTypes(resolveSchema(Object.fromEntries(Object.entries(nuxt.options.appConfig))),
+        {
+          interfaceName: 'AppConfig',
+          addExport: false,
+          addDefaults: false,
+          allowExtraKeys: true,
+          indentation: 2,
+          partial: true
+        }),
       generateTypes(resolveSchema(nuxt.options.runtimeConfig.public),
         {
           interfaceName: 'PublicRuntimeConfig',

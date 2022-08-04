@@ -377,6 +377,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/standalone@npm:^7.18.11":
+  version: 7.18.11
+  resolution: "@babel/standalone@npm:7.18.11"
+  checksum: 8a1c8e527c41ba7e2b6c80f7eb4e84cf82fd8697c38416fac548cb5442a83bae9eaf3c2bbcdc398d4149df54d4f1020f31337d784ede634fa1f3de1a6b5fad7c
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.0.0, @babel/template@npm:^7.18.6":
   version: 7.18.6
   resolution: "@babel/template@npm:7.18.6"
@@ -1737,7 +1744,7 @@ __metadata:
     unbuild: latest
     unctx: ^2.0.0
     unimport: ^0.6.5
-    untyped: ^0.4.4
+    untyped: ^0.4.5
   languageName: unknown
   linkType: soft
 
@@ -9982,7 +9989,7 @@ __metadata:
     unenv: ^0.5.2
     unimport: ^0.6.5
     unplugin: ^0.8.1
-    untyped: ^0.4.4
+    untyped: ^0.4.5
     vue: ^3.2.37
     vue-bundle-renderer: ^0.3.9
     vue-meta: next
@@ -13219,6 +13226,18 @@ __metadata:
     "@babel/types": ^7.17.0
     scule: ^0.2.1
   checksum: 674506884b49d8648a96ac54791f7f29b1d14c28e3efc5fdd973c4a44ae6d3ad38a0b8ad0198e70fa223760491309822fb403e7a0bc6b28aa43eca31b717305e
+  languageName: node
+  linkType: hard
+
+"untyped@npm:^0.4.5":
+  version: 0.4.5
+  resolution: "untyped@npm:0.4.5"
+  dependencies:
+    "@babel/core": ^7.18.10
+    "@babel/standalone": ^7.18.11
+    "@babel/types": ^7.18.10
+    scule: ^0.3.2
+  checksum: fd09347048145a3f87dbbd03174a3053e5a01b0e174c49bca23e6acddb2dd234a024795033d2c0d72fe8dbded3f8c56fb54580fcee893703f380e15095ddd3e2
   languageName: node
   linkType: hard
 
