@@ -56,7 +56,7 @@ const getSSRRenderer = lazyCachedFunction(async () => {
     renderToString,
     buildAssetsURL
   }
-  nitroApp.hooks.callHook('nuxt:render:options', options)
+  await nitroApp.hooks.callHook('nuxt:render:options', options)
   // Create renderer
   const renderer = createRenderer(createSSRApp, options)
 
@@ -83,7 +83,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
     renderToString: () => '<div id="__nuxt"></div>',
     buildAssetsURL
   }
-  nitroApp.hooks.callHook('nuxt:render:options', options)
+  await nitroApp.hooks.callHook('nuxt:render:options', options)
   // Create SPA renderer and cache the result for all requests
   const renderer = createRenderer(() => () => {}, options)
   const result = await renderer.renderToString({})
