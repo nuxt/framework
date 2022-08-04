@@ -14,7 +14,7 @@ export const UnctxTransformPlugin = (nuxt: Nuxt) => {
     name: 'unctx:transfrom',
     enforce: 'post',
     transformInclude (id) {
-      return Boolean(app?.plugins.find(i => i.src === id) || app.middleware.find(m => m.path === id))
+      return Boolean(app?.plugins.find(i => matchesPath(id, i.src)) || app.middleware.find(m => matchesPath(id, m.path)))
     },
     transform (code, id) {
       const result = transformer.transform(code)
@@ -27,3 +27,5 @@ export const UnctxTransformPlugin = (nuxt: Nuxt) => {
     }
   }))
 }
+
+const matchesPath = (path: string, withoutExt: string) => path === withoutExt || path.startsWith(withoutExt + '.')
