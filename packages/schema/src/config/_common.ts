@@ -753,7 +753,7 @@ export default {
    * Additional app configuration
    *
    * For programmatic usage and type support, you can directly provide app config with this option.
-   * It will be merged with all `app.config` files as default value.
+   * It will be merged with `app.config` file as default value.
    *
    * @type {typeof import('../src/types/config').AppConfig}
    * @version 3

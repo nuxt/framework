@@ -30,5 +30,11 @@ export default defineNuxtConfig({
   experimental: {
     reactivityTransform: true,
     treeshakeClientOnly: true
+  },
+  appConfig: {
+    fromNuxtConfig: true,
+    nested: {
+      val: 1
+    }
   }
 })

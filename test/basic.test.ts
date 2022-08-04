@@ -445,3 +445,20 @@ describe('dynamic paths', () => {
     }
   })
 })
+
+describe('app config', () => {
+  it('should work', async () => {
+    const html = await $fetch('/app-config')
+
+    const expectedAppConfig = {
+      fromNuxtConfig: true,
+      nested: {
+        val: 2
+      },
+      fromLayer: true,
+      userConfig: 123
+    }
+
+    expect(html).toContain(JSON.stringify(expectedAppConfig))
+  })
+})
