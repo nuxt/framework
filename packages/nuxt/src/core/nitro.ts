@@ -22,7 +22,7 @@ export async function initNitro (nuxt: Nuxt) {
     dev: nuxt.options.dev,
     preset: nuxt.options.dev ? 'nitro-dev' : undefined,
     buildDir: nuxt.options.buildDir,
-    scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
+    scanDirs: nuxt.options._layers.map(layer => join(layer.config!.srcDir!, 'server')),
     renderer: resolve(distDir, 'core/runtime/nitro/renderer'),
     errorHandler: resolve(distDir, 'core/runtime/nitro/error'),
     nodeModulesDirs: nuxt.options.modulesDir,
@@ -43,13 +43,13 @@ export async function initNitro (nuxt: Nuxt) {
     publicAssets: [
       { dir: resolve(nuxt.options.buildDir, 'dist/client') },
       ...nuxt.options._layers
-        .map(layer => join(layer.config.srcDir, layer.config.dir?.public || 'public'))
+        .map(layer => join(layer.config!.srcDir!, layer.config!.dir?.public || 'public'))
         .filter(dir => existsSync(dir))
         .map(dir => ({ dir }))
     ],
     prerender: {
       crawlLinks: nuxt.options._generate ? nuxt.options.generate.crawler : false,
-      routes: []
+      routes: ([] as string[])
         .concat(nuxt.options._generate ? ['/', ...nuxt.options.generate.routes] : [])
         .concat(nuxt.options.ssr === false ? ['/', '/200.html', '/404.html'] : [])
     },
@@ -101,11 +101,11 @@ export async function initNitro (nuxt: Nuxt) {
 
   // Add fallback server for `ssr: false`
   if (!nuxt.options.ssr) {
-    nitroConfig.virtual['#build/dist/server/server.mjs'] = 'export default () => {}'
+    nitroConfig.virtual!['#build/dist/server/server.mjs'] = 'export default () => {}'
   }
 
   // Register nuxt protection patterns
-  nitroConfig.rollupConfig.plugins.push(ImportProtectionPlugin.rollup({
+  nitroConfig.rollupConfig!.plugins!.push(ImportProtectionPlugin.rollup({
     rootDir: nuxt.options.rootDir,
     patterns: [
       ...['#app', /^#build(\/|$)/]

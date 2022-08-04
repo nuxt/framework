@@ -24,7 +24,7 @@ export interface Nuxt {
   vfs: Record<string, string>
 }
 
-export interface NuxtTemplate {
+export interface NuxtTemplate<Options = Record<string, any>> {
   /** @deprecated filename */
   fileName?: string
   /** @deprecated whether template is custom or a nuxt core template */
@@ -34,11 +34,11 @@ export interface NuxtTemplate {
   /** The target filename once the template is copied into the Nuxt buildDir */
   filename?: string
   /** An options object that will be accessible within the template via `<% options %>` */
-  options?: Record<string, any>
+  options?: Options
   /** The resolved path to the source file to be template */
   src?: string
-  /** Provided compile option intead of src */
-  getContents?: (data: Record<string, any>) => string | Promise<string>
+  /** Provided compile option instead of src */
+  getContents?: (options: Options) => string | Promise<string>
   /** Write to filesystem */
   write?: boolean
 }
@@ -51,9 +51,9 @@ export interface NuxtPlugin {
 }
 
 export interface NuxtApp {
-  mainComponent?: string
-  rootComponent?: string
-  errorComponent?: string
+  mainComponent?: string | null
+  rootComponent?: string | null
+  errorComponent?: string | null
   dir: string
   extensions: string[]
   plugins: NuxtPlugin[]
