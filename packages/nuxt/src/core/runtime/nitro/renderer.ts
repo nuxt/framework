@@ -1,4 +1,4 @@
-import { createRenderer } from 'vue-bundle-renderer'
+import { ClientManifest, createRenderer, ResourceMeta } from 'vue-bundle-renderer'
 import { eventHandler, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
@@ -10,6 +10,8 @@ import { useRuntimeConfig, useNitroApp } from '#internal/nitro'
 import { buildAssetsURL } from '#paths'
 
 export type NuxtSSRContext = NuxtApp['ssrContext']
+
+type ArgumentType<T> = T extends (...args: infer U) => any ? U : never
 
 export interface NuxtRenderContext {
   ssrContext: NuxtSSRContext
@@ -33,7 +35,7 @@ export interface NuxtRenderResponse {
 // @ts-ignore
 const getClientManifest = () => import('#build/dist/server/client.manifest.mjs')
   .then(r => r.default || r)
-  .then(r => typeof r === 'function' ? r() : r)
+  .then(r => typeof r === 'function' ? r() : r) as Promise<ClientManifest>
 
 // @ts-ignore
 const getServerEntry = () => import('#build/dist/server/server.mjs').then(r => r.default || r)
@@ -55,7 +57,7 @@ const getSSRRenderer = lazyCachedFunction(async () => {
     publicPath: buildAssetsURL()
   })
 
-  async function renderToString (input, context) {
+  async function renderToString (input: ArgumentType<typeof _renderToString>[0], context: ArgumentType<typeof _renderToString>[1]) {
     const html = await _renderToString(input, context)
     // In development with vite-node, the manifest is on-demand and will be available after rendering
     if (process.dev && process.env.NUXT_VITE_NODE_OPTIONS) {
@@ -72,21 +74,23 @@ const getSPARenderer = lazyCachedFunction(async () => {
   const clientManifest = await getClientManifest()
   const renderToString = (ssrContext: NuxtSSRContext) => {
     const config = useRuntimeConfig()
-    ssrContext.payload = {
+    ssrContext!.payload = {
       serverRendered: false,
       config: {
         public: config.public,
         app: config.app
-      }
+      },
+      data: {},
+      state: {}
     }
 
-    let entryFiles = Object.values(clientManifest).filter((fileValue: any) => fileValue.isEntry)
+    let entryFiles = Object.values(clientManifest).filter(fileValue => fileValue.isEntry)
     if ('all' in clientManifest && 'initial' in clientManifest) {
       // Upgrade legacy manifest (also see normalizeClientManifest in vue-bundle-renderer)
       // https://github.com/nuxt-contrib/vue-bundle-renderer/issues/12
-      entryFiles = clientManifest.initial.map(file =>
+      entryFiles = (clientManifest.initial as any as string[]).map(file =>
         // Webpack manifest fix with SPA renderer
-        file.endsWith('css') ? { css: file } : { file }
+        (file.endsWith('css') ? { css: file } : { file }) as ResourceMeta
       )
     }
 
@@ -127,8 +131,8 @@ export default eventHandler(async (event) => {
     runtimeConfig: useRuntimeConfig(),
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
     error: ssrError,
-    nuxt: undefined, /* NuxtApp */
-    payload: undefined
+    nuxt: undefined!, /* NuxtApp */
+    payload: undefined!
   }
 
   // Render app
@@ -159,7 +163,7 @@ export default eventHandler(async (event) => {
         _rendered.renderStyles(),
         ssrContext.styles
       ]),
-      bodyAttrs: normalizeChunks([renderedMeta.bodyAttrs]),
+      bodyAttrs: normalizeChunks([renderedMeta.bodyAttrs!]),
       bodyPreprend: normalizeChunks([
         renderedMeta.bodyScriptsPrepend,
         ssrContext.teleports?.body
@@ -202,7 +206,7 @@ export default eventHandler(async (event) => {
       event.res.setHeader(header, response.headers[header])
     }
     event.res.statusCode = response.statusCode
-    event.res.statusMessage = response.statusMessage
+    event.res.statusMessage = response.statusMessage!
   }
   if (!event.res.writableEnded) {
     event.res.end(response.body)
@@ -219,8 +223,8 @@ function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
   }
 }
 
-function normalizeChunks (chunks: string[]) {
-  return chunks.filter(Boolean).map(i => i.trim())
+function normalizeChunks (chunks: (string | undefined)[]) {
+  return chunks.filter(Boolean).map(i => i!.trim())
 }
 
 function joinTags (tags: string[]) {
