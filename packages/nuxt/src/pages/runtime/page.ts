@@ -1,4 +1,4 @@
-import { computed, DefineComponent, defineComponent, h, inject, nextTick, provide, reactive, Suspense, Transition } from 'vue'
+import { computed, DefineComponent, defineComponent, h, inject, nextTick, onMounted, provide, reactive, Suspense, Transition, VNode } from 'vue'
 import { RouteLocationNormalized, RouteLocationNormalizedLoaded, RouterView } from 'vue-router'
 
 import { generateRouteKey, RouterViewSlotProps, wrapInKeepAlive } from './utils'
@@ -34,26 +34,16 @@ export default defineComponent({
           if (!routeProps.Component) { return }
 
           const key = generateRouteKey(props.pageKey, routeProps)
-          const pageComponent = h(Component, { key, routeProps, pageKey: key } as {})
           const transitionProps = routeProps.route.meta.pageTransition ?? defaultPageTransition
-
-          if (process.dev && process.client && transitionProps && pageComponent) {
-            nextTick(() => {
-              if (pageComponent.el?.nodeName === '#comment') {
-                const filename = (pageComponent.type as any).__file
-                console.error(`\`${filename}\` does not have a single root node and will cause errors when navigating between routes.`)
-              }
-            })
-          }
 
           return _wrapIf(Transition, transitionProps,
             wrapInKeepAlive(routeProps.route.meta.keepalive, isNested && nuxtApp.isHydrating
             // Include route children in parent suspense
-              ? pageComponent
+              ? h(Component, { key, routeProps, pageKey: key, hasTransition: !!transitionProps } as {})
               : h(Suspense, {
                 onPending: () => nuxtApp.callHook('page:start', routeProps.Component),
                 onResolve: () => nuxtApp.callHook('page:finish', routeProps.Component)
-              }, { default: () => pageComponent })
+              }, { default: () => h(Component, { key, routeProps, pageKey: key, hasTransition: !!transitionProps } as {}) })
             )).default()
         }
       })
@@ -70,7 +60,7 @@ const defaultPageTransition = { name: 'page', mode: 'out-in' }
 
 const Component = defineComponent({
   // eslint-disable-next-line vue/require-prop-types
-  props: ['routeProps', 'pageKey'],
+  props: ['routeProps', 'pageKey', 'hasTransition'],
   setup (props) {
     // Prevent reactivity when the page will be rerendered in a different suspense fork
     const previousKey = props.pageKey
@@ -83,6 +73,23 @@ const Component = defineComponent({
     }
 
     provide('_route', reactive(route))
-    return () => h(props.routeProps.Component)
+
+    let vnode: VNode
+    if (process.dev && process.client && props.hasTransition) {
+      onMounted(() => {
+        nextTick(() => {
+          if (['#comment', '#text'].includes(vnode?.el?.nodeName)) {
+            const filename = (vnode?.type as any).__file
+            console.error(`\`${filename}\` does not have a single root node and will cause errors when navigating between routes.`)
+          }
+        })
+      })
+    }
+
+    return () => {
+      vnode = h(props.routeProps.Component)
+
+      return vnode
+    }
   }
 })

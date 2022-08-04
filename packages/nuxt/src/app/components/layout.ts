@@ -1,4 +1,4 @@
-import { defineComponent, isRef, nextTick, Ref, Transition } from 'vue'
+import { defineComponent, isRef, nextTick, onMounted, Ref, Transition, VNode } from 'vue'
 import { _wrapIf } from './utils'
 import { useRoute } from '#app'
 // @ts-ignore
@@ -26,19 +26,24 @@ export default defineComponent({
 
       const transitionProps = route.meta.layoutTransition ?? defaultLayoutTransition
 
+      let vnode: VNode
+      if (process.dev && process.client && transitionProps) {
+        onMounted(() => {
+          nextTick(() => {
+            if (['#comment', '#text'].includes(vnode?.el?.nodeName)) {
+              const filename = (vnode?.type as any).__file
+              console.error(`\`${filename}\` does not have a single root node and will cause errors when navigating between routes.`)
+            }
+          })
+        })
+      }
+
       // We avoid rendering layout transition if there is no layout to render
-      return _wrapIf(Transition, hasLayout && (transitionProps),
+      return _wrapIf(Transition, hasLayout && transitionProps,
         {
           default: () => {
-            const layoutComponent = _wrapIf(layouts[layout], hasLayout, context.slots).default()
-            if (process.dev && process.client && hasLayout && transitionProps) {
-              nextTick(() => {
-                if (layoutComponent.el?.nodeName === '#comment') {
-                  console.error(`Layout \`${layout}\` does not have a single root node and will cause errors when navigating between routes.`)
-                }
-              })
-            }
-            return layoutComponent
+            vnode = _wrapIf(layouts[layout], hasLayout, context.slots).default()
+            return vnode
           }
         }
       ).default()
