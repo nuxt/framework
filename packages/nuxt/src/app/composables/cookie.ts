@@ -3,6 +3,7 @@ import { parse, serialize, CookieParseOptions, CookieSerializeOptions } from 'co
 import { appendHeader } from 'h3'
 import type { CompatibilityEvent } from 'h3'
 import destr from 'destr'
+import { isEqual } from 'ohash'
 import { useRequestEvent } from './ssr'
 import { wrapInRef } from './utils'
 import { useNuxtApp } from '#app'
@@ -34,7 +35,7 @@ export function useCookie <T=string> (name: string, _opts?: CookieOptions<T>): C
   } else if (process.server) {
     const nuxtApp = useNuxtApp()
     const writeFinalCookieValue = () => {
-      if (!isEqualValue(cookie.value, cookies[name])) {
+      if (!isEqual(cookie.value, cookies[name])) {
         writeServerCookie(useRequestEvent(nuxtApp), name, cookie.value, opts)
       }
     }
@@ -71,13 +72,4 @@ function writeServerCookie (event: CompatibilityEvent, name: string, value: any,
     // TODO: Try to smart join with existing Set-Cookie headers
     appendHeader(event, 'Set-Cookie', serializeCookie(name, value, opts))
   }
-}
-
-function isEqualValue (val1: unknown, val2: unknown) {
-  try {
-    if (typeof val1 === 'object' && typeof val2 === 'object') {
-      return JSON.stringify(val1) === JSON.stringify(val2)
-    }
-  } catch {}
-  return val1 === val2
 }
