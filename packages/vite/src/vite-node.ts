@@ -39,8 +39,6 @@ function getManifest (server: ViteDevServer) {
     '@vite/client': {
       file: '@vite/client',
       css,
-      assets: [],
-      dynamicImports: [],
       isEntry: true
     },
     'entry.mjs': {

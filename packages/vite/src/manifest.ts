@@ -15,17 +15,12 @@ export async function writeManifest (ctx: ViteBuildContext, css: string[] = []) 
       isEntry: true,
       file: '@vite/client',
       css,
-      // placeholders for future use
-      assets: [],
-      dynamicImports: [],
       module: true,
       resourceType: 'script'
     },
     'entry.mjs': {
       isEntry: true,
-      file: 'entry.mjs',
-      module: true,
-      resourceType: 'script'
+      file: 'entry.mjs'
     }
   }
 
