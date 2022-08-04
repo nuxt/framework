@@ -41,16 +41,12 @@ export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamesp
 }
 
 // -- App Config --
-
-// Reserved namespaces to avoid breaking changes if Nuxt starts to use them
-// type ReservedAppConfigKeys =
-//   'baseURL' | 'buildAssetsDir' | 'cdnURL' |
-//   'public' | 'private' | 'app'| 'config' | 'head' |
-//   'nuxt' | 'nitro' | 'internal' | 'runtime'
-
-type AppConfigNamespace = Record<string, any> // & Partial<Record<ReservedAppConfigKeys, never>>
-
-export interface AppConfig extends AppConfigNamespace {
-  theme?: Record<string, any>
+export interface AppConfig extends Record<string, any> {
+  /** @deprecated reserved */
+  private: never
+  /** @deprecated reserved */
+  nuxt: never
+  /** @deprecated reserved */
+  nitro: never
 }
 
