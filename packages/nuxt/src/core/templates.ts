@@ -186,7 +186,7 @@ import defu from 'defu'
 const inlineConfig = ${JSON.stringify(nuxt.options.appConfig, null, 2)}
 
 ${app.configs.map((id, index) => `import ${`cfg${index}`} from ${JSON.stringify(id)}`).join('\n')}
-export default defu({}, ${app.configs.map((_id, index) => `cfg${index}`).join(', ')}, inlineConfig)
+export default defu(${['{}'].concat(app.configs.map((_id, index) => `cfg${index}`)).concat(['inlineConfig']).join(', ')})
 `
   }
 }
