@@ -17,25 +17,6 @@ export interface NuxtOptions extends ConfigSchema {
   _layers: ResolvedConfig<NuxtConfig>[]
 }
 
-type RuntimeConfigNamespace = Record<string, any>
-
-export interface PublicRuntimeConfig extends RuntimeConfigNamespace { }
-
-export interface AppConfig extends RuntimeConfigNamespace {
-  baseURL: string
-  buildAssetsDir: string
-  cdnURL: string
-}
-
-// TODO: remove before release of 3.0.0
-/** @deprecated use RuntimeConfig interface */
-export interface PrivateRuntimeConfig extends RuntimeConfigNamespace { }
-
-export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamespace {
-  public: PublicRuntimeConfig
-  app: AppConfig
-}
-
 export interface ViteConfig extends ViteUserConfig {
   /**
    * Options passed to @vitejs/plugin-vue
@@ -43,3 +24,33 @@ export interface ViteConfig extends ViteUserConfig {
    */
   vue?: VuePluginOptions
 }
+
+
+// -- Runtime Config --
+
+type RuntimeConfigNamespace = Record<string, any>
+
+export interface PublicRuntimeConfig extends RuntimeConfigNamespace { }
+
+// TODO: remove before release of 3.0.0
+/** @deprecated use RuntimeConfig interface */
+export interface PrivateRuntimeConfig extends RuntimeConfigNamespace { }
+
+export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamespace {
+  public: PublicRuntimeConfig
+}
+
+// -- App Config --
+
+// Reserved namespaces to avoid breaking changes if Nuxt starts to use them
+type ReservedAppConfigKeys =
+  'baseURL' | 'buildAssetsDir' | 'cdnURL' |
+  'public' | 'private' | 'app'| 'config' | 'head' |
+  'nuxt' | 'nitro' | 'internal' | 'runtime'
+
+type AppConfigNamespace = Record<string, any> & Record<ReservedAppConfigKeys, never>
+
+export interface AppConfig extends AppConfigNamespace {
+  theme: Record<string, any>
+}
+
