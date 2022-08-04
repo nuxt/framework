@@ -1,3 +1,4 @@
+import { pathToFileURL } from 'node:url'
 import * as vite from 'vite'
 import { resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
@@ -6,6 +7,7 @@ import { logger, isIgnored } from '@nuxt/kit'
 import type { Options } from '@vitejs/plugin-vue'
 import replace from '@rollup/plugin-replace'
 import { sanitizeFilePath } from 'mlly'
+import { isWindows } from 'std-env'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
@@ -82,6 +84,10 @@ export async function bundle (nuxt: Nuxt) {
       } as ViteOptions,
       nuxt.options.vite
     )
+  }
+
+  if (isWindows) {
+    ctx.config.resolve.alias['/entry.mjs'] = pathToFileURL(ctx.config.resolve.alias['/entry.mjs']).href
   }
 
   // In build mode we explicitly override any vite options that vite is relying on
