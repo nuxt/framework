@@ -21,7 +21,7 @@ export default async (ssrContext) => {
   // https://github.com/nuxt/framework/pull/3983
   process.server = true
 
-  // Invaildate cache for files changed since last rendering
+  // Invalidate cache for files changed since last rendering
   const invalidates = await $fetch('/invalidates', {
     baseURL: viteNodeOptions.baseURL
   })
