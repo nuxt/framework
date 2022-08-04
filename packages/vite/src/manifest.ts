@@ -18,9 +18,11 @@ export async function writeManifest (ctx: ViteBuildContext, css: string[] = []) 
       module: true,
       resourceType: 'script'
     },
-    'entry.mjs': {
+    [ctx.entry]: {
       isEntry: true,
-      file: 'entry.mjs'
+      file: ctx.entry,
+      module: true,
+      resourceType: 'script'
     }
   }
 
