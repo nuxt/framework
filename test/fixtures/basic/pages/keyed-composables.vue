@@ -35,11 +35,11 @@ const { data: useLazyFetchTest2 } = await useLocalLazyFetch()
 </script>
 
 <template>
-  <pre>
+  <div>
     {{ useStateTest1 === useStateTest2 }}
     {{ useAsyncDataTest1 === useAsyncDataTest2 }}
     {{ useLazyAsyncDataTest1 === useLazyAsyncDataTest2 }}
     {{ useFetchTest1 === useFetchTest2 }}
     {{ useLazyFetchTest1 === useLazyFetchTest2 }}
-  </pre>
+  </div>
 </template>
