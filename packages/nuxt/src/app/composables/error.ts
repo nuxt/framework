@@ -1,16 +1,10 @@
 import { createError as _createError, H3Error } from 'h3'
-import { computed } from 'vue'
+import { toRef } from 'vue'
 import { useNuxtApp } from '#app'
 
 export const useError = () => {
   const nuxtApp = useNuxtApp()
-  const source = process.server ? nuxtApp.ssrContext : nuxtApp.payload
-  return computed({
-    get: () => source.error,
-    set: (error) => {
-      source.error = error
-    }
-  })
+  return toRef(process.server ? nuxtApp.ssrContext : nuxtApp.payload, 'error')
 }
 
 export interface NuxtError extends H3Error {}
@@ -22,12 +16,8 @@ export const showError = (_err: string | Error | Partial<NuxtError>) => {
   try {
     const nuxtApp = useNuxtApp()
     nuxtApp.callHook('app:error', err)
-    if (process.server) {
-      nuxtApp.ssrContext.error = nuxtApp.ssrContext.error || err
-    } else {
-      const error = useError()
-      error.value = error.value || err
-    }
+    const error = useError()
+    error.value = error.value || err
   } catch {
     throw err
   }
