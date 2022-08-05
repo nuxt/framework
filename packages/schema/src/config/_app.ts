@@ -106,7 +106,7 @@ export default {
     head: {
       $resolve: (val, get) => {
         const resolved = defu(val, get('meta'), {
-          charset: val?.meta?.find(m => m.name === 'charset')?.charset ?? 'utf-8',
+          charset: val?.meta?.find(m => m.charset)?.charset ?? 'utf-8',
           viewport: val?.meta?.find(m => m.name === 'viewport')?.content ?? 'width=device-width, initial-scale=1',
           meta: [],
           link: [],
