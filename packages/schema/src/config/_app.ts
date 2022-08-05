@@ -105,15 +105,21 @@ export default {
      */
     head: {
       $resolve: (val, get) => {
-        return defu(val, get('meta'), {
-          charset: 'utf-8',
-          viewport: 'width=device-width, initial-scale=1',
+        const resolved = defu(val, get('meta'), {
+          charset: val?.meta?.find(m => m.name === 'charset')?.charset ?? 'utf-8',
+          viewport: val?.meta?.find(m => m.name === 'viewport')?.content ?? 'width=device-width, initial-scale=1',
           meta: [],
           link: [],
           style: [],
           script: [],
           noscript: []
         })
+        resolved.meta = resolved.meta.filter(m => m && m.name !== 'viewport' && !m.charset)
+        resolved.link = resolved.link.filter(Boolean)
+        resolved.style = resolved.style.filter(Boolean)
+        resolved.script = resolved.script.filter(Boolean)
+        resolved.noscript = resolved.noscript.filter(Boolean)
+        return resolved
       }
     },
   },
