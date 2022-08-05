@@ -28,7 +28,7 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
   path = normalize(path)
 
   // Fast return if the path exists
-  if (isAbsolute(path) && existsSync(path)) {
+  if (isAbsolute(path) && existsSync(path) && !(await isDirectory(path))) {
     return path
   }
 
@@ -47,10 +47,10 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
   }
 
   // Check if resolvedPath is a file
-  let isDirectory = false
+  let _isDir = false
   if (existsSync(path)) {
-    isDirectory = (await fsp.lstat(path)).isDirectory()
-    if (!isDirectory) {
+    _isDir = await isDirectory(path)
+    if (!_isDir) {
       return path
     }
   }
@@ -64,7 +64,7 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
     }
     // path/index.[ext]
     const pathWithIndex = join(path, 'index' + ext)
-    if (isDirectory && existsSync(pathWithIndex)) {
+    if (_isDir && existsSync(pathWithIndex)) {
       return pathWithIndex
     }
   }
@@ -89,8 +89,8 @@ export async function findPath (paths: string|string[], opts?: ResolvePathOption
   for (const path of paths) {
     const rPath = await resolvePath(path, opts)
     if (await existsSensitive(rPath)) {
-      const isDirectory = (await fsp.lstat(rPath)).isDirectory()
-      if (!pathType || (pathType === 'file' && !isDirectory) || (pathType === 'dir' && isDirectory)) {
+      const _isDir = await isDirectory(rPath)
+      if (!pathType || (pathType === 'file' && !_isDir) || (pathType === 'dir' && _isDir)) {
         return rPath
       }
     }
@@ -146,7 +146,12 @@ async function existsSensitive (path: string) {
   return dirFiles.includes(basename(path))
 }
 
-export async function resolveFiles (path: string, pattern: string | string[]) {
-  const files = await globby(pattern, { cwd: path, followSymbolicLinks: true })
+// Usage note: We assume path existance is already ensured
+async function isDirectory (path: string) {
+  return (await fsp.lstat(path)).isDirectory()
+}
+
+export async function resolveFiles (path: string, pattern: string | string[], opts: { followSymbolicLinks?: boolean } = {}) {
+  const files = await globby(pattern, { cwd: path, followSymbolicLinks: opts.followSymbolicLinks ?? true })
   return files.map(p => resolve(path, p)).filter(p => !isIgnored(p)).sort()
 }

@@ -2,25 +2,19 @@ import { join, resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
-import type { Connect } from 'vite'
+import type { Connect, HmrOptions } from 'vite'
 import { logger } from '@nuxt/kit'
 import { getPort } from 'get-port-please'
 import { joinURL, withLeadingSlash, withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import escapeRE from 'escape-string-regexp'
+import defu from 'defu'
 import { cacheDirPlugin } from './plugins/cache-dir'
-import { analyzePlugin } from './plugins/analyze'
 import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
-import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
-  const hmrPortDefault = 24678 // Vite's default HMR port
-  const hmrPort = await getPort({
-    port: hmrPortDefault,
-    ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
-  })
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     experimental: {
       renderBuiltUrl: (filename, { type, hostType }) => {
@@ -62,16 +56,12 @@ export async function buildClient (ctx: ViteBuildContext) {
         rootDir: ctx.nuxt.options.rootDir,
         buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
       }),
-      viteNodePlugin(ctx)
+      ctx.nuxt.options.experimental.viteNode
+        ? await import('./vite-node').then(r => r.viteNodePlugin(ctx))
+        : undefined
     ],
     appType: 'custom',
     server: {
-      hmr: {
-        // https://github.com/nuxt/framework/issues/4191
-        protocol: 'ws',
-        clientPort: hmrPort,
-        port: hmrPort
-      },
       middlewareMode: true
     }
   } as ViteOptions)
@@ -82,9 +72,22 @@ export async function buildClient (ctx: ViteBuildContext) {
     clientConfig.server.hmr = false
   }
 
+  if (clientConfig.server.hmr !== false) {
+    const hmrPortDefault = 24678 // Vite's default HMR port
+    const hmrPort = await getPort({
+      port: hmrPortDefault,
+      ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
+    })
+    clientConfig.server.hmr = defu(clientConfig.server.hmr as HmrOptions, {
+      // https://github.com/nuxt/framework/issues/4191
+      protocol: 'ws',
+      port: hmrPort
+    })
+  }
+
   // Add analyze plugin if needed
   if (ctx.nuxt.options.build.analyze) {
-    clientConfig.plugins.push(...analyzePlugin(ctx))
+    clientConfig.plugins.push(...await import('./plugins/analyze').then(r => r.analyzePlugin(ctx)))
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', clientConfig, { isClient: true, isServer: false })
@@ -94,7 +97,8 @@ export async function buildClient (ctx: ViteBuildContext) {
     const viteServer = await vite.createServer(clientConfig)
     ctx.clientServer = viteServer
     await ctx.nuxt.callHook('vite:serverCreated', viteServer, { isClient: true, isServer: false })
-    const BASE_RE = new RegExp(`^${escapeRE(withTrailingSlash(withLeadingSlash(joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir))))}`)
+    const baseURL = joinURL(ctx.nuxt.options.app.baseURL.replace(/^\./, '') || '/', ctx.nuxt.options.app.buildAssetsDir)
+    const BASE_RE = new RegExp(`^${escapeRE(withTrailingSlash(withLeadingSlash(baseURL)))}`)
     const viteMiddleware: Connect.NextHandleFunction = (req, res, next) => {
       // Workaround: vite devmiddleware modifies req.url
       const originalURL = req.url
