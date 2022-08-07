@@ -4,7 +4,7 @@ import type { App, onErrorCaptured, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import type { RuntimeConfig } from '@nuxt/schema'
 import { getContext } from 'unctx'
-import type { SSRContext } from 'vue-bundle-renderer'
+import type { SSRContext } from 'vue-bundle-renderer/runtime'
 import type { CompatibilityEvent } from 'h3'
 // eslint-disable-next-line import/no-restricted-paths
 import type { NuxtComponentRenderResult, NuxtRenderContext } from '../core/runtime/nitro/renderer'
@@ -258,7 +258,7 @@ export function callWithNuxt<T extends (...args: any[]) => any> (nuxt: NuxtApp |
  * Returns the current Nuxt instance.
  */
 export function useNuxtApp () {
-  const nuxtAppInstance = nuxtAppCtx.use()
+  const nuxtAppInstance = nuxtAppCtx.tryUse()
 
   if (!nuxtAppInstance) {
     const vm = getCurrentInstance()

@@ -69,7 +69,8 @@ export interface ScanDir {
 
   extendComponent?: (component: Component) => Promise<Component | void> | (Component | void)
   /**
-   * If enabled, registers components to be globally available
+   * If enabled, registers components to be globally available.
+   *
    */
   global?: boolean
   /**

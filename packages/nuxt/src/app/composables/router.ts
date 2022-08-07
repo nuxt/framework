@@ -9,7 +9,7 @@ export const useRouter = () => {
   return !nuxtApp || nuxtApp?._isolatedRender ? null : nuxtApp.$router as Router
 }
 
-export const useRoute = () => {
+export const useRoute = (): RouteLocationNormalizedLoaded | null => {
   const nuxtApp = useNuxtApp()
   if (nuxtApp._isolatedRender) {
     return null
@@ -17,11 +17,11 @@ export const useRoute = () => {
   if (getCurrentInstance()) {
     return inject<RouteLocationNormalizedLoaded>('_route', nuxtApp._route)
   }
-  return nuxtApp._route as RouteLocationNormalizedLoaded
+  return useNuxtApp()._route as RouteLocationNormalizedLoaded
 }
 
 /** @deprecated Use `useRoute` instead. */
-export const useActiveRoute = () => {
+export const useActiveRoute = (): RouteLocationNormalizedLoaded | null => {
   const nuxtApp = useNuxtApp()
   return nuxtApp._isolatedRender ? null : nuxtApp._route as RouteLocationNormalizedLoaded
 }
