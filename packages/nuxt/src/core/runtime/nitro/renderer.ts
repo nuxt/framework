@@ -1,15 +1,19 @@
-import { createRenderer } from 'vue-bundle-renderer'
-import { eventHandler, useQuery } from 'h3'
+import { createRenderer } from 'vue-bundle-renderer/runtime'
+import type { RenderHandler, RenderResponse } from 'nitropack'
+import type { Manifest } from 'vite'
+import { CompatibilityEvent, getQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
 import type { NuxtApp } from '#app'
 
 // @ts-ignore
-import { useRuntimeConfig, useNitroApp } from '#internal/nitro'
+import { useRuntimeConfig, useNitroApp, defineRenderHandler as _defineRenderHandler } from '#internal/nitro'
 // @ts-ignore
 import { buildAssetsURL } from '#paths'
 
 export type NuxtSSRContext = NuxtApp['ssrContext']
+
+const defineRenderHandler = _defineRenderHandler as (h: RenderHandler) => CompatibilityEvent
 
 export interface NuxtRenderContext {
   ssrContext: NuxtSSRContext
@@ -31,7 +35,7 @@ export interface NuxtRenderResponse {
 }
 
 // @ts-ignore
-const getClientManifest = () => import('#build/dist/server/client.manifest.mjs')
+const getClientManifest: () => Promise<Manifest> = () => import('#build/dist/server/client.manifest.mjs')
   .then(r => r.default || r)
   .then(r => typeof r === 'function' ? r() : r)
 
@@ -41,19 +45,20 @@ const getServerEntry = () => import('#build/dist/server/server.mjs').then(r => r
 // -- SSR Renderer --
 const getSSRRenderer = lazyCachedFunction(async () => {
   // Load client manifest
-  const clientManifest = await getClientManifest()
-  if (!clientManifest) { throw new Error('client.manifest is not available') }
+  const manifest = await getClientManifest()
+  if (!manifest) { throw new Error('client.manifest is not available') }
 
   // Load server bundle
   const createSSRApp = await getServerEntry()
   if (!createSSRApp) { throw new Error('Server bundle is not available') }
 
-  // Create renderer
-  const renderer = createRenderer(createSSRApp, {
-    clientManifest,
+  const options = {
+    manifest,
     renderToString,
-    publicPath: buildAssetsURL()
-  })
+    buildAssetsURL
+  }
+  // Create renderer
+  const renderer = createRenderer(createSSRApp, options)
 
   async function renderToString (input, context) {
     const html = await _renderToString(input, context)
@@ -69,7 +74,17 @@ const getSSRRenderer = lazyCachedFunction(async () => {
 
 // -- SPA Renderer --
 const getSPARenderer = lazyCachedFunction(async () => {
-  const clientManifest = await getClientManifest()
+  const manifest = await getClientManifest()
+
+  const options = {
+    manifest,
+    renderToString: () => '<div id="__nuxt"></div>',
+    buildAssetsURL
+  }
+  // Create SPA renderer and cache the result for all requests
+  const renderer = createRenderer(() => () => {}, options)
+  const result = await renderer.renderToString({})
+
   const renderToString = (ssrContext: NuxtSSRContext) => {
     const config = useRuntimeConfig()
     ssrContext.payload = {
@@ -79,43 +94,16 @@ const getSPARenderer = lazyCachedFunction(async () => {
         app: config.app
       }
     }
-
-    let entryFiles = Object.values(clientManifest).filter((fileValue: any) => fileValue.isEntry)
-    if ('all' in clientManifest && 'initial' in clientManifest) {
-      // Upgrade legacy manifest (also see normalizeClientManifest in vue-bundle-renderer)
-      // https://github.com/nuxt-contrib/vue-bundle-renderer/issues/12
-      entryFiles = clientManifest.initial.map(file =>
-        // Webpack manifest fix with SPA renderer
-        file.endsWith('css') ? { css: file } : { file }
-      )
-    }
-
-    return Promise.resolve({
-      html: '<div id="__nuxt"></div>',
-      renderResourceHints: () => '',
-      renderStyles: () =>
-        entryFiles
-          .flatMap(({ css }) => css)
-          .filter(css => css != null)
-          .map(file => `<link rel="stylesheet" href="${buildAssetsURL(file)}">`)
-          .join(''),
-      renderScripts: () =>
-        entryFiles
-          .filter(({ file }) => file)
-          .map(({ file }) => {
-            const isMJS = !file.endsWith('.js')
-            return `<script ${isMJS ? 'type="module"' : ''} src="${buildAssetsURL(file)}"></script>`
-          })
-          .join('')
-    })
+    ssrContext.renderMeta = ssrContext.renderMeta ?? (() => ({}))
+    return Promise.resolve(result)
   }
 
   return { renderToString }
 })
 
-export default eventHandler(async (event) => {
+export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
-  const ssrError = event.req.url?.startsWith('/__nuxt_error') ? useQuery(event) : null
+  const ssrError = event.req.url?.startsWith('/__nuxt_error') ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error> : null
   const url = ssrError?.url as string || event.req.url!
 
   // Initialize ssr context
@@ -126,9 +114,9 @@ export default eventHandler(async (event) => {
     res: event.res,
     runtimeConfig: useRuntimeConfig(),
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
-    error: ssrError,
+    error: !!ssrError,
     nuxt: undefined, /* NuxtApp */
-    payload: undefined
+    payload: ssrError ? { error: ssrError } : undefined
   }
 
   // Render app
@@ -141,8 +129,8 @@ export default eventHandler(async (event) => {
   if (!_rendered) {
     return
   }
-  if (ssrContext.error && !ssrError) {
-    throw ssrContext.error
+  if (ssrContext.payload?.error && !ssrError) {
+    throw ssrContext.payload.error
   }
 
   // Render meta
@@ -183,7 +171,7 @@ export default eventHandler(async (event) => {
   await nitroApp.hooks.callHook('nuxt:app:rendered', rendered)
 
   // Construct HTML response
-  const response: NuxtRenderResponse = {
+  const response: RenderResponse = {
     body: renderHTMLDocument(rendered),
     statusCode: event.res.statusCode,
     statusMessage: event.res.statusMessage,
@@ -193,20 +181,7 @@ export default eventHandler(async (event) => {
     }
   }
 
-  // Allow extending the response
-  await nitroApp.hooks.callHook('nuxt:app:response', { response })
-
-  // Send HTML response
-  if (!event.res.headersSent) {
-    for (const header in response.headers) {
-      event.res.setHeader(header, response.headers[header])
-    }
-    event.res.statusCode = response.statusCode
-    event.res.statusMessage = response.statusMessage
-  }
-  if (!event.res.writableEnded) {
-    event.res.end(response.body)
-  }
+  return response
 })
 
 function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
