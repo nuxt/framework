@@ -1736,7 +1736,6 @@ __metadata:
     knitwork: ^0.1.2
     lodash.template: ^4.5.0
     mlly: ^0.5.7
-    ohash: ^0.1.5
     pathe: ^0.3.3
     pkg-types: ^0.3.3
     scule: ^0.3.2
@@ -1813,7 +1812,7 @@ __metadata:
     "@nuxt/schema": ^3.0.0-rc.6
     defu: ^6.0.0
     execa: ^6.1.0
-    get-port-please: ^2.5.0
+    get-port-please: ^2.6.0
     jiti: ^1.14.0
     ohmyfetch: ^0.4.18
     playwright: ^1.24.2
@@ -1873,8 +1872,8 @@ __metadata:
     estree-walker: ^3.0.1
     externality: ^0.2.2
     fs-extra: ^10.1.0
-    get-port-please: ^2.5.0
-    h3: ^0.7.13
+    get-port-please: ^2.6.0
+    h3: ^0.7.14
     knitwork: ^0.1.2
     magic-string: ^0.26.2
     mlly: ^0.5.7
@@ -1887,7 +1886,6 @@ __metadata:
     postcss-url: ^10.1.3
     rollup: ^2.77.2
     rollup-plugin-visualizer: ^5.7.1
-    std-env: ^3.1.1
     ufo: ^0.8.5
     unbuild: latest
     unplugin: ^0.9.0
@@ -1895,7 +1893,7 @@ __metadata:
     vite-node: ^0.21.0
     vite-plugin-checker: ^0.4.9
     vue: 3.2.37
-    vue-bundle-renderer: ^0.4.0
+    vue-bundle-renderer: ^0.4.1
   peerDependencies:
     vue: ^3.2.37
   languageName: unknown
@@ -1944,7 +1942,7 @@ __metadata:
     unplugin: ^0.9.0
     url-loader: ^4.1.1
     vue: 3.2.37
-    vue-bundle-renderer: ^0.4.0
+    vue-bundle-renderer: ^0.4.1
     vue-loader: ^17.0.0
     webpack: ^5.74.0
     webpack-bundle-analyzer: ^4.5.0
@@ -7277,6 +7275,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"get-port-please@npm:^2.6.0":
+  version: 2.6.0
+  resolution: "get-port-please@npm:2.6.0"
+  dependencies:
+    fs-memo: ^1.2.0
+  checksum: 669d5707e19f7ee2772cfe7ff39cb8c656f03fb5d4210286d94ff0b91d90bb91bd2b8b548f360f6bcdafc684bef36c7073ebd4a3bd908a71e6d52fcc825e140a
+  languageName: node
+  linkType: hard
+
 "get-port@npm:^5.1.1":
   version: 5.1.1
   resolution: "get-port@npm:5.1.1"
@@ -7557,15 +7564,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"h3@npm:^0.7.13":
-  version: 0.7.13
-  resolution: "h3@npm:0.7.13"
+"h3@npm:^0.7.14":
+  version: 0.7.14
+  resolution: "h3@npm:0.7.14"
   dependencies:
     cookie-es: ^0.5.0
     destr: ^1.1.1
     radix3: ^0.1.2
     ufo: ^0.8.5
-  checksum: bb57c56c699cf743a66d8384d10419c76e24cacbf5aef79c220f0d39c8c761c672d1f7fb04f40b88124cc37a2c880272a37f6125c585389f3261f18374a17296
+  checksum: e5af9d984b54bdd4895cd157e531290b0e753d32b545d276f8d9134f886a9723a5bcb0e33de19bf998498143f612a7aef49e6ef53696fd69fc2f120719454580
   languageName: node
   linkType: hard
 
@@ -8723,6 +8730,21 @@ __metadata:
     selfsigned: ^2.0.1
     ufo: ^0.8.4
   checksum: a6399861a9ee81e0505e94aa5d723e26989e10c939266edeff28a4789e753449b1833bfe01490fa43390aa286785ada36cbfee668b00b44097c73f53483c30c4
+  languageName: node
+  linkType: hard
+
+"listhen@npm:^0.2.14":
+  version: 0.2.14
+  resolution: "listhen@npm:0.2.14"
+  dependencies:
+    clipboardy: ^3.0.0
+    colorette: ^2.0.19
+    defu: ^6.0.0
+    get-port-please: ^2.6.0
+    http-shutdown: ^1.2.2
+    selfsigned: ^2.0.1
+    ufo: ^0.8.5
+  checksum: 5527b02b39b7bfe15d6b560726ce7489950d6027a87c208709b73c6223cd751fbf18461479c17b21fff30b9a45572527cd09a0fe901e3569ed6f36df00a921fe
   languageName: node
   linkType: hard
 
@@ -10003,7 +10025,7 @@ __metadata:
     flat: ^5.0.2
     fsevents: ~2.3.2
     jiti: ^1.14.0
-    listhen: ^0.2.13
+    listhen: ^0.2.14
     mlly: ^0.5.7
     mri: ^1.2.0
     pathe: ^0.3.3
@@ -10085,7 +10107,7 @@ __metadata:
     escape-string-regexp: ^5.0.0
     fs-extra: ^10.1.0
     globby: ^13.1.2
-    h3: ^0.7.13
+    h3: ^0.7.14
     hash-sum: ^2.0.0
     hookable: ^5.1.1
     knitwork: ^0.1.2
@@ -10107,7 +10129,7 @@ __metadata:
     unplugin: ^0.9.0
     untyped: ^0.4.5
     vue: ^3.2.37
-    vue-bundle-renderer: ^0.4.0
+    vue-bundle-renderer: ^0.4.1
     vue-meta: next
     vue-router: ^4.1.3
   bin:
@@ -13652,12 +13674,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-bundle-renderer@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "vue-bundle-renderer@npm:0.4.0"
+"vue-bundle-renderer@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "vue-bundle-renderer@npm:0.4.1"
   dependencies:
     ufo: ^0.8.3
-  checksum: d27698c9b774dd8dac27861939d19935e3f2f5523f5f78f87290278bbee0f61a3c2516feaec88d59164257af96348b7bda67354e693fea71627c84a6141edb2b
+  checksum: 81879cfaa444e0abd8c797b494df6d0b33928c10912c1d02c28bdf1b9ae646c4d6dde7add4e21626c6617b7ac98cd6aadc6a2dcba92d91b35967cea6c946105e
   languageName: node
   linkType: hard
 
