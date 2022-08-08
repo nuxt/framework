@@ -1,4 +1,3 @@
-import { templateUtils } from '@nuxt/kit'
 import type { Nuxt, NuxtApp, NuxtTemplate } from '@nuxt/schema'
 import { genArrayFromRaw, genDynamicImport, genExport, genImport, genObjectFromRawEntries, genString, genSafeVariableName } from 'knitwork'
 
@@ -68,13 +67,17 @@ export const serverPluginTemplate = {
   filename: 'plugins/server.mjs',
   getContents (ctx: TemplateContext) {
     const serverPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'client')
+    const exports: string[] = ['preload']
+    const imports: string[] = ["import preload from '#app/plugins/preload.server'"]
+    for (const plugin of serverPlugins) {
+      const path = relative(ctx.nuxt.options.rootDir, plugin.src)
+      const variable = genSafeVariableName(path).replace(/_(45|46|47)/g, '_') + '_' + hash(path)
+      exports.push(variable)
+      imports.push(genImport(plugin.src, variable))
+    }
     return [
-      "import preload from '#app/plugins/preload.server'",
-      templateUtils.importSources(serverPlugins.map(p => p.src)),
-      `export default ${genArrayFromRaw([
-        'preload',
-        ...serverPlugins.map(p => genSafeVariableName(p.src))
-      ])}`
+      ...imports,
+      `export default ${genArrayFromRaw(exports)}`
     ].join('\n')
   }
 }
