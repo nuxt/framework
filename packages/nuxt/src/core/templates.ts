@@ -5,6 +5,7 @@ import { genArrayFromRaw, genDynamicImport, genExport, genImport, genObjectFromR
 import { isAbsolute, join, relative } from 'pathe'
 import { resolveSchema, generateTypes } from 'untyped'
 import escapeRE from 'escape-string-regexp'
+import { hash } from 'ohash'
 
 export interface TemplateContext {
   nuxt: Nuxt
@@ -48,8 +49,14 @@ export const clientPluginTemplate = {
   filename: 'plugins/client.mjs',
   getContents (ctx: TemplateContext) {
     const clientPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'server')
-    const rootDir = ctx.nuxt.options.rootDir
-    const { imports, exports } = templateUtils.importSources(clientPlugins.map(p => p.src), rootDir)
+    const exports: string[] = []
+    const imports: string[] = []
+    for (const plugin of clientPlugins) {
+      const path = relative(ctx.nuxt.options.rootDir, plugin.src)
+      const variable = genSafeVariableName(path).replace(/_(45|46|47)/g, '_') + '_' + hash(path)
+      exports.push(variable)
+      imports.push(genImport(plugin.src, variable))
+    }
     return [
       ...imports,
       `export default ${genArrayFromRaw(exports)}`
@@ -61,14 +68,12 @@ export const serverPluginTemplate = {
   filename: 'plugins/server.mjs',
   getContents (ctx: TemplateContext) {
     const serverPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'client')
-    const rootDir = ctx.nuxt.options.rootDir
-    const { imports, exports } = templateUtils.importSources(serverPlugins.map(p => p.src), rootDir)
     return [
       "import preload from '#app/plugins/preload.server'",
-      ...imports,
+      templateUtils.importSources(serverPlugins.map(p => p.src)),
       `export default ${genArrayFromRaw([
         'preload',
-        ...exports
+        ...serverPlugins.map(p => genSafeVariableName(p.src))
       ])}`
     ].join('\n')
   }
