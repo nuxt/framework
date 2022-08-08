@@ -1,16 +1,19 @@
 import { createRenderer } from 'vue-bundle-renderer/runtime'
+import type { RenderHandler, RenderResponse } from 'nitropack'
 import type { Manifest } from 'vite'
-import { getQuery } from 'h3'
+import { CompatibilityEvent, getQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
 import type { NuxtApp } from '#app'
 
 // @ts-ignore
-import { useRuntimeConfig, useNitroApp, defineRenderHandler } from '#internal/nitro'
+import { useRuntimeConfig, useNitroApp, defineRenderHandler as _defineRenderHandler } from '#internal/nitro'
 // @ts-ignore
 import { buildAssetsURL } from '#paths'
 
 export type NuxtSSRContext = NuxtApp['ssrContext']
+
+const defineRenderHandler = _defineRenderHandler as (h: RenderHandler) => CompatibilityEvent
 
 export interface NuxtRenderContext {
   ssrContext: NuxtSSRContext
@@ -168,7 +171,7 @@ export default defineRenderHandler(async (event) => {
   await nitroApp.hooks.callHook('nuxt:app:rendered', rendered)
 
   // Construct HTML response
-  const response: NuxtRenderResponse = {
+  const response: RenderResponse = {
     body: renderHTMLDocument(rendered),
     statusCode: event.res.statusCode,
     statusMessage: event.res.statusMessage,
@@ -177,9 +180,6 @@ export default defineRenderHandler(async (event) => {
       'X-Powered-By': 'Nuxt'
     }
   }
-
-  // Allow extending the response
-  await nitroApp.hooks.callHook('nuxt:app:response', { response })
 
   return response
 })
