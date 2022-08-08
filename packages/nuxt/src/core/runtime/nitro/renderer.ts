@@ -3,7 +3,6 @@ import type { Manifest } from 'vite'
 import { eventHandler, useQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
-import type { QueryObject } from 'ufo'
 import type { NuxtApp } from '#app'
 
 // @ts-ignore
