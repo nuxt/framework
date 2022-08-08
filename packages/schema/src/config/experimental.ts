@@ -38,6 +38,6 @@ export default {
      *
      * @see https://github.com/nuxt/framework/issues/6432
      */
-    serverDynamicImports: false,
+     viteServerDynamicImports: false,
   }
 }
