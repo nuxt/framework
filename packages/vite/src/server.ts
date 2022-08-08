@@ -80,7 +80,7 @@ export async function buildServer (ctx: ViteBuildContext) {
           entryFileNames: 'server.mjs',
           preferConst: true,
           // TODO: https://github.com/vitejs/vite/pull/8641
-          inlineDynamicImports: false,
+          inlineDynamicImports: !ctx.nuxt.options.experimental.serverDynamicImports,
           format: 'module'
         },
         onwarn (warning, rollupWarn) {
@@ -112,7 +112,7 @@ export async function buildServer (ctx: ViteBuildContext) {
     }))
   }
 
-  // Hotfix for https://github.com/nuxt/framework/issues/6204
+  // https://github.com/nuxt/framework/issues/6432
   if (provider === 'netlify') {
     (serverConfig.build.rollupOptions.output as OutputOptions).inlineDynamicImports = true
   }
