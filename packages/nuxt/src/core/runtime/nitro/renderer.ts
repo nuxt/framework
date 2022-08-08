@@ -1,12 +1,12 @@
 import { createRenderer } from 'vue-bundle-renderer/runtime'
 import type { Manifest } from 'vite'
-import { eventHandler, useQuery } from 'h3'
+import { getQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
 import type { NuxtApp } from '#app'
 
 // @ts-ignore
-import { useRuntimeConfig, useNitroApp } from '#internal/nitro'
+import { useRuntimeConfig, useNitroApp, defineRenderHandler } from '#internal/nitro'
 // @ts-ignore
 import { buildAssetsURL } from '#paths'
 
@@ -98,9 +98,9 @@ const getSPARenderer = lazyCachedFunction(async () => {
   return { renderToString }
 })
 
-export default eventHandler(async (event) => {
+export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
-  const ssrError = event.req.url?.startsWith('/__nuxt_error') ? useQuery(event) : null
+  const ssrError = event.req.url?.startsWith('/__nuxt_error') ? getQuery(event) : null
   const url = ssrError?.url as string || event.req.url!
 
   // Initialize ssr context
@@ -181,17 +181,7 @@ export default eventHandler(async (event) => {
   // Allow extending the response
   await nitroApp.hooks.callHook('nuxt:app:response', { response })
 
-  // Send HTML response
-  if (!event.res.headersSent) {
-    for (const header in response.headers) {
-      event.res.setHeader(header, response.headers[header])
-    }
-    event.res.statusCode = response.statusCode
-    event.res.statusMessage = response.statusMessage
-  }
-  if (!event.res.writableEnded) {
-    event.res.end(response.body)
-  }
+  return response
 })
 
 function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
