@@ -2,10 +2,7 @@ import { createError as _createError, H3Error } from 'h3'
 import { toRef } from 'vue'
 import { useNuxtApp } from '#app'
 
-export const useError = () => {
-  const nuxtApp = useNuxtApp()
-  return toRef(process.server ? nuxtApp.ssrContext : nuxtApp.payload, 'error')
-}
+export const useError = () => toRef(useNuxtApp().payload, 'error')
 
 export interface NuxtError extends H3Error {}
 
