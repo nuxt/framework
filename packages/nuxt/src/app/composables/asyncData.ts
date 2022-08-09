@@ -1,7 +1,7 @@
 import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch, unref } from 'vue'
 import type { Ref, WatchSource } from 'vue'
 import { wrapInRef } from './utils'
-import { NuxtApp, useNuxtApp } from '#app'
+import { NuxtApp, useNuxtApp, callWithNuxt } from '#app'
 
 export type _Transform<Input = any, Output = any> = (input: Input) => Output
 
@@ -132,7 +132,7 @@ export function useAsyncData<
     asyncData.pending.value = true
     // TODO: Cancel previous promise
     nuxt._asyncDataPromises[key] = Promise.resolve()
-      .then(() => handler(nuxt))
+      .then(() => callWithNuxt(nuxt, handler, [nuxt]))
       .then((result) => {
         if (options.transform) {
           result = options.transform(result)
