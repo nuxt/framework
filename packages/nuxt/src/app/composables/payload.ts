@@ -15,19 +15,13 @@ export function usePayload (url: string, forceRefetch: boolean = false) {
 }
 
 export function prefetchPayload (url: string) {
-  if (process.server) {
-    // TODO: Vite adds ?import in _importPayload ?!
-    const payloadURL = _getPayloadURL(url) + '?import'
-    useHead({
-      link: [
-        { rel: 'modulepreload', href: payloadURL }
-      ]
-    })
-  } else if (process.client) {
-    usePayload(url).catch((error) => {
-      console.warn(`Error while prefetching payload for ${url} :`, error)
-    })
-  }
+  // TODO: Vite adds ?import in _importPayload ?!
+  const payloadURL = _getPayloadURL(url) + '?import'
+  useHead({
+    link: [
+      { rel: 'modulepreload', href: payloadURL }
+    ]
+  })
 }
 
 // --- Internal ---
