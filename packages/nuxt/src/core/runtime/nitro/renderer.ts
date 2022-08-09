@@ -101,7 +101,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
   return { renderToString }
 })
 
-const PAYLOAD_FILE_NAME = '/_payload.js'
+const PAYLOAD_URL_RE = /\/_payload.js[^/]*$/
 
 export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
@@ -110,8 +110,8 @@ export default defineRenderHandler(async (event) => {
 
   // Whether we are rendering payload response
   let payloadReq = false
-  if (url.endsWith(PAYLOAD_FILE_NAME)) {
-    url = url.substring(0, url.length - PAYLOAD_FILE_NAME.length) || '/'
+  if (PAYLOAD_URL_RE.test(url)) {
+    url = url.substring(0, url.lastIndexOf('/')) || '/'
     event.req.url = url
     payloadReq = true
   }
@@ -146,7 +146,7 @@ export default defineRenderHandler(async (event) => {
   // Payload render
   if (payloadReq) {
     const response: RenderResponse = {
-      body: `__NUXT_JSONP__("${url}", ${devalue(ssrContext.payload)})`,
+      body: renderPayloadJS(ssrContext),
       statusCode: event.res.statusCode,
       statusMessage: event.res.statusMessage,
       headers: {
@@ -236,4 +236,8 @@ function renderHTMLDocument (rendered: NuxtRenderContext) {
 <head>${joinTags(rendered.html.head)}</head>
 <body ${joinAttrs(rendered.html.bodyAttrs)}>${joinTags(rendered.html.bodyPreprend)}${joinTags(rendered.html.body)}${joinTags(rendered.html.bodyAppend)}</body>
 </html>`
+}
+
+function renderPayloadJS (ssrContext: NuxtSSRContext) {
+  return `export const payload=${devalue(ssrContext.payload)}`
 }
