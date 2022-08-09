@@ -25,7 +25,7 @@ export default {
 
   /**
    * The base URL of the app. For example, if the entire single page application is
-   * served under `/app/`, then base should use the value '/app/'.
+   * served under `/app/`, then base should use the value `'/app/'`.
    *
    * This can be useful if you need to serve Nuxt as a different context root, from
    * within a bigger web site.
