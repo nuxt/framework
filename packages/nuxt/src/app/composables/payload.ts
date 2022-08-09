@@ -1,6 +1,7 @@
 import { parseURL, joinURL } from 'ufo'
+import { appendHeader, getRequestHeader } from 'h3'
 import { useNuxtApp } from '../nuxt'
-import { useHead } from '#app'
+import { useHead, useRequestEvent } from '#app'
 
 export function usePayload (url: string, forceRefetch: boolean = false) {
   if (process.server) { return null }
@@ -15,13 +16,20 @@ export function usePayload (url: string, forceRefetch: boolean = false) {
 }
 
 export function prefetchPayload (url: string) {
-  // TODO: Vite adds ?import in _importPayload ?!
-  const payloadURL = _getPayloadURL(url) + '?import'
+  const payloadURL = _getPayloadURL(url)
   useHead({
     link: [
-      { rel: 'modulepreload', href: payloadURL }
+      // TODO: Vite adds ?import in _importPayload ?!
+      { rel: 'modulepreload', href: payloadURL + '?import' }
     ]
   })
+  if (process.server) {
+    const event = useRequestEvent()
+    const isPrerendering = getRequestHeader(event, 'x-nitro-prerender')
+    if (isPrerendering) {
+      appendHeader(event, 'x-nitro-prerender', payloadURL)
+    }
+  }
 }
 
 // --- Internal ---
