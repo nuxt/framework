@@ -29,8 +29,5 @@
 <script setup lang="ts">
 const route = useRoute()
 
-// TODO
-prefetchPayload(route.path)
-
 const { data: randomNumbers, refresh } = await useFetch('/api/random')
 </script>

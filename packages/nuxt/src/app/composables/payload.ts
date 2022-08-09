@@ -42,6 +42,6 @@ function _getPayloadURL (url: string) {
 
 async function _importPayload (payloadURL: string) {
   if (process.server) { return null }
-  const { payload } = await import(/* @vite-ignore */ payloadURL) as { payload: any }
+  const { default: payload } = await import(/* @vite-ignore */ payloadURL) as { default: any }
   return payload
 }

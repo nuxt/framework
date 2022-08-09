@@ -1,9 +1,10 @@
 import { createRenderer } from 'vue-bundle-renderer/runtime'
 import type { RenderHandler, RenderResponse } from 'nitropack'
 import type { Manifest } from 'vite'
-import { CompatibilityEvent, getQuery } from 'h3'
+import { appendHeader, CompatibilityEvent, getQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
+import { joinURL } from 'ufo'
 import type { NuxtApp } from '#app'
 
 // @ts-ignore
@@ -116,6 +117,9 @@ export default defineRenderHandler(async (event) => {
     payloadReq = true
   }
 
+  // Prerender payload url
+  const payloadURL = event.req.headers['x-nitro-prerender'] ? joinURL(url, '_payload.js') : undefined
+
   // Initialize ssr context
   const ssrContext: NuxtSSRContext = {
     url,
@@ -181,10 +185,12 @@ export default defineRenderHandler(async (event) => {
         _rendered.html
       ],
       bodyAppend: normalizeChunks([
-      `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
-      _rendered.renderScripts(),
-      // Note: bodyScripts may contain tags other than <script>
-      renderedMeta.bodyScripts
+        payloadURL
+          ? `<script type="module">import p from "${payloadURL}?import";window.__NUXT__=p</script>`
+          : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
+        _rendered.renderScripts(),
+        // Note: bodyScripts may contain tags other than <script>
+        renderedMeta.bodyScripts
       ])
     }
   }
@@ -203,6 +209,12 @@ export default defineRenderHandler(async (event) => {
       'Content-Type': 'text/html;charset=UTF-8',
       'X-Powered-By': 'Nuxt'
     }
+  }
+
+  if (payloadURL) {
+    // Prerender hint to render payload
+    // TODO: use response.headers once nitro append header by default
+    appendHeader(event, 'x-nitro-prerender', payloadURL)
   }
 
   return response
@@ -239,5 +251,5 @@ function renderHTMLDocument (rendered: NuxtRenderContext) {
 }
 
 function renderPayloadJS (ssrContext: NuxtSSRContext) {
-  return `export const payload=${devalue(ssrContext.payload)}`
+  return `export default ${devalue(ssrContext.payload)}`
 }
