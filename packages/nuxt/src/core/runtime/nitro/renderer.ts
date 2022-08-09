@@ -104,6 +104,9 @@ const getSPARenderer = lazyCachedFunction(async () => {
 
 const PAYLOAD_URL_RE = /\/_payload.js[^/]*$/
 
+// TODO: Use LRU cache
+const PAYLOAD_CACHE = new Map()
+
 export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error> : null
@@ -115,6 +118,9 @@ export default defineRenderHandler(async (event) => {
     url = url.substring(0, url.lastIndexOf('/')) || '/'
     event.req.url = url
     payloadReq = true
+  }
+  if (payloadReq && PAYLOAD_CACHE.has(url)) {
+    return PAYLOAD_CACHE.get(url)
   }
 
   // Prerender payload url
@@ -149,15 +155,8 @@ export default defineRenderHandler(async (event) => {
 
   // Payload render
   if (payloadReq) {
-    const response: RenderResponse = {
-      body: renderPayloadJS(ssrContext),
-      statusCode: event.res.statusCode,
-      statusMessage: event.res.statusMessage,
-      headers: {
-        'Content-Type': 'text/javascript;charset=UTF-8',
-        'X-Powered-By': 'Nuxt'
-      }
-    }
+    const response = renderPayloadResponse(ssrContext)
+    PAYLOAD_CACHE.set(url, response)
     return response
   }
 
@@ -215,6 +214,9 @@ export default defineRenderHandler(async (event) => {
     // Prerender hint to render payload
     // TODO: use response.headers once nitro append header by default
     appendHeader(event, 'x-nitro-prerender', payloadURL)
+
+    // Set payload cache
+    PAYLOAD_CACHE.set(url, renderPayloadResponse(ssrContext))
   }
 
   return response
@@ -250,6 +252,14 @@ function renderHTMLDocument (rendered: NuxtRenderContext) {
 </html>`
 }
 
-function renderPayloadJS (ssrContext: NuxtSSRContext) {
-  return `export default ${devalue(ssrContext.payload)}`
+function renderPayloadResponse (ssrContext: NuxtSSRContext) {
+  return <RenderResponse> {
+    body: `export default ${devalue(ssrContext.payload)}`,
+    statusCode: ssrContext.event.res.statusCode,
+    statusMessage: ssrContext.event.res.statusMessage,
+    headers: {
+      'Content-Type': 'text/javascript;charset=UTF-8',
+      'X-Powered-By': 'Nuxt'
+    }
+  }
 }
