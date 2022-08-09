@@ -1,13 +1,10 @@
 import { isRef, ref, Ref } from 'vue'
-import { getRequestHeader } from 'h3'
-import { useRequestEvent } from './ssr'
+import { useNuxtApp } from '#app'
 
 export const wrapInRef = <T> (value: T | Ref<T>) => isRef(value) ? value : ref(value)
 
-export function isPrerendering () {
-  if (process.client) {
-    return false // TODO
-  }
-  const event = useRequestEvent()
-  return !!getRequestHeader(event, 'x-nitro-prerender')
+export function isPrerender () {
+  // Note: Alternative for server is checking x-nitro-prerender header
+  const nuxtApp = useNuxtApp()
+  return !!nuxtApp.payload.prerenderedAt
 }

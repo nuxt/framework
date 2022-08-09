@@ -68,6 +68,7 @@ interface _NuxtApp {
   }
   payload: {
     serverRendered?: boolean
+    prerenderedAt?: number
     data?: Record<string, any>
     state?: Record<string, any>
     rendered?: Function
@@ -107,12 +108,19 @@ export function createNuxtApp (options: CreateOptions) {
       data: {},
       state: {},
       _errors: {},
-      ...(process.client ? window.__NUXT__ : { serverRendered: true })
+      ...process.client ? window.__NUXT__ : {}
     }),
     isHydrating: process.client,
     _asyncDataPromises: {},
     ...options
   } as any as NuxtApp
+
+  if (process.server) {
+    nuxtApp.payload.serverRendered = true
+    if (options.ssrContext?.event.req.headers['x-nitro-prerender']) {
+      nuxtApp.payload.prerenderedAt = Date.now()
+    }
+  }
 
   nuxtApp.hooks = createHooks<RuntimeNuxtHooks>()
   nuxtApp.hook = nuxtApp.hooks.hook
