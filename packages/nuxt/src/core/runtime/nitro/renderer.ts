@@ -170,6 +170,7 @@ export default defineRenderHandler(async (event) => {
       htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
       head: normalizeChunks([
         renderedMeta.headTags,
+        payloadURL ? `<link rel="modulepreload" as="script" href="${payloadURL}?import">` : null,
         _rendered.renderResourceHints(),
         _rendered.renderStyles(),
         ssrContext.styles
