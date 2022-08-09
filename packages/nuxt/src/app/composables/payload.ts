@@ -1,6 +1,6 @@
 import { parseURL, joinURL } from 'ufo'
 import { useNuxtApp } from '../nuxt'
-import { useHead } from '#imports'
+import { useHead } from '#app'
 
 export function usePayload (url: string, forceRefetch: boolean = false) {
   if (process.server) { return null }
