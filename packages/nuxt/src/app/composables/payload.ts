@@ -1,26 +1,47 @@
-import { parseURL } from 'ufo'
+import { parseURL, joinURL } from 'ufo'
 import { useNuxtApp } from '../nuxt'
+import { useHead } from '#imports'
 
-export function loadPayload (url: string, forceRefetch: boolean = false) {
-  const parsed = parseURL(url)
-  if (parsed.search) {
-    throw new Error('Payload URLs cannot contain search params')
-  }
-
+export function usePayload (url: string, forceRefetch: boolean = false) {
+  if (process.server) { return null }
+  const payloadURL = _getPayloadURL(url)
   const nuxtApp = useNuxtApp()
   const cache = nuxtApp._payloadCache = nuxtApp._payloadCache || {}
-
-  const payloadURL = parsed.pathname + '/_payload.json'
-
   if (!forceRefetch && cache[payloadURL]) {
     return cache[payloadURL]
   }
-
   cache[url] = _importPayload(payloadURL + (forceRefetch ? '?_=' + Date.now() : ''))
   return cache[url]
 }
 
+export function prefetchPayload (url: string) {
+  if (process.server) {
+    // TODO: Vite adds ?import in _importPayload ?!
+    const payloadURL = _getPayloadURL(url) + '?import'
+    useHead({
+      link: [
+        { rel: 'modulepreload', href: payloadURL }
+      ]
+    })
+  } else if (process.client) {
+    usePayload(url).catch((error) => {
+      console.warn(`Error while prefetching payload for ${url} :`, error)
+    })
+  }
+}
+
+// --- Internal ---
+
+function _getPayloadURL (url: string) {
+  const parsed = parseURL(url)
+  if (parsed.search) {
+    throw new Error('Payload URL cannot contain search params: ' + url)
+  }
+  return joinURL(parsed.pathname, '_payload.js')
+}
+
 async function _importPayload (payloadURL: string) {
-  const { payload } = await import(payloadURL /* @vite-ignore */) as { payload: any }
+  if (process.server) { return null }
+  const { payload } = await import(/* @vite-ignore */ payloadURL) as { payload: any }
   return payload
 }
