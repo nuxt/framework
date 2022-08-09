@@ -120,7 +120,7 @@ export default {
    *
    * @note Multiple services (e.g. Netlify) detect a `404.html` automatically. If
    * you configure your web server on your own, please consult its documentation
-   * to find out how to set up an error page (and set it to the 404.html file).
+   * to find out how to set up an error page (and set it to the `404.html` file).
    */
   fallback: { $resolve: val => val === true ? '400.html' : (val || '200.html') },
 
