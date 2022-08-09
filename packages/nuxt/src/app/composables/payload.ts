@@ -4,7 +4,7 @@ import { useNuxtApp } from '../nuxt'
 import { isPrerender } from './utils'
 import { useHead, useRequestEvent } from '#app'
 
-export function usePayload (url: string, forceRefetch: boolean = false) {
+export function loadPayload (url: string, forceRefetch: boolean = false) {
   if (process.server) { return null }
   const payloadURL = _getPayloadURL(url)
   const nuxtApp = useNuxtApp()
