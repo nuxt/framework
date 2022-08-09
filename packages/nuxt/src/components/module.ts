@@ -101,8 +101,11 @@ export default defineNuxtModule<ComponentsOptions>({
           transpile: (transpile === 'auto' ? dirPath.includes('node_modules') : transpile)
         }
       }).filter(d => d.enabled)
-        .sort(dir => dir.path.includes('node_modules') ? 1 : -1)
-        .sort(dir => dir.path.includes('global') && !dir.path.includes('node_modules') ? -1 : 1)
+
+      componentDirs = [
+        ...componentDirs.filter(dir => !dir.path.includes('node_modules')),
+        ...componentDirs.filter(dir => dir.path.includes('node_modules'))
+      ]
 
       nuxt.options.build!.transpile!.push(...componentDirs.filter(dir => dir.transpile).map(dir => dir.path))
     })
