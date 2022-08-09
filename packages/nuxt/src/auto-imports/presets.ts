@@ -51,7 +51,8 @@ export const appPreset = defineUnimportPreset({
     'createError',
     'defineNuxtLink',
     'usePayload',
-    'prefetchPayload'
+    'prefetchPayload',
+    'isPrerendering'
   ]
 })
 

@@ -1,6 +1,7 @@
 import { parseURL, joinURL } from 'ufo'
-import { appendHeader, getRequestHeader } from 'h3'
+import { appendHeader } from 'h3'
 import { useNuxtApp } from '../nuxt'
+import { isPrerendering } from './utils'
 import { useHead, useRequestEvent } from '#app'
 
 export function usePayload (url: string, forceRefetch: boolean = false) {
@@ -23,12 +24,9 @@ export function prefetchPayload (url: string) {
       { rel: 'modulepreload', href: payloadURL + '?import' }
     ]
   })
-  if (process.server) {
+  if (process.server && isPrerendering()) {
     const event = useRequestEvent()
-    const isPrerendering = getRequestHeader(event, 'x-nitro-prerender')
-    if (isPrerendering) {
-      appendHeader(event, 'x-nitro-prerender', payloadURL)
-    }
+    appendHeader(event, 'x-nitro-prerender', payloadURL)
   }
 }
 
