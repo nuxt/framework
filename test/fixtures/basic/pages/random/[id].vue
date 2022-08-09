@@ -29,5 +29,6 @@
 <script setup lang="ts">
 const route = useRoute()
 
-const { data: randomNumbers, refresh } = await useFetch('/api/random')
+const { data: randomNumbers, refresh } =
+  await useFetch('/api/random', { key: '_rand' + route.params.id as string })
 </script>
