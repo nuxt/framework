@@ -101,10 +101,20 @@ const getSPARenderer = lazyCachedFunction(async () => {
   return { renderToString }
 })
 
+const PAYLOAD_FILE_NAME = '/_payload.js'
+
 export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error> : null
-  const url = ssrError?.url as string || event.req.url!
+  let url = ssrError?.url as string || event.req.url!
+
+  // Whether we are rendering payload response
+  let payloadReq = false
+  if (url.endsWith(PAYLOAD_FILE_NAME)) {
+    url = url.substring(0, url.length - PAYLOAD_FILE_NAME.length) || '/'
+    event.req.url = url
+    payloadReq = true
+  }
 
   // Initialize ssr context
   const ssrContext: NuxtSSRContext = {
@@ -131,6 +141,20 @@ export default defineRenderHandler(async (event) => {
   }
   if (ssrContext.payload?.error && !ssrError) {
     throw ssrContext.payload.error
+  }
+
+  // Payload render
+  if (payloadReq) {
+    const response: RenderResponse = {
+      body: `__NUXT_JSONP__("${url}", ${devalue(ssrContext.payload)})`,
+      statusCode: event.res.statusCode,
+      statusMessage: event.res.statusMessage,
+      headers: {
+        'Content-Type': 'text/javascript;charset=UTF-8',
+        'X-Powered-By': 'Nuxt'
+      }
+    }
+    return response
   }
 
   // Render meta
