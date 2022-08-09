@@ -20,7 +20,7 @@
         {{ n }}
       </li>
     </ul>
-    <button @click="refresh">
+    <button @click="() => refresh()">
       Give me another set
     </button>
   </div>
