@@ -23,7 +23,7 @@ export default {
   serverHandlers: [],
 
   /**
-   * Nitro devevelopment-only server handlers.
+   * Nitro development-only server handlers.
    *
    * @see https://nitro.unjs.io/guide/routing.html
    *
