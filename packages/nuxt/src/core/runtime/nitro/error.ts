@@ -27,7 +27,13 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
 
   // Console output
   if (error.unhandled || error.fatal) {
-    console.error('[nuxt] [unhandled request error]', errorObject.message + '\n' + stack.map(l => '  ' + l.text).join('  \n'))
+    const tags = [
+      '[nuxt]',
+      '[request error]',
+      error.unhandled && '[unhandled]',
+      error.fatal && '[fatal]'
+    ].filter(Boolean).join(' ')
+    console.error(tags, errorObject.message + '\n' + stack.map(l => '  ' + l.text).join('  \n'))
   }
 
   // JSON response
