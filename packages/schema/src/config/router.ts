@@ -164,7 +164,7 @@ export default {
    * `undefined`, the opposite route will stop working. Thus, 301 redirects should
    * be in place and your internal linking has to be adapted correctly. If you set
    * `trailingSlash` to `true`, then only `example.com/abc/` will work, but not
-   * `example.com/abc`. On `false`, it's vice-versa
+   * `example.com/abc`. On `false`, it's vice-versa.
    * @version 2
    */
   trailingSlash: undefined
