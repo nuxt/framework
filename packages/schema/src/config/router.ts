@@ -2,7 +2,7 @@ import { normalizeURL, withTrailingSlash } from 'ufo'
 
 export default {
   /**
-   * Additional options passed to vue-router.
+   * Additional options passed to `vue-router`.
    *
    * Note: Only JSON serializable options should be passed by nuxt config.
    *
