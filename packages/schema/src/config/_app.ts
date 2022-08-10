@@ -156,7 +156,7 @@ export default {
   },
 
   /**
-   * Enable or disable vuex store.
+   * Enable or disable Vuex store.
    *
    * By default, it is enabled if there is a `store/` directory.
    * @version 2
