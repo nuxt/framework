@@ -1,12 +1,13 @@
 import { withQuery } from 'ufo'
 import type { NitroErrorHandler } from 'nitropack'
+import type { H3Error } from 'h3'
 // @ts-ignore TODO
 import { normalizeError, isJsonRequest } from '#internal/nitro/utils'
 import { NuxtApp } from '#app'
 
-export default <NitroErrorHandler> async function errorhandler (_error, event) {
+export default <NitroErrorHandler> async function errorhandler (error: H3Error, event) {
   // Parse and normalize error
-  const { stack, statusCode, statusMessage, message } = normalizeError(_error)
+  const { stack, statusCode, statusMessage, message } = normalizeError(error)
 
   // Create an error object
   const errorObject: Exclude<NuxtApp['payload']['error'], Error> = {
@@ -17,7 +18,7 @@ export default <NitroErrorHandler> async function errorhandler (_error, event) {
     description: process.env.NODE_ENV === 'development' && statusCode !== 404
       ? `<pre>${stack.map(i => `<span class="stack${i.internal ? ' internal' : ''}">${i.text}</span>`).join('\n')}</pre>`
       : '',
-    data: (_error as any).data
+    data: error.data
   }
 
   // Set response code and message
@@ -25,7 +26,7 @@ export default <NitroErrorHandler> async function errorhandler (_error, event) {
   event.res.statusMessage = errorObject.statusMessage
 
   // Console output
-  if ((_error as any).unhandled) {
+  if (error.unhandled || error.fatal) {
     console.error('[nuxt] [unhandled request error]', errorObject.message + '\n' + stack.map(l => '  ' + l.text).join('  \n'))
   }
 
