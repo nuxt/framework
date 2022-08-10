@@ -91,7 +91,7 @@ export default {
     extractCSS: true,
 
     /**
-     * Enables CSS source map support (defaults to true in development).
+     * Enables CSS source map support (defaults to `true` in development).
      */
     cssSourceMap: {
       $resolve: (val, get) => val ?? get('dev')
