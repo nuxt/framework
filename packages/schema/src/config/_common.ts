@@ -116,7 +116,7 @@ export default {
   /**
    * The `env` property defines environment variables that should be available
    * throughout your app (server- and client-side). They can be assigned using
-   * server side environment variables.
+   * server-side environment variables.
    *
    * @note Nuxt uses webpack's `definePlugin` to define these environment variables.
    * This means that the actual `process` or `process.env` from Node.js is neither
