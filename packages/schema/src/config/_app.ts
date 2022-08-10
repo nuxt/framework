@@ -127,7 +127,7 @@ export default {
   },
   /**
    * The path to a template HTML file for rendering Nuxt responses.
-   * Uses `<srcDir>/app.html` if it exists, or the Nuxt default template if not.
+   * Uses `<srcDir>/app.html` if it exists, or the Nuxt's default template if not.
    *
    * @example
    * ```html
