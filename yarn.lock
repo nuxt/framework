@@ -48,29 +48,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.17.7, @babel/core@npm:^7.18.6":
-  version: 7.18.9
-  resolution: "@babel/core@npm:7.18.9"
-  dependencies:
-    "@ampproject/remapping": ^2.1.0
-    "@babel/code-frame": ^7.18.6
-    "@babel/generator": ^7.18.9
-    "@babel/helper-compilation-targets": ^7.18.9
-    "@babel/helper-module-transforms": ^7.18.9
-    "@babel/helpers": ^7.18.9
-    "@babel/parser": ^7.18.9
-    "@babel/template": ^7.18.6
-    "@babel/traverse": ^7.18.9
-    "@babel/types": ^7.18.9
-    convert-source-map: ^1.7.0
-    debug: ^4.1.0
-    gensync: ^1.0.0-beta.2
-    json5: ^2.2.1
-    semver: ^6.3.0
-  checksum: 64b9088b03fdf659b334864ef93bed85d60c17b27fcbd72970f8eb9e0d3266ffa5a1926960f648f2db36b0bafec615f947ea5117d200599a0661b9f0a9cdf323
-  languageName: node
-  linkType: hard
-
 "@babel/core@npm:^7.18.10":
   version: 7.18.10
   resolution: "@babel/core@npm:7.18.10"
@@ -91,6 +68,29 @@ __metadata:
     json5: ^2.2.1
     semver: ^6.3.0
   checksum: 3a3fcd878430a9e1cb165f755c89fff45acc4efe4dd3a2ba356e89af331cb1947886b9782d56902a49af19ba3c24f08cf638a632699b9c5a4d8305c57c6a150d
+  languageName: node
+  linkType: hard
+
+"@babel/core@npm:^7.18.6":
+  version: 7.18.9
+  resolution: "@babel/core@npm:7.18.9"
+  dependencies:
+    "@ampproject/remapping": ^2.1.0
+    "@babel/code-frame": ^7.18.6
+    "@babel/generator": ^7.18.9
+    "@babel/helper-compilation-targets": ^7.18.9
+    "@babel/helper-module-transforms": ^7.18.9
+    "@babel/helpers": ^7.18.9
+    "@babel/parser": ^7.18.9
+    "@babel/template": ^7.18.6
+    "@babel/traverse": ^7.18.9
+    "@babel/types": ^7.18.9
+    convert-source-map: ^1.7.0
+    debug: ^4.1.0
+    gensync: ^1.0.0-beta.2
+    json5: ^2.2.1
+    semver: ^6.3.0
+  checksum: 64b9088b03fdf659b334864ef93bed85d60c17b27fcbd72970f8eb9e0d3266ffa5a1926960f648f2db36b0bafec615f947ea5117d200599a0661b9f0a9cdf323
   languageName: node
   linkType: hard
 
@@ -370,13 +370,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/standalone@npm:^7.17.7":
-  version: 7.18.9
-  resolution: "@babel/standalone@npm:7.18.9"
-  checksum: 7a433b3dabc28f9ce43f30c5194446a1299b3431a6b352e2569927075ae343f9c16e6fe3ead140cfdcba981fb15202bf5a45fb7f255d79722545228da76cf528
-  languageName: node
-  linkType: hard
-
 "@babel/standalone@npm:^7.18.11":
   version: 7.18.11
   resolution: "@babel/standalone@npm:7.18.11"
@@ -442,7 +435,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.0.0, @babel/types@npm:^7.17.0, @babel/types@npm:^7.18.6, @babel/types@npm:^7.18.9, @babel/types@npm:^7.8.3":
+"@babel/types@npm:^7.0.0, @babel/types@npm:^7.18.6, @babel/types@npm:^7.18.9, @babel/types@npm:^7.8.3":
   version: 7.18.9
   resolution: "@babel/types@npm:7.18.9"
   dependencies:
@@ -2169,23 +2162,6 @@ __metadata:
   peerDependencies:
     rollup: ^1.20.0||^2.0.0
   checksum: cefae9dfb7c30f0dc78d24f4ad9ccb8a0878397b313c0fa9d0f519667394941c58a930d968d841e25aee43b0fb892d1e3f7edbb55e8197f191cce7da6a50b882
-  languageName: node
-  linkType: hard
-
-"@rollup/plugin-commonjs@npm:^22.0.1":
-  version: 22.0.1
-  resolution: "@rollup/plugin-commonjs@npm:22.0.1"
-  dependencies:
-    "@rollup/pluginutils": ^3.1.0
-    commondir: ^1.0.1
-    estree-walker: ^2.0.1
-    glob: ^7.1.6
-    is-reference: ^1.2.1
-    magic-string: ^0.25.7
-    resolve: ^1.17.0
-  peerDependencies:
-    rollup: ^2.68.0
-  checksum: 6326227b688d1069ab2146b6f08c3d189da94bb77388691d7496001148041388542ddcbc6ffa7e9e97419c67e9cf3256a2414d770b4539998b4bc5d807404198
   languageName: node
   linkType: hard
 
@@ -6088,7 +6064,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.14.39, esbuild@npm:^0.14.47, esbuild@npm:^0.14.49":
+"esbuild@npm:^0.14.39, esbuild@npm:^0.14.47":
   version: 0.14.50
   resolution: "esbuild@npm:0.14.50"
   dependencies:
@@ -10273,7 +10249,7 @@ __metadata:
     pathe: ^0.3.3
     rimraf: ^3.0.2
     typescript: ^4.7.4
-    unbuild: ^0.7.6
+    unbuild: ^0.8.0
     vitest: ~0.19.1
     vue-tsc: ^0.40.0
   languageName: unknown
@@ -12010,7 +11986,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.75.6, rollup@npm:^2.77.0":
+"rollup@npm:^2.75.6":
   version: 2.77.0
   resolution: "rollup@npm:2.77.0"
   dependencies:
@@ -13279,12 +13255,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.7.6":
-  version: 0.7.6
-  resolution: "unbuild@npm:0.7.6"
+"unbuild@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "unbuild@npm:0.8.0"
   dependencies:
     "@rollup/plugin-alias": ^3.1.9
-    "@rollup/plugin-commonjs": ^22.0.1
+    "@rollup/plugin-commonjs": ^22.0.2
     "@rollup/plugin-json": ^4.1.0
     "@rollup/plugin-node-resolve": ^13.3.0
     "@rollup/plugin-replace": ^4.0.0
@@ -13292,27 +13268,27 @@ __metadata:
     chalk: ^5.0.1
     consola: ^2.15.3
     defu: ^6.0.0
-    esbuild: ^0.14.49
+    esbuild: ^0.15.0
     hookable: ^5.1.1
     jiti: ^1.14.0
     magic-string: ^0.26.2
     mkdirp: ^1.0.4
     mkdist: ^0.3.13
-    mlly: ^0.5.4
+    mlly: ^0.5.7
     mri: ^1.2.0
-    pathe: ^0.3.2
+    pathe: ^0.3.3
     pkg-types: ^0.3.3
     pretty-bytes: ^6.0.0
     rimraf: ^3.0.2
-    rollup: ^2.77.0
+    rollup: ^2.77.2
     rollup-plugin-dts: ^4.2.2
     rollup-plugin-esbuild: ^4.9.1
-    scule: ^0.2.1
+    scule: ^0.3.2
     typescript: ^4.7.4
-    untyped: ^0.4.4
+    untyped: ^0.4.5
   bin:
     unbuild: dist/cli.mjs
-  checksum: 105e3d26afaf200c80b2e668ef2704aafae4be97627418f85a5eed515094aba1d6f95e54d2e1eb437c4d7d2d97d1e73a4d8dff280efd1867b476469ff52db3fe
+  checksum: edd13932e235e0ef56fa45f840520eeb9f97f2df2c4786865db8ca0d894f323754f8fea2a8889a0dd24fd1aac2bf079ffdb96f0dc26c35855f96523d9dd3c310
   languageName: node
   linkType: hard
 
@@ -13563,18 +13539,6 @@ __metadata:
     ufo: ^0.8.5
     ws: ^8.8.1
   checksum: 2cb0c9b4e5561fbce1a30d0ff724758fed7887f7db9f5d905a3bebb42c7b77b763bf672e9b11cbb82df6bcc6e37d3e2ed8b9bc7214cbb011541ed81a4779b931
-  languageName: node
-  linkType: hard
-
-"untyped@npm:^0.4.4":
-  version: 0.4.4
-  resolution: "untyped@npm:0.4.4"
-  dependencies:
-    "@babel/core": ^7.17.7
-    "@babel/standalone": ^7.17.7
-    "@babel/types": ^7.17.0
-    scule: ^0.2.1
-  checksum: 674506884b49d8648a96ac54791f7f29b1d14c28e3efc5fdd973c4a44ae6d3ad38a0b8ad0198e70fa223760491309822fb403e7a0bc6b28aa43eca31b717305e
   languageName: node
   linkType: hard
 
