@@ -1,13 +1,12 @@
-import { ClientManifest, createRenderer, ResourceMeta } from 'vue-bundle-renderer/runtime'
-import type { RenderHandler, RenderResponse } from 'nitropack'
+import { createRenderer } from 'vue-bundle-renderer/runtime'
+import type { RenderResponse } from 'nitropack'
 import type { Manifest } from 'vite'
-import { CompatibilityEvent, getQuery } from 'h3'
+import { getQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
-import type { NuxtApp } from '#app'
-
-// @ts-ignore
 import { useRuntimeConfig, useNitroApp, defineRenderHandler as _defineRenderHandler } from '#internal/nitro'
+import type { NuxtApp } from '@nuxt/schema'
+
 // @ts-ignore
 import { buildAssetsURL } from '#paths'
 
@@ -94,14 +93,14 @@ const getSPARenderer = lazyCachedFunction(async () => {
       data: {},
       state: {}
     }
-    ssrContext.renderMeta = ssrContext.renderMeta ?? (() => ({}))
+    ssrContext!.renderMeta = ssrContext!.renderMeta ?? (() => ({}))
     return Promise.resolve(result)
   }
 
   return { renderToString }
 })
 
-export default defineRenderHandler(async (event) => {
+export default _defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error> : null
   const url = ssrError?.url as string || event.req.url!
@@ -115,8 +114,8 @@ export default defineRenderHandler(async (event) => {
     runtimeConfig: useRuntimeConfig(),
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
     error: !!ssrError,
-    nuxt: undefined, /* NuxtApp */
-    payload: ssrError ? { error: ssrError } : undefined
+    nuxt: undefined!, /* NuxtApp */
+    payload: ssrError ? { error: ssrError } as NuxtSSRContext['payload'] : undefined!
   }
 
   // Render app

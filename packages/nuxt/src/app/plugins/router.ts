@@ -1,9 +1,8 @@
 import { reactive, h } from 'vue'
 import { parseURL, parseQuery, withoutBase, isEqual, joinURL } from 'ufo'
 import { createError } from 'h3'
-import { defineNuxtPlugin } from '..'
+import { defineNuxtPlugin, clearError, navigateTo, showError, useRuntimeConfig } from '..'
 import { callWithNuxt } from '../nuxt'
-import { clearError, navigateTo, showError, useRuntimeConfig } from '#app'
 // @ts-ignore
 import { globalMiddleware } from '#build/middleware'
 

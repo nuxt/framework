@@ -1,8 +1,8 @@
 import { withQuery } from 'ufo'
 import type { NitroErrorHandler } from 'nitropack'
 // @ts-ignore TODO
+import type { NuxtApp } from '@nuxt/schema'
 import { normalizeError, isJsonRequest } from '#internal/nitro/utils'
-import { NuxtApp } from '#app'
 
 export default <NitroErrorHandler> async function errorhandler (_error, event) {
   // Parse and normalize error

@@ -24,8 +24,8 @@ export type NuxtLinkProps = {
   custom?: boolean
 
   // Attributes
-  target?: string
-  rel?: string
+  target?: string | null
+  rel?: string | null
   noRel?: boolean
 
   // Styling

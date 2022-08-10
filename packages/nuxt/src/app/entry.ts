@@ -35,7 +35,7 @@ if (process.server) {
       await nuxt.hooks.callHook('app:created', vueApp)
     } catch (err) {
       await nuxt.callHook('app:error', err)
-      nuxt.payload.error = nuxt.payload.error || err
+      nuxt.payload.error = (nuxt.payload.error || err) as any
     }
 
     return vueApp
@@ -66,7 +66,7 @@ if (process.client) {
       await applyPlugins(nuxt, plugins)
     } catch (err) {
       await nuxt.callHook('app:error', err)
-      nuxt.payload.error = nuxt.payload.error || err
+      nuxt.payload.error = (nuxt.payload.error || err) as any
     }
 
     try {
@@ -77,7 +77,7 @@ if (process.client) {
       await nextTick()
     } catch (err) {
       await nuxt.callHook('app:error', err)
-      nuxt.payload.error = nuxt.payload.error || err
+      nuxt.payload.error = (nuxt.payload.error || err) as any
     }
   }
 
