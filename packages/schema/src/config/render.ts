@@ -31,7 +31,7 @@ export default {
    * Whether to enable rendering of HTML - either dynamically (in server mode) or at generate time.
    *
    * This option is automatically set based on global SSR value if not provided.
-   * This can be useful to dynamically enable/disable SSR on runtime after image builds
+   * This can be useful to dynamically enable/disable SSR at runtime after image builds
    * (with docker, for example).
    */
   ssr: undefined,
