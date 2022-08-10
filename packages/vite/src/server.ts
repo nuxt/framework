@@ -78,7 +78,7 @@ export async function buildServer (ctx: ViteBuildContext) {
           entryFileNames: 'server.mjs',
           preferConst: true,
           // TODO: https://github.com/vitejs/vite/pull/8641
-          inlineDynamicImports: false,
+          inlineDynamicImports: !ctx.nuxt.options.experimental.viteServerDynamicImports,
           format: 'module'
         },
         onwarn (warning, rollupWarn) {

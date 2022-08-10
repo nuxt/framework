@@ -100,13 +100,15 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
     ...nuxt.options.plugins.map(normalizePlugin)
   ]
   for (const config of nuxt.options._layers.map(layer => layer.config)) {
-    app.plugins.push(...[
-      ...(config.plugins || []),
-      ...await resolveFiles(config.srcDir, [
-        'plugins/*.{ts,js,mjs,cjs,mts,cts}',
-        'plugins/*/index.*{ts,js,mjs,cjs,mts,cts}'
-      ])
-    ].map(plugin => normalizePlugin(plugin as NuxtPlugin)))
+    if (config) {
+      app.plugins.push(...[
+        ...(config.plugins || []),
+        ...await resolveFiles(config.srcDir, [
+          'plugins/*.{ts,js,mjs,cjs,mts,cts}',
+          'plugins/*/index.*{ts,js,mjs,cjs,mts,cts}'
+        ])
+      ].map(plugin => normalizePlugin(plugin as NuxtPlugin)))
+    }
   }
 
   // Normalize and de-duplicate plugins and middleware

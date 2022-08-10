@@ -30,5 +30,13 @@ export default {
      * @see https://github.com/nuxt/framework/pull/5750
      */
     treeshakeClientOnly: false,
+
+    /**
+     * Split server bundle into multiple chunks and dynamically import them
+     *
+     *
+     * @see https://github.com/nuxt/framework/issues/6432
+     */
+     viteServerDynamicImports: true,
   }
 }
