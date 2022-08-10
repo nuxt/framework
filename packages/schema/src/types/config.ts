@@ -12,9 +12,13 @@ export interface NuxtConfig extends DeepPartial<Omit<ConfigSchema, 'vite'>> {
   [key: string]: any
 }
 
+export interface LayerOptions extends ResolvedConfig<NuxtConfig> {
+  config: NuxtConfig
+}
+
 /** Normalized Nuxt options available as `nuxt.options.*` */
 export interface NuxtOptions extends ConfigSchema {
-  _layers: ResolvedConfig<NuxtConfig>[]
+  _layers: LayerOptions[]
 }
 
 type RuntimeConfigNamespace = Record<string, any>

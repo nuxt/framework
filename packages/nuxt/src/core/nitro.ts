@@ -22,7 +22,7 @@ export async function initNitro (nuxt: Nuxt) {
     dev: nuxt.options.dev,
     preset: nuxt.options.dev ? 'nitro-dev' : undefined,
     buildDir: nuxt.options.buildDir,
-    scanDirs: nuxt.options._layers.map(layer => join(layer.config!.srcDir!, 'server')),
+    scanDirs: nuxt.options._layers.map(layer => layer.config.srcDir).filter(Boolean).map(dir => join(dir!, 'server')),
     renderer: resolve(distDir, 'core/runtime/nitro/renderer'),
     errorHandler: resolve(distDir, 'core/runtime/nitro/error'),
     nodeModulesDirs: nuxt.options.modulesDir,
@@ -43,7 +43,7 @@ export async function initNitro (nuxt: Nuxt) {
     publicAssets: [
       { dir: resolve(nuxt.options.buildDir, 'dist/client') },
       ...nuxt.options._layers
-        .map(layer => join(layer.config!.srcDir!, layer.config!.dir?.public || 'public'))
+        .map(layer => join(layer.config.srcDir!, layer.config.dir?.public || 'public'))
         .filter(dir => existsSync(dir))
         .map(dir => ({ dir }))
     ],

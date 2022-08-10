@@ -1,7 +1,7 @@
 import { promises as fsp } from 'node:fs'
 import { dirname, resolve } from 'pathe'
 import defu from 'defu'
-import type { Nuxt, NuxtApp, NuxtConfig, NuxtPlugin, NuxtTemplate } from '@nuxt/schema'
+import type { Nuxt, NuxtApp, NuxtPlugin, NuxtTemplate } from '@nuxt/schema'
 import { findPath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils, tryResolveModule, resolvePath, resolveAlias } from '@nuxt/kit'
 
 import * as defaultTemplates from './templates'
@@ -14,10 +14,6 @@ export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp 
     plugins: [],
     templates: []
   } as unknown as NuxtApp) as NuxtApp
-}
-
-function getLayerConfigs (nuxt: Nuxt) {
-  return nuxt.options._layers.map(layer => layer.config).filter(Boolean) as NuxtConfig[]
 }
 
 export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
@@ -62,7 +58,7 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   // Resolve main (app.vue)
   if (!app.mainComponent) {
     app.mainComponent = await findPath(
-      nuxt.options._layers.flatMap(layer => [`${layer.config!.srcDir}/App`, `${layer.config!.srcDir}/app`])
+      nuxt.options._layers.flatMap(layer => [`${layer.config.srcDir}/App`, `${layer.config.srcDir}/app`])
     )
   }
   if (!app.mainComponent) {
@@ -81,7 +77,7 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Resolve layouts/ from all config layers
   app.layouts = {}
-  for (const config of getLayerConfigs(nuxt)) {
+  for (const config of nuxt.options._layers.map(layer => layer.config)) {
     if (!config.srcDir) { continue }
     const layoutFiles = await resolveFiles(config.srcDir, `${config.dir?.layouts || 'layouts'}/*{${nuxt.options.extensions.join(',')}}`)
     for (const file of layoutFiles) {
@@ -92,7 +88,7 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Resolve middleware/ from all config layers
   app.middleware = []
-  for (const config of getLayerConfigs(nuxt)) {
+  for (const config of nuxt.options._layers.map(layer => layer.config)) {
     if (!config.srcDir) { continue }
     const middlewareFiles = await resolveFiles(config.srcDir, `${config.dir?.middleware || 'middleware'}/*{${nuxt.options.extensions.join(',')}}`)
     app.middleware.push(...middlewareFiles.map((file) => {
@@ -105,7 +101,7 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   app.plugins = [
     ...nuxt.options.plugins.map(normalizePlugin)
   ]
-  for (const config of getLayerConfigs(nuxt)) {
+  for (const config of nuxt.options._layers.map(layer => layer.config)) {
     app.plugins.push(...[
       ...(config.plugins || []),
       ...config.srcDir
