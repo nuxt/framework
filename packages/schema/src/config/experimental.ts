@@ -9,7 +9,7 @@ export default {
     },
 
     /**
-     * Use vite-node for on-demand server chunk loading.
+     * Use `vite-node` for on-demand server chunk loading.
      */
     viteNode: process.env.EXPERIMENTAL_VITE_NODE ? true : false,
 
