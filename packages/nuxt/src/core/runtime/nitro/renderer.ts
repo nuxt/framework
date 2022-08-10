@@ -4,13 +4,16 @@ import type { Manifest } from 'vite'
 import { getQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
+import type { NuxtApp } from '#app'
 import { useRuntimeConfig, useNitroApp, defineRenderHandler as _defineRenderHandler } from '#internal/nitro'
-import type { NuxtApp } from '@nuxt/schema'
 
 // @ts-ignore
 import { buildAssetsURL } from '#paths'
 
-export type NuxtSSRContext = NuxtApp['ssrContext']
+type ArgumentType<T> = T extends (...args: infer U) => any ? U : never
+type Required<T> = T extends undefined ? never : T
+
+export type NuxtSSRContext = Required<NuxtApp['ssrContext']>
 
 export interface NuxtRenderContext {
   ssrContext: NuxtSSRContext
@@ -30,6 +33,8 @@ export interface NuxtRenderResponse {
   statusMessage?: string,
   headers: Record<string, string>
 }
+
+interface ClientManifest {}
 
 // @ts-ignore
 const getClientManifest: () => Promise<Manifest> = () => import('#build/dist/server/client.manifest.mjs')
@@ -111,7 +116,7 @@ export default _defineRenderHandler(async (event) => {
     event,
     req: event.req,
     res: event.res,
-    runtimeConfig: useRuntimeConfig(),
+    runtimeConfig: useRuntimeConfig() as NuxtSSRContext['runtimeConfig'],
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
     error: !!ssrError,
     nuxt: undefined!, /* NuxtApp */
@@ -121,12 +126,14 @@ export default _defineRenderHandler(async (event) => {
   // Render app
   const renderer = (process.env.NUXT_NO_SSR || ssrContext.noSSR) ? await getSPARenderer() : await getSSRRenderer()
   const _rendered = await renderer.renderToString(ssrContext).catch((err) => {
-    if (!ssrError) { throw err }
+    if (!ssrError) {
+      throw err
+    }
   })
 
   // Handle errors
   if (!_rendered) {
-    return
+    return undefined!
   }
   if (ssrContext.payload?.error && !ssrError) {
     throw ssrContext.payload.error

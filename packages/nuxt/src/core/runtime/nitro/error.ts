@@ -1,7 +1,5 @@
 import { withQuery } from 'ufo'
 import type { NitroErrorHandler } from 'nitropack'
-// @ts-ignore TODO
-import type { NuxtApp } from '@nuxt/schema'
 import { normalizeError, isJsonRequest } from '#internal/nitro/utils'
 
 export default <NitroErrorHandler> async function errorhandler (_error, event) {
@@ -9,7 +7,7 @@ export default <NitroErrorHandler> async function errorhandler (_error, event) {
   const { stack, statusCode, statusMessage, message } = normalizeError(_error)
 
   // Create an error object
-  const errorObject: Exclude<NuxtApp['payload']['error'], Error> = {
+  const errorObject = {
     url: event.req.url,
     statusCode,
     statusMessage,

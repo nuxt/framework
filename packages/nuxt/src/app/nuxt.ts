@@ -135,10 +135,9 @@ export function createNuxtApp (options: CreateOptions) {
     }
     // Expose to server renderer to create window.__NUXT__
     nuxtApp.ssrContext = nuxtApp.ssrContext || {} as any
-    if (nuxtApp.ssrContext.payload) {
+    if (nuxtApp.ssrContext?.payload) {
       Object.assign(nuxtApp.payload, nuxtApp.ssrContext.payload)
     }
-    nuxtApp.ssrContext.payload = nuxtApp.payload
 
     // Expose client runtime-config to the payload
     nuxtApp.payload.config = {

@@ -1,7 +1,7 @@
 import { promises as fsp } from 'node:fs'
 import { dirname, resolve } from 'pathe'
 import defu from 'defu'
-import type { Nuxt, NuxtApp, NuxtPlugin, NuxtTemplate } from '@nuxt/schema'
+import type { Nuxt, NuxtApp, NuxtConfig, NuxtPlugin, NuxtTemplate } from '@nuxt/schema'
 import { findPath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils, tryResolveModule, resolvePath, resolveAlias } from '@nuxt/kit'
 
 import * as defaultTemplates from './templates'
@@ -14,6 +14,10 @@ export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp 
     plugins: [],
     templates: []
   } as unknown as NuxtApp) as NuxtApp
+}
+
+function getLayerConfigs (nuxt: Nuxt) {
+  return nuxt.options._layers.map(layer => layer.config).filter(Boolean) as NuxtConfig[]
 }
 
 export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
@@ -77,7 +81,8 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Resolve layouts/ from all config layers
   app.layouts = {}
-  for (const config of nuxt.options._layers.map(layer => layer.config)) {
+  for (const config of getLayerConfigs(nuxt)) {
+    if (!config.srcDir) { continue }
     const layoutFiles = await resolveFiles(config.srcDir, `${config.dir?.layouts || 'layouts'}/*{${nuxt.options.extensions.join(',')}}`)
     for (const file of layoutFiles) {
       const name = getNameFromPath(file)
@@ -87,7 +92,8 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Resolve middleware/ from all config layers
   app.middleware = []
-  for (const config of nuxt.options._layers.map(layer => layer.config)) {
+  for (const config of getLayerConfigs(nuxt)) {
+    if (!config.srcDir) { continue }
     const middlewareFiles = await resolveFiles(config.srcDir, `${config.dir?.middleware || 'middleware'}/*{${nuxt.options.extensions.join(',')}}`)
     app.middleware.push(...middlewareFiles.map((file) => {
       const name = getNameFromPath(file)
@@ -99,16 +105,16 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   app.plugins = [
     ...nuxt.options.plugins.map(normalizePlugin)
   ]
-  for (const config of nuxt.options._layers.map(layer => layer.config)) {
-    if (config) {
-      app.plugins.push(...[
-        ...(config.plugins || []),
-        ...await resolveFiles(config.srcDir, [
+  for (const config of getLayerConfigs(nuxt)) {
+    app.plugins.push(...[
+      ...(config.plugins || []),
+      ...config.srcDir
+        ? await resolveFiles(config.srcDir, [
           'plugins/*.{ts,js,mjs,cjs,mts,cts}',
           'plugins/*/index.*{ts,js,mjs,cjs,mts,cts}'
         ])
-      ].map(plugin => normalizePlugin(plugin as NuxtPlugin)))
-    }
+        : []
+    ].map(plugin => normalizePlugin(plugin as NuxtPlugin)))
   }
 
   // Normalize and de-duplicate plugins and middleware
