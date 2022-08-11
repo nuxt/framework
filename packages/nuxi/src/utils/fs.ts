@@ -24,6 +24,11 @@ export async function rmRecursive (paths: string[]) {
   }))
 }
 
+export async function touchFile (path: string) {
+  const time = new Date()
+  await fsp.utimes(path, time, time).catch(() => {})
+}
+
 export async function cleanupNuxtDirs (rootDir: string) {
   consola.info('Cleaning up generated nuxt files and caches...')
 
