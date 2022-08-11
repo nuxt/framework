@@ -5,7 +5,7 @@ on:
     paths-ignore:
       - 'docs/**'
     branches:
-      - main
+      - chore/test-npm
   pull_request:
     paths-ignore:
       - 'docs/**'
