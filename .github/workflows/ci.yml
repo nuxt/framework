@@ -27,6 +27,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: 'yarn'
+      - name: npm version
+        run: npm --version
 
       - name: Install dependencies
         run: yarn --immutable
