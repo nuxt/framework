@@ -9880,7 +9880,7 @@ __metadata:
     pathe: ^0.3.4
     rimraf: ^3.0.2
     typescript: ^4.7.4
-    unbuild: ^0.8.7
+    unbuild: ^0.8.8
     vitest: ~0.19.1
     vue-tsc: ^0.39.5
   languageName: unknown
@@ -12854,9 +12854,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.8.7":
-  version: 0.8.7
-  resolution: "unbuild@npm:0.8.7"
+"unbuild@npm:^0.8.8":
+  version: 0.8.8
+  resolution: "unbuild@npm:0.8.8"
   dependencies:
     "@rollup/plugin-alias": ^3.1.9
     "@rollup/plugin-commonjs": ^22.0.2
@@ -12888,7 +12888,7 @@ __metadata:
     untyped: ^0.4.5
   bin:
     unbuild: dist/cli.mjs
-  checksum: 4b279caa3dbee752c2ba82e54bb08f2b415f9e4f00046ba0d24853f0b26fad5ae19eb59400460958cee530072822ab56bd5a5f8ab8f7272e8435915b8c771cba
+  checksum: 892deeca45684c62917b3c84ed4273826e256f69b983042bee06e8a28829661b1c2c5ee554b70c6c3b6b4f0aa26beeaa8adf30e7e97a2be0a65017518ac44830
   languageName: node
   linkType: hard
 
