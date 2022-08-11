@@ -18,8 +18,9 @@ export async function clearDir (path: string) {
 }
 
 export async function rmRecursive (paths: string[]) {
-  await Promise.all(paths.map(async (path) => {
-    await fsp.rm(path, { recursive: true, force: true })
+  await Promise.all(paths.filter(p => typeof p === 'string').map(async (path) => {
+    consola.debug('Removing recursive path', path)
+    await fsp.rm(path, { recursive: true, force: true }).catch(() => {})
   }))
 }
 

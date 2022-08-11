@@ -33,14 +33,18 @@ export default defineNuxtCommand({
     const packageManagerVersion = execSync(`${packageManager} --version`).toString('utf8').trim()
     consola.info('Package Manager:', packageManager, packageManagerVersion)
 
-    const currentVersion = await getNuxtVersion(rootDir)
-    consola.info('Current nuxt version:', currentVersion)
+    const currentVersion = await getNuxtVersion(rootDir).catch(() => '0.0.0')
+    if (currentVersion !== '0.0.0') {
+      consola.info('Current nuxt version:', currentVersion)
+    } else {
+      consola.info('No installed nuxt version found!')
+    }
 
     if (args.force || args.f) {
       consola.info('Removing lock-file and node_modules...')
       await rmRecursive([
         packageManagerLocks[packageManager],
-        fsp.rm('node_modules', { recursive: true })
+        resolve(rootDir, 'node_modules')
       ])
       await cleanupNuxtDirs(rootDir)
       consola.info('Installing nuxt...')
