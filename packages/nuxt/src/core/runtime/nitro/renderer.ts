@@ -162,7 +162,7 @@ export default defineRenderHandler(async (event) => {
 
   // Allow hooking into the rendered result
   const nitroApp = useNitroApp()
-  await nitroApp.hooks.callHook('render:html', htmlContext)
+  await nitroApp.hooks.callHook('render:html', htmlContext, { event })
 
   // Construct HTML response
   const response: RenderResponse = {
