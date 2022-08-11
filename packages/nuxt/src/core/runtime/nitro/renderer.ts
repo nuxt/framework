@@ -124,6 +124,7 @@ export default defineRenderHandler(async (event) => {
   const _rendered = await renderer.renderToString(ssrContext).catch((err) => {
     if (!ssrError) { throw err }
   })
+  await ssrContext.nuxt?.hooks.callHook('app:rendered', { ssrContext })
 
   // Handle errors
   if (!_rendered) {
@@ -167,7 +168,6 @@ export default defineRenderHandler(async (event) => {
 
   // Allow hooking into the rendered result
   const nitroApp = useNitroApp()
-  await ssrContext.nuxt?.hooks.callHook('app:rendered', rendered)
   await nitroApp.hooks.callHook('nuxt:app:rendered', rendered)
 
   // Construct HTML response
