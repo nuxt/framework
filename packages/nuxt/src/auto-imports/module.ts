@@ -47,7 +47,6 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     // composables/ dirs from all layers
     let composablesDirs: string[] = []
     for (const layer of nuxt.options._layers) {
-      if (!layer.config.srcDir) { continue }
       composablesDirs.push(resolve(layer.config.srcDir, 'composables'))
       for (const dir of (layer.config.autoImports?.dirs ?? [])) {
         if (!dir) {

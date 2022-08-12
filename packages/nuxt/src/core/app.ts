@@ -78,7 +78,6 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   // Resolve layouts/ from all config layers
   app.layouts = {}
   for (const config of nuxt.options._layers.map(layer => layer.config)) {
-    if (!config.srcDir) { continue }
     const layoutFiles = await resolveFiles(config.srcDir, `${config.dir?.layouts || 'layouts'}/*{${nuxt.options.extensions.join(',')}}`)
     for (const file of layoutFiles) {
       const name = getNameFromPath(file)
@@ -89,7 +88,6 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   // Resolve middleware/ from all config layers
   app.middleware = []
   for (const config of nuxt.options._layers.map(layer => layer.config)) {
-    if (!config.srcDir) { continue }
     const middlewareFiles = await resolveFiles(config.srcDir, `${config.dir?.middleware || 'middleware'}/*{${nuxt.options.extensions.join(',')}}`)
     app.middleware.push(...middlewareFiles.map((file) => {
       const name = getNameFromPath(file)

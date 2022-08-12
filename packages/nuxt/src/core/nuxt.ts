@@ -81,7 +81,7 @@ async function initNuxt (nuxt: Nuxt) {
 
   // Transpile layers within node_modules
   nuxt.options.build.transpile.push(
-    ...nuxt.options._layers.filter(i => i.cwd && i.cwd.includes('node_modules')).map(i => i.cwd as string)
+    ...nuxt.options._layers.filter(i => i.cwd.includes('node_modules')).map(i => i.cwd as string)
   )
 
   // Init user modules

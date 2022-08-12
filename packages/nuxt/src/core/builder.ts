@@ -38,7 +38,7 @@ export async function build (nuxt: Nuxt) {
 }
 
 function watch (nuxt: Nuxt) {
-  const watcher = chokidar.watch(nuxt.options._layers.map(i => i.config?.srcDir as string).filter(Boolean), {
+  const watcher = chokidar.watch(nuxt.options._layers.map(i => i.config.srcDir as string).filter(Boolean), {
     ...nuxt.options.watchers.chokidar,
     cwd: nuxt.options.srcDir,
     ignoreInitial: true,

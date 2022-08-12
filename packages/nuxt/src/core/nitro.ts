@@ -43,7 +43,7 @@ export async function initNitro (nuxt: Nuxt) {
     publicAssets: [
       { dir: resolve(nuxt.options.buildDir, 'dist/client') },
       ...nuxt.options._layers
-        .map(layer => join(layer.config.srcDir!, layer.config.dir?.public || 'public'))
+        .map(layer => join(layer.config.srcDir, layer.config.dir?.public || 'public'))
         .filter(dir => existsSync(dir))
         .map(dir => ({ dir }))
     ],
