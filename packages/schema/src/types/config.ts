@@ -1,5 +1,4 @@
 import { ConfigSchema } from '../../schema/config'
-import type { ResolvedConfig } from 'c12'
 import type { UserConfig as ViteUserConfig } from 'vite'
 import type { Options as VuePluginOptions } from '@vitejs/plugin-vue'
 
