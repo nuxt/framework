@@ -38,6 +38,23 @@ export interface RuntimeNuxtHooks {
   'vue:error': (...args: Parameters<Parameters<typeof onErrorCaptured>[0]>) => HookResult
 }
 
+export interface NuxtSSRContext extends SSRContext {
+  url: string
+  event: CompatibilityEvent
+  /** @deprecated Use `event` instead. */
+  req?: CompatibilityEvent['req']
+  /** @deprecated Use `event` instead. */
+  res?: CompatibilityEvent['res']
+  runtimeConfig: RuntimeConfig
+  noSSR: boolean
+  /** whether we are rendering an SSR error */
+  error?: boolean
+  nuxt: _NuxtApp
+  payload: _NuxtApp['payload']
+  teleports?: Record<string, string>
+  renderMeta?: () => Promise<NuxtMeta> | NuxtMeta
+}
+
 interface _NuxtApp {
   vueApp: App<Element>
   globalName: string
@@ -50,22 +67,7 @@ interface _NuxtApp {
 
   _asyncDataPromises: Record<string, Promise<any> | undefined>
 
-  ssrContext?: SSRContext & {
-    url: string
-    event: CompatibilityEvent
-    /** @deprecated Use `event` instead. */
-    req?: CompatibilityEvent['req']
-    /** @deprecated Use `event` instead. */
-    res?: CompatibilityEvent['res']
-    runtimeConfig: RuntimeConfig
-    noSSR: boolean
-    /** whether we are rendering an SSR error */
-    error?: boolean
-    nuxt: _NuxtApp
-    payload: _NuxtApp['payload']
-    teleports?: Record<string, string>
-    renderMeta?: () => Promise<NuxtMeta> | NuxtMeta
-  }
+  ssrContext?: NuxtSSRContext
   payload: {
     serverRendered?: boolean
     data: Record<string, any>

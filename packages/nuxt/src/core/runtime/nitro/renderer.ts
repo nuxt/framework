@@ -4,16 +4,11 @@ import type { Manifest } from 'vite'
 import { getQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
-import type { NuxtApp } from '#app'
+import type { NuxtApp, NuxtSSRContext } from '#app'
 import { useRuntimeConfig, useNitroApp, defineRenderHandler as _defineRenderHandler } from '#internal/nitro'
 
 // @ts-ignore
 import { buildAssetsURL } from '#paths'
-
-type ArgumentType<T> = T extends (...args: infer U) => any ? U : never
-type Required<T> = T extends undefined ? never : T
-
-export type NuxtSSRContext = Required<NuxtApp['ssrContext']>
 
 export interface NuxtRenderHTMLContext {
   htmlAttrs: string[]
@@ -59,7 +54,8 @@ const getSSRRenderer = lazyCachedFunction(async () => {
   // Create renderer
   const renderer = createRenderer(createSSRApp, options)
 
-  async function renderToString (input: ArgumentType<typeof _renderToString>[0], context: ArgumentType<typeof _renderToString>[1]) {
+  type RenderToStringParams = Parameters<typeof _renderToString>
+  async function renderToString (input: RenderToStringParams[0], context: RenderToStringParams[1]) {
     const html = await _renderToString(input, context)
     // In development with vite-node, the manifest is on-demand and will be available after rendering
     if (process.dev && process.env.NUXT_VITE_NODE_OPTIONS) {
