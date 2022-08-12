@@ -4,10 +4,8 @@ import type { App, onErrorCaptured, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import type { RuntimeConfig } from '@nuxt/schema'
 import { getContext } from 'unctx'
-import type { SSRContext } from 'vue-bundle-renderer'
+import type { SSRContext } from 'vue-bundle-renderer/runtime'
 import type { CompatibilityEvent } from 'h3'
-// eslint-disable-next-line import/no-restricted-paths
-import type { NuxtRenderContext } from '../core/runtime/nitro/renderer'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
@@ -21,11 +19,13 @@ type NuxtMeta = {
 }
 
 type HookResult = Promise<void> | void
+
+type AppRenderedContext = { ssrContext: NuxtApp['ssrContext'] }
 export interface RuntimeNuxtHooks {
   'app:created': (app: App<Element>) => HookResult
   'app:beforeMount': (app: App<Element>) => HookResult
   'app:mounted': (app: App<Element>) => HookResult
-  'app:rendered': (ctx: NuxtRenderContext) => HookResult
+  'app:rendered': (ctx: AppRenderedContext) => HookResult
   'app:redirected': () => HookResult
   'app:suspense:resolve': (Component?: VNode) => HookResult
   'app:error': (err: any) => HookResult
@@ -59,7 +59,8 @@ interface _NuxtApp {
     res?: CompatibilityEvent['res']
     runtimeConfig: RuntimeConfig
     noSSR: boolean
-    error?: any
+    /** whether we are rendering an SSR error */
+    error?: boolean
     nuxt: _NuxtApp
     payload: _NuxtApp['payload']
     teleports?: Record<string, string>
@@ -70,6 +71,14 @@ interface _NuxtApp {
     data?: Record<string, any>
     state?: Record<string, any>
     rendered?: Function
+    error?: Error | {
+      url: string
+      statusCode: string
+      statusMessage: string
+      message: string
+      description: string
+      data?: any
+    }
     [key: string]: any
   }
 
@@ -119,19 +128,19 @@ export function createNuxtApp (options: CreateOptions) {
   defineGetter(nuxtApp.vueApp, '$nuxt', nuxtApp)
   defineGetter(nuxtApp.vueApp.config.globalProperties, '$nuxt', nuxtApp)
 
-  // Expose nuxt to the renderContext
-  if (nuxtApp.ssrContext) {
-    nuxtApp.ssrContext.nuxt = nuxtApp
-  }
-
   if (process.server) {
+    // Expose nuxt to the renderContext
+    if (nuxtApp.ssrContext) {
+      nuxtApp.ssrContext.nuxt = nuxtApp
+    }
     // Expose to server renderer to create window.__NUXT__
     nuxtApp.ssrContext = nuxtApp.ssrContext || {} as any
+    if (nuxtApp.ssrContext.payload) {
+      Object.assign(nuxtApp.payload, nuxtApp.ssrContext.payload)
+    }
     nuxtApp.ssrContext.payload = nuxtApp.payload
-  }
 
-  // Expose client runtime-config to the payload
-  if (process.server) {
+    // Expose client runtime-config to the payload
     nuxtApp.payload.config = {
       public: options.ssrContext.runtimeConfig.public,
       app: options.ssrContext.runtimeConfig.app
