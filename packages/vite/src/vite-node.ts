@@ -143,7 +143,7 @@ export async function initViteNodeServer (ctx: ViteBuildContext) {
   // Serialize and pass vite-node runtime options
   const viteNodeServerOptions = {
     baseURL: `${protocol}://${host}:${port}/__nuxt_vite_node__`,
-    root: ctx.nuxt.options.srcDir,
+    root: ctx.ssrServer.config.root,
     entryPath,
     base: ctx.ssrServer.config.base || '/_nuxt/'
   }
