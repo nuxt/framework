@@ -42,12 +42,12 @@
     "nuxi": "link:./packages/nuxi",
     "nuxt": "link:./packages/nuxt",
     "nuxt3": "link:./packages/nuxt",
-    "vite": "~3.0.6",
+    "vite": "~3.0.7",
     "unbuild": "^0.8.8"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^10.0.0",
-    "@types/node": "^16.11.47",
+    "@types/node": "^16.11.48",
     "@types/rimraf": "^3",
     "@unocss/reset": "^0.45.6",
     "case-police": "^0.5.7",
@@ -58,7 +58,7 @@
     "expect-type": "^0.13.0",
     "globby": "^13.1.2",
     "jiti": "^1.14.0",
-    "lerna": "^5.4.0",
+    "lerna": "^5.4.1",
     "markdownlint-cli": "^0.32.1",
     "pathe": "^0.3.4",
     "rimraf": "^3.0.2",
