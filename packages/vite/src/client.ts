@@ -38,14 +38,6 @@ export async function buildClient (ctx: ViteBuildContext) {
       }
     },
     build: {
-      rollupOptions: {
-        output: {
-          // https://github.com/vitejs/vite/tree/main/packages/vite/src/node/build.ts#L464-L478
-          assetFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].[ext]')),
-          chunkFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].mjs')),
-          entryFileNames: ctx.nuxt.options.dev ? 'entry.mjs' : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].mjs'))
-        }
-      },
       manifest: true,
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client')
     },
@@ -54,7 +46,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       vuePlugin(ctx.config.vue),
       viteJsxPlugin(),
       devStyleSSRPlugin({
-        rootDir: ctx.nuxt.options.rootDir,
+        srcDir: ctx.nuxt.options.srcDir,
         buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
       }),
       viteNodePlugin(ctx)
@@ -70,6 +62,16 @@ export async function buildClient (ctx: ViteBuildContext) {
   if (!ctx.nuxt.options.dev) {
     clientConfig.server.hmr = false
   }
+
+  // We want to respect users' own rollup output options
+  ctx.config.build.rollupOptions = defu(ctx.config.build.rollupOptions, {
+    output: {
+      // https://github.com/vitejs/vite/tree/main/packages/vite/src/node/build.ts#L464-L478
+      assetFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].[ext]')),
+      chunkFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].js')),
+      entryFileNames: ctx.nuxt.options.dev ? 'entry.js' : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].js'))
+    }
+  })
 
   if (clientConfig.server.hmr !== false) {
     const hmrPortDefault = 24678 // Vite's default HMR port

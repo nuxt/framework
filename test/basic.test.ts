@@ -44,6 +44,9 @@ describe('pages', () => {
     expect(html).toContain('Composable | template: auto imported from ~/components/template.ts')
     // should import components
     expect(html).toContain('This is a custom component with a named export.')
+    // should apply attributes to client-only components
+    expect(html).toContain('<div style="color:red;" class="client-only"></div>')
+    // should register global components automatically
     expect(html).toContain('global component registered automatically')
     expect(html).toContain('global component via suffix')
 
@@ -131,21 +134,25 @@ describe('pages', () => {
 
 describe('head tags', () => {
   it('should render tags', async () => {
-    const html = await $fetch('/head')
-    expect(html).toContain('<title>Using a dynamic component - Fixture</title>')
-    expect(html).not.toContain('<meta name="description" content="first">')
-    expect(html).toContain('<meta charset="utf-16">')
-    expect(html).not.toContain('<meta charset="utf-8">')
-    expect(html).toContain('<meta name="description" content="overriding with an inline useHead call">')
-    expect(html).toMatch(/<html[^>]*class="html-attrs-test"/)
-    expect(html).toMatch(/<body[^>]*class="body-attrs-test"/)
-    expect(html).toContain('script>console.log("works with useMeta too")</script>')
+    const headHtml = await $fetch('/head')
+    expect(headHtml).toContain('<title>Using a dynamic component - Title Template Fn Change</title>')
+    expect(headHtml).not.toContain('<meta name="description" content="first">')
+    expect(headHtml).toContain('<meta charset="utf-16">')
+    expect(headHtml.match('meta charset').length).toEqual(1)
+    expect(headHtml).toContain('<meta name="viewport" content="width=1024, initial-scale=1">')
+    expect(headHtml.match('meta name="viewport"').length).toEqual(1)
+    expect(headHtml).not.toContain('<meta charset="utf-8">')
+    expect(headHtml).toContain('<meta name="description" content="overriding with an inline useHead call">')
+    expect(headHtml).toMatch(/<html[^>]*class="html-attrs-test"/)
+    expect(headHtml).toMatch(/<body[^>]*class="body-attrs-test"/)
+    expect(headHtml).toContain('script>console.log("works with useMeta too")</script>')
+    expect(headHtml).toContain('<script src="https://a-body-appended-script.com" data-meta-body="true"></script></body>')
 
-    const index = await $fetch('/')
+    const indexHtml = await $fetch('/')
     // should render charset by default
-    expect(index).toContain('<meta charset="utf-8">')
+    expect(indexHtml).toContain('<meta charset="utf-8">')
     // should render <Head> components
-    expect(index).toContain('<title>Basic fixture - Fixture</title>')
+    expect(indexHtml).toContain('<title>Basic fixture</title>')
   })
 
   // TODO: Doesn't adds header in test environment
@@ -340,6 +347,9 @@ describe('automatically keyed composables', () => {
     expect(html).toContain('true')
     expect(html).not.toContain('false')
   })
+  it('should match server-generated keys', async () => {
+    await expectNoClientErrors('/keyed-composables')
+  })
 })
 
 describe('dynamic paths', () => {
@@ -365,7 +375,7 @@ describe('dynamic paths', () => {
 
     const html = await $fetch('/assets')
     const urls = Array.from(html.matchAll(/(href|src)="(.*?)"/g)).map(m => m[2])
-    const cssURL = urls.find(u => /_nuxt\/entry.*\.css$/.test(u))
+    const cssURL = urls.find(u => /_nuxt\/assets.*\.css$/.test(u))
     expect(cssURL).toBeDefined()
     const css = await $fetch(cssURL)
     const imageUrls = Array.from(css.matchAll(/url\(([^)]*)\)/g)).map(m => m[1].replace(/[-.][\w]{8}\./g, '.'))
