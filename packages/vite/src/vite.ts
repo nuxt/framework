@@ -1,5 +1,5 @@
 import * as vite from 'vite'
-import { join, resolve } from 'pathe'
+import { join } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
 import { logger, isIgnored } from '@nuxt/kit'

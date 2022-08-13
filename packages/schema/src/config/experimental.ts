@@ -29,7 +29,7 @@ export default {
     /**
      * Use vite-node for on-demand server chunk loading
      *
-     * @deprecated use `vite.serverBundler: 'vite-node'`
+     * @deprecated use `vite.devBundler: 'vite-node'`
      */
     viteNode: {
       $resolve: (val) => {
@@ -37,7 +37,7 @@ export default {
         if (val === true) {
           console.warn('`vite-node` is now enabled by default. You can safely remove `experimental.viteNode` from your config.')
         } else if (val === false) {
-          console.warn('`vite-node` is now enabled by default. To disable it, set `vite.serverBundler` to `legacy` instead.')
+          console.warn('`vite-node` is now enabled by default. To disable it, set `vite.devBundler` to `legacy` instead.')
         }
         return val ?? true
       }

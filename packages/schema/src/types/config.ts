@@ -49,5 +49,5 @@ export interface ViteConfig extends ViteUserConfig {
    * Bundler for dev time server-side rendering.
    * @default 'vite-node'
    */
-  serverBundler?: 'vite-node' | 'legacy'
+  devBundler?: 'vite-node' | 'legacy'
 }
