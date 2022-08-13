@@ -5,7 +5,7 @@ export default {
      * Set to true to generate an async entry point for the Vue bundle (for module federation support).
      */
     asyncEntry: {
-      $resolve: (val, get) => val ?? (get('dev') && get('experimental.viteNode')) ?? false
+      $resolve: (val, get) => val ?? false
     },
 
     /**

@@ -28,10 +28,9 @@ export interface ViteBuildContext {
 }
 
 export async function bundle (nuxt: Nuxt) {
-  const entry = resolve(nuxt.options.appDir, nuxt.options.experimental.asyncEntry ? 'entry.async' : 'entry')
   const ctx: ViteBuildContext = {
     nuxt,
-    entry,
+    entry: null,
     config: vite.mergeConfig(
       {
         resolve: {
@@ -48,14 +47,12 @@ export async function bundle (nuxt: Nuxt) {
           }
         },
         optimizeDeps: {
-          entries: [entry],
           include: ['vue']
         },
         css: resolveCSSOptions(nuxt),
         build: {
           rollupOptions: {
-            output: { sanitizeFileName: sanitizeFilePath },
-            input: resolve(nuxt.options.appDir, 'entry')
+            output: { sanitizeFileName: sanitizeFilePath }
           },
           watch: {
             exclude: nuxt.options.ignore

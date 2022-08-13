@@ -16,7 +16,11 @@ import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
+  const useAsyncEntry = ctx.nuxt.options.experimental.asyncEntry
+  ctx.entry = resolve(ctx.nuxt.options.appDir, useAsyncEntry ? 'entry.async' : 'entry')
+
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
+    entry: ctx.entry,
     experimental: {
       renderBuiltUrl: (filename, { type, hostType }) => {
         if (hostType !== 'js' || type === 'asset') {
@@ -31,6 +35,9 @@ export async function buildClient (ctx: ViteBuildContext) {
       'process.client': true,
       'module.hot': false
     },
+    optimizeDeps: {
+      entries: [ctx.entry]
+    },
     resolve: {
       alias: {
         '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/client'),
@@ -39,7 +46,10 @@ export async function buildClient (ctx: ViteBuildContext) {
     },
     build: {
       manifest: true,
-      outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client')
+      outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client'),
+      rollupOptions: {
+        input: ctx.entry
+      }
     },
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'client'),

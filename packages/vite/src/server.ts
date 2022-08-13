@@ -11,8 +11,13 @@ import { cacheDirPlugin } from './plugins/cache-dir'
 import { initViteNodeServer } from './vite-node'
 
 export async function buildServer (ctx: ViteBuildContext) {
+  const useAsyncEntry = ctx.nuxt.options.experimental.asyncEntry ||
+   (ctx.nuxt.options.vite.serverBundler === 'vite-node' && ctx.nuxt.options.dev)
+  ctx.entry = resolve(ctx.nuxt.options.appDir, useAsyncEntry ? 'entry.async' : 'entry')
+
   const _resolve = (id: string) => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
+    entry: ctx.entry,
     base: ctx.nuxt.options.dev
       ? joinURL(ctx.nuxt.options.app.baseURL.replace(/^\.\//, '/') || '/', ctx.nuxt.options.app.buildAssetsDir)
       : undefined,
@@ -39,6 +44,9 @@ export async function buildServer (ctx: ViteBuildContext) {
       'typeof navigator': '"undefined"',
       'typeof location': '"undefined"',
       'typeof XMLHttpRequest': '"undefined"'
+    },
+    optimizeDeps: {
+      entries: [ctx.entry]
     },
     resolve: {
       alias: {
@@ -74,6 +82,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
+        input: ctx.entry,
         external: ['#internal/nitro', ...ctx.nuxt.options.experimental.externalVue ? ['vue', 'vue-router'] : []],
         output: {
           entryFileNames: 'server.mjs',
