@@ -16,6 +16,7 @@
     <CustomComponent />
     <component :is="`test${'-'.toString()}global`" />
     <component :is="`with${'-'.toString()}suffix`" />
+    <ClientWrapped ref="clientRef" style="color: red;" class="client-only" />
   </div>
 </template>
 
@@ -26,9 +27,14 @@ const config = useRuntimeConfig()
 
 // reset title template example
 useHead({
-  titleTemplate: null
+  titleTemplate: ''
 })
 
 const foo = useFoo()
 const bar = useBar()
+const clientRef = ref()
+
+onMounted(() => {
+  clientRef.value.exposedFunc()
+})
 </script>

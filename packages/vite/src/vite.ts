@@ -1,5 +1,5 @@
 import * as vite from 'vite'
-import { resolve } from 'pathe'
+import { join } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
 import { logger, isIgnored } from '@nuxt/kit'
@@ -16,11 +16,13 @@ import { composableKeysPlugin } from './plugins/composable-keys'
 export interface ViteOptions extends InlineConfig {
   vue?: Options
   ssr?: SSROptions
+  devBundler?: 'vite-node' | 'legacy'
 }
 
 export interface ViteBuildContext {
   nuxt: Nuxt
   config: ViteOptions
+  entry: string
   clientServer?: vite.ViteDevServer
   ssrServer?: vite.ViteDevServer
 }
@@ -28,6 +30,7 @@ export interface ViteBuildContext {
 export async function bundle (nuxt: Nuxt) {
   const ctx: ViteBuildContext = {
     nuxt,
+    entry: null,
     config: vite.mergeConfig(
       {
         resolve: {
@@ -38,23 +41,18 @@ export async function bundle (nuxt: Nuxt) {
             // will be filled in client/server configs
             '#build/plugins': '',
             '#build': nuxt.options.buildDir,
-            '/entry.mjs': resolve(nuxt.options.appDir, nuxt.options.experimental.asyncEntry ? 'entry.async' : 'entry'),
             'web-streams-polyfill/ponyfill/es2018': 'unenv/runtime/mock/empty',
             // Cannot destructure property 'AbortController' of ..
             'abort-controller': 'unenv/runtime/mock/empty'
           }
         },
         optimizeDeps: {
-          entries: [
-            resolve(nuxt.options.appDir, 'entry.ts')
-          ],
           include: ['vue']
         },
         css: resolveCSSOptions(nuxt),
         build: {
           rollupOptions: {
-            output: { sanitizeFileName: sanitizeFilePath },
-            input: resolve(nuxt.options.appDir, 'entry')
+            output: { sanitizeFileName: sanitizeFilePath }
           },
           watch: {
             exclude: nuxt.options.ignore
@@ -104,7 +102,7 @@ export async function bundle (nuxt: Nuxt) {
     })
 
     const start = Date.now()
-    warmupViteServer(server, ['/entry.mjs'])
+    warmupViteServer(server, [join('/@fs/', ctx.entry)])
       .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
       .catch(logger.error)
   })

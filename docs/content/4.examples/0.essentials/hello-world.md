@@ -1,8 +1,10 @@
 ---
-title: "Hello world"
+title: "Hello World"
 description: "A minimal Nuxt 3 application only requires the `app.vue` and `nuxt.config.js` files."
 toc: false
 ---
+
+A minimal Nuxt 3 application only requires the `app.vue` and `nuxt.config.js` files.
 
 ::ReadMore{link="/getting-started/quick-start"}
 ::

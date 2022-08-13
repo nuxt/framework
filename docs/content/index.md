@@ -107,7 +107,7 @@ Nuxt 3 has been re-architected with a smaller core and optimized for faster perf
 
   ::card
   ---
-  title: Webpack 5
+  title: webpack 5
   description: 'Faster build time and smaller bundle size, with no configuration required.'
   icon: IconWebpack
   ---
