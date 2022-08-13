@@ -75,17 +75,6 @@ export default {
           ]
         }
       }
-    },
-
-    // Extended options
-    vue: {
-      isProduction: {
-        $resolve: (val, get) => val ?? !get('dev'),
-      },
-      template: { compilerOptions: {
-        $resolve: (val, get) => val ?? get('vue').compilerOptions }
-      },
-    },
-    serverBundler: 'vite-node'
+    }
   }
 }
