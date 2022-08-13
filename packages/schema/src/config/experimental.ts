@@ -44,7 +44,7 @@ export default {
         } else if (val === false) {
           console.warn('`vite-node` is now enabled by default. To disable it, set `vite.serverBundler` to `legacy` instead.')
         }
-        return val
+        return val ?? true
       }
     },
 
