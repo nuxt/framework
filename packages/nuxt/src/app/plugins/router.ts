@@ -1,9 +1,8 @@
 import { reactive, h } from 'vue'
 import { parseURL, parseQuery, withoutBase, isEqual, joinURL } from 'ufo'
 import { createError } from 'h3'
-import { defineNuxtPlugin } from '..'
+import { defineNuxtPlugin, clearError, navigateTo, showError, useRuntimeConfig } from '..'
 import { callWithNuxt } from '../nuxt'
-import { clearError, navigateTo, throwError, useRuntimeConfig } from '#app'
 // @ts-ignore
 import { globalMiddleware } from '#build/middleware'
 
@@ -90,8 +89,9 @@ interface Router {
 export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   const initialURL = process.client
     ? withoutBase(window.location.pathname, useRuntimeConfig().app.baseURL) + window.location.search + window.location.hash
-    : nuxtApp.ssrContext.url
-  const routes = []
+    : nuxtApp.ssrContext!.url
+
+  const routes: Route[] = []
 
   const hooks: { [key in keyof RouterHooks]: RouterHooks[key][] } = {
     'navigate:before': [],
@@ -179,8 +179,24 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
 
   nuxtApp.vueApp.component('RouterLink', {
     functional: true,
-    props: { to: String },
-    setup: (props, { slots }) => () => h('a', { href: props.to, onClick: (e) => { e.preventDefault(); router.push(props.to) } }, slots)
+    props: {
+      to: String,
+      custom: Boolean,
+      replace: Boolean,
+      // Not implemented
+      activeClass: String,
+      exactActiveClass: String,
+      ariaCurrentValue: String
+    },
+    setup: (props, { slots }) => {
+      const navigate = () => handleNavigation(props.to, props.replace)
+      return () => {
+        const route = router.resolve(props.to)
+        return props.custom
+          ? slots.default?.({ href: props.to, navigate, route })
+          : h('a', { href: props.to, onClick: (e: MouseEvent) => { e.preventDefault(); return navigate() } }, slots)
+      }
+    }
   })
 
   if (process.client) {
@@ -212,7 +228,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
             const error = result || createError({
               statusMessage: `Route navigation aborted: ${initialURL}`
             })
-            return callWithNuxt(nuxtApp, throwError, [error])
+            return callWithNuxt(nuxtApp, showError, [error])
           }
         }
         if (result || result === false) { return result }

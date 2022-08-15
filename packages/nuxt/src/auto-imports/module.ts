@@ -24,7 +24,7 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     // Allow modules extending sources
     await nuxt.callHook('autoImports:sources', options.presets as ImportPresetWithDeprecation[])
 
-    options.presets.forEach((i: ImportPresetWithDeprecation) => {
+    options.presets?.forEach((i: ImportPresetWithDeprecation | string) => {
       if (typeof i !== 'string' && i.names && !i.imports) {
         i.imports = i.names
         logger.warn('auto-imports: presets.names is deprecated, use presets.imports instead')
@@ -38,16 +38,20 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     const ctx = createUnimport({
       presets: options.presets,
       imports: options.imports,
+      virtualImports: ['#imports'],
       addons: {
         vueTemplate: true
       }
     })
 
     // composables/ dirs from all layers
-    let composablesDirs = []
+    let composablesDirs: string[] = []
     for (const layer of nuxt.options._layers) {
       composablesDirs.push(resolve(layer.config.srcDir, 'composables'))
       for (const dir of (layer.config.autoImports?.dirs ?? [])) {
+        if (!dir) {
+          continue
+        }
         composablesDirs.push(resolve(layer.config.srcDir, dir))
       }
     }
@@ -58,7 +62,7 @@ export default defineNuxtModule<Partial<AutoImportsOptions>>({
     // Support for importing from '#imports'
     addTemplate({
       filename: 'imports.mjs',
-      getContents: () => ctx.toExports()
+      getContents: () => ctx.toExports() + '\nif (process.dev) { console.warn("[nuxt] `#imports` should be transformed with real imports. There seems to be something wrong with the auto-imports plugin.") }'
     })
     nuxt.options.alias['#imports'] = join(nuxt.options.buildDir, 'imports')
 
@@ -122,7 +126,7 @@ function addDeclarationTemplates (ctx: Unimport) {
   // Remove file extension for benefit of TypeScript
   const stripExtension = (path: string) => path.replace(/\.[a-z]+$/, '')
 
-  const resolved = {}
+  const resolved: Record<string, string> = {}
   const r = ({ from }: Import) => {
     if (resolved[from]) {
       return resolved[from]
@@ -139,7 +143,7 @@ function addDeclarationTemplates (ctx: Unimport) {
 
   addTemplate({
     filename: 'imports.d.ts',
-    getContents: () => ctx.toExports()
+    getContents: () => ctx.toExports(nuxt.options.buildDir)
   })
 
   addTemplate({

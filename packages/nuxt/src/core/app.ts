@@ -1,8 +1,8 @@
 import { promises as fsp } from 'node:fs'
 import { dirname, resolve } from 'pathe'
 import defu from 'defu'
-import type { Nuxt, NuxtApp, NuxtPlugin } from '@nuxt/schema'
-import { findPath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils, tryResolveModule } from '@nuxt/kit'
+import type { Nuxt, NuxtApp, NuxtPlugin, NuxtTemplate } from '@nuxt/schema'
+import { findPath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils, tryResolveModule, resolvePath, resolveAlias } from '@nuxt/kit'
 
 import * as defaultTemplates from './templates'
 import { getNameFromPath, hasSuffix, uniqueBy } from './utils'
@@ -13,7 +13,7 @@ export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp 
     extensions: nuxt.options.extensions,
     plugins: [],
     templates: []
-  } as NuxtApp)
+  } as unknown as NuxtApp) as NuxtApp
 }
 
 export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
@@ -21,7 +21,7 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
   await resolveApp(nuxt, app)
 
   // User templates from options.build.templates
-  app.templates = Object.values(defaultTemplates).concat(nuxt.options.build.templates)
+  app.templates = Object.values(defaultTemplates).concat(nuxt.options.build.templates) as NuxtTemplate[]
 
   // Extend templates with hook
   await nuxt.callHook('app:templates', app)
@@ -34,10 +34,10 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
   await Promise.all(app.templates.map(async (template) => {
     const contents = await compileTemplate(template, templateContext)
 
-    const fullPath = template.dst || resolve(nuxt.options.buildDir, template.filename)
+    const fullPath = template.dst || resolve(nuxt.options.buildDir, template.filename!)
     nuxt.vfs[fullPath] = contents
 
-    const aliasPath = '#build/' + template.filename.replace(/\.\w+$/, '')
+    const aliasPath = '#build/' + template.filename!.replace(/\.\w+$/, '')
     nuxt.vfs[aliasPath] = contents
 
     // In case a non-normalized absolute path is called for on Windows
@@ -57,7 +57,9 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
 export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   // Resolve main (app.vue)
   if (!app.mainComponent) {
-    app.mainComponent = await findPath(['~/App', '~/app'])
+    app.mainComponent = await findPath(
+      nuxt.options._layers.flatMap(layer => [`${layer.config.srcDir}/App`, `${layer.config.srcDir}/app`])
+    )
   }
   if (!app.mainComponent) {
     app.mainComponent = tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')
@@ -92,7 +94,6 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
       return { name, path: file, global: hasSuffix(file, '.global') }
     }))
   }
-  app.middleware = uniqueBy(app.middleware, 'name')
 
   // Resolve plugins
   app.plugins = [
@@ -101,14 +102,33 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   for (const config of nuxt.options._layers.map(layer => layer.config)) {
     app.plugins.push(...[
       ...(config.plugins || []),
-      ...await resolveFiles(config.srcDir, [
-        'plugins/*.{ts,js,mjs,cjs,mts,cts}',
-        'plugins/*/index.*{ts,js,mjs,cjs,mts,cts}'
-      ])
+      ...config.srcDir
+        ? await resolveFiles(config.srcDir, [
+          'plugins/*.{ts,js,mjs,cjs,mts,cts}',
+          'plugins/*/index.*{ts,js,mjs,cjs,mts,cts}'
+        ])
+        : []
     ].map(plugin => normalizePlugin(plugin as NuxtPlugin)))
   }
-  app.plugins = uniqueBy(app.plugins, 'src')
+
+  // Normalize and de-duplicate plugins and middleware
+  app.middleware = uniqueBy(await resolvePaths(app.middleware, 'path'), 'name')
+  app.plugins = uniqueBy(await resolvePaths(app.plugins, 'src'), 'src')
 
   // Extend app
   await nuxt.callHook('app:resolve', app)
+
+  // Normalize and de-duplicate plugins and middleware
+  app.middleware = uniqueBy(await resolvePaths(app.middleware, 'path'), 'name')
+  app.plugins = uniqueBy(await resolvePaths(app.plugins, 'src'), 'src')
+}
+
+function resolvePaths <Item extends Record<string, any>> (items: Item[], key: { [K in keyof Item]: Item[K] extends string ? K : never }[keyof Item]) {
+  return Promise.all(items.map(async (item) => {
+    if (!item[key]) { return item }
+    return {
+      ...item,
+      [key]: await resolvePath(resolveAlias(item[key]))
+    }
+  }))
 }

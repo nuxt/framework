@@ -3,6 +3,7 @@ import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL, withQuery } from 'ufo'
 import { findStaticImports, findExports } from 'mlly'
 import MagicString from 'magic-string'
+import { isAbsolute } from 'pathe'
 
 export interface TransformMacroPluginOptions {
   macros: Record<string, string>
@@ -15,7 +16,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
     name: 'nuxt:pages-macros-transform',
     enforce: 'post',
     transformInclude (id) {
-      if (!id || id.startsWith('\x00')) { return }
+      if (!id || id.startsWith('\x00')) { return false }
       const { pathname, search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
       return pathname.endsWith('.vue') || !!parseQuery(search).macro
     },
@@ -25,7 +26,12 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
 
       function result () {
         if (s.hasChanged()) {
-          return { code: s.toString(), map: options.sourcemap && s.generateMap({ source: id, includeContent: true }) }
+          return {
+            code: s.toString(),
+            map: options.sourcemap
+              ? s.generateMap({ source: id, includeContent: true })
+              : undefined
+          }
         }
       }
 
@@ -34,7 +40,7 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
       for (const macro in options.macros) {
         const match = code.match(new RegExp(`\\b${macro}\\s*\\(\\s*`))
         if (match?.[0]) {
-          s.overwrite(match.index, match.index + match[0].length, `/*#__PURE__*/ false && ${match[0]}`)
+          s.overwrite(match.index!, match.index! + match[0].length, `/*#__PURE__*/ false && ${match[0]}`)
         }
       }
 
@@ -42,13 +48,23 @@ export const TransformMacroPlugin = createUnplugin((options: TransformMacroPlugi
         return result()
       }
 
+      const imports = findStaticImports(code)
+
+      // Purge all imports bringing side effects, such as CSS imports
+      for (const entry of imports) {
+        if (!entry.imports) {
+          s.remove(entry.start, entry.end)
+        }
+      }
+
       // [webpack] Re-export any imports from script blocks in the components
       // with workaround for vue-loader bug: https://github.com/vuejs/vue-loader/pull/1911
-      const scriptImport = findStaticImports(code).find(i => parseQuery(i.specifier.replace('?macro=true', '')).type === 'script')
+      const scriptImport = imports.find(i => parseQuery(i.specifier.replace('?macro=true', '')).type === 'script')
       if (scriptImport) {
         // https://github.com/vuejs/vue-loader/pull/1911
         // https://github.com/vitejs/vite/issues/8473
-        const parsed = parseURL(scriptImport.specifier.replace('?macro=true', ''))
+        const url = isAbsolute(scriptImport.specifier) ? pathToFileURL(scriptImport.specifier).href : scriptImport.specifier
+        const parsed = parseURL(decodeURIComponent(url).replace('?macro=true', ''))
         const specifier = withQuery(parsed.pathname, { macro: 'true', ...parseQuery(parsed.search) })
         s.overwrite(0, code.length, `export { meta } from "${specifier}"`)
         return result()
@@ -96,17 +112,19 @@ const starts = {
   "'": "'"
 }
 
+const QUOTE_RE = /["']/
+
 function extractObject (code: string) {
   // Strip comments
   code = code.replace(/^\s*\/\/.*$/gm, '')
 
-  const stack = []
+  const stack: string[] = []
   let result = ''
   do {
     if (stack[0] === code[0] && result.slice(-1) !== '\\') {
       stack.shift()
-    } else if (code[0] in starts) {
-      stack.unshift(starts[code[0]])
+    } else if (code[0] in starts && !QUOTE_RE.test(stack[0])) {
+      stack.unshift(starts[code[0] as keyof typeof starts])
     }
     result += code[0]
     code = code.slice(1)

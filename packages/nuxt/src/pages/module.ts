@@ -47,41 +47,42 @@ export default defineNuxtModule({
 
     nuxt.hook('app:resolve', (app) => {
       // Add default layout for pages
-      if (app.mainComponent.includes('@nuxt/ui-templates')) {
+      if (app.mainComponent!.includes('@nuxt/ui-templates')) {
         app.mainComponent = resolve(runtimeDir, 'app.vue')
       }
     })
 
     // Prerender all non-dynamic page routes when generating app
     if (!nuxt.options.dev && nuxt.options._generate) {
-      const routes = new Set<string>()
+      const prerenderRoutes = new Set<string>()
       nuxt.hook('modules:done', () => {
         nuxt.hook('pages:extend', (pages) => {
-          routes.clear()
-          for (const path of nuxt.options.nitro.prerender?.routes || []) {
-            routes.add(path)
-          }
+          prerenderRoutes.clear()
           const processPages = (pages: NuxtPage[], currentPath = '/') => {
             for (const page of pages) {
               // Skip dynamic paths
               if (page.path.includes(':')) { continue }
-
-              const path = joinURL(currentPath, page.path)
-              routes.add(path)
-              if (page.children) { processPages(page.children, path) }
+              const route = joinURL(currentPath, page.path)
+              prerenderRoutes.add(route)
+              if (page.children) { processPages(page.children, route) }
             }
           }
           processPages(pages)
         })
       })
-
       nuxt.hook('nitro:build:before', (nitro) => {
-        nitro.options.prerender.routes = [...routes]
+        for (const route of nitro.options.prerender.routes || []) {
+          prerenderRoutes.add(route)
+        }
+        nitro.options.prerender.routes = Array.from(prerenderRoutes)
       })
     }
 
     nuxt.hook('autoImports:extend', (autoImports) => {
-      autoImports.push({ name: 'definePageMeta', as: 'definePageMeta', from: resolve(runtimeDir, 'composables') })
+      autoImports.push(
+        { name: 'definePageMeta', as: 'definePageMeta', from: resolve(runtimeDir, 'composables') },
+        { name: 'useLink', as: 'useLink', from: 'vue-router' }
+      )
     })
 
     // Extract macros from pages

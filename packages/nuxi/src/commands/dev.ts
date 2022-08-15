@@ -1,9 +1,11 @@
+import type { AddressInfo } from 'node:net'
 import { resolve, relative, normalize } from 'pathe'
 import chokidar from 'chokidar'
 import { debounce } from 'perfect-debounce'
 import type { Nuxt } from '@nuxt/schema'
 import consola from 'consola'
 import { withTrailingSlash } from 'ufo'
+import { setupDotenv } from 'c12'
 import { showBanner } from '../utils/banner'
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
@@ -33,7 +35,11 @@ export default defineNuxtCommand({
       return currentHandler ? currentHandler(req, res) : loadingHandler(req, res)
     }
 
+    const rootDir = resolve(args._[0] || '.')
+    await setupDotenv({ cwd: rootDir })
+
     const listener = await listen(serverHandler, {
+      showURL: false,
       clipboard: args.clipboard,
       open: args.open || args.o,
       port: args.port || args.p || process.env.NUXT_PORT,
@@ -45,11 +51,15 @@ export default defineNuxtCommand({
       }
     })
 
-    const rootDir = resolve(args._[0] || '.')
-
     const { loadNuxt, buildNuxt } = await loadKit(rootDir)
 
     let currentNuxt: Nuxt
+    const showURL = () => {
+      listener.showURL({
+        // TODO: Normalize URL with trailing slash within schema
+        baseURL: withTrailingSlash(currentNuxt?.options.app.baseURL) || '/'
+      })
+    }
     const load = async (isRestart: boolean, reason?: string) => {
       try {
         loadingMessage = `${reason ? reason + '. ' : ''}${isRestart ? 'Restarting' : 'Starting'} nuxt...`
@@ -61,8 +71,17 @@ export default defineNuxtCommand({
           await currentNuxt.close()
         }
         currentNuxt = await loadNuxt({ rootDir, dev: true, ready: false })
+        if (!isRestart) {
+          showURL()
+        }
+
         await currentNuxt.ready()
+
         await currentNuxt.hooks.callHook('listen', listener.server, listener)
+        const address = listener.server.address() as AddressInfo
+        currentNuxt.options.server.port = address.port
+        currentNuxt.options.server.host = address.address
+
         await Promise.all([
           writeTypes(currentNuxt).catch(console.error),
           buildNuxt(currentNuxt)
@@ -70,7 +89,7 @@ export default defineNuxtCommand({
         currentHandler = currentNuxt.server.app
         if (isRestart && args.clear !== false) {
           showBanner()
-          listener.showURL()
+          showURL()
         }
       } catch (err) {
         consola.error(`Cannot ${isRestart ? 'restart' : 'start'} nuxt: `, err)

@@ -14,6 +14,7 @@ import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
 import { ImportProtectionPlugin, vueAppPatterns } from './plugins/import-protection'
 import { UnctxTransformPlugin } from './plugins/unctx'
+import { TreeShakePlugin } from './plugins/tree-shake'
 import { addModuleTranspiles } from './modules'
 import { initNitro } from './nitro'
 
@@ -67,9 +68,20 @@ async function initNuxt (nuxt: Nuxt) {
   addVitePlugin(UnctxTransformPlugin(nuxt).vite({ sourcemap: nuxt.options.sourcemap }))
   addWebpackPlugin(UnctxTransformPlugin(nuxt).webpack({ sourcemap: nuxt.options.sourcemap }))
 
+  if (!nuxt.options.dev) {
+    const removeFromServer = ['onBeforeMount', 'onMounted', 'onBeforeUpdate', 'onRenderTracked', 'onRenderTriggered', 'onActivated', 'onDeactivated', 'onBeforeUnmount']
+    const removeFromClient = ['onServerPrefetch', 'onRenderTracked', 'onRenderTriggered']
+
+    // Add tree-shaking optimisations for SSR - build time only
+    addVitePlugin(TreeShakePlugin.vite({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromServer }), { client: false })
+    addVitePlugin(TreeShakePlugin.vite({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromClient }), { server: false })
+    addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromServer }), { client: false })
+    addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromClient }), { server: false })
+  }
+
   // Transpile layers within node_modules
   nuxt.options.build.transpile.push(
-    ...nuxt.options._layers.filter(i => i.cwd && i.cwd.includes('node_modules')).map(i => i.cwd)
+    ...nuxt.options._layers.filter(i => i.cwd.includes('node_modules')).map(i => i.cwd as string)
   )
 
   // Init user modules
@@ -83,7 +95,7 @@ async function initNuxt (nuxt: Nuxt) {
   // Add <NuxtWelcome>
   addComponent({
     name: 'NuxtWelcome',
-    filePath: tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')
+    filePath: tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')!
   })
 
   addComponent({
@@ -113,6 +125,12 @@ async function initNuxt (nuxt: Nuxt) {
   addComponent({
     name: 'NuxtLink',
     filePath: resolve(nuxt.options.appDir, 'components/nuxt-link')
+  })
+
+  // Add <NuxtLoadingIndicator>
+  addComponent({
+    name: 'NuxtLoadingIndicator',
+    filePath: resolve(nuxt.options.appDir, 'components/nuxt-loading-indicator')
   })
 
   for (const m of modulesToInstall) {
@@ -147,7 +165,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
     transform: {
       include: options._layers
         .filter(i => i.cwd && i.cwd.includes('node_modules'))
-        .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd.split('node_modules/').pop())}(\\/|$)(?!node_modules\\/)`))
+        .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd!.split('node_modules/').pop()!)}(\\/|$)(?!node_modules\\/)`))
     }
   }])
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))

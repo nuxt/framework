@@ -35,6 +35,7 @@ export const appPreset = defineUnimportPreset({
     'useCookie',
     'useRequestHeaders',
     'useRequestEvent',
+    'setResponseStatus',
     'useRouter',
     'useRoute',
     'useActiveRoute',
@@ -43,8 +44,11 @@ export const appPreset = defineUnimportPreset({
     'abortNavigation',
     'addRouteMiddleware',
     'throwError',
+    'showError',
     'clearError',
+    'isNuxtError',
     'useError',
+    'createError',
     'defineNuxtLink'
   ]
 })

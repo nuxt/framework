@@ -4,8 +4,8 @@ import type { Ref } from 'vue'
 
 import { NavigationFailure, RouteLocationNormalizedLoaded, RouteLocationRaw, useRouter as vueUseRouter } from 'vue-router'
 import { defineNuxtConfig } from '~~/../../../packages/nuxt/src'
-import { useRouter } from '#imports'
 import { isVue3 } from '#app'
+import { useRouter } from '#imports'
 
 interface TestResponse { message: string }
 
@@ -133,5 +133,34 @@ describe('composables', () => {
 
     expectTypeOf(useFetch('/test', { default: () => ref(500) }).data).toMatchTypeOf<Ref<number>>()
     expectTypeOf(useFetch('/test', { default: () => 500 }).data).toMatchTypeOf<Ref<number>>()
+  })
+
+  it('infer request url string literal from server/api routes', () => {
+    // request can accept dynamic string type
+    const dynamicStringUrl:string = 'https://example.com/api'
+    expectTypeOf(useFetch(dynamicStringUrl).data).toMatchTypeOf<Ref<Pick<unknown, never>>>()
+
+    // request param should infer string literal type / show auto-complete hint base on server routes, ex: '/api/hello'
+    expectTypeOf(useFetch('/api/hello').data).toMatchTypeOf<Ref<string>>()
+    expectTypeOf(useLazyFetch('/api/hello').data).toMatchTypeOf<Ref<string>>()
+
+    // request can accept string literal and Request object type
+    expectTypeOf(useFetch('https://example.com/api').data).toMatchTypeOf<Ref<Pick<unknown, never>>>()
+    expectTypeOf(useFetch(new Request('test')).data).toMatchTypeOf<Ref<Pick<unknown, never>>>()
+  })
+
+  it('provides proper type support when using overloads', () => {
+    expectTypeOf(useState('test')).toMatchTypeOf(useState())
+    expectTypeOf(useState('test', () => ({ foo: Math.random() }))).toMatchTypeOf(useState(() => ({ foo: Math.random() })))
+
+    expectTypeOf(useAsyncData('test', () => Promise.resolve({ foo: Math.random() })))
+      .toMatchTypeOf(useAsyncData(() => Promise.resolve({ foo: Math.random() })))
+    expectTypeOf(useAsyncData('test', () => Promise.resolve({ foo: Math.random() }), { transform: data => data.foo }))
+      .toMatchTypeOf(useAsyncData(() => Promise.resolve({ foo: Math.random() }), { transform: data => data.foo }))
+
+    expectTypeOf(useLazyAsyncData('test', () => Promise.resolve({ foo: Math.random() })))
+      .toMatchTypeOf(useLazyAsyncData(() => Promise.resolve({ foo: Math.random() })))
+    expectTypeOf(useLazyAsyncData('test', () => Promise.resolve({ foo: Math.random() }), { transform: data => data.foo }))
+      .toMatchTypeOf(useLazyAsyncData(() => Promise.resolve({ foo: Math.random() }), { transform: data => data.foo }))
   })
 })

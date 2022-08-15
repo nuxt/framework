@@ -55,9 +55,6 @@ export async function stopServer () {
   if (ctx.serverProcess) {
     await ctx.serverProcess.kill()
   }
-  if (ctx.listener) {
-    await ctx.listener.close()
-  }
 }
 
 export function fetch (path: string, options?: any) {
@@ -71,7 +68,7 @@ export function $fetch (path: string, options?: FetchOptions) {
 export function url (path: string) {
   const ctx = useTestContext()
   if (!ctx.url) {
-    throw new Error('url is not availabe (is server option enabled?)')
+    throw new Error('url is not available (is server option enabled?)')
   }
   return ctx.url + path
 }

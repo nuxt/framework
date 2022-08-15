@@ -1,11 +1,17 @@
 import { pathToFileURL } from 'node:url'
 import { existsSync } from 'node:fs'
 import { builtinModules } from 'node:module'
-import { resolve } from 'pathe'
+import { isAbsolute, normalize, resolve } from 'pathe'
 import * as vite from 'vite'
-import { ExternalsOptions, isExternal as _isExternal, ExternalsDefaults } from 'externality'
+import { isExternal } from 'externality'
 import { genDynamicImport, genObjectFromRawEntries } from 'knitwork'
-import { hashId, uniq } from './utils'
+import fse from 'fs-extra'
+import { debounce } from 'perfect-debounce'
+import { isIgnored, logger } from '@nuxt/kit'
+import { hashId, isCSS, uniq } from './utils'
+import { createIsExternal } from './utils/external'
+import { writeManifest } from './manifest'
+import { ViteBuildContext } from './vite'
 
 export interface TransformChunk {
   id: string,
@@ -23,29 +29,7 @@ export interface SSRTransformResult {
 
 export interface TransformOptions {
   viteServer: vite.ViteDevServer
-}
-
-function isExternal (opts: TransformOptions, id: string) {
-  // Externals
-  const ssrConfig = (opts.viteServer.config as any).ssr
-
-  const externalOpts: ExternalsOptions = {
-    inline: [
-      /virtual:/,
-      /\.ts$/,
-      ...ExternalsDefaults.inline,
-      ...ssrConfig.noExternal
-    ],
-    external: [
-      ...ssrConfig.external,
-      /node_modules/
-    ],
-    resolve: {
-      type: 'module',
-      extensions: ['.ts', '.js', '.json', '.vue', '.mjs', '.jsx', '.tsx', '.wasm']
-    }
-  }
-  return _isExternal(id, opts.viteServer.config.root, externalOpts)
+  isExternal(id: string): ReturnType<typeof isExternal>
 }
 
 async function transformRequest (opts: TransformOptions, id: string) {
@@ -56,14 +40,7 @@ async function transformRequest (opts: TransformOptions, id: string) {
   if (id && id.startsWith('/@id/')) {
     id = id.slice('/@id/'.length)
   }
-  if (id && id.startsWith('/@fs/')) {
-    // Absolute path
-    id = id.slice('/@fs'.length)
-    // On Windows, this may be `/C:/my/path` at this point, in which case we want to remove the `/`
-    if (id.match(/^\/\w:/)) {
-      id = id.slice(1)
-    }
-  } else if (!id.includes('entry') && id.startsWith('/')) {
+  if (id && !id.startsWith('/@fs/') && id.startsWith('/')) {
     // Relative to the root directory
     const resolvedPath = resolve(opts.viteServer.config.root, '.' + id)
     if (existsSync(resolvedPath)) {
@@ -71,13 +48,16 @@ async function transformRequest (opts: TransformOptions, id: string) {
     }
   }
 
-  // Vite will add ?v=123 to bypass browser cache
-  // Remove for externals
-  const withoutVersionQuery = id.replace(/\?v=\w+$/, '')
-  if (await isExternal(opts, withoutVersionQuery)) {
-    const path = builtinModules.includes(withoutVersionQuery.split('node:').pop())
-      ? withoutVersionQuery
-      : pathToFileURL(withoutVersionQuery).href
+  // On Windows, we prefix absolute paths with `/@fs/` to skip node resolution algorithm
+  id = id.replace(/^\/?(?=\w:)/, '/@fs/')
+
+  // Remove query and @fs/ for external modules
+  const externalId = id.replace(/\?v=\w+$|^\/@fs/, '')
+
+  if (await opts.isExternal(externalId)) {
+    const path = builtinModules.includes(externalId.split('node:').pop()!)
+      ? externalId
+      : isAbsolute(externalId) ? pathToFileURL(externalId).href : externalId
     return {
       code: `(global, module, _, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) =>
 ${genDynamicImport(path, { wrapper: false })}
@@ -110,7 +90,7 @@ ${res.code || '/* empty */'};
   return { code, deps: res.deps || [], dynamicDeps: res.dynamicDeps || [] }
 }
 
-async function transformRequestRecursive (opts: TransformOptions, id, parent = '<entry>', chunks: Record<string, TransformChunk> = {}) {
+async function transformRequestRecursive (opts: TransformOptions, id: string, parent = '<entry>', chunks: Record<string, TransformChunk> = {}) {
   if (chunks[id]) {
     chunks[id].parents.push(parent)
     return
@@ -131,7 +111,7 @@ async function transformRequestRecursive (opts: TransformOptions, id, parent = '
 }
 
 export async function bundleRequest (opts: TransformOptions, entryURL: string) {
-  const chunks = await transformRequestRecursive(opts, entryURL)
+  const chunks = (await transformRequestRecursive(opts, entryURL))!
 
   const listIds = (ids: string[]) => ids.map(id => `// - ${id} (${hashId(id)})`).join('\n')
   const chunksCode = chunks.map(chunk => `
@@ -140,11 +120,11 @@ export async function bundleRequest (opts: TransformOptions, entryURL: string) {
 // Parents: \n${listIds(chunk.parents)}
 // Dependencies: \n${listIds(chunk.deps)}
 // --------------------
-const ${hashId(chunk.id)} = ${chunk.code}
+const ${hashId(chunk.id + '-' + chunk.code)} = ${chunk.code}
 `).join('\n')
 
   const manifestCode = `const __modules__ = ${
-    genObjectFromRawEntries(chunks.map(chunk => [chunk.id, hashId(chunk.id)]))
+    genObjectFromRawEntries(chunks.map(chunk => [chunk.id, hashId(chunk.id + '-' + chunk.code)]))
   }`
 
   // https://github.com/vitejs/vite/blob/main/packages/vite/src/node/ssr/ssrModuleLoader.ts
@@ -244,4 +224,37 @@ async function __instantiateModule__(url, urlStack) {
     code,
     ids: chunks.map(i => i.id)
   }
+}
+
+export async function initViteDevBundler (ctx: ViteBuildContext, onBuild: () => Promise<any>) {
+  const viteServer = ctx.ssrServer!
+  const options: TransformOptions = {
+    viteServer,
+    isExternal: createIsExternal(viteServer, ctx.nuxt.options.rootDir)
+  }
+
+  // Build and watch
+  const _doBuild = async () => {
+    const start = Date.now()
+    const { code, ids } = await bundleRequest(options, ctx.entry)
+    await fse.writeFile(resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'), code, 'utf-8')
+    // Have CSS in the manifest to prevent FOUC on dev SSR
+    await writeManifest(ctx, ids.filter(isCSS).map(i => i.slice(1)))
+    const time = (Date.now() - start)
+    logger.success(`Vite server built in ${time}ms`)
+    await onBuild()
+  }
+  const doBuild = debounce(_doBuild)
+
+  // Initial build
+  await _doBuild()
+
+  // Watch
+  viteServer.watcher.on('all', (_event, file) => {
+    file = normalize(file) // Fix windows paths
+    if (file.indexOf(ctx.nuxt.options.buildDir) === 0 || isIgnored(file)) { return }
+    doBuild()
+  })
+  // ctx.nuxt.hook('builder:watch', () => doBuild())
+  ctx.nuxt.hook('app:templatesGenerated', () => doBuild())
 }

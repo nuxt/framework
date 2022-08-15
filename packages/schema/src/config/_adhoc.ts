@@ -18,7 +18,7 @@ export default {
         return { dirs: val }
       }
       if (val === undefined || val === true) {
-        return { dirs: ['~/components'] }
+        return { dirs: [{ path: '~/components/global', global: true }, '~/components'] }
       }
       return val
     }
@@ -46,7 +46,7 @@ export default {
   pages: undefined,
 
   /**
-   * Manually disable nuxt telemetry
+   * Manually disable nuxt telemetry.
    *
    * @see [Nuxt Telemetry](https://github.com/nuxt/telemetry) for more information.
    *

@@ -1,23 +1,41 @@
-import { resolve, join, normalize } from 'pathe'
+import { resolveTSConfig } from 'pkg-types'
+import { resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
-import { logger, resolveModule, isIgnored } from '@nuxt/kit'
-import fse from 'fs-extra'
-import { debounce } from 'perfect-debounce'
-import { withoutTrailingSlash } from 'ufo'
+import { logger, resolveModule } from '@nuxt/kit'
+import { joinURL, withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
-import { prepareDevServerEntry } from './vite-node'
-import { isCSS, isDirectory, readDirRecursively } from './utils'
-import { bundleRequest } from './dev-bundler'
-import { writeManifest } from './manifest'
-import { RelativeAssetPlugin } from './plugins/dynamic-base'
+import { initViteNodeServer } from './vite-node'
 
 export async function buildServer (ctx: ViteBuildContext) {
-  const _resolve = id => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
+  const useAsyncEntry = ctx.nuxt.options.experimental.asyncEntry ||
+   (ctx.nuxt.options.vite.devBundler === 'vite-node' && ctx.nuxt.options.dev)
+  ctx.entry = resolve(ctx.nuxt.options.appDir, useAsyncEntry ? 'entry.async' : 'entry')
+
+  const _resolve = (id: string) => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
+    entry: ctx.entry,
+    base: ctx.nuxt.options.dev
+      ? joinURL(ctx.nuxt.options.app.baseURL.replace(/^\.\//, '/') || '/', ctx.nuxt.options.app.buildAssetsDir)
+      : undefined,
+    experimental: {
+      renderBuiltUrl: (filename, { type, hostType }) => {
+        if (hostType !== 'js') {
+          // In CSS we only use relative paths until we craft a clever runtime CSS hack
+          return { relative: true }
+        }
+        if (type === 'public') {
+          return { runtime: `globalThis.__publicAssetsURL(${JSON.stringify(filename)})` }
+        }
+        if (type === 'asset') {
+          const relativeFilename = filename.replace(withTrailingSlash(withoutLeadingSlash(ctx.nuxt.options.app.buildAssetsDir)), '')
+          return { runtime: `globalThis.__buildAssetsURL(${JSON.stringify(relativeFilename)})` }
+        }
+      }
+    },
     define: {
       'process.server': true,
       'process.client': false,
@@ -27,24 +45,28 @@ export async function buildServer (ctx: ViteBuildContext) {
       'typeof location': '"undefined"',
       'typeof XMLHttpRequest': '"undefined"'
     },
+    optimizeDeps: {
+      entries: [ctx.entry]
+    },
     resolve: {
       alias: {
         '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/server'),
-        // Alias vue to ensure we're using the same context in development
-        'vue/server-renderer': _resolve('vue/server-renderer'),
-        'vue/compiler-sfc': _resolve('vue/compiler-sfc'),
-        ...ctx.nuxt.options.experimental.externalVue
+        ...ctx.nuxt.options.experimental.externalVue || ctx.nuxt.options.dev
           ? {}
           : {
               '@vue/reactivity': _resolve(`@vue/reactivity/dist/reactivity.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
               '@vue/shared': _resolve(`@vue/shared/dist/shared.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
-              'vue-router': _resolve(`vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`)
-            },
-        vue: _resolve(`vue/dist/vue.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`)
+              'vue-router': _resolve(`vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
+              'vue/server-renderer': _resolve('vue/server-renderer'),
+              'vue/compiler-sfc': _resolve('vue/compiler-sfc'),
+              vue: _resolve(`vue/dist/vue.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`)
+            }
       }
     },
     ssr: {
-      external: ctx.nuxt.options.experimental.externalVue ? ['#internal/nitro', 'vue', 'vue-router'] : ['#internal/nitro'],
+      external: ctx.nuxt.options.experimental.externalVue
+        ? ['#internal/nitro', '#internal/nitro/utils', 'vue', 'vue-router']
+        : ['#internal/nitro', '#internal/nitro/utils'],
       noExternal: [
         ...ctx.nuxt.options.build.transpile,
         // TODO: Use externality for production (rollup) build
@@ -60,31 +82,30 @@ export async function buildServer (ctx: ViteBuildContext) {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
+        input: ctx.entry,
         external: ['#internal/nitro', ...ctx.nuxt.options.experimental.externalVue ? ['vue', 'vue-router'] : []],
         output: {
           entryFileNames: 'server.mjs',
           preferConst: true,
           // TODO: https://github.com/vitejs/vite/pull/8641
-          inlineDynamicImports: false,
+          inlineDynamicImports: !ctx.nuxt.options.experimental.viteServerDynamicImports,
           format: 'module'
         },
         onwarn (warning, rollupWarn) {
-          if (!['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
-            rollupWarn(warning)
+          if (warning.code && ['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
+            return
           }
+          rollupWarn(warning)
         }
-      },
-      watch: {
-        exclude: ctx.nuxt.options.ignore
       }
     },
     server: {
       // https://github.com/vitest-dev/vitest/issues/229#issuecomment-1002685027
-      preTransformRequests: false
+      preTransformRequests: false,
+      hmr: false
     },
     plugins: [
       cacheDirPlugin(ctx.nuxt.options.rootDir, 'server'),
-      RelativeAssetPlugin(),
       vuePlugin(ctx.config.vue),
       viteJsxPlugin()
     ]
@@ -93,41 +114,14 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Add type-checking
   if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
     const checker = await import('vite-plugin-checker').then(r => r.default)
-    serverConfig.plugins.push(checker({ typescript: true }))
+    serverConfig.plugins!.push(checker({
+      vueTsc: {
+        tsconfigPath: await resolveTSConfig(ctx.nuxt.options.rootDir)
+      }
+    }))
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
-
-  ctx.nuxt.hook('nitro:build:before', async () => {
-    if (ctx.nuxt.options.dev) {
-      return
-    }
-    const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
-
-    // Remove public files that have been duplicated into buildAssetsDir
-    // TODO: Add option to configure this behavior in vite
-    const publicDir = join(ctx.nuxt.options.srcDir, ctx.nuxt.options.dir.public)
-    let publicFiles: string[] = []
-    if (await isDirectory(publicDir)) {
-      publicFiles = readDirRecursively(publicDir).map(r => r.replace(publicDir, ''))
-      for (const file of publicFiles) {
-        try {
-          fse.rmSync(join(clientDist, file))
-        } catch {}
-      }
-    }
-
-    // Copy doubly-nested /_nuxt/_nuxt files into buildAssetsDir
-    // TODO: Workaround vite issue
-    if (await isDirectory(clientDist)) {
-      const nestedAssetsPath = withoutTrailingSlash(join(clientDist, ctx.nuxt.options.app.buildAssetsDir))
-
-      if (await isDirectory(nestedAssetsPath)) {
-        await fse.copy(nestedAssetsPath, clientDist, { recursive: true })
-        await fse.remove(nestedAssetsPath)
-      }
-    }
-  })
 
   const onBuild = () => ctx.nuxt.callHook('build:resources', wpfs)
 
@@ -158,33 +152,10 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Initialize plugins
   await viteServer.pluginContainer.buildStart({})
 
-  if (ctx.nuxt.options.experimental.viteNode) {
-    logger.info('Vite server using experimental `vite-node`...')
-    await prepareDevServerEntry(ctx)
+  if (ctx.config.devBundler !== 'legacy') {
+    await initViteNodeServer(ctx)
   } else {
-    // Build and watch
-    const _doBuild = async () => {
-      const start = Date.now()
-      const { code, ids } = await bundleRequest({ viteServer }, resolve(ctx.nuxt.options.appDir, 'entry'))
-      await fse.writeFile(resolve(ctx.nuxt.options.buildDir, 'dist/server/server.mjs'), code, 'utf-8')
-      // Have CSS in the manifest to prevent FOUC on dev SSR
-      await writeManifest(ctx, ids.filter(isCSS).map(i => i.slice(1)))
-      const time = (Date.now() - start)
-      logger.success(`Vite server built in ${time}ms`)
-      await onBuild()
-    }
-    const doBuild = debounce(_doBuild)
-
-    // Initial build
-    await _doBuild()
-
-    // Watch
-    viteServer.watcher.on('all', (_event, file) => {
-      file = normalize(file) // Fix windows paths
-      if (file.indexOf(ctx.nuxt.options.buildDir) === 0 || isIgnored(file)) { return }
-      doBuild()
-    })
-    // ctx.nuxt.hook('builder:watch', () => doBuild())
-    ctx.nuxt.hook('app:templatesGenerated', () => doBuild())
+    logger.info('Vite server using legacy server bundler...')
+    await import('./dev-bundler').then(r => r.initViteDevBundler(ctx, onBuild))
   }
 }
