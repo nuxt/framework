@@ -133,7 +133,7 @@ describe('pages', () => {
 
   it('/client-only-components', async () => {
     const html = await $fetch('/client-only-components')
-    expect(html).toContain('<div class="client-only-script" foo="bar" />')
+    expect(html).toContain('<div class="client-only-script" foo="bar">')
     expect(html).toContain('<div class="client-only-script-setup" foo="hello">')
 
     await expectNoClientErrors('/client-only-components')
