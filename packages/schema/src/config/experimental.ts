@@ -44,6 +44,11 @@ export default {
     },
 
     /**
+     * Warmup vite entrypoint caches on dev startup.
+     */
+    viteEntryWarmup: true,
+
+    /**
      * Split server bundle into multiple chunks and dynamically import them.
      *
      *
