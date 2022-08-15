@@ -1,6 +1,7 @@
-import type { FetchOptions } from 'ohmyfetch'
+import type { FetchOptions, SearchParams } from 'ohmyfetch'
 import type { TypedInternalResponse, NitroFetchRequest } from 'nitropack'
 import { computed, isRef, Ref } from 'vue'
+import { withBase, withQuery } from 'ufo'
 import type { AsyncDataOptions, _Transform, KeyOfRes, AsyncData, PickFrom } from './asyncData'
 import { useAsyncData } from './asyncData'
 
@@ -38,7 +39,7 @@ export function useFetch<
   arg2?: string
 ) {
   const [opts = {}, autoKey] = typeof arg1 === 'string' ? [{}, arg1] : [arg1, arg2]
-  const _key = opts.key || autoKey
+  const _key = opts.key || typeof request === 'string' ? withBase(opts.baseURL || '', withQuery(request as string, opts.params as SearchParams)) : autoKey
   if (!_key || typeof _key !== 'string') {
     throw new TypeError('[nuxt] [useFetch] key must be a string: ' + _key)
   }
