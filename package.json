@@ -42,8 +42,9 @@
     "nuxi": "link:./packages/nuxi",
     "nuxt": "link:./packages/nuxt",
     "nuxt3": "link:./packages/nuxt",
-    "vite": "~3.0.7",
-    "unbuild": "^0.8.8"
+    "rollup": "~2.77.3",
+    "unbuild": "^0.8.8",
+    "vite": "~3.0.7"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config-typescript": "^10.0.0",

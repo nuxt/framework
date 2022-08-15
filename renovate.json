@@ -11,6 +11,7 @@
     "@docus/twitter",
     "vitest",
     "unplugin",
-    "vue-tsc"
+    "vue-tsc",
+    "rollup"
   ]
 }
