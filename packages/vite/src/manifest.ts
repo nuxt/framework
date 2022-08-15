@@ -1,27 +1,29 @@
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
-import { joinURL, withoutLeadingSlash, withTrailingSlash } from 'ufo'
+import { withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import escapeRE from 'escape-string-regexp'
+import { normalizeViteManifest, Manifest } from 'vue-bundle-renderer'
 import type { ViteBuildContext } from './vite'
 
-export async function writeManifest (ctx: ViteBuildContext, extraEntries: string[] = []) {
+export async function writeManifest (ctx: ViteBuildContext, css: string[] = []) {
   // Write client manifest for use in vue-bundle-renderer
   const clientDist = resolve(ctx.nuxt.options.buildDir, 'dist/client')
   const serverDist = resolve(ctx.nuxt.options.buildDir, 'dist/server')
 
-  const entries = [
-    '@vite/client',
-    'entry.mjs',
-    ...extraEntries
-  ]
-
-  // Legacy dev manifest
-  const devClientManifest = {
-    publicPath: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir),
-    all: entries,
-    initial: entries,
-    async: [],
-    modules: {}
+  const devClientManifest: Manifest = {
+    '@vite/client': {
+      isEntry: true,
+      file: '@vite/client',
+      css,
+      module: true,
+      resourceType: 'script'
+    },
+    [ctx.entry]: {
+      isEntry: true,
+      file: ctx.entry,
+      module: true,
+      resourceType: 'script'
+    }
   }
 
   const clientManifest = ctx.nuxt.options.dev
@@ -37,12 +39,13 @@ export async function writeManifest (ctx: ViteBuildContext, extraEntries: string
     }
     for (const item of ['css', 'assets']) {
       if (clientManifest[key][item]) {
-        clientManifest[key][item] = clientManifest[key][item].map(i => i.replace(BASE_RE, ''))
+        clientManifest[key][item] = clientManifest[key][item].map((i: string) => i.replace(BASE_RE, ''))
       }
     }
   }
 
   await fse.mkdirp(serverDist)
-  await fse.writeFile(resolve(serverDist, 'client.manifest.json'), JSON.stringify(clientManifest, null, 2), 'utf8')
-  await fse.writeFile(resolve(serverDist, 'client.manifest.mjs'), 'export default ' + JSON.stringify(clientManifest, null, 2), 'utf8')
+  const manifest = normalizeViteManifest(clientManifest)
+  await fse.writeFile(resolve(serverDist, 'client.manifest.json'), JSON.stringify(manifest, null, 2), 'utf8')
+  await fse.writeFile(resolve(serverDist, 'client.manifest.mjs'), 'export default ' + JSON.stringify(manifest, null, 2), 'utf8')
 }
