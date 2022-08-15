@@ -34,10 +34,10 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
         sourceType: 'module',
         ecmaVersion: 'latest'
       }), {
-        // @ts-expect-error type cast
-        enter (node: CallExpression) {
-          if (node.type !== 'CallExpression' || node.callee.type !== 'Identifier') { return }
-          if (keyedFunctions.includes(node.callee.name) && node.arguments.length < 4) {
+        enter (_node) {
+          if (_node.type !== 'CallExpression' || (_node as CallExpression).callee.type !== 'Identifier') { return }
+          const node: CallExpression = _node as CallExpression
+          if (keyedFunctions.includes((node.callee as any).name) && node.arguments.length < 4) {
             const end = (node as any).end
             s.appendLeft(
               codeIndex + end - 1,
