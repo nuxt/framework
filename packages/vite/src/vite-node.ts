@@ -135,7 +135,6 @@ export async function initViteNodeServer (ctx: ViteBuildContext) {
     entryPath = resolve(ctx.nuxt.options.appDir, 'entry.async')
   }
 
-  // TODO: Update me
   const host = ctx.nuxt.options.server.host || 'localhost'
   const port = ctx.nuxt.options.server.port || '3000'
   const protocol = ctx.nuxt.options.server.https ? 'https' : 'http'
@@ -143,7 +142,7 @@ export async function initViteNodeServer (ctx: ViteBuildContext) {
   // Serialize and pass vite-node runtime options
   const viteNodeServerOptions = {
     baseURL: `${protocol}://${host}:${port}/__nuxt_vite_node__`,
-    rootDir: ctx.nuxt.options.rootDir,
+    root: ctx.nuxt.options.srcDir,
     entryPath,
     base: ctx.ssrServer.config.base || '/_nuxt/'
   }
