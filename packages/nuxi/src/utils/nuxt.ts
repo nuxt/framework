@@ -1,6 +1,5 @@
 import { promises as fsp } from 'node:fs'
-import { dirname } from 'node:path'
-import { resolve } from 'pathe'
+import { resolve, dirname } from 'pathe'
 import consola from 'consola'
 import { hash } from 'ohash'
 import type { Nuxt } from '@nuxt/schema'
