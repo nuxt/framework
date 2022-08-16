@@ -1,7 +1,3 @@
 import { defineNuxtConfig } from 'nuxt'
 
-export default defineNuxtConfig({
-  vite: {
-    // devBundler: 'legacy'
-  }
-})
+export default defineNuxtConfig({})

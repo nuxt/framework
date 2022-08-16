@@ -1,4 +1,5 @@
 import { performance } from 'node:perf_hooks'
+import { createError } from 'h3'
 import { ViteNodeRunner } from 'vite-node/client'
 import { $fetch } from 'ohmyfetch'
 import consola from 'consola'
@@ -13,13 +14,18 @@ const runner = new ViteNodeRunner({
     return await $fetch('/module/' + encodeURI(id), {
       baseURL: viteNodeOptions.baseURL
     }).catch((err) => {
-      if (!err.data || !err.data.data) {
+      if (!err.data) {
         throw err
       }
-      return { code: '' }
+      // Legacy bundler behavior
+      // return { code: '' }
       // Keys: id, plugin, message, name, stack, loc, pluginCode, frame
-      // const viteError = { ...err.data.data }
-      // throw viteError
+      const viteErrorObject = err.data.data || err.data
+      const _error = createError({
+        statusMessage: `[vite-node-runner] Cannot fetch module ${id}`,
+        ...viteErrorObject
+      })
+      throw _error
     })
   }
 })
@@ -50,8 +56,6 @@ export default async (ssrContext) => {
     consola.success(`Vite server hmr ${updates.size} files`, time ? `in ${time}ms` : '')
   }
 
-  const result = await render(ssrContext).catch((err) => {
-    throw new Error('Vite server error: ' + err.message)
-  })
+  const result = await render(ssrContext)
   return result
 }
