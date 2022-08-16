@@ -2,7 +2,7 @@ import type { AppConfig, RuntimeConfig } from '@nuxt/schema'
 import { reactive } from 'vue'
 import { useNuxtApp } from './nuxt'
 // @ts-ignore
-import __appConfig from '#build/app.config.ts'
+import __appConfig from '#build/app.config.mjs'
 
 // Workaround for vite HMR with virtual modules
 export const _appConfig = __appConfig as AppConfig
@@ -50,7 +50,7 @@ if (process.dev) {
   // Webpack
   if (import.meta.webpackHot) {
     console.log('Register webpackHot')
-    import.meta.webpackHot.accept('#build/app.config.ts', () => {
+    import.meta.webpackHot.accept('#build/app.config.mjs', () => {
       applyHMR(__appConfig)
     })
   }
