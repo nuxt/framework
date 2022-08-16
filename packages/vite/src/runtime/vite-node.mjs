@@ -12,6 +12,13 @@ const runner = new ViteNodeRunner({
   async fetchModule (id) {
     return await $fetch('/module/' + encodeURI(id), {
       baseURL: viteNodeOptions.baseURL
+    }).catch((err) => {
+      if (!err.data || !err.data.data) {
+        throw err
+      }
+      // Keys: id, plugin, message, name, stack, loc, pluginCode, frame
+      const viteError = { ...err.data.data }
+      throw viteError
     })
   }
 })
@@ -42,6 +49,8 @@ export default async (ssrContext) => {
     consola.success(`Vite server hmr ${updates.size} files`, time ? `in ${time}ms` : '')
   }
 
-  const result = await render(ssrContext)
+  const result = await render(ssrContext).catch((err) => {
+    throw new Error('Vite server error: ' + err.message)
+  })
   return result
 }

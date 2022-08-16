@@ -120,12 +120,18 @@ function createViteNodeMiddleware (ctx: ViteBuildContext, invalidates: Set<strin
       if (moduleId === '/') {
         throw createError({ statusCode: 400 })
       }
-      const module = await node.fetchModule(moduleId) as any
+      const module = await node.fetchModule(moduleId).catch((err) => {
+        throw createError({
+          statusCode: 500,
+          statusMessage: `[vite-node] Cannot fetch module ${moduleId}`,
+          data: err
+        })
+      })
       return module
     }
   }))
 
-  return app.handler
+  return app
 }
 
 export async function initViteNodeServer (ctx: ViteBuildContext) {
