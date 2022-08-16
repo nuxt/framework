@@ -77,10 +77,12 @@ export default defineNuxtCommand({
         }
 
         // Check if we need cache invalidation
-        const previousManifest = await loadNuxtManifest(currentNuxt.options.buildDir)
-        const newManifest = await writeNuxtManifest(currentNuxt)
-        if (previousManifest && newManifest && previousManifest._hash !== newManifest._hash) {
-          await cleanupNuxtDirs(currentNuxt.options.rootDir)
+        if (!isRestart) {
+          const previousManifest = await loadNuxtManifest(currentNuxt.options.buildDir)
+          const newManifest = await writeNuxtManifest(currentNuxt)
+          if (previousManifest && newManifest && previousManifest._hash !== newManifest._hash) {
+            await cleanupNuxtDirs(currentNuxt.options.rootDir)
+          }
         }
 
         await currentNuxt.ready()
