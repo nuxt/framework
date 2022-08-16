@@ -12,8 +12,9 @@ import { installModule } from './install'
 const MODULE_CONTAINER_KEY = '__module_container__'
 
 export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
-  // @ts-expect-error
-  if (nuxt[MODULE_CONTAINER_KEY]) { return nuxt[MODULE_CONTAINER_KEY] }
+  if (nuxt[MODULE_CONTAINER_KEY]) {
+    return nuxt[MODULE_CONTAINER_KEY]
+  }
 
   async function requireModule (moduleOpts: any) {
     let src, inlineOptions
@@ -34,7 +35,6 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
     await installModule(src, inlineOptions)
   }
 
-  // @ts-expect-error
   nuxt[MODULE_CONTAINER_KEY] = <ModuleContainer>{
     nuxt,
     options: nuxt.options,
@@ -71,7 +71,7 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
     },
 
     extendBuild (fn) {
-      // @ts-expect-error
+      // @ts-ignore
       nuxt.options.build.extend = chainFn(nuxt.options.build.extend, fn)
 
       if (!isNuxt2(nuxt)) {
@@ -93,6 +93,5 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
     }
   }
 
-  // @ts-expect-error
   return nuxt[MODULE_CONTAINER_KEY]
 }

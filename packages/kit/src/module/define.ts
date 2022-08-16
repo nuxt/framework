@@ -92,9 +92,7 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
 const NUXT2_SHIMS_KEY = '__nuxt2_shims_key__'
 function nuxt2Shims (nuxt: Nuxt) {
   // Avoid duplicate install and only apply to Nuxt2
-  // @ts-expect-error
   if (!isNuxt2(nuxt) || nuxt[NUXT2_SHIMS_KEY]) { return }
-  // @ts-expect-error
   nuxt[NUXT2_SHIMS_KEY] = true
 
   // Allow using nuxt.hooks
