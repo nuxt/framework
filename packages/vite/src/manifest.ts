@@ -2,7 +2,8 @@ import fse from 'fs-extra'
 import { resolve } from 'pathe'
 import { withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import escapeRE from 'escape-string-regexp'
-import { normalizeViteManifest, Manifest } from 'vue-bundle-renderer'
+import { normalizeViteManifest } from 'vue-bundle-renderer'
+import type { Manifest } from 'vue-bundle-renderer'
 import type { ViteBuildContext } from './vite'
 
 export async function writeManifest (ctx: ViteBuildContext, css: string[] = []) {
