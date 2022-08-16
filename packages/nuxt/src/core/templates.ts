@@ -124,7 +124,7 @@ export const schemaTemplate = {
       "declare module '@nuxt/schema' {",
       '  interface NuxtConfig {',
       ...moduleInfo.filter(Boolean).map(meta =>
-      `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
+        `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
       ),
       '  }',
       generateTypes(resolveSchema(Object.fromEntries(Object.entries(nuxt.options.runtimeConfig).filter(([key]) => key !== 'public'))),
@@ -157,7 +157,7 @@ export const layoutTemplate: NuxtTemplate = {
     }))
     return [
       'import { defineAsyncComponent } from \'vue\'',
-          `export default ${layoutsObject}`
+      `export default ${layoutsObject}`
     ].join('\n')
   }
 }
@@ -188,12 +188,11 @@ export const appConfigDeclarationTemplate: NuxtTemplate = {
   filename: 'types/app.config.d.ts',
   getContents: ({ app, nuxt }) => {
     return `
-import defu from 'defu'
+import type { Defu } from 'defu'
 ${app.configs.map((id, index) => `import ${`cfg${index}`} from ${JSON.stringify(id.replace(/(?<=\w)\.\w+$/g, ''))}`).join('\n')}
 
 declare const inlineConfig = ${JSON.stringify(nuxt.options.appConfig, null, 2)}
-declare const resolvedConfig = defu(${app.configs.map((_id, index) => `cfg${index}`).concat(['inlineConfig']).join(', ')})
-type ResolvedAppConfig = typeof resolvedConfig
+type ResolvedAppConfig = Defu<typeof inlineConfig, [${app.configs.map((_id, index) => `typeof cfg${index}`).join(', ')}]>
 
 declare module '@nuxt/schema' {
   interface AppConfig extends ResolvedAppConfig { }
