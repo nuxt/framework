@@ -16,9 +16,10 @@ const runner = new ViteNodeRunner({
       if (!err.data || !err.data.data) {
         throw err
       }
+      return { code: '' }
       // Keys: id, plugin, message, name, stack, loc, pluginCode, frame
-      const viteError = { ...err.data.data }
-      throw viteError
+      // const viteError = { ...err.data.data }
+      // throw viteError
     })
   }
 })
