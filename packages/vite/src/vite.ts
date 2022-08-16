@@ -1,5 +1,5 @@
 import * as vite from 'vite'
-import { join, resolve } from 'pathe'
+import { join } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
 import { logger, isIgnored } from '@nuxt/kit'
@@ -16,6 +16,7 @@ import { composableKeysPlugin } from './plugins/composable-keys'
 export interface ViteOptions extends InlineConfig {
   vue?: Options
   ssr?: SSROptions
+  devBundler?: 'vite-node' | 'legacy'
 }
 
 export interface ViteBuildContext {
@@ -27,10 +28,9 @@ export interface ViteBuildContext {
 }
 
 export async function bundle (nuxt: Nuxt) {
-  const entry = resolve(nuxt.options.appDir, nuxt.options.experimental.asyncEntry ? 'entry.async' : 'entry')
   const ctx: ViteBuildContext = {
     nuxt,
-    entry,
+    entry: null!,
     config: vite.mergeConfig(
       {
         resolve: {
@@ -47,14 +47,12 @@ export async function bundle (nuxt: Nuxt) {
           }
         },
         optimizeDeps: {
-          entries: [entry],
           include: ['vue']
         },
         css: resolveCSSOptions(nuxt),
         build: {
           rollupOptions: {
-            output: { sanitizeFileName: sanitizeFilePath },
-            input: resolve(nuxt.options.appDir, 'entry')
+            output: { sanitizeFileName: sanitizeFilePath }
           },
           watch: {
             exclude: nuxt.options.ignore
@@ -87,8 +85,8 @@ export async function bundle (nuxt: Nuxt) {
   // In build mode we explicitly override any vite options that vite is relying on
   // to detect whether to inject production or development code (such as HMR code)
   if (!nuxt.options.dev) {
-    ctx.config.server.watch = undefined
-    ctx.config.build.watch = undefined
+    ctx.config.server!.watch = undefined
+    ctx.config.build!.watch = undefined
   }
 
   await nuxt.callHook('vite:extend', ctx)
@@ -103,10 +101,12 @@ export async function bundle (nuxt: Nuxt) {
       }
     })
 
-    const start = Date.now()
-    warmupViteServer(server, [join('/@fs/', ctx.entry)])
-      .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
-      .catch(logger.error)
+    if (nuxt.options.vite.warmupEntry !== false) {
+      const start = Date.now()
+      warmupViteServer(server, [join('/@fs/', ctx.entry)], env.isServer)
+        .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
+        .catch(logger.error)
+    }
   })
 
   await buildClient(ctx)

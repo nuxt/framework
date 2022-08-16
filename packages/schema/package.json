@@ -17,17 +17,17 @@
     "@types/lodash.template": "^4",
     "@types/semver": "^7",
     "unbuild": "latest",
-    "vite": "~3.0.7"
+    "vite": "~3.0.8"
   },
   "dependencies": {
     "c12": "^0.2.9",
     "create-require": "^1.1.1",
-    "defu": "^6.0.0",
+    "defu": "^6.0.1",
     "jiti": "^1.14.0",
     "pathe": "^0.3.4",
     "postcss-import-resolver": "^2.0.0",
     "scule": "^0.3.2",
-    "std-env": "^3.1.1",
+    "std-env": "^3.2.1",
     "ufo": "^0.8.5",
     "unimport": "^0.6.7"
   },

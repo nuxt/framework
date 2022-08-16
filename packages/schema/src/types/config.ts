@@ -45,4 +45,13 @@ export interface ViteConfig extends ViteUserConfig {
    * @see https://github.com/vitejs/vite/tree/main/packages/plugin-vue
    */
   vue?: VuePluginOptions
+  /**
+   * Bundler for dev time server-side rendering.
+   * @default 'vite-node'
+   */
+  devBundler?: 'vite-node' | 'legacy',
+  /**
+   * Warmup vite entrypoint caches on dev startup.
+   */
+  warmupEntry?: boolean
 }
