@@ -9,7 +9,7 @@ import type { NuxtTemplate, Nuxt, NuxtApp } from './nuxt'
 import type { Preset as ImportPreset, Import } from 'unimport'
 import type { NuxtConfig, NuxtOptions } from './config'
 import type { Nitro, NitroConfig } from 'nitropack'
-import type { Component, ComponentsDir, ScanDir, ComponentsOptions } from './components'
+import type { Component, ComponentsOptions } from './components'
 import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
 
 

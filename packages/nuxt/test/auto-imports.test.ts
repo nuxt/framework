@@ -20,8 +20,8 @@ describe('auto-imports:transform', () => {
 
   const transformPlugin = TransformPlugin.raw({ ctx, options: { transform: { exclude: [/node_modules/] } } }, { framework: 'rollup' })
   const transform = async (source: string) => {
-    const { code } = await transformPlugin.transform.call({ error: null, warn: null }, source, '') || { code: null }
-    return code
+    const result = await transformPlugin.transform!.call({ error: null, warn: null } as any, source, '')
+    return typeof result === 'string' ? result : result?.code
   }
 
   it('should correct inject', async () => {
@@ -65,7 +65,7 @@ describe('auto-imports:nuxt', () => {
         continue
       }
       it(`should register ${name} globally`, () => {
-        expect(defaultPresets.find(a => a.from === '#app').imports).to.include(name)
+        expect(defaultPresets.find(a => a.from === '#app')!.imports).to.include(name)
       })
     }
   } catch (e) {
@@ -176,7 +176,7 @@ describe('auto-imports:vue', () => {
       continue
     }
     it(`should register ${name} globally`, () => {
-      expect(defaultPresets.find(a => a.from === 'vue').imports).toContain(name)
+      expect(defaultPresets.find(a => a.from === 'vue')!.imports).toContain(name)
     })
   }
 })

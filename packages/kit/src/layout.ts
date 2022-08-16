@@ -6,9 +6,9 @@ import { useNuxt } from './context'
 import { logger } from './logger'
 import { addTemplate } from './template'
 
-export function addLayout (tmpl: NuxtTemplate, name?: string) {
+export function addLayout (this: any, template: NuxtTemplate, name?: string) {
   const nuxt = useNuxt()
-  const { filename, src } = addTemplate(tmpl)
+  const { filename, src } = addTemplate(template)
   const layoutName = kebabCase(name || parse(filename).name).replace(/["']/g, '')
 
   if (isNuxt2(nuxt)) {
@@ -21,7 +21,6 @@ export function addLayout (tmpl: NuxtTemplate, name?: string) {
     }
     nuxt.options.layouts[layoutName] = `./${filename}`
     if (name === 'error') {
-      // @ts-expect-error untyped
       this.addErrorLayout(filename)
     }
     return
