@@ -125,7 +125,7 @@ function createViteNodeMiddleware (ctx: ViteBuildContext, invalidates: Set<strin
     }
   }))
 
-  return app.nodeHandler
+  return app.handler
 }
 
 export async function initViteNodeServer (ctx: ViteBuildContext) {
