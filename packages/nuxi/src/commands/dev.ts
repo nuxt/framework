@@ -76,7 +76,7 @@ export default defineNuxtCommand({
           showURL()
         }
 
-        // Check if we need cache invalidation
+        // Write manifest and also check if we need cache invalidation
         if (!isRestart) {
           const previousManifest = await loadNuxtManifest(currentNuxt.options.buildDir)
           const newManifest = await writeNuxtManifest(currentNuxt)
