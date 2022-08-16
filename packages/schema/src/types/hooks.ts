@@ -82,7 +82,7 @@ export interface NuxtHooks {
 
   // Components
   'components:dirs': (dirs: ComponentsOptions['dirs']) => HookResult
-  'components:extend': (components: (Component | ComponentsDir | ScanDir)[]) => HookResult
+  'components:extend': (components: Component[]) => HookResult
 
   // @nuxt/builder
   'build:before':

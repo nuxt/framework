@@ -9,7 +9,7 @@ import { addTemplate } from './template'
 export function addLayout (tmpl: NuxtTemplate, name?: string) {
   const nuxt = useNuxt()
   const { filename, src } = addTemplate(tmpl)
-  const layoutName = kebabCase(name || parse(tmpl.filename).name).replace(/["']/g, '')
+  const layoutName = kebabCase(name || parse(filename).name).replace(/["']/g, '')
 
   if (isNuxt2(nuxt)) {
     // Nuxt 2 adds layouts in options
@@ -21,6 +21,7 @@ export function addLayout (tmpl: NuxtTemplate, name?: string) {
     }
     nuxt.options.layouts[layoutName] = `./${filename}`
     if (name === 'error') {
+      // @ts-expect-error untyped
       this.addErrorLayout(filename)
     }
     return
