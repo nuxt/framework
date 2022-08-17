@@ -5,7 +5,7 @@ import { resolve } from 'pathe'
 import { resolveModule } from '../utils/cjs'
 import { getPackageManager, packageManagerLocks } from '../utils/packageManagers'
 import { rmRecursive, touchFile } from '../utils/fs'
-import { cleanupNuxtDirs } from '../utils/nuxt'
+import { cleanupNuxtDirs, nuxtVersionToGitIdentifier } from '../utils/nuxt'
 import { defineNuxtCommand } from './index'
 
 async function getNuxtVersion (paths: string | string[]): Promise<string|null> {
@@ -19,16 +19,6 @@ async function getNuxtVersion (paths: string | string[]): Promise<string|null> {
   } catch {
     return null
   }
-}
-
-const nuxtVersionToGitIdentifier = (version: string) => {
-  const parts = version.split('.')
-  // match the git identifier in the release, for example: 3.0.0-rc.8-27677607.a3a8706
-  if (parts.length > 4) {
-    return parts.pop()
-  }
-  // match github tag, for example 3.0.0-rc.8
-  return `v${version}`
 }
 
 export default defineNuxtCommand({
