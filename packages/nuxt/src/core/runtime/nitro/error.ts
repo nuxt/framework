@@ -45,12 +45,19 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
 
   // HTML response
   const url = withQuery('/__nuxt_error', errorObject)
-  const html = await $fetch(url).catch(async (error) => {
-    console.error('[nitro] Error while generating error response', error)
+  let html = await $fetch(url).catch(() => null)
+
+  if (!html) {
     // Fallback to static rendered error page
-    const { template } = await importModule('@nuxt/ui-templates/templates/error-dev.mjs')
-    return template(errorObject)
-  })
+    console.log('Rendering fallback...')
+    const { template } = process.dev
+      ? await importModule('@nuxt/ui-templates/templates/error-dev.mjs')
+      : await importModule('@nuxt/ui-templates/templates/error-500.mjs')
+    html = template({
+      ...errorObject,
+      description: errorObject.message
+    })
+  }
 
   event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   event.res.end(html)
