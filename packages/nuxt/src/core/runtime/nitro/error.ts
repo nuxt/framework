@@ -1,7 +1,6 @@
 import { withQuery } from 'ufo'
 import type { NitroErrorHandler } from 'nitropack'
 import type { H3Error } from 'h3'
-import { importModule } from '@nuxt/kit'
 import { normalizeError, isJsonRequest } from '#internal/nitro/utils'
 
 export default <NitroErrorHandler> async function errorhandler (error: H3Error, event) {
@@ -50,8 +49,10 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
   // Fallback to static rendered error page
   if (!html) {
     const { template } = process.dev
-      ? await importModule('@nuxt/ui-templates/templates/error-dev.mjs')
-      : await importModule('@nuxt/ui-templates/templates/error-500.mjs')
+      // @ts-ignore
+      ? await import('@nuxt/ui-templates/templates/error-dev.mjs')
+      // @ts-ignore
+      : await import('@nuxt/ui-templates/templates/error-500.mjs')
     if (process.dev) {
       // TODO: Support `message` in tempalte
       (errorObject as any).description = errorObject.message
