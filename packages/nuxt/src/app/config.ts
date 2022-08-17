@@ -21,7 +21,7 @@ export function useAppConfig (): AppConfig {
 
 // HMR Support
 if (process.dev) {
-  function applyHMR (newConfig: AppConfigInput) {
+  function applyHMR (newConfig: AppConfig) {
     const appConfig = useAppConfig()
     if (newConfig && appConfig) {
       for (const key in newConfig) {
