@@ -16,13 +16,6 @@ const commonPresets: Preset[] = [
       'isVue2',
       'isVue3'
     ]
-  }),
-  // specific define* helpers without
-  defineUnimportPreset({
-    from: '#app/define',
-    imports: [
-      'defineAppConfig'
-    ]
   })
 ]
 
@@ -57,7 +50,8 @@ const appPreset = defineUnimportPreset({
     'useError',
     'createError',
     'defineNuxtLink',
-    'useAppConfig'
+    'useAppConfig',
+    'defineAppConfig'
   ]
 })
 

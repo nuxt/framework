@@ -1,4 +1,4 @@
-import type { AppConfig, RuntimeConfig } from '@nuxt/schema'
+import type { AppConfig, RuntimeConfig, AppConfigInput } from '@nuxt/schema'
 import { reactive } from 'vue'
 import { useNuxtApp } from './nuxt'
 // @ts-ignore
@@ -21,15 +21,15 @@ export function useAppConfig (): AppConfig {
 
 // HMR Support
 if (process.dev) {
-  function applyHMR (newConfig: AppConfig) {
+  function applyHMR (newConfig: AppConfigInput) {
     const appConfig = useAppConfig()
     if (newConfig && appConfig) {
       for (const key in newConfig) {
-        appConfig[key] = newConfig[key]
+        (appConfig as any)[key] = newConfig[key]
       }
       for (const key in appConfig) {
         if (!(key in newConfig)) {
-          delete appConfig[key]
+          delete (appConfig as any)[key]
         }
       }
     }
