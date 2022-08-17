@@ -1,4 +1,4 @@
-import type { AppConfig, RuntimeConfig, AppConfigInput } from '@nuxt/schema'
+import type { AppConfig, RuntimeConfig } from '@nuxt/schema'
 import { reactive } from 'vue'
 import { useNuxtApp } from './nuxt'
 // @ts-ignore
