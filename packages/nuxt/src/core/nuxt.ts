@@ -2,9 +2,9 @@ import { normalize, resolve } from 'pathe'
 import { createHooks } from 'hookable'
 import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
 import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule } from '@nuxt/kit'
+import escapeRE from 'escape-string-regexp'
 // Temporary until finding better placement
 /* eslint-disable import/no-restricted-paths */
-import escapeRE from 'escape-string-regexp'
 import pagesModule from '../pages/module'
 import metaModule from '../head/module'
 import componentsModule from '../components/module'
@@ -81,7 +81,7 @@ async function initNuxt (nuxt: Nuxt) {
 
   // Transpile layers within node_modules
   nuxt.options.build.transpile.push(
-    ...nuxt.options._layers.filter(i => i.cwd && i.cwd.includes('node_modules')).map(i => i.cwd)
+    ...nuxt.options._layers.filter(i => i.cwd.includes('node_modules')).map(i => i.cwd as string)
   )
 
   // Init user modules
@@ -95,7 +95,7 @@ async function initNuxt (nuxt: Nuxt) {
   // Add <NuxtWelcome>
   addComponent({
     name: 'NuxtWelcome',
-    filePath: tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')
+    filePath: tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')!
   })
 
   addComponent({
@@ -165,7 +165,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
     transform: {
       include: options._layers
         .filter(i => i.cwd && i.cwd.includes('node_modules'))
-        .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd.split('node_modules/').pop())}(\\/|$)(?!node_modules\\/)`))
+        .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd!.split('node_modules/').pop()!)}(\\/|$)(?!node_modules\\/)`))
     }
   }])
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))

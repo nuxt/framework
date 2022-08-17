@@ -1,4 +1,5 @@
 import { Nuxt, NuxtApp } from '@nuxt/schema'
+import { normalize } from 'pathe'
 import { createTransformer } from 'unctx/transform'
 import { createUnplugin } from 'unplugin'
 
@@ -14,6 +15,7 @@ export const UnctxTransformPlugin = (nuxt: Nuxt) => {
     name: 'unctx:transfrom',
     enforce: 'post',
     transformInclude (id) {
+      id = normalize(id).replace(/\?.*$/, '')
       return app?.plugins.some(i => i.src === id) || app?.middleware.some(m => m.path === id)
     },
     transform (code, id) {
@@ -21,7 +23,9 @@ export const UnctxTransformPlugin = (nuxt: Nuxt) => {
       if (result) {
         return {
           code: result.code,
-          map: options.sourcemap && result.magicString.generateMap({ source: id, includeContent: true })
+          map: options.sourcemap
+            ? result.magicString.generateMap({ source: id, includeContent: true })
+            : undefined
         }
       }
     }

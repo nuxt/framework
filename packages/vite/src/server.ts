@@ -2,18 +2,22 @@ import { resolveTSConfig } from 'pkg-types'
 import { resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
-import { provider } from 'std-env'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import { logger, resolveModule } from '@nuxt/kit'
 import { joinURL, withoutLeadingSlash, withTrailingSlash } from 'ufo'
-import type { OutputOptions } from 'rollup'
 import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
+import { initViteNodeServer } from './vite-node'
 
 export async function buildServer (ctx: ViteBuildContext) {
+  const useAsyncEntry = ctx.nuxt.options.experimental.asyncEntry ||
+   (ctx.nuxt.options.vite.devBundler === 'vite-node' && ctx.nuxt.options.dev)
+  ctx.entry = resolve(ctx.nuxt.options.appDir, useAsyncEntry ? 'entry.async' : 'entry')
+
   const _resolve = (id: string) => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
+    entry: ctx.entry,
     base: ctx.nuxt.options.dev
       ? joinURL(ctx.nuxt.options.app.baseURL.replace(/^\.\//, '/') || '/', ctx.nuxt.options.app.buildAssetsDir)
       : undefined,
@@ -40,6 +44,9 @@ export async function buildServer (ctx: ViteBuildContext) {
       'typeof navigator': '"undefined"',
       'typeof location': '"undefined"',
       'typeof XMLHttpRequest': '"undefined"'
+    },
+    optimizeDeps: {
+      entries: [ctx.entry]
     },
     resolve: {
       alias: {
@@ -75,18 +82,20 @@ export async function buildServer (ctx: ViteBuildContext) {
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
+        input: ctx.entry,
         external: ['#internal/nitro', ...ctx.nuxt.options.experimental.externalVue ? ['vue', 'vue-router'] : []],
         output: {
           entryFileNames: 'server.mjs',
           preferConst: true,
           // TODO: https://github.com/vitejs/vite/pull/8641
-          inlineDynamicImports: false,
+          inlineDynamicImports: !ctx.nuxt.options.experimental.viteServerDynamicImports,
           format: 'module'
         },
         onwarn (warning, rollupWarn) {
-          if (!['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
-            rollupWarn(warning)
+          if (warning.code && ['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
+            return
           }
+          rollupWarn(warning)
         }
       }
     },
@@ -105,16 +114,11 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Add type-checking
   if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
     const checker = await import('vite-plugin-checker').then(r => r.default)
-    serverConfig.plugins.push(checker({
+    serverConfig.plugins!.push(checker({
       vueTsc: {
         tsconfigPath: await resolveTSConfig(ctx.nuxt.options.rootDir)
       }
     }))
-  }
-
-  // Hotfix for https://github.com/nuxt/framework/issues/6204
-  if (provider === 'netlify') {
-    (serverConfig.build.rollupOptions.output as OutputOptions).inlineDynamicImports = true
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
@@ -148,10 +152,10 @@ export async function buildServer (ctx: ViteBuildContext) {
   // Initialize plugins
   await viteServer.pluginContainer.buildStart({})
 
-  if (ctx.nuxt.options.experimental.viteNode) {
-    logger.info('Vite server using experimental `vite-node`...')
-    await import('./vite-node').then(r => r.initViteNodeServer(ctx))
+  if (ctx.config.devBundler !== 'legacy') {
+    await initViteNodeServer(ctx)
   } else {
+    logger.info('Vite server using legacy server bundler...')
     await import('./dev-bundler').then(r => r.initViteDevBundler(ctx, onBuild))
   }
 }
