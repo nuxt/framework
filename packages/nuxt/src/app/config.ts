@@ -1,4 +1,4 @@
-import type { AppConfig, RuntimeConfig } from '@nuxt/schema'
+import type { AppConfig } from '@nuxt/schema'
 import { reactive } from 'vue'
 import { useNuxtApp } from './nuxt'
 // @ts-ignore
@@ -6,10 +6,6 @@ import __appConfig from '#build/app.config.mjs'
 
 // Workaround for vite HMR with virtual modules
 export const _getAppConfig = () => __appConfig as AppConfig
-
-export function useRuntimeConfig (): RuntimeConfig {
-  return useNuxtApp().$config
-}
 
 export function useAppConfig (): AppConfig {
   const nuxtApp = useNuxtApp()
