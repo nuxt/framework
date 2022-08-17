@@ -6,12 +6,12 @@ import { useNuxtApp, useRuntimeConfig } from '#app'
 
 export const useRouter = () => {
   const nuxtApp = useNuxtApp()
-  return !nuxtApp || nuxtApp?._isolatedRender ? null : nuxtApp.$router as Router
+  return !nuxtApp || nuxtApp?._islandRender ? null : nuxtApp.$router as Router
 }
 
 export const useRoute = (): RouteLocationNormalizedLoaded | null => {
   const nuxtApp = useNuxtApp()
-  if (nuxtApp._isolatedRender) {
+  if (nuxtApp._islandRender) {
     return null
   }
   if (getCurrentInstance()) {
@@ -23,7 +23,7 @@ export const useRoute = (): RouteLocationNormalizedLoaded | null => {
 /** @deprecated Use `useRoute` instead. */
 export const useActiveRoute = (): RouteLocationNormalizedLoaded | null => {
   const nuxtApp = useNuxtApp()
-  return nuxtApp._isolatedRender ? null : nuxtApp._route as RouteLocationNormalizedLoaded
+  return nuxtApp._islandRender ? null : nuxtApp._route as RouteLocationNormalizedLoaded
 }
 
 export interface RouteMiddleware {

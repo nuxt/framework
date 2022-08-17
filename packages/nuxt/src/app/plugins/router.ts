@@ -88,7 +88,7 @@ interface Router {
 
 export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   // Self-disable if we are rendering a component with no URL context
-  if (nuxtApp._isolatedRender) { return }
+  if (nuxtApp._islandRender) { return }
 
   const initialURL = process.client
     ? withoutBase(window.location.pathname, useRuntimeConfig().app.baseURL) + window.location.search + window.location.hash

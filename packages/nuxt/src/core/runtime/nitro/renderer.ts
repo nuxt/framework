@@ -118,7 +118,7 @@ function parseRenderQuery (event: CompatibilityEvent) {
 export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error> : null
-  const isolatedRenderCtx = event.req.url?.startsWith('/__nuxt_isolated_render')
+  const isolatedRenderCtx = event.req.url?.startsWith('/__nuxt_island')
     ? event.req.method === 'GET' ? parseRenderQuery(event) : await readBody(event)
     : null
   const url: string = ssrError?.url as string || isolatedRenderCtx?.url || event.req.url!

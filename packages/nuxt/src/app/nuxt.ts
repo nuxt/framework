@@ -72,8 +72,9 @@ interface _NuxtApp {
   [key: string]: any
 
   _asyncDataPromises: Record<string, Promise<any> | undefined>
+
   /** @private */
-  _isolatedRender?: boolean
+  _islandRender?: boolean
 
   ssrContext?: NuxtSSRContext
   payload: {
@@ -121,7 +122,7 @@ export function createNuxtApp (options: CreateOptions) {
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
     isHydrating: process.client,
-    _isolatedRender: process.server && options.ssrContext?.url.startsWith('/__nuxt_isolated_render'),
+    _islandRender: process.server && options.ssrContext?.url.startsWith('/__nuxt_island'),
     _asyncDataPromises: {},
     ...options
   } as any as NuxtApp

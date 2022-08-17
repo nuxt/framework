@@ -363,7 +363,7 @@ describe('automatically keyed composables', () => {
 
 describe('selective rendering of islands components', () => {
   it('renders components with route', async () => {
-    const result: NuxtComponentRenderResult = await $fetch(withQuery('/__nuxt_isolated_render', {
+    const result: NuxtComponentRenderResult = await $fetch(withQuery('/__nuxt_island', {
       url: '/foo',
       state: JSON.stringify({}),
       components: JSON.stringify([
@@ -385,7 +385,7 @@ describe('selective rendering of islands components', () => {
     `)
   })
   it('renders pure components', async () => {
-    const result: NuxtComponentRenderResult = await $fetch(withQuery('/__nuxt_isolated_render', {
+    const result: NuxtComponentRenderResult = await $fetch(withQuery('/__nuxt_island', {
       components: JSON.stringify([
         {
           name: 'PureComponent',
