@@ -176,10 +176,20 @@ export default defineRenderHandler(async (event) => {
     }
 
     // Allow hooking into the rendered result
-    await ssrContext.nuxt?.hooks.callHook('component:rendered', result)
     await nitroApp.hooks.callHook('nuxt:component:rendered', result)
 
-    return result
+    // Construct JSON response
+    const response: RenderResponse = {
+      body: JSON.stringify(result),
+      statusCode: event.res.statusCode,
+      statusMessage: event.res.statusMessage,
+      headers: {
+        'content-type': 'application/json;charset=utf-8',
+        'x-powered-by': 'Nuxt'
+      }
+    }
+
+    return response
   }
 
   // Create render context
@@ -217,8 +227,8 @@ export default defineRenderHandler(async (event) => {
     statusCode: event.res.statusCode,
     statusMessage: event.res.statusMessage,
     headers: {
-      'Content-Type': 'text/html;charset=UTF-8',
-      'X-Powered-By': 'Nuxt'
+      'content-type': 'text/html;charset=utf-8',
+      'x-powered-by': 'Nuxt'
     }
   }
 

@@ -366,11 +366,7 @@ describe('selective rendering of islands components', () => {
       "<pre>    Route: /foo
         </pre>"
     `)
-    expect(result.state).toMatchInlineSnapshot(`
-      {
-        "$serror": null,
-      }
-    `)
+    expect(result.state).toMatchInlineSnapshot('{}')
     expect(Object.keys(result)).toMatchInlineSnapshot(`
       [
         "rendered",
@@ -402,11 +398,7 @@ describe('selective rendering of islands components', () => {
           Was router enabled: false
         </pre>"
     `)
-    expect(result.state).toMatchInlineSnapshot(`
-      {
-        "$serror": null,
-      }
-    `)
+    expect(result.state).toMatchInlineSnapshot('{}')
     // TODO: fix bundle renderer issue with webpack
     if (!process.env.TEST_WITH_WEBPACK) {
       expect(result.styles).toMatch(/PureComponent[^"']*.css/)
