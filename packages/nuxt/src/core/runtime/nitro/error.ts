@@ -44,7 +44,8 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
   }
 
   // HTML response (via SSR)
-  let html = await $fetch(withQuery('/__nuxt_error', errorObject)).catch(() => null)
+  const isErrorPage = event.req.url?.startsWith('/__nuxt_error')
+  let html = !isErrorPage ? await $fetch(withQuery('/__nuxt_error', errorObject)).catch(() => null) : null
 
   // Fallback to static rendered error page
   if (!html) {
