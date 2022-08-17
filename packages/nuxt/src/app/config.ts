@@ -25,7 +25,7 @@ if (process.dev) {
     const appConfig = useAppConfig()
     if (newConfig && appConfig) {
       for (const key in newConfig) {
-        (appConfig as any)[key] = newConfig[key]
+        (appConfig as any)[key] = (newConfig as any)[key]
       }
       for (const key in appConfig) {
         if (!(key in newConfig)) {
