@@ -1,6 +1,7 @@
 import { withQuery } from 'ufo'
 import type { NitroErrorHandler } from 'nitropack'
 import type { H3Error } from 'h3'
+import { importModule } from '@nuxt/kit'
 import { normalizeError, isJsonRequest } from '#internal/nitro/utils'
 
 export default <NitroErrorHandler> async function errorhandler (error: H3Error, event) {
@@ -13,7 +14,7 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
     statusCode,
     statusMessage,
     message,
-    description: process.env.NODE_ENV === 'development' && statusCode !== 404
+    stack: process.env.NODE_ENV === 'development' && statusCode !== 404
       ? `<pre>${stack.map(i => `<span class="stack${i.internal ? ' internal' : ''}">${i.text}</span>`).join('\n')}</pre>`
       : '',
     data: error.data
@@ -44,9 +45,11 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
 
   // HTML response
   const url = withQuery('/__nuxt_error', errorObject)
-  const html = await $fetch(url).catch((error) => {
+  const html = await $fetch(url).catch(async (error) => {
     console.error('[nitro] Error while generating error response', error)
-    return errorObject.statusMessage
+    // Fallback to static rendered error page
+    const { template } = await importModule('@nuxt/ui-templates/templates/error-dev.mjs')
+    return template(errorObject)
   })
 
   event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
