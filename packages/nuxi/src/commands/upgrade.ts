@@ -5,7 +5,6 @@ import { readPackageJSON } from 'pkg-types'
 import { getPackageManager, packageManagerLocks } from '../utils/packageManagers'
 import { rmRecursive, touchFile } from '../utils/fs'
 import { cleanupNuxtDirs } from '../utils/nuxt'
-import { getNearestPackage } from '../utils/cjs'
 import { defineNuxtCommand } from './index'
 
 async function getNuxtVersion (path: string): Promise<string|null> {
@@ -58,7 +57,7 @@ export default defineNuxtCommand({
     await cleanupNuxtDirs(rootDir)
 
     // Check installed nuxt version again
-    let upgradedVersion = await getNuxtVersion(rootDir) || '[unknown]'
+    const upgradedVersion = await getNuxtVersion(rootDir) || '[unknown]'
     consola.info('Upgraded nuxt version:', upgradedVersion)
 
     if (upgradedVersion === currentVersion) {
