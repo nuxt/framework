@@ -11,10 +11,6 @@ export function useRuntimeConfig (): RuntimeConfig {
   return useNuxtApp().$config
 }
 
-export function defineAppConfig (config: AppConfig): AppConfig {
-  return config
-}
-
 export function useAppConfig (): AppConfig {
   const nuxtApp = useNuxtApp()
   if (!nuxtApp._appConfig) {
@@ -25,7 +21,7 @@ export function useAppConfig (): AppConfig {
 
 // HMR Support
 if (process.dev) {
-  function applyHMR (newConfig) {
+  function applyHMR (newConfig: AppConfig) {
     const appConfig = useAppConfig()
     if (newConfig && appConfig) {
       for (const key in newConfig) {

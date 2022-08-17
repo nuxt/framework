@@ -13,14 +13,14 @@ interface TestResponse { message: string }
 describe('API routes', () => {
   it('generates types for routes', () => {
     expectTypeOf($fetch('/api/hello')).toMatchTypeOf<Promise<string>>()
-    expectTypeOf($fetch('/api/hey')).toMatchTypeOf<Promise<{ foo:string, baz: string }>>()
+    expectTypeOf($fetch('/api/hey')).toMatchTypeOf<Promise<{ foo: string, baz: string }>>()
     expectTypeOf($fetch('/api/other')).toMatchTypeOf<Promise<unknown>>()
     expectTypeOf($fetch<TestResponse>('/test')).toMatchTypeOf<Promise<TestResponse>>()
   })
 
   it('works with useAsyncData', () => {
     expectTypeOf(useAsyncData('api-hello', () => $fetch('/api/hello')).data).toMatchTypeOf<Ref<string>>()
-    expectTypeOf(useAsyncData('api-hey', () => $fetch('/api/hey')).data).toMatchTypeOf<Ref<{ foo:string, baz: string }>>()
+    expectTypeOf(useAsyncData('api-hey', () => $fetch('/api/hey')).data).toMatchTypeOf<Ref<{ foo: string, baz: string }>>()
     expectTypeOf(useAsyncData('api-hey-with-pick', () => $fetch('/api/hey'), { pick: ['baz'] }).data).toMatchTypeOf<Ref<{ baz: string }>>()
     expectTypeOf(useAsyncData('api-other', () => $fetch('/api/other')).data).toMatchTypeOf<Ref<unknown>>()
     expectTypeOf(useAsyncData<TestResponse>('api-generics', () => $fetch('/test')).data).toMatchTypeOf<Ref<TestResponse>>()
@@ -29,7 +29,7 @@ describe('API routes', () => {
     expectTypeOf(useAsyncData<any, string>('api-error-generics', () => $fetch('/error')).error).toMatchTypeOf<Ref<string | true | null>>()
 
     expectTypeOf(useLazyAsyncData('lazy-api-hello', () => $fetch('/api/hello')).data).toMatchTypeOf<Ref<string>>()
-    expectTypeOf(useLazyAsyncData('lazy-api-hey', () => $fetch('/api/hey')).data).toMatchTypeOf<Ref<{ foo:string, baz: string }>>()
+    expectTypeOf(useLazyAsyncData('lazy-api-hey', () => $fetch('/api/hey')).data).toMatchTypeOf<Ref<{ foo: string, baz: string }>>()
     expectTypeOf(useLazyAsyncData('lazy-api-hey-with-pick', () => $fetch('/api/hey'), { pick: ['baz'] }).data).toMatchTypeOf<Ref<{ baz: string }>>()
     expectTypeOf(useLazyAsyncData('lazy-api-other', () => $fetch('/api/other')).data).toMatchTypeOf<Ref<unknown>>()
     expectTypeOf(useLazyAsyncData<TestResponse>('lazy-api-generics', () => $fetch('/test')).data).toMatchTypeOf<Ref<TestResponse>>()
@@ -40,7 +40,7 @@ describe('API routes', () => {
 
   it('works with useFetch', () => {
     expectTypeOf(useFetch('/api/hello').data).toMatchTypeOf<Ref<string>>()
-    expectTypeOf(useFetch('/api/hey').data).toMatchTypeOf<Ref<{ foo:string, baz: string }>>()
+    expectTypeOf(useFetch('/api/hey').data).toMatchTypeOf<Ref<{ foo: string, baz: string }>>()
     expectTypeOf(useFetch('/api/hey', { pick: ['baz'] }).data).toMatchTypeOf<Ref<{ baz: string }>>()
     expectTypeOf(useFetch('/api/other').data).toMatchTypeOf<Ref<unknown>>()
     expectTypeOf(useFetch<TestResponse>('/test').data).toMatchTypeOf<Ref<TestResponse>>()
@@ -49,7 +49,7 @@ describe('API routes', () => {
     expectTypeOf(useFetch<any, string>('/error').error).toMatchTypeOf<Ref<string | null | true>>()
 
     expectTypeOf(useLazyFetch('/api/hello').data).toMatchTypeOf<Ref<string>>()
-    expectTypeOf(useLazyFetch('/api/hey').data).toMatchTypeOf<Ref<{ foo:string, baz: string }>>()
+    expectTypeOf(useLazyFetch('/api/hey').data).toMatchTypeOf<Ref<{ foo: string, baz: string }>>()
     expectTypeOf(useLazyFetch('/api/hey', { pick: ['baz'] }).data).toMatchTypeOf<Ref<{ baz: string }>>()
     expectTypeOf(useLazyFetch('/api/other').data).toMatchTypeOf<Ref<unknown>>()
     expectTypeOf(useLazyFetch('/api/other').data).toMatchTypeOf<Ref<unknown>>()
@@ -138,7 +138,7 @@ describe('composables', () => {
 
   it('infer request url string literal from server/api routes', () => {
     // request can accept dynamic string type
-    const dynamicStringUrl:string = 'https://example.com/api'
+    const dynamicStringUrl: string = 'https://example.com/api'
     expectTypeOf(useFetch(dynamicStringUrl).data).toMatchTypeOf<Ref<Pick<unknown, never>>>()
 
     // request param should infer string literal type / show auto-complete hint base on server routes, ex: '/api/hello'

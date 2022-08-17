@@ -41,7 +41,7 @@ export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamesp
 }
 
 // -- App Config --
-export interface AppConfig extends Record<string, any> {
+export interface AppConfigInput extends Record<string, any> {
   /** @deprecated reserved */
   private?: never
   /** @deprecated reserved */
@@ -50,3 +50,4 @@ export interface AppConfig extends Record<string, any> {
   nitro?: never
 }
 
+export interface AppConfig { }
