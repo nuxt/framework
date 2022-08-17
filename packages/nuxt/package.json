@@ -13,11 +13,9 @@
   "exports": {
     ".": "./dist/index.mjs",
     "./app": "./dist/app/index.mjs",
-    "./app/define": "./dist/app/define.mjs",
     "./package.json": "./package.json"
   },
   "imports": {
-    "#app/define": "./dist/app/define.mjs",
     "#app": "./dist/app/index.mjs",
     "#head": "./dist/head/runtime/index.mjs",
     "#pages": "./dist/pages/runtime/index.mjs"
