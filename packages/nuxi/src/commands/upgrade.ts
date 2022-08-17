@@ -21,6 +21,16 @@ async function getNuxtVersion (paths: string | string[]): Promise<string|null> {
   }
 }
 
+const nuxtVersionToGitIdentifier = (version: string) => {
+  const parts = version.split('.')
+  // match the git identifier in the release, for example: 3.0.0-rc.8-27677607.a3a8706
+  if (parts.length > 4) {
+    return parts.pop()
+  }
+  // match github tag, for example 3.0.0-rc.8
+  return `v${version}`
+}
+
 export default defineNuxtCommand({
   meta: {
     name: 'upgrade',
@@ -66,8 +76,8 @@ export default defineNuxtCommand({
       consola.success('You\'re already using the latest version of nuxt.')
     } else {
       consola.success('Successfully upgraded nuxt from', currentVersion, 'to', upgradedVersion)
-      const commitA = currentVersion.split('.').pop()
-      const commitB = upgradedVersion.split('.').pop()
+      const commitA = nuxtVersionToGitIdentifier(currentVersion)
+      const commitB = nuxtVersionToGitIdentifier(upgradedVersion)
       if (commitA && commitB) {
         consola.info('Changelog:', `https://github.com/nuxt/framework/compare/${commitA}...${commitB}`)
       }
