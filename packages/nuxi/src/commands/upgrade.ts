@@ -2,10 +2,10 @@ import { execSync } from 'node:child_process'
 import { promises as fsp } from 'node:fs'
 import consola from 'consola'
 import { resolve } from 'pathe'
-import { resolveModule } from '../utils/cjs'
 import { getPackageManager, packageManagerLocks } from '../utils/packageManagers'
 import { rmRecursive, touchFile } from '../utils/fs'
 import { cleanupNuxtDirs } from '../utils/nuxt'
+import { getNearestPackage, resolveModule } from '../utils/cjs'
 import { defineNuxtCommand } from './index'
 
 async function getNuxtVersion (paths: string | string[]): Promise<string|null> {
@@ -53,13 +53,22 @@ export default defineNuxtCommand({
 
     // Install latest rc
     consola.info('Installing latest Nuxt 3 RC...')
-    execSync(`${packageManager} ${packageManager === 'yarn' ? 'add' : 'install'} -D nuxt@rc`, { stdio: 'inherit' })
+    execSync(`${packageManager} ${packageManager === 'yarn' ? 'add' : 'install'} -D nuxt@rc`, { stdio: 'inherit', cwd: rootDir })
 
     // Cleanup after upgrade
     await cleanupNuxtDirs(rootDir)
 
     // Check installed nuxt version again
-    const upgradedVersion = await getNuxtVersion(rootDir) || '[unknown]'
+    let upgradedVersion = await getNuxtVersion(rootDir)
+    // The above will occasionally fail when running in a non cwd, seems to be a caching issue (fetches last versions module)
+    if (!upgradedVersion) {
+      try {
+        // fallback to fetching version from package.json
+        upgradedVersion = getNearestPackage(rootDir).devDependencies?.nuxt || '[unknown]'
+      } catch {
+        upgradedVersion = '[unknown]'
+      }
+    }
     consola.info('Upgraded nuxt version:', upgradedVersion)
 
     if (upgradedVersion === currentVersion) {
