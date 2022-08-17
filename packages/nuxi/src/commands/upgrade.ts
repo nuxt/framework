@@ -58,16 +58,7 @@ export default defineNuxtCommand({
     await cleanupNuxtDirs(rootDir)
 
     // Check installed nuxt version again
-    let upgradedVersion = await getNuxtVersion(rootDir)
-    // The above will occasionally fail when running in a non cwd, seems to be a caching issue (fetches last versions module)
-    if (!upgradedVersion) {
-      try {
-        // fallback to fetching version from package.json
-        upgradedVersion = getNearestPackage(rootDir).devDependencies?.nuxt || '[unknown]'
-      } catch {
-        upgradedVersion = '[unknown]'
-      }
-    }
+    let upgradedVersion = await getNuxtVersion(rootDir) || '[unknown]'
     consola.info('Upgraded nuxt version:', upgradedVersion)
 
     if (upgradedVersion === currentVersion) {
