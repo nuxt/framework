@@ -1,7 +1,7 @@
 <template>
   <Suspense @resolve="onResolve">
     <ErrorComponent v-if="error" :error="error" />
-    <RenderComponents v-else-if="componentsToRender" :components="componentsToRender" />
+    <IslandRendererer v-else-if="islandContext" :context="islandContext" />
     <App v-else />
   </Suspense>
 </template>
@@ -11,10 +11,9 @@ import { defineAsyncComponent, onErrorCaptured, provide } from 'vue'
 import { callWithNuxt, isNuxtError, showError, useError, useRoute, useNuxtApp } from '#app'
 
 const ErrorComponent = defineAsyncComponent(() => import('#build/error-component.mjs'))
-const RenderComponents = process.server
-  ? defineAsyncComponent(() => import('./render-components').then(r => r.default || r))
-  // Generate client-side CSS chunks - TODO: https://github.com/nuxt/framework/pull/5688
-  : () => import('#build/components-islands.mjs')
+const IslandRendererer = process.server
+  ? defineAsyncComponent(() => import('./island-renderer').then(r => r.default || r))
+  : () => import('#build/island-renderer.mjs')
 
 const nuxtApp = useNuxtApp()
 const onResolve = () => nuxtApp.callHook('app:suspense:resolve')
@@ -37,6 +36,6 @@ onErrorCaptured((err, target, info) => {
   }
 })
 
-// server component rendering
-const componentsToRender = process.server && nuxtApp.ssrContext?.render?.components
+// Component islands context
+const { islandContext } = process.server && nuxtApp.ssrContext
 </script>

@@ -56,8 +56,9 @@ export interface NuxtSSRContext extends SSRContext {
   payload: _NuxtApp['payload']
   teleports?: Record<string, string>
   renderMeta?: () => Promise<NuxtMeta> | NuxtMeta
-  render?: {
-    components: Array<{ name: string, props?: Record<string, any> }>
+  islandContext?: {
+    name: string
+    props?: Record<string, any>
   }
 }
 
@@ -72,9 +73,6 @@ interface _NuxtApp {
   [key: string]: any
 
   _asyncDataPromises: Record<string, Promise<any> | undefined>
-
-  /** @private */
-  _islandRender?: boolean
 
   ssrContext?: NuxtSSRContext
   payload: {
@@ -122,7 +120,6 @@ export function createNuxtApp (options: CreateOptions) {
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
     isHydrating: process.client,
-    _islandRender: process.server && options.ssrContext?.url.startsWith('/__nuxt_island'),
     _asyncDataPromises: {},
     ...options
   } as any as NuxtApp

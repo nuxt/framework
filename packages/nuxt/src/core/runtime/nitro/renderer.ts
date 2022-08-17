@@ -20,7 +20,13 @@ export interface NuxtRenderHTMLContext {
   bodyAppend: string[]
 }
 
-export interface NuxtComponentRenderResult {
+export interface NuxtIslandRequest {
+  format?: 'html' | 'json'
+  name: string
+  props?: Record<string, any>
+}
+
+export interface NuxtIslandResponse {
   state: Record<string, any>
   rendered: Array<{ html: string }>
   styles?: string
@@ -106,22 +112,21 @@ const getSPARenderer = lazyCachedFunction(async () => {
   return { renderToString }
 })
 
-function parseRenderQuery (event: CompatibilityEvent) {
-  const query = getQuery(event)
+async function readIslandsRequest (event: CompatibilityEvent): Promise<NuxtIslandRequest> {
+  const query = event.req.method === 'GET' ? getQuery(event) : await readBody(event)
+  // TODO: Validate name and props
   return {
-    ...query,
-    components: destr(query.components),
-    state: destr(query.state)
+    format: query.format,
+    name: query.name,
+    props: destr(query.props) || {}
   }
 }
 
 export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error> : null
-  const isolatedRenderCtx = event.req.url?.startsWith('/__nuxt_island')
-    ? event.req.method === 'GET' ? parseRenderQuery(event) : await readBody(event)
-    : null
-  const url: string = ssrError?.url as string || isolatedRenderCtx?.url || event.req.url!
+  const islandContext = event.req.url?.startsWith('/__nuxt_island') ? await readIslandsRequest(event) : undefined
+  const url: string = ssrError?.url as string || event.req.url!
 
   // Initialize ssr context
   const ssrContext: NuxtSSRContext = {
@@ -133,10 +138,9 @@ export default defineRenderHandler(async (event) => {
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
     error: !!ssrError,
     nuxt: undefined!, /* NuxtApp */
-    render: isolatedRenderCtx ? { components: isolatedRenderCtx.components || [] } : undefined,
+    islandContext,
     payload: {
-      ...ssrError ? { error: ssrError } : {},
-      ...isolatedRenderCtx ? { state: isolatedRenderCtx.state || {} } : {}
+      ...ssrError ? { error: ssrError } : {}
     } as NuxtSSRContext['payload']
   }
 
@@ -162,36 +166,6 @@ export default defineRenderHandler(async (event) => {
 
   const nitroApp = useNitroApp()
 
-  // Render server components
-  if (isolatedRenderCtx) {
-    const components = Object.entries(ssrContext.teleports || [])
-      .filter(([key]) => key.startsWith('render-target'))
-      .map(([, value]) => ({ html: value.replace(/<!--teleport anchor-->$/, '') }))
-
-    const result: NuxtComponentRenderResult = {
-      rendered: components,
-      state: ssrContext.payload.state,
-      styles: _rendered.renderStyles() + (ssrContext.styles || ''),
-      scripts: (renderedMeta.bodyScriptsPrepend || '') + _rendered.renderScripts() + (renderedMeta.bodyScripts || '')
-    }
-
-    // Allow hooking into the rendered result
-    await nitroApp.hooks.callHook('nuxt:component:rendered', result)
-
-    // Construct JSON response
-    const response: RenderResponse = {
-      body: JSON.stringify(result),
-      statusCode: event.res.statusCode,
-      statusMessage: event.res.statusMessage,
-      headers: {
-        'content-type': 'application/json;charset=utf-8',
-        'x-powered-by': 'Nuxt'
-      }
-    }
-
-    return response
-  }
-
   // Create render context
   const htmlContext: NuxtRenderHTMLContext = {
     htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
@@ -207,8 +181,10 @@ export default defineRenderHandler(async (event) => {
       ssrContext.teleports?.body
     ]),
     body: [
-      // TODO: Rename to _rendered.body in next vue-bundle-renderer
-      _rendered.html
+      islandContext
+        ? ssrContext.teleports!['nuxt-island']
+          .replace(/<!--teleport anchor-->$/, '')
+        : _rendered.html
     ],
     bodyAppend: normalizeChunks([
       `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
@@ -220,6 +196,20 @@ export default defineRenderHandler(async (event) => {
 
   // Allow hooking into the rendered result
   await nitroApp.hooks.callHook('render:html', htmlContext, { event })
+
+  // Response for component islands
+  if (islandContext && islandContext.format !== 'html') {
+    const response: RenderResponse = {
+      body: JSON.stringify(htmlContext, null, 2),
+      statusCode: event.res.statusCode,
+      statusMessage: event.res.statusMessage,
+      headers: {
+        'content-type': 'application/json;charset=utf-8',
+        'x-powered-by': 'Nuxt'
+      }
+    }
+    return response
+  }
 
   // Construct HTML response
   const response: RenderResponse = {
@@ -258,6 +248,14 @@ function joinAttrs (chunks: string[]) {
 }
 
 function renderHTMLDocument (html: NuxtRenderHTMLContext) {
+  return `<!DOCTYPE html>
+<html ${joinAttrs(html.htmlAttrs)}>
+<head>${joinTags(html.head)}</head>
+<body ${joinAttrs(html.bodyAttrs)}>${joinTags(html.bodyPreprend)}${joinTags(html.body)}${joinTags(html.bodyAppend)}</body>
+</html>`
+}
+
+function renderIslandComponent (html: NuxtRenderHTMLContext) {
   return `<!DOCTYPE html>
 <html ${joinAttrs(html.htmlAttrs)}>
 <head>${joinTags(html.head)}</head>

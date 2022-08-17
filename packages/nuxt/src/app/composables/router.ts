@@ -5,25 +5,19 @@ import { joinURL } from 'ufo'
 import { useNuxtApp, useRuntimeConfig } from '#app'
 
 export const useRouter = () => {
-  const nuxtApp = useNuxtApp()
-  return !nuxtApp || nuxtApp?._islandRender ? null : nuxtApp.$router as Router
+  return useNuxtApp()?.$router as Router
 }
 
-export const useRoute = (): RouteLocationNormalizedLoaded | null => {
-  const nuxtApp = useNuxtApp()
-  if (nuxtApp._islandRender) {
-    return null
-  }
+export const useRoute = (): RouteLocationNormalizedLoaded => {
   if (getCurrentInstance()) {
-    return inject<RouteLocationNormalizedLoaded>('_route', nuxtApp._route)
+    return inject('_route', useNuxtApp()._route)
   }
-  return useNuxtApp()._route as RouteLocationNormalizedLoaded
+  return useNuxtApp()._route
 }
 
 /** @deprecated Use `useRoute` instead. */
-export const useActiveRoute = (): RouteLocationNormalizedLoaded | null => {
-  const nuxtApp = useNuxtApp()
-  return nuxtApp._islandRender ? null : nuxtApp._route as RouteLocationNormalizedLoaded
+export const useActiveRoute = (): RouteLocationNormalizedLoaded => {
+  return useNuxtApp()._route
 }
 
 export interface RouteMiddleware {
