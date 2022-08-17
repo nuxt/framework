@@ -14,7 +14,7 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
     statusCode,
     statusMessage,
     message,
-    stack: process.env.NODE_ENV === 'development' && statusCode !== 404
+    stack: process.dev && statusCode !== 404
       ? `<pre>${stack.map(i => `<span class="stack${i.internal ? ' internal' : ''}">${i.text}</span>`).join('\n')}</pre>`
       : '',
     data: error.data
@@ -43,20 +43,19 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
     return
   }
 
-  // HTML response
-  const url = withQuery('/__nuxt_error', errorObject)
-  let html = await $fetch(url).catch(() => null)
+  // HTML response (via SSR)
+  let html = await $fetch(withQuery('/__nuxt_error', errorObject)).catch(() => null)
 
+  // Fallback to static rendered error page
   if (!html) {
-    // Fallback to static rendered error page
-    console.log('Rendering fallback...')
     const { template } = process.dev
       ? await importModule('@nuxt/ui-templates/templates/error-dev.mjs')
       : await importModule('@nuxt/ui-templates/templates/error-500.mjs')
-    html = template({
-      ...errorObject,
-      description: errorObject.message
-    })
+    if (process.dev) {
+      // TODO: Support `message` in tempalte
+      (errorObject as any).description = errorObject.message
+    }
+    html = template(errorObject)
   }
 
   event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
