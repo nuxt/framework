@@ -5,7 +5,7 @@ import { useNuxtApp } from './nuxt'
 import __appConfig from '#build/app.config.mjs'
 
 // Workaround for vite HMR with virtual modules
-export const _appConfig = __appConfig as AppConfig
+export const _getAppConfig = () => __appConfig as AppConfig
 
 export function useRuntimeConfig (): RuntimeConfig {
   return useNuxtApp().$config
@@ -14,7 +14,7 @@ export function useRuntimeConfig (): RuntimeConfig {
 export function useAppConfig (): AppConfig {
   const nuxtApp = useNuxtApp()
   if (!nuxtApp._appConfig) {
-    nuxtApp._appConfig = reactive(_appConfig) as AppConfig
+    nuxtApp._appConfig = reactive(__appConfig) as AppConfig
   }
   return nuxtApp._appConfig
 }
@@ -38,14 +38,13 @@ if (process.dev) {
   // Vite
   if (import.meta.hot) {
     import.meta.hot.accept((newModule) => {
-      const newConfig = newModule?._appConfig
+      const newConfig = newModule._getAppConfig()
       applyHMR(newConfig)
     })
   }
 
   // Webpack
   if (import.meta.webpackHot) {
-    console.log('Register webpackHot')
     import.meta.webpackHot.accept('#build/app.config.mjs', () => {
       applyHMR(__appConfig)
     })
