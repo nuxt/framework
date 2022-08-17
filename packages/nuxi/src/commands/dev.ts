@@ -1,3 +1,4 @@
+import type { AddressInfo } from 'node:net'
 import { resolve, relative, normalize } from 'pathe'
 import chokidar from 'chokidar'
 import { debounce } from 'perfect-debounce'
@@ -10,6 +11,7 @@ import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
 import { importModule } from '../utils/cjs'
 import { overrideEnv } from '../utils/env'
+import { writeNuxtManifest, loadNuxtManifest, cleanupNuxtDirs } from '../utils/nuxt'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -74,8 +76,22 @@ export default defineNuxtCommand({
           showURL()
         }
 
+        // Write manifest and also check if we need cache invalidation
+        if (!isRestart) {
+          const previousManifest = await loadNuxtManifest(currentNuxt.options.buildDir)
+          const newManifest = await writeNuxtManifest(currentNuxt)
+          if (previousManifest && newManifest && previousManifest._hash !== newManifest._hash) {
+            await cleanupNuxtDirs(currentNuxt.options.rootDir)
+          }
+        }
+
         await currentNuxt.ready()
+
         await currentNuxt.hooks.callHook('listen', listener.server, listener)
+        const address = listener.server.address() as AddressInfo
+        currentNuxt.options.server.port = address.port
+        currentNuxt.options.server.host = address.address
+
         await Promise.all([
           writeTypes(currentNuxt).catch(console.error),
           buildNuxt(currentNuxt)

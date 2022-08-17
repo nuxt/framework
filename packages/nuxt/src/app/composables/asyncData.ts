@@ -1,6 +1,5 @@
 import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch, unref } from 'vue'
 import type { Ref, WatchSource } from 'vue'
-import { wrapInRef } from './utils'
 import { NuxtApp, useNuxtApp } from '#app'
 
 export type _Transform<Input = any, Output = any> = (input: Input) => Output
@@ -16,16 +15,16 @@ export type PickFrom<T, K extends Array<string>> = T extends Array<any>
 export type KeysOf<T> = Array<keyof T extends string ? keyof T : string>
 export type KeyOfRes<Transform extends _Transform> = KeysOf<ReturnType<Transform>>
 
-type MultiWatchSources = (WatchSource<unknown> | object)[];
+type MultiWatchSources = (WatchSource<unknown> | object)[]
 
 export interface AsyncDataOptions<
   DataT,
   Transform extends _Transform<DataT, any> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<_Transform> = KeyOfRes<Transform>
-  > {
+> {
   server?: boolean
   lazy?: boolean
-  default?: () => DataT | Ref<DataT>
+  default?: () => DataT | Ref<DataT> | null
   transform?: Transform
   pick?: PickKeys
   watch?: MultiWatchSources
@@ -37,10 +36,10 @@ export interface RefreshOptions {
 }
 
 export interface _AsyncData<DataT, ErrorT> {
-  data: Ref<DataT>
+  data: Ref<DataT | null>
   pending: Ref<boolean>
   refresh: (opts?: RefreshOptions) => Promise<void>
-  error: Ref<ErrorT>
+  error: Ref<ErrorT | null>
 }
 
 export type AsyncData<Data, Error> = _AsyncData<Data, Error> & Promise<_AsyncData<Data, Error>>
@@ -70,7 +69,7 @@ export function useAsyncData<
   DataE = Error,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-> (...args): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
+> (...args: any[]): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
   const autoKey = typeof args[args.length - 1] === 'string' ? args.pop() : undefined
   if (typeof args[0] !== 'string') { args.unshift(autoKey) }
 
@@ -102,7 +101,8 @@ export function useAsyncData<
   // Setup hook callbacks once per instance
   const instance = getCurrentInstance()
   if (instance && !instance._nuxtOnBeforeMountCbs) {
-    const cbs = instance._nuxtOnBeforeMountCbs = []
+    instance._nuxtOnBeforeMountCbs = []
+    const cbs = instance._nuxtOnBeforeMountCbs
     if (instance && process.client) {
       onBeforeMount(() => {
         cbs.forEach((cb) => { cb() })
@@ -112,10 +112,10 @@ export function useAsyncData<
     }
   }
 
-  const useInitialCache = () => options.initialCache && nuxt.payload.data[key] !== undefined
+  const useInitialCache = () => (nuxt.isHydrating || options.initialCache) && nuxt.payload.data[key] !== undefined
 
   const asyncData = {
-    data: wrapInRef(nuxt.payload.data[key] ?? options.default()),
+    data: ref(useInitialCache() ? nuxt.payload.data[key] : options.default?.() ?? null),
     pending: ref(!useInitialCache()),
     error: ref(nuxt.payload._errors[key] ?? null)
   } as AsyncData<DataT, DataE>
@@ -151,7 +151,7 @@ export function useAsyncData<
       })
       .catch((error: any) => {
         asyncData.error.value = error
-        asyncData.data.value = unref(options.default())
+        asyncData.data.value = unref(options.default?.() ?? null)
       })
       .finally(() => {
         asyncData.pending.value = false
@@ -230,7 +230,7 @@ export function useLazyAsyncData<
   DataE = Error,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-> (...args): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
+> (...args: any[]): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
   const autoKey = typeof args[args.length - 1] === 'string' ? args.pop() : undefined
   if (typeof args[0] !== 'string') { args.unshift(autoKey) }
   const [key, handler, options] = args as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
@@ -249,7 +249,7 @@ export function refreshNuxtData (keys?: string | string[]): Promise<void> {
 function pick (obj: Record<string, any>, keys: string[]) {
   const newObj = {}
   for (const key of keys) {
-    newObj[key] = obj[key]
+    (newObj as any)[key] = obj[key]
   }
   return newObj
 }

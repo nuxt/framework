@@ -2,7 +2,8 @@ import fse from 'fs-extra'
 import { resolve } from 'pathe'
 import { withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import escapeRE from 'escape-string-regexp'
-import { normalizeViteManifest, Manifest } from 'vue-bundle-renderer'
+import { normalizeViteManifest } from 'vue-bundle-renderer'
+import type { Manifest } from 'vue-bundle-renderer'
 import type { ViteBuildContext } from './vite'
 
 export async function writeManifest (ctx: ViteBuildContext, css: string[] = []) {
@@ -39,13 +40,16 @@ export async function writeManifest (ctx: ViteBuildContext, css: string[] = []) 
     }
     for (const item of ['css', 'assets']) {
       if (clientManifest[key][item]) {
-        clientManifest[key][item] = clientManifest[key][item].map(i => i.replace(BASE_RE, ''))
+        clientManifest[key][item] = clientManifest[key][item].map((i: string) => i.replace(BASE_RE, ''))
       }
     }
   }
 
   await fse.mkdirp(serverDist)
+
   const manifest = normalizeViteManifest(clientManifest)
+  await ctx.nuxt.callHook('build:manifest', manifest)
+
   await fse.writeFile(resolve(serverDist, 'client.manifest.json'), JSON.stringify(manifest, null, 2), 'utf8')
   await fse.writeFile(resolve(serverDist, 'client.manifest.mjs'), 'export default ' + JSON.stringify(manifest, null, 2), 'utf8')
 }

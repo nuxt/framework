@@ -1,21 +1,19 @@
 import { withQuery } from 'ufo'
 import type { NitroErrorHandler } from 'nitropack'
 import type { H3Error } from 'h3'
-// @ts-ignore TODO
 import { normalizeError, isJsonRequest } from '#internal/nitro/utils'
-import { NuxtApp } from '#app'
 
 export default <NitroErrorHandler> async function errorhandler (error: H3Error, event) {
   // Parse and normalize error
   const { stack, statusCode, statusMessage, message } = normalizeError(error)
 
   // Create an error object
-  const errorObject: Exclude<NuxtApp['payload']['error'], Error> = {
+  const errorObject = {
     url: event.req.url,
     statusCode,
     statusMessage,
     message,
-    description: process.env.NODE_ENV === 'development' && statusCode !== 404
+    stack: process.dev && statusCode !== 404
       ? `<pre>${stack.map(i => `<span class="stack${i.internal ? ' internal' : ''}">${i.text}</span>`).join('\n')}</pre>`
       : '',
     data: error.data
@@ -44,12 +42,23 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
     return
   }
 
-  // HTML response
-  const url = withQuery('/__nuxt_error', errorObject)
-  const html = await $fetch(url).catch((error) => {
-    console.error('[nitro] Error while generating error response', error)
-    return errorObject.statusMessage
-  })
+  // HTML response (via SSR)
+  const isErrorPage = event.req.url?.startsWith('/__nuxt_error')
+  let html = !isErrorPage ? await $fetch(withQuery('/__nuxt_error', errorObject)).catch(() => null) : null
+
+  // Fallback to static rendered error page
+  if (!html) {
+    const { template } = process.dev
+      // @ts-ignore
+      ? await import('@nuxt/ui-templates/templates/error-dev.mjs')
+      // @ts-ignore
+      : await import('@nuxt/ui-templates/templates/error-500.mjs')
+    if (process.dev) {
+      // TODO: Support `message` in template
+      (errorObject as any).description = errorObject.message
+    }
+    html = template(errorObject)
+  }
 
   event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
   event.res.end(html)

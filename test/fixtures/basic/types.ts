@@ -5,8 +5,8 @@ import type { AppConfig } from '@nuxt/schema'
 
 import { NavigationFailure, RouteLocationNormalizedLoaded, RouteLocationRaw, useRouter as vueUseRouter } from 'vue-router'
 import { defineNuxtConfig } from '~~/../../../packages/nuxt/src'
-import { useRouter } from '#imports'
 import { isVue3 } from '#app'
+import { useRouter } from '#imports'
 
 interface TestResponse { message: string }
 
