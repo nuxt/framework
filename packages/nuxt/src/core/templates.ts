@@ -189,10 +189,10 @@ export const appConfigDeclarationTemplate: NuxtTemplate = {
   getContents: ({ app, nuxt }) => {
     return `
 import type { Defu } from 'defu'
-${app.configs.map((id, index) => `import ${`cfg${index}`} from ${JSON.stringify(id.replace(/(?<=\w)\.\w+$/g, ''))}`).join('\n')}
+${app.configs.map((id: string, index: number) => `import ${`cfg${index}`} from ${JSON.stringify(id.replace(/(?<=\w)\.\w+$/g, ''))}`).join('\n')}
 
 declare const inlineConfig = ${JSON.stringify(nuxt.options.appConfig, null, 2)}
-type ResolvedAppConfig = Defu<typeof inlineConfig, [${app.configs.map((_id, index) => `typeof cfg${index}`).join(', ')}]>
+type ResolvedAppConfig = Defu<typeof inlineConfig, [${app.configs.map((_id: string, index: number) => `typeof cfg${index}`).join(', ')}]>
 
 declare module '@nuxt/schema' {
   interface AppConfig extends ResolvedAppConfig { }
@@ -210,8 +210,8 @@ import defu from 'defu'
 
 const inlineConfig = ${JSON.stringify(nuxt.options.appConfig, null, 2)}
 
-${app.configs.map((id, index) => `import ${`cfg${index}`} from ${JSON.stringify(id)}`).join('\n')}
-export default defu(${app.configs.map((_id, index) => `cfg${index}`).concat(['inlineConfig']).join(', ')})
+${app.configs.map((id: string, index: number) => `import ${`cfg${index}`} from ${JSON.stringify(id)}`).join('\n')}
+export default defu(${app.configs.map((_id: string, index: number) => `cfg${index}`).concat(['inlineConfig']).join(', ')})
 `
   }
 }
