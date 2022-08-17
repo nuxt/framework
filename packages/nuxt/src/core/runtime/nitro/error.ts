@@ -54,7 +54,7 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
       // @ts-ignore
       : await import('@nuxt/ui-templates/templates/error-500.mjs')
     if (process.dev) {
-      // TODO: Support `message` in tempalte
+      // TODO: Support `message` in template
       (errorObject as any).description = errorObject.message
     }
     html = template(errorObject)
