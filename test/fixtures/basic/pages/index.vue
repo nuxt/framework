@@ -21,7 +21,12 @@
 </template>
 
 <script setup>
+import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import { useRuntimeConfig } from '#imports'
+
+if (useRuntimeConfig().enableDevtools) {
+  setupDevtoolsPlugin()
+}
 
 const config = useRuntimeConfig()
 
