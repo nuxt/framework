@@ -132,6 +132,14 @@ describe('pages', () => {
 
     await expectNoClientErrors('/another-parent')
   })
+
+  it('/client-only-components', async () => {
+    const html = await $fetch('/client-only-components')
+    expect(html).toContain('<div class="client-only-script" foo="bar">')
+    expect(html).toContain('<div class="client-only-script-setup" foo="hello">')
+
+    await expectNoClientErrors('/client-only-components')
+  })
 })
 
 describe('head tags', () => {
@@ -511,5 +519,29 @@ describe('dynamic paths', () => {
         (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
       ).toBeTruthy()
     }
+  })
+
+  it('restore server', async () => {
+    process.env.NUXT_APP_BASE_URL = undefined
+    process.env.NUXT_APP_CDN_URL = undefined
+    process.env.NUXT_APP_BUILD_ASSETS_DIR = undefined
+    await startServer()
+  })
+})
+
+describe('app config', () => {
+  it('should work', async () => {
+    const html = await $fetch('/app-config')
+
+    const expectedAppConfig = {
+      fromNuxtConfig: true,
+      nested: {
+        val: 2
+      },
+      fromLayer: true,
+      userConfig: 123
+    }
+
+    expect(html).toContain(JSON.stringify(expectedAppConfig))
   })
 })
