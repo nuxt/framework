@@ -29,13 +29,13 @@ describe('auto-imports:transform', () => {
   })
 
   it('should ignore existing imported', async () => {
-    expect(await transform('import { ref } from "foo"; const a = ref(0)')).to.equal(null)
-    expect(await transform('import { computed as ref } from "foo"; const a = ref(0)')).to.equal(null)
-    expect(await transform('import ref from "foo"; const a = ref(0)')).to.equal(null)
-    expect(await transform('import { z as ref } from "foo"; const a = ref(0)')).to.equal(null)
-    expect(await transform('let ref = () => {}; const a = ref(0)')).to.equal(null)
-    expect(await transform('let { ref } = Vue; const a = ref(0)')).to.equal(null)
-    expect(await transform('let [\ncomputed,\nref\n] = Vue; const a = ref(0); const b = ref(0)')).to.equal(null)
+    expect(await transform('import { ref } from "foo"; const a = ref(0)')).to.equal(undefined)
+    expect(await transform('import { computed as ref } from "foo"; const a = ref(0)')).to.equal(undefined)
+    expect(await transform('import ref from "foo"; const a = ref(0)')).to.equal(undefined)
+    expect(await transform('import { z as ref } from "foo"; const a = ref(0)')).to.equal(undefined)
+    expect(await transform('let ref = () => {}; const a = ref(0)')).to.equal(undefined)
+    expect(await transform('let { ref } = Vue; const a = ref(0)')).to.equal(undefined)
+    expect(await transform('let [\ncomputed,\nref\n] = Vue; const a = ref(0); const b = ref(0)')).to.equal(undefined)
   })
 
   it('should ignore comments', async () => {
@@ -48,7 +48,7 @@ describe('auto-imports:transform', () => {
   })
 
   it('should exclude files from transform', async () => {
-    expect(await transform('excluded')).toEqual(null)
+    expect(await transform('excluded')).toEqual(undefined)
   })
 })
 
