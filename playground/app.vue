@@ -4,7 +4,7 @@
 <template>
   <!-- Edit this file to play around with Nuxt but never commit changes! -->
   <div>
-    Hello World
+    Nuxt 3 Playground
   </div>
 </template>
 
