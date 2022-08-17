@@ -1,5 +1,5 @@
 import { statSync } from 'node:fs'
-import { resolve } from 'pathe'
+import { relative, resolve } from 'pathe'
 import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { componentsPluginTemplate, componentsTemplate, componentsTypeTemplate } from './templates'
@@ -102,6 +102,11 @@ export default defineNuxtModule<ComponentsOptions>({
         }
       }).filter(d => d.enabled)
 
+      componentDirs = [
+        ...componentDirs.filter(dir => !dir.path.includes('node_modules')),
+        ...componentDirs.filter(dir => dir.path.includes('node_modules'))
+      ]
+
       nuxt.options.build!.transpile!.push(...componentDirs.filter(dir => dir.transpile).map(dir => dir.path))
     })
 
@@ -132,7 +137,8 @@ export default defineNuxtModule<ComponentsOptions>({
       context.components = newComponents
     })
 
-    nuxt.hook('prepare:types', ({ references }) => {
+    nuxt.hook('prepare:types', ({ references, tsConfig }) => {
+      tsConfig.compilerOptions!.paths['#components'] = [relative(nuxt.options.rootDir, resolve(nuxt.options.buildDir, 'components'))]
       references.push({ path: resolve(nuxt.options.buildDir, 'components.d.ts') })
     })
 
@@ -141,7 +147,7 @@ export default defineNuxtModule<ComponentsOptions>({
       if (!['add', 'unlink'].includes(event)) {
         return
       }
-      const fPath = resolve(nuxt.options.rootDir, path)
+      const fPath = resolve(nuxt.options.srcDir, path)
       if (componentDirs.find(dir => fPath.startsWith(dir.path))) {
         await nuxt.callHook('builder:generateApp')
       }
