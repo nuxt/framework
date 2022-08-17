@@ -24,9 +24,7 @@
 import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import { useRuntimeConfig } from '#imports'
 
-if (useRuntimeConfig().enableDevtools) {
-  setupDevtoolsPlugin()
-}
+setupDevtoolsPlugin()
 
 const config = useRuntimeConfig()
 
