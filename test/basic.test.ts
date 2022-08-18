@@ -513,19 +513,17 @@ describe('component islands', () => {
       })
     }))
 
-    expect(result.island).toMatchInlineSnapshot(`
-      {
-        "html": "<div data-v-ab4cf0eb> Was router enabled: true <br data-v-ab4cf0eb> Props: <pre data-v-ab4cf0eb>{
-        \\"number\\": 3487,
-        \\"str\\": \\"something\\",
-        \\"obj\\": {
-          \\"foo\\": 42,
-          \\"bar\\": false,
-          \\"me\\": \\"hi\\"
+    expect(result.island.html.replace(/data-v-\w+|"/g, '')).toMatchInlineSnapshot(`
+      "<div > Was router enabled: true <br > Props: <pre >{
+        number: 3487,
+        str: something,
+        obj: {
+          foo: 42,
+          bar: false,
+          me: hi
         },
-        \\"bool\\": false
-      }</pre></div>",
-      }
+        bool: false
+      }</pre></div>"
     `)
     expect(result.state).toMatchInlineSnapshot(`
       {
