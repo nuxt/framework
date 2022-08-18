@@ -3,7 +3,9 @@ import { debounce } from 'perfect-debounce'
 import { hash } from 'ohash'
 // eslint-disable-next-line import/no-restricted-paths
 import type { NuxtIslandResponse } from '../../core/runtime/nitro/renderer'
-import { useHead } from '#app'
+import { useHead, useNuxtApp } from '#app'
+
+const pKey = '_islandPromises'
 
 export default defineComponent({
   name: 'NuxtIsland',
@@ -22,24 +24,34 @@ export default defineComponent({
     }
   },
   async setup (props) {
+    const nuxtApp = useNuxtApp()
     const hashId = computed(() => hash([props.name, props.props, props.context]))
     const html = ref('')
 
-    async function fetchComponent () {
-      const islandResponse = await $fetch<NuxtIslandResponse>(`${props.name}:${hashId.value}`, {
+    function _fetchComponent () {
+      // TODO: Validate response
+      return $fetch<NuxtIslandResponse>(`${props.name}:${hashId.value}`, {
         baseURL: '/__nuxt_island',
         params: {
           ...props.context,
           props: props.props ? JSON.stringify(props.props) : undefined
         }
       })
-      // TODO: Validate response
-      injectHead(islandResponse.html)
-      // Update html
-      html.value = islandResponse.island?.html!
     }
 
-    if (process.server) {
+    async function fetchComponent () {
+      nuxtApp[pKey] = nuxtApp[pKey] || {}
+      if (!nuxtApp[pKey][hashId.value]) {
+        nuxtApp[pKey][hashId.value] = _fetchComponent().finally(() => {
+          delete nuxtApp[pKey][hashId.value]
+        })
+      }
+      const res = await nuxtApp[pKey][hashId.value]
+      injectHead(res.html)
+      html.value = res.island?.html!
+    }
+
+    if (process.server || !nuxtApp.isHydrating) {
       await fetchComponent()
     }
 

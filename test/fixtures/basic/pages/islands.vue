@@ -5,6 +5,8 @@ const islandProps = ref({
   str: 'helo world',
   obj: { json: 'works' }
 })
+
+const routeIslandVisible = ref(false)
 </script>
 
 <template>
@@ -12,15 +14,19 @@ const islandProps = ref({
     Pure island component:
     <div class="box">
       <NuxtIsland name="PureComponent" :props="islandProps" />
+      <NuxtIsland name="PureComponent" :props="islandProps" />
     </div>
     <button @click="islandProps.number++">
       Increase
     </button>
     <hr>
     Route island component:
-    <div class="box">
+    <div v-if="routeIslandVisible" class="box">
       <NuxtIsland name="RouteComponent" :context="{ url: '/test' }" />
     </div>
+    <button v-else @click="routeIslandVisible = true">
+      Show
+    </button>
   </div>
 </template>
 
@@ -28,5 +34,6 @@ const islandProps = ref({
 .box {
   border: 1px solid black;
   margin: 3px;
+  display: flex;
 }
 </style>
