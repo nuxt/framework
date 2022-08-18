@@ -30,7 +30,7 @@ export interface ViteBuildContext {
 export async function bundle (nuxt: Nuxt) {
   const ctx: ViteBuildContext = {
     nuxt,
-    entry: null,
+    entry: null!,
     config: vite.mergeConfig(
       {
         resolve: {
@@ -85,8 +85,8 @@ export async function bundle (nuxt: Nuxt) {
   // In build mode we explicitly override any vite options that vite is relying on
   // to detect whether to inject production or development code (such as HMR code)
   if (!nuxt.options.dev) {
-    ctx.config.server.watch = undefined
-    ctx.config.build.watch = undefined
+    ctx.config.server!.watch = undefined
+    ctx.config.build!.watch = undefined
   }
 
   await nuxt.callHook('vite:extend', ctx)
@@ -101,10 +101,12 @@ export async function bundle (nuxt: Nuxt) {
       }
     })
 
-    const start = Date.now()
-    warmupViteServer(server, [join('/@fs/', ctx.entry)])
-      .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
-      .catch(logger.error)
+    if (nuxt.options.vite.warmupEntry !== false) {
+      const start = Date.now()
+      warmupViteServer(server, [join('/@fs/', ctx.entry)], env.isServer)
+        .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))
+        .catch(logger.error)
+    }
   })
 
   await buildClient(ctx)
