@@ -22,7 +22,7 @@ export default defineComponent({
     }
   },
   async setup (props) {
-    const hashId = computed(() => hash([props.props, props.context]))
+    const hashId = computed(() => hash([props.name, props.props, props.context]))
     const html = ref('')
 
     async function fetchComponent () {
