@@ -1662,7 +1662,7 @@ __metadata:
     lodash.template: ^4.5.0
     mlly: ^0.5.13
     pathe: ^0.3.5
-    pkg-types: ^0.3.4
+    pkg-types: ^0.3.3
     scule: ^0.3.2
     semver: ^7.3.7
     unbuild: latest
@@ -1805,7 +1805,7 @@ __metadata:
     ohash: ^0.1.5
     pathe: ^0.3.5
     perfect-debounce: ^0.1.3
-    pkg-types: ^0.3.4
+    pkg-types: ^0.3.3
     postcss: ^8.4.16
     postcss-import: ^14.1.0
     postcss-url: ^10.1.3
@@ -8646,7 +8646,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonc-parser@npm:^3.0.0, jsonc-parser@npm:^3.1.0, jsonc-parser@npm:~3.1.0":
+"jsonc-parser@npm:^3.0.0, jsonc-parser@npm:~3.1.0":
   version: 3.1.0
   resolution: "jsonc-parser@npm:3.1.0"
   checksum: 81b00c565c60cb1b400523a918d42ad9c7bb3d9cf34c708bf78d37c8c496ecd670c3ff8828f2f60aa6e6627ef4287982794ddf92261ea71e320973c54b29fb22
@@ -10103,7 +10103,7 @@ __metadata:
     mri: ^1.2.0
     pathe: ^0.3.5
     perfect-debounce: ^0.1.3
-    pkg-types: ^0.3.4
+    pkg-types: ^0.3.3
     scule: ^0.3.2
     semver: ^7.3.7
     superb: ^4.0.0
@@ -10846,17 +10846,6 @@ __metadata:
     mlly: ^0.5.3
     pathe: ^0.3.0
   checksum: 1c74b65e12274c157bbbadfad50e68a17e4091f1e352d30c600de5da18200dbea35f349516e02a1fec6992a9b5531074bf0b3bcee9da160fe0754135127ede24
-  languageName: node
-  linkType: hard
-
-"pkg-types@npm:^0.3.4":
-  version: 0.3.4
-  resolution: "pkg-types@npm:0.3.4"
-  dependencies:
-    jsonc-parser: ^3.1.0
-    mlly: ^0.5.13
-    pathe: ^0.3.5
-  checksum: 0061b6ab260ddb7ceccc99b4cf80306df44929545b2364051115f9556d3a26302e57efbb2322887e3cfe8a3f7977f673bcc8b74cb374d71fc6ede81395692b5a
   languageName: node
   linkType: hard
 
