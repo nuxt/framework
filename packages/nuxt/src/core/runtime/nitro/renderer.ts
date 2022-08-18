@@ -134,6 +134,8 @@ async function getIslandContext (event: CompatibilityEvent): Promise<NuxtIslandC
 }
 
 export default defineRenderHandler(async (event) => {
+  const nitroApp = useNitroApp()
+
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error> : null
   const islandContext = event.req.url?.startsWith('/__nuxt_island') ? await getIslandContext(event) : undefined
@@ -149,10 +151,8 @@ export default defineRenderHandler(async (event) => {
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
     error: !!ssrError,
     nuxt: undefined!, /* NuxtApp */
-    islandContext,
-    payload: {
-      ...ssrError ? { error: ssrError } : {}
-    } as NuxtSSRContext['payload']
+    payload: ssrError ? { error: ssrError } as NuxtSSRContext['payload'] : undefined!,
+    islandContext
   }
 
   // Render app
@@ -174,8 +174,6 @@ export default defineRenderHandler(async (event) => {
 
   // Render meta
   const renderedMeta = await ssrContext.renderMeta?.() ?? {}
-
-  const nitroApp = useNitroApp()
 
   // Create render context
   const htmlContext: NuxtRenderHTMLContext = {
@@ -277,11 +275,3 @@ function renderHTMLDocument (html: NuxtRenderHTMLContext) {
 <body ${joinAttrs(html.bodyAttrs)}>${joinTags(html.bodyPreprend)}${joinTags(html.body)}${joinTags(html.bodyAppend)}</body>
 </html>`
 }
-
-// function renderIslandComponent (html: NuxtRenderHTMLContext) {
-//   return `<!DOCTYPE html>
-// <html ${joinAttrs(html.htmlAttrs)}>
-// <head>${joinTags(html.head)}</head>
-// <body ${joinAttrs(html.bodyAttrs)}>${joinTags(html.bodyPreprend)}${joinTags(html.body)}${joinTags(html.bodyAppend)}</body>
-// </html>`
-// }
