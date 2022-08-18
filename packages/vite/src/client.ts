@@ -44,9 +44,7 @@ export async function buildClient (ctx: ViteBuildContext) {
         '#build/plugins': resolve(ctx.nuxt.options.buildDir, 'plugins/client'),
         '#internal/nitro': resolve(ctx.nuxt.options.buildDir, 'nitro.client.mjs')
       },
-      resolve: {
-        dedupe: ['vue']
-      }
+      dedupe: ['vue']
     },
     build: {
       manifest: true,
