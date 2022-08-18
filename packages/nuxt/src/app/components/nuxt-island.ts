@@ -2,6 +2,7 @@ import { defineComponent, createStaticVNode, computed, ref, watch } from 'vue'
 import { debounce } from 'perfect-debounce'
 import { hash } from 'ohash'
 // eslint-disable-next-line import/no-restricted-paths
+import type { MetaObject } from '@nuxt/schema'
 import type { NuxtIslandResponse } from '../../core/runtime/nitro/renderer'
 import { useHead, useNuxtApp } from '#app'
 
@@ -27,6 +28,8 @@ export default defineComponent({
     const nuxtApp = useNuxtApp()
     const hashId = computed(() => hash([props.name, props.props, props.context]))
     const html = ref('')
+    const cHead = ref<MetaObject>({ link: [] })
+    useHead(cHead)
 
     function _fetchComponent () {
       // TODO: Validate response
@@ -47,10 +50,7 @@ export default defineComponent({
         })
       }
       const res: NuxtIslandResponse = await nuxtApp[pKey][hashId.value]
-      // TODO: Use better head meerging
-      useHead({
-        link: res.tags.filter(tag => tag[0] === 'link').map(tag => tag[1] || {})
-      })
+      cHead.value.link = res.tags.filter(tag => tag[0] === 'link').map(tag => tag[1] || {})
       html.value = res.html
     }
 
