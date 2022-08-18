@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps({
+const props = defineProps({
   bool: Boolean,
   number: Number,
   str: String,
@@ -10,13 +10,13 @@ const hasRouter = useState('hasRouter', () => !!useRouter())
 </script>
 
 <template>
-  <pre>
-    {{ JSON.stringify(bool) }}
-    {{ JSON.stringify(number) }}
-    {{ JSON.stringify(str) }}
-    {{ JSON.stringify(obj) }}
+  <div>
     Was router enabled: {{ hasRouter }}
-  </pre>
+    <br>
+    Props:
+    <!-- eslint-disable-next-line vue/no-v-html -->
+    <pre v-html="JSON.stringify(props, null, 2)" />
+  </div>
 </template>
 
 <style scoped>

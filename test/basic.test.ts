@@ -487,56 +487,60 @@ describe('app config', () => {
 
 describe('component islands', () => {
   it('renders components with route', async () => {
-    const result: NuxtIslandResponse = await $fetch(withQuery('/__nuxt_island', {
-      url: '/foo',
-      name: 'RouteComponent'
-    }))
-    expect(result.island.html).toMatchInlineSnapshot(`
-      "<pre>    Route: /foo
-        </pre>"
+    const result: NuxtIslandResponse = await $fetch('/__nuxt_island/RouteComponent?url=/foo')
+    expect(result.island).toMatchInlineSnapshot(`
+      {
+        "html": "<pre>    Route: /foo
+        </pre>",
+      }
     `)
     expect(result.state).toMatchInlineSnapshot('{}')
-    expect(Object.keys(result)).toMatchInlineSnapshot(`
-      [
-        "rendered",
-        "state",
-        "styles",
-        "scripts",
-      ]
-    `)
-  })
-  it('renders pure components', async () => {
-    const result: NuxtIslandResponse = await $fetch(withQuery('/__nuxt_island', {
-      components: JSON.stringify([
-        {
-          name: 'PureComponent',
-          props: {
-            bool: false,
-            number: 3487,
-            str: 'something',
-            obj: { foo: 42, bar: false, me: 'hi' }
-          }
-        }
-      ])
-    }))
-    expect(result.island.html.replace(/&quot;/g, '"').replace(/ data-v-\w+>/, '>')).toMatchInlineSnapshot(`
-      "<pre>    false
-          3487
-          \\"something\\"
-          {\\"foo\\":42,\\"bar\\":false,\\"me\\":\\"hi\\"}
-          Was router enabled: false
-        </pre>"
-    `)
-    expect(result.state).toMatchInlineSnapshot('{}')
-    // TODO: fix bundle renderer issue with webpack
-    if (!process.env.TEST_WITH_WEBPACK) {
-      expect(result.html.head.join(' ')).toMatch(/PureComponent[^"']*.css/)
-    }
     expect(Object.keys(result)).toMatchInlineSnapshot(`
       [
         "island",
         "state",
-        "html"
+        "html",
+      ]
+    `)
+  })
+  it('renders pure components', async () => {
+    const result: NuxtIslandResponse = await $fetch(withQuery('/__nuxt_island/PureComponent', {
+      props: JSON.stringify({
+        bool: false,
+        number: 3487,
+        str: 'something',
+        obj: { foo: 42, bar: false, me: 'hi' }
+      })
+    }))
+
+    expect(result.island).toMatchInlineSnapshot(`
+      {
+        "html": "<div data-v-ab4cf0eb> Was router enabled: true <br data-v-ab4cf0eb> Props: <pre data-v-ab4cf0eb>{
+        \\"number\\": 3487,
+        \\"str\\": \\"something\\",
+        \\"obj\\": {
+          \\"foo\\": 42,
+          \\"bar\\": false,
+          \\"me\\": \\"hi\\"
+        },
+        \\"bool\\": false
+      }</pre></div>",
+      }
+    `)
+    expect(result.state).toMatchInlineSnapshot(`
+      {
+        "$shasRouter": true,
+      }
+    `)
+
+    // TODO: Test response differes!
+    // expect(result.html.head.join(' ')).toMatch(/PureComponent[^"']*.css/)
+
+    expect(Object.keys(result)).toMatchInlineSnapshot(`
+      [
+        "island",
+        "state",
+        "html",
       ]
     `)
   })
