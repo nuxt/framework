@@ -488,18 +488,137 @@ describe('app config', () => {
 describe('component islands', () => {
   it('renders components with route', async () => {
     const result: NuxtIslandResponse = await $fetch('/__nuxt_island/RouteComponent?url=/foo')
-    expect(result.island).toMatchInlineSnapshot(`
+    expect(result).toMatchInlineSnapshot(`
       {
         "html": "<pre>    Route: /foo
         </pre>",
+        "state": {},
+        "tags": [
+          {
+            "attrs": {
+              "charset": "\\"utf-8\\"",
+            },
+            "tag": "meta",
+          },
+          {
+            "attrs": {
+              "content": "\\"width=1024, initial-scale=1\\"",
+              "name": "\\"viewport\\"",
+            },
+            "tag": "meta",
+          },
+          {
+            "attrs": {
+              "content": "\\"2\\"",
+              "name": "\\"head:count\\"",
+            },
+            "tag": "meta",
+          },
+          {
+            "attrs": {
+              "as": "\\"script\\"",
+              "href": "\\"/_nuxt/entry.79170466.js\\"",
+              "rel": "\\"modulepreload\\"",
+            },
+            "tag": "link",
+          },
+          {
+            "attrs": {
+              "as": "\\"script\\"",
+              "href": "\\"/_nuxt/TestGlobal.28b642d1.js\\"",
+              "rel": "\\"prefetch\\"",
+            },
+            "tag": "link",
+          },
+          {
+            "attrs": {
+              "as": "\\"script\\"",
+              "href": "\\"/_nuxt/WithSuffix.global.a813662c.js\\"",
+              "rel": "\\"prefetch\\"",
+            },
+            "tag": "link",
+          },
+          {
+            "attrs": {
+              "as": "\\"script\\"",
+              "href": "\\"/_nuxt/BreaksServer.9d9aeeb9.js\\"",
+              "rel": "\\"prefetch\\"",
+            },
+            "tag": "link",
+          },
+          {
+            "attrs": {
+              "as": "\\"script\\"",
+              "href": "\\"/_nuxt/injectAuth.de44cafa.js\\"",
+              "rel": "\\"prefetch\\"",
+            },
+            "tag": "link",
+          },
+          {
+            "attrs": {
+              "as": "\\"script\\"",
+              "href": "\\"/_nuxt/override.1835fbc4.js\\"",
+              "rel": "\\"prefetch\\"",
+            },
+            "tag": "link",
+          },
+          {
+            "attrs": {
+              "as": "\\"script\\"",
+              "href": "\\"/_nuxt/foo.bcd52142.js\\"",
+              "rel": "\\"prefetch\\"",
+            },
+            "tag": "link",
+          },
+          {
+            "attrs": {
+              "as": "\\"script\\"",
+              "href": "\\"/_nuxt/error-component.2a10ec59.js\\"",
+              "rel": "\\"prefetch\\"",
+            },
+            "tag": "link",
+          },
+          {
+            "attrs": {
+              "as": "\\"script\\"",
+              "href": "\\"/_nuxt/PascalCase.87deb145.js\\"",
+              "rel": "\\"prefetch\\"",
+            },
+            "tag": "link",
+          },
+          {
+            "attrs": {
+              "as": "\\"script\\"",
+              "href": "\\"/_nuxt/custom.4b0b318c.js\\"",
+              "rel": "\\"prefetch\\"",
+            },
+            "tag": "link",
+          },
+          {
+            "attrs": {
+              "as": "\\"script\\"",
+              "href": "\\"/_nuxt/override.af11ded7.js\\"",
+              "rel": "\\"prefetch\\"",
+            },
+            "tag": "link",
+          },
+          {
+            "attrs": {
+              "as": "\\"script\\"",
+              "href": "\\"/_nuxt/default.8f9ba753.js\\"",
+              "rel": "\\"prefetch\\"",
+            },
+            "tag": "link",
+          },
+        ],
       }
     `)
     expect(result.state).toMatchInlineSnapshot('{}')
     expect(Object.keys(result)).toMatchInlineSnapshot(`
       [
-        "island",
-        "state",
         "html",
+        "state",
+        "tags",
       ]
     `)
   })
@@ -513,7 +632,7 @@ describe('component islands', () => {
       })
     }))
 
-    expect(result.island.html.replace(/data-v-\w+|"|<!--.*-->/g, '')).toMatchInlineSnapshot(`
+    expect(result.html.replace(/data-v-\w+|"|<!--.*-->/g, '')).toMatchInlineSnapshot(`
       "<div > Was router enabled: true <br > Props: <pre >{
         number: 3487,
         str: something,
@@ -536,9 +655,9 @@ describe('component islands', () => {
 
     expect(Object.keys(result)).toMatchInlineSnapshot(`
       [
-        "island",
-        "state",
         "html",
+        "state",
+        "tags",
       ]
     `)
   })
