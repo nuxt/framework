@@ -30,9 +30,10 @@ export interface NuxtIslandContext {
 }
 
 export interface NuxtIslandResponse {
-  island?: { id?: string, html: string }
+  id?: string
+  html: string
   state: Record<string, any>
-  html: NuxtRenderHTMLContext
+  tags: { tag: string, attrs: Record<string, string> }[]
 }
 
 export interface NuxtRenderResponse {
@@ -209,13 +210,10 @@ export default defineRenderHandler(async (event) => {
   // Response for component islands
   if (islandContext && islandContext.format !== 'html') {
     const islandReponse: NuxtIslandResponse = {
-      island: {
-        id: islandContext.id,
-        html: ssrContext.teleports!['nuxt-island']
-          .replace(/<!--teleport anchor-->$/, '')
-      },
+      id: islandContext.id,
+      html: ssrContext.teleports!['nuxt-island'].replace(/<!--teleport anchor-->$/, ''),
       state: ssrContext.payload.state,
-      html: htmlContext
+      tags: htmlContext.head.flatMap(head => extractHTMLTags(head))
     }
 
     await nitroApp.hooks.callHook('render:island', islandReponse, { event, islandContext })
@@ -274,4 +272,19 @@ function renderHTMLDocument (html: NuxtRenderHTMLContext) {
 <head>${joinTags(html.head)}</head>
 <body ${joinAttrs(html.bodyAttrs)}>${joinTags(html.bodyPreprend)}${joinTags(html.body)}${joinTags(html.bodyAppend)}</body>
 </html>`
+}
+
+// TOOD: Move to external library
+const HTML_TAG_RE = /<(?<tag>[a-z]+)(?<rawAttrs> [^>]*)>/g
+const HTML_TAG_ATTR_RE = /(?<name>[a-z]+)=(?<value>"[^"]*"|'[^']*'|[^ >]*)/g
+function extractHTMLTags (html: string) {
+  const tags: {tag: string, attrs: Record<string, string>}[] = []
+  for (const tagMatch of html.matchAll(HTML_TAG_RE)) {
+    const attrs = {} as Record<string, string>
+    for (const attraMatch of tagMatch.groups!.rawAttrs.matchAll(HTML_TAG_ATTR_RE)) {
+      attrs[attraMatch.groups!.name] = attraMatch.groups!.value
+    }
+    tags.push({ tag: tagMatch.groups!.tag, attrs })
+  }
+  return tags
 }

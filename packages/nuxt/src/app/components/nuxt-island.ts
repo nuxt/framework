@@ -46,9 +46,12 @@ export default defineComponent({
           delete nuxtApp[pKey][hashId.value]
         })
       }
-      const res = await nuxtApp[pKey][hashId.value]
-      injectHead(res.html)
-      html.value = res.island?.html!
+      const res: NuxtIslandResponse = await nuxtApp[pKey][hashId.value]
+      // TODO: Use better head meerging
+      useHead({
+        link: res.tags.filter(tag => tag.tag === 'link').map(tag => tag.attrs)
+      })
+      html.value = res.html
     }
 
     if (process.server || !nuxtApp.isHydrating) {
@@ -62,28 +65,3 @@ export default defineComponent({
     return () => createStaticVNode(html.value, 1)
   }
 })
-
-// --- Internal ---
-
-function injectHead (html: NuxtIslandResponse['html']) {
-  const tags = extractTags(html.head.join(''))
-  useHead({
-    link: tags.filter(tag => tag.tag === 'link').map(tag => tag.attrs)
-  })
-}
-
-// Tag parsing utils
-// TOOD: Move to external library
-const HTML_TAG_RE = /<(?<tag>[a-z]+)(?<rawAttrs> [^>]*)>/g
-const HTML_TAG_ATTR_RE = /(?<name>[a-z]+)=(?<value>"[^"]*"|'[^']*'|[^ >]*)/g
-function extractTags (html: string) {
-  const tags: {tag: string, attrs: Record<string, string>}[] = []
-  for (const tagMatch of html.matchAll(HTML_TAG_RE)) {
-    const attrs = {} as Record<string, string>
-    for (const attraMatch of tagMatch.groups!.rawAttrs.matchAll(HTML_TAG_ATTR_RE)) {
-      attrs[attraMatch.groups!.name] = attraMatch.groups!.value
-    }
-    tags.push({ tag: tagMatch.groups!.tag, attrs })
-  }
-  return tags
-}
