@@ -6,7 +6,6 @@ import devalue from '@nuxt/devalue'
 import destr from 'destr'
 import { renderToString as _renderToString } from 'vue/server-renderer'
 import { hash } from 'ohash'
-import { snakeCase } from 'scule'
 import type { NuxtApp, NuxtSSRContext } from '#app'
 import { useRuntimeConfig, useNitroApp, defineRenderHandler } from '#internal/nitro'
 
@@ -24,14 +23,15 @@ export interface NuxtRenderHTMLContext {
 }
 
 export interface NuxtIslandContext {
-  id: string
+  id?: string
+  url?: string
   format?: 'html' | 'json'
   name: string
   props?: Record<string, any>
 }
 
 export interface NuxtIslandResponse {
-  island?: { id: string, html: string }
+  island?: { id?: string, html: string }
   state: Record<string, any>
   html: NuxtRenderHTMLContext
 }
@@ -116,15 +116,21 @@ const getSPARenderer = lazyCachedFunction(async () => {
 })
 
 async function getIslandContext (event: CompatibilityEvent): Promise<NuxtIslandContext> {
-  const query = event.req.method === 'GET' ? getQuery(event) : await readBody(event)
-  // TODO: Validate name and props
+  // TODO: Strict validation for url
+  const [_, componentName, hashId] =
+    (event.req.url?.substring('/__nuxt_island'.length + 1) || '').match(/([^:]+):?([^/?]+)?/) || []
+
+  // TODO: Validate context
+  const context = event.req.method === 'GET' ? getQuery(event) : await readBody(event)
+
   const ctx: NuxtIslandContext = {
-    id: null as any,
-    format: query.format,
-    name: query.name,
-    props: destr(query.props) || {}
+    url: '/',
+    ...context,
+    id: hashId,
+    name: componentName,
+    props: destr(context.props) || {}
   }
-  ctx.id = 'island_' + snakeCase(ctx.name) + '_' + hash([ctx.props]).toLocaleLowerCase()
+
   return ctx
 }
 
@@ -132,7 +138,7 @@ export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error> : null
   const islandContext = event.req.url?.startsWith('/__nuxt_island') ? await getIslandContext(event) : undefined
-  const url: string = ssrError?.url as string || event.req.url!
+  const url: string = ssrError?.url as string || islandContext?.url || event.req.url!
 
   // Initialize ssr context
   const ssrContext: NuxtSSRContext = {
