@@ -10138,7 +10138,7 @@ __metadata:
     pathe: ^0.3.5
     rimraf: ^3.0.2
     typescript: ^4.7.4
-    unbuild: ^0.8.9
+    unbuild: ^0.8.8
     vitest: ~0.19.1
     vue-tsc: ^0.39.5
   languageName: unknown
@@ -13138,7 +13138,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^0.8.9":
+"unbuild@npm:^0.8.8":
   version: 0.8.9
   resolution: "unbuild@npm:0.8.9"
   dependencies:
