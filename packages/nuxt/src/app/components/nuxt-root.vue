@@ -13,7 +13,7 @@ import { callWithNuxt, isNuxtError, showError, useError, useRoute, useNuxtApp } 
 const ErrorComponent = defineAsyncComponent(() => import('#build/error-component.mjs'))
 const IslandRendererer = process.server
   ? defineAsyncComponent(() => import('./island-renderer').then(r => r.default || r))
-  : () => import('#build/island-renderer.mjs')
+  : () => null
 
 const nuxtApp = useNuxtApp()
 const onResolve = () => nuxtApp.callHook('app:suspense:resolve')
