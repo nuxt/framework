@@ -134,6 +134,12 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: resolve(nuxt.options.appDir, 'components/nuxt-loading-indicator')
   })
 
+  // Add <NuxtIsland>
+  addComponent({
+    name: 'NuxtIsland',
+    filePath: resolve(nuxt.options.appDir, 'components/nuxt-island')
+  })
+
   for (const m of modulesToInstall) {
     if (Array.isArray(m)) {
       await installModule(m[0], m[1])

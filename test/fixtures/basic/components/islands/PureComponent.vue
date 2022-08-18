@@ -5,10 +5,8 @@ defineProps({
   str: String,
   obj: Object
 })
-let wasRouter = false
-try {
-  wasRouter = !!useRoute()
-} catch (e) {}
+
+const hasRouter = useState('hasRouter', () => !!useRouter())
 </script>
 
 <template>
@@ -17,12 +15,12 @@ try {
     {{ JSON.stringify(number) }}
     {{ JSON.stringify(str) }}
     {{ JSON.stringify(obj) }}
-    Was router enabled: {{ wasRouter }}
+    Was router enabled: {{ hasRouter }}
   </pre>
 </template>
 
 <style scoped>
-:root {
+pre {
   color: blue
 }
 </style>
