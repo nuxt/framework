@@ -489,12 +489,9 @@ describe('component islands', () => {
   it('renders components with route', async () => {
     const result: NuxtIslandResponse = await $fetch(withQuery('/__nuxt_island', {
       url: '/foo',
-      state: JSON.stringify({}),
-      components: JSON.stringify([
-        { name: 'RouteComponent' }
-      ])
+      name: 'RouteComponent'
     }))
-    expect(result.rendered[0].html).toMatchInlineSnapshot(`
+    expect(result.island.html).toMatchInlineSnapshot(`
       "<pre>    Route: /foo
         </pre>"
     `)
@@ -522,7 +519,7 @@ describe('component islands', () => {
         }
       ])
     }))
-    expect(result.rendered[0].html.replace(/&quot;/g, '"').replace(/ data-v-\w+>/, '>')).toMatchInlineSnapshot(`
+    expect(result.island.html.replace(/&quot;/g, '"').replace(/ data-v-\w+>/, '>')).toMatchInlineSnapshot(`
       "<pre>    false
           3487
           \\"something\\"
@@ -533,14 +530,13 @@ describe('component islands', () => {
     expect(result.state).toMatchInlineSnapshot('{}')
     // TODO: fix bundle renderer issue with webpack
     if (!process.env.TEST_WITH_WEBPACK) {
-      expect(result.styles).toMatch(/PureComponent[^"']*.css/)
+      expect(result.html.head.join(' ')).toMatch(/PureComponent[^"']*.css/)
     }
     expect(Object.keys(result)).toMatchInlineSnapshot(`
       [
-        "rendered",
+        "island",
         "state",
-        "styles",
-        "scripts",
+        "html"
       ]
     `)
   })
