@@ -117,7 +117,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
 async function getIslandContext (event: CompatibilityEvent): Promise<NuxtIslandContext> {
   // TODO: Strict validation for url
   const url = event.req.url?.substring('/__nuxt_island'.length + 1) || ''
-  const [componentName, hashId] = url.split('?')[0].split(/\//)
+  const [componentName, hashId] = url.split('?')[0].split(':')
 
   // TODO: Validate context
   const context = event.req.method === 'GET' ? getQuery(event) : await readBody(event)
