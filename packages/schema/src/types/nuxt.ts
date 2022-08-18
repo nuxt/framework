@@ -65,6 +65,7 @@ export interface NuxtApp {
   layouts: Record<string, NuxtLayout>
   middleware: NuxtMiddleware[]
   templates: NuxtTemplate[]
+  configs: string[]
 }
 
 type _TemplatePlugin<Options> = Omit<NuxtPlugin, 'src'> & NuxtTemplate<Options>
