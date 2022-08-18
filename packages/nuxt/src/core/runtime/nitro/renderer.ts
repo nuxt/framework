@@ -14,6 +14,7 @@ import { useRuntimeConfig, useNitroApp, defineRenderHandler } from '#internal/ni
 import { buildAssetsURL } from '#paths'
 
 export interface NuxtRenderHTMLContext {
+  island?: boolean
   htmlAttrs: string[]
   head: string[]
   bodyAttrs: string[]
@@ -173,6 +174,7 @@ export default defineRenderHandler(async (event) => {
 
   // Create render context
   const htmlContext: NuxtRenderHTMLContext = {
+    island: Boolean(islandContext),
     htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
     head: normalizeChunks([
       renderedMeta.headTags,
@@ -212,6 +214,8 @@ export default defineRenderHandler(async (event) => {
       state: ssrContext.payload.state,
       html: htmlContext
     }
+
+    await nitroApp.hooks.callHook('render:island', islandReponse, { event, islandContext })
 
     const response: RenderResponse = {
       body: JSON.stringify(islandReponse, null, 2),
