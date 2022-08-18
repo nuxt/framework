@@ -1,8 +1,8 @@
 import { defineComponent, createStaticVNode, computed, ref, watch } from 'vue'
 import { debounce } from 'perfect-debounce'
 import { hash } from 'ohash'
-// eslint-disable-next-line import/no-restricted-paths
 import type { MetaObject } from '@nuxt/schema'
+// eslint-disable-next-line import/no-restricted-paths
 import type { NuxtIslandResponse } from '../../core/runtime/nitro/renderer'
 import { useHead, useNuxtApp } from '#app'
 
