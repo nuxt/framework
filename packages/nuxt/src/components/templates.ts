@@ -55,7 +55,7 @@ export const componentsTemplate = {
   getContents ({ options }: ComponentsTemplateContext) {
     return [
       'import { defineAsyncComponent } from \'vue\'',
-      ...options.getComponents(options.mode).flatMap((c) => {
+      ...options.getComponents(options.mode).filter(c => !c.island).flatMap((c) => {
         const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
         const comment = createImportMagicComments(c)
 
@@ -64,14 +64,15 @@ export const componentsTemplate = {
           `export const Lazy${c.pascalName} = defineAsyncComponent(${genDynamicImport(c.filePath, { comment })}.then(c => ${exp}))`
         ]
       }),
-      `export const componentNames = ${JSON.stringify(options.getComponents().map(c => c.pascalName))}`
+      `export const componentNames = ${JSON.stringify(options.getComponents().filter(c => !c.island).map(c => c.pascalName))}`
     ].join('\n')
   }
 }
 
 export const componentsIslandsTemplate = {
+  // components.islands.mjs'
   getContents ({ options }: ComponentsTemplateContext) {
-    return options.getComponents().filter(c => c.island === true).map(
+    return options.getComponents().filter(c => c.island).map(
       (c) => {
         const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
         const comment = createImportMagicComments(c)
@@ -85,7 +86,7 @@ export const componentsTypeTemplate = {
   filename: 'components.d.ts',
   getContents: ({ options, nuxt }: ComponentsTemplateContext) => {
     const buildDir = nuxt.options.buildDir
-    const componentTypes = options.getComponents().map(c => [
+    const componentTypes = options.getComponents().filter(c => !c.island).map(c => [
       c.pascalName,
       `typeof ${genDynamicImport(isAbsolute(c.filePath) ? relative(buildDir, c.filePath) : c.filePath, { wrapper: false })}['${c.export}']`
     ])

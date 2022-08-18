@@ -119,6 +119,8 @@ export default defineNuxtModule<ComponentsOptions>({
     addTemplate({ ...componentsTemplate, filename: 'components.server.mjs', options: { getComponents, mode: 'server' } })
     // components.client.mjs
     addTemplate({ ...componentsTemplate, filename: 'components.client.mjs', options: { getComponents, mode: 'client' } })
+    // components.islands.mjs
+    addTemplate({ ...componentsIslandsTemplate, filename: 'components.islands.mjs', options: { getComponents } })
 
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       const mode = isClient ? 'client' : 'server'
@@ -130,9 +132,6 @@ export default defineNuxtModule<ComponentsOptions>({
         config.resolve.alias['#components'] = resolve(nuxt.options.buildDir, `components.${mode}.mjs`)
       }
     })
-
-    // Register islands import
-    addTemplate({ ...componentsIslandsTemplate, filename: 'components-islands.mjs', options: { getComponents } })
 
     // Scan components and add to plugin
     nuxt.hook('app:templates', async () => {

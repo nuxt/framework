@@ -1,7 +1,7 @@
 import { createBlock, defineComponent, h, Teleport } from 'vue'
 
 // @ts-ignore
-import * as islandComponents from '#build/components-islands.mjs'
+import * as islandComponents from '#build/components.islands.mjs'
 import { createError } from '#app'
 
 export default defineComponent({
