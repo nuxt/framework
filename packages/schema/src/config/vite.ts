@@ -26,7 +26,10 @@ export default {
       })
     },
     resolve: {
-      extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
+      extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+      resolve: {
+        dedupe: ['vue']
+      }
     },
     publicDir: {
       $resolve: (val, get) => val ?? resolve(get('srcDir'), get('dir').public)
