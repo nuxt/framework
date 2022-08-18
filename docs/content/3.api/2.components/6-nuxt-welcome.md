@@ -8,4 +8,3 @@ Nuxt uses the `<NuxtWelcome>` component to greet users in new projects made from
 
 ::ReadMore{link="https://github.com/nuxt/ui" title="@nuxt/ui"}
 ::
-
