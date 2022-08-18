@@ -5,7 +5,6 @@ import { CompatibilityEvent, readBody, getQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import destr from 'destr'
 import { renderToString as _renderToString } from 'vue/server-renderer'
-import { hash } from 'ohash'
 import type { NuxtApp, NuxtSSRContext } from '#app'
 import { useRuntimeConfig, useNitroApp, defineRenderHandler } from '#internal/nitro'
 
