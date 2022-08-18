@@ -211,7 +211,7 @@ export default defineRenderHandler(async (event) => {
   if (islandContext && islandContext.format !== 'html') {
     const islandReponse: NuxtIslandResponse = {
       id: islandContext.id,
-      html: ssrContext.teleports!['nuxt-island'].replace(/<!--teleport anchor-->$/, ''),
+      html: ssrContext.teleports!['nuxt-island'].replace(/<!--.*-->/g, ''),
       state: ssrContext.payload.state,
       tags: htmlContext.head.flatMap(head => extractHTMLTags(head))
     }
