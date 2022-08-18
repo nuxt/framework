@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 // import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
 import { withQuery } from 'ufo'
-import type { NuxtComponentRenderResult } from '../packages/nuxt/src/core/runtime/nitro/renderer'
+import type { NuxtIslandResponse } from '../packages/nuxt/src/core/runtime/nitro/renderer'
 import { expectNoClientErrors } from './utils'
 
 await setup({
@@ -361,67 +361,6 @@ describe('automatically keyed composables', () => {
   })
 })
 
-describe('selective rendering of islands components', () => {
-  it('renders components with route', async () => {
-    const result: NuxtComponentRenderResult = await $fetch(withQuery('/__nuxt_island', {
-      url: '/foo',
-      state: JSON.stringify({}),
-      components: JSON.stringify([
-        { name: 'RouteComponent' }
-      ])
-    }))
-    expect(result.rendered[0].html).toMatchInlineSnapshot(`
-      "<pre>    Route: /foo
-        </pre>"
-    `)
-    expect(result.state).toMatchInlineSnapshot('{}')
-    expect(Object.keys(result)).toMatchInlineSnapshot(`
-      [
-        "rendered",
-        "state",
-        "styles",
-        "scripts",
-      ]
-    `)
-  })
-  it('renders pure components', async () => {
-    const result: NuxtComponentRenderResult = await $fetch(withQuery('/__nuxt_island', {
-      components: JSON.stringify([
-        {
-          name: 'PureComponent',
-          props: {
-            bool: false,
-            number: 3487,
-            str: 'something',
-            obj: { foo: 42, bar: false, me: 'hi' }
-          }
-        }
-      ])
-    }))
-    expect(result.rendered[0].html.replace(/&quot;/g, '"').replace(/ data-v-\w+>/, '>')).toMatchInlineSnapshot(`
-      "<pre>    false
-          3487
-          \\"something\\"
-          {\\"foo\\":42,\\"bar\\":false,\\"me\\":\\"hi\\"}
-          Was router enabled: false
-        </pre>"
-    `)
-    expect(result.state).toMatchInlineSnapshot('{}')
-    // TODO: fix bundle renderer issue with webpack
-    if (!process.env.TEST_WITH_WEBPACK) {
-      expect(result.styles).toMatch(/PureComponent[^"']*.css/)
-    }
-    expect(Object.keys(result)).toMatchInlineSnapshot(`
-      [
-        "rendered",
-        "state",
-        "styles",
-        "scripts",
-      ]
-    `)
-  })
-})
-
 describe('dynamic paths', () => {
   if (process.env.NUXT_TEST_DEV) {
     // TODO:
@@ -543,5 +482,66 @@ describe('app config', () => {
     }
 
     expect(html).toContain(JSON.stringify(expectedAppConfig))
+  })
+})
+
+describe('component islands', () => {
+  it('renders components with route', async () => {
+    const result: NuxtIslandResponse = await $fetch(withQuery('/__nuxt_island', {
+      url: '/foo',
+      state: JSON.stringify({}),
+      components: JSON.stringify([
+        { name: 'RouteComponent' }
+      ])
+    }))
+    expect(result.rendered[0].html).toMatchInlineSnapshot(`
+      "<pre>    Route: /foo
+        </pre>"
+    `)
+    expect(result.state).toMatchInlineSnapshot('{}')
+    expect(Object.keys(result)).toMatchInlineSnapshot(`
+      [
+        "rendered",
+        "state",
+        "styles",
+        "scripts",
+      ]
+    `)
+  })
+  it('renders pure components', async () => {
+    const result: NuxtIslandResponse = await $fetch(withQuery('/__nuxt_island', {
+      components: JSON.stringify([
+        {
+          name: 'PureComponent',
+          props: {
+            bool: false,
+            number: 3487,
+            str: 'something',
+            obj: { foo: 42, bar: false, me: 'hi' }
+          }
+        }
+      ])
+    }))
+    expect(result.rendered[0].html.replace(/&quot;/g, '"').replace(/ data-v-\w+>/, '>')).toMatchInlineSnapshot(`
+      "<pre>    false
+          3487
+          \\"something\\"
+          {\\"foo\\":42,\\"bar\\":false,\\"me\\":\\"hi\\"}
+          Was router enabled: false
+        </pre>"
+    `)
+    expect(result.state).toMatchInlineSnapshot('{}')
+    // TODO: fix bundle renderer issue with webpack
+    if (!process.env.TEST_WITH_WEBPACK) {
+      expect(result.styles).toMatch(/PureComponent[^"']*.css/)
+    }
+    expect(Object.keys(result)).toMatchInlineSnapshot(`
+      [
+        "rendered",
+        "state",
+        "styles",
+        "scripts",
+      ]
+    `)
   })
 })

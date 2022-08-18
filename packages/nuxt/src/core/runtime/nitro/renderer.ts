@@ -255,10 +255,10 @@ function renderHTMLDocument (html: NuxtRenderHTMLContext) {
 </html>`
 }
 
-function renderIslandComponent (html: NuxtRenderHTMLContext) {
-  return `<!DOCTYPE html>
-<html ${joinAttrs(html.htmlAttrs)}>
-<head>${joinTags(html.head)}</head>
-<body ${joinAttrs(html.bodyAttrs)}>${joinTags(html.bodyPreprend)}${joinTags(html.body)}${joinTags(html.bodyAppend)}</body>
-</html>`
-}
+// function renderIslandComponent (html: NuxtRenderHTMLContext) {
+//   return `<!DOCTYPE html>
+// <html ${joinAttrs(html.htmlAttrs)}>
+// <head>${joinTags(html.head)}</head>
+// <body ${joinAttrs(html.bodyAttrs)}>${joinTags(html.bodyPreprend)}${joinTags(html.body)}${joinTags(html.bodyAppend)}</body>
+// </html>`
+// }
