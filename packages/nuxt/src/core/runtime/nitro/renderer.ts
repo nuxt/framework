@@ -33,7 +33,7 @@ export interface NuxtIslandResponse {
   id?: string
   html: string
   state: Record<string, any>
-  tags: { tag: string, attrs: Record<string, string> }[]
+  tags: [tag: string, attrs?: Record<string, string>][]
 }
 
 export interface NuxtRenderResponse {
@@ -276,15 +276,15 @@ function renderHTMLDocument (html: NuxtRenderHTMLContext) {
 
 // TOOD: Move to external library
 const HTML_TAG_RE = /<(?<tag>[a-z]+)(?<rawAttrs> [^>]*)>/g
-const HTML_TAG_ATTR_RE = /(?<name>[a-z]+)=(?<value>"[^"]*"|'[^']*'|[^ >]*)/g
+const HTML_TAG_ATTR_RE = /(?<name>[a-z]+)="(?<value>[^"]*)"/g
 function extractHTMLTags (html: string) {
-  const tags: {tag: string, attrs: Record<string, string>}[] = []
+  const tags: [tag: string, attrs?: Record<string, string>][] = []
   for (const tagMatch of html.matchAll(HTML_TAG_RE)) {
     const attrs = {} as Record<string, string>
     for (const attraMatch of tagMatch.groups!.rawAttrs.matchAll(HTML_TAG_ATTR_RE)) {
       attrs[attraMatch.groups!.name] = attraMatch.groups!.value
     }
-    tags.push({ tag: tagMatch.groups!.tag, attrs })
+    tags.push([tagMatch.groups!.tag, attrs])
   }
   return tags
 }

@@ -49,7 +49,7 @@ export default defineComponent({
       const res: NuxtIslandResponse = await nuxtApp[pKey][hashId.value]
       // TODO: Use better head meerging
       useHead({
-        link: res.tags.filter(tag => tag.tag === 'link').map(tag => tag.attrs)
+        link: res.tags.filter(tag => tag[0] === 'link').map(tag => tag[1] || {})
       })
       html.value = res.html
     }
