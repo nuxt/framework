@@ -494,122 +494,122 @@ describe('component islands', () => {
         </pre>",
         "state": {},
         "tags": [
-          {
-            "attrs": {
-              "charset": "\\"utf-8\\"",
+          [
+            "meta",
+            {
+              "charset": "utf-8",
             },
-            "tag": "meta",
-          },
-          {
-            "attrs": {
-              "content": "\\"width=1024, initial-scale=1\\"",
-              "name": "\\"viewport\\"",
+          ],
+          [
+            "meta",
+            {
+              "content": "width=1024, initial-scale=1",
+              "name": "viewport",
             },
-            "tag": "meta",
-          },
-          {
-            "attrs": {
-              "content": "\\"2\\"",
-              "name": "\\"head:count\\"",
+          ],
+          [
+            "meta",
+            {
+              "content": "2",
+              "name": "head:count",
             },
-            "tag": "meta",
-          },
-          {
-            "attrs": {
-              "as": "\\"script\\"",
-              "href": "\\"/_nuxt/entry.79170466.js\\"",
-              "rel": "\\"modulepreload\\"",
+          ],
+          [
+            "link",
+            {
+              "as": "script",
+              "href": "/_nuxt/entry.ed3d904c.js",
+              "rel": "modulepreload",
             },
-            "tag": "link",
-          },
-          {
-            "attrs": {
-              "as": "\\"script\\"",
-              "href": "\\"/_nuxt/TestGlobal.28b642d1.js\\"",
-              "rel": "\\"prefetch\\"",
+          ],
+          [
+            "link",
+            {
+              "as": "script",
+              "href": "/_nuxt/TestGlobal.8b601198.js",
+              "rel": "prefetch",
             },
-            "tag": "link",
-          },
-          {
-            "attrs": {
-              "as": "\\"script\\"",
-              "href": "\\"/_nuxt/WithSuffix.global.a813662c.js\\"",
-              "rel": "\\"prefetch\\"",
+          ],
+          [
+            "link",
+            {
+              "as": "script",
+              "href": "/_nuxt/WithSuffix.global.19532f4e.js",
+              "rel": "prefetch",
             },
-            "tag": "link",
-          },
-          {
-            "attrs": {
-              "as": "\\"script\\"",
-              "href": "\\"/_nuxt/BreaksServer.9d9aeeb9.js\\"",
-              "rel": "\\"prefetch\\"",
+          ],
+          [
+            "link",
+            {
+              "as": "script",
+              "href": "/_nuxt/BreaksServer.9d9aeeb9.js",
+              "rel": "prefetch",
             },
-            "tag": "link",
-          },
-          {
-            "attrs": {
-              "as": "\\"script\\"",
-              "href": "\\"/_nuxt/injectAuth.de44cafa.js\\"",
-              "rel": "\\"prefetch\\"",
+          ],
+          [
+            "link",
+            {
+              "as": "script",
+              "href": "/_nuxt/injectAuth.2083679e.js",
+              "rel": "prefetch",
             },
-            "tag": "link",
-          },
-          {
-            "attrs": {
-              "as": "\\"script\\"",
-              "href": "\\"/_nuxt/override.1835fbc4.js\\"",
-              "rel": "\\"prefetch\\"",
+          ],
+          [
+            "link",
+            {
+              "as": "script",
+              "href": "/_nuxt/override.af1cd5ce.js",
+              "rel": "prefetch",
             },
-            "tag": "link",
-          },
-          {
-            "attrs": {
-              "as": "\\"script\\"",
-              "href": "\\"/_nuxt/foo.bcd52142.js\\"",
-              "rel": "\\"prefetch\\"",
+          ],
+          [
+            "link",
+            {
+              "as": "script",
+              "href": "/_nuxt/foo.72febae8.js",
+              "rel": "prefetch",
             },
-            "tag": "link",
-          },
-          {
-            "attrs": {
-              "as": "\\"script\\"",
-              "href": "\\"/_nuxt/error-component.2a10ec59.js\\"",
-              "rel": "\\"prefetch\\"",
+          ],
+          [
+            "link",
+            {
+              "as": "script",
+              "href": "/_nuxt/error-component.eceba4d2.js",
+              "rel": "prefetch",
             },
-            "tag": "link",
-          },
-          {
-            "attrs": {
-              "as": "\\"script\\"",
-              "href": "\\"/_nuxt/PascalCase.87deb145.js\\"",
-              "rel": "\\"prefetch\\"",
+          ],
+          [
+            "link",
+            {
+              "as": "script",
+              "href": "/_nuxt/PascalCase.87deb145.js",
+              "rel": "prefetch",
             },
-            "tag": "link",
-          },
-          {
-            "attrs": {
-              "as": "\\"script\\"",
-              "href": "\\"/_nuxt/custom.4b0b318c.js\\"",
-              "rel": "\\"prefetch\\"",
+          ],
+          [
+            "link",
+            {
+              "as": "script",
+              "href": "/_nuxt/custom.daf0d259.js",
+              "rel": "prefetch",
             },
-            "tag": "link",
-          },
-          {
-            "attrs": {
-              "as": "\\"script\\"",
-              "href": "\\"/_nuxt/override.af11ded7.js\\"",
-              "rel": "\\"prefetch\\"",
+          ],
+          [
+            "link",
+            {
+              "as": "script",
+              "href": "/_nuxt/override.62df4802.js",
+              "rel": "prefetch",
             },
-            "tag": "link",
-          },
-          {
-            "attrs": {
-              "as": "\\"script\\"",
-              "href": "\\"/_nuxt/default.8f9ba753.js\\"",
-              "rel": "\\"prefetch\\"",
+          ],
+          [
+            "link",
+            {
+              "as": "script",
+              "href": "/_nuxt/default.b7809d21.js",
+              "rel": "prefetch",
             },
-            "tag": "link",
-          },
+          ],
         ],
       }
     `)
