@@ -513,7 +513,7 @@ describe('component islands', () => {
       })
     }))
 
-    expect(result.island.html.replace(/data-v-\w+|"/g, '')).toMatchInlineSnapshot(`
+    expect(result.island.html.replace(/data-v-\w+|"|<!--.*-->/g, '')).toMatchInlineSnapshot(`
       "<div > Was router enabled: true <br > Props: <pre >{
         number: 3487,
         str: something,
