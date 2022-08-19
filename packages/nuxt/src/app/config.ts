@@ -1,5 +1,5 @@
 import type { AppConfig } from '@nuxt/schema'
-import { reactive } from 'vue'
+import { reactive, toRef } from 'vue'
 import { useNuxtApp } from './nuxt'
 // @ts-ignore
 import __appConfig from '#build/app.config.mjs'
@@ -7,10 +7,13 @@ import __appConfig from '#build/app.config.mjs'
 // Workaround for vite HMR with virtual modules
 export const _getAppConfig = () => __appConfig as AppConfig
 
-export function useAppConfig (): AppConfig {
+export function useAppConfig (key?: string) {
   const nuxtApp = useNuxtApp()
   if (!nuxtApp._appConfig) {
     nuxtApp._appConfig = reactive(__appConfig) as AppConfig
+  }
+  if (key) {
+    return reactive(toRef(nuxtApp._appConfig, key))
   }
   return nuxtApp._appConfig
 }
@@ -20,13 +23,22 @@ if (process.dev) {
   function applyHMR (newConfig: AppConfig) {
     const appConfig = useAppConfig()
     if (newConfig && appConfig) {
-      for (const key in newConfig) {
-        (appConfig as any)[key] = (newConfig as any)[key]
-      }
+      deepAssign(appConfig, newConfig)
       for (const key in appConfig) {
         if (!(key in newConfig)) {
           delete (appConfig as any)[key]
         }
+      }
+    }
+  }
+
+  function deepAssign (obj: any, newObj: any) {
+    for (const key in newObj) {
+      const val = newObj[key]
+      if (val && typeof val === 'object') {
+        deepAssign(obj[key], val)
+      } else {
+        obj[key] = val
       }
     }
   }
