@@ -1,5 +1,5 @@
 import type { AppConfig } from '@nuxt/schema'
-import { reactive, computed } from 'vue'
+import { reactive, toRef } from 'vue'
 import { useNuxtApp } from './nuxt'
 // @ts-ignore
 import __appConfig from '#build/app.config.mjs'
@@ -13,7 +13,7 @@ export function useAppConfig (key?: string): AppConfig {
     nuxtApp._appConfig = reactive(__appConfig) as AppConfig
   }
   if (key) {
-    return computed(() => nuxtApp._appConfig[key])
+    return reactive(toRef(nuxtApp._appConfig, key))
   }
   return nuxtApp._appConfig
 }
