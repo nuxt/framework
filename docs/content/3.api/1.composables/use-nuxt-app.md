@@ -1,4 +1,5 @@
 # `useNuxtApp`
+
 `useNuxtApp` is a built-in composable that provides a shared runtime context. This runtime context is available on both client-side and server-side and it helps you access the Vue instance, runtime hooks, runtime config variables and internal states, such as `ssrContext` and `payload`.
 
 You can use `useNuxtApp` within composable, plugins and components.
@@ -12,8 +13,9 @@ You can use `useNuxtApp` within composable, plugins and components.
 
 `useNuxtApp` will expose the following properties that you can use to extend and customize your app and share state, data and variables.
 
-## globalName 
-#### `type: string`
+## globalName
+
+**`type: string`**
 
 `globalName` allows you to customize the global ID used in the main HTML template as well as the main Vue instance name and other options.
 
@@ -28,10 +30,11 @@ The default value of `globalName` is set to `nuxt`, but you can customize it usi
 </script>
 ```
 
-## isHydrating 
-#### `type: boolean`
+## isHydrating
 
-You can use `nuxtApp.isHydrating` to check if the Nuxt app is hydrating on the client side. 
+**`type: boolean`**
+
+You can use `nuxtApp.isHydrating` to check if the Nuxt app is hydrating on the client side.
 
 ### Example
 
@@ -74,7 +77,7 @@ export default defineComponent({
 
 - **component** - Registers a global component if passing both a name string and a component definition, or retrieves an already registered one if only the name is passed.
 - **config** - exposes a `config` object that contains the configuration settings for that application.
-- **directive** - Registers a global custom directive if passing both a name string and a directive definition, or retrieves an already registered one if only the name is passed. 
+- **directive** - Registers a global custom directive if passing both a name string and a directive definition, or retrieves an already registered one if only the name is passed.
 
 > See `directive` example: [https://v3.nuxtjs.org/guide/directory-structure/plugins#vue-directives](https://v3.nuxtjs.org/guide/directory-structure/plugins#vue-directives)
 
@@ -82,16 +85,17 @@ export default defineComponent({
 - **mount** - Mounts the application instance in a container element.
 - **provide** - Provide a value that can be injected in all descendent components within the application.
 - **unmount** - Unmounts a mounted application instance, triggering the unmount lifecycle hooks for all components in the application's component tree.
-- **use** - Installs a **[plugin](https://vuejs.org/guide/reusability/plugins.html)**. 
+- **use** - Installs a **[plugin](https://vuejs.org/guide/reusability/plugins.html)**.
 
 > See `use` example: [https://v3.nuxtjs.org/guide/directory-structure/plugins#vue-plugins](https://v3.nuxtjs.org/guide/directory-structure/plugins#vue-plugins)
 
 :ReadMore{link="https://vuejs.org/api/application.html#application-api"}
 
-## $router 
-#### `type: router object`
+## $router
 
-You can access the Vue router object using `nuxtApp.$router`. 
+**`type: router object`**
+
+You can access the Vue router object using `nuxtApp.$router`.
 
 :ReadMore{link="/api/composables/use-router"}
 
@@ -122,9 +126,9 @@ As you can see in the example above, `$hello` has become the new and custom part
 Keys found under `app` and `public` are available on the client-side.
 
 - **app:**
-    - **baseURL** - `type: string`
-    - **buildAssetsDir** - `type: string`
-    - **cdnURL** - `type: string`
+  - **baseURL** - `type: string`
+  - **buildAssetsDir** - `type: string`
+  - **cdnURL** - `type: string`
 - **public** - `nuxtApp.$config.public` allows you to access the public runtime config that is set in the `nuxt.config` file of your Nuxt app.
 
 > Same `$config` object is accessible through `nuxtApp.payload.config` as well.
@@ -145,10 +149,10 @@ export default defineComponent({
   }
 })
 ```
+
 After fetching the value of `count` using `useAsyncData` in the example above, if you access `payload.data`, you will see `{ count: 1 }` recorded there. And the value `count` is updated accordingly as the page count increases.
 
 When accessing the same `payload.data` from [ssrcontext](#ssrcontext), you can access the same value on the server-side as well.
-
 
 - **state** - `type: record object` - when you use `useState` composable in Nuxt to set shared state, this state data is accessed through payload.state.[name-of-your-state]
 
@@ -161,6 +165,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
 })
 ```
+
 - **config** - Same as the [$config](#config) section above.
 
 ## Runtime `nuxtApp` hooks
