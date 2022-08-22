@@ -67,7 +67,7 @@ export default defineComponent({
 - **renderMeta** - `type: NuxtMeta` - returns a `Promise` of `NuxtMeta` type that includes HTML, head and body attributes, as well as head tags.
 - **teleports** - `type: Record object` - renders content outside of the Vue application
 
-> See how the [Vue-meta plugin](https://github.com/nuxt/framework/blob/main/packages/nuxt/src/head/runtime/lib/vue-meta.plugin.ts#L23) on Nuxt uses `renderMeta` in combination with `teleports`.
+> See how the [`vue-meta` plugin](https://github.com/nuxt/framework/blob/main/packages/nuxt/src/head/runtime/lib/vue-meta.plugin.ts#L23) in Nuxt uses `renderMeta` in combination with `teleports`.
 
 ## vueApp
 
