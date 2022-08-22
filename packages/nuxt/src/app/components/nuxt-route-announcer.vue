@@ -2,7 +2,7 @@
   <p
     class="nuxtjs-route-announcer"
     aria-live="assertive"
-    id="__next-route-announcer__"
+    id="__nuxt-route-announcer__"
     role="alert"
   >
     {{ routeAnnouncement }}
