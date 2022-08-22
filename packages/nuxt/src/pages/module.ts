@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs'
 import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin, findPath } from '@nuxt/kit'
-import { resolve } from 'pathe'
+import { relative, resolve } from 'pathe'
 import { genString, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
 import type { NuxtApp, NuxtPage } from '@nuxt/schema'
@@ -99,6 +99,24 @@ export default defineNuxtModule({
     // Add router plugin
     addPlugin(resolve(runtimeDir, 'router'))
 
+    const getSources = (pages: NuxtPage[]): string[] => pages.flatMap(p =>
+      [relative(nuxt.options.srcDir, p.file), ...getSources(p.children || [])]
+    )
+
+    // Do not prefetch page chunks
+    nuxt.hook('build:manifest', async (manifest) => {
+      const pages = await resolvePagesRoutes()
+      await nuxt.callHook('pages:extend', pages)
+
+      const sourceFiles = getSources(pages)
+      for (const key in manifest) {
+        if (manifest[key].isEntry) {
+          manifest[key].dynamicImports =
+            manifest[key].dynamicImports?.filter(i => !sourceFiles.includes(i))
+        }
+      }
+    })
+
     // Add routes template
     addTemplate({
       filename: 'routes.mjs',
@@ -117,7 +135,7 @@ export default defineNuxtModule({
         // Check for router options
         const routerOptionsFiles = (await Promise.all(nuxt.options._layers.map(
           async layer => await findPath(resolve(layer.config.srcDir, 'app/router.options'))
-        ))).filter(Boolean)
+        ))).filter(Boolean) as string[]
 
         const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router.options)
           .map(([key, value]) => [key, genString(value as string)]))
