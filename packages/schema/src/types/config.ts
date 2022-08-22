@@ -81,5 +81,5 @@ export interface NuxtAppConfig {
 }
 
 export interface AppConfig {
-  nuxt: NuxtAppConfig
+  _nuxt: NuxtAppConfig
 }
