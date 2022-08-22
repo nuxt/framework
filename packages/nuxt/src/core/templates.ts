@@ -211,7 +211,7 @@ import defu from 'defu'
 
 const inlineConfig = ${JSON.stringify(nuxt.options.appConfig, null, 2)}
 const nuxtConfig = {
-  nuxt: ${JSON.stringify({ ...nuxt.options.app, ...Object.fromEntries(nuxtKeysToOmit.map(k => [k])) }, null, 2)},
+  _nuxt: ${JSON.stringify({ ...nuxt.options.app, ...Object.fromEntries(nuxtKeysToOmit.map(k => [k])) }, null, 2)},
 }
 
 ${app.configs.map((id: string, index: number) => `import ${`cfg${index}`} from ${JSON.stringify(id)}`).join('\n')}
