@@ -3,12 +3,13 @@ import type { Server as HttpsServer } from 'node:https'
 import type { Compiler, Configuration, Stats } from 'webpack'
 import type { TSConfig } from 'pkg-types'
 import type { InlineConfig as ViteInlineConfig, ViteDevServer } from 'vite'
+import type { Manifest } from 'vue-bundle-renderer'
 import type { ModuleContainer } from './module'
 import type { NuxtTemplate, Nuxt, NuxtApp } from './nuxt'
 import type { Preset as ImportPreset, Import } from 'unimport'
 import type { NuxtConfig, NuxtOptions } from './config'
 import type { Nitro, NitroConfig } from 'nitropack'
-import type { Component, ComponentsDir, ScanDir, ComponentsOptions } from './components'
+import type { Component, ComponentsOptions } from './components'
 import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
 
 
@@ -72,6 +73,7 @@ export interface NuxtHooks {
   'app:templatesGenerated': (app: NuxtApp) => HookResult
   'builder:generateApp': () => HookResult
   'pages:extend': (pages: NuxtPage[]) => HookResult
+  'build:manifest': (manifest: Manifest) => HookResult
 
   // Auto imports
   'autoImports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
@@ -80,7 +82,7 @@ export interface NuxtHooks {
 
   // Components
   'components:dirs': (dirs: ComponentsOptions['dirs']) => HookResult
-  'components:extend': (components: (Component | ComponentsDir | ScanDir)[]) => HookResult
+  'components:extend': (components: Component[]) => HookResult
 
   // @nuxt/builder
   'build:before':

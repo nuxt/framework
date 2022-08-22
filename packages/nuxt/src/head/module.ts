@@ -1,5 +1,5 @@
 import { resolve } from 'pathe'
-import { addPlugin, defineNuxtModule } from '@nuxt/kit'
+import { addPlugin, addTemplate, defineNuxtModule } from '@nuxt/kit'
 import { distDir } from '../dirs'
 
 export default defineNuxtModule({
