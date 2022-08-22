@@ -3,6 +3,7 @@
     class="nuxtjs-route-announcer"
     aria-live="assertive"
     id="__nuxt-route-announcer__"
+    v-memo="[routeAnnouncement]"
     role="alert"
   >
     {{ routeAnnouncement }}
