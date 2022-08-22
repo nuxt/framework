@@ -22,7 +22,7 @@ export default defineComponent({
       onMounted(() => {
         nextTick(() => {
           if (_layout && ['#comment', '#text'].includes(vnode?.el?.nodeName)) {
-            console.error(`\`${_layout}\` does not have a single root node and will cause errors when navigating between routes.`)
+            console.warn(`[nuxt] \`${_layout}\` layout does not have a single root node and will cause errors when navigating between routes.`)
           }
         })
       })

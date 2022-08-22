@@ -83,7 +83,7 @@ const Component = defineComponent({
         nextTick(() => {
           if (['#comment', '#text'].includes(vnode?.el?.nodeName)) {
             const filename = (vnode?.type as any).__file
-            console.error(`\`${filename}\` does not have a single root node and will cause errors when navigating between routes.`)
+            console.warn(`[nuxt] \`${filename}\` does not have a single root node and will cause errors when navigating between routes.`)
           }
         })
       })
