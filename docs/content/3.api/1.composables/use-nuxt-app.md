@@ -153,7 +153,7 @@ After fetching the value of `count` using `useAsyncData` in the example above, i
 
 When accessing the same `payload.data` from [ssrcontext](#ssrcontext), you can access the same value on the server-side as well.
 
-- **state** - `type: record object` - when you use `useState` composable in Nuxt to set shared state, this state data is accessed through payload.state.[name-of-your-state]
+- **state** - `type: record object` - When you use `useState` composable in Nuxt to set shared state, this state data is accessed through `payload.state.[name-of-your-state]`.
 
 ```js [plugins/my-plugin.ts]
 export const useColor = () => useState<string>('color', () => 'pink')
