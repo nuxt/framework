@@ -16,7 +16,7 @@ You can use `useNuxtApp` within composables, plugins and components.
 
 **`type: string`**
 
-`globalName` allows you to customize the global ID used in the main HTML template as well as the main Vue instance name and other options.
+`globalName` allows you to customize the global ID used in the main HTML template, as well as the main Vue instance name and other options.
 
 The default value of `globalName` is set to `nuxt`, but you can customize it using `nuxtApp.globalName`.
 
