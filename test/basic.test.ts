@@ -44,6 +44,11 @@ describe('pages', () => {
     expect(html).toContain('Composable | template: auto imported from ~/components/template.ts')
     // should import components
     expect(html).toContain('This is a custom component with a named export.')
+    // should apply attributes to client-only components
+    expect(html).toContain('<div style="color:red;" class="client-only"></div>')
+    // should register global components automatically
+    expect(html).toContain('global component registered automatically')
+    expect(html).toContain('global component via suffix')
 
     await expectNoClientErrors('/')
   })
@@ -125,26 +130,44 @@ describe('pages', () => {
 
     await expectNoClientErrors('/another-parent')
   })
+
+  it('/client-only-components', async () => {
+    const html = await $fetch('/client-only-components')
+    expect(html).toContain('<div class="client-only-script" foo="bar">')
+    expect(html).toContain('<div class="client-only-script-setup" foo="hello">')
+
+    await expectNoClientErrors('/client-only-components')
+  })
 })
 
 describe('head tags', () => {
   it('should render tags', async () => {
-    const html = await $fetch('/head')
-    expect(html).toContain('<title>Using a dynamic component - Fixture</title>')
-    expect(html).not.toContain('<meta name="description" content="first">')
-    expect(html).toContain('<meta charset="utf-16">')
-    expect(html).not.toContain('<meta charset="utf-8">')
-    expect(html).toContain('<meta name="description" content="overriding with an inline useHead call">')
-    expect(html).toMatch(/<html[^>]*class="html-attrs-test"/)
-    expect(html).toMatch(/<body[^>]*class="body-attrs-test"/)
-    expect(html).toContain('script>console.log("works with useMeta too")</script>')
+    const headHtml = await $fetch('/head')
+    expect(headHtml).toContain('<title>Using a dynamic component - Title Template Fn Change</title>')
+    expect(headHtml).not.toContain('<meta name="description" content="first">')
+    expect(headHtml).toContain('<meta charset="utf-16">')
+    expect(headHtml.match('meta charset').length).toEqual(1)
+    expect(headHtml).toContain('<meta name="viewport" content="width=1024, initial-scale=1">')
+    expect(headHtml.match('meta name="viewport"').length).toEqual(1)
+    expect(headHtml).not.toContain('<meta charset="utf-8">')
+    expect(headHtml).toContain('<meta name="description" content="overriding with an inline useHead call">')
+    expect(headHtml).toMatch(/<html[^>]*class="html-attrs-test"/)
+    expect(headHtml).toMatch(/<body[^>]*class="body-attrs-test"/)
+    expect(headHtml).toContain('script>console.log("works with useMeta too")</script>')
+    expect(headHtml).toContain('<script src="https://a-body-appended-script.com" data-meta-body="true"></script></body>')
 
-    const index = await $fetch('/')
+    const indexHtml = await $fetch('/')
     // should render charset by default
-    expect(index).toContain('<meta charset="utf-8">')
+    expect(indexHtml).toContain('<meta charset="utf-8">')
     // should render <Head> components
-    expect(index).toContain('<title>Basic fixture - Fixture</title>')
+    expect(indexHtml).toContain('<title>Basic fixture</title>')
   })
+
+  // TODO: Doesn't adds header in test environment
+  // it.todo('should render stylesheet link tag (SPA mode)', async () => {
+  //   const html = await $fetch('/head', { headers: { 'x-nuxt-no-ssr': '1' } })
+  //   expect(html).toMatch(/<link rel="stylesheet" href="\/_nuxt\/[^>]*.css"/)
+  // })
 })
 
 describe('navigate', () => {
@@ -166,7 +189,6 @@ describe('errors', () => {
     const error = await res.json()
     delete error.stack
     expect(error).toMatchObject({
-      description: process.env.NUXT_TEST_DEV ? expect.stringContaining('<pre>') : '',
       message: 'This is a custom error',
       statusCode: 500,
       statusMessage: 'Internal Server Error',
@@ -332,6 +354,9 @@ describe('automatically keyed composables', () => {
     expect(html).toContain('true')
     expect(html).not.toContain('false')
   })
+  it('should match server-generated keys', async () => {
+    await expectNoClientErrors('/keyed-composables')
+  })
 })
 
 describe('dynamic paths', () => {
@@ -357,7 +382,7 @@ describe('dynamic paths', () => {
 
     const html = await $fetch('/assets')
     const urls = Array.from(html.matchAll(/(href|src)="(.*?)"/g)).map(m => m[2])
-    const cssURL = urls.find(u => /_nuxt\/entry.*\.css$/.test(u))
+    const cssURL = urls.find(u => /_nuxt\/assets.*\.css$/.test(u))
     expect(cssURL).toBeDefined()
     const css = await $fetch(cssURL)
     const imageUrls = Array.from(css.matchAll(/url\(([^)]*)\)/g)).map(m => m[1].replace(/[-.][\w]{8}\./g, '.'))
@@ -377,10 +402,32 @@ describe('dynamic paths', () => {
     await startServer()
 
     const html = await $fetch('/foo/assets')
+    for (const match of html.matchAll(/(href|src)="(.`*?)"/g)) {
+      const url = match[2]
+      expect(
+        url.startsWith('/foo/_other/') ||
+        url === '/foo/public.svg' ||
+        // TODO: webpack does not yet support dynamic static paths
+        (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
+      ).toBeTruthy()
+    }
+  })
+
+  it('should allow setting relative baseURL', async () => {
+    delete process.env.NUXT_APP_BUILD_ASSETS_DIR
+    process.env.NUXT_APP_BASE_URL = './'
+    await startServer()
+
+    const html = await $fetch('/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
-      // TODO: webpack does not yet support dynamic static paths
-      expect(url.startsWith('/foo/_other/') || url === '/foo/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
+      expect(
+        url.startsWith('./_nuxt/') ||
+        url === './public.svg' ||
+        // TODO: webpack does not yet support dynamic static paths
+        (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
+      ).toBeTruthy()
+      expect(url.startsWith('./_nuxt/_nuxt')).toBeFalsy()
     }
   })
 
@@ -402,8 +449,36 @@ describe('dynamic paths', () => {
     const html = await $fetch('/foo/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
-      // TODO: webpack does not yet support dynamic static paths
-      expect(url.startsWith('https://example.com/_cdn/') || url === 'https://example.com/public.svg' || (process.env.TEST_WITH_WEBPACK && url === '/public.svg')).toBeTruthy()
+      expect(
+        url.startsWith('https://example.com/_cdn/') ||
+        url === 'https://example.com/public.svg' ||
+        // TODO: webpack does not yet support dynamic static paths
+        (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
+      ).toBeTruthy()
     }
+  })
+
+  it('restore server', async () => {
+    process.env.NUXT_APP_BASE_URL = undefined
+    process.env.NUXT_APP_CDN_URL = undefined
+    process.env.NUXT_APP_BUILD_ASSETS_DIR = undefined
+    await startServer()
+  })
+})
+
+describe('app config', () => {
+  it('should work', async () => {
+    const html = await $fetch('/app-config')
+
+    const expectedAppConfig = {
+      fromNuxtConfig: true,
+      nested: {
+        val: 2
+      },
+      fromLayer: true,
+      userConfig: 123
+    }
+
+    expect(html).toContain(JSON.stringify(expectedAppConfig))
   })
 })

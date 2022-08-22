@@ -1,6 +1,6 @@
 import { defineUnimportPreset, Preset } from 'unimport'
 
-export const commonPresets: Preset[] = [
+const commonPresets: Preset[] = [
   // #head
   defineUnimportPreset({
     from: '#head',
@@ -19,7 +19,7 @@ export const commonPresets: Preset[] = [
   })
 ]
 
-export const appPreset = defineUnimportPreset({
+const appPreset = defineUnimportPreset({
   from: '#app',
   imports: [
     'useAsyncData',
@@ -35,6 +35,7 @@ export const appPreset = defineUnimportPreset({
     'useCookie',
     'useRequestHeaders',
     'useRequestEvent',
+    'setResponseStatus',
     'useRouter',
     'useRoute',
     'useActiveRoute',
@@ -43,14 +44,19 @@ export const appPreset = defineUnimportPreset({
     'abortNavigation',
     'addRouteMiddleware',
     'throwError',
+    'showError',
     'clearError',
+    'isNuxtError',
     'useError',
-    'defineNuxtLink'
+    'createError',
+    'defineNuxtLink',
+    'useAppConfig',
+    'defineAppConfig'
   ]
 })
 
 // vue
-export const vuePreset = defineUnimportPreset({
+const vuePreset = defineUnimportPreset({
   from: 'vue',
   imports: [
     // <script setup>
