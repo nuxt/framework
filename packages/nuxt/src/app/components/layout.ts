@@ -24,7 +24,7 @@ export default defineComponent({
       }
 
       // We avoid rendering layout transition if there is no layout to render
-      return _wrapIf(Transition, hasLayout && (route.meta.layoutTransition ?? (appConfig as any).nuxt.layoutTransition),
+      return _wrapIf(Transition, hasLayout && (route.meta.layoutTransition ?? appConfig.nuxt.layoutTransition),
         _wrapIf(layouts[layout], hasLayout, context.slots)
       ).default()
     }

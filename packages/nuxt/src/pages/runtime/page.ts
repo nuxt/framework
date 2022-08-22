@@ -36,8 +36,8 @@ export default defineComponent({
 
           const key = generateRouteKey(props.pageKey, routeProps)
 
-          return _wrapIf(Transition, routeProps.route.meta.pageTransition ?? (appConfig as any).nuxt.pageTransition,
-            wrapInKeepAlive(routeProps.route.meta.keepalive ?? (appConfig as any).nuxt.keepalive, isNested && nuxtApp.isHydrating
+          return _wrapIf(Transition, routeProps.route.meta.pageTransition ?? appConfig.nuxt.pageTransition,
+            wrapInKeepAlive(routeProps.route.meta.keepalive ?? appConfig.nuxt.keepalive, isNested && nuxtApp.isHydrating
               // Include route children in parent suspense
               ? h(Component, { key, routeProps, pageKey: key } as {})
               : h(Suspense, {

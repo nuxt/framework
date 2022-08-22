@@ -13,8 +13,8 @@ export interface NuxtConfig extends DeepPartial<Omit<ConfigSchema, 'vite'>> {
 
 // TODO: Expose ConfigLayer<T> from c12
 interface ConfigLayer<T> {
-  config: T;
-  cwd: string;
+  config: T
+  cwd: string
   configFile: string
 }
 export type NuxtConfigLayer = ConfigLayer<NuxtConfig & {
@@ -65,10 +65,11 @@ export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamesp
 export interface AppConfigInput extends Record<string, any> {
   /** @deprecated reserved */
   private?: never
-  /** @deprecated reserved */
-  nuxt?: never
+  nuxt?: DeepPartial<Omit<ConfigSchema['app'], 'baseURL' | 'buildAssetsDir' | 'assetsPath' | 'cdnURL'>>
   /** @deprecated reserved */
   nitro?: never
 }
 
-export interface AppConfig { }
+export interface AppConfig {
+  nuxt: Omit<ConfigSchema['app'], 'baseURL' | 'buildAssetsDir' | 'assetsPath' | 'cdnURL'>
+}
