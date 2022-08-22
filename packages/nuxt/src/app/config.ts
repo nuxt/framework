@@ -32,7 +32,7 @@ if (process.dev) {
   function deepAssign (obj: any, newObj: any) {
     for (const key in newObj) {
       const val = newObj[key]
-      if (val && typeof val === 'object') {
+      if (val !== null && typeof val === 'object') {
         deepAssign(obj[key], val)
       } else {
         obj[key] = val
