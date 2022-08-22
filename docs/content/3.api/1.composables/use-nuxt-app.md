@@ -168,7 +168,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 ## Runtime `nuxtApp` hooks
 
-Hooks available in `nuxtApp` allows you to customize the runtime aspects of your Nuxt application. You can use runtime hooks in Vue composable and [Nuxt Plugins](/guide/directory-structure/plugins) to hook into the rendering lifecycle.
+Hooks available in `nuxtApp` allows you to customize the runtime aspects of your Nuxt application. You can use runtime hooks in Vue composable and [Nuxt plugins](/guide/directory-structure/plugins) to hook into the rendering lifecycle.
 
 ### hooks
 
