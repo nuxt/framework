@@ -56,7 +56,7 @@ export default defineComponent({
 
 ## ssrContext
 
-`ssrContext` is generated using runtime `vue-bundle-renderer` for Vue 3 and it is only available on the server-side. Nuxt exposes the following properties through `ssrContext`.
+`ssrContext` is generated using runtime `vue-bundle-renderer` for Vue 3 and it is only available on the server side. Nuxt exposes the following properties through `ssrContext`:
 
 - **url** - `type: string` - `url` refers to the host url where the current request is being made
 - **event** - `type: HTTP request` - `event` allows access to `res` and `res` object for the current request made to Nuxt page
