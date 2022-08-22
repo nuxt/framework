@@ -6,7 +6,7 @@ You can use `useNuxtApp` within composables, plugins and components.
 
 ```vue [app.vue]
 <script setup>
-  const nuxtApp = useNuxtApp();
+  const nuxtApp = useNuxtApp()
 </script>
 ```
 
