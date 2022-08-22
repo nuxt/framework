@@ -24,7 +24,7 @@ The default value of `globalName` is set to `nuxt`, but you can customize it usi
 
 ```vue [app.vue]
 <script setup>
-  const nuxtApp = useNuxtApp();
+  const nuxtApp = useNuxtApp()
   console.log(nuxtApp.globalName) // nuxt
 </script>
 ```
