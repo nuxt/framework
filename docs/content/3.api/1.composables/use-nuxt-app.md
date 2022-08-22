@@ -10,7 +10,7 @@ You can use `useNuxtApp` within composables, plugins and components.
 </script>
 ```
 
-`useNuxtApp` will expose the following properties that you can use to extend and customize your app and share state, data and variables.
+`useNuxtApp` exposes the following properties that you can use to extend and customize your app and share state, data and variables.
 
 ## globalName
 
