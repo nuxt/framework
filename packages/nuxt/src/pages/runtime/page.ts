@@ -1,5 +1,7 @@
-import { computed, DefineComponent, defineComponent, h, inject, provide, reactive, onMounted, nextTick, Suspense, Transition, VNode } from 'vue'
-import { RouteLocationNormalized, RouteLocationNormalizedLoaded, RouterView, RouteLocation } from 'vue-router'
+import { computed, defineComponent, h, inject, provide, reactive, onMounted, nextTick, Suspense, Transition } from 'vue'
+import type { DefineComponent, VNode } from 'vue'
+import { RouteLocationNormalized, RouteLocationNormalizedLoaded, RouterView } from 'vue-router'
+import type { RouteLocation } from 'vue-router'
 
 import { generateRouteKey, RouterViewSlotProps, wrapInKeepAlive } from './utils'
 import { useNuxtApp } from '#app'
