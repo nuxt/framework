@@ -100,7 +100,7 @@ export default {
      *   }
      * }
      * ```
-     * @type {typeof import('../src/types/meta').MetaObject}
+     * @type {typeof import('../src/types/config').NuxtAppConfig['head']}
      * @version 3
      */
     head: {
@@ -132,7 +132,7 @@ export default {
      * Only JSON-serializable values are allowed.
      *
      * @see https://vuejs.org/api/built-in-components.html#transition
-     * @type {boolean | typeof import('vue').TransitionProps}
+     * @type {typeof import('../src/types/config').NuxtAppConfig['layoutTransition']}
      */
     layoutTransition: { name: 'layout', mode: 'out-in' },
     /**
@@ -142,7 +142,7 @@ export default {
      * Only JSON-serializable values are allowed.
      *
      * @see https://vuejs.org/api/built-in-components.html#transition
-     * @type {boolean | typeof import('vue').TransitionProps}
+     * @type {typeof import('../src/types/config').NuxtAppConfig['pageTransition']}
      */
     pageTransition: { name: 'page', mode: 'out-in' },
     /**
@@ -152,7 +152,7 @@ export default {
      * Only JSON-serializable values are allowed.
      *
      * @see https://vuejs.org/api/built-in-components.html#keepalive
-     * @type {boolean | typeof import('vue').KeepAliveProps}
+     * @type {typeof import('../src/types/config').NuxtAppConfig['keepalive']}
      */
     keepalive: false,
   },

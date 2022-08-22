@@ -1,6 +1,8 @@
+import type { KeepAliveProps, TransitionProps } from 'vue'
 import { ConfigSchema } from '../../schema/config'
 import type { UserConfig as ViteUserConfig } from 'vite'
 import type { Options as VuePluginOptions } from '@vitejs/plugin-vue'
+import { MetaObject } from './meta'
 
 type DeepPartial<T> = T extends Function ? T : T extends Record<string, any> ? { [P in keyof T]?: DeepPartial<T[P]> } : T
 
@@ -65,11 +67,18 @@ export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamesp
 export interface AppConfigInput extends Record<string, any> {
   /** @deprecated reserved */
   private?: never
-  nuxt?: DeepPartial<Omit<ConfigSchema['app'], 'baseURL' | 'buildAssetsDir' | 'assetsPath' | 'cdnURL'>>
+  nuxt?: never
   /** @deprecated reserved */
   nitro?: never
 }
 
+export interface NuxtAppConfig {
+  head: MetaObject
+  layoutTransition: boolean | TransitionProps
+  pageTransition: boolean | TransitionProps
+  keepalive: boolean | KeepAliveProps
+}
+
 export interface AppConfig {
-  nuxt: Omit<ConfigSchema['app'], 'baseURL' | 'buildAssetsDir' | 'assetsPath' | 'cdnURL'>
+  nuxt: NuxtAppConfig
 }
