@@ -2,7 +2,7 @@ import type { KeepAliveProps, TransitionProps } from 'vue'
 import { ConfigSchema } from '../../schema/config'
 import type { UserConfig as ViteUserConfig } from 'vite'
 import type { Options as VuePluginOptions } from '@vitejs/plugin-vue'
-import { MetaObject } from './meta'
+import type { MetaObject } from './meta'
 
 type DeepPartial<T> = T extends Function ? T : T extends Record<string, any> ? { [P in keyof T]?: DeepPartial<T[P]> } : T
 
@@ -67,6 +67,7 @@ export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamesp
 export interface AppConfigInput extends Record<string, any> {
   /** @deprecated reserved */
   private?: never
+  /** @deprecated reserved */
   nuxt?: never
   /** @deprecated reserved */
   nitro?: never
