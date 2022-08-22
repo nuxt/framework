@@ -4,8 +4,7 @@
 
 You can use `useNuxtApp` within composable, plugins and components.
 
-```jsx
-// app.vue
+```vue [app.vue]
 <script setup>
   const nuxtApp = useNuxtApp();
 </script>
@@ -23,7 +22,7 @@ The default value of `globalName` is set to `nuxt`, but you can customize it usi
 
 ### Example
 
-```jsx [app.vue]
+```vue [app.vue]
 <script setup>
   const nuxtApp = useNuxtApp();
   console.log(nuxtApp.globalName) // nuxt
@@ -38,7 +37,7 @@ You can use `nuxtApp.isHydrating` to check if the Nuxt app is hydrating on the c
 
 ### Example
 
-```tsx [components/nuxt-error-boundary.ts]
+```ts [components/nuxt-error-boundary.ts]
 
 export default defineComponent({
   setup (_props, { slots, emit }) {
@@ -107,7 +106,7 @@ You can access the Vue router object using `nuxtApp.$router`.
 
 ### Example
 
-```jsx
+```js
 const nuxtApp = useNuxtApp()
 nuxtApp.provide('hello', (name) => `Hello ${name}!`)
 
@@ -142,7 +141,7 @@ Keys found under `app` and `public` are available on the client-side.
 - **serverRendered** - `type: boolean`
 - **data** - `type: record object` - when you fetch the data from an API endpoint using either `useFetch` or `useAsyncData`, resulting payload can be accessed from the `payload.data` . This data is cached and helps you prevent fetching the same data in case an identical request is made twice.
 
-```js [app.vue]
+```vue [app.vue]
 export default defineComponent({
   async setup() {
     const { data } = await useAsyncData('count', () => $fetch('/api/count'))
@@ -176,7 +175,7 @@ Hooks available in `nuxtApp` allows you to customize the runtime aspects of your
 
 `nuxtApp` lets you call and add the following runtime hooks:
 
-```tsx
+```ts
 // App related runtime hooks
 'app:created': (app: App<Element>) => HookResult
 'app:beforeMount': (app: App<Element>) => HookResult
@@ -202,7 +201,7 @@ Hooks available in `nuxtApp` allows you to customize the runtime aspects of your
 
 `hook` function is useful for adding custom logic by hooking into the rendering lifecycle at a specific point. `hook` function is mostly used in creating Nuxt plugins.
 
-```jsx [plugins/test.ts]
+```js [plugins/test.ts]
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.hook('page:start', () => {
     /* your code goes here */
@@ -220,6 +219,6 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 `callHook` returns promise when called with any of the existing hooks.
 
-```jsx
+```js
 await nuxtApp.callHook('app:created', vueApp)
 ```
