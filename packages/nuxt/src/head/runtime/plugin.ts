@@ -5,7 +5,7 @@ import { defineNuxtPlugin, useAppConfig, useNuxtApp } from '#app'
 
 type MetaComponents = typeof Components
 declare module 'vue' {
-  export interface GlobalComponents extends MetaComponents {}
+  export interface GlobalComponents extends MetaComponents { }
 }
 
 const metaMixin = {
@@ -26,7 +26,7 @@ const metaMixin = {
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
-  useHead(markRaw({ title: '', ...useAppConfig().nuxt.head }))
+  useHead(markRaw({ title: '', ...(useAppConfig() as any).nuxt.head }))
 
   nuxtApp.vueApp.mixin(metaMixin)
 
