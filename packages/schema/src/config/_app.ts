@@ -124,7 +124,6 @@ export default {
         return resolved
       }
     },
-
     /**
      * Default values for layout transitions.
      *
