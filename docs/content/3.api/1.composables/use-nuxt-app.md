@@ -38,7 +38,6 @@ You can use `nuxtApp.isHydrating` to check if the Nuxt app is hydrating on the c
 ### Example
 
 ```ts [components/nuxt-error-boundary.ts]
-
 export default defineComponent({
   setup (_props, { slots, emit }) {
     // ...
