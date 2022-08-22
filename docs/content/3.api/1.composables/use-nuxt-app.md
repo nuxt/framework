@@ -60,7 +60,7 @@ export default defineComponent({
 
 - **url** - `type: string` - `url` refers to the host url where the current request is being made
 - **event** - `type: HTTP request` - `event` allows access to `req` and `res` objects for the current request made to the Nuxt page
-- **runtimeConfig** - `type: runtimeConfig object` - `runtimeConfig` exposes runtime config on the client-side via payload
+- **runtimeConfig** - `type: runtimeConfig object` - `runtimeConfig` exposes runtime config on the client side via payload
 - **noSSR**  - `type: boolean`
 - **error** - `type: error object` - returns server-side error if any
 - **payload** - returns NuxtApp payload object - See [payload](#payload) section below for more detail.
