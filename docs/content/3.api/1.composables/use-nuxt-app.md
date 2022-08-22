@@ -1,6 +1,6 @@
 # `useNuxtApp`
 
-`useNuxtApp` is a built-in composable that provides a shared runtime context, which is available on both client and server side. It helps you access the Vue instance, runtime hooks, runtime config variables and internal states, such as `ssrContext` and `payload`.
+`useNuxtApp` is a built-in composable that provides a shared runtime context, which is available on both client and server side. It helps you access the Vue app instance, runtime hooks, runtime config variables and internal states, such as `ssrContext` and `payload`.
 
 You can use `useNuxtApp` within composables, plugins and components.
 
@@ -11,23 +11,6 @@ You can use `useNuxtApp` within composables, plugins and components.
 ```
 
 `useNuxtApp` exposes the following properties that you can use to extend and customize your app and share state, data and variables.
-
-## globalName
-
-**`type: string`**
-
-`globalName` allows you to customize the global ID used in the main HTML template, as well as the main Vue instance name and other options.
-
-The default value of `globalName` is set to `nuxt`, but you can customize it using `nuxtApp.globalName`.
-
-### Example
-
-```vue [app.vue]
-<script setup>
-  const nuxtApp = useNuxtApp()
-  console.log(nuxtApp.globalName) // nuxt
-</script>
-```
 
 ## isHydrating
 
@@ -110,7 +93,7 @@ const nuxtApp = useNuxtApp()
 nuxtApp.provide('hello', (name) => `Hello ${name}!`)
 
 // Prints "Hello name!"
-console.log(nuxtApp.$hello('name')) 
+console.log(nuxtApp.$hello('name'))
 ```
 
 As you can see in the example above, `$hello` has become the new and custom part of `nuxtApp` context and it is available in all places where `nuxtApp` is accessible.
