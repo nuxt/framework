@@ -64,7 +64,7 @@ export default defineComponent({
 - **noSSR**  - `type: boolean`
 - **error** - `type: error object` - returns server-side error if any
 - **payload** - returns NuxtApp payload object - See [payload](#payload) section below for more detail.
-- **renderMeta** - `type: NuxtMeta` - returns a `Promise` of `NuxtMeta` type that includes HTML, head and body attributes as well as head tags.
+- **renderMeta** - `type: NuxtMeta` - returns a `Promise` of `NuxtMeta` type that includes HTML, head and body attributes, as well as head tags.
 - **teleports** - `type: Record object` - renders content outside of the Vue application
 
 > See how the [Vue-meta plugin](https://github.com/nuxt/framework/blob/main/packages/nuxt/src/head/runtime/lib/vue-meta.plugin.ts#L23) on Nuxt uses `renderMeta` in combination with `teleports`.
