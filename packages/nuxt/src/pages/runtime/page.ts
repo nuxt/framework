@@ -2,10 +2,8 @@ import { computed, DefineComponent, defineComponent, h, inject, provide, reactiv
 import { RouteLocation, RouteLocationNormalized, RouteLocationNormalizedLoaded, RouterView } from 'vue-router'
 
 import { generateRouteKey, RouterViewSlotProps, wrapInKeepAlive } from './utils'
-import { useNuxtApp } from '#app'
+import { useAppConfig, useNuxtApp } from '#app'
 import { _wrapIf } from '#app/components/utils'
-// @ts-ignore
-import { pageTransition as defaultPageTransition, keepalive as defaultKeepaliveConfig } from '#build/app.config.mjs'
 
 const isNestedKey = Symbol('isNested')
 
@@ -26,6 +24,7 @@ export default defineComponent({
   },
   setup (props, { attrs }) {
     const nuxtApp = useNuxtApp()
+    const appConfig = useAppConfig()
 
     const isNested = inject(isNestedKey, false)
     provide(isNestedKey, true)
@@ -37,9 +36,9 @@ export default defineComponent({
 
           const key = generateRouteKey(props.pageKey, routeProps)
 
-          return _wrapIf(Transition, routeProps.route.meta.pageTransition ?? defaultPageTransition,
-            wrapInKeepAlive(routeProps.route.meta.keepalive ?? defaultKeepaliveConfig, isNested && nuxtApp.isHydrating
-            // Include route children in parent suspense
+          return _wrapIf(Transition, routeProps.route.meta.pageTransition ?? appConfig.nuxt.pageTransition,
+            wrapInKeepAlive(routeProps.route.meta.keepalive ?? appConfig.nuxt.keepalive, isNested && nuxtApp.isHydrating
+              // Include route children in parent suspense
               ? h(Component, { key, routeProps, pageKey: key } as {})
               : h(Suspense, {
                 onPending: () => nuxtApp.callHook('page:start', routeProps.Component),

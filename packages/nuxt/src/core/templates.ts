@@ -205,13 +205,17 @@ export const appConfigTemplate: NuxtTemplate = {
   filename: 'app.config.mjs',
   write: true,
   getContents: ({ app, nuxt }) => {
+    const nuxtKeysToOmit = ['baseURL', 'buildAssetsDir', 'assetsPath', 'cdnURL']
     return `
 import defu from 'defu'
 
 const inlineConfig = ${JSON.stringify(nuxt.options.appConfig, null, 2)}
+const nuxtConfig = {
+  nuxt: ${JSON.stringify({ ...nuxt.options.app, ...Object.fromEntries(nuxtKeysToOmit.map(k => [k])) }, null, 2)},
+}
 
 ${app.configs.map((id: string, index: number) => `import ${`cfg${index}`} from ${JSON.stringify(id)}`).join('\n')}
-export default defu(${app.configs.map((_id: string, index: number) => `cfg${index}`).concat(['inlineConfig']).join(', ')})
+export default defu(${app.configs.map((_id: string, index: number) => `cfg${index}`).concat(['inlineConfig', 'nuxtConfig']).join(', ')})
 `
   }
 }
@@ -240,13 +244,5 @@ export const publicPathTemplate: NuxtTemplate = {
       'globalThis.__buildAssetsURL = buildAssetsURL',
       'globalThis.__publicAssetsURL = publicAssetsURL'
     ].filter(Boolean).join('\n')
-  }
-}
-
-// Add app configuration
-export const appConfigTemplate = {
-  filename: 'app.config.mjs',
-  getContents: (ctx: TemplateContext) => {
-    return Object.entries(ctx.nuxt.options.app).map(([k, v]) => `export const ${k} = ${JSON.stringify(v)}`).join('\n\n')
   }
 }

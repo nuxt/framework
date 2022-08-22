@@ -1,9 +1,7 @@
 import { computed, getCurrentInstance, markRaw } from 'vue'
 import * as Components from './components'
 import { useHead } from './composables'
-import { defineNuxtPlugin, useNuxtApp } from '#app'
-// @ts-ignore
-import { head as globalMeta } from '#build/app.config.mjs'
+import { defineNuxtPlugin, useAppConfig, useNuxtApp } from '#app'
 
 type MetaComponents = typeof Components
 declare module 'vue' {
@@ -28,7 +26,7 @@ const metaMixin = {
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
-  useHead(markRaw({ title: '', ...globalMeta }))
+  useHead(markRaw({ title: '', ...useAppConfig().nuxt.head }))
 
   nuxtApp.vueApp.mixin(metaMixin)
 
