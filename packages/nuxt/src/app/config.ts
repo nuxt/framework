@@ -7,13 +7,10 @@ import __appConfig from '#build/app.config.mjs'
 // Workaround for vite HMR with virtual modules
 export const _getAppConfig = () => __appConfig as AppConfig
 
-export function useAppConfig (key?: string) {
+export function useAppConfig () {
   const nuxtApp = useNuxtApp()
   if (!nuxtApp._appConfig) {
     nuxtApp._appConfig = reactive(__appConfig) as AppConfig
-  }
-  if (key) {
-    return reactive(toRef(nuxtApp._appConfig, key))
   }
   return nuxtApp._appConfig
 }
