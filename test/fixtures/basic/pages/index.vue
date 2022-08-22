@@ -21,13 +21,16 @@
 </template>
 
 <script setup>
+import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import { useRuntimeConfig } from '#imports'
+
+setupDevtoolsPlugin({}, () => {})
 
 const config = useRuntimeConfig()
 
 // reset title template example
 useHead({
-  titleTemplate: null
+  titleTemplate: ''
 })
 
 const foo = useFoo()

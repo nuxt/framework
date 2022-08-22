@@ -21,7 +21,7 @@ export default {
       performance: { $resolve: (val, get) => val ?? get('dev') },
     },
     /**
-     * Options for the Vue compiler that will be passed at build time
+     * Options for the Vue compiler that will be passed at build time.
      * @see [documentation](https://vuejs.org/api/application.html#app-config-compileroptions)
      * @type {typeof import('@vue/compiler-core').CompilerOptions}
      * @version 3
@@ -60,12 +60,12 @@ export default {
     /**
      * An absolute URL to serve the public folder from (production-only).
      *
-     * This can be set to a different value at runtime by setting the NUXT_APP_CDN_URL environment variable.
+     * This can be set to a different value at runtime by setting the `NUXT_APP_CDN_URL` environment variable.
      * @example
      * ```bash
      * NUXT_APP_CDN_URL=https://mycdn.org/ node .output/server/index.mjs
      * ```
-    */
+     */
     cdnURL: {
       $resolve: (val, get) => get('dev') ? '' : (process.env.NUXT_APP_CDN_URL ?? val) || ''
     },
@@ -92,7 +92,7 @@ export default {
      *     style: [
      *       // <style type="text/css">:root { color: red }</style>
      *       { children: ':root { color: red }', type: 'text/css' }
-     *     ]
+     *     ],
      *     noscript: [
      *       // <noscript>Javascript is required</noscript>
      *       { children: 'Javascript is required' }
@@ -105,21 +105,29 @@ export default {
      */
     head: {
       $resolve: (val, get) => {
-        return defu(val, get('meta'), {
-          charset: 'utf-8',
-          viewport: 'width=device-width, initial-scale=1',
+        const resolved = defu(val, get('meta'), {
           meta: [],
           link: [],
           style: [],
           script: [],
           noscript: []
         })
+
+        resolved.charset = resolved.charset ?? resolved.meta.find(m => m.charset)?.charset ?? 'utf-8'
+        resolved.viewport = resolved.viewport ?? resolved.meta.find(m => m.name === 'viewport')?.content ?? 'width=device-width, initial-scale=1'
+        resolved.meta = resolved.meta.filter(m => m && m.name !== 'viewport' && !m.charset)
+        resolved.link = resolved.link.filter(Boolean)
+        resolved.style = resolved.style.filter(Boolean)
+        resolved.script = resolved.script.filter(Boolean)
+        resolved.noscript = resolved.noscript.filter(Boolean)
+
+        return resolved
       }
-    },
+    }
   },
   /**
-   * The path to a templated HTML file for rendering Nuxt responses.
-   * Uses `<srcDir>/app.html` if it exists or the Nuxt default template if not.
+   * The path to an HTML template file for rendering Nuxt responses.
+   * Uses `<srcDir>/app.html` if it exists, or the Nuxt's default template if not.
    *
    * @example
    * ```html
@@ -148,9 +156,9 @@ export default {
   },
 
   /**
-   * Enable or disable vuex store.
+   * Enable or disable Vuex store.
    *
-   * By default it is enabled if there is a `store/` directory
+   * By default, it is enabled if there is a `store/` directory.
    * @version 2
    */
   store: {
@@ -255,7 +263,7 @@ export default {
    * @example
    * ```js
    * css: [
-   *   // Load a Node.js module directly (here it's a Sass file)
+   *   // Load a Node.js module directly (here it's a Sass file).
    *   'bulma',
    *   // CSS file in the project
    *   '@/assets/css/main.css',
@@ -274,7 +282,7 @@ export default {
   /**
    * An object where each key name maps to a path to a layout .vue file.
    *
-   * Normally there is no need to configure this directly.
+   * Normally, there is no need to configure this directly.
    * @type {Record<string, string>}
    * @version 2
    */
@@ -283,7 +291,7 @@ export default {
   /**
    * Set a custom error page layout.
    *
-   * Normally there is no need to configure this directly.
+   * Normally, there is no need to configure this directly.
    * @type {string}
    * @version 2
    */
@@ -296,11 +304,11 @@ export default {
    * @version 2
    */
   loading: {
-    /** CSS color of the progress bar */
+    /** CSS color of the progress bar. */
     color: 'black',
     /**
      * CSS color of the progress bar when an error appended while rendering
-     * the route (if data or fetch sent back an error for example).
+     * the route (if data or fetch sent back an error, for example).
      */
     failedColor: 'red',
     /** Height of the progress bar (used in the style property of the progress bar). */
@@ -319,7 +327,7 @@ export default {
     continuous: false,
     /** Set the direction of the progress bar from right to left. */
     rtl: false,
-    /** Set to false to remove default progress bar styles (and add your own). */
+    /** Set to `false` to remove default progress bar styles (and add your own). */
     css: true
   },
 
@@ -329,7 +337,7 @@ export default {
    * Set to `false` to disable. Alternatively, you can pass a string name or an object for more
    * configuration. The name can refer to an indicator from [SpinKit](https://tobiasahlin.com/spinkit/)
    * or a path to an HTML template of the indicator source code (in this case, all the
-   * other options will be passed to the template.)
+   * other options will be passed to the template).
    * @version 2
    */
   loadingIndicator: {
