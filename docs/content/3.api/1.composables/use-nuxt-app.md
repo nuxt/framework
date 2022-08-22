@@ -198,7 +198,7 @@ Hooks available in `nuxtApp` allows you to customize the runtime aspects of your
 
 ### hook - `type: function`
 
-`hook` function is useful for adding custom logic by hooking into the rendering lifecycle at a specific point. `hook` function is mostly used in creating Nuxt plugins.
+`hook` function is useful for adding custom logic by hooking into the rendering lifecycle at a specific point. `hook` function is mostly used when creating Nuxt plugins.
 
 ```js [plugins/test.ts]
 export default defineNuxtPlugin((nuxtApp) => {
