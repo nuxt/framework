@@ -206,7 +206,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     /* your code goes here */
   })
   nuxtApp.hook('vue:error', (..._args) => {
-  console.log('vue:error')
+    console.log('vue:error')
     // if (process.client) {
     //   console.log(..._args)
     // }
