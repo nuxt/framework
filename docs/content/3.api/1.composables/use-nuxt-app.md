@@ -1,8 +1,8 @@
 # `useNuxtApp`
 
-`useNuxtApp` is a built-in composable that provides a shared runtime context, which is available on both client and server side. It helps you access the Vue app instance, runtime hooks, runtime config variables and internal states, such as `ssrContext` and `payload`.
+`useNuxtApp` is a built-in composable that provides a way to access shared runtime context of Nuxt, which is available on both client and server side. It helps you access the Vue app instance, runtime hooks, runtime config variables and internal states, such as `ssrContext` and `payload`.
 
-You can use `useNuxtApp` within composables, plugins and components.
+You can use `useNuxtApp()` within composables, plugins and components.
 
 ```vue [app.vue]
 <script setup>
@@ -10,9 +10,9 @@ You can use `useNuxtApp` within composables, plugins and components.
 </script>
 ```
 
-`useNuxtApp` exposes the following properties that you can use to extend and customize your app and share state, data and variables.
+`useNuxtApp()` exposes the following properties that you can use to extend and customize your app and share state, data and variables.
 
-## isHydrating
+## `isHydrating`
 
 **`type: boolean`**
 
@@ -23,64 +23,35 @@ You can use `nuxtApp.isHydrating` to check if the Nuxt app is hydrating on the c
 ```ts [components/nuxt-error-boundary.ts]
 export default defineComponent({
   setup (_props, { slots, emit }) {
-    // ...
     const nuxtApp = useNuxtApp()
     onErrorCaptured((err) => {
       if (process.client && !nuxtApp.isHydrating) {
-        emit('error', err)
-        error.value = err
-        return false
+        // ...
       }
     })
-    // ...
   }
 })
 ```
 
-## ssrContext
+## `vueApp`
 
-`ssrContext` is generated using runtime `vue-bundle-renderer` for Vue 3 and it is only available on the server side. Nuxt exposes the following properties through `ssrContext`:
+`vueApp` is the global Vue.js [application instance](https://vuejs.org/api/application.html#application-api) that you can access through `nuxtApp`. Some useful methods:
 
-- **url** - `type: string` - `url` refers to the host url where the current request is being made
-- **event** - `type: HTTP request` - `event` allows access to `req` and `res` objects for the current request made to the Nuxt page
-- **runtimeConfig** - `type: runtimeConfig object` - `runtimeConfig` exposes runtime config on the client side via payload
-- **noSSR**  - `type: boolean`
-- **error** - `type: error object` - returns server-side error if any
-- **payload** - returns NuxtApp payload object - See [payload](#payload) section below for more detail.
-- **renderMeta** - `type: NuxtMeta` - returns a `Promise` of `NuxtMeta` type that includes HTML, head and body attributes, as well as head tags.
-- **teleports** - `type: Record object` - renders content outside of the Vue application
-
-> See how the [`vue-meta` plugin](https://github.com/nuxt/framework/blob/main/packages/nuxt/src/head/runtime/lib/vue-meta.plugin.ts#L23) in Nuxt uses `renderMeta` in combination with `teleports`.
-
-## vueApp
-
-`vueApp` is the global Vue application instance that you can access through `nuxtApp`.
-
-- **component** - Registers a global component if passing both a name string and a component definition, or retrieves an already registered one if only the name is passed.
-- **config** - exposes a `config` object that contains the configuration settings for the application.
-- **directive** - Registers a global custom directive if passing both a name string and a directive definition, or retrieves an already registered one if only the name is passed.
-
-> See `directive` example: [https://v3.nuxtjs.org/guide/directory-structure/plugins#vue-directives](https://v3.nuxtjs.org/guide/directory-structure/plugins#vue-directives).
-
-- **mixins** - Applies a global `mixin` (scoped to the application). However, it is not recommended to use mixins with the Vue 3. Their sole purpose is to provide backward compatibility.
-- **mount** - Mounts the application instance in a container element.
-- **provide** - Provides a value that can be injected in all descendent components within the application.
-- **unmount** - Unmounts a mounted application instance, triggering the unmount lifecycle hooks for all components in the application's component tree.
-- **use** - Installs a **[plugin](https://vuejs.org/guide/reusability/plugins.html)**.
-
-> See `use` example: [https://v3.nuxtjs.org/guide/directory-structure/plugins#vue-plugins](https://v3.nuxtjs.org/guide/directory-structure/plugins#vue-plugins).
+- **component()** - Registers a global component if passing both a name string and a component definition, or retrieves an already registered one if only the name is passed ([Read More](https://vuejs.org/api/application.html#app-component)).
+- **directive()** - Registers a global custom directive if passing both a name string and a directive definition, or retrieves an already registered one if only the name is passed. ([Read More](https://vuejs.org/api/application.html#app-directive), [Example](https://v3.nuxtjs.org/guide/directory-structure/plugins#vue-directives)).
+- **use()** - Installs a **[Vue.js Plugin](https://vuejs.org/guide/reusability/plugins.html)**. ([Read More](https://vuejs.org/api/application.html#app-use), [Example](https://v3.nuxtjs.org/guide/directory-structure/plugins#vue-plugins))
 
 :ReadMore{link="https://vuejs.org/api/application.html#application-api"}
 
-## $router
+## `ssrContext`
 
-**`type: router object`**
+`ssrContext` is generated during server-side rendering and it is only available on the server side. Nuxt exposes the following properties through `ssrContext`:
 
-You can access the Vue router object using `nuxtApp.$router`.
+- **`url`** (string) -  Current request url.
+- **`event`** ([unjs/h3](https://github.com/unjs/h3) Request event) - Access to `req` and `res` objects for the current request.
+- **`payload`** - NuxtApp payload object.
 
-:ReadMore{link="/api/composables/use-router"}
-
-## provide - fn
+## `provide(name, value)`
 
 `nuxtApp` is a runtime context that you can extend using [Nuxt plugins](https://v3.nuxtjs.org/guide/directory-structure/plugins). You can use the `provide` function to create Nuxt plugins to make values and helper methods available in your Nuxt application across all composables and components.
 
@@ -100,7 +71,7 @@ As you can see in the example above, `$hello` has become the new and custom part
 
 ## State and variables
 
-### $config
+### `$config`
 
 `nuxtApp.$config` exposes a runtime config and environment variables on the client side to the Nuxt app context through two keys: `app` and `public`.
 
@@ -112,9 +83,7 @@ Keys found under `app` and `public` are available on the client side.
   - **cdnURL** - `type: string`
 - **public** - `nuxtApp.$config.public` allows you to access the public runtime config that is set in the `nuxt.config` file of your Nuxt app.
 
-> The same `$config` object is also accessible through `nuxtApp.payload.config`.
-
-### payload
+### `payload`
 
 `payload` exposes data and state variables from server side to client side and makes them available in the `window.NUXT` object that is accessible from the browser.
 
@@ -149,37 +118,10 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 - **config** - Same as the [$config](#config) section above.
 
-## Runtime `nuxtApp` hooks
+
+### `hook(name, cb)`
 
 Hooks available in `nuxtApp` allows you to customize the runtime aspects of your Nuxt application. You can use runtime hooks in Vue composable and [Nuxt plugins](/guide/directory-structure/plugins) to hook into the rendering lifecycle.
-
-### hooks
-
-`nuxtApp` lets you call and add the following runtime hooks:
-
-```ts
-// App related runtime hooks
-'app:created': (app: App<Element>) => HookResult
-'app:beforeMount': (app: App<Element>) => HookResult
-'app:mounted': (app: App<Element>) => HookResult
-'app:rendered': (ctx: AppRenderedContext) => HookResult
-'app:redirected': () => HookResult
-'app:suspense:resolve': (Component?: VNode) => HookResult
-'app:error': (err: any) => HookResult
-'app:error:cleared': (options: { redirect?: string }) => HookResult
-'app:data:refresh': (keys?: string[]) => HookResult
-
-// Nuxt page related runtime hooks
-'page:start': (Component?: VNode) => HookResult
-'page:finish': (Component?: VNode) => HookResult
-'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
-
-// Vue instance related runtime hooks
-'vue:setup': () => void
-'vue:error': (...args: Parameters<Parameters<typeof onErrorCaptured>[0]>) => HookResult
-```
-
-### hook - `type: function`
 
 `hook` function is useful for adding custom logic by hooking into the rendering lifecycle at a specific point. `hook` function is mostly used when creating Nuxt plugins.
 
@@ -197,10 +139,12 @@ export default defineNuxtPlugin((nuxtApp) => {
 })
 ```
 
-### callhook - `type: function`
+See [Runtime Hooks](/api/advanced/hooks#app-hooks-runtime) for avialble runtime hooks called by Nuxt.
+
+### `callhook(name, ...args)`
 
 `callHook` returns a promise when called with any of the existing hooks.
 
 ```js
-await nuxtApp.callHook('app:created', vueApp)
+await nuxtApp.callHook('my-plugin:init')
 ```
