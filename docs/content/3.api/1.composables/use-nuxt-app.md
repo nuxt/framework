@@ -216,7 +216,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 ### callhook - `type: function`
 
-`callHook` returns promise when called with any of the existing hooks.
+`callHook` returns a promise when called with any of the existing hooks.
 
 ```js
 await nuxtApp.callHook('app:created', vueApp)
