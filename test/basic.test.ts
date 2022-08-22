@@ -366,7 +366,7 @@ if (process.env.NUXT_TEST_DEV) {
       for (const path of ['1', '2', '3', '4']) {
         const { consoleLogs } = await renderPage(joinURL('/invalid-root', path))
 
-        const consoleLogsWarns = consoleLogs.filter(i => i.type === 'warn')
+        const consoleLogsWarns = consoleLogs.filter(i => i.type === 'warning')
 
         expect(consoleLogsWarns.length).toEqual(1)
         expect(consoleLogsWarns[0].text).toContain('does not have a single root node and will cause errors when navigating between routes')
@@ -377,7 +377,7 @@ if (process.env.NUXT_TEST_DEV) {
       for (const path of ['fine']) {
         const { consoleLogs } = await renderPage(joinURL('/invalid-root', path))
 
-        const consoleLogsWarns = consoleLogs.filter(i => i.type === 'warn')
+        const consoleLogsWarns = consoleLogs.filter(i => i.type === 'warning')
 
         expect(consoleLogsWarns.length).toEqual(0)
       }
