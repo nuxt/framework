@@ -1,5 +1,5 @@
 <script setup lang="ts">
-prefetchComponents('TestGlobal')
+await prefetchComponents('TestGlobal')
 </script>
 
 <template>
