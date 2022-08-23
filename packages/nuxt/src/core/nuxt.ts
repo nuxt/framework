@@ -21,6 +21,14 @@ import { initNitro } from './nitro'
 export function createNuxt (options: NuxtOptions): Nuxt {
   const hooks = createHooks<NuxtHooks>()
 
+  // TODO: remove deprecated hooks in stable
+  hooks.deprecateHooks({
+    // @ts-expect-error
+    'autoImports:sources': { to: 'imports:sources' },
+    'autoImports:dirs': { to: 'imports:dirs' },
+    'autoImports:extend': { to: 'imports:extend' }
+  })
+
   const nuxt: Nuxt = {
     _version: version,
     options,
