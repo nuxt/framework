@@ -5,7 +5,7 @@ const welcome = () => {
 const nuxt3 = () => {
   return <span>nuxt3</span>
 }
-// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const content = () => {
   return (
     <div>
