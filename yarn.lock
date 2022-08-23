@@ -6759,6 +6759,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-jsx@workspace:examples/advanced/jsx":
+  version: 0.0.0-use.local
+  resolution: "example-jsx@workspace:examples/advanced/jsx"
+  dependencies:
+    "@nuxt/ui": ^0.2.0
+    nuxt: "npm:nuxt3@latest"
+  languageName: unknown
+  linkType: soft
+
 "example-layouts@workspace:examples/routing/layouts":
   version: 0.0.0-use.local
   resolution: "example-layouts@workspace:examples/routing/layouts"
@@ -6852,14 +6861,6 @@ __metadata:
 "example-testing@workspace:examples/advanced/testing":
   version: 0.0.0-use.local
   resolution: "example-testing@workspace:examples/advanced/testing"
-  dependencies:
-    nuxt: "npm:nuxt3@latest"
-  languageName: unknown
-  linkType: soft
-
-"example-tsx@workspace:examples/advanced/tsx":
-  version: 0.0.0-use.local
-  resolution: "example-tsx@workspace:examples/advanced/tsx"
   dependencies:
     nuxt: "npm:nuxt3@latest"
   languageName: unknown

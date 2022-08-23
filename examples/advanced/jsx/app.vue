@@ -9,7 +9,7 @@ const Nuxt3 = defineComponent(() => {
   return () => <span>nuxt3</span>
 })
 
-// We can combine components with TSX syntax too
+// We can combine components with JSX syntax too
 const InlineComponent = () => (
     <div>
       <Welcome />
@@ -20,9 +20,9 @@ const InlineComponent = () => (
 </script>
 
 <template>
-  <NuxtExampleLayout example="advanced/tsx">
+  <NuxtExampleLayout example="advanced/jsx">
     <InlineComponent />
-    <!-- Defined in components/tsx-component.ts -->
-    <TsxComponent message="This is an external TSX component" />
+    <!-- Defined in components/jsx-component.ts -->
+    <MyComponent message="This is an external JSX component" />
   </NuxtExampleLayout>
 </template>
