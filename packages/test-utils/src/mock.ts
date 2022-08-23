@@ -1,4 +1,5 @@
 import consola from 'consola'
+import type { Consola } from 'consola'
 import { useTestContext } from './context'
 
 export async function mockFn () {
@@ -18,15 +19,15 @@ export async function mockFn () {
   return () => {}
 }
 
-export async function mockLogger (): typeof consola {
-  const mock = {}
+export async function mockLogger (): Promise<Consola> {
+  const mockedConsole: any = {}
+
   const fn = await mockFn()
 
   consola.mockTypes((type) => {
-    mock[type] = mock[type] || fn
-    return mock[type]
+    mockedConsole[type] = mockedConsole[type] || fn
+    return mockedConsole[type]
   })
 
-  // @ts-ignore
-  return mock
+  return mockedConsole
 }
