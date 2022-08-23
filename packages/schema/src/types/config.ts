@@ -80,6 +80,4 @@ export interface NuxtAppConfig {
   keepalive: boolean | KeepAliveProps
 }
 
-export interface AppConfig {
-  _nuxt: NuxtAppConfig
-}
+export interface AppConfig { }

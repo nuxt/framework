@@ -1,8 +1,10 @@
 import { defineComponent, isRef, Ref, Transition } from 'vue'
 import { _wrapIf } from './utils'
-import { useAppConfig, useRoute } from '#app'
+import { useRoute } from '#app'
 // @ts-ignore
 import layouts from '#build/layouts'
+// @ts-ignore
+import { appLayoutTransition as defaultLayoutTransition } from '#build/nuxt.config.mjs'
 
 export default defineComponent({
   props: {
@@ -13,7 +15,6 @@ export default defineComponent({
   },
   setup (props, context) {
     const route = useRoute()
-    const appConfig = useAppConfig()
 
     return () => {
       const layout = (isRef(props.name) ? props.name.value : props.name) ?? route.meta.layout as string ?? 'default'
@@ -24,7 +25,7 @@ export default defineComponent({
       }
 
       // We avoid rendering layout transition if there is no layout to render
-      return _wrapIf(Transition, hasLayout && (route.meta.layoutTransition ?? appConfig._nuxt.layoutTransition),
+      return _wrapIf(Transition, hasLayout && (route.meta.layoutTransition ?? defaultLayoutTransition),
         _wrapIf(layouts[layout], hasLayout, context.slots)
       ).default()
     }
