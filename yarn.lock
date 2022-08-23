@@ -7870,7 +7870,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hookable@npm:^5.2.1":
+"hookable@npm:^5.2.0":
   version: 5.2.1
   resolution: "hookable@npm:5.2.1"
   checksum: 6ad7f67733a083634ef7ba367b40fe9057dbc6e614a00ba88d84b718e49d67d83e5f4bf81759777b39afafa1fe043f56faffe7aabd590c8a9ea6dd0f0c4af53b
@@ -10294,7 +10294,7 @@ __metadata:
     globby: ^13.1.2
     h3: ^0.7.16
     hash-sum: ^2.0.0
-    hookable: ^5.2.1
+    hookable: ^5.2.0
     knitwork: ^0.1.2
     magic-string: ^0.26.2
     mlly: ^0.5.14
