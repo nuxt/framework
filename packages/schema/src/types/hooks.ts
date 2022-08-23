@@ -80,6 +80,13 @@ export interface NuxtHooks {
   'imports:extend': (imports: Import[]) => HookResult
   'imports:dirs': (dirs: string[]) => HookResult
 
+  /** @deprecated Please use `imports:sources` hook */
+  'autoImports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
+  /** @deprecated Please use `imports:extend` hook */
+  'autoImports:extend': (imports: Import[]) => HookResult
+  /** @deprecated Please use `imports:dirs` hook */
+  'autoImports:dirs': (dirs: string[]) => HookResult
+
   // Components
   'components:dirs': (dirs: ComponentsOptions['dirs']) => HookResult
   'components:extend': (components: Component[]) => HookResult
