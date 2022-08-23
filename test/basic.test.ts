@@ -1,8 +1,9 @@
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
+import { joinURL } from 'ufo'
 // import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
-import { expectNoClientErrors } from './utils'
+import { expectNoClientErrors, renderPage } from './utils'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
@@ -130,6 +131,14 @@ describe('pages', () => {
 
     await expectNoClientErrors('/another-parent')
   })
+
+  it('/client-only-components', async () => {
+    const html = await $fetch('/client-only-components')
+    expect(html).toContain('<div class="client-only-script" foo="bar">')
+    expect(html).toContain('<div class="client-only-script-setup" foo="hello">')
+
+    await expectNoClientErrors('/client-only-components')
+  })
 })
 
 describe('head tags', () => {
@@ -181,7 +190,6 @@ describe('errors', () => {
     const error = await res.json()
     delete error.stack
     expect(error).toMatchObject({
-      description: process.env.NUXT_TEST_DEV ? expect.stringContaining('<pre>') : '',
       message: 'This is a custom error',
       statusCode: 500,
       statusMessage: 'Internal Server Error',
@@ -352,6 +360,34 @@ describe('automatically keyed composables', () => {
   })
 })
 
+describe('prefetching', () => {
+  it('should prefetch components', async () => {
+    await expectNoClientErrors('/prefetch/components')
+  })
+})
+
+if (process.env.NUXT_TEST_DEV) {
+  describe('detecting invalid root nodes', () => {
+    it('should detect invalid root nodes in pages', async () => {
+      for (const path of ['1', '2', '3', '4']) {
+        const { consoleLogs } = await renderPage(joinURL('/invalid-root', path))
+        const consoleLogsWarns = consoleLogs.filter(i => i.type === 'warning').map(w => w.text).join('\n')
+        expect(consoleLogsWarns).toContain('does not have a single root node and will cause errors when navigating between routes')
+      }
+    })
+
+    it('should not complain if there is no transition', async () => {
+      for (const path of ['fine']) {
+        const { consoleLogs } = await renderPage(joinURL('/invalid-root', path))
+
+        const consoleLogsWarns = consoleLogs.filter(i => i.type === 'warning')
+
+        expect(consoleLogsWarns.length).toEqual(0)
+      }
+    })
+  })
+}
+
 describe('dynamic paths', () => {
   if (process.env.NUXT_TEST_DEV) {
     // TODO:
@@ -449,5 +485,29 @@ describe('dynamic paths', () => {
         (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
       ).toBeTruthy()
     }
+  })
+
+  it('restore server', async () => {
+    process.env.NUXT_APP_BASE_URL = undefined
+    process.env.NUXT_APP_CDN_URL = undefined
+    process.env.NUXT_APP_BUILD_ASSETS_DIR = undefined
+    await startServer()
+  })
+})
+
+describe('app config', () => {
+  it('should work', async () => {
+    const html = await $fetch('/app-config')
+
+    const expectedAppConfig = {
+      fromNuxtConfig: true,
+      nested: {
+        val: 2
+      },
+      fromLayer: true,
+      userConfig: 123
+    }
+
+    expect(html).toContain(JSON.stringify(expectedAppConfig))
   })
 })

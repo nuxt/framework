@@ -22,7 +22,12 @@ export async function initNitro (nuxt: Nuxt) {
     dev: nuxt.options.dev,
     preset: nuxt.options.dev ? 'nitro-dev' : undefined,
     buildDir: nuxt.options.buildDir,
-    scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
+    analyze: nuxt.options.build.analyze && {
+      template: 'treemap',
+      projectRoot: nuxt.options.rootDir,
+      filename: join(nuxt.options.rootDir, '.nuxt/stats', '{name}.html')
+    },
+    scanDirs: nuxt.options._layers.map(layer => layer.config.srcDir).filter(Boolean).map(dir => join(dir!, 'server')),
     renderer: resolve(distDir, 'core/runtime/nitro/renderer'),
     errorHandler: resolve(distDir, 'core/runtime/nitro/error'),
     nodeModulesDirs: nuxt.options.modulesDir,
@@ -49,7 +54,7 @@ export async function initNitro (nuxt: Nuxt) {
     ],
     prerender: {
       crawlLinks: nuxt.options._generate ? nuxt.options.generate.crawler : false,
-      routes: []
+      routes: ([] as string[])
         .concat(nuxt.options._generate ? ['/', ...nuxt.options.generate.routes] : [])
         .concat(nuxt.options.ssr === false ? ['/', '/200.html', '/404.html'] : [])
     },
@@ -82,7 +87,7 @@ export async function initNitro (nuxt: Nuxt) {
       '@vue/compiler-core': 'unenv/runtime/mock/proxy',
       '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
       '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
-      '@vue/devtools-api': 'unenv/runtime/mock/proxy-cjs',
+      '@vue/devtools-api': 'vue-devtools-stub',
 
       // Paths
       '#paths': resolve(distDir, 'core/runtime/nitro/paths'),
@@ -92,7 +97,8 @@ export async function initNitro (nuxt: Nuxt) {
     },
     replace: {
       'process.env.NUXT_NO_SSR': nuxt.options.ssr === false,
-      'process.dev': nuxt.options.dev
+      'process.dev': nuxt.options.dev,
+      __VUE_PROD_DEVTOOLS__: false
     },
     rollupConfig: {
       plugins: []
@@ -101,11 +107,11 @@ export async function initNitro (nuxt: Nuxt) {
 
   // Add fallback server for `ssr: false`
   if (!nuxt.options.ssr) {
-    nitroConfig.virtual['#build/dist/server/server.mjs'] = 'export default () => {}'
+    nitroConfig.virtual!['#build/dist/server/server.mjs'] = 'export default () => {}'
   }
 
   // Register nuxt protection patterns
-  nitroConfig.rollupConfig.plugins.push(ImportProtectionPlugin.rollup({
+  nitroConfig.rollupConfig!.plugins!.push(ImportProtectionPlugin.rollup({
     rootDir: nuxt.options.rootDir,
     patterns: [
       ...['#app', /^#build(\/|$)/]

@@ -17,9 +17,9 @@ export function analyzePlugin (ctx: ViteBuildContext): Plugin[] {
           }))
           bundle.modules = Object.fromEntries(minifiedEntries)
         }
-        return null
       }
     },
+    // @ts-ignore
     visualizer({
       ...ctx.nuxt.options.build.analyze as any,
       // @ts-ignore
