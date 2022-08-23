@@ -1,19 +1,17 @@
 import { upperFirst } from 'scule'
 
 interface TemplateOptions {
-  name: string
-  mode?: 'client' | 'server'
+  name: string,
+  args: Record<string, any>
 }
+
 interface Template {
   (options: TemplateOptions): { path: string, contents: string }
 }
 
-const suffixMode = (opts: TemplateOptions): string => {
-  return !opts.mode ? opts.name : `${opts.name}.${opts.mode}`
-}
-
-const api: Template = ({ name }) => ({
-  path: `server/api/${name}.ts`,
+const httpMethods = ['connect', 'delete', 'get', 'head', 'options', 'post', 'put', 'trace', 'patch']
+const api: Template = ({ name, args }) => ({
+  path: `server/api/${name}${applySuffix(args, httpMethods, 'method')}.ts`,
   contents: `
 export default defineEventHandler((event) => {
   return 'Hello ${name}'
@@ -21,15 +19,15 @@ export default defineEventHandler((event) => {
 `
 })
 
-const plugin: Template = opts => ({
-  path: `plugins/${suffixMode(opts)}.ts`,
+const plugin: Template = ({ name, args }) => ({
+  path: `plugins/${name}${applySuffix(args, ['client', 'server'], 'mode')}.ts`,
   contents: `
 export default defineNuxtPlugin((nuxtApp) => {})
   `
 })
 
-const component: Template = ({ name }) => ({
-  path: `components/${name}.vue`,
+const component: Template = ({ name, args }) => ({
+  path: `components/${name}${applySuffix(args, ['client', 'server'], 'mode')}.vue`,
   contents: `
 <script lang="ts" setup></script>
 
@@ -55,8 +53,8 @@ export const ${nameWithUsePrefix} = () => {
   }
 }
 
-const middleware: Template = ({ name }) => ({
-  path: `middleware/${name}.ts`,
+const middleware: Template = ({ name, args }) => ({
+  path: `middleware/${name}${applySuffix(args, ['global'])}.ts`,
   contents: `
 export default defineNuxtRouteMiddleware((to, from) => {})
 `
@@ -103,4 +101,19 @@ export const templates = {
   page
 } as Record<string, Template>
 
-export const modeSupported = (template: string) => ['plugin'].includes(template)
+// -- internal utils --
+
+function applySuffix (args: TemplateOptions['args'], suffixes: string[], unwrapFrom?: string): string {
+  let suffix = ''
+  // --client
+  for (const s of suffixes) {
+    if (args[s]) {
+      suffix += '.' + s
+    }
+  }
+  // --mode=server
+  if (unwrapFrom && args[unwrapFrom] && suffixes.includes(args[unwrapFrom])) {
+    suffix += '.' + args[unwrapFrom]
+  }
+  return suffix
+}

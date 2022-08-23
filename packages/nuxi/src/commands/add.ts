@@ -2,7 +2,7 @@ import { existsSync, promises as fsp } from 'node:fs'
 import { resolve, dirname } from 'pathe'
 import consola from 'consola'
 import { loadKit } from '../utils/kit'
-import { templates, modeSupported } from '../utils/templates'
+import { templates } from '../utils/templates'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -16,7 +16,6 @@ export default defineNuxtCommand({
 
     const template = args._[0]
     const name = args._[1]
-    const mode = (args.client && 'client') || (args.server && 'server') as 'client' | 'server'
 
     // Validate template name
     if (!templates[template]) {
@@ -30,17 +29,12 @@ export default defineNuxtCommand({
       process.exit(1)
     }
 
-    if (mode && !modeSupported(template)) {
-      consola.error(`Template \`${template}\` does not support modes.`)
-      process.exit(1)
-    }
-
     // Load config in order to respect srcDir
     const kit = await loadKit(cwd)
     const config = await kit.loadNuxtConfig({ cwd })
 
     // Resolve template
-    const res = templates[template]({ name, mode })
+    const res = templates[template]({ name, args })
 
     // Resolve full path to generated file
     const path = resolve(config.srcDir, res.path)
