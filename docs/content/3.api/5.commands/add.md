@@ -13,24 +13,85 @@ Option        | Default          | Description
 `--cwd` | `.` | The directory of the target application.
 `--force` | `false` | Force override file if it already exists.
 
+**Modifiers:**
+
 Some templates support additional modifer flags to add a suffix (like `.client` or `.get`) to their name.
 
-**Example:**
+**Example:** `npx nuxi add plugin sockets --client` generates `/plugins/sockets.client.ts`.
 
-```{bash}
+## `nuxi add component`
+
+* Modifier flags: `--mode client|server` or `--client` or `--server`
+
+Example:
+
+```bash
+# Generates `components/TheHeader.vue`
 npx nuxi add component TheHeader
 ```
 
-The `add` command generates new elements:
+## `nuxi add composable`
 
-* **component**: `npx nuxi add component TheHeader`
-  * Modifier flags: `--mode client|server` or `--client` or `--server`
-* **composable**: `npx nuxi add composable foo`
-* **layout**: `npx nuxi add layout custom`
-* **plugin**: `npx nuxi add plugin analytics` or `npx nuxi add plugin sockets --client` (generates `/plugins/sockets.client.ts`)
-  * Modifier flags: `--mode client|server` or `--client`or `--server`
-* **page**: `npx nuxi add page about` or `npx nuxi add page "category/[id]"`
-* **middleware**: `npx nuxi add middleware auth`
-  * Modifier flags: `--global`
-* **api**: `npx nuxi add api hello` (CLI will generate file under `/server/api`)
-  * Modifier flags: `--method=connect|delete|get|head|options|patch|post|put|trace` or `--get`, `--post`, etc.
+Example:
+
+```bash
+# Generates `composables/foo.ts`
+npx nuxi add composable foo
+```
+
+## `nuxi add layout`
+
+Example:
+
+```bash
+# Generates `layouts/custom.ts`
+npx nuxi add layout custom
+```
+
+## `nuxi add plugin`
+
+- Modifier flags: `--mode client|server` or `--client`or `--server`
+
+Example:
+
+```bash
+# Generates `plugins/analytics.ts`
+npx nuxi add plugin analytics
+```
+
+## `nuxi add page`
+
+Example:
+
+```bash
+# Generates `pages/about.vue`
+npx nuxi add page about
+```
+
+```bash
+# Generates `pages/category/[id].vue`
+npx nuxi add page "category/[id]"
+```
+
+
+## `nuxi add middleware`
+
+* Modifier flags: `--global`
+
+Example:
+
+```bash
+# Generates `middleware/auth.ts`
+npx nuxi add middleware auth
+```
+
+## `nuxi add api`
+
+* Modifier flags: `--method=connect|delete|get|head|options|patch|post|put|trace` or `--get`, `--post`, etc.
+
+Example:
+
+```bash
+# Generates `server/api/hello.ts`
+npx nuxi add api hello
+```
