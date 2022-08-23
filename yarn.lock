@@ -1812,7 +1812,7 @@ __metadata:
     get-port-please: ^2.6.1
     jiti: ^1.14.0
     ohmyfetch: ^0.4.18
-    playwright: ^1.25.1
+    playwright: ^1.25.0
     unbuild: latest
     vitest: ~0.19.1
   peerDependencies:
@@ -7870,10 +7870,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hookable@npm:^5.2.1":
-  version: 5.2.1
-  resolution: "hookable@npm:5.2.1"
-  checksum: 6ad7f67733a083634ef7ba367b40fe9057dbc6e614a00ba88d84b718e49d67d83e5f4bf81759777b39afafa1fe043f56faffe7aabd590c8a9ea6dd0f0c4af53b
+"hookable@npm:^5.1.2":
+  version: 5.2.2
+  resolution: "hookable@npm:5.2.2"
+  checksum: fb4b3104a62ecf47f1743e8ea1a573656ee8d0601903fafa6a5c7247bc18a007be603e58a302400576f3b4c358b641372b073adf649018db00294d8c34123dbc
   languageName: node
   linkType: hard
 
@@ -10294,7 +10294,7 @@ __metadata:
     globby: ^13.1.2
     h3: ^0.7.16
     hash-sum: ^2.0.0
-    hookable: ^5.2.1
+    hookable: ^5.1.2
     knitwork: ^0.1.2
     magic-string: ^0.26.2
     mlly: ^0.5.14
@@ -10981,7 +10981,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.25.1":
+"playwright@npm:^1.25.0":
   version: 1.25.1
   resolution: "playwright@npm:1.25.1"
   dependencies:
