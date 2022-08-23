@@ -13109,6 +13109,14 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tsx@workspace:examples/advanced/tsx":
+  version: 0.0.0-use.local
+  resolution: "tsx@workspace:examples/advanced/tsx"
+  dependencies:
+    nuxt: "npm:nuxt3@latest"
+  languageName: unknown
+  linkType: soft
+
 "type-check@npm:^0.4.0, type-check@npm:~0.4.0":
   version: 0.4.0
   resolution: "type-check@npm:0.4.0"
