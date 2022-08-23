@@ -5,6 +5,7 @@ const welcome = () => {
 const nuxt3 = () => {
   return <span>nuxt3</span>
 }
+// @ts-ignore
 const content = () => {
   return (
     <div>
