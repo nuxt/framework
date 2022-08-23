@@ -50,7 +50,7 @@ npx nuxi add layout custom
 
 ## `nuxi add plugin`
 
-- Modifier flags: `--mode client|server` or `--client`or `--server`
+* Modifier flags: `--mode client|server` or `--client`or `--server`
 
 Example:
 
@@ -72,7 +72,6 @@ npx nuxi add page about
 # Generates `pages/category/[id].vue`
 npx nuxi add page "category/[id]"
 ```
-
 
 ## `nuxi add middleware`
 
