@@ -22,6 +22,7 @@ export default defineNuxtCommand({
     // Generate types and build nuxt instance
     await writeTypes(nuxt)
     await buildNuxt(nuxt)
+    await nuxt.close()
 
     // Prefer local install if possible
     const hasLocalInstall = tryResolveModule('typescript', rootDir) && tryResolveModule('vue-tsc/package.json', rootDir)
