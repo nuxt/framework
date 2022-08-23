@@ -123,7 +123,7 @@ export async function buildServer (ctx: ViteBuildContext) {
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
 
-  const onBuild = () => ctx.nuxt.callHook('build:resources', wpfs)
+  const onBuild = () => Promise.resolve(ctx.nuxt.callHook('build:resources', wpfs))
 
   // Production build
   if (!ctx.nuxt.options.dev) {

@@ -143,7 +143,7 @@ export function useAsyncData<
         if (options.transform) {
           result = options.transform(result)
         }
-        if (options.pick) {
+        if (options.pick && result && typeof result === 'object') {
           result = pick(result, options.pick) as DataT
         }
         asyncData.data.value = result
@@ -238,7 +238,7 @@ export function useLazyAsyncData<
   return useAsyncData(key, handler, { ...options, lazy: true }, null)
 }
 
-export function refreshNuxtData (keys?: string | string[]): Promise<void> {
+export function refreshNuxtData (keys?: string | string[]): void | Promise<void> {
   if (process.server) {
     return Promise.resolve()
   }
