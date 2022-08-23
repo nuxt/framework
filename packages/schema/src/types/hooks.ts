@@ -76,9 +76,9 @@ export interface NuxtHooks {
   'build:manifest': (manifest: Manifest) => HookResult
 
   // Auto imports
-  'autoImports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
-  'autoImports:extend': (imports: Import[]) => HookResult
-  'autoImports:dirs': (dirs: string[]) => HookResult
+  'imports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
+  'imports:extend': (imports: Import[]) => HookResult
+  'imports:dirs': (dirs: string[]) => HookResult
 
   // Components
   'components:dirs': (dirs: ComponentsOptions['dirs']) => HookResult
