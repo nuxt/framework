@@ -6857,6 +6857,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-tsx@workspace:examples/advanced/tsx":
+  version: 0.0.0-use.local
+  resolution: "example-tsx@workspace:examples/advanced/tsx"
+  dependencies:
+    nuxt: "npm:nuxt3@latest"
+  languageName: unknown
+  linkType: soft
+
 "example-universal-router@workspace:examples/routing/universal-router":
   version: 0.0.0-use.local
   resolution: "example-universal-router@workspace:examples/routing/universal-router"
@@ -13108,14 +13116,6 @@ __metadata:
   checksum: 1843f4c1b2e0f975e08c4c21caa4af4f7f65a12ac1b81b3b8489366826259323feb3fc7a243123453d2d1a02314205a7634e048d4a8009921da19f99755cdc48
   languageName: node
   linkType: hard
-
-"tsx@workspace:examples/advanced/tsx":
-  version: 0.0.0-use.local
-  resolution: "tsx@workspace:examples/advanced/tsx"
-  dependencies:
-    nuxt: "npm:nuxt3@latest"
-  languageName: unknown
-  linkType: soft
 
 "type-check@npm:^0.4.0, type-check@npm:~0.4.0":
   version: 0.4.0
