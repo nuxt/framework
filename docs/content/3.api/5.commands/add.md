@@ -24,11 +24,11 @@ npx nuxi add component TheHeader
 The `add` command generates new elements:
 
 * **component**: `npx nuxi add component TheHeader`
-  * Modifier flags: `--mode client|server` or `--client`, `--server`
+  * Modifier flags: `--mode client|server` or `--client` or `--server`
 * **composable**: `npx nuxi add composable foo`
 * **layout**: `npx nuxi add layout custom`
 * **plugin**: `npx nuxi add plugin analytics` or `npx nuxi add plugin sockets --client` (generates `/plugins/sockets.client.ts`)
-  * Modifier flags: `--mode client|server` or `--client`, `--server`
+  * Modifier flags: `--mode client|server` or `--client`or `--server`
 * **page**: `npx nuxi add page about` or `npx nuxi add page "category/[id]"`
 * **middleware**: `npx nuxi add middleware auth`
   * Modifier flags: `--global`
