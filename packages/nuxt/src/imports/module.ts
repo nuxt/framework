@@ -23,10 +23,10 @@ export default defineNuxtModule<Partial<ImportsOptions>>({
   },
   async setup (options, nuxt) {
     // TODO: remove deprecation warning
-    // @ts-expect-error
+    // @ts-ignore
     if (nuxt.options['auto-imports']) {
       logger.warn('`auto-imports` is deprecated, use `imports` instead')
-      // @ts-expect-error
+      // @ts-ignore
       options = defu(nuxt.options['auto-imports'], options)
     }
     nuxt.hooks.deprecateHooks({
