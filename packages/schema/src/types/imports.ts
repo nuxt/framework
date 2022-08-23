@@ -1,8 +1,8 @@
 import { UnimportOptions } from 'unimport'
 
-export interface AutoImportsOptions extends UnimportOptions {
+export interface ImportsOptions extends UnimportOptions {
   dirs?: string[]
-  global?: boolean,
+  global?: boolean
   transform?: {
     exclude?: RegExp[]
     include?: RegExp[]

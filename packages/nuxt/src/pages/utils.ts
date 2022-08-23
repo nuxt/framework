@@ -1,10 +1,10 @@
-import { basename, extname, normalize, relative, resolve } from 'pathe'
+import { extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
-import { NuxtMiddleware, NuxtPage } from '@nuxt/schema'
+import { NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
-import { kebabCase } from 'scule'
 import { genImport, genDynamicImport, genArrayFromRaw, genSafeVariableName } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
+import { uniqueBy } from '../core/utils'
 
 enum SegmentParserState {
   initial,
@@ -74,8 +74,9 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
       route.name += (route.name && '-') + segmentName
 
       // ex: parent.vue + parent/child.vue
-      const child = parent.find(parentRoute => parentRoute.name === route.name)
-      if (child) {
+      const child = parent.find(parentRoute => parentRoute.name === route.name && !parentRoute.path.endsWith('(.*)*'))
+
+      if (child && child.children) {
         parent = child.children
         route.path = ''
       } else if (segmentName === '404' && isSingleSegment) {
@@ -212,11 +213,11 @@ function prepareRoutes (routes: NuxtPage[], parent?: NuxtPage) {
       route.path = route.path.slice(1)
     }
 
-    if (route.children.length) {
+    if (route.children?.length) {
       route.children = prepareRoutes(route.children, route)
     }
 
-    if (route.children.find(childRoute => childRoute.path === '')) {
+    if (route.children?.find(childRoute => childRoute.path === '')) {
       delete route.name
     }
   }
@@ -236,44 +237,8 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
         children: route.children ? normalizeRoutes(route.children, metaImports).routes : [],
         meta: route.meta ? `{...(${metaImportName} || {}), ...${JSON.stringify(route.meta)}}` : metaImportName,
         alias: `${metaImportName}?.alias || []`,
-        component: genDynamicImport(file)
+        component: genDynamicImport(file, { interopDefault: true })
       }
     }))
   }
-}
-
-export async function resolveMiddleware (): Promise<NuxtMiddleware[]> {
-  const nuxt = useNuxt()
-
-  const middlewareDirs = nuxt.options._layers.map(
-    layer => resolve(layer.config.srcDir, layer.config.dir?.middleware || 'middleware')
-  )
-
-  const allMiddlewares = (await Promise.all(
-    middlewareDirs.map(async (dir) => {
-      const files = await resolveFiles(dir, `*{${nuxt.options.extensions.join(',')}}`)
-      return files.map(path => ({ name: getNameFromPath(path), path, global: hasSuffix(path, '.global') }))
-    })
-  )).flat()
-
-  return uniqueBy(allMiddlewares, 'name')
-}
-
-function getNameFromPath (path: string) {
-  return kebabCase(basename(path).replace(extname(path), '')).replace(/["']/g, '').replace('.global', '')
-}
-
-function hasSuffix (path: string, suffix: string) {
-  return basename(path).replace(extname(path), '').endsWith(suffix)
-}
-
-function uniqueBy <T, K extends keyof T> (arr: T[], key: K) {
-  const res: T[] = []
-  const seen = new Set<T[K]>()
-  for (const item of arr) {
-    if (seen.has(item[key])) { continue }
-    seen.add(item[key])
-    res.push(item)
-  }
-  return res
 }

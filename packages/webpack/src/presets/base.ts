@@ -150,7 +150,8 @@ export function baseTranspile (ctx: WebpackConfigContext) {
 
   const transpile = [
     /\.vue\.js/i, // include SFCs in node_modules
-    /consola\/src/
+    /consola\/src/,
+    /vue-demi/
   ]
 
   for (let pattern of options.build.transpile) {
@@ -195,7 +196,7 @@ function getOutput (ctx: WebpackConfigContext): webpack.Configuration['output'] 
   const { options } = ctx
 
   return {
-    path: resolve(options.buildDir, 'dist', ctx.isServer ? 'server' : 'client'),
+    path: resolve(options.buildDir, 'dist', ctx.isServer ? 'server' : joinURL('client', options.app.buildAssetsDir)),
     filename: fileName(ctx, 'app'),
     chunkFilename: fileName(ctx, 'chunk'),
     publicPath: joinURL(options.app.baseURL, options.app.buildAssetsDir)

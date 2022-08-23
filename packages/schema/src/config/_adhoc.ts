@@ -18,20 +18,23 @@ export default {
         return { dirs: val }
       }
       if (val === undefined || val === true) {
-        return { dirs: ['~/components'] }
+        return { dirs: [{ path: '~/components/global', global: true }, '~/components'] }
       }
       return val
     }
   },
 
+  /** @deprecated Please use `imports` config. */
+  autoImports: null,
+
   /**
    * Configure how Nuxt auto-imports composables into your application.
    *
    * @see [Nuxt 3 documentation](https://v3.nuxtjs.org/guide/directory-structure/composables)
-   * @type {typeof import('../src/types/imports').AutoImportsOptions}
+   * @type {typeof import('../src/types/imports').ImportsOptions}
    * @version 3
    */
-  autoImports: {
+  imports: {
     global: false,
     dirs: []
   },
@@ -46,7 +49,7 @@ export default {
   pages: undefined,
 
   /**
-   * Manually disable nuxt telemetry
+   * Manually disable nuxt telemetry.
    *
    * @see [Nuxt Telemetry](https://github.com/nuxt/telemetry) for more information.
    *
