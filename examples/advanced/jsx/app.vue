@@ -1,6 +1,4 @@
 <script lang="tsx" setup>
-import { defineComponent } from 'vue'
-
 // Component could be a simple function with JSX syntax
 const Welcome = () => <span>Welcome </span>
 
