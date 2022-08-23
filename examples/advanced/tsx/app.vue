@@ -17,7 +17,7 @@ const content = () => {
 </script>
 <template>
   <div>
-    <contentDom />
+    <content-dom />
     <content />
   </div>
 </template>

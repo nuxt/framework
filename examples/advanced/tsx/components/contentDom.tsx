@@ -1,4 +1,3 @@
-
 let content: string = '`tsx` components exported using functions'
 
 const contentDom = () => {
