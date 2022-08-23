@@ -10,27 +10,32 @@ const _require = createRequire(import.meta.url)
 interface ImportProtectionOptions {
   rootDir: string
   patterns: [importPattern: string | RegExp, warning?: string][]
+  exclude?: Array<RegExp | string>
 }
 
 export const vueAppPatterns = (nuxt: Nuxt) => [
   [/^(nuxt3|nuxt)$/, '`nuxt3`/`nuxt` cannot be imported directly. Instead, import runtime Nuxt composables from `#app` or `#imports`.'],
-  [/nuxt\.config/, 'Importing directly from a `nuxt.config` file is not allowed. Instead, use runtime config or a module.'],
+  [/^((|~|~~|@|@@)\/)?nuxt\.config(\.|$)/, 'Importing directly from a `nuxt.config` file is not allowed. Instead, use runtime config or a module.'],
   [/(^|node_modules\/)@vue\/composition-api/],
-  ...nuxt.options.modules.filter(m => typeof m === 'string').map((m: string) =>
-    [new RegExp(`^${escapeRE(m)}$`), 'Importing directly from module entry points is not allowed.']),
+  ...nuxt.options.modules.filter(m => typeof m === 'string').map((m: any) =>
+    [new RegExp(`^${escapeRE(m as string)}$`), 'Importing directly from module entry points is not allowed.']),
   ...[/(^|node_modules\/)@nuxt\/kit/, /^nitropack/]
     .map(i => [i, 'This module cannot be imported in the Vue part of your app.']),
-  [new RegExp(escapeRE(resolve(nuxt.options.srcDir, (nuxt.options.dir as any).server || 'server'))), 'Importing from server middleware is not allowed in the Vue part of your app.']
+  [new RegExp(escapeRE(resolve(nuxt.options.srcDir, (nuxt.options.dir as any).server || 'server')) + '\\/(api|routes|middleware|plugins)\\/'), 'Importing from server is not allowed in the Vue part of your app.']
 ] as ImportProtectionOptions['patterns']
 
 export const ImportProtectionPlugin = createUnplugin(function (options: ImportProtectionOptions) {
   const cache: Record<string, Map<string | RegExp, boolean>> = {}
+  const importersToExclude = options?.exclude || []
   return {
     name: 'nuxt:import-protection',
     enforce: 'pre',
     resolveId (id, importer) {
+      if (!importer) { return }
+      if (importersToExclude.some(p => typeof p === 'string' ? importer === p : p.test(importer))) { return }
+
       const invalidImports = options.patterns.filter(([pattern]) => pattern instanceof RegExp ? pattern.test(id) : pattern === id)
-      let matched: boolean
+      let matched = false
       for (const match of invalidImports) {
         cache[id] = cache[id] || new Map()
         const [pattern, warning] = match

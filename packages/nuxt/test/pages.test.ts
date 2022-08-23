@@ -68,6 +68,48 @@ describe('pages:generateRoutesFromFiles', () => {
       ]
     },
     {
+      description: 'should generate correct id for catchall (order 1)',
+      files: [
+          `${pagesDir}/[...stories].vue`,
+          `${pagesDir}/stories/[id].vue`
+      ],
+      output: [
+        {
+          name: 'stories',
+          path: '/:stories(.*)*',
+          file: `${pagesDir}/[...stories].vue`,
+          children: []
+        },
+        {
+          name: 'stories-id',
+          path: '/stories/:id',
+          file: `${pagesDir}/stories/[id].vue`,
+          children: []
+        }
+      ]
+    },
+    {
+      description: 'should generate correct id for catchall (order 2)',
+      files: [
+        `${pagesDir}/stories/[id].vue`,
+        `${pagesDir}/[...stories].vue`
+      ],
+      output: [
+        {
+          name: 'stories-id',
+          path: '/stories/:id',
+          file: `${pagesDir}/stories/[id].vue`,
+          children: []
+        },
+        {
+          name: 'stories',
+          path: '/:stories(.*)*',
+          file: `${pagesDir}/[...stories].vue`,
+          children: []
+        }
+      ]
+    },
+    {
       description: 'should generate correct route for snake_case file',
       files: [
           `${pagesDir}/snake_case.vue`
@@ -96,19 +138,27 @@ describe('pages:generateRoutesFromFiles', () => {
     {
       description: 'should generate correct dynamic routes',
       files: [
+          `${pagesDir}/index.vue`,
           `${pagesDir}/[slug].vue`,
           `${pagesDir}/[[foo]]`,
           `${pagesDir}/[[foo]]/index.vue`,
           `${pagesDir}/[bar]/index.vue`,
-          `${pagesDir}/sub/[slug].vue`,
+          `${pagesDir}/nonopt/[slug].vue`,
+          `${pagesDir}/opt/[[slug]].vue`,
           `${pagesDir}/[[sub]]/route-[slug].vue`
       ],
       output: [
         {
-          name: 'slug',
-          path: '/:slug',
-          file: `${pagesDir}/[slug].vue`,
+          name: 'index',
+          path: '/',
+          file: `${pagesDir}/index.vue`,
           children: []
+        },
+        {
+          children: [],
+          name: 'slug',
+          file: 'pages/[slug].vue',
+          path: '/:slug'
         },
         {
           children: [
@@ -130,9 +180,15 @@ describe('pages:generateRoutesFromFiles', () => {
           path: '/:bar'
         },
         {
-          name: 'sub-slug',
-          path: '/sub/:slug',
-          file: `${pagesDir}/sub/[slug].vue`,
+          name: 'nonopt-slug',
+          path: '/nonopt/:slug',
+          file: `${pagesDir}/nonopt/[slug].vue`,
+          children: []
+        },
+        {
+          name: 'opt-slug',
+          path: '/opt/:slug?',
+          file: `${pagesDir}/opt/[[slug]].vue`,
           children: []
         },
         {
@@ -145,12 +201,18 @@ describe('pages:generateRoutesFromFiles', () => {
     },
     {
       description: 'should generate correct catch-all route',
-      files: [`${pagesDir}/[...slug].vue`],
+      files: [`${pagesDir}/[...slug].vue`, `${pagesDir}/index.vue`],
       output: [
         {
           name: 'slug',
           path: '/:slug(.*)*',
           file: `${pagesDir}/[...slug].vue`,
+          children: []
+        },
+        {
+          name: 'index',
+          path: '/',
+          file: `${pagesDir}/index.vue`,
           children: []
         }
       ]
@@ -242,7 +304,7 @@ describe('pages:generateRouteKey', () => {
 
   const tests = [
     { description: 'should handle overrides', override: 'key', route: getRouteProps(), output: 'key' },
-    { description: 'should handle overrides', override: route => route.meta.key as string, route: getRouteProps(), output: 'route-meta-key' },
+    { description: 'should handle overrides', override: (route: any) => route.meta.key as string, route: getRouteProps(), output: 'route-meta-key' },
     { description: 'should handle overrides', override: false as any, route: getRouteProps(), output: false },
     {
       description: 'should key dynamic routes without keys',

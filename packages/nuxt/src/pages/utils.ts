@@ -1,10 +1,10 @@
-import { basename, extname, normalize, relative, resolve } from 'pathe'
+import { extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
-import { NuxtMiddleware, NuxtPage } from '@nuxt/schema'
+import { NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
-import { kebabCase, pascalCase } from 'scule'
-import { genImport, genDynamicImport, genArrayFromRaw } from 'knitwork'
+import { genImport, genDynamicImport, genArrayFromRaw, genSafeVariableName } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
+import { uniqueBy } from '../core/utils'
 
 enum SegmentParserState {
   initial,
@@ -74,8 +74,9 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
       route.name += (route.name && '-') + segmentName
 
       // ex: parent.vue + parent/child.vue
-      const child = parent.find(parentRoute => parentRoute.name === route.name)
-      if (child) {
+      const child = parent.find(parentRoute => parentRoute.name === route.name && !parentRoute.path.endsWith('(.*)*'))
+
+      if (child && child.children) {
         parent = child.children
         route.path = ''
       } else if (segmentName === '404' && isSingleSegment) {
@@ -207,24 +208,16 @@ function prepareRoutes (routes: NuxtPage[], parent?: NuxtPage) {
       route.name = route.name.replace(/-index$/, '')
     }
 
-    if (route.path === '/') {
-      // Remove ? suffix when index page at same level
-      routes.forEach((siblingRoute) => {
-        if (siblingRoute.path.endsWith('?')) {
-          siblingRoute.path = siblingRoute.path.slice(0, -1)
-        }
-      })
-    }
     // Remove leading / if children route
     if (parent && route.path.startsWith('/')) {
       route.path = route.path.slice(1)
     }
 
-    if (route.children.length) {
+    if (route.children?.length) {
       route.children = prepareRoutes(route.children, route)
     }
 
-    if (route.children.find(childRoute => childRoute.path === '')) {
+    if (route.children?.find(childRoute => childRoute.path === '')) {
       delete route.name
     }
   }
@@ -237,55 +230,15 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
     imports: metaImports,
     routes: genArrayFromRaw(routes.map((route) => {
       const file = normalize(route.file)
-      const metaImportName = getImportName(file) + 'Meta'
+      const metaImportName = genSafeVariableName(file) + 'Meta'
       metaImports.add(genImport(`${file}?macro=true`, [{ name: 'meta', as: metaImportName }]))
       return {
         ...Object.fromEntries(Object.entries(route).map(([key, value]) => [key, JSON.stringify(value)])),
         children: route.children ? normalizeRoutes(route.children, metaImports).routes : [],
         meta: route.meta ? `{...(${metaImportName} || {}), ...${JSON.stringify(route.meta)}}` : metaImportName,
         alias: `${metaImportName}?.alias || []`,
-        component: genDynamicImport(file)
+        component: genDynamicImport(file, { interopDefault: true })
       }
     }))
   }
-}
-
-export async function resolveMiddleware (): Promise<NuxtMiddleware[]> {
-  const nuxt = useNuxt()
-
-  const middlewareDirs = nuxt.options._layers.map(
-    layer => resolve(layer.config.srcDir, layer.config.dir?.middleware || 'middleware')
-  )
-
-  const allMiddlewares = (await Promise.all(
-    middlewareDirs.map(async (dir) => {
-      const files = await resolveFiles(dir, `*{${nuxt.options.extensions.join(',')}}`)
-      return files.map(path => ({ name: getNameFromPath(path), path, global: hasSuffix(path, '.global') }))
-    })
-  )).flat()
-
-  return uniqueBy(allMiddlewares, 'name')
-}
-
-function getNameFromPath (path: string) {
-  return kebabCase(basename(path).replace(extname(path), '')).replace(/["']/g, '').replace('.global', '')
-}
-
-function hasSuffix (path: string, suffix: string) {
-  return basename(path).replace(extname(path), '').endsWith(suffix)
-}
-
-export function getImportName (name: string) {
-  return pascalCase(name).replace(/[^\w]/g, r => '_' + r.charCodeAt(0))
-}
-
-function uniqueBy <T, K extends keyof T> (arr: T[], key: K) {
-  const res: T[] = []
-  const seen = new Set<T[K]>()
-  for (const item of arr) {
-    if (seen.has(item[key])) { continue }
-    seen.add(item[key])
-    res.push(item)
-  }
-  return res
 }

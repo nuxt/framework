@@ -1,10 +1,12 @@
 import { existsSync } from 'node:fs'
 import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin, findPath } from '@nuxt/kit'
-import { resolve } from 'pathe'
-import { genDynamicImport, genString, genArrayFromRaw, genImport, genObjectFromRawEntries } from 'knitwork'
+import { relative, resolve } from 'pathe'
+import { genString, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
+import type { NuxtApp, NuxtPage } from '@nuxt/schema'
+import { joinURL } from 'ufo'
 import { distDir } from '../dirs'
-import { resolvePagesRoutes, normalizeRoutes, resolveMiddleware, getImportName } from './utils'
+import { resolvePagesRoutes, normalizeRoutes } from './utils'
 import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
 
 export default defineNuxtModule({
@@ -37,7 +39,7 @@ export default defineNuxtModule({
         nuxt.options.dir.middleware
       ].filter(Boolean)
 
-      const pathPattern = new RegExp(`^(${dirs.map(escapeRE).join('|')})/`)
+      const pathPattern = new RegExp(`(^|\\/)(${dirs.map(escapeRE).join('|')})/`)
       if (event !== 'change' && path.match(pathPattern)) {
         await nuxt.callHook('builder:generateApp')
       }
@@ -45,13 +47,42 @@ export default defineNuxtModule({
 
     nuxt.hook('app:resolve', (app) => {
       // Add default layout for pages
-      if (app.mainComponent.includes('@nuxt/ui-templates')) {
+      if (app.mainComponent!.includes('@nuxt/ui-templates')) {
         app.mainComponent = resolve(runtimeDir, 'app.vue')
       }
     })
 
-    nuxt.hook('autoImports:extend', (autoImports) => {
-      autoImports.push({ name: 'definePageMeta', as: 'definePageMeta', from: resolve(runtimeDir, 'composables') })
+    // Prerender all non-dynamic page routes when generating app
+    if (!nuxt.options.dev && nuxt.options._generate) {
+      const prerenderRoutes = new Set<string>()
+      nuxt.hook('modules:done', () => {
+        nuxt.hook('pages:extend', (pages) => {
+          prerenderRoutes.clear()
+          const processPages = (pages: NuxtPage[], currentPath = '/') => {
+            for (const page of pages) {
+              // Skip dynamic paths
+              if (page.path.includes(':')) { continue }
+              const route = joinURL(currentPath, page.path)
+              prerenderRoutes.add(route)
+              if (page.children) { processPages(page.children, route) }
+            }
+          }
+          processPages(pages)
+        })
+      })
+      nuxt.hook('nitro:build:before', (nitro) => {
+        for (const route of nitro.options.prerender.routes || []) {
+          prerenderRoutes.add(route)
+        }
+        nitro.options.prerender.routes = Array.from(prerenderRoutes)
+      })
+    }
+
+    nuxt.hook('imports:extend', (imports) => {
+      imports.push(
+        { name: 'definePageMeta', as: 'definePageMeta', from: resolve(runtimeDir, 'composables') },
+        { name: 'useLink', as: 'useLink', from: 'vue-router' }
+      )
     })
 
     // Extract macros from pages
@@ -67,6 +98,24 @@ export default defineNuxtModule({
 
     // Add router plugin
     addPlugin(resolve(runtimeDir, 'router'))
+
+    const getSources = (pages: NuxtPage[]): string[] => pages.flatMap(p =>
+      [relative(nuxt.options.srcDir, p.file), ...getSources(p.children || [])]
+    )
+
+    // Do not prefetch page chunks
+    nuxt.hook('build:manifest', async (manifest) => {
+      const pages = await resolvePagesRoutes()
+      await nuxt.callHook('pages:extend', pages)
+
+      const sourceFiles = getSources(pages)
+      for (const key in manifest) {
+        if (manifest[key].isEntry) {
+          manifest[key].dynamicImports =
+            manifest[key].dynamicImports?.filter(i => !sourceFiles.includes(i))
+        }
+      }
+    })
 
     // Add routes template
     addTemplate({
@@ -86,7 +135,7 @@ export default defineNuxtModule({
         // Check for router options
         const routerOptionsFiles = (await Promise.all(nuxt.options._layers.map(
           async layer => await findPath(resolve(layer.config.srcDir, 'app/router.options'))
-        ))).filter(Boolean)
+        ))).filter(Boolean) as string[]
 
         const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router.options)
           .map(([key, value]) => [key, genString(value as string)]))
@@ -103,29 +152,11 @@ export default defineNuxtModule({
       }
     })
 
-    // Add middleware template
-    addTemplate({
-      filename: 'middleware.mjs',
-      async getContents () {
-        const middleware = await resolveMiddleware()
-        await nuxt.callHook('pages:middleware:extend', middleware)
-        const globalMiddleware = middleware.filter(mw => mw.global)
-        const namedMiddleware = middleware.filter(mw => !mw.global)
-        const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
-        return [
-          ...globalMiddleware.map(mw => genImport(mw.path, getImportName(mw.name))),
-          `export const globalMiddleware = ${genArrayFromRaw(globalMiddleware.map(mw => getImportName(mw.name)))}`,
-          `export const namedMiddleware = ${namedMiddlewareObject}`
-        ].join('\n')
-      }
-    })
-
     addTemplate({
       filename: 'types/middleware.d.ts',
-      getContents: async () => {
+      getContents: ({ app }: { app: NuxtApp }) => {
         const composablesFile = resolve(runtimeDir, 'composables')
-        const middleware = await resolveMiddleware()
-        const namedMiddleware = middleware.filter(mw => !mw.global)
+        const namedMiddleware = app.middleware.filter(mw => !mw.global)
         return [
           'import type { NavigationGuard } from \'vue-router\'',
           `export type MiddlewareKey = ${namedMiddleware.map(mw => genString(mw.name)).join(' | ') || 'string'}`,
@@ -140,7 +171,7 @@ export default defineNuxtModule({
 
     addTemplate({
       filename: 'types/layouts.d.ts',
-      getContents: ({ app }) => {
+      getContents: ({ app }: { app: NuxtApp }) => {
         const composablesFile = resolve(runtimeDir, 'composables')
         return [
           'import { ComputedRef, Ref } from \'vue\'',

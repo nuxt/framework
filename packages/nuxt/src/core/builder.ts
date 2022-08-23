@@ -13,12 +13,12 @@ export async function build (nuxt: Nuxt) {
   if (nuxt.options.dev) {
     watch(nuxt)
     nuxt.hook('builder:watch', async (event, path) => {
-      if (event !== 'change' && /app|error|plugins/i.test(path)) {
-        if (path.match(/app/i)) {
-          app.mainComponent = null
+      if (event !== 'change' && /^(app\.|error\.|plugins\/|middleware\/|layouts\/)/i.test(path)) {
+        if (path.startsWith('app')) {
+          app.mainComponent = undefined
         }
-        if (path.match(/error/i)) {
-          app.errorComponent = null
+        if (path.startsWith('error')) {
+          app.errorComponent = undefined
         }
         await generateApp()
       }
@@ -38,7 +38,7 @@ export async function build (nuxt: Nuxt) {
 }
 
 function watch (nuxt: Nuxt) {
-  const watcher = chokidar.watch(nuxt.options.srcDir, {
+  const watcher = chokidar.watch(nuxt.options._layers.map(i => i.config.srcDir as string).filter(Boolean), {
     ...nuxt.options.watchers.chokidar,
     cwd: nuxt.options.srcDir,
     ignoreInitial: true,
@@ -49,8 +49,7 @@ function watch (nuxt: Nuxt) {
     ]
   })
 
-  const watchHook = debounce((event: 'add' | 'addDir' | 'change' | 'unlink' | 'unlinkDir', path: string) => nuxt.callHook('builder:watch', event, normalize(path)))
-  watcher.on('all', watchHook)
+  watcher.on('all', (event, path) => nuxt.callHook('builder:watch', event, normalize(path)))
   nuxt.hook('close', () => watcher.close())
   return watcher
 }
@@ -62,7 +61,7 @@ async function bundle (nuxt: Nuxt) {
       : nuxt.options.builder
 
     return bundle(nuxt)
-  } catch (error) {
+  } catch (error: any) {
     await nuxt.callHook('build:error', error)
 
     if (error.toString().includes('Cannot find module \'@nuxt/webpack-builder\'')) {
