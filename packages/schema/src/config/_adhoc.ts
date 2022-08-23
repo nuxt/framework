@@ -25,9 +25,7 @@ export default {
   },
 
   /** @deprecated Please use `imports` config. */
-  autoImports: {
-    dirs: []
-  },
+  autoImports: null,
 
   /**
    * Configure how Nuxt auto-imports composables into your application.
