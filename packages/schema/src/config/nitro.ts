@@ -1,19 +1,19 @@
 export default {
   /**
-   * Configuration for Nitro
+   * Configuration for Nitro.
    *
    * @see https://nitro.unjs.io/config/
    *
    * @type {typeof import('nitropack')['NitroConfig']}
    * @version 2
    * @version 3
-  */
+   */
   nitro: {},
 
   /**
-   * Nitro server handlers
+   * Nitro server handlers.
    *
-   * @see https://nitro.unjs.io/guide/routing.html
+   * @see https://nitro.unjs.io/guide/introduction/routing
    *
    * **Note:** Files from `server/api`, `server/middleware` and `server/routes` will be automatically registred by Nuxt.
    *
@@ -23,12 +23,12 @@ export default {
   serverHandlers: [],
 
   /**
-   * Nitro devevelopment-only server handlers
+   * Nitro development-only server handlers.
    *
-   * @see https://nitro.unjs.io/guide/routing.html
+   * @see https://nitro.unjs.io/guide/introduction/routing
    *
    * @type {typeof import('nitropack')['NitroDevEventHandler'][]}
    * @version 3
    */
-   devServerHandlers: []
+  devServerHandlers: []
 }

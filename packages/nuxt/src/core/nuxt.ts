@@ -8,7 +8,7 @@ import escapeRE from 'escape-string-regexp'
 import pagesModule from '../pages/module'
 import metaModule from '../head/module'
 import componentsModule from '../components/module'
-import autoImportsModule from '../auto-imports/module'
+import importsModule from '../imports/module'
 /* eslint-enable */
 import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
@@ -54,6 +54,7 @@ async function initNuxt (nuxt: Nuxt) {
     }
     // Add module augmentations directly to NuxtConfig
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/schema.d.ts') })
+    opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/app.config.d.ts') })
   })
 
   // Add import protection
@@ -81,7 +82,7 @@ async function initNuxt (nuxt: Nuxt) {
 
   // Transpile layers within node_modules
   nuxt.options.build.transpile.push(
-    ...nuxt.options._layers.filter(i => i.cwd && i.cwd.includes('node_modules')).map(i => i.cwd)
+    ...nuxt.options._layers.filter(i => i.cwd.includes('node_modules')).map(i => i.cwd as string)
   )
 
   // Init user modules
@@ -95,7 +96,7 @@ async function initNuxt (nuxt: Nuxt) {
   // Add <NuxtWelcome>
   addComponent({
     name: 'NuxtWelcome',
-    filePath: tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')
+    filePath: tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')!
   })
 
   addComponent({
@@ -161,11 +162,11 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   options.appDir = options.alias['#app'] = resolve(distDir, 'app')
   options._majorVersion = 3
   options._modules.push(pagesModule, metaModule, componentsModule)
-  options._modules.push([autoImportsModule, {
+  options._modules.push([importsModule, {
     transform: {
       include: options._layers
         .filter(i => i.cwd && i.cwd.includes('node_modules'))
-        .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd.split('node_modules/').pop())}(\\/|$)(?!node_modules\\/)`))
+        .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd!.split('node_modules/').pop()!)}(\\/|$)(?!node_modules\\/)`))
     }
   }])
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))

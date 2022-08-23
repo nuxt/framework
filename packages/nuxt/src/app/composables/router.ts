@@ -1,3 +1,4 @@
+import { getCurrentInstance, inject } from 'vue'
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure } from 'vue-router'
 import { sendRedirect } from 'h3'
 import { hasProtocol, joinURL, parseURL } from 'ufo'
@@ -7,12 +8,16 @@ export const useRouter = () => {
   return useNuxtApp()?.$router as Router
 }
 
-export const useRoute = () => {
-  return useNuxtApp()._route as RouteLocationNormalizedLoaded
+export const useRoute = (): RouteLocationNormalizedLoaded => {
+  if (getCurrentInstance()) {
+    return inject('_route', useNuxtApp()._route)
+  }
+  return useNuxtApp()._route
 }
 
-export const useActiveRoute = () => {
-  return useNuxtApp()._activeRoute as RouteLocationNormalizedLoaded
+/** @deprecated Use `useRoute` instead. */
+export const useActiveRoute = (): RouteLocationNormalizedLoaded => {
+  return useNuxtApp()._route
 }
 
 export interface RouteMiddleware {
@@ -67,7 +72,7 @@ const getPath = (to: RouteLocationRaw): string => {
   return '/'
 }
 
-export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}): Promise<void | NavigationFailure> | RouteLocationRaw => {
+export const navigateTo = (to: RouteLocationRaw | undefined | null, options: NavigateToOptions = {}): Promise<void | NavigationFailure> | RouteLocationRaw => {
   if (!to) {
     to = '/'
   }
@@ -92,7 +97,7 @@ export const navigateTo = (to: RouteLocationRaw, options: NavigateToOptions = {}
         throw new Error('Redirecting to external URL without `allowExternal: true` is not allowed.')
       }
       const redirectLocation = isExternal ? toPath : joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
-      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext.event, redirectLocation, options.redirectCode || 301))
+      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext!.event, redirectLocation, options.redirectCode || 301))
     }
   }
 
