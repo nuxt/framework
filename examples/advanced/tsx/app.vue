@@ -4,12 +4,12 @@ import { defineComponent } from 'vue'
 // Component could be a simple function with JSX syntax
 const Welcome = () => <span>Welcome </span>
 
-// ...or a component that returns render function with JSX syntax
+// Or using defineComponent setup that returns render function with JSX syntax
 const Nuxt3 = defineComponent(() => {
   return () => <span>nuxt3</span>
 })
 
-// We can componet components with TSX syntax too!
+// We can combine components with TSX syntax too
 const InlineComponent = () => (
     <div>
       <Welcome />
@@ -20,9 +20,9 @@ const InlineComponent = () => (
 </script>
 
 <template>
-  <div>
+  <NuxtExampleLayout example="advanced/tsx">
     <InlineComponent />
     <!-- Defined in components/tsx-component.ts -->
     <TsxComponent message="This is an external TSX component" />
-  </div>
+  </NuxtExampleLayout>
 </template>
