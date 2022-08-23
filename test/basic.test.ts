@@ -494,12 +494,6 @@ describe('app config', () => {
     const html = await $fetch('/app-config')
 
     const expectedAppConfig = {
-      _nuxt: {
-        head: { meta: [], link: [], style: [], script: [], noscript: [], charset: 'utf-8', viewport: 'width=1024, initial-scale=1' },
-        layoutTransition: { name: 'layout', mode: 'out-in' },
-        pageTransition: { name: 'page', mode: 'out-in' },
-        keepalive: false
-      },
       fromNuxtConfig: true,
       nested: {
         val: 2
