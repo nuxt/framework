@@ -1,25 +1,21 @@
 import consola from 'consola'
 import { useTestContext } from './context'
 
-const mockFnVitest = async () => {
-  const vitest = await import('vitest')
-  return vitest.vi.fn()
-}
-
-const mockFnJest = async () => {
-  const jest = await import('jest')
-  return jest.fn()
-}
-
-export const mockFnMaps = {
-  jest: mockFnJest,
-  vitest: mockFnVitest
-}
-
 export async function mockFn () {
   const { runner } = useTestContext().options
 
-  return await mockFnMaps[runner]()
+  if (runner === 'jest') {
+    // @ts-ignore jest is not installed
+    const jest = await import('jest')
+    return jest.fn()
+  }
+
+  if (runner === 'vitest') {
+    const vitest = await import('vitest')
+    return vitest.vi.fn()
+  }
+
+  return () => {}
 }
 
 export async function mockLogger (): typeof consola {
