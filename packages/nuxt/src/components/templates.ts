@@ -40,23 +40,7 @@ const components = ${genObjectFromRawEntries(globalComponents.map((c) => {
   return [c.pascalName, `defineAsyncComponent(${genDynamicImport(c.filePath, { comment })}.then(c => ${exp}))`]
 }))}
 
-function prefetchAsyncComponent (component) {
-  if (component?.__asyncLoader && !component.__asyncResolved) {
-    return component.__asyncLoader()
-  }
-}
-
 export default defineNuxtPlugin(nuxtApp => {
-  if (process.client) {
-    nuxtApp.hook('components:prefetch', async (components) => {
-      components = Array.isArray(components) ? components : [components]
-      await Promise.all(components.map((name) => {
-        if (name in components) {
-          return prefetchAsyncComponent(components[name])
-        }
-      }))
-    })
-  }
   for (const name in components) {
     nuxtApp.vueApp.component(name, components[name])
     nuxtApp.vueApp.component('Lazy' + name, components[name])

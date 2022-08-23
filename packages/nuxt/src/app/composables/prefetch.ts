@@ -16,9 +16,8 @@ function prefetchAsyncComponent (component: Component) {
  */
 export const prefetchComponents = async (components: string | string[]) => {
   if (process.server) { return }
+  const nuxtApp = useNuxtApp()
 
   components = Array.isArray(components) ? components : [components]
-  await Promise.all(components.map((name) => {
-    return name in components && prefetchAsyncComponent(components[name])
-  }))
+  await Promise.all(components.map(name => prefetchAsyncComponent(nuxtApp.vueApp._context.components[name])))
 }
