@@ -1,6 +1,6 @@
 import { defineUnimportPreset, Preset } from 'unimport'
 
-export const commonPresets: Preset[] = [
+const commonPresets: Preset[] = [
   // #head
   defineUnimportPreset({
     from: '#head',
@@ -19,7 +19,7 @@ export const commonPresets: Preset[] = [
   })
 ]
 
-export const appPreset = defineUnimportPreset({
+const appPreset = defineUnimportPreset({
   from: '#app',
   imports: [
     'useAsyncData',
@@ -50,12 +50,14 @@ export const appPreset = defineUnimportPreset({
     'useError',
     'createError',
     'defineNuxtLink',
+    'useAppConfig',
+    'defineAppConfig',
     'prefetchComponents'
   ]
 })
 
 // vue
-export const vuePreset = defineUnimportPreset({
+const vuePreset = defineUnimportPreset({
   from: 'vue',
   imports: [
     // <script setup>

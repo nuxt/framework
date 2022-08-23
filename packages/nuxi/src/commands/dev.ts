@@ -11,6 +11,7 @@ import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
 import { importModule } from '../utils/cjs'
 import { overrideEnv } from '../utils/env'
+import { writeNuxtManifest, loadNuxtManifest, cleanupNuxtDirs } from '../utils/nuxt'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -75,6 +76,15 @@ export default defineNuxtCommand({
           showURL()
         }
 
+        // Write manifest and also check if we need cache invalidation
+        if (!isRestart) {
+          const previousManifest = await loadNuxtManifest(currentNuxt.options.buildDir)
+          const newManifest = await writeNuxtManifest(currentNuxt)
+          if (previousManifest && newManifest && previousManifest._hash !== newManifest._hash) {
+            await cleanupNuxtDirs(currentNuxt.options.rootDir)
+          }
+        }
+
         await currentNuxt.ready()
 
         await currentNuxt.hooks.callHook('listen', listener.server, listener)
@@ -122,7 +132,7 @@ export default defineNuxtCommand({
           dLoad(true, `Directory \`${relativePath}/\` ${event === 'addDir' ? 'created' : 'removed'}`)
         }
       } else if (isFileChange) {
-        if (file.match(/(app|error)\.(js|ts|mjs|jsx|tsx|vue)$/)) {
+        if (file.match(/(app|error|app\.config)\.(js|ts|mjs|jsx|tsx|vue)$/)) {
           dLoad(true, `\`${relativePath}\` ${event === 'add' ? 'created' : 'removed'}`)
         }
       }
