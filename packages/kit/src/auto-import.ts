@@ -5,17 +5,17 @@ import { assertNuxtCompatibility } from './compatibility'
 export function addAutoImport (imports: Import | Import[]) {
   assertNuxtCompatibility({ bridge: true })
 
-  useNuxt().hook('imports:extend', (imports) => {
-    imports.push(...(Array.isArray(imports) ? imports : [imports]))
+  useNuxt().hook('imports:extend', (extend) => {
+    extend.push(...(Array.isArray(imports) ? imports : [imports]))
   })
 }
 
-export function addAutoImportDir (_autoImportDirs: string | string[]) {
+export function addAutoImportDir (dirs: string | string[]) {
   assertNuxtCompatibility({ bridge: true })
 
-  useNuxt().hook('imports:dirs', (autoImportDirs: string[]) => {
-    for (const dir of (Array.isArray(_autoImportDirs) ? _autoImportDirs : [_autoImportDirs])) {
-      autoImportDirs.push(dir)
+  useNuxt().hook('imports:dirs', (extend: string[]) => {
+    for (const dir of (Array.isArray(dirs) ? dirs : [dirs])) {
+      extend.push(dir)
     }
   })
 }
