@@ -1,5 +1,5 @@
 import { getCurrentInstance, inject } from 'vue'
-import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure } from 'vue-router'
+import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure, RouteLocationPathRaw } from 'vue-router'
 import { sendRedirect } from 'h3'
 import { hasProtocol, joinURL, parseURL } from 'ufo'
 import { useNuxtApp, useRuntimeConfig } from '#app'
@@ -62,38 +62,27 @@ export interface NavigateToOptions {
   external?: boolean
 }
 
-const getPath = (to: RouteLocationRaw): string => {
-  if (typeof to === 'string') {
-    return to
-  }
-  if ('path' in to) {
-    return to.path
-  }
-  return '/'
-}
-
 export const navigateTo = (to: RouteLocationRaw | undefined | null, options: NavigateToOptions = {}): Promise<void | NavigationFailure> | RouteLocationRaw => {
   if (!to) {
     to = '/'
   }
 
-  const toPath = getPath(to)
+  const toPath = typeof to === 'string' ? to : ((to as RouteLocationPathRaw).path || '/')
   const isExternal = hasProtocol(toPath, true)
-  const hasScriptProtocol = parseURL(toPath).protocol === 'script:'
-
-  if (hasScriptProtocol) {
+  if (isExternal && !options.external) {
+    throw new Error('Navigating to external URL is not allowed by default. Use `nagivateTo(url, { external: true })`.')
+  }
+  if (isExternal && parseURL(toPath).protocol === 'script:') {
     throw new Error('Cannot navigate to an URL with script protocol')
   }
 
+  // Early redirect on client-side
   if (!isExternal && isProcessingMiddleware()) {
     return to
   }
 
-  if (isExternal && !options.external) {
-    throw new Error('Navigating to external URL is not allowed by default. Use `nagivateTo(url, { external: true })`.')
-  }
-
   const router = useRouter()
+
   if (process.server) {
     const nuxtApp = useNuxtApp()
     if (nuxtApp.ssrContext && nuxtApp.ssrContext.event) {
