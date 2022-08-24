@@ -106,15 +106,15 @@ export const navigateTo = (to: RouteLocationRaw | undefined | null, options: Nav
     if (!options.allowExternal) {
       const response = window.confirm(`Do you want to get redirected to ${toPath}?`)
       if (!response) {
-        return
+        return Promise.resolve()
       }
     }
     if (options.replace) {
       location.replace(toPath)
-      return
+      return Promise.resolve()
     }
     location.href = toPath
-    return
+    return Promise.resolve()
   }
 
   return options.replace ? router.replace(to) : router.push(to)
