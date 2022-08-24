@@ -207,12 +207,20 @@ export const appConfigTemplate: NuxtTemplate = {
   write: true,
   getContents: ({ app, nuxt }) => {
     return `
-import defu from 'defu'
+import { createDefu } from 'defu'
 
 const inlineConfig = ${JSON.stringify(nuxt.options.appConfig, null, 2)}
 
 ${app.configs.map((id: string, index: number) => `import ${`cfg${index}`} from ${JSON.stringify(id)}`).join('\n')}
-export default defu(${app.configs.map((_id: string, index: number) => `cfg${index}`).concat(['inlineConfig']).join(', ')})
+
+const merge = createDefu((obj, key, value) => {
+  if (obj[key] && Array.isArray(obj[key])) {
+    obj[key] = value
+    return true
+  }
+})
+
+export default merge(${app.configs.map((_id: string, index: number) => `cfg${index}`).concat(['inlineConfig']).join(', ')})
 `
   }
 }
