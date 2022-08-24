@@ -51,6 +51,8 @@ const appPreset = defineUnimportPreset({
     'createError',
     'defineNuxtLink',
     'useAppConfig',
+    'setAppConfig',
+    'updateAppConfig',
     'defineAppConfig',
     'preloadComponents',
     'prefetchComponents'

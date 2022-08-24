@@ -18,6 +18,7 @@ function deepDelete (obj: any, newObj: any) {
     }
   }
 }
+
 function deepAssign (obj: any, newObj: any) {
   for (const key in newObj) {
     const val = newObj[key]
