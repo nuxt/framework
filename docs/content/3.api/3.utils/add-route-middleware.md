@@ -48,7 +48,7 @@ export default defineNuxtPlugin(() => {
 
 Named route middleware takes a string as the first argument and a function as the second.
 
-When defined in a plugin, it overrides any existing middleware of the same name located in the `/middleware` directory:
+When defined in a plugin, it overrides any existing middleware of the same name located in the `middleware/` directory:
 
 ```ts [plugins/my-plugin.ts]
 export default defineNuxtPlugin(() => {
