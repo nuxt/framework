@@ -1,6 +1,6 @@
 import { defineComponent, isRef, nextTick, onMounted, Ref, Transition, VNode } from 'vue'
 import { _wrapIf } from './utils'
-import { useRoute } from '#app'
+import { setLayout, useRoute } from '#app'
 // @ts-ignore
 import layouts from '#build/layouts'
 
@@ -29,8 +29,8 @@ export default defineComponent({
     }
 
     return () => {
-      const layout = (isRef(props.name) ? props.name.value : props.name) ?? route.meta.layout as string ?? 'default'
-
+      let layout = (isRef(props.name) ? props.name.value : props.name) ?? route.meta.layout as string ?? setLayout().value ?? 'default'
+      
       const hasLayout = layout && layout in layouts
       if (process.dev && layout && !hasLayout && layout !== 'default') {
         console.warn(`Invalid layout \`${layout}\` selected.`)
