@@ -44,19 +44,8 @@ export function useAppConfig (): AppConfig {
  * Will preserve existing properties.
  */
 export function updateAppConfig (appConfig: Partial<AppConfig>) {
-  const nuxtApp = useNuxtApp()
-  if (!nuxtApp._appConfig) {
-    nuxtApp._appConfig = reactive(__appConfig) as AppConfig
-  }
-  deepAssign(nuxtApp._appConfig, appConfig)
-}
-
-/**
- * Overwrites the current app config with the new one.
- */
-export function setAppConfig (appConfig: AppConfig) {
-  const nuxtApp = useNuxtApp()
-  nuxtApp._appConfig = appConfig
+  const _appConfig = useAppConfig()
+  deepAssign(_appConfig, appConfig)
 }
 
 // HMR Support

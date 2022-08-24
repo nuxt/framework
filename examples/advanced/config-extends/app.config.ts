@@ -6,15 +6,5 @@ export default defineAppConfig({
     'user',
     'user',
     'user'
-  ],
-  arrayNested: {
-    nested: {
-      key: 'user',
-      array: [
-        'user',
-        'user',
-        'user'
-      ]
-    }
-  }
+  ]
 })
