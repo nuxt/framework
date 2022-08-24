@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-await navigateTo('https://example.com/', { extenral: true, replace: true })
+await navigateTo('https://example.com/', { external: true, replace: true })
 </script>
