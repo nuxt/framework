@@ -44,13 +44,13 @@ export default defineNuxtPlugin(() => {
 })
 ```
 
-### Named route middleware
+### Named Route Middleware
 
-Named route middleware always takes the first argument as a `string` and the second argument as a `function`.
+Named route middleware takes a string as the first argument and a function as the second.
 
-Named route middleware defined through a plugin like this overrides any existing middleware of the same name located in the `/middleware` directory.
+When defined in a plugin, it overrides any existing middleware of the same name located in the `/middleware` directory:
 
-```js [plugins/my-plugin.ts]
+```ts [plugins/my-plugin.ts]
 export default defineNuxtPlugin(() => {
   addRouteMiddleware('named-middleware', () => {
     console.log('named middleware added in Nuxt plugin')
