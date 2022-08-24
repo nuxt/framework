@@ -10,7 +10,7 @@ import { toEventHandler, dynamicEventHandler } from 'h3'
 import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
-export async function initNitro(nuxt: Nuxt) {
+export async function initNitro (nuxt: Nuxt) {
   // Resolve handlers
   const { handlers, devHandlers } = await resolveHandlers(nuxt)
 
@@ -64,10 +64,10 @@ export async function initNitro(nuxt: Nuxt) {
         ...(nuxt.options.dev
           ? []
           : [
-            ...nuxt.options.experimental.externalVue ? [] : ['vue', '@vue/'],
-            '@nuxt/',
-            nuxt.options.buildDir
-          ]),
+              ...nuxt.options.experimental.externalVue ? [] : ['vue', '@vue/'],
+              '@nuxt/',
+              nuxt.options.buildDir
+            ]),
         'nuxt/dist',
         'nuxt3/dist'
       ]
@@ -77,10 +77,10 @@ export async function initNitro(nuxt: Nuxt) {
         ? {}
         : {
 
-          'vue/compiler-sfc': 'vue/compiler-sfc',
-          'vue/server-renderer': 'vue/server-renderer',
-          vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
-        },
+            'vue/compiler-sfc': 'vue/compiler-sfc',
+            'vue/server-renderer': 'vue/server-renderer',
+            vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
+          },
       // Vue 3 mocks
       'estree-walker': 'unenv/runtime/mock/proxy',
       '@babel/parser': 'unenv/runtime/mock/proxy',
@@ -160,17 +160,19 @@ export async function initNitro(nuxt: Nuxt) {
     if (nuxt.options.dev) {
       await build(nitro)
     } else {
-      await Promise.allSettled([prepare(nitro), copyPublicAssets(nitro), prerender(nitro)])
+      await prepare(nitro)
+      await copyPublicAssets(nitro)
+      await prerender(nitro)
       if (!nuxt.options._generate) {
         await build(nitro)
       } else {
         const distDir = resolve(nuxt.options.rootDir, 'dist')
         if (!existsSync(distDir)) {
-          await fsp.symlink(nitro.options.output.publicDir, distDir, 'junction').catch(() => { })
+          await fsp.symlink(nitro.options.output.publicDir, distDir, 'junction').catch(() => {})
         }
       }
     }
-  }) 
+  })
 
   // nuxt dev
   if (nuxt.options.dev) {
@@ -187,7 +189,7 @@ export async function initNitro(nuxt: Nuxt) {
   }
 }
 
-async function resolveHandlers(nuxt: Nuxt) {
+async function resolveHandlers (nuxt: Nuxt) {
   const handlers: NitroEventHandler[] = [...nuxt.options.serverHandlers]
   const devHandlers: NitroDevEventHandler[] = [...nuxt.options.devServerHandlers]
 
