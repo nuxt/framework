@@ -26,7 +26,7 @@ The second argument is also a function of type `RouteMiddleware` but it is optio
 
 - **options:** `type: AddRouteMiddlewareOptions`  
 
-`options` lets you set the value of `global` to `true` to indicate whether the router middleware is global or not. By default the `global` is set to `false`.
+An optional `options` argument lets you set the value of `global` to `true` to indicate whether the router middleware is global or not (set to `false` by default).
 
 ## Examples
 
