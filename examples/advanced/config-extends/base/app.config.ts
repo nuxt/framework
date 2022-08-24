@@ -1,7 +1,7 @@
 export default defineAppConfig({
   bar: 'base',
   baz: 'base',
-  array: [
+  array: () => [
     'base',
     'base',
     'base'
