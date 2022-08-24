@@ -59,7 +59,7 @@ const isProcessingMiddleware = () => {
 export interface NavigateToOptions {
   replace?: boolean
   redirectCode?: number,
-  allowExternal?: boolean
+  external?: boolean
 }
 
 const getPath = (to: RouteLocationRaw): string => {
@@ -89,13 +89,14 @@ export const navigateTo = (to: RouteLocationRaw | undefined | null, options: Nav
     return to
   }
 
+  if (isExternal && !options.external) {
+    throw new Error('Navigating to external URL is not allowed by default. Use `nagivateTo(url, { external: true })`.')
+  }
+
   const router = useRouter()
   if (process.server) {
     const nuxtApp = useNuxtApp()
     if (nuxtApp.ssrContext && nuxtApp.ssrContext.event) {
-      if (isExternal && !options.allowExternal) {
-        throw new Error('Redirecting to external URL without `allowExternal: true` is not allowed.')
-      }
       const redirectLocation = isExternal ? toPath : joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
       return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext!.event, redirectLocation, options.redirectCode || 301))
     }
@@ -103,17 +104,11 @@ export const navigateTo = (to: RouteLocationRaw | undefined | null, options: Nav
 
   // Client-side redirection using vue-router
   if (isExternal) {
-    if (!options.allowExternal) {
-      const response = window.confirm(`Do you want to get redirected to ${toPath}?`)
-      if (!response) {
-        return Promise.resolve()
-      }
-    }
     if (options.replace) {
       location.replace(toPath)
-      return Promise.resolve()
+    } else {
+      location.href = toPath
     }
-    location.href = toPath
     return Promise.resolve()
   }
 
