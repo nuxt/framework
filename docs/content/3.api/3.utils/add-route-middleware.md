@@ -16,9 +16,9 @@ addRouteMiddleware (name: string | RouteMiddleware, middleware?: RouteMiddleware
 
 - **name** `type: string | RouteMiddleware`
 
-`name` can either be a `string` or a function of type `RouteMiddleware`. This function provides the next route `to` as the first argument and the current route `from` as the second argument. Both `to` and `from` are Vue route objects.
+`name` can be either a string or a function of type `RouteMiddleware`. Function takes the next route `to` as the first argument and the current route `from` as the second argument, both of which are Vue route objects.
 
-Learn more about available properties found on [route objects](/api/composables/use-route).
+Learn more about available properties of [route objects](/api/composables/use-route).
 
 - **middleware**: `type: RouteMiddleware`
 
