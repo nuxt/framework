@@ -14,19 +14,19 @@
         <NuxtLink to="/other">
           Other layout
         </NuxtLink>
-        <NButton @click="layoutValue = 'default'">
-          Change to default layout 
+        <NButton @click="layoutName = 'default'">
+          Change to default layout
         </NButton>
-        <NButton @click="layoutValue = 'custom'">
-          Change to custom layout 
+        <NButton @click="layoutName = 'custom'">
+          Change to custom layout
         </NButton>
-        <NButton @click="layoutValue = 'other'">
-          Change to other layout 
+        <NButton @click="layoutName = 'other'">
+          Change to other layout
         </NButton>
       </nav>
     </template>
   </NuxtExampleLayout>
 </template>
 <script setup>
-const layoutValue = setLayout()
+const layoutName = setLayout()
 </script>

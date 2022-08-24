@@ -3,8 +3,8 @@ import { _wrapIf } from './utils'
 import { setLayout, useRoute } from '#app'
 // @ts-ignore
 import layouts from '#build/layouts'
-// @ts-ignore
-import { appLayoutTransition as defaultLayoutTransition } from '#build/nuxt.config.mjs'
+
+const defaultLayoutTransition = { name: 'layout', mode: 'out-in' }
 
 export default defineComponent({
   props: {
@@ -29,8 +29,8 @@ export default defineComponent({
     }
 
     return () => {
-      let layout = (isRef(props.name) ? props.name.value : props.name) ?? route.meta.layout as string ?? setLayout().value ?? 'default'
-      
+      const layout = (isRef(props.name) ? props.name.value : props.name) ?? route.meta.layout as string ?? setLayout().value ?? 'default'
+
       const hasLayout = layout && layout in layouts
       if (process.dev && layout && !hasLayout && layout !== 'default') {
         console.warn(`Invalid layout \`${layout}\` selected.`)
