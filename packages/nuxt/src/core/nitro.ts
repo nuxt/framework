@@ -170,7 +170,7 @@ export async function initNitro(nuxt: Nuxt) {
         }
       }
     }
-  })
+  }) 
 
   // nuxt dev
   if (nuxt.options.dev) {
