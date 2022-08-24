@@ -21,10 +21,18 @@ if (process.dev) {
     const appConfig = useAppConfig()
     if (newConfig && appConfig) {
       deepAssign(appConfig, newConfig)
-      for (const key in appConfig) {
-        if (!(key in newConfig)) {
-          delete (appConfig as any)[key]
-        }
+      deepDelete(appConfig, newConfig)
+    }
+  }
+
+  function deepDelete (obj: any, newObj: any) {
+    for (const key in obj) {
+      if (!(key in newObj)) {
+        delete (obj as any)[key]
+      }
+
+      if (typeof obj[key] === 'object' && newObj[key]) {
+        deepDelete(obj[key], newObj[key])
       }
     }
   }
