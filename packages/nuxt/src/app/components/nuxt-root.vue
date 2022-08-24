@@ -1,7 +1,12 @@
 <template>
   <Suspense @resolve="onResolve">
-    <ErrorComponent v-if="error" :error="error" />
-    <App v-else />
+    <NuxtErrorBoundary>
+      <ErrorComponent v-if="error" :error="error" />
+      <App v-else />
+      <template #error="{ errMsg = error }">
+        <FallbackErrorComponent :status-message="errMsg" />
+      </template>
+    </NuxtErrorBoundary>
   </Suspense>
 </template>
 
@@ -10,6 +15,8 @@ import { defineAsyncComponent, onErrorCaptured, provide } from 'vue'
 import { callWithNuxt, isNuxtError, showError, useError, useRoute, useNuxtApp } from '#app'
 
 const ErrorComponent = defineAsyncComponent(() => import('#build/error-component.mjs'))
+// TODO Use error-dev.vue to handle error description in dev?
+const FallbackErrorComponent = defineAsyncComponent(() => import('@nuxt/ui-templates/templates/error-500.vue'))
 
 const nuxtApp = useNuxtApp()
 const onResolve = () => nuxtApp.callHook('app:suspense:resolve')
