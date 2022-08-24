@@ -30,11 +30,11 @@ An optional `options` argument lets you set the value of `global` to `true` to i
 
 ## Examples
 
-### Inline route middleware
+### Anonymous Route Middleware
 
-Inline route middleware is anonymous because it does not have a name. `function` is passed as the first argument and therefore the second argument of `middleware` becomes redundant.
+Anonymous route middleware does not have a name. It takes a function as the first argument, making the second `middleware` argument redundant:
 
-```js [plugins/my-plugin.ts]
+```ts [plugins/my-plugin.ts]
 export default defineNuxtPlugin(() => {
   addRouteMiddleware((to, from) => {
     if (to.path === '/forbidden') {
