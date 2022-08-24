@@ -22,7 +22,7 @@ Learn more about available properties found on [route objects](/api/composables/
 
 - **middleware**: `type: RouteMiddleware`
 
-The second argument is also a function of type `RouteMiddleware` but it is optional. Same as mentioned above, this function provides `to` and `from` route objects. This argument becomes optional if the first argument in `addRouteMiddleware()` is already passed as a function.
+The second argument is a function of type `RouteMiddleware`. Same as above, it provides `to` and `from` route objects. It becomes optional if the first argument in `addRouteMiddleware()` is already passed as a function.
 
 - **options:** `type: AddRouteMiddlewareOptions`  
 
