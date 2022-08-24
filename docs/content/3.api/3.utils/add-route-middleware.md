@@ -20,11 +20,11 @@ addRouteMiddleware (name: string | RouteMiddleware, middleware?: RouteMiddleware
 
 Learn more about available properties of [route objects](/api/composables/use-route).
 
-- **middleware**: `type: RouteMiddleware`
+- **middleware** `type: RouteMiddleware`
 
 The second argument is a function of type `RouteMiddleware`. Same as above, it provides `to` and `from` route objects. It becomes optional if the first argument in `addRouteMiddleware()` is already passed as a function.
 
-- **options:** `type: AddRouteMiddlewareOptions`  
+- **options** `type: AddRouteMiddlewareOptions`  
 
 An optional `options` argument lets you set the value of `global` to `true` to indicate whether the router middleware is global or not (set to `false` by default).
 
