@@ -3,7 +3,7 @@
 ::StabilityEdge
 ::
 
-Updates [app config](/guide/features/app-config):
+Updates [app config](/guide/features/app-config) using deep assignment. Existing (nested) properties will be preserved. 
 
 **Usage:**
 
