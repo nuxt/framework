@@ -1,3 +1,5 @@
+import type { InputObject } from 'untyped'
+
 export default {
   /**
    * Configure Nuxt component auto-registration.
@@ -12,7 +14,7 @@ export default {
    * @version 2
    * @version 3
    */
-  components: {
+  components: <InputObject>{
     $resolve: (val, get) => {
       if (Array.isArray(val)) {
         return { dirs: val }

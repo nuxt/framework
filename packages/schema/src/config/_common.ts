@@ -4,6 +4,7 @@ import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
 import defu from 'defu'
+import type { InputObject } from 'untyped'
 import { RuntimeConfig } from '../types/config'
 
 export default {
@@ -31,7 +32,7 @@ export default {
    * @version 2
    * @version 3
    */
-  rootDir: {
+  rootDir: <InputObject>{
     $resolve: val => typeof val === 'string' ? resolve(val) : process.cwd()
   },
 
@@ -65,7 +66,7 @@ export default {
    * @version 2
    * @version 3
    */
-  srcDir: {
+  srcDir: <InputObject>{
     $resolve: (val, get) => resolve(get('rootDir'), val || '.')
   },
 
@@ -84,7 +85,7 @@ export default {
    * @version 2
    * @version 3
    */
-  buildDir: {
+  buildDir: <InputObject>{
     $resolve: (val, get) => resolve(get('rootDir'), val || '.nuxt')
   },
 
@@ -109,7 +110,7 @@ export default {
    * By default, it's only enabled in development mode.
    * @version 2
    */
-  debug: {
+  debug: <InputObject>{
     $resolve: (val, get) => val ?? get('dev')
   },
 
@@ -128,7 +129,7 @@ export default {
    *
    * @version 2
    */
-  env: {
+  env: <InputObject>{
     $default: {},
     $resolve: (val) => {
       val = { ...val }
@@ -149,7 +150,7 @@ export default {
    * @type {'jiti' | 'native' | ((p: string | { filename: string }) => NodeRequire)}
    * @version 2
    */
-  createRequire: {
+  createRequire: <InputObject>{
     $resolve: (val: any) => {
       val = process.env.NUXT_CREATE_REQUIRE || val ||
         (typeof globalThis.jest !== 'undefined' ? 'native' : 'jiti')
@@ -171,7 +172,7 @@ export default {
    * @type {'server' | 'static'}
    * @version 2
    */
-  target: {
+  target: <InputObject>{
     $resolve: val => ['server', 'static'].includes(val) ? val : 'server'
   },
 
@@ -187,7 +188,7 @@ export default {
   /**
    * @deprecated use `ssr` option
    */
-  mode: {
+  mode: <InputObject>{
     $resolve: (val, get) => val || (get('ssr') ? 'spa' : 'universal'),
     $schema: { deprecated: '`mode` option is deprecated' }
   },
@@ -302,7 +303,7 @@ export default {
    * Vue instance name and other options.
    * @version 2
    */
-  globalName: {
+  globalName: <InputObject>{
     $resolve: val => (typeof val === 'string' && /^[a-zA-Z]+$/.test(val)) ? val.toLocaleLowerCase() : 'nuxt'
   },
 
@@ -397,7 +398,7 @@ export default {
    * @version 2
    * @deprecated Use `serverHandlers` instead
    */
-  serverMiddleware: {
+  serverMiddleware: <InputObject>{
     $resolve: (val: any) => {
       if (!val) {
         return []
@@ -425,7 +426,7 @@ export default {
    * ```
    * @version 2
    */
-  modulesDir: {
+  modulesDir: <InputObject>{
     $default: ['node_modules'],
     $resolve: (val, get) => [].concat(
       val.map(dir => resolve(get('rootDir'), dir)),
@@ -494,7 +495,7 @@ export default {
    * @version 2
    * @version 3
    */
-  extensions: {
+  extensions: <InputObject>{
     $resolve: val => ['.js', '.jsx', '.mjs', '.ts', '.tsx', '.vue'].concat(val).filter(Boolean)
   },
 
@@ -592,7 +593,7 @@ export default {
    * @version 2
    * @version 3
    */
-  ignore: {
+  ignore: <InputObject>{
     $resolve: (val, get) => [
       '**/*.stories.{js,ts,jsx,tsx}', // ignore storybook files
       '**/*.{spec,test}.{js,ts,jsx,tsx}', // ignore tests
@@ -616,7 +617,7 @@ export default {
    * @type {string[]}
    * @version 2
    */
-  watch: {
+  watch: <InputObject>{
     $resolve: (val, get) => {
       const rootDir = get('rootDir')
       return Array.from(new Set([].concat(val, get('_nuxtConfigFiles'))
@@ -720,7 +721,7 @@ export default {
    * @type {typeof import('../src/types/config').RuntimeConfig}
    * @version 3
    */
-  runtimeConfig: {
+  runtimeConfig: <InputObject>{
     $resolve: (val: RuntimeConfig, get) => defu(val, {
       ...get('publicRuntimeConfig'),
       ...get('privateRuntimeConfig'),

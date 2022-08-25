@@ -1,11 +1,13 @@
+import type { InputObject } from 'untyped'
+
 export default {
   /** @version 3 */
   experimental: {
     /**
      * Set to true to generate an async entry point for the Vue bundle (for module federation support).
      */
-    asyncEntry: {
-      $resolve: (val, get) => val ?? false
+    asyncEntry: <InputObject>{
+      $resolve: (val) => val ?? false
     },
 
     /**
@@ -31,7 +33,7 @@ export default {
      *
      * @deprecated use `vite.devBundler: 'vite-node'`
      */
-    viteNode: {
+    viteNode: <InputObject>{
       $resolve: (val) => {
         val = process.env.EXPERIMENTAL_VITE_NODE ? true : val
         if (val === true) {

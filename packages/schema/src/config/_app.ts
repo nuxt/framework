@@ -1,6 +1,8 @@
 import { resolve, join } from 'pathe'
 import { existsSync, readdirSync } from 'node:fs'
 import defu from 'defu'
+import type { InputObject } from 'untyped'
+import { MetaObject } from '../types/meta'
 
 export default {
   /**
@@ -17,8 +19,12 @@ export default {
      * @version 2
      */
     config: {
-      silent: { $resolve: (val, get) => val ?? !get('dev') },
-      performance: { $resolve: (val, get) => val ?? get('dev') },
+      silent: <InputObject>{
+        $resolve: (val, get) => val ?? !get('dev') 
+      },
+      performance: <InputObject>{
+        $resolve: (val, get) => val ?? get('dev') 
+      },
     },
     /**
      * Options for the Vue compiler that will be passed at build time.
@@ -54,7 +60,7 @@ export default {
      * @deprecated - use `buildAssetsDir` instead
      * @version 2
      */
-    assetsPath: {
+    assetsPath: <InputObject>{
       $resolve: (val, get) => val ?? get('buildAssetsDir')
     },
     /**
@@ -66,7 +72,7 @@ export default {
      * NUXT_APP_CDN_URL=https://mycdn.org/ node .output/server/index.mjs
      * ```
      */
-    cdnURL: {
+    cdnURL: <InputObject>{
       $resolve: (val, get) => get('dev') ? '' : (process.env.NUXT_APP_CDN_URL ?? val) || ''
     },
     /**
@@ -103,9 +109,9 @@ export default {
      * @type {typeof import('../src/types/config').NuxtAppConfig['head']}
      * @version 3
      */
-    head: {
+    head: <InputObject>{
       $resolve: (val, get) => {
-        const resolved = defu(val, get('meta'), {
+        const resolved: Required<MetaObject> = defu(val, get('meta'), {
           meta: [],
           link: [],
           style: [],
@@ -173,7 +179,7 @@ export default {
    * ```
    * @version 2
    */
-  appTemplatePath: {
+  appTemplatePath: <InputObject>{
     $resolve: (val, get) => {
       if (val) {
         return resolve(get('srcDir'), val)
@@ -191,7 +197,7 @@ export default {
    * By default, it is enabled if there is a `store/` directory.
    * @version 2
    */
-  store: {
+  store: <InputObject>{
     $resolve: (val, get) => val !== false &&
       existsSync(join(get('srcDir'), get('dir.store'))) &&
       readdirSync(join(get('srcDir'), get('dir.store')))
@@ -305,8 +311,8 @@ export default {
    * @version 2
    * @version 3
    */
-  css: {
-    $resolve: val => (val ?? []).map(c => c.src || c)
+  css: <InputObject>{
+    $resolve: val => (val ?? []).map((c: any) => c.src || c)
   },
 
   /**
@@ -370,7 +376,7 @@ export default {
    * other options will be passed to the template).
    * @version 2
    */
-  loadingIndicator: {
+  loadingIndicator: <InputObject>{
     $resolve: (val, get) => {
       val = typeof val === 'string' ? { name: val } : val
       return defu(val, {
@@ -394,7 +400,7 @@ export default {
    * @see [vue@3 documentation](https://vuejs.org/guide/built-ins/transition-group.html#enter-leave-transitions)
    * @version 2
    */
-  pageTransition: {
+  pageTransition: <InputObject>{
     $resolve: (val, get) => {
       val = typeof val === 'string' ? { name: val } : val
       return defu(val, {
@@ -418,7 +424,7 @@ export default {
    * @see [vue@3 documentation](https://vuejs.org/guide/built-ins/transition-group.html#enter-leave-transitions)
    * @version 2
    */
-  layoutTransition: {
+  layoutTransition: <InputObject>{
     $resolve: val => {
       val = typeof val === 'string' ? { name: val } : val
       return defu(val, {

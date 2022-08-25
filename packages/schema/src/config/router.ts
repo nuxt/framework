@@ -1,4 +1,5 @@
 import { normalizeURL, withTrailingSlash } from 'ufo'
+import type { InputObject } from 'untyped'
 
 export default {
   /**
@@ -31,12 +32,12 @@ export default {
    * within a bigger web site.
    * @version 2
    */
-  base: {
+  base: <InputObject>{
     $resolve: (val, get) => val ? withTrailingSlash(normalizeURL(val)) : get('app').baseURL
   },
 
   /** @private */
-  _routerBaseSpecified: {
+  _routerBaseSpecified: <InputObject>{
     $resolve: (_val, get) => typeof get('router.base') === 'string'
   },
 
@@ -57,7 +58,7 @@ export default {
    * Set the default(s) middleware for every page of the application.
    * @version 2
    */
-  middleware: {
+  middleware: <InputObject>{
     $resolve: val => Array.isArray(val) ? val : [val].filter(Boolean)
   },
 
@@ -109,7 +110,7 @@ export default {
    * @see [vue-router `scrollBehavior` documentation](https://router.vuejs.org/guide/advanced/scroll-behavior.html).
    * @version 2
    */
-  scrollBehavior: {
+  scrollBehavior: <InputObject>{
     $schema: {
       deprecated: 'router.scrollBehavior` property is deprecated in favor of using `~/app/router.scrollBehavior.js` file, learn more: https://nuxtjs.org/api/configuration-router#scrollbehavior'
     }

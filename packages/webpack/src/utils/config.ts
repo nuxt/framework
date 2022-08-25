@@ -19,7 +19,7 @@ export function createWebpackConfigContext (nuxt: Nuxt) {
     isServer: false,
     isClient: false,
 
-    alias: {} as Configuration['resolve']['alias'],
+    alias: {} as NonNullable<Configuration['resolve']>['alias'],
     transpile: [] as RegExp[]
   }
 }
@@ -61,7 +61,7 @@ export function getWebpackConfig (ctx: WebpackConfigContext): Configuration {
 
   // TODO
   const builder = {}
-  const loaders = []
+  const loaders: any[] = []
 
   // @ts-ignore
   const { extend } = options.build

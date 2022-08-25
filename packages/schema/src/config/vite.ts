@@ -1,5 +1,6 @@
 import { resolve } from 'pathe'
 import { withoutLeadingSlash } from 'ufo'
+import type { InputObject } from 'untyped'
 
 export default {
   /**
@@ -12,14 +13,14 @@ export default {
    * @version 3
    */
   vite: {
-    root: {
+    root: <InputObject>{
       $resolve: (val, get) => val ?? get('srcDir')
     },
-    mode: {
+    mode: <InputObject>{
       $resolve: (val, get) => val ?? (get('dev') ? 'development' : 'production')
     },
     logLevel: 'warn',
-    define: {
+    define: <InputObject>{
       $resolve: (val, get) => ({
         'process.dev': get('dev'),
         ...val || {}
@@ -28,21 +29,21 @@ export default {
     resolve: {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
     },
-    publicDir: {
+    publicDir: <InputObject>{
       $resolve: (val, get) => val ?? resolve(get('srcDir'), get('dir').public)
     },
     vue: {
-      isProduction: {
+      isProduction: <InputObject>{
         $resolve: (val, get) => val ?? !get('dev')
       },
       template: {
-        compilerOptions: {
+        compilerOptions: <InputObject>{
           $resolve: (val, get) => val ?? get('vue').compilerOptions
         }
       }
     },
     optimizeDeps: {
-      exclude: {
+      exclude: <InputObject>{
         $resolve: (val, get) => [
           ...val || [],
           ...get('build.transpile').filter((i) => typeof i === 'string'),
@@ -57,7 +58,7 @@ export default {
     },
     clearScreen: false,
     build: {
-      assetsDir: {
+      assetsDir: <InputObject>{
         $resolve: (val, get) => val ?? withoutLeadingSlash(get('app').buildAssetsDir)
       },
       emptyOutDir: false
@@ -65,7 +66,7 @@ export default {
     server: {
       fs: {
         strict: false,
-        allow: {
+        allow: <InputObject>{
           $resolve: (val, get) => [
             get('buildDir'),
             get('srcDir'),

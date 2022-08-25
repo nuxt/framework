@@ -1,3 +1,5 @@
+import type { InputObject } from 'untyped'
+
 /**
  * @version 2
  */
@@ -12,7 +14,9 @@ export default {
     shouldPrefetch: () => false,
     shouldPreload: (_fileWithoutQuery, asType) => ['script', 'style'].includes(asType),
     /** enabled by default for development */
-    runInNewContext: { $resolve: (val, get) => val ?? get('dev') }
+    runInNewContext: <InputObject>{
+      $resolve: (val, get) => val ?? get('dev')
+    }
   },
 
   /**
@@ -41,7 +45,9 @@ export default {
    *
    * Set to `collapsed` to collapse the logs, or `false` to disable.
    */
-  ssrLog: { $resolve: (val, get) => get('dev') ? Boolean(val) : false },
+  ssrLog: <InputObject>{
+    $resolve: (val, get) => get('dev') ? Boolean(val) : false
+  },
 
   /**
    * Configuration for HTTP2 push headers.
@@ -206,7 +212,7 @@ export default {
    * }
    * ```
    */
-  csp: {
+  csp: <InputObject>{
     $resolve: (val, get) => {
       if (!val) { return false }
       return {

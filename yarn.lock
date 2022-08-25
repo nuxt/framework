@@ -1767,6 +1767,7 @@ __metadata:
     ufo: ^0.8.5
     unbuild: latest
     unimport: ^0.6.7
+    untyped: ^0.4.5
     vite: ~3.0.9
   languageName: unknown
   linkType: soft
@@ -1904,6 +1905,7 @@ __metadata:
     "@nuxt/friendly-errors-webpack-plugin": ^2.5.2
     "@nuxt/kit": 3.0.0-rc.8
     "@nuxt/schema": 3.0.0-rc.8
+    "@types/lodash-es": ^4.17.6
     "@types/pify": ^5.0.1
     "@types/webpack-bundle-analyzer": ^4.4.2
     "@types/webpack-dev-middleware": ^5.0.2
@@ -2430,6 +2432,15 @@ __metadata:
   version: 0.0.29
   resolution: "@types/json5@npm:0.0.29"
   checksum: e60b153664572116dfea673c5bda7778dbff150498f44f998e34b5886d8afc47f16799280e4b6e241c0472aef1bc36add771c569c68fc5125fc2ae519a3eb9ac
+  languageName: node
+  linkType: hard
+
+"@types/lodash-es@npm:^4.17.6":
+  version: 4.17.6
+  resolution: "@types/lodash-es@npm:4.17.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 9bd239dd525086e278821949ce12fbdd4f100a060fed9323fc7ad5661113e1641f28a7ebab617230ed3474680d8f4de705c1928b48252bb684be6ec9eed715db
   languageName: node
   linkType: hard
 
