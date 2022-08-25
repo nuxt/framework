@@ -1,30 +1,34 @@
 # `defineNuxtRouteMiddleware`
 
-You can create named route middleware using `defineNuxtRouteMiddleware`  helper function.
+You can create named route middleware using `defineNuxtRouteMiddleware` helper function.
 
-Route middleware are generally stored in the `middleware/` directory unless otherwise customized using [nuxt.config](/api/configuration/nuxt.config#middleware).
+Route middleware are stored in the `middleware/` directory of your Nuxt application (unless [set otherwise](/api/configuration/nuxt.config#middleware)).
 
-## Usage
+## Type
 
 ```ts
-export default defineNuxtRouteMiddleware((middleware: RouteMiddleware) => {})
+defineNuxtRouteMiddleware(middleware: RouteMiddleware) => RouteMiddleware
+
+interface RouteMiddleware {
+  (to: RouteLocationNormalized, from: RouteLocationNormalized): ReturnType<NavigationGuard>
+}
 ```
 
-### Parameters
+## Parameters
 
-`defineNuxtRouteMiddleware` provides parameter of type `RouteMiddleware` which includes two Vue route objects:
+### `middleware`
 
-- **to:** `type: RouteMiddleware` - `to` is the first argument that return the next route
+- **Type**: `RouteMiddleware`
 
-- **from:** `type: RouteMiddleware` - `from` is the second argument that returns the current route
+  Expects a function as a single argument, which takes two `vue-router`'s route location objects as parameters: the next route `to` as the first, and the current route `from` as the second.
 
-Learn more about available properties of **[route objects](https://v3.nuxtjs.org/api/composables/use-route)** .
+Learn more about available properties of `RouteLocationNormalized` in the **[`vue-router` docs](https://router.vuejs.org/api/interfaces/RouteLocationNormalized.html)**.
 
 ## Examples
 
-### Show error page
+### Showing Error Page
 
-You can use route middleware to throw errors and show helpful error messages.
+You can use route middleware to throw errors and show helpful error messages:
 
 ```ts [middleware/error.ts]
 export default defineNuxtRouteMiddleware((to) => {
@@ -34,24 +38,25 @@ export default defineNuxtRouteMiddleware((to) => {
 })
 ```
 
-Above route middleware will take user on a custom error page defined at `~/error.vue` and show error message and code as passed from the middleware.
+The above route middleware will redirect a user to the custom error page defined in the `~/error.vue` file, and expose the error message and code passed from the middleware.
 
 ### Redirection
 
-The route middleware below shows how you can use `useState` in combination with `navigateTo` helper method to redirect users on different routes based on their authentication status.
+You can use `useState` in combination with `navigateTo` helper function inside the route middleware to redirect users to different routes based on their authentication status:
 
 ```ts [middleware/auth.ts]
 export default defineNuxtRouteMiddleware((to, from) => {
   const auth = useState('auth')
   
-  if (!auth.value.authenticated) {
+  if (!auth.value.isAuthenticated) {
     return navigateTo('/login')
   }
+
   return navigateTo('/dashboard')
 })
 ```
 
-Both [navigateTo](/api/utils/navigate-to) and [abortNavigation](/api/utils/abort-navigation) are globally available helper methods that you can use inside `defineNuxtRouteMiddleware` helper function.
+Both [navigateTo](/api/utils/navigate-to) and [abortNavigation](/api/utils/abort-navigation) are globally available helper functions that you can use inside `defineNuxtRouteMiddleware`.
 
 ::ReadMore{link="/guide/features/routing"}
 ::
