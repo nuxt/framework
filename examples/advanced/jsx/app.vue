@@ -20,11 +20,11 @@ const InlineComponent = () => (
 <template>
   <NuxtExampleLayout example="advanced/jsx">
     <InlineComponent />
-    <!-- Defined in components/defineComponent-jsx-component.ts -->
+    <!-- Defined in components/jsx-component.ts -->
     <DefineComponentMyComponent
       message="This is an external defineComponent JSX component"
     />
-    <!-- Defined in components/function-jsx-component.ts -->
+    <!-- function in components/jsx-component.ts -->
     <ExportMyComponent message="This is an external function JSX component" />
   </NuxtExampleLayout>
 </template>
