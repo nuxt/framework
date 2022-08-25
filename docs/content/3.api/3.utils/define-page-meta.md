@@ -15,7 +15,7 @@
 
 ## Type
 
-```
+```ts
 definePageMeta(meta: PageMeta) => void
 
 interface PageMeta {
@@ -37,46 +37,46 @@ interface PageMeta {
 
   An object accepting the following page metadata:
   
-  #### `pageTransition`
+  **`pageTransition`**
   
   - **Type**: `boolean` | [`TransitionProps`](https://vuejs.org/api/built-in-components.html#transition)
   
     Set name of the transition to apply for current page. You can also set this value to `false` to disable the page transition.
-    
-  #### `layoutTransition`
-  
+
+  **`layoutTransition`**
+
   - **Type**: `boolean` | [`TransitionProps`](https://vuejs.org/api/built-in-components.html#transition)
-  
+
     Set name of the transition to apply for current layout. You can also set this value to `false` to disable the layout transition.
-    
-  #### `key`
-  
+
+  **`key`**
+
   - **Type**: `false` | `string` | `((route: RouteLocationNormalizedLoaded) => string)`
-  
+
     Set `key` value when you need more control over when the `<NuxtPage>` component is re-rendered.
-    
-  #### `keepalive`
-  
+
+  **`keepalive`**
+
   - **Type**: `boolean` | [`KeepAliveProps`](https://vuejs.org/api/built-in-components.html#keepalive)
-  
+
     Set to `true` when you want to preserve page state across route changes or use the [`KeepAliveProps`](https://vuejs.org/api/built-in-components.html#keepalive) for a fine-grained control.
-    
-  #### `layout`
-  
+
+  **`layout`**
+
   - **Type**: `false` | `LayoutKey` | `Ref<LayoutKey>` | `ComputedRef<LayoutKey>`
-  
+
     Set a static or dynamic name of the layout for each route. This can be set to `false` in case the default layout needs to be disabled.
-    
-  #### `middleware`
-  
+
+  **`middleware`**
+
   - **Type**: `MiddlewareKey` | [`NavigationGuard`](https://router.vuejs.org/api/interfaces/NavigationGuard.html#navigationguard) | `Array<MiddlewareKey | NavigationGuard>`
-  
+
     Define anonymous or named middleware directly within `definePageMeta`. Learn more about [route middleware](/docs/directory-structure/middleware).
-    
-  #### `[key: string]`
-  
+
+  **`[key: string]`**
+
   - **Type**: `any`
-  
+
     Apart from the above properties, you can also set **custom** metadata. You may wish to do so in a type-safe way by [augmenting the type of the `meta` object](/guide/directory-structure/pages/#typing-custom-metadata).
 
 ## Examples
@@ -84,6 +84,7 @@ interface PageMeta {
 ### Basic Usage
 
 The example below demonstrates:
+
 - how `key` can be a function that returns a value;
 - how `keepalive` property makes sure that the `<modal>` component is not cached when switching between multiple components;
 - adding `pageType` as a custom property:
