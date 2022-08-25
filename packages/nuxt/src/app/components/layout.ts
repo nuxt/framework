@@ -1,10 +1,10 @@
 import { defineComponent, isRef, nextTick, onMounted, Ref, Transition, VNode } from 'vue'
 import { _wrapIf } from './utils'
-import { setLayout, useRoute } from '#app'
+import { useRoute } from '#app'
 // @ts-ignore
 import layouts from '#build/layouts'
-
-const defaultLayoutTransition = { name: 'layout', mode: 'out-in' }
+// @ts-ignore
+import { appLayoutTransition as defaultLayoutTransition } from '#build/nuxt.config.mjs'
 
 export default defineComponent({
   props: {
@@ -29,7 +29,7 @@ export default defineComponent({
     }
 
     return () => {
-      const layout = (isRef(props.name) ? props.name.value : props.name) ?? route.meta.layout as string ?? setLayout().value ?? 'default'
+      const layout = (isRef(props.name) ? props.name.value : props.name) ?? route.meta.layout as string ?? 'default'
 
       const hasLayout = layout && layout in layouts
       if (process.dev && layout && !hasLayout && layout !== 'default') {
