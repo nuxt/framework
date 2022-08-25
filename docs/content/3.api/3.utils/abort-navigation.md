@@ -56,8 +56,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
  if (to.params.id === '1') {
     abortNavigation({ 
        statusCode: 401, 
-       statusMessage: "This feature requires special permission." 
-  })
+       statusMessage: 'This feature requires special permission.'
+    })
   }
 })
 ```
