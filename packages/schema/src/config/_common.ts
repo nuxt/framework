@@ -496,7 +496,7 @@ export default {
    */
   extensions: {
     // https://github.com/nuxt/framework/issues/6920
-    $resolve: val => resolve(val)
+    $resolve: val => val ? resolve(val) : ['.js', '.jsx', '.mjs', '.ts', '.tsx', '.vue']
   },
 
   /**
