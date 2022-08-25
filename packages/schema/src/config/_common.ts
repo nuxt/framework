@@ -495,7 +495,8 @@ export default {
    * @version 3
    */
   extensions: {
-    $resolve: val => ['.js', '.jsx', '.mjs', '.ts', '.tsx', '.vue'].concat(val).filter(Boolean)
+    // https://github.com/nuxt/framework/issues/6920
+    $resolve: val => val
   },
 
   /**
