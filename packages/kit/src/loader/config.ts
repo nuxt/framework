@@ -34,7 +34,7 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
   nuxtConfig._layers = layers.filter(layer => layer.configFile && !layer.configFile.endsWith('.nuxtrc'))
 
   // https://github.com/nuxt/framework/issues/6920
-  if(nuxtConfig.extensions){
+  if (nuxtConfig.extensions) {
     // Cover extension
     NuxtConfigSchema.extensions.$resolve = nuxtConfig.extensions as any
   }
