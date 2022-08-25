@@ -34,7 +34,7 @@ Set a static or dynamic name of the layout for each route. This can be set to `f
 
 - **middleware**: `string | function`
 
-Define anonymous or named middleware directly within `definePageMeta` under `middleware` key. Learn more about route middleware.
+Define anonymous or named middleware directly within `definePageMeta` under `middleware` key. Learn more about [route middleware](/docs/directory-structure/middleware/).
 
 - **layoutTransition**: `boolean | TransitionProps`
 
@@ -46,14 +46,14 @@ Set name of the transition to apply for current layout. You can also set this va
 Set name of the transition to apply for current page. You can also set this value to `false` to disable the page transition.
 
 - **alias**: `string | string[]`
-Set alias to access the same page from different paths. Learn more about alias [alias](https://router.vuejs.org/guide/essentials/redirect-and-alias.html#alias)
+
+Set alias to access the same page from different paths. Learn more about [alias](https://router.vuejs.org/guide/essentials/redirect-and-alias.html#alias)
 
 - **keepalive**: `boolean | KeepAliveProps`
 
-Set to `true` when you want to preserve page state across route changes.
-(Learn more about [KeepAlive](https://vuejs.org/api/built-in-components.html#keepalive))
+Set to `true` when you want to preserve page state across route changes. Learn more about [KeepAlive](https://vuejs.org/api/built-in-components.html#keepalive).
 
-Apart from above values, you can set **custom** values in `definePageMeta` as well depending on your use-case. This data can then be accessed throughout your Nuxt application using `route.meta` object as shown below.
+Apart from the above values, you can also set **custom** values in `definePageMeta` as well, depending on your use-case. This data can then be accessed throughout your Nuxt application using the `route.meta` object as shown below.
 
 ```vue [pages/some-page.vue]
 <script setup>
@@ -66,7 +66,7 @@ Apart from above values, you can set **custom** values in `definePageMeta` as we
 
 ### Basic usage
 
-The example below shows how `key` can be a function that returns a value, while `pageType` is a custom property and `keepAlive` property makes sure that the `modal` component is not cached when you change pages.
+The example below shows how `key` can be a function that returns a value, while `pageType` is a custom property and `keepalive` property makes sure that the `modal` component is not cached when you change pages.
 
 ```vue [pages/some-page.vue]
 <script setup>
@@ -84,7 +84,7 @@ The example below shows how `key` can be a function that returns a value, while 
 </script>
 ```
 
-### Define m**iddleware**
+### Define middleware
 
 The example below shows how the middleware can be defined using a `function` directly within the `definePageMeta` or set as a `string` that matches the middleware file name located in the `middleware/` directory.
 
@@ -104,8 +104,8 @@ The example below shows how the middleware can be defined using a `function` dir
     ],
 
     // string
-    // middleware: ["auth"]
-    // or middleware: "auth"
+    // middleware: ['auth']
+    // or middleware: 'auth'
 })
 </script>
 ```
@@ -117,12 +117,12 @@ You can set the `layout` as a `string` value that matches the layout file locate
 ```vue [pages/some-page.vue]
 <script setup>
   function applyCustomLayout () {
-    route.meta.layout = "custom"
+    route.meta.layout = 'custom'
   }
 
   definePageMeta({
     layout: false
-    // or layout: "custom"
+    // or layout: 'custom'
   })
 </script>
 ```
