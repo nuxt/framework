@@ -2375,6 +2375,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/flat@npm:^5.0.2":
+  version: 5.0.2
+  resolution: "@types/flat@npm:5.0.2"
+  checksum: e21d51d872e788bdb381887c2880f717ba4377beb4055078136127134858efd15044655610f1fce4832d9a103ded468a25335203fc53f36db08edd5ab5a8b3db
+  languageName: node
+  linkType: hard
+
 "@types/fs-extra@npm:^9.0.13":
   version: 9.0.13
   resolution: "@types/fs-extra@npm:9.0.13"
@@ -10196,6 +10203,7 @@ __metadata:
     "@nuxt/kit": 3.0.0-rc.8
     "@nuxt/schema": 3.0.0-rc.8
     "@types/clear": ^0
+    "@types/flat": ^5.0.2
     "@types/mri": ^1.1.1
     "@types/semver": ^7
     c12: ^0.2.9
