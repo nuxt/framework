@@ -36,7 +36,8 @@ interface PageMeta {
 - **Type**: `PageMeta`
 
   An object accepting the following page metadata:
-  
+\
+\
   **`pageTransition`**
   
   - **Type**: `boolean` | [`TransitionProps`](https://vuejs.org/api/built-in-components.html#transition)
