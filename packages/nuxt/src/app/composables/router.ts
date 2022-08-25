@@ -2,7 +2,7 @@ import { getCurrentInstance, inject } from 'vue'
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure, RouteLocationPathRaw } from 'vue-router'
 import { sendRedirect } from 'h3'
 import { hasProtocol, joinURL, parseURL } from 'ufo'
-import { useNuxtApp, useRuntimeConfig } from '#app'
+import { useNuxtApp, useRuntimeConfig, useState } from '#app'
 
 export const useRouter = () => {
   return useNuxtApp()?.$router as Router
@@ -113,4 +113,18 @@ export const abortNavigation = (err?: Error | string) => {
     throw err instanceof Error ? err : new Error(err)
   }
   return false
+}
+
+export const setLayout = (layout: string) => {
+  if (process.server) {
+    useState('_layout').value = layout
+  }
+  if (isProcessingMiddleware()) {
+    const unsubscribe = useRouter().beforeResolve((to) => {
+      to.meta.layout = layout
+      unsubscribe()
+    })
+  } else {
+    useRoute().meta.layout = layout
+  }
 }
