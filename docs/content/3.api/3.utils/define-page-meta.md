@@ -22,6 +22,7 @@
 You can set following properties through `definePageMeta` .
 
 - **title** - `string`
+
 Set custom title for each route of your application
 
 - **key** - `string | function`
@@ -79,7 +80,7 @@ The example below shows how `key` can be a function that returns a value, while 
     },
 
     // custom property: pageType
-    pageType: "Checkout"
+    pageType: 'Checkout'
   })
 </script>
 ```
