@@ -20,7 +20,7 @@ interface RouteMiddleware {
 
 - **Type**: `RouteMiddleware`
 
-  A function which takes two Vue Router's route location objects as parameters: the next route `to` as the first, and the current route `from` as the second.
+A function that takes two Vue Router's route location objects as parameters: the next route `to` as the first, and the current route `from` as the second.
 
 Learn more about available properties of `RouteLocationNormalized` in the **[Vue Router docs](https://router.vuejs.org/api/interfaces/RouteLocationNormalized.html)**.
 
