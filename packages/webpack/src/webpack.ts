@@ -96,9 +96,9 @@ async function createDevMiddleware (compiler: Compiler) {
   await nuxt.callHook('webpack:hotMiddleware', hotMiddleware)
 
   // Register devMiddleware on server
-  await nuxt.callHook('server:devMiddleware', async (req, res, next) => {
+  await nuxt.callHook('server:devMiddleware', async (req: IncomingMessage, res: ServerResponse, next: (error?: any) => void) => {
     for (const mw of [devMiddleware, hotMiddleware]) {
-      await mw?.(req, res)
+      await mw?.(req, res, next)
     }
     next()
   })
@@ -111,11 +111,11 @@ async function compile (compiler: Compiler) {
 
   const { name } = compiler.options
 
-  await nuxt.callHook('build:compile', { name, compiler })
+  await nuxt.callHook('build:compile', { name: name!, compiler })
 
   // Load renderer resources after build
   compiler.hooks.done.tap('load-resources', async (stats) => {
-    await nuxt.callHook('build:compiled', { name, compiler, stats })
+    await nuxt.callHook('build:compiled', { name: name!, compiler, stats })
     // Reload renderer
     await nuxt.callHook('build:resources', compiler.outputFileSystem)
   })
