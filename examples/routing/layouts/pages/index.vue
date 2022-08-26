@@ -11,6 +11,18 @@
         <NuxtLink to="/dynamic">
           Dynamic layout
         </NuxtLink>
+        <NuxtLink to="/other">
+          Other layout
+        </NuxtLink>
+        <NButton @click="setLayout('default')">
+          Change to default layout
+        </NButton>
+        <NButton @click="setLayout('custom')">
+          Change to custom layout
+        </NButton>
+        <NButton @click="setLayout('other')">
+          Change to other layout
+        </NButton>
       </nav>
     </template>
   </NuxtExampleLayout>
