@@ -16,7 +16,7 @@ export default defineSchemaObject({
       if (typeof val === 'object') {
         return val
       }
-      const map = {
+      const map: Record<string, string> = {
         vite: '@nuxt/vite-builder',
         webpack: '@nuxt/webpack-builder',
       }
@@ -226,15 +226,16 @@ export default defineSchemaObject({
      *   chunk: ({ isDev }) => (isDev ? '[name].js' : '[id].[contenthash].js')
      * }
      * ```
+     * @type {Record<string, ((arg: any) => string)>}
      * @version 2
      */
     filenames: {
-      app: ({ isDev, isModern }) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
-      chunk: ({ isDev, isModern }) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
-      css: ({ isDev }) => isDev ? '[name].css' : 'css/[contenthash:7].css',
-      img: ({ isDev }) => isDev ? '[path][name].[ext]' : 'img/[name].[contenthash:7].[ext]',
-      font: ({ isDev }) => isDev ? '[path][name].[ext]' : 'fonts/[name].[contenthash:7].[ext]',
-      video: ({ isDev }) => isDev ? '[path][name].[ext]' : 'videos/[name].[contenthash:7].[ext]'
+      app: ({ isDev, isModern }: any) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
+      chunk: ({ isDev, isModern }: any) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
+      css: ({ isDev }: any) => isDev ? '[name].css' : 'css/[contenthash:7].css',
+      img: ({ isDev }: any) => isDev ? '[path][name].[ext]' : 'img/[name].[contenthash:7].[ext]',
+      font: ({ isDev }: any) => isDev ? '[path][name].[ext]' : 'fonts/[name].[contenthash:7].[ext]',
+      video: ({ isDev }: any) => isDev ? '[path][name].[ext]' : 'videos/[name].[contenthash:7].[ext]'
     },
 
     /**

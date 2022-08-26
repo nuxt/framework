@@ -46,7 +46,7 @@ export default defineSchemaObject({
       exclude: {
         $resolve: (val, get) => [
           ...val || [],
-          ...get('build.transpile').filter((i) => typeof i === 'string'),
+          ...get('build.transpile').filter((i: string) => typeof i === 'string'),
           'vue-demi'
         ]
       }

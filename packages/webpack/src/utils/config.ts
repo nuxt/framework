@@ -19,7 +19,7 @@ export function createWebpackConfigContext (nuxt: Nuxt) {
     isServer: false,
     isClient: false,
 
-    alias: {} as NonNullable<Configuration['resolve']>['alias'],
+    alias: {} as { [index: string]: string | false | string[] },
     transpile: [] as RegExp[]
   }
 }
@@ -40,7 +40,7 @@ export function applyPresets (ctx: WebpackConfigContext, presets: WebpackConfigP
 export function fileName (ctx: WebpackConfigContext, key: string) {
   const { options } = ctx
 
-  let fileName = options.webpack.filenames[key]
+  let fileName = options.webpack.filenames[key as keyof typeof options.webpack.filenames] as ((ctx: WebpackConfigContext) => string) | string
 
   if (typeof fileName === 'function') {
     fileName = fileName(ctx)

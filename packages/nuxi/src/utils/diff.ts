@@ -3,7 +3,7 @@ import { detailedDiff } from 'deep-object-diff'
 import { green, red, blue, cyan } from 'colorette'
 
 function normalizeDiff (diffObj: any, type: 'added' | 'deleted' | 'updated', ignore: string[]) {
-  return Object.entries(flatten(diffObj))
+  return Object.entries(flatten(diffObj) as Record<string, any>)
     .map(([key, value]) => ({ key, value, type }))
     .filter(item => !ignore.includes(item.key) && typeof item.value !== 'function')
 }

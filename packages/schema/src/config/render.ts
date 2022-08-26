@@ -12,7 +12,7 @@ export default <SchemaObject> {
    */
   bundleRenderer: {
     shouldPrefetch: () => false,
-    shouldPreload: (_fileWithoutQuery, asType) => ['script', 'style'].includes(asType),
+    shouldPreload: (_fileWithoutQuery: string, asType: string) => ['script', 'style'].includes(asType),
     /** enabled by default for development */
     runInNewContext: {
       $resolve: (val, get) => val ?? get('dev')
