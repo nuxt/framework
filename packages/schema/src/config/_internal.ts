@@ -1,6 +1,6 @@
-import { defineSchemaObject } from '../utils'
+import { defineUntypedSchema } from 'untyped'
 
-export default defineSchemaObject({
+export default defineUntypedSchema({
   /** @private */
   _majorVersion: 2,
   /** @private */

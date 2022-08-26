@@ -1,9 +1,9 @@
-import { SchemaObject } from '../utils'
+import { SchemaDefinition } from 'untyped'
 
 /**
  * @version 2
  */
-export default <SchemaObject> {
+export default <SchemaDefinition> {
   /** The text that displays on the Nuxt loading indicator when `ssr: false`. */
   loading: 'Loading...',
   /** The 404 text on the default Nuxt error page. */

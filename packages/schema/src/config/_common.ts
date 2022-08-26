@@ -7,9 +7,9 @@ import defu from 'defu'
 
 import { RuntimeConfig } from '../types/config'
 
-import { defineSchemaObject } from '../utils'
+import { defineUntypedSchema } from 'untyped'
 
-export default defineSchemaObject({
+export default defineUntypedSchema({
   /**
    * Extend nested configurations from multiple local or remote sources.
    *

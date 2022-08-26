@@ -1,11 +1,11 @@
 import { resolve } from 'pathe'
 import { joinURL } from 'ufo'
-import { SchemaObject } from '../utils'
+import { SchemaDefinition } from 'untyped'
 
 /**
  * @version 2
  */
- export default <SchemaObject> {
+ export default <SchemaDefinition> {
   /**
    * Directory name that holds all the assets and generated pages for a `static` build.
    */

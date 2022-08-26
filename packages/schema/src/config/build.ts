@@ -2,9 +2,9 @@ import defu from 'defu'
 import { join } from 'pathe'
 import { isCI, isTest } from 'std-env'
 import { normalizeURL, withTrailingSlash } from 'ufo'
-import { defineSchemaObject } from '../utils'
+import { defineUntypedSchema } from 'untyped'
 
-export default defineSchemaObject({
+export default defineUntypedSchema({
   /**
    * The builder to use for bundling the Vue part of your application.
    *

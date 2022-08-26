@@ -1,6 +1,6 @@
-import { defineSchemaObject } from '../utils'
+import { defineUntypedSchema } from 'untyped'
 
-export default defineSchemaObject({
+export default defineUntypedSchema({
   /**
    * Add a message to the CLI banner by adding a string to this array.
    * @type {string[]}

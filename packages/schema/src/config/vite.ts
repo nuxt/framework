@@ -1,8 +1,8 @@
 import { resolve } from 'pathe'
 import { withoutLeadingSlash } from 'ufo'
-import { defineSchemaObject } from '../utils'
+import { defineUntypedSchema } from 'untyped'
 
-export default defineSchemaObject({
+export default defineUntypedSchema({
   /**
    * Configuration that will be passed directly to Vite.
    *

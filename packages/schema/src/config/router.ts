@@ -1,7 +1,7 @@
 import { normalizeURL, withTrailingSlash } from 'ufo'
-import { defineSchemaObject } from '../utils'
+import { defineUntypedSchema } from 'untyped'
 
-export default defineSchemaObject({
+export default defineUntypedSchema({
   /**
    * Additional options passed to `vue-router`.
    *

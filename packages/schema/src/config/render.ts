@@ -1,9 +1,9 @@
-import { SchemaObject } from '../utils'
+import { SchemaDefinition } from 'untyped'
 
 /**
  * @version 2
  */
-export default <SchemaObject> {
+export default <SchemaDefinition>{
   /**
    * Use this option to customize the Vue SSR bundle renderer.
    * This option is skipped if `ssr: false`.

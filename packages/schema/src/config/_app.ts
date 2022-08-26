@@ -1,12 +1,11 @@
 import { resolve, join } from 'pathe'
 import { existsSync, readdirSync } from 'node:fs'
 import defu from 'defu'
+import { defineUntypedSchema } from 'untyped'
 
 import { MetaObject } from '../types/meta'
 
-import { defineSchemaObject } from '../utils'
-
-export default defineSchemaObject({
+export default defineUntypedSchema({
   /**
    * Vue.js config
    * @version 2
