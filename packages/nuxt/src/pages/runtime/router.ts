@@ -3,6 +3,7 @@ import {
   createRouter,
   createWebHistory,
   createMemoryHistory,
+  createWebHashHistory,
   NavigationGuard,
   RouteLocation
 } from 'vue-router'
@@ -56,7 +57,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   const baseURL = useRuntimeConfig().app.baseURL
   const routerHistory = process.client
-    ? createWebHistory(baseURL)
+    ? routerOptions.hashMode ? createWebHashHistory(baseURL) : createWebHistory(baseURL)
     : createMemoryHistory(baseURL)
 
   const initialURL = process.server ? nuxtApp.ssrContext!.url : createCurrentLocation(baseURL, window.location)
