@@ -1,9 +1,9 @@
-import type { InputObject } from 'untyped'
+import { defineSchemaObject } from '../utils'
 
 /**
  * @version 2
  */
-export default {
+export default defineSchemaObject({
   /**
    * Use this option to customize the Vue SSR bundle renderer.
    * This option is skipped if `ssr: false`.
@@ -14,7 +14,7 @@ export default {
     shouldPrefetch: () => false,
     shouldPreload: (_fileWithoutQuery, asType) => ['script', 'style'].includes(asType),
     /** enabled by default for development */
-    runInNewContext: <InputObject>{
+    runInNewContext: {
       $resolve: (val, get) => val ?? get('dev')
     }
   },
@@ -45,7 +45,7 @@ export default {
    *
    * Set to `collapsed` to collapse the logs, or `false` to disable.
    */
-  ssrLog: <InputObject>{
+  ssrLog: {
     $resolve: (val, get) => get('dev') ? Boolean(val) : false
   },
 
@@ -212,7 +212,7 @@ export default {
    * }
    * ```
    */
-  csp: <InputObject>{
+  csp: {
     $resolve: (val, get) => {
       if (!val) { return false }
       return {
@@ -295,4 +295,4 @@ export default {
       }
     }
   }
-}
+})

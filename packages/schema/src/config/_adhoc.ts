@@ -1,6 +1,6 @@
-import type { InputObject } from 'untyped'
+import { defineSchemaObject } from '../utils'
 
-export default {
+export default defineSchemaObject({
   /**
    * Configure Nuxt component auto-registration.
    *
@@ -14,7 +14,7 @@ export default {
    * @version 2
    * @version 3
    */
-  components: <InputObject>{
+  components: {
     $resolve: (val, get) => {
       if (Array.isArray(val)) {
         return { dirs: val }
@@ -59,4 +59,4 @@ export default {
    * @version 3
   */
   telemetry: undefined
-}
+})

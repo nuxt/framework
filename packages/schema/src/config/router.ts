@@ -1,7 +1,7 @@
 import { normalizeURL, withTrailingSlash } from 'ufo'
-import type { InputObject } from 'untyped'
+import { defineSchemaObject } from '../utils'
 
-export default {
+export default defineSchemaObject({
   /**
    * Additional options passed to `vue-router`.
    *
@@ -32,12 +32,12 @@ export default {
    * within a bigger web site.
    * @version 2
    */
-  base: <InputObject>{
+  base: {
     $resolve: (val, get) => val ? withTrailingSlash(normalizeURL(val)) : get('app').baseURL
   },
 
   /** @private */
-  _routerBaseSpecified: <InputObject>{
+  _routerBaseSpecified: {
     $resolve: (_val, get) => typeof get('router.base') === 'string'
   },
 
@@ -58,7 +58,7 @@ export default {
    * Set the default(s) middleware for every page of the application.
    * @version 2
    */
-  middleware: <InputObject>{
+  middleware: {
     $resolve: val => Array.isArray(val) ? val : [val].filter(Boolean)
   },
 
@@ -110,7 +110,7 @@ export default {
    * @see [vue-router `scrollBehavior` documentation](https://router.vuejs.org/guide/advanced/scroll-behavior.html).
    * @version 2
    */
-  scrollBehavior: <InputObject>{
+  scrollBehavior: {
     $schema: {
       deprecated: 'router.scrollBehavior` property is deprecated in favor of using `~/app/router.scrollBehavior.js` file, learn more: https://nuxtjs.org/api/configuration-router#scrollbehavior'
     }
@@ -169,4 +169,4 @@ export default {
    * @version 2
    */
   trailingSlash: undefined
-}
+})

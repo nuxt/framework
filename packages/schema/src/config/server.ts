@@ -1,5 +1,7 @@
+import { SchemaObject } from '../utils'
+
 /** @version 2 */
-export default {
+export default <SchemaObject> {
   /**
    * Whether to enable HTTPS.
    *

@@ -1,8 +1,8 @@
 import defu from 'defu'
 import createResolver from 'postcss-import-resolver'
-import type { InputObject } from 'untyped'
+import { defineSchemaObject } from '../utils'
 
-export default {
+export default defineSchemaObject({
   /** @version 3 */
   postcss: {
     /** Path to postcss config file. */
@@ -18,7 +18,7 @@ export default {
       /**
        * https://github.com/postcss/postcss-import
        */
-      'postcss-import': <InputObject>{
+      'postcss-import': {
         $resolve: (val, get) => val !== false ? defu(val || {}, {
           resolve: createResolver({
             alias: { ...get('alias') },
@@ -41,7 +41,7 @@ export default {
        */
       autoprefixer: {},
 
-      cssnano: <InputObject>{
+      cssnano: {
         $resolve: (val, get) => val ?? (!get('dev') && {
           preset: ['default', {
             // Keep quotes in font values to prevent from HEX conversion
@@ -52,4 +52,4 @@ export default {
       }
     }
   }
-}
+})

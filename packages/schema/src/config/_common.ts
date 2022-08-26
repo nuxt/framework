@@ -4,10 +4,12 @@ import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
 import defu from 'defu'
-import type { InputObject } from 'untyped'
+
 import { RuntimeConfig } from '../types/config'
 
-export default {
+import { defineSchemaObject } from '../utils'
+
+export default defineSchemaObject({
   /**
    * Extend nested configurations from multiple local or remote sources.
    *
@@ -32,7 +34,7 @@ export default {
    * @version 2
    * @version 3
    */
-  rootDir: <InputObject>{
+  rootDir: {
     $resolve: val => typeof val === 'string' ? resolve(val) : process.cwd()
   },
 
@@ -66,7 +68,7 @@ export default {
    * @version 2
    * @version 3
    */
-  srcDir: <InputObject>{
+  srcDir: {
     $resolve: (val, get) => resolve(get('rootDir'), val || '.')
   },
 
@@ -85,7 +87,7 @@ export default {
    * @version 2
    * @version 3
    */
-  buildDir: <InputObject>{
+  buildDir: {
     $resolve: (val, get) => resolve(get('rootDir'), val || '.nuxt')
   },
 
@@ -110,7 +112,7 @@ export default {
    * By default, it's only enabled in development mode.
    * @version 2
    */
-  debug: <InputObject>{
+  debug: {
     $resolve: (val, get) => val ?? get('dev')
   },
 
@@ -129,7 +131,7 @@ export default {
    *
    * @version 2
    */
-  env: <InputObject>{
+  env: {
     $default: {},
     $resolve: (val) => {
       val = { ...val }
@@ -150,7 +152,7 @@ export default {
    * @type {'jiti' | 'native' | ((p: string | { filename: string }) => NodeRequire)}
    * @version 2
    */
-  createRequire: <InputObject>{
+  createRequire: {
     $resolve: (val: any) => {
       val = process.env.NUXT_CREATE_REQUIRE || val ||
         (typeof globalThis.jest !== 'undefined' ? 'native' : 'jiti')
@@ -172,7 +174,7 @@ export default {
    * @type {'server' | 'static'}
    * @version 2
    */
-  target: <InputObject>{
+  target: {
     $resolve: val => ['server', 'static'].includes(val) ? val : 'server'
   },
 
@@ -188,7 +190,7 @@ export default {
   /**
    * @deprecated use `ssr` option
    */
-  mode: <InputObject>{
+  mode: {
     $resolve: (val, get) => val || (get('ssr') ? 'spa' : 'universal'),
     $schema: { deprecated: '`mode` option is deprecated' }
   },
@@ -303,7 +305,7 @@ export default {
    * Vue instance name and other options.
    * @version 2
    */
-  globalName: <InputObject>{
+  globalName: {
     $resolve: val => (typeof val === 'string' && /^[a-zA-Z]+$/.test(val)) ? val.toLocaleLowerCase() : 'nuxt'
   },
 
@@ -398,7 +400,7 @@ export default {
    * @version 2
    * @deprecated Use `serverHandlers` instead
    */
-  serverMiddleware: <InputObject>{
+  serverMiddleware: {
     $resolve: (val: any) => {
       if (!val) {
         return []
@@ -426,7 +428,7 @@ export default {
    * ```
    * @version 2
    */
-  modulesDir: <InputObject>{
+  modulesDir: {
     $default: ['node_modules'],
     $resolve: (val, get) => [].concat(
       val.map(dir => resolve(get('rootDir'), dir)),
@@ -495,7 +497,7 @@ export default {
    * @version 2
    * @version 3
    */
-  extensions: <InputObject>{
+  extensions: {
     $resolve: val => ['.js', '.jsx', '.mjs', '.ts', '.tsx', '.vue'].concat(val).filter(Boolean)
   },
 
@@ -593,7 +595,7 @@ export default {
    * @version 2
    * @version 3
    */
-  ignore: <InputObject>{
+  ignore: {
     $resolve: (val, get) => [
       '**/*.stories.{js,ts,jsx,tsx}', // ignore storybook files
       '**/*.{spec,test}.{js,ts,jsx,tsx}', // ignore tests
@@ -617,7 +619,7 @@ export default {
    * @type {string[]}
    * @version 2
    */
-  watch: <InputObject>{
+  watch: {
     $resolve: (val, get) => {
       const rootDir = get('rootDir')
       return Array.from(new Set([].concat(val, get('_nuxtConfigFiles'))
@@ -721,7 +723,7 @@ export default {
    * @type {typeof import('../src/types/config').RuntimeConfig}
    * @version 3
    */
-  runtimeConfig: <InputObject>{
+  runtimeConfig: {
     $resolve: (val: RuntimeConfig, get) => defu(val, {
       ...get('publicRuntimeConfig'),
       ...get('privateRuntimeConfig'),
@@ -760,4 +762,4 @@ export default {
    * @version 3
    */
    appConfig: {},
-}
+})

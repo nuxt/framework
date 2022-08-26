@@ -1,4 +1,6 @@
-export default {
+import { defineSchemaObject } from '../utils'
+
+export default defineSchemaObject({
   /**
    * Configuration for Nitro.
    *
@@ -31,4 +33,4 @@ export default {
    * @version 3
    */
   devServerHandlers: []
-}
+})

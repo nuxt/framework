@@ -1,12 +1,12 @@
-import type { InputObject } from 'untyped'
+import { defineSchemaObject } from '../utils'
 
-export default {
+export default defineSchemaObject({
   /** @version 3 */
   experimental: {
     /**
      * Set to true to generate an async entry point for the Vue bundle (for module federation support).
      */
-    asyncEntry: <InputObject>{
+    asyncEntry: {
       $resolve: (val) => val ?? false
     },
 
@@ -33,7 +33,7 @@ export default {
      *
      * @deprecated use `vite.devBundler: 'vite-node'`
      */
-    viteNode: <InputObject>{
+    viteNode: {
       $resolve: (val) => {
         val = process.env.EXPERIMENTAL_VITE_NODE ? true : val
         if (val === true) {
@@ -53,4 +53,4 @@ export default {
      */
     viteServerDynamicImports: true
   }
-}
+})

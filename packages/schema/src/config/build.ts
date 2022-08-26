@@ -2,16 +2,16 @@ import defu from 'defu'
 import { join } from 'pathe'
 import { isCI, isTest } from 'std-env'
 import { normalizeURL, withTrailingSlash } from 'ufo'
-import type { InputObject } from 'untyped'
+import { defineSchemaObject } from '../utils'
 
-export default {
+export default defineSchemaObject({
   /**
    * The builder to use for bundling the Vue part of your application.
    *
    * @type {'vite' | 'webpack' | { bundle: (nuxt: typeof import('../src/types/nuxt').Nuxt) => Promise<void> }}
    * @version 3
    */
-  builder: <InputObject>{
+  builder: {
     $resolve: (val, get) => {
       if (typeof val === 'object') {
         return val
@@ -59,7 +59,7 @@ export default {
      * ```
      * @type {boolean | typeof import('webpack-bundle-analyzer').BundleAnalyzerPlugin.Options | typeof import('rollup-plugin-visualizer').PluginVisualizerOptions}
      */
-    analyze: <InputObject>{
+    analyze: {
       $resolve: (val, get) => {
         if(val !== true) {
           return val ?? false
@@ -138,7 +138,7 @@ export default {
      * Enables CSS source map support (defaults to true in development)
      * @version 2
      */
-    cssSourceMap: <InputObject>{
+    cssSourceMap: {
       $resolve: (val, get) => val ?? get('sourcemap') ?? get('dev')
     },
 
@@ -154,7 +154,7 @@ export default {
      * @warning This is an unstable feature.
      * @version 2
      */
-    parallel: <InputObject>{
+    parallel: {
       $resolve: (val, get) => get('build.extractCSS') ? false : Boolean(val)
     },
 
@@ -198,7 +198,7 @@ export default {
      * ```
      * @version 2
      */
-    publicPath: <InputObject>{
+    publicPath: {
       $resolve: (val, get) => val ? withTrailingSlash(normalizeURL(val)) : get('app').buildAssetsDir
     },
 
@@ -241,7 +241,7 @@ export default {
      * Customize the options of Nuxt's integrated webpack loaders.
      * @version 2
      */
-    loaders: <InputObject>{
+    loaders: {
       $resolve: (val, get) => {
         const styleLoaders = [
           'css', 'cssModules', 'less',
@@ -350,7 +350,7 @@ export default {
      * @see [optimize-css-assets-webpack-plugin documentation](https://github.com/NMFR/optimize-css-assets-webpack-plugin).
      * @version 2
      */
-    optimizeCSS: <InputObject>{
+    optimizeCSS: {
       $resolve: (val, get) => val ?? (get('build.extractCSS') ? {} : false)
     },
 
@@ -361,7 +361,7 @@ export default {
     optimization: {
       runtimeChunk: 'single',
       /** Set minimize to false to disable all minimizers. (It is disabled in development by default) */
-      minimize: <InputObject>{ 
+      minimize: {
         $resolve: (val, get) => val ?? !get('dev')
       },
       /** You can set minimizer to a customized array of plugins. */
@@ -493,7 +493,7 @@ export default {
      */
     postcss: {
       execute: undefined,
-      postcssOptions: <InputObject>{
+      postcssOptions: {
         $resolve: (val, get) => {
           // Ensure we return the same object in `build.postcss.postcssOptions as `postcss`
           // so modules which modify the configuration continue to work.
@@ -612,7 +612,7 @@ export default {
      * Set to `'none'` or `false` to disable stats printing out after a build.
      * @version 2
      */
-    stats: <InputObject>{
+    stats: {
       $resolve: (val, get) => (val === 'none' || get('build.quiet')) ? false : val,
       excludeAssets: [
         /.map$/,
@@ -642,4 +642,4 @@ export default {
      */
     followSymlinks: false
   }
-}
+})
