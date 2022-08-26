@@ -1,9 +1,9 @@
-import { defineSchemaObject } from '../utils'
+import { SchemaObject } from '../utils'
 
 /**
  * @version 2
  */
-export default defineSchemaObject({
+export default <SchemaObject> {
   /** The text that displays on the Nuxt loading indicator when `ssr: false`. */
   loading: 'Loading...',
   /** The 404 text on the default Nuxt error page. */
@@ -20,4 +20,4 @@ export default defineSchemaObject({
   client_error: 'Error',
   /** The error message (in debug mode) on the built-in Nuxt error page. */
   client_error_details: 'An error occurred while rendering the page. Check developer tools console for details.'
-})
+}
