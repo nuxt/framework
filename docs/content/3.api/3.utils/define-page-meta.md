@@ -19,13 +19,13 @@
 definePageMeta(meta: PageMeta) => void
 
 interface PageMeta {
-  pageTransition?: boolean | TransitionProps;
-  layoutTransition?: boolean | TransitionProps;
-  key?: false | string | ((route: RouteLocationNormalizedLoaded) => string);
-  keepalive?: boolean | KeepAliveProps;
+  pageTransition?: boolean | TransitionProps
+  layoutTransition?: boolean | TransitionProps
+  key?: false | string | ((route: RouteLocationNormalizedLoaded) => string)
+  keepalive?: boolean | KeepAliveProps
   layout?: false | LayoutKey | Ref<LayoutKey> | ComputedRef<LayoutKey>
   middleware?: MiddlewareKey | NavigationGuard | Array<MiddlewareKey | NavigationGuard>
-  [key: string]: any;
+  [key: string]: any
 }
 ```
 
@@ -112,7 +112,7 @@ The example below shows how the middleware can be defined using a `function` dir
   definePageMeta({
     // define middleware as a function
     middleware: [
-      async function (to, from) {
+      function (to, from) {
         const auth = useState('auth')
         
         if (!auth.value.authenticated) {
