@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FeedsApi } from "./api/api";
+import { FeedsApi } from "./api/hackernews";
 
 // 1.How to use
 const {
