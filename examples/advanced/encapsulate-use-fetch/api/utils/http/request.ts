@@ -37,7 +37,7 @@ type DataT = {
 }
 
 export function request<T = any> (url: NitroFetchRequest | Ref<NitroFetchRequest> | (() => NitroFetchRequest), options?: UseFetchOptions): Promise<T> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     // Default configuration and merge
     const opts = {
       // key: `${new Date().getTime()}`,

@@ -1,5 +1,5 @@
 import { Ref } from '@vue/runtime-dom'
-import { DataT } from "../dto/globle.dto"
+import { DataT } from '../dto/globle.dto'
 
 export interface FeedsModel {
   feed: string,

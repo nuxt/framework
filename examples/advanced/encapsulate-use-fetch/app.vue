@@ -3,22 +3,12 @@ import { FeedsApi } from './api/hackernews'
 
 // 1.How to use
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const {
-  data,
-  pending,
-  refresh,
-  error
-} = await FeedsApi({ feed: 'news', page: 1 })
+const { data, pending, refresh, error } = await FeedsApi({ feed: 'news', page: 1 })
 
 // 2.How to use
-FeedsApi({ feed: 'news', page: 1 }).then(res => {
+FeedsApi({ feed: 'news', page: 1 }).then((res) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const {
-    data,
-    pending,
-    refresh,
-    error
-  } = res
+  const { data, pending, refresh, error } = res
 })
 </script>
 
