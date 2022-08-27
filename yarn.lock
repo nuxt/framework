@@ -6451,6 +6451,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-encapsulate-use-fetch@workspace:examples/advanced/encapsulate-use-fetch":
+  version: 0.0.0-use.local
+  resolution: "example-encapsulate-use-fetch@workspace:examples/advanced/encapsulate-use-fetch"
+  dependencies:
+    "@nuxt/ui": ^0.2.0
+    nuxt: "npm:nuxt3@latest"
+  languageName: unknown
+  linkType: soft
+
 "example-error-handling@workspace:examples/app/error-handling":
   version: 0.0.0-use.local
   resolution: "example-error-handling@workspace:examples/app/error-handling"
