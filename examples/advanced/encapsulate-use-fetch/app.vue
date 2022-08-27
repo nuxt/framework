@@ -2,6 +2,7 @@
 import { FeedsApi } from "./api/hackernews";
 
 // 1.How to use
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const {
   data,
   pending,
@@ -11,6 +12,7 @@ const {
 
 // 2.How to use
 FeedsApi({ feed: 'news', page: 1 }).then(res => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const {
     data,
     pending,

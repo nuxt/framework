@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 import { Ref } from '@vue/runtime-dom'
 import type { NitroFetchRequest } from 'nitropack'
 import { KeyOfRes } from 'nuxt/dist/app/composables/asyncData'
@@ -35,7 +36,7 @@ type DataT = {
   error: Ref<Error | boolean>
 }
 
-export function request<T = any>(url: NitroFetchRequest | Ref<NitroFetchRequest> | (() => NitroFetchRequest), options?: UseFetchOptions): Promise<T> {
+export function request<T = any> (url: NitroFetchRequest | Ref<NitroFetchRequest> | (() => NitroFetchRequest), options?: UseFetchOptions): Promise<T> {
   return new Promise(resolve => {
     // Default configuration and merge
     const opts = {
