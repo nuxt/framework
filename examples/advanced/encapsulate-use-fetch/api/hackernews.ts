@@ -1,5 +1,5 @@
 import { FeedsDataT, FeedsModel } from './model/feeds.model';
-import { request } from './util/request'
+import { request } from './utils/http/request';
 
 enum Api {
     Feeds = '/api/hn/feeds',
