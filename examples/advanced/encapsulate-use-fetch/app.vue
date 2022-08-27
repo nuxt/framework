@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FeedsApi } from "./api/hackernews";
+import { FeedsApi } from './api/hackernews'
 
 // 1.How to use
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -8,7 +8,7 @@ const {
   pending,
   refresh,
   error
-} = await FeedsApi({ feed: 'news', page: 1 });
+} = await FeedsApi({ feed: 'news', page: 1 })
 
 // 2.How to use
 FeedsApi({ feed: 'news', page: 1 }).then(res => {
