@@ -103,8 +103,8 @@ async function main () {
 
   const nuxtPkg = workspace.find('nuxt')
   const nitroInfo = await $fetch('https://registry.npmjs.org/nitropack-edge')
-  const latestNitro = nitroInfo.distTags.latest
-  nuxtPkg.data.dependencies.nitropack = `npm:nitropack-edge@${latestNitro}`
+  const latestNitro = nitroInfo['dist-tags'].latest
+  nuxtPkg.data.dependencies.nitropack = `npm:nitropack-edge@^${latestNitro}`
 
   for (const pkg of workspace.packages.filter(p => !p.data.private)) {
     workspace.setVersion(pkg.data.name, `${pkg.data.version}-${date}.${commit}`)
