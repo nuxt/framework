@@ -14,13 +14,13 @@
         <NuxtLink to="/other">
           Other layout
         </NuxtLink>
-        <NButton @click="setLayout('default')">
+        <NButton @click="setPageLayout('default')">
           Change to default layout
         </NButton>
-        <NButton @click="setLayout('custom')">
+        <NButton @click="setPageLayout('custom')">
           Change to custom layout
         </NButton>
-        <NButton @click="setLayout('other')">
+        <NButton @click="setPageLayout('other')">
           Change to other layout
         </NButton>
       </nav>

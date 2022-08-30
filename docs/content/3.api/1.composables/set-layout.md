@@ -1,13 +1,13 @@
-# `setLayout`
+# `setPageLayout`
 
-`setLayout` allows you to dynamically change the layout of a page.
+`setPageLayout` allows you to dynamically change the layout of a page.
 
-`setLayout` relies on access to the Nuxt context and can only be called within component setup functions, plugins, and route middleware.
+`setPageLayout` relies on access to the Nuxt context and can only be called within component setup functions, plugins, and route middleware.
 
 ```js
 export default defineNuxtRouteMiddleware(to => {
   // Set the layout on the route you are navigating _to_
-  setLayout('other')
+  setPageLayout('other')
 })
 ```
 

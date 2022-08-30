@@ -115,7 +115,7 @@ export const abortNavigation = (err?: Error | string) => {
   return false
 }
 
-export const setLayout = (layout: string) => {
+export const setPageLayout = (layout: string) => {
   if (process.server) {
     useState('_layout').value = layout
   }
