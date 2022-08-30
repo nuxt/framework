@@ -172,7 +172,7 @@ export function useAsyncData<
     if (instance && !instance._nuxtOnBeforeMountCbs) {
       instance._nuxtOnBeforeMountCbs = []
       const cbs = instance._nuxtOnBeforeMountCbs
-      if (instance && process.client) {
+      if (instance) {
         onBeforeMount(() => {
           cbs.forEach((cb) => { cb() })
           cbs.splice(0, cbs.length)
