@@ -119,12 +119,15 @@ export const setPageLayout = (layout: string) => {
   if (process.server) {
     useState('_layout').value = layout
   }
-  if (isProcessingMiddleware()) {
+  const nuxtApp = useNuxtApp()
+  const inMiddleware = isProcessingMiddleware()
+  if (inMiddleware || process.server || nuxtApp.isHydrating) {
     const unsubscribe = useRouter().beforeResolve((to) => {
       to.meta.layout = layout
       unsubscribe()
     })
-  } else {
+  }
+  if (!inMiddleware) {
     useRoute().meta.layout = layout
   }
 }
