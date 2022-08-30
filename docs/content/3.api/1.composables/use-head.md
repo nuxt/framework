@@ -1,6 +1,6 @@
 # `useHead`
 
-Nuxt provides `useHead` composable to add and customize the head properties of individual pages of Nuxt app. Unlike [definePageMeta](/api/utils/define-page-meta), properties of `useHead` can be dynamic and can accept a function returning the object with reactive metadata.
+Nuxt provides `useHead` composable to add and customize the head properties of individual pages of Nuxt app. `useHead` uses [@vueuse/head](https://github.com/vueuse/head) underneath and unlike [definePageMeta](/api/utils/define-page-meta), properties of `useHead` can be dynamic and can accept a function returning the object with reactive metadata.
 
 `useHead` accepts properties of type `MetaObject` as listed below.
 
