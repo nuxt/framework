@@ -62,20 +62,18 @@ Application-wide configuration of the same properties listed above is possible t
 
 The example below changes the website's `title` and `description` using `meta` option within `useHead` composable.
 
-```js
-export default {
-  setup () {
-    const title = ref('My App')
-    const description = ref('My amazing Nuxt app')
-    useHead({
-      title,
-      meta: [{
-        name: 'description',
-        content: description
-      }]
-    })
-  }
-}
+```vue
+<script setup>
+  const title = ref('My App')
+  const description = ref('My amazing Nuxt app')
+  useHead({
+    title,
+    meta: [{
+      name: 'description',
+      content: description
+    }]
+  })
+</script>
 ```
 
 ### Add dynamic title
@@ -102,24 +100,22 @@ In the example below, `titleTemplate` is set as a `function` to have full contro
 
 The example below inserts Google Fonts using the `link` property of `useHead` composable.
 
-```js
-export default {
-  setup () {
-    useHead({
-      link: [
-        { 
-          rel: 'preconnect', 
-          href: 'https://fonts.googleapis.com'
-        },
-        { 
-          rel: 'stylesheet', 
-          href: 'https://fonts.googleapis.com/css2?family=Roboto&display=swap', 
-          crossorigin: '' 
-        },
-      ]
-    })
-  }
-}
+```vue [app.vue]
+<script setup>  
+  useHead({
+    link: [
+      { 
+        rel: 'preconnect', 
+        href: 'https://fonts.googleapis.com'
+      },
+      { 
+        rel: 'stylesheet', 
+        href: 'https://fonts.googleapis.com/css2?family=Roboto&display=swap', 
+        crossorigin: '' 
+      },
+    ]
+  })
+</script>
 ```
 
 ### Add third-party script
@@ -128,14 +124,14 @@ The example below inserts third-party JavaScript using the `script` property of 
 
 ```vue
 <script setup>
-useHead({
-  script: [
-    {
-      src: 'https://third-party-script.com',
-      body: true
-    }
-  ]
-})
+  useHead({
+    script: [
+      {
+        src: 'https://third-party-script.com',
+        body: true
+      }
+    ]
+  })
 </script>
 ```
 
