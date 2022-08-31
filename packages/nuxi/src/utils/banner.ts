@@ -5,7 +5,7 @@ import { version } from '../../package.json'
 
 export function showBanner (_clear?: boolean) {
   if (_clear) { clear() }
-  console.log(green(`nuxi ${version}`))
+  console.log(gray(`nuxi ${version}`))
 }
 
 export function showVersions (cwd: string) {
@@ -14,7 +14,8 @@ export function showVersions (cwd: string) {
   for (const pkg of ['nuxt', 'nitropack', 'vite', 'webpack']) {
     try {
       const { version } = _require(`${pkg}/package.json`)
-      versions.push(pkg + '@' + version)
+      const fullName = pkg + '@' + version
+      versions.push(pkg === 'nuxt' ? green(fullName) : gray(fullName))
     } catch {
       // Not found
     }
