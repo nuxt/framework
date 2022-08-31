@@ -27,8 +27,6 @@ export interface ViteGlobOptions {
 }
 
 export interface ViteImportMeta {
-  url: string
-
   /** Vite client HMR API - see https://vitejs.dev/guide/api-hmr.html */
   readonly hot?: ViteHot
 
