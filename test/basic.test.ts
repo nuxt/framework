@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { joinURL } from 'ufo'
 // import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
+// eslint-disable-next-line import/order
 import { expectNoClientErrors, renderPage } from './utils'
 
 await setup({
@@ -272,6 +273,16 @@ describe('layouts', () => {
 
     expect(html).toContain('with-layout.vue')
     expect(html).toContain('Custom Layout:')
+  })
+  it('should work with a dynamically set layout', async () => {
+    const html = await $fetch('/with-dynamic-layout')
+
+    // Snapshot
+    // expect(html).toMatchInlineSnapshot()
+
+    expect(html).toContain('with-dynamic-layout')
+    expect(html).toContain('Custom Layout:')
+    await expectNoClientErrors('/with-dynamic-layout')
   })
 })
 
