@@ -108,7 +108,7 @@ async function main () {
   nuxtPkg.data.dependencies.nitropack = `npm:nitropack-edge@^${latestNitro}`
 
   for (const pkg of workspace.packages.filter(p => !p.data.private)) {
-    // TODO: Set release type based on changelog after ^4.0.0
+    // TODO: Set release type based on changelog after 3.0.0
     const newVersion = inc(pkg.data.version, 'prerelease', 'rc')
     workspace.setVersion(pkg.data.name, `${newVersion}-${date}.${commit}`)
     const newname = pkg.data.name === 'nuxt' ? 'nuxt3' : (pkg.data.name + '-edge')
