@@ -20,5 +20,5 @@ export function showVersions (cwd: string) {
       // Not found
     }
   }
-  console.log(gray(versions.join(' ')))
+  console.log(versions.join(' '))
 }
