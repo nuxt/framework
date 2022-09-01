@@ -17,12 +17,11 @@ export function showVersions (cwd: string) {
         return pkg + '@' + version
       }
     } catch { /* not found */ }
-    return ''
+    return pkg
   }
-  const pkgs = ['nitropack', 'vite', 'webpack', 'vue']
   console.log(
-    green(getPkgWithVersion('nuxt') || getPkgWithVersion('nuxt-edge') /* bridge */ || 'nuxt'),
+    green(getPkgWithVersion('nuxt')),
     gray('running with'),
-    gray(pkgs.map(pkg => getPkgWithVersion(pkg)).filter(Boolean).join(' ') || '-')
+    gray(getPkgWithVersion('nitropack'))
   )
 }
