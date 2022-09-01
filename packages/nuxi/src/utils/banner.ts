@@ -21,6 +21,6 @@ export function showVersions (cwd: string) {
   const nitroVersion = getPkgVersion('nitropack')
   console.log(
     green(`Nuxt ${nuxtVersion}`),
-    nitroVersion ? gray(`running with Nitro ${nitroVersion}`) : ''
+    nitroVersion ? gray(`with Nitro ${nitroVersion}`) : ''
   )
 }
