@@ -43,6 +43,7 @@ An object accepting the following head metadata:
 - `charset`
 
   **Type**: `string`
+
   **Default**: `utf-8`
 
   Specifies character encoding for the HTML document.
@@ -50,6 +51,7 @@ An object accepting the following head metadata:
 - `viewport`
 
   **Type**: `string`
+ 
   **Default**: `width=device-width, initial-scale=1`
 
   Configures the viewport (the user's visible area of a web page).
@@ -57,6 +59,7 @@ An object accepting the following head metadata:
 - `meta`
 
   **Type**: `Array<Record<string, any>>`
+
   **Default**: `width=device-width, initial-scale=1`
 
   Each element in the array is mapped to a newly-created `<meta>` tag, where object properties are mapped to the corresponding attributes.
