@@ -1,18 +1,26 @@
 import { promises as fsp } from 'node:fs'
 import { execSync } from 'node:child_process'
+import { $fetch } from 'ohmyfetch'
 import { resolve } from 'pathe'
 import { globby } from 'globby'
+import { inc } from 'semver'
+
+interface Dep {
+  name: string,
+  range: string,
+  type: string
+}
 
 async function loadPackage (dir: string) {
   const pkgPath = resolve(dir, 'package.json')
   const data = JSON.parse(await fsp.readFile(pkgPath, 'utf-8').catch(() => '{}'))
   const save = () => fsp.writeFile(pkgPath, JSON.stringify(data, null, 2) + '\n')
 
-  const updateDeps = (reviver: Function) => {
+  const updateDeps = (reviver: (dep: Dep) => Dep | void) => {
     for (const type of ['dependencies', 'devDependencies', 'optionalDependencies', 'peerDependencies']) {
       if (!data[type]) { continue }
       for (const e of Object.entries(data[type])) {
-        const dep = { name: e[0], range: e[1], type }
+        const dep: Dep = { name: e[0], range: e[1] as string, type }
         delete data[type][dep.name]
         const updated = reviver(dep) || dep
         data[updated.type] = data[updated.type] || {}
@@ -94,8 +102,15 @@ async function main () {
   const commit = execSync('git rev-parse --short HEAD').toString('utf-8').trim()
   const date = Math.round(Date.now() / (1000 * 60))
 
+  const nuxtPkg = workspace.find('nuxt')
+  const nitroInfo = await $fetch('https://registry.npmjs.org/nitropack-edge')
+  const latestNitro = nitroInfo['dist-tags'].latest
+  nuxtPkg.data.dependencies.nitropack = `npm:nitropack-edge@^${latestNitro}`
+
   for (const pkg of workspace.packages.filter(p => !p.data.private)) {
-    workspace.setVersion(pkg.data.name, `${pkg.data.version}-${date}.${commit}`)
+    // TODO: Set release type based on changelog after 3.0.0
+    const newVersion = inc(pkg.data.version, 'prerelease', 'rc')
+    workspace.setVersion(pkg.data.name, `${newVersion}-${date}.${commit}`)
     const newname = pkg.data.name === 'nuxt' ? 'nuxt3' : (pkg.data.name + '-edge')
     workspace.rename(pkg.data.name, newname)
   }

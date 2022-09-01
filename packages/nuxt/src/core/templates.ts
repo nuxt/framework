@@ -5,6 +5,7 @@ import { isAbsolute, join, relative } from 'pathe'
 import { resolveSchema, generateTypes } from 'untyped'
 import escapeRE from 'escape-string-regexp'
 import { hash } from 'ohash'
+import { camelCase } from 'scule'
 
 export interface TemplateContext {
   nuxt: Nuxt
@@ -110,7 +111,7 @@ export { }
   }
 }
 
-const adHocModules = ['router', 'pages', 'auto-imports', 'meta', 'components']
+const adHocModules = ['router', 'pages', 'imports', 'meta', 'components']
 export const schemaTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'types/schema.d.ts',
   getContents: ({ nuxt }) => {
@@ -206,12 +207,13 @@ export const appConfigTemplate: NuxtTemplate = {
   write: true,
   getContents: ({ app, nuxt }) => {
     return `
-import defu from 'defu'
+import { defuFn } from 'defu'
 
 const inlineConfig = ${JSON.stringify(nuxt.options.appConfig, null, 2)}
 
 ${app.configs.map((id: string, index: number) => `import ${`cfg${index}`} from ${JSON.stringify(id)}`).join('\n')}
-export default defu(${app.configs.map((_id: string, index: number) => `cfg${index}`).concat(['inlineConfig']).join(', ')})
+
+export default defuFn(${app.configs.map((_id: string, index: number) => `cfg${index}`).concat(['inlineConfig']).join(', ')})
 `
   }
 }
@@ -240,5 +242,13 @@ export const publicPathTemplate: NuxtTemplate = {
       'globalThis.__buildAssetsURL = buildAssetsURL',
       'globalThis.__publicAssetsURL = publicAssetsURL'
     ].filter(Boolean).join('\n')
+  }
+}
+
+// Allow direct access to specific exposed nuxt.config
+export const nuxtConfigTemplate = {
+  filename: 'nuxt.config.mjs',
+  getContents: (ctx: TemplateContext) => {
+    return Object.entries(ctx.nuxt.options.app).map(([k, v]) => `export const ${camelCase('app-' + k)} = ${JSON.stringify(v)}`).join('\n\n')
   }
 }

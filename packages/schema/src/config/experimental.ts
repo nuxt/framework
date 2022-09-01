@@ -1,11 +1,13 @@
-export default {
+import { defineUntypedSchema } from 'untyped'
+
+export default defineUntypedSchema({
   /** @version 3 */
   experimental: {
     /**
      * Set to true to generate an async entry point for the Vue bundle (for module federation support).
      */
     asyncEntry: {
-      $resolve: (val, get) => val ?? false
+      $resolve: (val) => val ?? false
     },
 
     /**
@@ -18,7 +20,7 @@ export default {
      * Externalize `vue`, `@vue/*` and `vue-router` when building.
      * @see https://github.com/nuxt/framework/issues/4084
      */
-    externalVue: false,
+    externalVue: true,
 
     /**
      * Tree shakes contents of client-only components from server bundle.
@@ -49,6 +51,6 @@ export default {
      *
      * @see https://github.com/nuxt/framework/issues/6432
      */
-     viteServerDynamicImports: true
+    viteServerDynamicImports: true
   }
-}
+})
