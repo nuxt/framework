@@ -1,6 +1,6 @@
 # `useHead`
 
-Nuxt provides `useHead` composable to add and customize the head properties of individual pages of Nuxt app. `useHead` uses [@vueuse/head](https://github.com/vueuse/head) underneath and unlike [definePageMeta](/api/utils/define-page-meta), properties of `useHead` can be dynamic and can accept a function returning the object with reactive metadata.
+Nuxt provides the `useHead` composable to add and customize the head properties of individual pages of Nuxt app. `useHead` uses [@vueuse/head](https://github.com/vueuse/head) underneath.
 
 `useHead` accepts properties of type `MetaObject` as listed below.
 
@@ -26,6 +26,9 @@ interface MetaObject extends Record<string, any> {
 
 Application-wide configuration of the same properties listed above is possible through [nuxt.config](/api/configuration/nuxt.config#head). However, `useHead` composable allows customizing these properties at page-level.
 
+::alert{type=info}
+The properties of `useHead` can be dynamic, accepting `ref`, `computed` and `reactive` properties. It can also accept a function returning an object to make the entire object reactive.
+::
 ::alert{icon=👉}
 **`useHead` only works during `setup`**.
 ::
@@ -137,4 +140,4 @@ The example below inserts third-party JavaScript using the `script` property of 
 
 You can use the `body: true` option on `script` meta tags to add script at the end of the `<body>` tag.
 
-::ReadMore{link="/guide/features/head-management"}
+:ReadMore{link="/guide/features/head-management"}
