@@ -154,7 +154,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   const router: Router = {
     currentRoute: route,
     isReady: () => Promise.resolve(),
-    //
+    // https://router.vuejs.org/api/interfaces/routeroptions.html
     options: {},
     install: () => Promise.resolve(),
     // Navigation
