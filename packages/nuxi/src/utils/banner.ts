@@ -20,7 +20,7 @@ export function showVersions (cwd: string) {
   const nuxtVersion = getPkgVersion('nuxt') || getPkgVersion('nuxt-edge')
   const nitroVersion = getPkgVersion('nitropack')
   console.log(gray(
-    `${green('Nuxt')} ${bold(nuxtVersion)}` +
+    green(`Nuxt ${bold(nuxtVersion)}`) +
     (nitroVersion ? ` with Nitro ${(bold(nitroVersion))}` : '')
   ))
 }
