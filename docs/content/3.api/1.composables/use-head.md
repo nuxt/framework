@@ -51,7 +51,7 @@ An object accepting the following head metadata:
 - `viewport`
 
   **Type**: `string`
- 
+
   **Default**: `width=device-width, initial-scale=1`
 
   Configures the viewport (the user's visible area of a web page).
