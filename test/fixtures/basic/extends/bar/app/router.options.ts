@@ -1,5 +1,5 @@
-import type { RouterOptions } from '@nuxt/schema'
+import type { RouterConfig } from '@nuxt/schema'
 
-export default <RouterOptions>{
+export default <RouterConfig>{
   linkExactActiveClass: 'bar-exact-active-class'
 }

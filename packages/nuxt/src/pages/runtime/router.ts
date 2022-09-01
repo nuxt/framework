@@ -55,15 +55,14 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   nuxtApp.vueApp.component('NuxtChild', NuxtPage)
 
   const baseURL = useRuntimeConfig().app.baseURL
-  const routerHistory = process.client
-    ? createWebHistory(baseURL)
-    : createMemoryHistory(baseURL)
+  const routerHistory = routerOptions.history?.(baseURL) ??
+    (process.client ? createWebHistory(baseURL) : createMemoryHistory(baseURL))
 
   const initialURL = process.server ? nuxtApp.ssrContext!.url : createCurrentLocation(baseURL, window.location)
   const router = createRouter({
     ...routerOptions,
     history: routerHistory,
-    routes
+    routes: routerOptions.routes || routes
   })
   nuxtApp.vueApp.use(router)
 
