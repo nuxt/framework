@@ -19,7 +19,7 @@ export function showVersions (cwd: string) {
     } catch { /* not found */ }
     return ''
   }
-  const pkgs = ['vue', 'nitropack', 'vite', 'webpack']
+  const pkgs = ['nitropacl', 'vite', 'webpack', 'vue']
   console.log(
     green(getPkgWithVersion('nuxt') || getPkgWithVersion('nuxt-edge') /* bridge */ || 'nuxt'),
     gray('running with'),
