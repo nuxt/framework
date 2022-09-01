@@ -11,7 +11,7 @@ import { defineUntypedSchema } from 'untyped'
 
 export default defineUntypedSchema({
   /**
-   * Extend nested configurations from multiple local or remote sources.
+   * Extend project from multiple local or remote sources.
    *
    * Value should be either a string or array of strings pointing to source directories or config path relative to current config.
    *
@@ -24,7 +24,7 @@ export default defineUntypedSchema({
   extends: null,
 
   /**
-   * Extend nested configurations from multiple local or remote sources.
+   * Extend project from a local or remote source.
    *
    * Value should be a string pointing to source directory or config path relative to current config.
    *
