@@ -1,13 +1,15 @@
 # `useHead`
 
-Nuxt provides the `useHead` composable to add and customize the head properties of individual pages of Nuxt app. `useHead` uses [@vueuse/head](https://github.com/vueuse/head) underneath.
+Nuxt provides the `useHead` composable to add and customize the head properties of individual pages of your Nuxt app. `useHead` uses [@vueuse/head](https://github.com/vueuse/head) under the hood.
 
-`useHead` accepts properties of type `MetaObject` as listed below.
+::alert{icon=👉}
+**`useHead` must be placed within the `setup` function**.
+::
 
 ## Type
 
-```js [Signature]
-useHead(options: MetaObject)
+```ts
+useHead(meta: Computable<MetaObject>): void
 
 interface MetaObject extends Record<string, any> {
   charset?: string
@@ -24,86 +26,139 @@ interface MetaObject extends Record<string, any> {
 }
 ```
 
-Application-wide configuration of the same properties listed above is possible through [nuxt.config](/api/configuration/nuxt.config#head). However, `useHead` composable allows customizing these properties at page-level.
+Application-wide configuration of the head metadata is possible through [nuxt.config](/api/configuration/nuxt.config#head), or by placing the `useHead` in the `app.vue` file.
 
 ::alert{type=info}
-The properties of `useHead` can be dynamic, accepting `ref`, `computed` and `reactive` properties. It can also accept a function returning an object to make the entire object reactive.
-::
-::alert{icon=👉}
-**`useHead` only works during `setup`**.
+The properties of `useHead` can be dynamic, accepting `ref`, `computed` and `reactive` properties. `meta` parameter can also accept a function returning an object to make the entire object reactive.
 ::
 
-## Properties
+## Parameters
 
-* **charset**: `type: string` | `default: 'utf-8'` - Character encoding in which the document is encoded
+### `meta`
 
-* **viewport**: `type: string` | `default: 'width=device-width, initial-scale=1'` - Configure the viewport (the area of the window in which web content can be seen)
+**Type**: `MetaObject`
 
-* **meta**: `type: array` - Each item in meta array maps to a newly-created `<meta>` element, where object properties map to attributes.
+An object accepting the following head metadata:
 
-* **link**: `type: array` - Each item maps to a newly-created `<link>` element, where object properties map to attributes.
+  - `charset`
 
-* **style**: `type: array` - Each item maps to a newly-created `<style>` element, where object properties map to attributes.
+    **Type**: `string`
+    **Default**: `utf-8`
 
-* **script**: `type: array` - Each item maps to a newly-created `<script>` element, where object properties map to attributes.
+    Specifies character encoding for the HTML document.
 
-* **noscript**: `type: array` - Each item maps to a newly-created `<noscript>` element, where object properties map to attributes.
+  - `viewport`
 
-* **titleTemplate**: `type: string | function` - Configure dynamic template to customise page title on individual page
+    **Type**: `string`
+    **Default**: `width=device-width, initial-scale=1`
 
-* **title**: `type: string` - Provide static page title for Nuxt application
+    Configures the viewport (the user's visible area of a web page).
 
-* **bodyAttrs**: `type: Record` - Keys in `bodyAttrs` can be `class`, `id` or `inheritAttrs`. See the full [list of keys](https://github.com/nuxt/framework/blob/main/packages/schema/src/types/meta.ts) available to add as key-value pairs in `bodyAttrs`.
+  - `meta`
 
-* **htmlAttrs**: `type: Record` - Keys in `htmlAttrs` can be `class`, `id`, `manifest`, `version` or `xmlns`. See the full [list of keys](https://github.com/nuxt/framework/blob/main/packages/schema/src/types/meta.ts) available to add as key-value pairs in `htmlAttrs`.
+    **Type**: `Array<Record<string, any>>`
+    **Default**: `width=device-width, initial-scale=1`
 
-> All elements in the meta object are optional. You can also pass only single values.
+    Each element in the array is mapped to a newly-created `<meta>` tag, where object properties are mapped to the corresponding attributes.
+
+  - `link`
+
+    **Type**: `Array<Record<string, any>>`
+
+    Each element in the array is mapped to a newly-created `<link>` tag, where object properties are mapped to the corresponding attributes.
+
+  - `style`
+
+    **Type**: `Array<Record<string, any>>`
+
+    Each element in the array is mapped to a newly-created `<style>` tag, where object properties are mapped to the corresponding attributes.
+
+  - `script`
+
+    **Type**: `Array<Record<string, any>>`
+
+    Each element in the array is mapped to a newly-created `<script>` tag, where object properties are mapped to the corresponding attributes.
+
+  - `noscript`
+
+    **Type**: `Array<Record<string, any>>`
+
+    Each element in the array is mapped to a newly-created `<noscript>` tag, where object properties are mapped to the corresponding attributes.
+
+  - `titleTemplate`
+
+    **Type**: `string` | `((title: string) => string)`
+
+    Configures dynamic template to customize the page title on an individual page.
+
+  - `title`
+
+    **Type**: `string`
+
+    Sets static page title on an individual page.
+
+  - `bodyAttrs`
+
+    **Type**: `Record<string, any>`
+
+    Sets attributes of the `<body>` tag. Each object property is mapped to the corresponding attribute.
+
+  - `htmlAttrs`
+
+    **Type**: `Record<string, any>`
+
+    Sets attributes of the `<html>` tag. Each object property is mapped to the corresponding attribute.
 
 ## Examples
 
-### Customize metadata
+### Customize Metadata
 
-The example below changes the website's `title` and `description` using `meta` option within `useHead` composable.
+The example below changes the website's `title` and `description` using `meta` option of the `useHead` composable:
 
 ```vue
 <script setup>
   const title = ref('My App')
   const description = ref('My amazing Nuxt app')
+
   useHead({
     title,
-    meta: [{
-      name: 'description',
-      content: description
-    }]
+    meta: [
+      {
+        name: 'description',
+        content: description
+      }
+    ]
   })
 </script>
 ```
 
-### Add dynamic title
+### Add Dynamic Title
 
-In the example below, `titleTemplate` is set as a `function` to have full control over setting dynamic title for each route of your Nuxt app.
+In the example below, `titleTemplate` is set either as a string with the `%s` placeholder or as a `function`, which allows greater flexibility in setting the page title dynamically for each route of your Nuxt app:
 
 ```vue [app.vue]
 <script setup>
   useHead({
-    // as a string
-    // `%s` is replaced with the title
+    // as a string,
+    // where `%s` is replaced with the title
     titleTemplate: '%s - Site Title',
-    // or as a function 
+    // ... or as a function 
     titleTemplate: (productCategory) => {
-      return productCategory ? `${productCategory} - Site Title` : 'Site Title';
+      return productCategory
+        ? `${productCategory} - Site Title`
+        : 'Site Title'
     }
   })
 </script>
 ```
 
-`nuxt.config` is also used as an alternative to set the page title. However, `nuxt.config` does not allow the page title to be dynamic. Therefore, it is recommended to use `titleTemplate` in `app.vue` file to add dynamic title which is then applied to all routes of your Nuxt app.
+`nuxt.config` is also used as an alternative way of setting the page title. However, `nuxt.config` does not allow the page title to be dynamic. Therefore, it is recommended to use `titleTemplate` in the `app.vue` file to add a dynamic title, which is then applied to all routes of your Nuxt app.
 
-### Add external CSS
+### Add External CSS
 
-The example below inserts Google Fonts using the `link` property of `useHead` composable.
+The example below inserts Google Fonts using the `link` property of the `useHead` composable:
 
-```vue [app.vue]
+```vue
 <script setup>  
   useHead({
     link: [
@@ -115,15 +170,15 @@ The example below inserts Google Fonts using the `link` property of `useHead` co
         rel: 'stylesheet', 
         href: 'https://fonts.googleapis.com/css2?family=Roboto&display=swap', 
         crossorigin: '' 
-      },
+      }
     ]
   })
 </script>
 ```
 
-### Add third-party script
+### Add Third-party Script
 
-The example below inserts third-party JavaScript using the `script` property of the `useHead` composable.
+The example below inserts a third-party script using the `script` property of the `useHead` composable:
 
 ```vue
 <script setup>
@@ -138,6 +193,6 @@ The example below inserts third-party JavaScript using the `script` property of 
 </script>
 ```
 
-You can use the `body: true` option on `script` meta tags to add script at the end of the `<body>` tag.
+You can use the `body: true` option to add the above script at the end of the `<body>` tag.
 
 :ReadMore{link="/guide/features/head-management"}
