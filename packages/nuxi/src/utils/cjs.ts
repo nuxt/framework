@@ -30,7 +30,7 @@ export function requireModule (id: string, paths?: string | string[]) {
 }
 
 export function tryRequireModule (id: string, paths?: string | string[]) {
-  try { return _require(resolveModule(id, paths)) } catch { return null }
+  try { return requireModule(id, paths) } catch { return null }
 }
 
 export function importModule (id: string, paths?: string | string[]) {
