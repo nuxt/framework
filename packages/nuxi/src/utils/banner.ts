@@ -5,20 +5,24 @@ import { version } from '../../package.json'
 
 export function showBanner (_clear?: boolean) {
   if (_clear) { clear() }
-  console.log(gray(`nuxi ${version}`))
+  console.log(gray(`nuxi@${version}`))
 }
 
 export function showVersions (cwd: string) {
   const _require = createRequire(cwd)
-  const versions = []
-  for (const pkg of ['nuxt', 'nitropack', 'vite', 'webpack']) {
+  const getPkgWithVersion = (pkg: string) => {
     try {
       const { version } = _require(`${pkg}/package.json`)
-      const fullName = pkg + '@' + version
-      versions.push(pkg === 'nuxt' ? green(fullName) : gray(fullName))
-    } catch {
-      // Not found
-    }
+      if (version) {
+        return pkg + '@' + version
+      }
+    } catch { /* not found */ }
+    return ''
   }
-  console.log(versions.join(' '))
+  const pkgs = ['vue', 'nitropack', 'vite', 'webpack']
+  console.log(
+    green(getPkgWithVersion('nuxt')),
+    gray('running with'),
+    gray(pkgs.map(pkg => getPkgWithVersion(pkg)).filter(Boolean).join(' '))
+  )
 }
