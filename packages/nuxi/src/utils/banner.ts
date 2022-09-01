@@ -10,18 +10,17 @@ export function showBanner (_clear?: boolean) {
 
 export function showVersions (cwd: string) {
   const _require = createRequire(cwd)
-  const getPkgWithVersion = (pkg: string, name: string) => {
+  const getPkgVersion = (pkg: string) => {
     try {
       const { version } = _require(`${pkg}/package.json`)
-      if (version) {
-        return name + ' ' + version
-      }
+      return version || ''
     } catch { /* not found */ }
-    return pkg
+    return ''
   }
+  const nuxtVersion = getPkgVersion('nuxt') || getPkgVersion('nuxt-edge')
+  const nitroVersion = getPkgVersion('nitropack')
   console.log(
-    green(getPkgWithVersion('nuxt', 'Nuxt')),
-    gray('running with'),
-    gray(getPkgWithVersion('nitropack', 'Nitro'))
+    green(`Nuxt ${nuxtVersion}`),
+    nitroVersion ? gray(`running with Nitro ${nitroVersion}`) : ''
   )
 }
