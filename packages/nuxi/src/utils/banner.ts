@@ -1,11 +1,11 @@
 import { createRequire } from 'node:module'
 import clear from 'clear'
-import { gray, green } from 'colorette'
+import { bold, gray, green } from 'colorette'
 import { version } from '../../package.json'
 
 export function showBanner (_clear?: boolean) {
   if (_clear) { clear() }
-  console.log(gray(`Nuxi ${version}`))
+  console.log(gray(`Nuxi ${(bold(version))}`))
 }
 
 export function showVersions (cwd: string) {
@@ -19,8 +19,8 @@ export function showVersions (cwd: string) {
   }
   const nuxtVersion = getPkgVersion('nuxt') || getPkgVersion('nuxt-edge')
   const nitroVersion = getPkgVersion('nitropack')
-  console.log(
-    green(`Nuxt ${nuxtVersion}`),
-    nitroVersion ? gray(`with Nitro ${nitroVersion}`) : ''
-  )
+  console.log(gray(
+    `${green('Nuxt')} ${bold(nuxtVersion)}` +
+    (nitroVersion ? ` with Nitro ${(bold(nitroVersion))}` : '')
+  ))
 }
