@@ -6,7 +6,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { resolvePath } from '@nuxt/kit'
 import defu from 'defu'
 import fsExtra from 'fs-extra'
-import { toEventHandler, dynamicEventHandler } from 'h3'
+import { toEventHandler, dynamicEventHandler, CompatibilityEventHandler } from 'h3'
 import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
@@ -137,6 +137,7 @@ export async function initNitro (nuxt: Nuxt) {
 
   // Setup handlers
   const devMiddlewareHandler = dynamicEventHandler()
+  // @ts-ignore fix handler type in nitro to accept event handler
   nitro.options.devHandlers.unshift({ handler: devMiddlewareHandler })
   nitro.options.devHandlers.push(...devHandlers)
   nitro.options.handlers.unshift({
