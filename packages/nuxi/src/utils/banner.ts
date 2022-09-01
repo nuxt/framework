@@ -21,8 +21,8 @@ export function showVersions (cwd: string) {
   }
   const pkgs = ['vue', 'nitropack', 'vite', 'webpack']
   console.log(
-    green(getPkgWithVersion('nuxt')),
+    green(getPkgWithVersion('nuxt') || getPkgWithVersion('nuxt-edge') /* bridge */ || 'nuxt'),
     gray('running with'),
-    gray(pkgs.map(pkg => getPkgWithVersion(pkg)).filter(Boolean).join(' '))
+    gray(pkgs.map(pkg => getPkgWithVersion(pkg)).filter(Boolean).join(' ') || '-')
   )
 }
