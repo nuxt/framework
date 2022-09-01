@@ -24,6 +24,19 @@ export default defineUntypedSchema({
   extends: null,
 
   /**
+   * Extend nested configurations from multiple local or remote sources.
+   *
+   * Value should be a string pointing to source directory or config path relative to current config.
+   *
+   * You can use `github:`, `gitlab:`, `bitbucket:` or `https://` to extend from a remote git repository.
+   *
+   * @type {string}
+   *
+   * @version 3
+   */
+   theme: null,
+
+  /**
    * Define the workspace directory of your application.
    *
    * This property can be overwritten (for example, running `nuxt ./my-app/`
