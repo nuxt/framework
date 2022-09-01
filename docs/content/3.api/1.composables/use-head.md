@@ -40,74 +40,74 @@ The properties of `useHead` can be dynamic, accepting `ref`, `computed` and `rea
 
 An object accepting the following head metadata:
 
-  - `charset`
+- `charset`
 
-    **Type**: `string`
-    **Default**: `utf-8`
+  **Type**: `string`
+  **Default**: `utf-8`
 
-    Specifies character encoding for the HTML document.
+  Specifies character encoding for the HTML document.
 
-  - `viewport`
+- `viewport`
 
-    **Type**: `string`
-    **Default**: `width=device-width, initial-scale=1`
+  **Type**: `string`
+  **Default**: `width=device-width, initial-scale=1`
 
-    Configures the viewport (the user's visible area of a web page).
+  Configures the viewport (the user's visible area of a web page).
 
-  - `meta`
+- `meta`
 
-    **Type**: `Array<Record<string, any>>`
-    **Default**: `width=device-width, initial-scale=1`
+  **Type**: `Array<Record<string, any>>`
+  **Default**: `width=device-width, initial-scale=1`
 
-    Each element in the array is mapped to a newly-created `<meta>` tag, where object properties are mapped to the corresponding attributes.
+  Each element in the array is mapped to a newly-created `<meta>` tag, where object properties are mapped to the corresponding attributes.
 
-  - `link`
+- `link`
 
-    **Type**: `Array<Record<string, any>>`
+  **Type**: `Array<Record<string, any>>`
 
-    Each element in the array is mapped to a newly-created `<link>` tag, where object properties are mapped to the corresponding attributes.
+  Each element in the array is mapped to a newly-created `<link>` tag, where object properties are mapped to the corresponding attributes.
 
-  - `style`
+- `style`
 
-    **Type**: `Array<Record<string, any>>`
+  **Type**: `Array<Record<string, any>>`
 
-    Each element in the array is mapped to a newly-created `<style>` tag, where object properties are mapped to the corresponding attributes.
+  Each element in the array is mapped to a newly-created `<style>` tag, where object properties are mapped to the corresponding attributes.
 
-  - `script`
+- `script`
 
-    **Type**: `Array<Record<string, any>>`
+  **Type**: `Array<Record<string, any>>`
 
-    Each element in the array is mapped to a newly-created `<script>` tag, where object properties are mapped to the corresponding attributes.
+  Each element in the array is mapped to a newly-created `<script>` tag, where object properties are mapped to the corresponding attributes.
 
-  - `noscript`
+- `noscript`
 
-    **Type**: `Array<Record<string, any>>`
+  **Type**: `Array<Record<string, any>>`
 
-    Each element in the array is mapped to a newly-created `<noscript>` tag, where object properties are mapped to the corresponding attributes.
+  Each element in the array is mapped to a newly-created `<noscript>` tag, where object properties are mapped to the corresponding attributes.
 
-  - `titleTemplate`
+- `titleTemplate`
 
-    **Type**: `string` | `((title: string) => string)`
+  **Type**: `string` | `((title: string) => string)`
 
-    Configures dynamic template to customize the page title on an individual page.
+  Configures dynamic template to customize the page title on an individual page.
 
-  - `title`
+- `title`
 
-    **Type**: `string`
+  **Type**: `string`
 
-    Sets static page title on an individual page.
+  Sets static page title on an individual page.
 
-  - `bodyAttrs`
+- `bodyAttrs`
 
-    **Type**: `Record<string, any>`
+  **Type**: `Record<string, any>`
 
-    Sets attributes of the `<body>` tag. Each object property is mapped to the corresponding attribute.
+  Sets attributes of the `<body>` tag. Each object property is mapped to the corresponding attribute.
 
-  - `htmlAttrs`
+- `htmlAttrs`
 
-    **Type**: `Record<string, any>`
+  **Type**: `Record<string, any>`
 
-    Sets attributes of the `<html>` tag. Each object property is mapped to the corresponding attribute.
+  Sets attributes of the `<html>` tag. Each object property is mapped to the corresponding attribute.
 
 ## Examples
 
