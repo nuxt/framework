@@ -58,7 +58,7 @@ Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the rout
 By default, Nuxt waits until a `refresh` is finished before it can be executed again.
 
 ::alert{type=warning}
-If you have not fetched data on the server (for example, with `server: false`), then the data _will not_ be fetched until hydration completes. This means even if you await `useAsyncData` on client-side, `data` will remain null within `<script setup>`.
+If you have not fetched data on the server (for example, with `server: false`), then the data _will not_ be fetched until hydration completes. This means even if you await `useAsyncData` on the client side, `data` will remain `null` within `<script setup>`.
 ::
 
 ## Example
