@@ -3,7 +3,7 @@
 ::StabilityEdge
 ::
 
-Updates [app config](/guide/features/app-config) using deep assignment. Existing (nested) properties will be preserved.
+Updates [app config](/guide/going-further/app-config) using deep assignment. Existing (nested) properties will be preserved.
 
 **Usage:**
 
@@ -17,4 +17,4 @@ updateAppConfig(newAppConfig)
 console.log(appConfig) // { foo: 'baz' }
 ```
 
-::ReadMore{link="/guide/features/app-config"}
+::ReadMore{link="/guide/going-further/app-config"}

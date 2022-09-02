@@ -142,7 +142,7 @@ Nuxt 3 has been re-architected with a smaller core and optimized for faster perf
     :icon-nuxt-nitro{.h-32}
     :headline[Nitro Engine]
 
-    We worked for 9 months on Nuxt's new server engine for Nuxt: [**Nitro**](/guide/concepts/server-engine). It unlocks new **full-stack capabilities** to Nuxt server and beyond.
+    We worked for 9 months on Nuxt's new server engine for Nuxt: [**Nitro**](/guide/key-concepts/server-engine). It unlocks new **full-stack capabilities** to Nuxt server and beyond.
 
     In development, it uses [Rollup](https://rollupjs.org/guide/en/) and [Node.js workers](https://nodejs.org/api/worker_threads.html) for your server code and context isolation. It also **generates your server API** by reading files in [`server/api/`](/guide/directory-structure/server#api-routes) and **server middleware** from [`server/middleware/`](/guide/directory-structure/server#server-middleware).
 
@@ -152,7 +152,7 @@ Nuxt 3 has been re-architected with a smaller core and optimized for faster perf
 
     The foundation of the Nitro server is rollup and [h3](https://github.com/unjs/h3): a minimal http framework built for high performance and portability.
 
-    :button-link[Learn more about Nitro]{ href="/guide/concepts/server-engine" size="medium" aria-label="Learn more about Nitro" }
+    :button-link[Learn more about Nitro]{ href="/guide/key-concepts/server-engine" size="medium" aria-label="Learn more about Nitro" }
   ::
 ::
 
@@ -178,7 +178,7 @@ Nuxt 3 has been re-architected with a smaller core and optimized for faster perf
     As we've been working on new features for Nuxt 3, we've back-ported some of them to Nuxt 2.
 
     ::list{.mb-8}
-    - Using [Nitro server](/guide/concepts/server-engine) with Nuxt 2
+    - Using [Nitro server](/guide/key-concepts/server-engine) with Nuxt 2
     - Using Composition API (same as Nuxt 3) with Nuxt 2
     - Using new CLI and DevTools with Nuxt 2
     - Progressively upgrade to Nuxt 3

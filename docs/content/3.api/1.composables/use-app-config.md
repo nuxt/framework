@@ -3,7 +3,7 @@
 ::StabilityEdge
 ::
 
-Access [app config](/guide/features/app-config):
+Access [app config](/guide/going-further/app-config):
 
 **Usage:**
 
@@ -13,4 +13,4 @@ const appConfig = useAppConfig()
 console.log(appConfig)
 ```
 
-::ReadMore{link="/guide/features/app-config"}
+::ReadMore{link="/guide/going-further/app-config"}

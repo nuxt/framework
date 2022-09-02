@@ -77,6 +77,6 @@ const { data, pending, error, refresh } = await useFetch(
 )
 ```
 
-:ReadMore{link="/guide/features/data-fetching"}
+:ReadMore{link="/getting-started/data-fetching"}
 
 :LinkExample{link="/examples/composables/use-fetch"}

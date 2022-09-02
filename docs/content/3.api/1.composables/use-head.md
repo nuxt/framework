@@ -1,6 +1,6 @@
 # `useHead`
 
-::ReadMore{link="/guide/features/head-management"}
+::ReadMore{link="/getting-started/head-management"}
 
 Nuxt provides a composable to update the head properties of your page with an [`MetaObject`](/api/composables/use-head/#metaobject) of meta properties with keys corresponding to meta tags:
 
