@@ -1788,7 +1788,7 @@ __metadata:
     "@rollup/plugin-replace": ^4.0.0
     "@types/cssnano": ^5
     "@vitejs/plugin-vue": ^3.0.3
-    "@vitejs/plugin-vue-jsx": ^2.0.0
+    "@vitejs/plugin-vue-jsx": ^2.0.1
     autoprefixer: ^10.4.8
     chokidar: ^3.5.3
     cssnano: ^5.1.13
@@ -1857,7 +1857,7 @@ __metadata:
     mlly: ^0.5.14
     ohash: ^0.1.5
     pathe: ^0.3.5
-    pify: ^6.0.0
+    pify: ^6.1.0
     postcss: ^8.4.16
     postcss-import: ^15.0.0
     postcss-loader: ^7.0.1
@@ -2930,7 +2930,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-vue-jsx@npm:^2.0.0":
+"@vitejs/plugin-vue-jsx@npm:^2.0.1":
   version: 2.0.1
   resolution: "@vitejs/plugin-vue-jsx@npm:2.0.1"
   dependencies:
@@ -10625,10 +10625,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pify@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "pify@npm:6.0.0"
-  checksum: f5837e835160d617b4ec6814753c114faed9a847a2be8264b86805b1bbdb84f6b35bad5277257a3e78f0fd210f7eaefc762443b5b74ce96a7c7a81e2fb056934
+"pify@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "pify@npm:6.1.0"
+  checksum: cb21ee8794e9e14955669fbc06b964d0dd3d4e6fa3c2ea3cf22f6794de61ec1ea5c1fac02dadfd4aa16c9cf589f6733406e826e64366f70e09f5e95917a0b8ac
   languageName: node
   linkType: hard
 
