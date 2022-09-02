@@ -51,9 +51,9 @@ export function ssrStylePlugin (options: SSRStylePluginOptions): Plugin {
           [
             ...globalStylesArray.map((css, i) => `import s${i} from './${css}';`),
             `const globalStyles = [${globalStylesArray.map((_, i) => `s${i}`).join(', ')}]`,
-            'const interopDefault = r => r.default || r',
+            'const addGlobals = r => (r.default || r).concat(globalStyles)',
             `export default ${genObjectFromRawEntries(
-              Object.entries(emitted).map(([key, value]) => [key, `() => import('./${this.getFileName(value)}').then(interopDefault).then(r => r.concat(globalStyles))`])
+              Object.entries(emitted).map(([key, value]) => [key, `() => import('./${this.getFileName(value)}').then(addGlobals)`])
             )}`
           ].join('\n')
       })
