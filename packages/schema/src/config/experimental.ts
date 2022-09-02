@@ -58,7 +58,7 @@ export default defineUntypedSchema({
      * You can also pass a function that receives the path of a Vue component
      * and returns a boolean indicating whether to inline the styles for that component.
      *
-     * @type {boolean | (id?: string) => boolean}
+     * @type {boolean | ((id?: string) => boolean)}
      */
     renderInlineStyles: true,
   }
