@@ -62,15 +62,15 @@ export interface NavigateToOptions {
   external?: boolean
 }
 
-export const navigateTo = (to: RouteLocationRaw | undefined | null, options?: NavigateToOptions): Promise<void | NavigationFailure> | RouteLocationRaw => {
+export const navigateTo = (to: RouteLocationRaw | undefined | null, options: NavigateToOptions = {}): Promise<void | NavigationFailure> | RouteLocationRaw => {
   if (!to) {
     to = '/'
   }
 
   const toPath = typeof to === 'string' ? to : ((to as RouteLocationPathRaw).path || '/')
   const isExternal = hasProtocol(toPath, true)
-  if (isExternal && !options?.external) {
-    throw new Error('Navigating to an external URL is not allowed by default. Use `navigateTo (url, { external: true })`.')
+  if (isExternal && !options.external) {
+    throw new Error('Navigating to external URL is not allowed by default. Use `nagivateTo (url, { external: true })`.')
   }
   if (isExternal && parseURL(toPath).protocol === 'script:') {
     throw new Error('Cannot navigate to an URL with script protocol.')
@@ -87,13 +87,13 @@ export const navigateTo = (to: RouteLocationRaw | undefined | null, options?: Na
     const nuxtApp = useNuxtApp()
     if (nuxtApp.ssrContext && nuxtApp.ssrContext.event) {
       const redirectLocation = isExternal ? toPath : joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
-      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext!.event, redirectLocation, options?.redirectCode || 302))
+      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext!.event, redirectLocation, options.redirectCode || 301))
     }
   }
 
   // Client-side redirection using vue-router
   if (isExternal) {
-    if (options?.replace) {
+    if (options.replace) {
       location.replace(toPath)
     } else {
       location.href = toPath
@@ -101,7 +101,7 @@ export const navigateTo = (to: RouteLocationRaw | undefined | null, options?: Na
     return Promise.resolve()
   }
 
-  return options?.replace ? router.replace(to) : router.push(to)
+  return options.replace ? router.replace(to) : router.push(to)
 }
 
 /** This will abort navigation within a Nuxt route middleware handler. */
