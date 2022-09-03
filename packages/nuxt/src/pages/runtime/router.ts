@@ -58,7 +58,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const routerHistory = routerOptions.history?.(baseURL) ??
     (process.client ? createWebHistory(baseURL) : createMemoryHistory(baseURL))
 
-  const routes = !routerOptions.routes ? _routes : Array.isArray(routerOptions.routes) ? routerOptions.routes : routerOptions.routes(_routes)
+  const routes = !routerOptions.routes ? _routes : routerOptions.routes(_routes)
 
   const initialURL = process.server ? nuxtApp.ssrContext!.url : createCurrentLocation(baseURL, window.location)
   const router = createRouter({
