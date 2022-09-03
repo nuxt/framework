@@ -9,7 +9,7 @@ import type { NuxtTemplate, Nuxt, NuxtApp } from './nuxt'
 import type { Preset as ImportPreset, Import } from 'unimport'
 import type { NuxtConfig, NuxtOptions } from './config'
 import type { Nitro, NitroConfig } from 'nitropack'
-import type { Component, ComponentsDir, ScanDir, ComponentsOptions } from './components'
+import type { Component, ComponentsOptions } from './components'
 import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
 
 
@@ -76,13 +76,20 @@ export interface NuxtHooks {
   'build:manifest': (manifest: Manifest) => HookResult
 
   // Auto imports
+  'imports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
+  'imports:extend': (imports: Import[]) => HookResult
+  'imports:dirs': (dirs: string[]) => HookResult
+
+  /** @deprecated Please use `imports:sources` hook */
   'autoImports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
+  /** @deprecated Please use `imports:extend` hook */
   'autoImports:extend': (imports: Import[]) => HookResult
+  /** @deprecated Please use `imports:dirs` hook */
   'autoImports:dirs': (dirs: string[]) => HookResult
 
   // Components
   'components:dirs': (dirs: ComponentsOptions['dirs']) => HookResult
-  'components:extend': (components: (Component | ComponentsDir | ScanDir)[]) => HookResult
+  'components:extend': (components: Component[]) => HookResult
 
   // @nuxt/builder
   'build:before':

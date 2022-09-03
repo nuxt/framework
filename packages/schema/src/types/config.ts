@@ -1,6 +1,8 @@
+import type { KeepAliveProps, TransitionProps } from 'vue'
 import { ConfigSchema } from '../../schema/config'
 import type { UserConfig as ViteUserConfig } from 'vite'
 import type { Options as VuePluginOptions } from '@vitejs/plugin-vue'
+import type { MetaObject } from './meta'
 
 type DeepPartial<T> = T extends Function ? T : T extends Record<string, any> ? { [P in keyof T]?: DeepPartial<T[P]> } : T
 
@@ -13,8 +15,8 @@ export interface NuxtConfig extends DeepPartial<Omit<ConfigSchema, 'vite'>> {
 
 // TODO: Expose ConfigLayer<T> from c12
 interface ConfigLayer<T> {
-  config: T;
-  cwd: string;
+  config: T
+  cwd: string
   configFile: string
 }
 export type NuxtConfigLayer = ConfigLayer<NuxtConfig & {
@@ -26,6 +28,28 @@ export type NuxtConfigLayer = ConfigLayer<NuxtConfig & {
 export interface NuxtOptions extends ConfigSchema {
   _layers: NuxtConfigLayer[]
 }
+
+export interface ViteConfig extends ViteUserConfig {
+  /**
+   * Options passed to @vitejs/plugin-vue
+   * @see https://github.com/vitejs/vite/tree/main/packages/plugin-vue
+   */
+  vue?: VuePluginOptions
+
+  /**
+   * Bundler for dev time server-side rendering.
+   * @default 'vite-node'
+   */
+  devBundler?: 'vite-node' | 'legacy',
+
+  /**
+   * Warmup vite entrypoint caches on dev startup.
+   */
+  warmupEntry?: boolean
+}
+
+
+// -- Runtime Config --
 
 type RuntimeConfigNamespace = Record<string, any>
 
@@ -39,19 +63,21 @@ export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamesp
   public: PublicRuntimeConfig
 }
 
-export interface ViteConfig extends ViteUserConfig {
-  /**
-   * Options passed to @vitejs/plugin-vue
-   * @see https://github.com/vitejs/vite/tree/main/packages/plugin-vue
-   */
-  vue?: VuePluginOptions
-  /**
-   * Bundler for dev time server-side rendering.
-   * @default 'vite-node'
-   */
-  devBundler?: 'vite-node' | 'legacy',
-  /**
-   * Warmup vite entrypoint caches on dev startup.
-   */
-  warmupEntry?: boolean
+// -- App Config --
+export interface AppConfigInput extends Record<string, any> {
+  /** @deprecated reserved */
+  private?: never
+  /** @deprecated reserved */
+  nuxt?: never
+  /** @deprecated reserved */
+  nitro?: never
 }
+
+export interface NuxtAppConfig {
+  head: MetaObject
+  layoutTransition: boolean | TransitionProps
+  pageTransition: boolean | TransitionProps
+  keepalive: boolean | KeepAliveProps
+}
+
+export interface AppConfig { }

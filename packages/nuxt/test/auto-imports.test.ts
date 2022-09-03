@@ -4,10 +4,10 @@ import { join } from 'pathe'
 import { createCommonJS, findExports } from 'mlly'
 import * as VueFunctions from 'vue'
 import { createUnimport, Import } from 'unimport'
-import { TransformPlugin } from '../src/auto-imports/transform'
-import { defaultPresets } from '../src/auto-imports/presets'
+import { TransformPlugin } from '../src/imports/transform'
+import { defaultPresets } from '../src/imports/presets'
 
-describe('auto-imports:transform', () => {
+describe('imports:transform', () => {
   const imports: Import[] = [
     { name: 'ref', as: 'ref', from: 'vue' },
     { name: 'computed', as: 'computed', from: 'bar' },
@@ -20,8 +20,8 @@ describe('auto-imports:transform', () => {
 
   const transformPlugin = TransformPlugin.raw({ ctx, options: { transform: { exclude: [/node_modules/] } } }, { framework: 'rollup' })
   const transform = async (source: string) => {
-    const { code } = await transformPlugin.transform.call({ error: null, warn: null }, source, '') || { code: null }
-    return code
+    const result = await transformPlugin.transform!.call({ error: null, warn: null } as any, source, '')
+    return typeof result === 'string' ? result : result?.code
   }
 
   it('should correct inject', async () => {
@@ -29,13 +29,13 @@ describe('auto-imports:transform', () => {
   })
 
   it('should ignore existing imported', async () => {
-    expect(await transform('import { ref } from "foo"; const a = ref(0)')).to.equal(null)
-    expect(await transform('import { computed as ref } from "foo"; const a = ref(0)')).to.equal(null)
-    expect(await transform('import ref from "foo"; const a = ref(0)')).to.equal(null)
-    expect(await transform('import { z as ref } from "foo"; const a = ref(0)')).to.equal(null)
-    expect(await transform('let ref = () => {}; const a = ref(0)')).to.equal(null)
-    expect(await transform('let { ref } = Vue; const a = ref(0)')).to.equal(null)
-    expect(await transform('let [\ncomputed,\nref\n] = Vue; const a = ref(0); const b = ref(0)')).to.equal(null)
+    expect(await transform('import { ref } from "foo"; const a = ref(0)')).to.equal(undefined)
+    expect(await transform('import { computed as ref } from "foo"; const a = ref(0)')).to.equal(undefined)
+    expect(await transform('import ref from "foo"; const a = ref(0)')).to.equal(undefined)
+    expect(await transform('import { z as ref } from "foo"; const a = ref(0)')).to.equal(undefined)
+    expect(await transform('let ref = () => {}; const a = ref(0)')).to.equal(undefined)
+    expect(await transform('let { ref } = Vue; const a = ref(0)')).to.equal(undefined)
+    expect(await transform('let [\ncomputed,\nref\n] = Vue; const a = ref(0); const b = ref(0)')).to.equal(undefined)
   })
 
   it('should ignore comments', async () => {
@@ -48,13 +48,13 @@ describe('auto-imports:transform', () => {
   })
 
   it('should exclude files from transform', async () => {
-    expect(await transform('excluded')).toEqual(null)
+    expect(await transform('excluded')).toEqual(undefined)
   })
 })
 
 const excludedNuxtHelpers = ['useHydration']
 
-describe('auto-imports:nuxt', () => {
+describe('imports:nuxt', () => {
   try {
     const { __dirname } = createCommonJS(import.meta.url)
     const entrypointContents = readFileSync(join(__dirname, '../src/app/composables/index.ts'), 'utf8')
@@ -65,7 +65,7 @@ describe('auto-imports:nuxt', () => {
         continue
       }
       it(`should register ${name} globally`, () => {
-        expect(defaultPresets.find(a => a.from === '#app').imports).to.include(name)
+        expect(defaultPresets.find(a => a.from === '#app')!.imports).to.include(name)
       })
     }
   } catch (e) {
@@ -170,13 +170,13 @@ const excludedVueHelpers = [
   'compile'
 ]
 
-describe('auto-imports:vue', () => {
+describe('imports:vue', () => {
   for (const name of Object.keys(VueFunctions)) {
     if (excludedVueHelpers.includes(name)) {
       continue
     }
     it(`should register ${name} globally`, () => {
-      expect(defaultPresets.find(a => a.from === 'vue').imports).toContain(name)
+      expect(defaultPresets.find(a => a.from === 'vue')!.imports).toContain(name)
     })
   }
 })

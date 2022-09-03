@@ -11,8 +11,8 @@ export default defineNuxtConfig({
   },
   buildDir: process.env.NITRO_BUILD_DIR,
   builder: process.env.TEST_WITH_WEBPACK ? 'webpack' : 'vite',
+  theme: './extends/bar',
   extends: [
-    './extends/bar',
     './extends/node_modules/foo'
   ],
   nitro: {
@@ -37,5 +37,11 @@ export default defineNuxtConfig({
   experimental: {
     reactivityTransform: true,
     treeshakeClientOnly: true
+  },
+  appConfig: {
+    fromNuxtConfig: true,
+    nested: {
+      val: 1
+    }
   }
 })

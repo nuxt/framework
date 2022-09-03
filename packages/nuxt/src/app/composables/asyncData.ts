@@ -98,27 +98,18 @@ export function useAsyncData<
   // Setup nuxt instance payload
   const nuxt = useNuxtApp()
 
-  // Setup hook callbacks once per instance
-  const instance = getCurrentInstance()
-  if (instance && !instance._nuxtOnBeforeMountCbs) {
-    instance._nuxtOnBeforeMountCbs = []
-    const cbs = instance._nuxtOnBeforeMountCbs
-    if (instance && process.client) {
-      onBeforeMount(() => {
-        cbs.forEach((cb) => { cb() })
-        cbs.splice(0, cbs.length)
-      })
-      onUnmounted(() => cbs.splice(0, cbs.length))
-    }
-  }
-
   const useInitialCache = () => (nuxt.isHydrating || options.initialCache) && nuxt.payload.data[key] !== undefined
 
-  const asyncData = {
-    data: ref(useInitialCache() ? nuxt.payload.data[key] : options.default?.() ?? null),
-    pending: ref(!useInitialCache()),
-    error: ref(nuxt.payload._errors[key] ?? null)
-  } as AsyncData<DataT, DataE>
+  // Create or use a shared asyncData entity
+  if (!nuxt._asyncData[key]) {
+    nuxt._asyncData[key] = {
+      data: ref(useInitialCache() ? nuxt.payload.data[key] : options.default?.() ?? null),
+      pending: ref(!useInitialCache()),
+      error: ref(nuxt.payload._errors[key] ?? null)
+    }
+  }
+  // TODO: Else, Soemhow check for confliciting keys with different defaults or fetcher
+  const asyncData = { ...nuxt._asyncData[key] } as AsyncData<DataT, DataE>
 
   asyncData.refresh = (opts = {}) => {
     // Avoid fetching same key more than once at a time
@@ -144,7 +135,7 @@ export function useAsyncData<
           result = options.transform(result)
         }
         if (options.pick) {
-          result = pick(result, options.pick) as DataT
+          result = pick(result as any, options.pick) as DataT
         }
         asyncData.data.value = result
         asyncData.error.value = null
@@ -176,12 +167,26 @@ export function useAsyncData<
 
   // Client side
   if (process.client) {
+    // Setup hook callbacks once per instance
+    const instance = getCurrentInstance()
+    if (instance && !instance._nuxtOnBeforeMountCbs) {
+      instance._nuxtOnBeforeMountCbs = []
+      const cbs = instance._nuxtOnBeforeMountCbs
+      if (instance) {
+        onBeforeMount(() => {
+          cbs.forEach((cb) => { cb() })
+          cbs.splice(0, cbs.length)
+        })
+        onUnmounted(() => cbs.splice(0, cbs.length))
+      }
+    }
+
     if (fetchOnServer && nuxt.isHydrating && key in nuxt.payload.data) {
       // 1. Hydration (server: true): no fetch
       asyncData.pending.value = false
-    } else if (instance && nuxt.payload.serverRendered && (nuxt.isHydrating || options.lazy)) {
+    } else if (instance && ((nuxt.payload.serverRendered && nuxt.isHydrating) || options.lazy)) {
       // 2. Initial load (server: false): fetch on mounted
-      // 3. Navigation (lazy: true): fetch on mounted
+      // 3. Initial load or navigation (lazy: true): fetch on mounted
       instance._nuxtOnBeforeMountCbs.push(initialFetch)
     } else {
       // 4. Navigation (lazy: false) - or plugin usage: await fetch

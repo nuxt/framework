@@ -78,8 +78,8 @@ export default defineNuxtModule({
       })
     }
 
-    nuxt.hook('autoImports:extend', (autoImports) => {
-      autoImports.push(
+    nuxt.hook('imports:extend', (imports) => {
+      imports.push(
         { name: 'definePageMeta', as: 'definePageMeta', from: resolve(runtimeDir, 'composables') },
         { name: 'useLink', as: 'useLink', from: 'vue-router' }
       )
@@ -135,7 +135,7 @@ export default defineNuxtModule({
         // Check for router options
         const routerOptionsFiles = (await Promise.all(nuxt.options._layers.map(
           async layer => await findPath(resolve(layer.config.srcDir, 'app/router.options'))
-        ))).filter(Boolean)
+        ))).filter(Boolean) as string[]
 
         const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router.options)
           .map(([key, value]) => [key, genString(value as string)]))

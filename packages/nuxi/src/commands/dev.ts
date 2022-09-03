@@ -1,4 +1,5 @@
 import type { AddressInfo } from 'node:net'
+import { RequestListener } from 'node:http'
 import { resolve, relative, normalize } from 'pathe'
 import chokidar from 'chokidar'
 import { debounce } from 'perfect-debounce'
@@ -6,7 +7,7 @@ import type { Nuxt } from '@nuxt/schema'
 import consola from 'consola'
 import { withTrailingSlash } from 'ufo'
 import { setupDotenv } from 'c12'
-import { showBanner } from '../utils/banner'
+import { showBanner, showVersions } from '../utils/banner'
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
 import { importModule } from '../utils/cjs'
@@ -24,19 +25,21 @@ export default defineNuxtCommand({
     overrideEnv('development')
 
     const { listen } = await import('listhen')
-    let currentHandler
+    let currentHandler: RequestListener | undefined
     let loadingMessage = 'Nuxt is starting...'
-    const loadingHandler = async (_req, res) => {
+    const loadingHandler: RequestListener = async (_req, res) => {
       const { loading: loadingTemplate } = await importModule('@nuxt/ui-templates')
       res.setHeader('Content-Type', 'text/html; charset=UTF-8')
       res.statusCode = 503 // Service Unavailable
       res.end(loadingTemplate({ loading: loadingMessage }))
     }
-    const serverHandler = (req, res) => {
+    const serverHandler: RequestListener = (req, res) => {
       return currentHandler ? currentHandler(req, res) : loadingHandler(req, res)
     }
 
     const rootDir = resolve(args._[0] || '.')
+    showVersions(rootDir)
+
     await setupDotenv({ cwd: rootDir })
 
     const listener = await listen(serverHandler, {
@@ -64,7 +67,7 @@ export default defineNuxtCommand({
     const load = async (isRestart: boolean, reason?: string) => {
       try {
         loadingMessage = `${reason ? reason + '. ' : ''}${isRestart ? 'Restarting' : 'Starting'} nuxt...`
-        currentHandler = null
+        currentHandler = undefined
         if (isRestart) {
           consola.info(loadingMessage)
         }
@@ -103,7 +106,7 @@ export default defineNuxtCommand({
         }
       } catch (err) {
         consola.error(`Cannot ${isRestart ? 'restart' : 'start'} nuxt: `, err)
-        currentHandler = null
+        currentHandler = undefined
         loadingMessage = 'Error while loading nuxt. Please check console and fix errors.'
       }
     }
@@ -132,7 +135,7 @@ export default defineNuxtCommand({
           dLoad(true, `Directory \`${relativePath}/\` ${event === 'addDir' ? 'created' : 'removed'}`)
         }
       } else if (isFileChange) {
-        if (file.match(/(app|error)\.(js|ts|mjs|jsx|tsx|vue)$/)) {
+        if (file.match(/(app|error|app\.config)\.(js|ts|mjs|jsx|tsx|vue)$/)) {
           dLoad(true, `\`${relativePath}\` ${event === 'add' ? 'created' : 'removed'}`)
         }
       }

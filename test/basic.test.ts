@@ -1,8 +1,10 @@
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
+import { joinURL } from 'ufo'
 // import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
-import { expectNoClientErrors } from './utils'
+// eslint-disable-next-line import/order
+import { expectNoClientErrors, renderPage } from './utils'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
@@ -130,6 +132,14 @@ describe('pages', () => {
 
     await expectNoClientErrors('/another-parent')
   })
+
+  it('/client-only-components', async () => {
+    const html = await $fetch('/client-only-components')
+    expect(html).toContain('<div class="client-only-script" foo="bar">')
+    expect(html).toContain('<div class="client-only-script-setup" foo="hello">')
+
+    await expectNoClientErrors('/client-only-components')
+  })
 })
 
 describe('head tags', () => {
@@ -162,11 +172,27 @@ describe('head tags', () => {
   // })
 })
 
+describe('legacy async data', () => {
+  it('should work with defineNuxtComponent', async () => {
+    const html = await $fetch('/legacy/async-data')
+    expect(html).toContain('<div>Hello API</div>')
+    expect(html).toContain('{hello:"Hello API"}')
+  })
+})
+
 describe('navigate', () => {
   it('should redirect to index with navigateTo', async () => {
     const { headers } = await fetch('/navigate-to/', { redirect: 'manual' })
 
     expect(headers.get('location')).toEqual('/')
+  })
+})
+
+describe('navigate external', () => {
+  it('should redirect to example.com', async () => {
+    const { headers } = await fetch('/navigate-to-external/', { redirect: 'manual' })
+
+    expect(headers.get('location')).toEqual('https://example.com/')
   })
 })
 
@@ -247,6 +273,16 @@ describe('layouts', () => {
 
     expect(html).toContain('with-layout.vue')
     expect(html).toContain('Custom Layout:')
+  })
+  it('should work with a dynamically set layout', async () => {
+    const html = await $fetch('/with-dynamic-layout')
+
+    // Snapshot
+    // expect(html).toMatchInlineSnapshot()
+
+    expect(html).toContain('with-dynamic-layout')
+    expect(html).toContain('Custom Layout:')
+    await expectNoClientErrors('/with-dynamic-layout')
   })
 })
 
@@ -333,7 +369,7 @@ describe('extends support', () => {
   describe('app', () => {
     it('extends foo/app/router.options & bar/app/router.options', async () => {
       const html: string = await $fetch('/')
-      const routerLinkClasses = html.match(/href="\/" class="([^"]*)"/)[1].split(' ')
+      const routerLinkClasses = html.match(/href="\/" class="([^"]*)"/)?.[1].split(' ')
       expect(routerLinkClasses).toContain('foo-active-class')
       expect(routerLinkClasses).toContain('bar-exact-active-class')
     })
@@ -351,6 +387,41 @@ describe('automatically keyed composables', () => {
   })
 })
 
+describe('prefetching', () => {
+  it('should prefetch components', async () => {
+    await expectNoClientErrors('/prefetch/components')
+  })
+  it('should not prefetch certain dynamic imports by default', async () => {
+    const html = await $fetch('/auth')
+    // should not prefetch global components
+    expect(html).not.toMatch(/<link [^>]*\/_nuxt\/TestGlobal[^>]*\.js"/)
+    // should not prefetch all other pages
+    expect(html).not.toMatch(/<link [^>]*\/_nuxt\/navigate-to[^>]*\.js"/)
+  })
+})
+
+if (process.env.NUXT_TEST_DEV) {
+  describe('detecting invalid root nodes', () => {
+    it('should detect invalid root nodes in pages', async () => {
+      for (const path of ['1', '2', '3', '4']) {
+        const { consoleLogs } = await renderPage(joinURL('/invalid-root', path))
+        const consoleLogsWarns = consoleLogs.filter(i => i.type === 'warning').map(w => w.text).join('\n')
+        expect(consoleLogsWarns).toContain('does not have a single root node and will cause errors when navigating between routes')
+      }
+    })
+
+    it('should not complain if there is no transition', async () => {
+      for (const path of ['fine']) {
+        const { consoleLogs } = await renderPage(joinURL('/invalid-root', path))
+
+        const consoleLogsWarns = consoleLogs.filter(i => i.type === 'warning')
+
+        expect(consoleLogsWarns.length).toEqual(0)
+      }
+    })
+  })
+}
+
 describe('dynamic paths', () => {
   if (process.env.NUXT_TEST_DEV) {
     // TODO:
@@ -359,7 +430,7 @@ describe('dynamic paths', () => {
   }
 
   it('should work with no overrides', async () => {
-    const html = await $fetch('/assets')
+    const html: string = await $fetch('/assets')
     for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
       const url = match[2]
       expect(url.startsWith('/_nuxt/') || url === '/public.svg').toBeTruthy()
@@ -372,11 +443,11 @@ describe('dynamic paths', () => {
       return
     }
 
-    const html = await $fetch('/assets')
+    const html: string = await $fetch('/assets')
     const urls = Array.from(html.matchAll(/(href|src)="(.*?)"/g)).map(m => m[2])
     const cssURL = urls.find(u => /_nuxt\/assets.*\.css$/.test(u))
     expect(cssURL).toBeDefined()
-    const css = await $fetch(cssURL)
+    const css: string = await $fetch(cssURL!)
     const imageUrls = Array.from(css.matchAll(/url\(([^)]*)\)/g)).map(m => m[1].replace(/[-.][\w]{8}\./g, '.'))
     expect(imageUrls).toMatchInlineSnapshot(`
         [
@@ -448,5 +519,47 @@ describe('dynamic paths', () => {
         (process.env.TEST_WITH_WEBPACK && url === '/public.svg')
       ).toBeTruthy()
     }
+  })
+
+  it('restore server', async () => {
+    process.env.NUXT_APP_BASE_URL = undefined
+    process.env.NUXT_APP_CDN_URL = undefined
+    process.env.NUXT_APP_BUILD_ASSETS_DIR = undefined
+    await startServer()
+  })
+})
+
+describe('app config', () => {
+  it('should work', async () => {
+    const html = await $fetch('/app-config')
+
+    const expectedAppConfig = {
+      fromNuxtConfig: true,
+      nested: {
+        val: 2
+      },
+      fromLayer: true,
+      userConfig: 123
+    }
+
+    expect(html).toContain(JSON.stringify(expectedAppConfig))
+  })
+})
+
+describe('useAsyncData', () => {
+  it('single request resolves', async () => {
+    await expectNoClientErrors('/useAsyncData/single')
+  })
+
+  it('two requests resolve', async () => {
+    await expectNoClientErrors('/useAsyncData/double')
+  })
+
+  it('two requests resolve and sync', async () => {
+    await $fetch('/useAsyncData/refresh')
+  })
+
+  it('two requests made at once resolve and sync', async () => {
+    await expectNoClientErrors('/useAsyncData/promise-all')
   })
 })

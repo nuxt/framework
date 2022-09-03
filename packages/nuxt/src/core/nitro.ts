@@ -22,6 +22,11 @@ export async function initNitro (nuxt: Nuxt) {
     dev: nuxt.options.dev,
     preset: nuxt.options.dev ? 'nitro-dev' : undefined,
     buildDir: nuxt.options.buildDir,
+    analyze: nuxt.options.build.analyze && {
+      template: 'treemap',
+      projectRoot: nuxt.options.rootDir,
+      filename: join(nuxt.options.rootDir, '.nuxt/stats', '{name}.html')
+    },
     scanDirs: nuxt.options._layers.map(layer => layer.config.srcDir).filter(Boolean).map(dir => join(dir!, 'server')),
     renderer: resolve(distDir, 'core/runtime/nitro/renderer'),
     errorHandler: resolve(distDir, 'core/runtime/nitro/error'),
@@ -82,7 +87,7 @@ export async function initNitro (nuxt: Nuxt) {
       '@vue/compiler-core': 'unenv/runtime/mock/proxy',
       '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
       '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
-      '@vue/devtools-api': 'unenv/runtime/mock/proxy-cjs',
+      '@vue/devtools-api': 'vue-devtools-stub',
 
       // Paths
       '#paths': resolve(distDir, 'core/runtime/nitro/paths'),
@@ -131,8 +136,9 @@ export async function initNitro (nuxt: Nuxt) {
   nuxt.hook('close', () => nitro.hooks.callHook('close'))
 
   // Setup handlers
-  const devMidlewareHandler = dynamicEventHandler()
-  nitro.options.devHandlers.unshift({ handler: devMidlewareHandler })
+  const devMiddlewareHandler = dynamicEventHandler()
+  // @ts-ignore fix handler type in nitro to accept event handler
+  nitro.options.devHandlers.unshift({ handler: devMiddlewareHandler })
   nitro.options.devHandlers.push(...devHandlers)
   nitro.options.handlers.unshift({
     route: '/__nuxt_error',
@@ -174,7 +180,7 @@ export async function initNitro (nuxt: Nuxt) {
     nuxt.hook('build:compile', ({ compiler }) => {
       compiler.outputFileSystem = { ...fsExtra, join } as any
     })
-    nuxt.hook('server:devMiddleware', (m) => { devMidlewareHandler.set(toEventHandler(m)) })
+    nuxt.hook('server:devMiddleware', (m) => { devMiddlewareHandler.set(toEventHandler(m)) })
     nuxt.server = createDevServer(nitro)
     nuxt.hook('build:resources', () => {
       nuxt.server.reload()

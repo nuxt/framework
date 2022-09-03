@@ -4,11 +4,14 @@ import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
 import defu from 'defu'
+
 import { RuntimeConfig } from '../types/config'
 
-export default {
+import { defineUntypedSchema } from 'untyped'
+
+export default defineUntypedSchema({
   /**
-   * Extend nested configurations from multiple local or remote sources.
+   * Extend project from multiple local or remote sources.
    *
    * Value should be either a string or array of strings pointing to source directories or config path relative to current config.
    *
@@ -19,6 +22,19 @@ export default {
    * @version 3
    */
   extends: null,
+
+  /**
+   * Extend project from a local or remote source.
+   *
+   * Value should be a string pointing to source directory or config path relative to current config.
+   *
+   * You can use `github:`, `gitlab:`, `bitbucket:` or `https://` to extend from a remote git repository.
+   *
+   * @type {string}
+   *
+   * @version 3
+   */
+   theme: null,
 
   /**
    * Define the workspace directory of your application.
@@ -152,12 +168,13 @@ export default {
   createRequire: {
     $resolve: (val: any) => {
       val = process.env.NUXT_CREATE_REQUIRE || val ||
+        // @ts-expect-error global type
         (typeof globalThis.jest !== 'undefined' ? 'native' : 'jiti')
       if (val === 'jiti') {
-        return p => jiti(typeof p === 'string' ? p : p.filename, { esmResolve: true })
+        return (p: string | { filename: string }) => jiti(typeof p === 'string' ? p : p.filename, { esmResolve: true })
       }
       if (val === 'native') {
-        return p => createRequire(typeof p === 'string' ? p : p.filename)
+        return (p: string | { filename: string }) => createRequire(typeof p === 'string' ? p : p.filename)
       }
       return val
     }
@@ -312,17 +329,17 @@ export default {
    */
   globals: {
     /** @type {(globalName: string) => string} */
-    id: globalName => `__${globalName}`,
+    id: (globalName: string) => `__${globalName}`,
     /** @type {(globalName: string) => string} */
-    nuxt: globalName => `$${globalName}`,
+    nuxt: (globalName: string) => `$${globalName}`,
     /** @type {(globalName: string) => string} */
-    context: globalName => `__${globalName.toUpperCase()}__`,
+    context: (globalName: string) => `__${globalName.toUpperCase()}__`,
     /** @type {(globalName: string) => string} */
-    pluginPrefix: globalName => globalName,
+    pluginPrefix: (globalName: string) => globalName,
     /** @type {(globalName: string) => string} */
-    readyCallback: globalName => `on${pascalCase(globalName)}Ready`,
+    readyCallback: (globalName: string) => `on${pascalCase(globalName)}Ready`,
     /** @type {(globalName: string) => string} */
-    loadedCallback: globalName => `_on${pascalCase(globalName)}Loaded`
+    loadedCallback: (globalName: string) => `_on${pascalCase(globalName)}Loaded`
   },
 
   /**
@@ -427,10 +444,10 @@ export default {
    */
   modulesDir: {
     $default: ['node_modules'],
-    $resolve: (val, get) => [].concat(
-      val.map(dir => resolve(get('rootDir'), dir)),
+    $resolve: (val, get) => [
+      ...val.map((dir: string) => resolve(get('rootDir'), dir)),
       resolve(process.cwd(), 'node_modules')
-    )
+    ]
   },
 
   /**
@@ -704,7 +721,7 @@ export default {
    * Anything under `public` and `app` will be exposed to the frontend as well.
    *
    * Values are automatically replaced by matching env variables at runtime, e.g. setting an environment
-   * variable `API_KEY=my-api-key PUBLIC_BASE_URL=/foo/` would overwrite the two values in the example below.
+   * variable `NUXT_API_KEY=my-api-key NUXT_PUBLIC_BASE_URL=/foo/` would overwrite the two values in the example below.
    *
    * @example
    * ```js
@@ -747,5 +764,16 @@ export default {
    * @version 3
    * @deprecated Use `runtimeConfig` option with `public` key (`runtimeConfig.public.*`).
    */
-  publicRuntimeConfig: {}
-}
+  publicRuntimeConfig: {},
+
+  /**
+   * Additional app configuration
+   *
+   * For programmatic usage and type support, you can directly provide app config with this option.
+   * It will be merged with `app.config` file as default value.
+   *
+   * @type {typeof import('../src/types/config').AppConfig}
+   * @version 3
+   */
+  appConfig: {},
+})
