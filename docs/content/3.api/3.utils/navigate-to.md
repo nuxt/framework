@@ -31,8 +31,6 @@ Make sure to always use `await` or `return` on result of `navigateTo` when calli
 
 ### `options` (optional)
 
-**Default**: `{}`
-
 **Type**: `NavigateToOptions`
 
 An object accepting the following properties:
@@ -44,7 +42,7 @@ An object accepting the following properties:
   **Default**: `false`
 
   By default, `navigateTo` pushes the given route into the Vue Router's instance on the client side.
-  
+
   This behavior can be changed by setting `replace` to `true`, to indicate that given route should be replaced.
 
 - `redirectCode` (optional)
@@ -54,7 +52,7 @@ An object accepting the following properties:
   **Default**: `302`
 
   `navigateTo` redirects to the given path and sets the redirect code to [`302 Found`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/302) by default when the redirection takes place on the server side.
-  
+
   This default behavior can be modified by providing different `redirectCode`. Commonly, [`301 Moved Permanently`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/301) can be used for permanent redirections.
 
 - `external` (optional)

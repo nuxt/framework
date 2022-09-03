@@ -94,14 +94,14 @@ export const navigateTo = (to: RouteLocationRaw | undefined | null, options?: Na
   // Client-side redirection using vue-router
   if (isExternal) {
     if (options?.replace) {
-      location.replace(toPath);
+      location.replace(toPath)
     } else {
-      location.href = toPath;
+      location.href = toPath
     }
     return Promise.resolve()
   }
 
-  return options?.replace ? router.replace(to) : router.push(to);
+  return options?.replace ? router.replace(to) : router.push(to)
 }
 
 /** This will abort navigation within a Nuxt route middleware handler. */
