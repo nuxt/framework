@@ -11,7 +11,7 @@ import { withoutBase, isEqual } from 'ufo'
 import NuxtPage from './page'
 import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, showError, clearError, navigateTo, useError, useState } from '#app'
 // @ts-ignore
-import routes from '#build/routes'
+import _routes from '#build/routes'
 // @ts-ignore
 import routerOptions from '#build/router.options'
 // @ts-ignore
@@ -57,6 +57,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const baseURL = useRuntimeConfig().app.baseURL
   const routerHistory = routerOptions.history?.(baseURL) ??
     (process.client ? createWebHistory(baseURL) : createMemoryHistory(baseURL))
+
+  const routes = !routerOptions.routes ? _routes : Array.isArray(routerOptions.routes) ? routerOptions.routes : routerOptions.routes(_routes)
 
   const initialURL = process.server ? nuxtApp.ssrContext!.url : createCurrentLocation(baseURL, window.location)
   const router = createRouter({
