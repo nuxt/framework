@@ -4,7 +4,7 @@ This composable provides a convenient wrapper around [`useAsyncData`](/api/compo
 
 ## Type
 
-```ts [Signature]
+```ts
 function useFetch(
   url: string | Request | Ref<string | Request> | () => string | Request,
   options?: UseFetchOptions<DataT>
@@ -73,19 +73,19 @@ const { data, pending, error, refresh } = await useFetch(
   'https://api.nuxtjs.dev/mountains',
   {
     onRequest({ options }) {
-      // Set your request headers
-      options.headers = options.headers || {};
-      options.headers['authorize'] = 'authorize';
+      // set the request headers
+      options.headers = options.headers || {}
+      options.headers.authorize = 'authorize'
     },
-    onRequestError({ error }){
-      // Handling your request errors
+    onRequestError({ error }) {
+      // handle the request errors
     },
     onResponse({ response }) {
-      // Process your response data
+      // process the response data
       return response._data
     },
-    onResponseError({ response }){
-      // Handling your response errors
+    onResponseError({ response }) {
+      // handle the response errors
     },
     pick: ['title']
   }
