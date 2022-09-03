@@ -72,6 +72,21 @@ By default, Nuxt waits until a `refresh` is finished before it can be executed a
 const { data, pending, error, refresh } = await useFetch(
   'https://api.nuxtjs.dev/mountains',
   {
+    onRequest({ options }) {
+      // Set your request headers
+      options.headers = options.headers || {};
+      options.headers['authorize'] = 'authorize';
+    },
+    onRequestError({ error }){
+      // Handling your request errors
+    },
+    onResponse({ response }) {
+      // Process your response data
+      return response._data
+    },
+    onResponseError({ response }){
+      // Handling your response errors
+    },
     pick: ['title']
   }
 )
