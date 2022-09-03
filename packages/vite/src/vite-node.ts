@@ -113,11 +113,7 @@ function createViteNodeMiddleware (ctx: ViteBuildContext, invalidates: Set<strin
         throw createError({ statusCode: 400 })
       }
       const module = await node.fetchModule(moduleId).catch((err) => {
-        throw createError({
-          statusCode: 500,
-          statusMessage: `[vite-node] Cannot fetch module ${moduleId}`,
-          data: err
-        })
+        throw createError({ data: err })
       })
       return module
     }
