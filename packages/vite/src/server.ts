@@ -9,7 +9,7 @@ import { ViteBuildContext, ViteOptions } from './vite'
 import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { initViteNodeServer } from './vite-node'
-import { ssrStylePlugin } from './plugins/ssr-styles'
+import { ssrStylesPlugin } from './plugins/ssr-styles'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const useAsyncEntry = ctx.nuxt.options.experimental.asyncEntry ||
@@ -113,7 +113,7 @@ export async function buildServer (ctx: ViteBuildContext) {
   } as ViteOptions)
 
   if (ctx.nuxt.options.experimental.inlineSSRStyles) {
-    serverConfig.plugins!.push(ssrStylePlugin({
+    serverConfig.plugins!.push(ssrStylesPlugin({
       srcDir: ctx.nuxt.options.srcDir,
       shouldInline: typeof ctx.nuxt.options.experimental.inlineSSRStyles === 'function'
         ? ctx.nuxt.options.experimental.inlineSSRStyles
