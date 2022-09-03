@@ -15,16 +15,16 @@ export default defineUntypedSchema({
   /**
    * Nitro server handlers.
    *
-   * Each handler admits the following options:
+   * Each handler accepts the following options:
    * - handler: The path to the file defining the handler.
    * - route: The route under which the handler is available. This follows the conventions of https://github.com/unjs/radix3.
-   * - method: The kind of requests (`GET`, `POST`, ...) that should be handled.
-   * - middleware: Specifies this is a middleware handler.
-   * - lazy: Specifies to use lazy loading to import the handler.
+   * - method: The HTTP method of requests that should be handled.
+   * - middleware: Specifies whether it is a middleware handler.
+   * - lazy: Specifies whether to use lazy loading to import the handler.
    *
    * @see https://v3.nuxtjs.org/guide/features/server-routes
    *
-   * @note Files from `server/api`, `server/middleware` and `server/routes` will be automatically registred by Nuxt.
+   * @note Files from `server/api`, `server/middleware` and `server/routes` will be automatically registered by Nuxt.
    *
    * @example
    * ```js
