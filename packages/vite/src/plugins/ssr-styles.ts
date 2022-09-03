@@ -28,13 +28,13 @@ export function ssrStylePlugin (options: SSRStylePluginOptions): Plugin {
           ? outputOptions.assetFileNames
           : outputOptions.assetFileNames({
             type: 'asset',
-            name: `${filename(file)}-css.mjs`,
+            name: `${filename(file)}-styles.mjs`,
             source: ''
           })
 
         emitted[file] = this.emitFile({
           type: 'asset',
-          name: `${filename(file)}-css.mjs`,
+          name: `${filename(file)}-styles.mjs`,
           source: [
             ...cssMap[file].map((css, i) => `import s${i} from './${relative(dirname(base), this.getFileName(css))}';`),
             `export default [${cssMap[file].map((_, i) => `s${i}`).join(', ')}]`
@@ -91,7 +91,7 @@ export function ssrStylePlugin (options: SSRStylePluginOptions): Plugin {
         if (resolution) {
           const ref = this.emitFile({
             type: 'chunk',
-            name: `${filename(id)}-css-${index}.mjs`,
+            name: `${filename(id)}-styles-${index}.mjs`,
             id: resolution.id + '?inline&used'
           })
 
