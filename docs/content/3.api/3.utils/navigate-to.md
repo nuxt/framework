@@ -5,6 +5,7 @@
 `navigateTo` is available on both server side and client side. It can be used within plugins, middleware or can be called directly to perform page navigation.
 
 ## Type
+
 ```ts
 navigateTo(to: RouteLocationRaw | undefined | null, options?: NavigateToOptions) => Promise<void | NavigationFailure> | RouteLocationRaw
 
