@@ -60,6 +60,14 @@ export default defineUntypedSchema({
      *
      * @type {boolean | ((id?: string) => boolean)}
      */
-    renderInlineStyles: true,
+    inlineSSRStyles: {
+      $resolve(val, get) {
+        if (val === false || get('dev') || get('ssr') === false || get('builder') === '@nuxt/webpack-builder') {
+          return false
+        }
+        // Enabled by default for vite prod with ssr
+        return val ?? true
+      }
+    },
   }
 })

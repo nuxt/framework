@@ -141,7 +141,7 @@ export default defineRenderHandler(async (event) => {
   const renderedMeta = await ssrContext.renderMeta?.() ?? {}
 
   // Render inline styles
-  const inlinedStyles = !process.env.NUXT_NO_INLINE && !ssrContext.noInlineStyles
+  const inlinedStyles = process.env.NUXT_INLINE_STYLES && !ssrContext.noInlineStyles
     ? await renderInlineStyles(ssrContext.modules ?? ssrContext._registeredComponents ?? [])
     : ''
 

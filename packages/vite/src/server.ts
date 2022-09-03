@@ -112,11 +112,11 @@ export async function buildServer (ctx: ViteBuildContext) {
     ]
   } as ViteOptions)
 
-  if (ctx.nuxt.options.experimental.renderInlineStyles) {
+  if (ctx.nuxt.options.experimental.inlineSSRStyles) {
     serverConfig.plugins!.push(ssrStylePlugin({
       srcDir: ctx.nuxt.options.srcDir,
-      shouldInline: typeof ctx.nuxt.options.experimental.renderInlineStyles === 'function'
-        ? ctx.nuxt.options.experimental.renderInlineStyles
+      shouldInline: typeof ctx.nuxt.options.experimental.inlineSSRStyles === 'function'
+        ? ctx.nuxt.options.experimental.inlineSSRStyles
         : undefined
     }))
   }
