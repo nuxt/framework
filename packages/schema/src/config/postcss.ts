@@ -1,7 +1,8 @@
 import defu from 'defu'
 import createResolver from 'postcss-import-resolver'
+import { defineUntypedSchema } from 'untyped'
 
-export default {
+export default defineUntypedSchema({
   /** @version 3 */
   postcss: {
     /** Path to postcss config file. */
@@ -41,7 +42,7 @@ export default {
       autoprefixer: {},
 
       cssnano: {
-        $resolve: (val, get) => val ?? (get('dev') && {
+        $resolve: (val, get) => val ?? (!get('dev') && {
           preset: ['default', {
             // Keep quotes in font values to prevent from HEX conversion
             // https://github.com/nuxt/nuxt.js/issues/6306
@@ -51,4 +52,4 @@ export default {
       }
     }
   }
-}
+})

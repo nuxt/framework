@@ -11,8 +11,9 @@ export async function checkNuxtCompatibility (constraints: NuxtCompatibility, nu
   // Nuxt version check
   if (constraints.nuxt) {
     const nuxtVersion = getNuxtVersion(nuxt)
-    const nuxtSemanticVersion = nuxtVersion.split('-').shift()
-    if (!satisfies(nuxtSemanticVersion, constraints.nuxt)) {
+    const nuxtSemanticVersion = nuxtVersion
+      .replace(/-[0-9]+\.[0-9a-f]{7,8}/, '') // Remove edge prefix
+    if (!satisfies(nuxtSemanticVersion, constraints.nuxt, { includePrerelease: true })) {
       issues.push({
         name: 'nuxt',
         message: `Nuxt version \`${constraints.nuxt}\` is required but currently using \`${nuxtVersion}\``
@@ -22,7 +23,7 @@ export async function checkNuxtCompatibility (constraints: NuxtCompatibility, nu
 
   // Bridge compatibility check
   if (isNuxt2(nuxt)) {
-    const bridgeRequirement = constraints?.bridge
+    const bridgeRequirement = constraints.bridge
     const hasBridge = !!(nuxt.options as any).bridge
     if (bridgeRequirement === true && !hasBridge) {
       issues.push({
@@ -86,7 +87,7 @@ export function isNuxt3 (nuxt: Nuxt = useNuxt()) {
 export function getNuxtVersion (nuxt: Nuxt | any = useNuxt() /* TODO: LegacyNuxt */) {
   const version = (nuxt?._version || nuxt?.version || nuxt?.constructor?.version || '').replace(/^v/g, '')
   if (!version) {
-    throw new Error('Cannot determine nuxt version! Is currect instance passed?')
+    throw new Error('Cannot determine nuxt version! Is current instance passed?')
   }
   return version
 }

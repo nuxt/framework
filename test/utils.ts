@@ -1,16 +1,16 @@
-import { getBrowser, url, useTestContext } from '@nuxt/test-utils'
 import { expect } from 'vitest'
+import { getBrowser, url, useTestContext } from '@nuxt/test-utils'
 
 export async function renderPage (path = '/') {
   const ctx = useTestContext()
   if (!ctx.options.browser) {
-    return
+    throw new Error('`renderPage` require `options.browser` to be set')
   }
 
   const browser = await getBrowser()
   const page = await browser.newPage({})
-  const pageErrors = []
-  const consoleLogs = []
+  const pageErrors: Error[] = []
+  const consoleLogs: { type:string, text:string }[] = []
 
   page.on('console', (message) => {
     consoleLogs.push({
@@ -39,10 +39,10 @@ export async function expectNoClientErrors (path: string) {
     return
   }
 
-  const { pageErrors, consoleLogs } = await renderPage(path)
+  const { pageErrors, consoleLogs } = (await renderPage(path))!
 
   const consoleLogErrors = consoleLogs.filter(i => i.type === 'error')
-  const consoleLogWarnings = consoleLogs.filter(i => i.type === 'warn')
+  const consoleLogWarnings = consoleLogs.filter(i => i.type === 'warning')
 
   expect(pageErrors).toEqual([])
   expect(consoleLogErrors).toEqual([])

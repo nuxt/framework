@@ -7,10 +7,37 @@ import MagicString from 'magic-string'
 import { pascalCase } from 'scule'
 
 interface LoaderOptions {
-  getComponents(): Component[]
+  getComponents (): Component[]
   mode: 'server' | 'client'
   sourcemap?: boolean
   transform?: ComponentsOptions['transform']
+}
+
+function isVueTemplate (id: string) {
+  // Bare `.vue` file (in Vite)
+  if (id.endsWith('.vue')) {
+    return true
+  }
+
+  const { search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
+  if (!search) {
+    return false
+  }
+
+  const query = parseQuery(search)
+
+  // Macro
+  if (query.macro) {
+    return true
+  }
+
+  // Non-Vue or Styles
+  if (!('vue' in query) || query.type === 'style') {
+    return false
+  }
+
+  // Query `?vue&type=template` (in Webpack or external template)
+  return true
 }
 
 export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
@@ -27,12 +54,7 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
       if (include.some(pattern => id.match(pattern))) {
         return true
       }
-
-      const { pathname, search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
-      const query = parseQuery(search)
-      // we only transform render functions
-      // from `type=template` (in Webpack) and bare `.vue` file (in Vite)
-      return pathname.endsWith('.vue') && (query.type === 'template' || !!query.macro || !search)
+      return isVueTemplate(id)
     },
     transform (code, id) {
       const components = options.getComponents()
@@ -43,7 +65,7 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
       const s = new MagicString(code)
 
       // replace `_resolveComponent("...")` to direct import
-      s.replace(/(?<=[ (])_?resolveComponent\(["'](lazy-|Lazy)?([^'"]*?)["']\)/g, (full, lazy, name) => {
+      s.replace(/(?<=[ (])_?resolveComponent\(\s*["'](lazy-|Lazy)?([^'"]*?)["'][\s,]*\)/g, (full, lazy, name) => {
         const component = findComponent(components, name, options.mode)
         if (component) {
           const identifier = map.get(component) || `__nuxt_component_${num++}`
@@ -54,11 +76,11 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
           }
           if (lazy) {
             imports.add(genImport('vue', [{ name: 'defineAsyncComponent', as: '__defineAsyncComponent' }]))
-            imports.add(`const ${identifier}_lazy = __defineAsyncComponent(${genDynamicImport(component.filePath)})`)
-            return isClientOnly ? `createClientOnly(${identifier}_lazy)` : `${identifier}_lazy`
+            imports.add(`const ${identifier}_lazy = /*#__PURE__*/ __defineAsyncComponent(${genDynamicImport(component.filePath)})`)
+            return isClientOnly ? `/*#__PURE__*/ createClientOnly(${identifier}_lazy)` : `${identifier}_lazy`
           } else {
             imports.add(genImport(component.filePath, [{ name: component.export, as: identifier }]))
-            return isClientOnly ? `createClientOnly(${identifier})` : identifier
+            return isClientOnly ? `/*#__PURE__*/ createClientOnly(${identifier})` : identifier
           }
         }
         // no matched
@@ -72,7 +94,9 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
       if (s.hasChanged()) {
         return {
           code: s.toString(),
-          map: options.sourcemap && s.generateMap({ source: id, includeContent: true })
+          map: options.sourcemap
+            ? s.generateMap({ source: id, includeContent: true })
+            : undefined
         }
       }
     }

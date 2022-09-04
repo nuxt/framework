@@ -136,25 +136,23 @@ be returned as the cookie's value.
 
 Specifies a function that returns the cookie's default value. The function can also return a `Ref`.
 
-## Handling cookies in API routes
+## Handling Cookies in API Routes
 
-You can use `useCookie` and `setCookie` from [`h3`](https://github.com/unjs/h3) package to set cookies in server API routes.
+You can use `getCookie` and `setCookie` from [`h3`](https://github.com/unjs/h3) package to set cookies in server API routes.
 
 **Example:**
 
 ```js
-import { useCookie, setCookie } from 'h3'
-
-export default (req, res) => {
+export default defineEventHandler(event => {
   // Read counter cookie
-  let counter = useCookie(req, 'counter') || 0
+  let counter = getCookie(event, 'counter') || 0
 
   // Increase counter cookie by 1
-  setCookie(res, 'counter', ++counter)
+  setCookie(event, 'counter', ++counter)
 
   // Send JSON response
   return { counter }
-}
+})
 ```
 
 :LinkExample{link="/examples/composables/use-cookie"}

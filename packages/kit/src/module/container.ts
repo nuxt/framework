@@ -1,8 +1,8 @@
-import { parse, relative } from 'pathe'
-import type { Nuxt, NuxtPluginTemplate, NuxtTemplate, ModuleContainer } from '@nuxt/schema'
-import { logger } from '../logger'
+import { relative } from 'pathe'
+import type { Nuxt, ModuleContainer } from '@nuxt/schema'
 import { chainFn } from '../internal/task'
 import { addTemplate } from '../template'
+import { addLayout } from '../layout'
 import { addServerMiddleware } from '../server'
 import { isNuxt2 } from '../compatibility'
 import { addPluginTemplate } from '../plugin'
@@ -12,11 +12,10 @@ import { installModule } from './install'
 const MODULE_CONTAINER_KEY = '__module_container__'
 
 export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
-  if (nuxt[MODULE_CONTAINER_KEY]) {
-    return nuxt[MODULE_CONTAINER_KEY]
-  }
+  // @ts-ignore
+  if (nuxt[MODULE_CONTAINER_KEY]) { return nuxt[MODULE_CONTAINER_KEY] }
 
-  async function requireModule (moduleOpts) {
+  async function requireModule (moduleOpts: any) {
     let src, inlineOptions
     if (typeof moduleOpts === 'string') {
       src = moduleOpts
@@ -35,7 +34,7 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
     await installModule(src, inlineOptions)
   }
 
-  nuxt[MODULE_CONTAINER_KEY] = <ModuleContainer>{
+  const container: ModuleContainer = {
     nuxt,
     options: nuxt.options,
 
@@ -47,7 +46,7 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
 
     addServerMiddleware,
 
-    addTemplate (template: string | NuxtTemplate) {
+    addTemplate (template) {
       if (typeof template === 'string') {
         template = { src: template }
       }
@@ -57,25 +56,15 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
       return addTemplate(template)
     },
 
-    addPlugin (pluginTemplate: NuxtPluginTemplate): NuxtPluginTemplate {
+    addPlugin (pluginTemplate) {
       return addPluginTemplate(pluginTemplate)
     },
 
-    addLayout (tmpl: NuxtTemplate, name: string) {
-      const { filename, src } = addTemplate(tmpl)
-      const layoutName = name || parse(src).name
-      const layout = nuxt.options.layouts[layoutName]
-
-      if (layout) {
-        logger.warn(`Duplicate layout registration, "${layoutName}" has been registered as "${layout}"`)
-      }
-      nuxt.options.layouts[layoutName] = `./${filename}`
-      if (name === 'error') {
-        this.addErrorLayout(filename)
-      }
+    addLayout (tmpl, name) {
+      return addLayout(tmpl, name)
     },
 
-    addErrorLayout (dst: string) {
+    addErrorLayout (dst) {
       const relativeBuildDir = relative(nuxt.options.rootDir, nuxt.options.buildDir)
       nuxt.options.ErrorPage = `~/${relativeBuildDir}/${dst}`
     },
@@ -103,5 +92,9 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
     }
   }
 
+  // @ts-ignore
+  nuxt[MODULE_CONTAINER_KEY] = container
+
+  // @ts-ignore
   return nuxt[MODULE_CONTAINER_KEY]
 }
