@@ -21,6 +21,7 @@ export default defineBuildConfig({
     // Type imports
     'vue-meta',
     'vue-router',
+    'vue-bundle-renderer',
     'vue',
     'hookable',
     'nitropack',
@@ -40,6 +41,7 @@ export default defineBuildConfig({
     'ignore',
     // Implicit
     '@vue/compiler-core',
-    '@vue/shared'
+    '@vue/shared',
+    'untyped'
   ]
 })

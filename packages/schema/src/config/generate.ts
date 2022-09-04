@@ -1,10 +1,11 @@
 import { resolve } from 'pathe'
 import { joinURL } from 'ufo'
+import { SchemaDefinition } from 'untyped'
 
 /**
  * @version 2
  */
-export default {
+export default <SchemaDefinition>{
   /**
    * Directory name that holds all the assets and generated pages for a `static` build.
    */
@@ -115,12 +116,12 @@ export default {
    * routes can be rendered (on the client-side) by Nuxt.
    *
    * * If unset or set to a falsy value, the name of the fallback HTML file will be `200.html`.
-   * * If set to true, the filename will be `404.html`.
+   * * If set to `true`, the filename will be `404.html`.
    * * If you provide a string as a value, it will be used instead.
    *
    * @note Multiple services (e.g. Netlify) detect a `404.html` automatically. If
    * you configure your web server on your own, please consult its documentation
-   * to find out how to set up an error page (and set it to the 404.html file)
+   * to find out how to set up an error page (and set it to the `404.html` file).
    */
   fallback: { $resolve: val => val === true ? '400.html' : (val || '200.html') },
 
@@ -160,10 +161,16 @@ export default {
      * The full path to the directory underneath `/_nuxt/` where static assets
      * (payload, state and manifest files) will live.
      */
-    base: { $resolve: (val, get) => val || joinURL(get('app').buildAssetsDir, get('generate.dir')) },
-    /** The full path to the versioned directory where static assets for the current buidl are located. */
-    versionBase: { $resolve: (val, get) => val || joinURL(get('generate.base'), get('generate.version')) },
+    base: {
+      $resolve: (val, get) => val || joinURL(get('app').buildAssetsDir, get('generate.dir'))
+    },
+    /** The full path to the versioned directory where static assets for the current build are located. */
+    versionBase: {
+      $resolve: (val, get) => val || joinURL(get('generate.base'), get('generate.version'))
+    },
     /** A unique string to uniquely identify payload versions (defaults to the current timestamp).  */
-    version: { $resolve: val => val || (String(Math.round(Date.now() / 1000))) }
+    version: {
+      $resolve: val => val || (String(Math.round(Date.now() / 1000)))
+    }
   }
 }

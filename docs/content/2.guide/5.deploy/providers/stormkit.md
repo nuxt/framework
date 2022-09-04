@@ -4,8 +4,8 @@ icon: IconCloud
 
 # StormKit
 
-How to deploy Nuxt to [StormKit](https://www.stormkit.io/).
+How to deploy Nuxt to [StormKit](https://app.stormkit.io/?referral=nuxtjs).
 
-## Learn more
+## Learn More
 
-:ReadMore{link="https://nitro.unjs.io/deploy/providers/stormkit.html" title="the Nitro documentation for StormKit deployment"}
+:ReadMore{link="https://nitro.unjs.io/deploy/providers/stormkit" title="the Nitro documentation for StormKit deployment"}

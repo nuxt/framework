@@ -3,7 +3,7 @@ import { createApp, createError, defineEventHandler, defineLazyEventHandler } fr
 import { ViteNodeServer } from 'vite-node/server'
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
-import { addServerMiddleware } from '@nuxt/kit'
+import { addDevServerHandler } from '@nuxt/kit'
 import type { ModuleNode, Plugin as VitePlugin } from 'vite'
 import { normalizeViteManifest } from 'vue-bundle-renderer'
 import { resolve as resolveModule } from 'mlly'
@@ -25,9 +25,8 @@ export function viteNodePlugin (ctx: ViteBuildContext): VitePlugin {
     },
     handleHotUpdate ({ file, server }) {
       function markInvalidate (mod: ModuleNode) {
-        if (invalidates.has(mod.id)) {
-          return
-        }
+        if (!mod.id) { return }
+        if (invalidates.has(mod.id)) { return }
         invalidates.add(mod.id)
         for (const importer of mod.importers) {
           markInvalidate(importer)
@@ -42,14 +41,14 @@ export function viteNodePlugin (ctx: ViteBuildContext): VitePlugin {
 }
 
 export function registerViteNodeMiddleware (ctx: ViteBuildContext) {
-  addServerMiddleware({
+  addDevServerHandler({
     route: '/__nuxt_vite_node__/',
     handler: createViteNodeMiddleware(ctx)
   })
 }
 
 function getManifest (ctx: ViteBuildContext) {
-  const css = Array.from(ctx.ssrServer.moduleGraph.urlToModuleMap.keys())
+  const css = Array.from(ctx.ssrServer!.moduleGraph.urlToModuleMap.keys())
     .filter(i => isCSS(i))
 
   const manifest = normalizeViteManifest({
@@ -79,21 +78,13 @@ function createViteNodeMiddleware (ctx: ViteBuildContext, invalidates: Set<strin
   }))
 
   app.use('/invalidates', defineEventHandler(() => {
-    // When a file has been invalidated, we also invalidate the entry module
-    if (invalidates.size) {
-      for (const key of ctx.ssrServer.moduleGraph.fileToModulesMap.keys()) {
-        if (key.startsWith(ctx.nuxt.options.appDir + '/entry')) {
-          invalidates.add(key)
-        }
-      }
-    }
     const ids = Array.from(invalidates)
     invalidates.clear()
     return ids
   }))
 
   app.use('/module', defineLazyEventHandler(() => {
-    const viteServer = ctx.ssrServer
+    const viteServer = ctx.ssrServer!
     const node: ViteNodeServer = new ViteNodeServer(viteServer, {
       deps: {
         inline: [
@@ -117,16 +108,18 @@ function createViteNodeMiddleware (ctx: ViteBuildContext, invalidates: Set<strin
     }
 
     return async (event) => {
-      const moduleId = decodeURI(event.req.url).substring(1)
+      const moduleId = decodeURI(event.req.url!).substring(1)
       if (moduleId === '/') {
         throw createError({ statusCode: 400 })
       }
-      const module = await node.fetchModule(moduleId) as any
+      const module = await node.fetchModule(moduleId).catch((err) => {
+        throw createError({ data: err })
+      })
       return module
     }
   }))
 
-  return app.nodeHandler
+  return app
 }
 
 export async function initViteNodeServer (ctx: ViteBuildContext) {
@@ -135,7 +128,6 @@ export async function initViteNodeServer (ctx: ViteBuildContext) {
     entryPath = resolve(ctx.nuxt.options.appDir, 'entry.async')
   }
 
-  // TODO: Update me
   const host = ctx.nuxt.options.server.host || 'localhost'
   const port = ctx.nuxt.options.server.port || '3000'
   const protocol = ctx.nuxt.options.server.https ? 'https' : 'http'
@@ -143,9 +135,9 @@ export async function initViteNodeServer (ctx: ViteBuildContext) {
   // Serialize and pass vite-node runtime options
   const viteNodeServerOptions = {
     baseURL: `${protocol}://${host}:${port}/__nuxt_vite_node__`,
-    rootDir: ctx.nuxt.options.rootDir,
+    root: ctx.nuxt.options.srcDir,
     entryPath,
-    base: ctx.ssrServer.config.base || '/_nuxt/'
+    base: ctx.ssrServer!.config.base || '/_nuxt/'
   }
   process.env.NUXT_VITE_NODE_OPTIONS = JSON.stringify(viteNodeServerOptions)
 

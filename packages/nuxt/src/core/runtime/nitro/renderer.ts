@@ -1,31 +1,24 @@
 import { createRenderer } from 'vue-bundle-renderer/runtime'
-import type { RenderHandler, RenderResponse } from 'nitropack'
+import type { RenderResponse } from 'nitropack'
 import type { Manifest } from 'vite'
-import { appendHeader, CompatibilityEvent, getQuery } from 'h3'
+import { appendHeader, getQuery } from 'h3'
 import devalue from '@nuxt/devalue'
-import { renderToString as _renderToString } from 'vue/server-renderer'
 import { joinURL } from 'ufo'
-import type { NuxtApp } from '#app'
+import { renderToString as _renderToString } from 'vue/server-renderer'
+import { useRuntimeConfig, useNitroApp, defineRenderHandler } from '#internal/nitro'
+// eslint-disable-next-line import/no-restricted-paths
+import type { NuxtApp, NuxtSSRContext } from '#app'
 
-// @ts-ignore
-import { useRuntimeConfig, useNitroApp, defineRenderHandler as _defineRenderHandler } from '#internal/nitro'
 // @ts-ignore
 import { buildAssetsURL } from '#paths'
 
-export type NuxtSSRContext = NuxtApp['ssrContext']
-
-const defineRenderHandler = _defineRenderHandler as (h: RenderHandler) => CompatibilityEvent
-
-export interface NuxtRenderContext {
-  ssrContext: NuxtSSRContext
-  html: {
-    htmlAttrs: string[]
-    head: string[]
-    bodyAttrs: string[]
-    bodyPreprend: string[]
-    body: string[]
-    bodyAppend: string[]
-  }
+export interface NuxtRenderHTMLContext {
+  htmlAttrs: string[]
+  head: string[]
+  bodyAttrs: string[]
+  bodyPreprend: string[]
+  body: string[]
+  bodyAppend: string[]
 }
 
 export interface NuxtRenderResponse {
@@ -35,13 +28,23 @@ export interface NuxtRenderResponse {
   headers: Record<string, string>
 }
 
+interface ClientManifest {}
+
 // @ts-ignore
 const getClientManifest: () => Promise<Manifest> = () => import('#build/dist/server/client.manifest.mjs')
   .then(r => r.default || r)
-  .then(r => typeof r === 'function' ? r() : r)
+  .then(r => typeof r === 'function' ? r() : r) as Promise<ClientManifest>
 
 // @ts-ignore
 const getServerEntry = () => import('#build/dist/server/server.mjs').then(r => r.default || r)
+
+// @ts-ignore
+const getSSRStyles = (): Promise<Record<string, () => Promise<string[]>>> => import('#build/dist/server/styles.mjs').then(r => r.default || r)
+
+const PAYLOAD_URL_RE = /\/_payload.js[^/]*$/
+
+// TODO: Use LRU cache
+const PAYLOAD_CACHE = new Map()
 
 // -- SSR Renderer --
 const getSSRRenderer = lazyCachedFunction(async () => {
@@ -61,7 +64,8 @@ const getSSRRenderer = lazyCachedFunction(async () => {
   // Create renderer
   const renderer = createRenderer(createSSRApp, options)
 
-  async function renderToString (input, context) {
+  type RenderToStringParams = Parameters<typeof _renderToString>
+  async function renderToString (input: RenderToStringParams[0], context: RenderToStringParams[1]) {
     const html = await _renderToString(input, context)
     // In development with vite-node, the manifest is on-demand and will be available after rendering
     if (process.dev && process.env.NUXT_VITE_NODE_OPTIONS) {
@@ -88,24 +92,21 @@ const getSPARenderer = lazyCachedFunction(async () => {
 
   const renderToString = (ssrContext: NuxtSSRContext) => {
     const config = useRuntimeConfig()
-    ssrContext.payload = {
+    ssrContext!.payload = {
       serverRendered: false,
       config: {
         public: config.public,
         app: config.app
-      }
+      },
+      data: {},
+      state: {}
     }
-    ssrContext.renderMeta = ssrContext.renderMeta ?? (() => ({}))
+    ssrContext!.renderMeta = ssrContext!.renderMeta ?? (() => ({}))
     return Promise.resolve(result)
   }
 
   return { renderToString }
 })
-
-const PAYLOAD_URL_RE = /\/_payload.js[^/]*$/
-
-// TODO: Use LRU cache
-const PAYLOAD_CACHE = new Map()
 
 export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
@@ -132,22 +133,25 @@ export default defineRenderHandler(async (event) => {
     event,
     req: event.req,
     res: event.res,
-    runtimeConfig: useRuntimeConfig(),
+    runtimeConfig: useRuntimeConfig() as NuxtSSRContext['runtimeConfig'],
     noSSR: !!event.req.headers['x-nuxt-no-ssr'],
     error: !!ssrError,
-    nuxt: undefined, /* NuxtApp */
-    payload: ssrError ? { error: ssrError } : undefined
+    nuxt: undefined!, /* NuxtApp */
+    payload: ssrError ? { error: ssrError } as NuxtSSRContext['payload'] : undefined!
   }
 
   // Render app
   const renderer = (process.env.NUXT_NO_SSR || ssrContext.noSSR) ? await getSPARenderer() : await getSSRRenderer()
   const _rendered = await renderer.renderToString(ssrContext).catch((err) => {
-    if (!ssrError) { throw err }
+    if (!ssrError) {
+      throw err
+    }
   })
+  await ssrContext.nuxt?.hooks.callHook('app:rendered', { ssrContext })
 
   // Handle errors
   if (!_rendered) {
-    return
+    return undefined!
   }
   if (ssrContext.payload?.error && !ssrError) {
     throw ssrContext.payload.error
@@ -163,46 +167,50 @@ export default defineRenderHandler(async (event) => {
   // Render meta
   const renderedMeta = await ssrContext.renderMeta?.() ?? {}
 
+  // Render inline styles
+  const inlinedStyles = process.env.NUXT_INLINE_STYLES
+    ? await renderInlineStyles(ssrContext.modules ?? ssrContext._registeredComponents ?? [])
+    : ''
+
   // Create render context
-  const rendered: NuxtRenderContext = {
-    ssrContext,
-    html: {
-      htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
-      head: normalizeChunks([
-        renderedMeta.headTags,
-        payloadURL ? `<link rel="modulepreload" as="script" href="${payloadURL}?import">` : null,
-        _rendered.renderResourceHints(),
-        _rendered.renderStyles(),
-        ssrContext.styles
-      ]),
-      bodyAttrs: normalizeChunks([renderedMeta.bodyAttrs]),
-      bodyPreprend: normalizeChunks([
-        renderedMeta.bodyScriptsPrepend,
-        ssrContext.teleports?.body
-      ]),
-      body: [
+  const htmlContext: NuxtRenderHTMLContext = {
+    htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
+    head: normalizeChunks([
+      renderedMeta.headTags,
+      payloadURL ? `<link rel="modulepreload" as="script" href="${payloadURL}?import">` : null,
+      _rendered.renderResourceHints(),
+      _rendered.renderStyles(),
+      inlinedStyles,
+      ssrContext.styles
+    ]),
+    bodyAttrs: normalizeChunks([renderedMeta.bodyAttrs!]),
+    bodyPreprend: normalizeChunks([
+      renderedMeta.bodyScriptsPrepend,
+      ssrContext.teleports?.body
+    ]),
+    body: [
       // TODO: Rename to _rendered.body in next vue-bundle-renderer
-        _rendered.html
-      ],
-      bodyAppend: normalizeChunks([
-        payloadURL
-          ? `<script type="module">import p from "${payloadURL}?import";window.__NUXT__=p</script>`
-          : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
-        _rendered.renderScripts(),
-        // Note: bodyScripts may contain tags other than <script>
-        renderedMeta.bodyScripts
-      ])
-    }
+      _rendered.html
+    ],
+    bodyAppend: normalizeChunks([
+      `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
+      _rendered.renderScripts(),
+      payloadURL
+        ? `<script type="module">import p from "${payloadURL}?import";window.__NUXT__=p</script>`
+        : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
+      _rendered.renderScripts(),
+      // Note: bodyScripts may contain tags other than <script>
+      renderedMeta.bodyScripts
+    ])
   }
 
   // Allow hooking into the rendered result
   const nitroApp = useNitroApp()
-  await ssrContext.nuxt?.hooks.callHook('app:rendered', rendered)
-  await nitroApp.hooks.callHook('nuxt:app:rendered', rendered)
+  await nitroApp.hooks.callHook('render:html', htmlContext, { event })
 
   // Construct HTML response
   const response: RenderResponse = {
-    body: renderHTMLDocument(rendered),
+    body: renderHTMLDocument(htmlContext),
     statusCode: event.res.statusCode,
     statusMessage: event.res.statusMessage,
     headers: {
@@ -233,8 +241,8 @@ function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
   }
 }
 
-function normalizeChunks (chunks: string[]) {
-  return chunks.filter(Boolean).map(i => i.trim())
+function normalizeChunks (chunks: (string | undefined)[]) {
+  return chunks.filter(Boolean).map(i => i!.trim())
 }
 
 function joinTags (tags: string[]) {
@@ -245,12 +253,25 @@ function joinAttrs (chunks: string[]) {
   return chunks.join(' ')
 }
 
-function renderHTMLDocument (rendered: NuxtRenderContext) {
+function renderHTMLDocument (html: NuxtRenderHTMLContext) {
   return `<!DOCTYPE html>
-<html ${joinAttrs(rendered.html.htmlAttrs)}>
-<head>${joinTags(rendered.html.head)}</head>
-<body ${joinAttrs(rendered.html.bodyAttrs)}>${joinTags(rendered.html.bodyPreprend)}${joinTags(rendered.html.body)}${joinTags(rendered.html.bodyAppend)}</body>
+<html ${joinAttrs(html.htmlAttrs)}>
+<head>${joinTags(html.head)}</head>
+<body ${joinAttrs(html.bodyAttrs)}>${joinTags(html.bodyPreprend)}${joinTags(html.body)}${joinTags(html.bodyAppend)}</body>
 </html>`
+}
+
+async function renderInlineStyles (usedModules: Set<string> | string[]) {
+  const styleMap = await getSSRStyles()
+  const inlinedStyles = new Set<string>()
+  for (const mod of usedModules) {
+    if (mod in styleMap) {
+      for (const style of await styleMap[mod]()) {
+        inlinedStyles.add(`<style>${style}</style>`)
+      }
+    }
+  }
+  return Array.from(inlinedStyles).join('')
 }
 
 function renderPayloadResponse (ssrContext: NuxtSSRContext) {

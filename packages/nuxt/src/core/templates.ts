@@ -5,13 +5,14 @@ import { isAbsolute, join, relative } from 'pathe'
 import { resolveSchema, generateTypes } from 'untyped'
 import escapeRE from 'escape-string-regexp'
 import { hash } from 'ohash'
+import { camelCase } from 'scule'
 
 export interface TemplateContext {
   nuxt: Nuxt
   app: NuxtApp
 }
 
-export const vueShim = {
+export const vueShim: NuxtTemplate = {
   filename: 'types/vue-shim.d.ts',
   getContents: () =>
     [
@@ -24,29 +25,29 @@ export const vueShim = {
 }
 
 // TODO: Use an alias
-export const appComponentTemplate = {
+export const appComponentTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'app-component.mjs',
-  getContents: (ctx: TemplateContext) => genExport(ctx.app.mainComponent, ['default'])
+  getContents: ctx => genExport(ctx.app.mainComponent!, ['default'])
 }
 // TODO: Use an alias
-export const rootComponentTemplate = {
+export const rootComponentTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'root-component.mjs',
-  getContents: (ctx: TemplateContext) => genExport(ctx.app.rootComponent, ['default'])
+  getContents: ctx => genExport(ctx.app.rootComponent!, ['default'])
 }
 // TODO: Use an alias
-export const errorComponentTemplate = {
+export const errorComponentTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'error-component.mjs',
-  getContents: (ctx: TemplateContext) => genExport(ctx.app.errorComponent, ['default'])
+  getContents: ctx => genExport(ctx.app.errorComponent!, ['default'])
 }
 
-export const cssTemplate = {
+export const cssTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'css.mjs',
-  getContents: (ctx: TemplateContext) => ctx.nuxt.options.css.map(i => genImport(i)).join('\n')
+  getContents: ctx => ctx.nuxt.options.css.map(i => genImport(i)).join('\n')
 }
 
-export const clientPluginTemplate = {
+export const clientPluginTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'plugins/client.mjs',
-  getContents (ctx: TemplateContext) {
+  getContents (ctx) {
     const clientPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'server')
     const exports: string[] = []
     const imports: string[] = []
@@ -63,9 +64,9 @@ export const clientPluginTemplate = {
   }
 }
 
-export const serverPluginTemplate = {
+export const serverPluginTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'plugins/server.mjs',
-  getContents (ctx: TemplateContext) {
+  getContents (ctx) {
     const serverPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'client')
     const exports: string[] = ['preload']
     const imports: string[] = ["import preload from '#app/plugins/preload.server'"]
@@ -82,9 +83,9 @@ export const serverPluginTemplate = {
   }
 }
 
-export const pluginsDeclaration = {
+export const pluginsDeclaration: NuxtTemplate<TemplateContext> = {
   filename: 'types/plugins.d.ts',
-  getContents: (ctx: TemplateContext) => {
+  getContents: (ctx) => {
     const EXTENSION_RE = new RegExp(`(?<=\\w)(${ctx.nuxt.options.extensions.map(e => escapeRE(e)).join('|')})$`, 'g')
     const tsImports = ctx.app.plugins.map(p => (isAbsolute(p.src) ? relative(join(ctx.nuxt.options.buildDir, 'types'), p.src) : p.src).replace(EXTENSION_RE, ''))
 
@@ -110,10 +111,10 @@ export { }
   }
 }
 
-const adHocModules = ['router', 'pages', 'auto-imports', 'meta', 'components']
-export const schemaTemplate = {
+const adHocModules = ['router', 'pages', 'imports', 'meta', 'components']
+export const schemaTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'types/schema.d.ts',
-  getContents: ({ nuxt }: TemplateContext) => {
+  getContents: ({ nuxt }) => {
     const moduleInfo = nuxt.options._installedModules.map(m => ({
       ...m.meta || {},
       importName: m.entryPath || m.meta?.name
@@ -124,7 +125,7 @@ export const schemaTemplate = {
       "declare module '@nuxt/schema' {",
       '  interface NuxtConfig {',
       ...moduleInfo.filter(Boolean).map(meta =>
-      `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
+        `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
       ),
       '  }',
       generateTypes(resolveSchema(Object.fromEntries(Object.entries(nuxt.options.runtimeConfig).filter(([key]) => key !== 'public'))),
@@ -149,23 +150,23 @@ export const schemaTemplate = {
 }
 
 // Add layouts template
-export const layoutTemplate: NuxtTemplate = {
+export const layoutTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'layouts.mjs',
-  getContents ({ app }: TemplateContext) {
+  getContents ({ app }) {
     const layoutsObject = genObjectFromRawEntries(Object.values(app.layouts).map(({ name, file }) => {
       return [name, `defineAsyncComponent(${genDynamicImport(file)})`]
     }))
     return [
       'import { defineAsyncComponent } from \'vue\'',
-          `export default ${layoutsObject}`
+      `export default ${layoutsObject}`
     ].join('\n')
   }
 }
 
 // Add middleware template
-export const middlewareTemplate: NuxtTemplate = {
+export const middlewareTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'middleware.mjs',
-  getContents ({ app }: TemplateContext) {
+  getContents ({ app }) {
     const globalMiddleware = app.middleware.filter(mw => mw.global)
     const namedMiddleware = app.middleware.filter(mw => !mw.global)
     const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
@@ -182,6 +183,39 @@ export const clientConfigTemplate: NuxtTemplate = {
   getContents: () => `
 export const useRuntimeConfig = () => window?.__NUXT__?.config || {}
 `
+}
+
+export const appConfigDeclarationTemplate: NuxtTemplate = {
+  filename: 'types/app.config.d.ts',
+  getContents: ({ app, nuxt }) => {
+    return `
+import type { Defu } from 'defu'
+${app.configs.map((id: string, index: number) => `import ${`cfg${index}`} from ${JSON.stringify(id.replace(/(?<=\w)\.\w+$/g, ''))}`).join('\n')}
+
+declare const inlineConfig = ${JSON.stringify(nuxt.options.appConfig, null, 2)}
+type ResolvedAppConfig = Defu<typeof inlineConfig, [${app.configs.map((_id: string, index: number) => `typeof cfg${index}`).join(', ')}]>
+
+declare module '@nuxt/schema' {
+  interface AppConfig extends ResolvedAppConfig { }
+}
+`
+  }
+}
+
+export const appConfigTemplate: NuxtTemplate = {
+  filename: 'app.config.mjs',
+  write: true,
+  getContents: ({ app, nuxt }) => {
+    return `
+import { defuFn } from 'defu'
+
+const inlineConfig = ${JSON.stringify(nuxt.options.appConfig, null, 2)}
+
+${app.configs.map((id: string, index: number) => `import ${`cfg${index}`} from ${JSON.stringify(id)}`).join('\n')}
+
+export default defuFn(${app.configs.map((_id: string, index: number) => `cfg${index}`).concat(['inlineConfig']).join(', ')})
+`
+  }
 }
 
 export const publicPathTemplate: NuxtTemplate = {
@@ -208,5 +242,13 @@ export const publicPathTemplate: NuxtTemplate = {
       'globalThis.__buildAssetsURL = buildAssetsURL',
       'globalThis.__publicAssetsURL = publicAssetsURL'
     ].filter(Boolean).join('\n')
+  }
+}
+
+// Allow direct access to specific exposed nuxt.config
+export const nuxtConfigTemplate = {
+  filename: 'nuxt.config.mjs',
+  getContents: (ctx: TemplateContext) => {
+    return Object.entries(ctx.nuxt.options.app).map(([k, v]) => `export const ${camelCase('app-' + k)} = ${JSON.stringify(v)}`).join('\n\n')
   }
 }

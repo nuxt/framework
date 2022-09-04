@@ -1,7 +1,6 @@
 import { parseURL, joinURL } from 'ufo'
 import { appendHeader } from 'h3'
 import { useNuxtApp } from '../nuxt'
-import { isPrerender } from './utils'
 import { useHead, useRequestEvent } from '#app'
 
 export function loadPayload (url: string, forceRefetch: boolean = false) {
@@ -44,4 +43,10 @@ async function _importPayload (payloadURL: string) {
   if (process.server) { return null }
   const { default: payload } = await import(/* @vite-ignore */ payloadURL) as { default: any }
   return payload
+}
+
+export function isPrerender () {
+  // Note: Alternative for server is checking x-nitro-prerender header
+  const nuxtApp = useNuxtApp()
+  return !!nuxtApp.payload.prerenderedAt
 }

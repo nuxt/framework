@@ -1,13 +1,11 @@
 /* eslint-disable no-use-before-define */
-import { getCurrentInstance, reactive } from 'vue'
+import { getCurrentInstance, reactive, Ref } from 'vue'
 import type { App, onErrorCaptured, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
-import type { RuntimeConfig } from '@nuxt/schema'
+import type { RuntimeConfig, AppConfigInput } from '@nuxt/schema'
 import { getContext } from 'unctx'
 import type { SSRContext } from 'vue-bundle-renderer/runtime'
 import type { CompatibilityEvent } from 'h3'
-// eslint-disable-next-line import/no-restricted-paths
-import type { NuxtRenderContext } from '../core/runtime/nitro/renderer'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
@@ -21,11 +19,13 @@ type NuxtMeta = {
 }
 
 type HookResult = Promise<void> | void
+
+type AppRenderedContext = { ssrContext: NuxtApp['ssrContext'] }
 export interface RuntimeNuxtHooks {
   'app:created': (app: App<Element>) => HookResult
   'app:beforeMount': (app: App<Element>) => HookResult
   'app:mounted': (app: App<Element>) => HookResult
-  'app:rendered': (ctx: NuxtRenderContext) => HookResult
+  'app:rendered': (ctx: AppRenderedContext) => HookResult
   'app:redirected': () => HookResult
   'app:suspense:resolve': (Component?: VNode) => HookResult
   'app:error': (err: any) => HookResult
@@ -33,9 +33,25 @@ export interface RuntimeNuxtHooks {
   'app:data:refresh': (keys?: string[]) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
-  'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
   'vue:setup': () => void
   'vue:error': (...args: Parameters<Parameters<typeof onErrorCaptured>[0]>) => HookResult
+}
+
+export interface NuxtSSRContext extends SSRContext {
+  url: string
+  event: CompatibilityEvent
+  /** @deprecated Use `event` instead. */
+  req?: CompatibilityEvent['req']
+  /** @deprecated Use `event` instead. */
+  res?: CompatibilityEvent['res']
+  runtimeConfig: RuntimeConfig
+  noSSR: boolean
+  /** whether we are rendering an SSR error */
+  error?: boolean
+  nuxt: _NuxtApp
+  payload: _NuxtApp['payload']
+  teleports?: Record<string, string>
+  renderMeta?: () => Promise<NuxtMeta> | NuxtMeta
 }
 
 interface _NuxtApp {
@@ -48,29 +64,19 @@ interface _NuxtApp {
 
   [key: string]: any
 
-  _asyncDataPromises?: Record<string, Promise<any>>
+  _asyncDataPromises: Record<string, Promise<any> | undefined>
+  _asyncData: Record<string, {
+    data: Ref<any>
+    pending: Ref<boolean>
+    error: Ref<any>
+  }>,
 
-  ssrContext?: SSRContext & {
-    url: string
-    event: CompatibilityEvent
-    /** @deprecated Use `event` instead. */
-    req?: CompatibilityEvent['req']
-    /** @deprecated Use `event` instead. */
-    res?: CompatibilityEvent['res']
-    runtimeConfig: RuntimeConfig
-    noSSR: boolean
-    /** whether we are rendering an SSR error */
-    error?: boolean
-    nuxt: _NuxtApp
-    payload: _NuxtApp['payload']
-    teleports?: Record<string, string>
-    renderMeta?: () => Promise<NuxtMeta> | NuxtMeta
-  }
+  ssrContext?: NuxtSSRContext
   payload: {
     serverRendered?: boolean
     prerenderedAt?: number
-    data?: Record<string, any>
-    state?: Record<string, any>
+    data: Record<string, any>
+    state: Record<string, any>
     rendered?: Function
     error?: Error | {
       url: string
@@ -79,14 +85,14 @@ interface _NuxtApp {
       message: string
       description: string
       data?: any
-    }
+    } | null
     [key: string]: any
   }
 
   provide: (name: string, value: any) => void
 }
 
-export interface NuxtApp extends _NuxtApp { }
+export interface NuxtApp extends _NuxtApp {}
 
 export const NuxtPluginIndicator = '__nuxt_plugin'
 export interface Plugin<Injections extends Record<string, any> = Record<string, any>> {
@@ -112,6 +118,7 @@ export function createNuxtApp (options: CreateOptions) {
     }),
     isHydrating: process.client,
     _asyncDataPromises: {},
+    _asyncData: {},
     ...options
   } as any as NuxtApp
 
@@ -143,24 +150,24 @@ export function createNuxtApp (options: CreateOptions) {
     }
     // Expose to server renderer to create window.__NUXT__
     nuxtApp.ssrContext = nuxtApp.ssrContext || {} as any
-    if (nuxtApp.ssrContext.payload) {
-      Object.assign(nuxtApp.payload, nuxtApp.ssrContext.payload)
+    if (nuxtApp.ssrContext!.payload) {
+      Object.assign(nuxtApp.payload, nuxtApp.ssrContext!.payload)
     }
-    nuxtApp.ssrContext.payload = nuxtApp.payload
+    nuxtApp.ssrContext!.payload = nuxtApp.payload
 
     // Expose client runtime-config to the payload
     nuxtApp.payload.config = {
-      public: options.ssrContext.runtimeConfig.public,
-      app: options.ssrContext.runtimeConfig.app
+      public: options.ssrContext!.runtimeConfig.public,
+      app: options.ssrContext!.runtimeConfig.app
     }
   }
 
   // Expose runtime config
   const runtimeConfig = process.server
-    ? options.ssrContext.runtimeConfig
+    ? options.ssrContext!.runtimeConfig
     : reactive(nuxtApp.payload.config)
 
-  // Backward compatibilty following #4254
+  // Backward compatibility following #4254
   const compatibilityConfig = new Proxy(runtimeConfig, {
     get (target, prop) {
       if (prop === 'public') {
@@ -200,9 +207,9 @@ export async function applyPlugins (nuxtApp: NuxtApp, plugins: Plugin[]) {
 }
 
 export function normalizePlugins (_plugins: Plugin[]) {
-  const unwrappedPlugins = []
-  const legacyInjectPlugins = []
-  const invalidPlugins = []
+  const unwrappedPlugins: Plugin[] = []
+  const legacyInjectPlugins: Plugin[] = []
+  const invalidPlugins: Plugin[] = []
 
   const plugins = _plugins.map((plugin) => {
     if (typeof plugin !== 'function') {
@@ -237,7 +244,7 @@ export function normalizePlugins (_plugins: Plugin[]) {
   return plugins as Plugin[]
 }
 
-export function defineNuxtPlugin<T> (plugin: Plugin<T>) {
+export function defineNuxtPlugin<T extends Record<string, any>> (plugin: Plugin<T>) {
   plugin[NuxtPluginIndicator] = true
   return plugin
 }
@@ -286,4 +293,8 @@ export function useRuntimeConfig (): RuntimeConfig {
 
 function defineGetter<K extends string | number | symbol, V> (obj: Record<K, V>, key: K, val: V) {
   Object.defineProperty(obj, key, { get: () => val })
+}
+
+export function defineAppConfig<C extends AppConfigInput> (config: C): C {
+  return config
 }
