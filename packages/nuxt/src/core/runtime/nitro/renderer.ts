@@ -41,11 +41,6 @@ const getServerEntry = () => import('#build/dist/server/server.mjs').then(r => r
 // @ts-ignore
 const getSSRStyles = (): Promise<Record<string, () => Promise<string[]>>> => import('#build/dist/server/styles.mjs').then(r => r.default || r)
 
-const PAYLOAD_URL_RE = /\/_payload.js[^/]*$/
-
-const IS_PRERENDER = process.env.NODE_ENV === 'prerender' // TODO: Use NITRO_PRERENDER
-const PAYLOAD_CACHE = IS_PRERENDER ? new Map() : null // TODO: Use LRU cache
-
 // -- SSR Renderer --
 const getSSRRenderer = lazyCachedFunction(async () => {
   // Load client manifest
@@ -108,9 +103,15 @@ const getSPARenderer = lazyCachedFunction(async () => {
   return { renderToString }
 })
 
+const IS_PRERENDER = process.env.NODE_ENV === 'prerender' // TODO: Use NITRO_PRERENDER
+const PAYLOAD_CACHE = IS_PRERENDER ? new Map() : null // TODO: Use LRU cache
+const PAYLOAD_URL_RE = /\/_payload.js(\?.*)?$/
+
 export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
-  const ssrError = event.req.url?.startsWith('/__nuxt_error') ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error> : null
+  const ssrError = event.req.url?.startsWith('/__nuxt_error')
+    ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error>
+    : null
   let url = ssrError?.url as string || event.req.url!
 
   // Whether we are rendering payload route
