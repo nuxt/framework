@@ -113,19 +113,15 @@ export default defineRenderHandler(async (event) => {
   const ssrError = event.req.url?.startsWith('/__nuxt_error') ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error> : null
   let url = ssrError?.url as string || event.req.url!
 
-  // Whether we are rendering payload response
-  let payloadReq = false
-  if (PAYLOAD_URL_RE.test(url)) {
+  // Whether we are rendering payload route
+  const isRenderingPayload = PAYLOAD_URL_RE.test(url)
+  if (isRenderingPayload) {
     url = url.substring(0, url.lastIndexOf('/')) || '/'
     event.req.url = url
-    payloadReq = true
+    if (PAYLOAD_CACHE.has(url)) {
+      return PAYLOAD_CACHE.get(url)
+    }
   }
-  if (payloadReq && PAYLOAD_CACHE.has(url)) {
-    return PAYLOAD_CACHE.get(url)
-  }
-
-  // Prerender payload url
-  const payloadURL = event.req.headers['x-nitro-prerender'] ? joinURL(url, '_payload.js') : undefined
 
   // Initialize ssr context
   const ssrContext: NuxtSSRContext = {
@@ -138,6 +134,13 @@ export default defineRenderHandler(async (event) => {
     error: !!ssrError,
     nuxt: undefined!, /* NuxtApp */
     payload: ssrError ? { error: ssrError } as NuxtSSRContext['payload'] : undefined!
+  }
+
+  // Whether we are prerendering route
+  const isPrerendering = event.req.headers['x-nitro-prerender']
+  const payloadURL = isPrerendering ? joinURL(url, '_payload.js') : undefined
+  if (isPrerendering) {
+    ssrContext.payload.prerenderedAt = Date.now()
   }
 
   // Render app
@@ -157,8 +160,8 @@ export default defineRenderHandler(async (event) => {
     throw ssrContext.payload.error
   }
 
-  // Payload render
-  if (payloadReq) {
+  // Directly render payload routes
+  if (isRenderingPayload) {
     const response = renderPayloadResponse(ssrContext)
     PAYLOAD_CACHE.set(url, response)
     return response
@@ -221,7 +224,6 @@ export default defineRenderHandler(async (event) => {
 
   if (payloadURL) {
     // Prerender hint to render payload
-    // TODO: use response.headers once nitro append header by default
     appendHeader(event, 'x-nitro-prerender', payloadURL)
 
     // Set payload cache

@@ -114,20 +114,13 @@ export function createNuxtApp (options: CreateOptions) {
       data: {},
       state: {},
       _errors: {},
-      ...process.client ? window.__NUXT__ : {}
+      ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
     isHydrating: process.client,
     _asyncDataPromises: {},
     _asyncData: {},
     ...options
   } as any as NuxtApp
-
-  if (process.server) {
-    nuxtApp.payload.serverRendered = true
-    if (options.ssrContext?.event.req.headers['x-nitro-prerender']) {
-      nuxtApp.payload.prerenderedAt = Date.now()
-    }
-  }
 
   nuxtApp.hooks = createHooks<RuntimeNuxtHooks>()
   nuxtApp.hook = nuxtApp.hooks.hook
