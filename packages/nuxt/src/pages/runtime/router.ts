@@ -10,9 +10,9 @@ import {
 import { createError } from 'h3'
 import { withoutBase, isEqual } from 'ufo'
 import NuxtPage from './page'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, showError, clearError, navigateTo, useError } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, showError, clearError, navigateTo, useError, useState } from '#app'
 // @ts-ignore
-import routes from '#build/routes'
+import _routes from '#build/routes'
 // @ts-ignore
 import routerOptions from '#build/router.options'
 // @ts-ignore
@@ -56,14 +56,18 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   nuxtApp.vueApp.component('NuxtChild', NuxtPage)
 
   const baseURL = useRuntimeConfig().app.baseURL
-  const routerHistory = process.client
-    ? routerOptions.hashMode ? createWebHashHistory(baseURL) : createWebHistory(baseURL)
+
+  const history = routerOptions.history?.(baseURL) ?? (process.client
+    ? (routerOptions.hashMode ? createWebHashHistory(baseURL) : createWebHistory(baseURL))
     : createMemoryHistory(baseURL)
+  )
+
+  const routes = routerOptions.routes?.(_routes) ?? _routes
 
   const initialURL = process.server ? nuxtApp.ssrContext!.url : createCurrentLocation(baseURL, window.location)
   const router = createRouter({
     ...routerOptions,
-    history: routerHistory,
+    history,
     routes
   })
   nuxtApp.vueApp.use(router)
@@ -115,8 +119,12 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     callWithNuxt(nuxtApp, showError, [error])
   }
 
+  const initialLayout = useState('_layout')
   router.beforeEach(async (to, from) => {
     to.meta = reactive(to.meta)
+    if (nuxtApp.isHydrating) {
+      to.meta.layout = initialLayout.value ?? to.meta.layout
+    }
     nuxtApp._processingMiddleware = true
 
     type MiddlewareDef = string | NavigationGuard

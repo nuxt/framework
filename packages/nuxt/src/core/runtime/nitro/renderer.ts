@@ -4,8 +4,9 @@ import type { Manifest } from 'vite'
 import { getQuery } from 'h3'
 import devalue from '@nuxt/devalue'
 import { renderToString as _renderToString } from 'vue/server-renderer'
-import type { NuxtApp, NuxtSSRContext } from '#app'
 import { useRuntimeConfig, useNitroApp, defineRenderHandler } from '#internal/nitro'
+// eslint-disable-next-line import/no-restricted-paths
+import type { NuxtApp, NuxtSSRContext } from '#app'
 
 // @ts-ignore
 import { buildAssetsURL } from '#paths'
@@ -35,6 +36,9 @@ const getClientManifest: () => Promise<Manifest> = () => import('#build/dist/ser
 
 // @ts-ignore
 const getServerEntry = () => import('#build/dist/server/server.mjs').then(r => r.default || r)
+
+// @ts-ignore
+const getSSRStyles = (): Promise<Record<string, () => Promise<string[]>>> => import('#build/dist/server/styles.mjs').then(r => r.default || r)
 
 // -- SSR Renderer --
 const getSSRRenderer = lazyCachedFunction(async () => {
@@ -136,6 +140,11 @@ export default defineRenderHandler(async (event) => {
   // Render meta
   const renderedMeta = await ssrContext.renderMeta?.() ?? {}
 
+  // Render inline styles
+  const inlinedStyles = process.env.NUXT_INLINE_STYLES
+    ? await renderInlineStyles(ssrContext.modules ?? ssrContext._registeredComponents ?? [])
+    : ''
+
   // Create render context
   const htmlContext: NuxtRenderHTMLContext = {
     htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
@@ -143,6 +152,7 @@ export default defineRenderHandler(async (event) => {
       renderedMeta.headTags,
       _rendered.renderResourceHints(),
       _rendered.renderStyles(),
+      inlinedStyles,
       ssrContext.styles
     ]),
     bodyAttrs: normalizeChunks([renderedMeta.bodyAttrs!]),
@@ -208,4 +218,17 @@ function renderHTMLDocument (html: NuxtRenderHTMLContext) {
 <head>${joinTags(html.head)}</head>
 <body ${joinAttrs(html.bodyAttrs)}>${joinTags(html.bodyPreprend)}${joinTags(html.body)}${joinTags(html.bodyAppend)}</body>
 </html>`
+}
+
+async function renderInlineStyles (usedModules: Set<string> | string[]) {
+  const styleMap = await getSSRStyles()
+  const inlinedStyles = new Set<string>()
+  for (const mod of usedModules) {
+    if (mod in styleMap) {
+      for (const style of await styleMap[mod]()) {
+        inlinedStyles.add(`<style>${style}</style>`)
+      }
+    }
+  }
+  return Array.from(inlinedStyles).join('')
 }

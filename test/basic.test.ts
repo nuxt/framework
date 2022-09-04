@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { joinURL } from 'ufo'
 // import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
+// eslint-disable-next-line import/order
 import { expectNoClientErrors, renderPage } from './utils'
 
 await setup({
@@ -164,11 +165,25 @@ describe('head tags', () => {
     expect(indexHtml).toContain('<title>Basic fixture</title>')
   })
 
+  it('should render http-equiv correctly', async () => {
+    const html = await $fetch('/head')
+    // http-equiv should be rendered kebab case
+    expect(html).toContain('<meta content="default-src https" http-equiv="content-security-policy">')
+  })
+
   // TODO: Doesn't adds header in test environment
   // it.todo('should render stylesheet link tag (SPA mode)', async () => {
   //   const html = await $fetch('/head', { headers: { 'x-nuxt-no-ssr': '1' } })
   //   expect(html).toMatch(/<link rel="stylesheet" href="\/_nuxt\/[^>]*.css"/)
   // })
+})
+
+describe('legacy async data', () => {
+  it('should work with defineNuxtComponent', async () => {
+    const html = await $fetch('/legacy/async-data')
+    expect(html).toContain('<div>Hello API</div>')
+    expect(html).toContain('{hello:"Hello API"}')
+  })
 })
 
 describe('navigate', () => {
@@ -265,6 +280,16 @@ describe('layouts', () => {
     expect(html).toContain('with-layout.vue')
     expect(html).toContain('Custom Layout:')
   })
+  it('should work with a dynamically set layout', async () => {
+    const html = await $fetch('/with-dynamic-layout')
+
+    // Snapshot
+    // expect(html).toMatchInlineSnapshot()
+
+    expect(html).toContain('with-dynamic-layout')
+    expect(html).toContain('Custom Layout:')
+    await expectNoClientErrors('/with-dynamic-layout')
+  })
 })
 
 describe('reactivity transform', () => {
@@ -350,7 +375,7 @@ describe('extends support', () => {
   describe('app', () => {
     it('extends foo/app/router.options & bar/app/router.options', async () => {
       const html: string = await $fetch('/')
-      const routerLinkClasses = html.match(/href="\/" class="([^"]*)"/)[1].split(' ')
+      const routerLinkClasses = html.match(/href="\/" class="([^"]*)"/)?.[1].split(' ')
       expect(routerLinkClasses).toContain('foo-active-class')
       expect(routerLinkClasses).toContain('bar-exact-active-class')
     })
@@ -368,9 +393,39 @@ describe('automatically keyed composables', () => {
   })
 })
 
+if (!process.env.NUXT_TEST_DEV && !process.env.TEST_WITH_WEBPACK) {
+  describe('inlining component styles', () => {
+    it('should inline styles', async () => {
+      const html = await $fetch('/styles')
+      for (const style of [
+        '{--assets:"assets"}', // <script>
+        '{--scoped:"scoped"}', // <style lang=css>
+        '{--postcss:"postcss"}', // <style lang=postcss>
+        '{--global:"global"}', // entryfile dependency
+        '{--plugin:"plugin"}', // plugin dependency
+        '{--functional:"functional"}' // functional component with css import
+      ]) {
+        expect(html).toContain(style)
+      }
+    })
+    it.todo('does not render style hints for inlined styles')
+    it.todo('renders client-only styles?', async () => {
+      const html = await $fetch('/styles')
+      expect(html).toContain('{--client-only:"client-only"}')
+    })
+  })
+}
+
 describe('prefetching', () => {
   it('should prefetch components', async () => {
     await expectNoClientErrors('/prefetch/components')
+  })
+  it('should not prefetch certain dynamic imports by default', async () => {
+    const html = await $fetch('/auth')
+    // should not prefetch global components
+    expect(html).not.toMatch(/<link [^>]*\/_nuxt\/TestGlobal[^>]*\.js"/)
+    // should not prefetch all other pages
+    expect(html).not.toMatch(/<link [^>]*\/_nuxt\/navigate-to[^>]*\.js"/)
   })
 })
 
@@ -404,9 +459,9 @@ describe('dynamic paths', () => {
   }
 
   it('should work with no overrides', async () => {
-    const html = await $fetch('/assets')
-    for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
-      const url = match[2]
+    const html: string = await $fetch('/assets')
+    for (const match of html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)) {
+      const url = match[2] || match[3]
       expect(url.startsWith('/_nuxt/') || url === '/public.svg').toBeTruthy()
     }
   })
@@ -417,11 +472,11 @@ describe('dynamic paths', () => {
       return
     }
 
-    const html = await $fetch('/assets')
-    const urls = Array.from(html.matchAll(/(href|src)="(.*?)"/g)).map(m => m[2])
+    const html: string = await $fetch('/assets')
+    const urls = Array.from(html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)).map(m => m[2] || m[3])
     const cssURL = urls.find(u => /_nuxt\/assets.*\.css$/.test(u))
     expect(cssURL).toBeDefined()
-    const css = await $fetch(cssURL)
+    const css: string = await $fetch(cssURL!)
     const imageUrls = Array.from(css.matchAll(/url\(([^)]*)\)/g)).map(m => m[1].replace(/[-.][\w]{8}\./g, '.'))
     expect(imageUrls).toMatchInlineSnapshot(`
         [
@@ -439,8 +494,8 @@ describe('dynamic paths', () => {
     await startServer()
 
     const html = await $fetch('/foo/assets')
-    for (const match of html.matchAll(/(href|src)="(.`*?)"/g)) {
-      const url = match[2]
+    for (const match of html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)) {
+      const url = match[2] || match[3]
       expect(
         url.startsWith('/foo/_other/') ||
         url === '/foo/public.svg' ||
@@ -456,8 +511,8 @@ describe('dynamic paths', () => {
     await startServer()
 
     const html = await $fetch('/assets')
-    for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
-      const url = match[2]
+    for (const match of html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)) {
+      const url = match[2] || match[3]
       expect(
         url.startsWith('./_nuxt/') ||
         url === './public.svg' ||
@@ -484,8 +539,8 @@ describe('dynamic paths', () => {
     await startServer()
 
     const html = await $fetch('/foo/assets')
-    for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
-      const url = match[2]
+    for (const match of html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)) {
+      const url = match[2] || match[3]
       expect(
         url.startsWith('https://example.com/_cdn/') ||
         url === 'https://example.com/public.svg' ||
@@ -517,5 +572,23 @@ describe('app config', () => {
     }
 
     expect(html).toContain(JSON.stringify(expectedAppConfig))
+  })
+})
+
+describe('useAsyncData', () => {
+  it('single request resolves', async () => {
+    await expectNoClientErrors('/useAsyncData/single')
+  })
+
+  it('two requests resolve', async () => {
+    await expectNoClientErrors('/useAsyncData/double')
+  })
+
+  it('two requests resolve and sync', async () => {
+    await $fetch('/useAsyncData/refresh')
+  })
+
+  it('two requests made at once resolve and sync', async () => {
+    await expectNoClientErrors('/useAsyncData/promise-all')
   })
 })
