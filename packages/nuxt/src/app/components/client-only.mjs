@@ -1,4 +1,4 @@
-import { ref, onMounted, defineComponent, createElementBlock, h } from 'vue'
+import { ref, onMounted, defineComponent, createElementBlock, h, Fragment } from 'vue'
 
 export default defineComponent({
   name: 'ClientOnly',
@@ -30,7 +30,7 @@ export function createClientOnly (component) {
     // override the component render (non script setup component)
     component.render = (ctx, ...args) => {
       return ctx.mounted$
-        ? _render(ctx, ...args)
+        ? h(Fragment, ctx.props, [_render(ctx, ...args)])
         : h('div', ctx.$attrs ?? ctx._.attrs)
     }
   } else if (_template) {
@@ -53,7 +53,7 @@ export function createClientOnly (component) {
             ? { ...setupState, mounted$ }
             : (...args) => {
                 return mounted$.value
-                  ? setupState(...args)
+                  ? h(Fragment, null, [setupState(...args)])
                   : h('div', ctx.attrs)
               }
         })
