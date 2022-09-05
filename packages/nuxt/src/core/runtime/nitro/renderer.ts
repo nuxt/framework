@@ -188,7 +188,7 @@ export default defineRenderHandler(async (event) => {
     htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
     head: normalizeChunks([
       renderedMeta.headTags,
-      process.env.prerender ? `<link rel="modulepreload" as="script" href="${payloadURL}?import">` : null,
+      process.env.prerender ? `<link rel="modulepreload" as="script" href="${payloadURL}">` : null,
       _rendered.renderResourceHints(),
       _rendered.renderStyles(),
       inlinedStyles,
@@ -205,7 +205,7 @@ export default defineRenderHandler(async (event) => {
     ],
     bodyAppend: normalizeChunks([
       process.env.prerender
-        ? `<script type="module">import p from "${payloadURL}?import";window.__NUXT__={...p,...(${devalue(splitPayload(ssrContext).initial)})}</script>`
+        ? `<script type="module">import p from "${payloadURL}";window.__NUXT__={...p,...(${devalue(splitPayload(ssrContext).initial)})}</script>`
         : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
       _rendered.renderScripts(),
       // Note: bodyScripts may contain tags other than <script>

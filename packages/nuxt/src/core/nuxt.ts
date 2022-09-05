@@ -151,7 +151,7 @@ async function initNuxt (nuxt: Nuxt) {
   })
 
   // Add prerender payload support
-  addPlugin(resolve(nuxt.options.appDir, 'plugins/prerender.client'))
+  addPlugin(resolve(nuxt.options.appDir, 'plugins/payload.client'))
 
   for (const m of modulesToInstall) {
     if (Array.isArray(m)) {

@@ -19,8 +19,7 @@ export function prefetchPayload (url: string) {
   const payloadURL = _getPayloadURL(url)
   useHead({
     link: [
-      // TODO: Vite adds ?import in _importPayload ?!
-      { rel: 'modulepreload', href: payloadURL + '?import' }
+      { rel: 'modulepreload', href: payloadURL }
     ]
   })
   if (process.server && !process.dev && isPrerendered()) {
@@ -41,8 +40,10 @@ function _getPayloadURL (url: string) {
 
 async function _importPayload (payloadURL: string) {
   if (process.server) { return null }
-  const { default: payload } = await import(/* @vite-ignore */ payloadURL) as { default: any }
-  return payload
+  const res = await import(/* @vite-ignore */ payloadURL).catch((err) => {
+    console.warn('[nuxt] Cannot load payload ', payloadURL, err)
+  })
+  return res?.default || null
 }
 
 export function isPrerendered () {
