@@ -1,4 +1,4 @@
-import { ref, onMounted, defineComponent, createElementBlock, h, Fragment } from 'vue'
+import { ref, onMounted, defineComponent, createElementBlock, h } from 'vue'
 
 export default defineComponent({
   name: 'ClientOnly',
@@ -18,13 +18,19 @@ export default defineComponent({
   }
 })
 
+const cache = {}
+
 export function createClientOnly (component) {
+  if (cache[component.__name]) {
+    return cache[component.__name]
+  }
+
   const { setup, render: _render, template: _template } = component
   if (_render) {
     // override the component render (non script setup component)
     component.render = (ctx, ...args) => {
       return ctx.mounted$
-        ? h(Fragment, null, [h(_render(ctx, ...args), ctx.$attrs ?? ctx._.attrs)])
+        ? _render(ctx, ...args)
         : h('div', ctx.$attrs ?? ctx._.attrs)
     }
   } else if (_template) {
@@ -34,7 +40,8 @@ export function createClientOnly (component) {
       <template v-else><div></div></template>
     `
   }
-  return defineComponent({
+
+  const definition = defineComponent({
     ...component,
     setup (props, ctx) {
       const mounted$ = ref(false)
@@ -46,11 +53,12 @@ export function createClientOnly (component) {
             ? { ...setupState, mounted$ }
             : (...args) => {
                 return mounted$.value
-                // use Fragment to avoid oldChildren is null issue
-                  ? h(Fragment, null, [h(setupState(...args), ctx.attrs)])
+                  ? setupState(...args)
                   : h('div', ctx.attrs)
               }
         })
     }
   })
+  cache[component.__name] = definition
+  return definition
 }
