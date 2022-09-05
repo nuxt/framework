@@ -152,7 +152,7 @@ export default defineRenderHandler(async (event) => {
     htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
     head: normalizeChunks([
       renderedMeta.headTags,
-      process.env.NUXT_NO_SCRIPTS ? _rendered.renderResourceHints().replace(JS_HINT_RE, '') : _rendered.renderResourceHints(),
+      _rendered.renderResourceHints(),
       _rendered.renderStyles(),
       inlinedStyles,
       ssrContext.styles
@@ -167,9 +167,8 @@ export default defineRenderHandler(async (event) => {
       _rendered.html
     ],
     bodyAppend: normalizeChunks([
-      ...process.env.NUXT_NO_SCRIPTS
-        ? []
-        : [`<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`, _rendered.renderScripts()],
+      process.env.NUXT_NO_SCRIPTS ? '' : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
+      process.env.NUXT_NO_SCRIPTS ? '' : _rendered.renderScripts(),
       // Note: bodyScripts may contain tags other than <script>
       renderedMeta.bodyScripts
     ])
