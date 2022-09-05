@@ -11,7 +11,12 @@ export function loadPayload (url: string, forceRefetch: boolean = false) {
   if (!forceRefetch && cache[payloadURL]) {
     return cache[payloadURL]
   }
-  cache[url] = _importPayload(payloadURL + (forceRefetch ? '?_=' + Date.now() : ''))
+  cache[url] = _importPayload(payloadURL + (forceRefetch ? '?_=' + Date.now() : '')).then((payload) => {
+    if (!payload) {
+      delete cache[url]
+      return null
+    }
+  })
   return cache[url]
 }
 
