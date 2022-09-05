@@ -11,6 +11,10 @@
     </NuxtLink>
     <br>
 
+    Random: {{ random }}
+
+    Random: (global) {{ globalRandom }}
+
     Random page: <b>{{ route.params.id }}</b><br>
 
     Here are some random numbers for you:
@@ -29,6 +33,10 @@
 <script setup lang="ts">
 const route = useRoute()
 
-const { data: randomNumbers, refresh } =
-  await useFetch('/api/random', { key: '_rand' + route.params.id as string })
+const pageKey = 'rand_' + route.params.id
+
+const { data: randomNumbers, refresh } = await useFetch('/api/random', { key: pageKey as string })
+
+const random = useRandomState(100, pageKey)
+const globalRandom = useRandomState(100)
 </script>
