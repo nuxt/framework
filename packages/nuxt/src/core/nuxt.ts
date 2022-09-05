@@ -82,6 +82,7 @@ async function initNuxt (nuxt: Nuxt) {
     addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromClient }), { server: false })
   }
 
+  // TODO: [Experimental] Avoid emitting assets when flag is enabled
   if (nuxt.options.experimental.noScripts) {
     nuxt.hook('build:manifest', async (manifest) => {
       for (const file in manifest) {
