@@ -4,7 +4,7 @@ This composable provides a convenient wrapper around [`useAsyncData`](/api/compo
 
 ## Type
 
-```ts
+```ts  [Signature]
 function useFetch(
   url: string | Request | Ref<string | Request> | () => string | Request,
   options?: UseFetchOptions<DataT>
