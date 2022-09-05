@@ -24,7 +24,7 @@ export function createClientOnly (component) {
     // override the component render (non script setup component)
     component.render = (ctx, ...args) => {
       return ctx.mounted$
-        ? h(Fragment, null, [h(_render(ctx, ...args), ctx.$attrs ?? ctx._.attrs)])
+        ? h(Fragment, ctx.$attrs ?? ctx._.attrs, _render(ctx, ...args))
         : h('div', ctx.$attrs ?? ctx._.attrs)
     }
   } else if (_template) {
@@ -34,6 +34,7 @@ export function createClientOnly (component) {
       <template v-else><div></div></template>
     `
   }
+
   return defineComponent({
     ...component,
     setup (props, ctx) {
@@ -46,8 +47,8 @@ export function createClientOnly (component) {
             ? { ...setupState, mounted$ }
             : (...args) => {
                 return mounted$.value
-                // use Fragment to avoid oldChildren is null issue
-                  ? h(Fragment, null, [h(setupState(...args), ctx.attrs)])
+                  // use Fragment to avoid oldChildren is null issue
+                  ? h(Fragment, ctx.attrs, setupState(...args))
                   : h('div', ctx.attrs)
               }
         })
