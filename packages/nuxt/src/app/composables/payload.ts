@@ -27,7 +27,7 @@ export function prefetchPayload (url: string) {
       { rel: 'modulepreload', href: payloadURL }
     ]
   })
-  if (process.server && !process.dev && isPrerendered()) {
+  if (process.env.prerender) {
     const event = useRequestEvent()
     appendHeader(event, 'x-nitro-prerender', payloadURL)
   }
