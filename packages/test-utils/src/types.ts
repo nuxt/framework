@@ -23,6 +23,9 @@ export interface TestOptions {
     launch?: LaunchOptions
   }
   server: boolean
+  mock: {
+    fn: Function
+  }
 }
 
 export interface TestContext {
@@ -31,6 +34,7 @@ export interface TestContext {
   browser?: Browser
   url?: string
   serverProcess?: ExecaChildProcess
+  mockFn?: Function
 }
 
 export interface TestHooks {
