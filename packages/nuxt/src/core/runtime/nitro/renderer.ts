@@ -40,6 +40,8 @@ const getServerEntry = () => import('#build/dist/server/server.mjs').then(r => r
 // @ts-ignore
 const getSSRStyles = (): Promise<Record<string, () => Promise<string[]>>> => import('#build/dist/server/styles.mjs').then(r => r.default || r)
 
+const JS_HINT_RE = /<[^>]+(\.m?js"|as="script")[^>]*>/g
+
 // -- SSR Renderer --
 const getSSRRenderer = lazyCachedFunction(async () => {
   // Load client manifest
@@ -150,7 +152,7 @@ export default defineRenderHandler(async (event) => {
     htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
     head: normalizeChunks([
       renderedMeta.headTags,
-      _rendered.renderResourceHints(),
+      process.env.NUXT_NO_SCRIPTS ? _rendered.renderResourceHints().replace(JS_HINT_RE, '') : _rendered.renderResourceHints(),
       _rendered.renderStyles(),
       inlinedStyles,
       ssrContext.styles
@@ -165,8 +167,9 @@ export default defineRenderHandler(async (event) => {
       _rendered.html
     ],
     bodyAppend: normalizeChunks([
-      `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
-      _rendered.renderScripts(),
+      ...process.env.NUXT_NO_SCRIPTS
+        ? []
+        : [`<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`, _rendered.renderScripts()],
       // Note: bodyScripts may contain tags other than <script>
       renderedMeta.bodyScripts
     ])
@@ -190,7 +193,7 @@ export default defineRenderHandler(async (event) => {
   return response
 })
 
-function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
+function lazyCachedFunction<T> (fn: () => Promise<T>): () => Promise<T> {
   let res: Promise<T> | null = null
   return () => {
     if (res === null) {
