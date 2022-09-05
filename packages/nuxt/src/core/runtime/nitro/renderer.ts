@@ -12,6 +12,15 @@ import type { NuxtApp, NuxtSSRContext } from '#app'
 // @ts-ignore
 import { buildAssetsURL } from '#paths'
 
+// TODO: Move to nitro
+declare global {
+  namespace NodeJS {
+    interface Process {
+      prerender: boolean
+    }
+  }
+}
+
 export interface NuxtRenderHTMLContext {
   htmlAttrs: string[]
   head: string[]
@@ -103,8 +112,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
   return { renderToString }
 })
 
-const IS_PRERENDER = process.env.NODE_ENV === 'prerender' // TODO: Use NITRO_PRERENDER
-const PAYLOAD_CACHE = IS_PRERENDER ? new Map() : null // TODO: Use LRU cache
+const PAYLOAD_CACHE = process.prerender ? new Map() : null // TODO: Use LRU cache
 const PAYLOAD_URL_RE = /\/_payload.js(\?.*)?$/
 
 export default defineRenderHandler(async (event) => {
@@ -119,7 +127,7 @@ export default defineRenderHandler(async (event) => {
   if (isRenderingPayload) {
     url = url.substring(0, url.lastIndexOf('/')) || '/'
     event.req.url = url
-    if (IS_PRERENDER && PAYLOAD_CACHE!.has(url)) {
+    if (process.prerender && PAYLOAD_CACHE!.has(url)) {
       return PAYLOAD_CACHE!.get(url)
     }
   }
@@ -138,8 +146,8 @@ export default defineRenderHandler(async (event) => {
   }
 
   // Whether we are prerendering route
-  const payloadURL = IS_PRERENDER ? joinURL(url, '_payload.js') : undefined
-  if (IS_PRERENDER) {
+  const payloadURL = process.prerender ? joinURL(url, '_payload.js') : undefined
+  if (process.prerender) {
     ssrContext.payload.prerenderedAt = Date.now()
   }
 
@@ -163,13 +171,13 @@ export default defineRenderHandler(async (event) => {
   // Directly render payload routes
   if (isRenderingPayload) {
     const response = renderPayloadResponse(ssrContext)
-    if (IS_PRERENDER) {
+    if (process.prerender) {
       PAYLOAD_CACHE!.set(url, response)
     }
     return response
   }
 
-  if (IS_PRERENDER) {
+  if (process.prerender) {
     // Hint nitro to prerender payload for this route
     appendHeader(event, 'x-nitro-prerender', payloadURL!)
     // Use same ssr context to generate payload for this route
@@ -189,7 +197,7 @@ export default defineRenderHandler(async (event) => {
     htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
     head: normalizeChunks([
       renderedMeta.headTags,
-      IS_PRERENDER ? `<link rel="modulepreload" as="script" href="${payloadURL}?import">` : null,
+      process.prerender ? `<link rel="modulepreload" as="script" href="${payloadURL}?import">` : null,
       _rendered.renderResourceHints(),
       _rendered.renderStyles(),
       inlinedStyles,
@@ -205,7 +213,7 @@ export default defineRenderHandler(async (event) => {
       _rendered.html
     ],
     bodyAppend: normalizeChunks([
-      IS_PRERENDER
+      process.prerender
         ? `<script type="module">import p from "${payloadURL}?import";window.__NUXT__=p</script>`
         : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
       _rendered.renderScripts(),
