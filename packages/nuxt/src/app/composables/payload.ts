@@ -20,7 +20,7 @@ export function loadPayload (url: string, forceRefetch: boolean = false) {
   return cache[url]
 }
 
-export function prefetchPayload (url: string) {
+export function preloadPayload (url: string) {
   const payloadURL = _getPayloadURL(url)
   useHead({
     link: [
