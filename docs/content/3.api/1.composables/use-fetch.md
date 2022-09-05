@@ -72,6 +72,17 @@ By default, Nuxt waits until a `refresh` is finished before it can be executed a
 const { data, pending, error, refresh } = await useFetch(
   'https://api.nuxtjs.dev/mountains',
   {
+    pick: ['title']
+  }
+)
+```
+
+Using [interceptors](https://github.com/unjs/ohmyfetch#%EF%B8%8F-interceptors):
+
+```ts
+const { data, pending, error, refresh } = await useFetch(
+  'https://api.nuxtjs.dev/mountains',
+  {
     onRequest({ options }) {
       // set the request headers
       options.headers = options.headers || {}
