@@ -188,7 +188,7 @@ export default defineRenderHandler(async (event) => {
     htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
     head: normalizeChunks([
       renderedMeta.headTags,
-      process.env.prerender ? `<link rel="modulepreload" as="script" href="${payloadURL}">` : null,
+      process.env.prerender ? `<link rel="modulepreload" href="${payloadURL}">` : null,
       _rendered.renderResourceHints(),
       _rendered.renderStyles(),
       inlinedStyles,

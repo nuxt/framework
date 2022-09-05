@@ -27,10 +27,6 @@ export function preloadPayload (url: string) {
       { rel: 'modulepreload', href: payloadURL }
     ]
   })
-  if (process.env.prerender) {
-    const event = useRequestEvent()
-    appendHeader(event, 'x-nitro-prerender', payloadURL)
-  }
 }
 
 // --- Internal ---

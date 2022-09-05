@@ -39,4 +39,11 @@ const { data: randomNumbers, refresh } = await useFetch('/api/random', { key: pa
 
 const random = useRandomState(100, pageKey)
 const globalRandom = useRandomState(100)
+
+// TODO: NuxtLink should do this automatically on observed
+if (process.client) {
+  preloadPayload('/random/a')
+  preloadPayload('/random/b')
+  preloadPayload('/random/c')
+}
 </script>
