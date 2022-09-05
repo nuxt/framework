@@ -3,14 +3,14 @@ import { pathToFileURL } from 'node:url'
 import { normalize, dirname } from 'pathe'
 
 export function getModulePaths (paths?: string | string[]): string[] {
-  return [].concat(
+  return [
     // @ts-ignore
     global.__NUXT_PREPATHS__,
-    ...(Array.isArray(paths) ? paths : [paths]),
+    ...(paths ? [] : Array.isArray(paths) ? paths : [paths]),
     process.cwd(),
     // @ts-ignore
     global.__NUXT_PATHS__
-  ).filter(Boolean)
+  ].filter(Boolean)
 }
 
 const _require = createRequire(process.cwd())
@@ -27,6 +27,10 @@ export function tryResolveModule (id: string, paths?: string | string[]) {
 
 export function requireModule (id: string, paths?: string | string[]) {
   return _require(resolveModule(id, paths))
+}
+
+export function tryRequireModule (id: string, paths?: string | string[]) {
+  try { return requireModule(id, paths) } catch { return null }
 }
 
 export function importModule (id: string, paths?: string | string[]) {

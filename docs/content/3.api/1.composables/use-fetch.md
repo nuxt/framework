@@ -44,8 +44,7 @@ type AsyncData<DataT> = {
   * `headers`: Request headers.
   * `baseURL`: Base URL for the request.
 * **Options (from `useAsyncData`)**:
-  * `key`: a unique key to ensure that data fetching can be properly de-duplicated across requests, if not provided, it will be generated based on the `url` and fetch options.
-  * `lazy`: Whether to resolve the async function after loading the route, instead of blocking navigation (defaults to `false`).
+  * `key`: a unique key to ensure that data fetching can be properly de-duplicated across requests, if not provided, it will be generated based on the static code location where `useAyncData` is used.
   * `server`: Whether to fetch the data on the server (defaults to `true`).
   * `default`: A factory function to set the default value of the data, before the async function resolves - particularly useful with the `lazy: true` option.
   * `pick`: Only pick specified keys in this array from the `handler` function result.
@@ -64,17 +63,40 @@ If you provide a function or ref as the `url` parameter, or if you provide funct
 * **refresh**: a function that can be used to refresh the data returned by the `handler` function.
 * **error**: an error object if the data fetching failed.
 
-By default, Nuxt waits until a `refresh` is finished before it can be executed again. Passing `true` as parameter skips that wait.
+By default, Nuxt waits until a `refresh` is finished before it can be executed again.
+
+::alert{type=warning}
+If you have not fetched data on the server (for example, with `server: false`), then the data _will not_ be fetched until hydration completes. This means even if you await `useFetch` on client-side, `data` will remain null within `<script setup>`.
+::
 
 ## Example
 
 ```ts
-const { data, pending, error, refresh } = await useFetch(
-  'https://api.nuxtjs.dev/mountains',
-  {
+const { data, pending, error, refresh } = await useFetch('https://api.nuxtjs.dev/mountains',{
     pick: ['title']
+})
+```
+
+Using [interceptors](https://github.com/unjs/ohmyfetch#%EF%B8%8F-interceptors):
+
+```ts
+const { data, pending, error, refresh } = await useFetch('/api/auth/login', {
+  onRequest({ request, options }) {
+    // Set the request headers
+    options.headers = options.headers || {}
+    options.headers.authorization = '...'
+  },
+  onRequestError({ request, options, error }) {
+    // Handle the request errors
+  },
+  onResponse({ request, response, options }) {
+    // Process the response data
+    return response._data
+  },
+  onResponseError({ request, response, options }) {
+    // Pandle the response errors
   }
-)
+})
 ```
 
 :ReadMore{link="/guide/features/data-fetching"}

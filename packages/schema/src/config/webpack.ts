@@ -1,6 +1,7 @@
 import { join } from 'pathe'
+import { defineUntypedSchema } from 'untyped'
 
-export default {
+export default defineUntypedSchema({
   /** @version 3 */
   webpack: {
     /**
@@ -18,7 +19,7 @@ export default {
      */
     analyze: {
       $resolve: (val, get) => {
-        if(val !== true) {
+        if (val !== true) {
           return val ?? false
         }
         const rootDir = get('rootDir')
@@ -122,12 +123,12 @@ export default {
      * ```
      */
     filenames: {
-      app: ({ isDev }) => isDev ? `[name].js` : `[contenthash:7].js`,
-      chunk: ({ isDev }) => isDev ? `[name].js` : `[contenthash:7].js`,
-      css: ({ isDev }) => isDev ? '[name].css' : 'css/[contenthash:7].css',
-      img: ({ isDev }) => isDev ? '[path][name].[ext]' : 'img/[name].[contenthash:7].[ext]',
-      font: ({ isDev }) => isDev ? '[path][name].[ext]' : 'fonts/[name].[contenthash:7].[ext]',
-      video: ({ isDev }) => isDev ? '[path][name].[ext]' : 'videos/[name].[contenthash:7].[ext]'
+      app: ({ isDev }: { isDev: boolean }) => isDev ? `[name].js` : `[contenthash:7].js`,
+      chunk: ({ isDev }: { isDev: boolean }) => isDev ? `[name].js` : `[contenthash:7].js`,
+      css: ({ isDev }: { isDev: boolean }) => isDev ? '[name].css' : 'css/[contenthash:7].css',
+      img: ({ isDev }: { isDev: boolean }) => isDev ? '[path][name].[ext]' : 'img/[name].[contenthash:7].[ext]',
+      font: ({ isDev }: { isDev: boolean }) => isDev ? '[path][name].[ext]' : 'fonts/[name].[contenthash:7].[ext]',
+      video: ({ isDev }: { isDev: boolean }) => isDev ? '[path][name].[ext]' : 'videos/[name].[contenthash:7].[ext]'
     },
 
     /**
@@ -264,7 +265,7 @@ export default {
       execute: undefined,
       postcssOptions: {
         config: {
-          $resolve:  (val, get) => val ?? get('postcss.config')
+          $resolve: (val, get) => val ?? get('postcss.config')
         },
         plugins: {
           $resolve: (val, get) => val ?? get('postcss.plugins')
@@ -297,4 +298,4 @@ export default {
      */
     warningIgnoreFilters: [],
   }
-}
+})

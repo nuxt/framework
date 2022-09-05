@@ -3,15 +3,16 @@ import {
   createRouter,
   createWebHistory,
   createMemoryHistory,
+  createWebHashHistory,
   NavigationGuard,
   RouteLocation
 } from 'vue-router'
 import { createError } from 'h3'
 import { withoutBase, isEqual } from 'ufo'
 import NuxtPage from './page'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, showError, clearError, navigateTo, useError } from '#app'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, showError, clearError, navigateTo, useError, useState } from '#app'
 // @ts-ignore
-import routes from '#build/routes'
+import _routes from '#build/routes'
 // @ts-ignore
 import routerOptions from '#build/router.options'
 // @ts-ignore
@@ -27,7 +28,7 @@ declare module 'vue' {
   }
 }
 
-// https://github.dev/vuejs/router/blob/main/src/history/html5.ts#L33-L56
+// https://github.com/vuejs/router/blob/4a0cc8b9c1e642cdf47cc007fa5bbebde70afc66/packages/router/src/history/html5.ts#L37
 function createCurrentLocation (
   base: string,
   location: Location
@@ -54,15 +55,23 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   nuxtApp.vueApp.component('NuxtNestedPage', NuxtPage)
   nuxtApp.vueApp.component('NuxtChild', NuxtPage)
 
-  const baseURL = useRuntimeConfig().app.baseURL
-  const routerHistory = process.client
-    ? createWebHistory(baseURL)
-    : createMemoryHistory(baseURL)
+  let routerBase = useRuntimeConfig().app.baseURL
+  if (routerOptions.hashMode && !routerBase.includes('#')) {
+    // allow the user to provide a `#` in the middle: `/base/#/app`
+    routerBase += '#'
+  }
 
-  const initialURL = process.server ? nuxtApp.ssrContext!.url : createCurrentLocation(baseURL, window.location)
+  const history = routerOptions.history?.(routerBase) ?? (process.client
+    ? (routerOptions.hashMode ? createWebHashHistory(routerBase) : createWebHistory(routerBase))
+    : createMemoryHistory(routerBase)
+  )
+
+  const routes = routerOptions.routes?.(_routes) ?? _routes
+
+  const initialURL = process.server ? nuxtApp.ssrContext!.url : createCurrentLocation(routerBase, window.location)
   const router = createRouter({
     ...routerOptions,
-    history: routerHistory,
+    history,
     routes
   })
   nuxtApp.vueApp.use(router)
@@ -114,8 +123,12 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     callWithNuxt(nuxtApp, showError, [error])
   }
 
+  const initialLayout = useState('_layout')
   router.beforeEach(async (to, from) => {
     to.meta = reactive(to.meta)
+    if (nuxtApp.isHydrating) {
+      to.meta.layout = initialLayout.value ?? to.meta.layout
+    }
     nuxtApp._processingMiddleware = true
 
     type MiddlewareDef = string | NavigationGuard

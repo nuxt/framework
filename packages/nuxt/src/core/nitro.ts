@@ -97,6 +97,7 @@ export async function initNitro (nuxt: Nuxt) {
     },
     replace: {
       'process.env.NUXT_NO_SSR': nuxt.options.ssr === false,
+      'process.env.NUXT_INLINE_STYLES': !!nuxt.options.experimental.inlineSSRStyles,
       'process.dev': nuxt.options.dev,
       __VUE_PROD_DEVTOOLS__: false
     },
@@ -108,6 +109,10 @@ export async function initNitro (nuxt: Nuxt) {
   // Add fallback server for `ssr: false`
   if (!nuxt.options.ssr) {
     nitroConfig.virtual!['#build/dist/server/server.mjs'] = 'export default () => {}'
+  }
+
+  if (!nuxt.options.experimental.inlineSSRStyles) {
+    nitroConfig.virtual!['#build/dist/server/styles.mjs'] = 'export default {}'
   }
 
   // Register nuxt protection patterns
@@ -136,8 +141,9 @@ export async function initNitro (nuxt: Nuxt) {
   nuxt.hook('close', () => nitro.hooks.callHook('close'))
 
   // Setup handlers
-  const devMidlewareHandler = dynamicEventHandler()
-  nitro.options.devHandlers.unshift({ handler: devMidlewareHandler })
+  const devMiddlewareHandler = dynamicEventHandler()
+  // @ts-ignore fix handler type in nitro to accept event handler
+  nitro.options.devHandlers.unshift({ handler: devMiddlewareHandler })
   nitro.options.devHandlers.push(...devHandlers)
   nitro.options.handlers.unshift({
     route: '/__nuxt_error',
@@ -179,7 +185,7 @@ export async function initNitro (nuxt: Nuxt) {
     nuxt.hook('build:compile', ({ compiler }) => {
       compiler.outputFileSystem = { ...fsExtra, join } as any
     })
-    nuxt.hook('server:devMiddleware', (m) => { devMidlewareHandler.set(toEventHandler(m)) })
+    nuxt.hook('server:devMiddleware', (m) => { devMiddlewareHandler.set(toEventHandler(m)) })
     nuxt.server = createDevServer(nitro)
     nuxt.hook('build:resources', () => {
       nuxt.server.reload()

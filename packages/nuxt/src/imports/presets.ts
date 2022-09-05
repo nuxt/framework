@@ -36,6 +36,7 @@ const appPreset = defineUnimportPreset({
     'useRequestHeaders',
     'useRequestEvent',
     'setResponseStatus',
+    'setPageLayout',
     'useRouter',
     'useRoute',
     'useActiveRoute',
@@ -51,6 +52,7 @@ const appPreset = defineUnimportPreset({
     'createError',
     'defineNuxtLink',
     'useAppConfig',
+    'updateAppConfig',
     'defineAppConfig',
     'preloadComponents',
     'prefetchComponents'
