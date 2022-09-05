@@ -40,8 +40,6 @@ const getServerEntry = () => import('#build/dist/server/server.mjs').then(r => r
 // @ts-ignore
 const getSSRStyles = (): Promise<Record<string, () => Promise<string[]>>> => import('#build/dist/server/styles.mjs').then(r => r.default || r)
 
-const JS_HINT_RE = /<[^>]+(\.m?js"|as="script")[^>]*>/g
-
 // -- SSR Renderer --
 const getSSRRenderer = lazyCachedFunction(async () => {
   // Load client manifest
@@ -192,7 +190,7 @@ export default defineRenderHandler(async (event) => {
   return response
 })
 
-function lazyCachedFunction<T> (fn: () => Promise<T>): () => Promise<T> {
+function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
   let res: Promise<T> | null = null
   return () => {
     if (res === null) {
