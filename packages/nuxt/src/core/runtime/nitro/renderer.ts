@@ -205,7 +205,7 @@ export default defineRenderHandler(async (event) => {
     ],
     bodyAppend: normalizeChunks([
       process.env.prerender
-        ? `<script type="module">import p from "${payloadURL}?import";window.__NUXT__=p</script>`
+        ? `<script type="module">import p from "${payloadURL}?import";window.__NUXT__={...p,(${devalue(splitPayload(ssrContext).initial)})}</script>`
         : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
       _rendered.renderScripts(),
       // Note: bodyScripts may contain tags other than <script>
@@ -276,12 +276,20 @@ async function renderInlineStyles (usedModules: Set<string> | string[]) {
 
 function renderPayloadResponse (ssrContext: NuxtSSRContext) {
   return <RenderResponse> {
-    body: `export default ${devalue(ssrContext.payload)}`,
+    body: `export default ${devalue(splitPayload(ssrContext).payload)}`,
     statusCode: ssrContext.event.res.statusCode,
     statusMessage: ssrContext.event.res.statusMessage,
     headers: {
       'Content-Type': 'text/javascript;charset=UTF-8',
       'X-Powered-By': 'Nuxt'
     }
+  }
+}
+
+function splitPayload (ssrContext: NuxtSSRContext) {
+  const { data, state, prerenderedAt, ...initial } = ssrContext.payload
+  return {
+    initial: { ...initial, prerenderedAt },
+    payload: { data, state, prerenderedAt }
   }
 }
