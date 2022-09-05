@@ -23,9 +23,6 @@ export interface TestOptions {
     launch?: LaunchOptions
   }
   server: boolean
-  mock: {
-    fn: Function
-  }
 }
 
 export interface TestContext {
