@@ -113,8 +113,6 @@ export default defineRenderHandler(async (event) => {
     : null
   let url = ssrError?.url as string || event.req.url!
 
-  console.log(process.env.prerender, url)
-
   // Whether we are rendering payload route
   const isRenderingPayload = PAYLOAD_URL_RE.test(url)
   if (isRenderingPayload) {
