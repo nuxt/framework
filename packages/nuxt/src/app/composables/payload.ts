@@ -23,7 +23,7 @@ export function prefetchPayload (url: string) {
       { rel: 'modulepreload', href: payloadURL + '?import' }
     ]
   })
-  if (process.server && !process.dev && isPrerender()) {
+  if (process.server && !process.dev && isPrerendered()) {
     const event = useRequestEvent()
     appendHeader(event, 'x-nitro-prerender', payloadURL)
   }
@@ -45,7 +45,7 @@ async function _importPayload (payloadURL: string) {
   return payload
 }
 
-export function isPrerender () {
+export function isPrerendered () {
   // Note: Alternative for server is checking x-nitro-prerender header
   const nuxtApp = useNuxtApp()
   return !!nuxtApp.payload.prerenderedAt

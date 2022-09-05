@@ -1,7 +1,7 @@
-import { defineNuxtPlugin, loadPayload, addRouteMiddleware, isPrerender } from '#app'
+import { defineNuxtPlugin, loadPayload, addRouteMiddleware, isPrerendered } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
-  if (!isPrerender()) {
+  if (!isPrerendered()) {
     return // TODO: Watch for mode change in hybrid mode
   }
   addRouteMiddleware(async (to, from) => {
