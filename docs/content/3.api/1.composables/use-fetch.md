@@ -81,24 +81,23 @@ Using [interceptors](https://github.com/unjs/ohmyfetch#%EF%B8%8F-interceptors):
 
 ```ts
 const { data, pending, error, refresh } = await useFetch(
-  'https://api.nuxtjs.dev/mountains',
+  '/api/auth/login',
   {
-    onRequest({ options }) {
-      // set the request headers
+    onRequest({ request, options }) {
+      // Set the request headers
       options.headers = options.headers || {}
-      options.headers.authorize = 'authorize'
+      options.headers.authorization = '...'
     },
-    onRequestError({ error }) {
-      // handle the request errors
+    onRequestError({ request, options, error }) {
+      // Handle the request errors
     },
-    onResponse({ response }) {
-      // process the response data
+    onResponse({ request, response, options }) {
+      // Process the response data
       return response._data
     },
-    onResponseError({ response }) {
-      // handle the response errors
-    },
-    pick: ['title']
+    onResponseError({ request, response, options }) {
+      // Pandle the response errors
+    }
   }
 )
 ```
