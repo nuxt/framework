@@ -5,6 +5,8 @@ import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, 
 // Temporary until finding better placement
 /* eslint-disable import/no-restricted-paths */
 import escapeRE from 'escape-string-regexp'
+import fse from 'fs-extra'
+import { withoutLeadingSlash } from 'ufo'
 import pagesModule from '../pages/module'
 import metaModule from '../head/module'
 import componentsModule from '../components/module'
@@ -80,6 +82,18 @@ async function initNuxt (nuxt: Nuxt) {
     addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromClient }), { server: false })
   }
 
+  // TODO: [Experimental] Avoid emitting assets when flag is enabled
+  if (nuxt.options.experimental.noScripts) {
+    nuxt.hook('build:manifest', async (manifest) => {
+      for (const file in manifest) {
+        if (manifest[file].resourceType === 'script') {
+          await fse.rm(resolve(nuxt.options.buildDir, 'dist/client', withoutLeadingSlash(nuxt.options.app.buildAssetsDir), manifest[file].file), { force: true })
+          manifest[file].file = ''
+        }
+      }
+    })
+  }
+
   // Transpile layers within node_modules
   nuxt.options.build.transpile.push(
     ...nuxt.options._layers.filter(i => i.cwd.includes('node_modules')).map(i => i.cwd as string)
@@ -138,15 +152,15 @@ async function initNuxt (nuxt: Nuxt) {
   nuxt.hooks.deprecateHooks({
     'autoImports:sources': {
       to: 'imports:sources',
-      message: '`autoImports:sources` hook is deprecated. Use `imports:sources` with `nuxt>=3.0.0-rc.9`.'
+      message: '`autoImports:sources` hook is deprecated. Use `addImportsSources()` from `@nuxt/kit` or `imports:dirs` with `nuxt>=3.0.0-rc.10`.'
     },
     'autoImports:dirs': {
       to: 'imports:dirs',
-      message: '`autoImports:sources` hook is deprecated. Use `addImports()` from `@nuxt/kit` or `imports:sources` with `nuxt>=3.0.0-rc.9`.'
+      message: '`autoImports:dirs` hook is deprecated. Use `addImportsDir()` from `@nuxt/kit` or `imports:dirs` with `nuxt>=3.0.0-rc.9`.'
     },
     'autoImports:extend': {
       to: 'imports:extend',
-      message: '`autoImports:extend` hook is deprecated. Use `addImports()` from `@nuxt/kit` or `imports:sources` with `nuxt>=3.0.0-rc.9`.'
+      message: '`autoImports:extend` hook is deprecated. Use `addImports()` from `@nuxt/kit` or `imports:extend` with `nuxt>=3.0.0-rc.9`.'
     }
   })
 
