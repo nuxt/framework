@@ -9,9 +9,9 @@ import { useNuxtApp } from '#app'
 
 type _CookieOptions = Omit<CookieSerializeOptions & CookieParseOptions, 'decode' | 'encode'>
 
-export interface CookieOptions<T=any> extends _CookieOptions {
+export interface CookieOptions<T = any> extends _CookieOptions {
   decode?(value: string): T
-  encode?(value: T): string;
+  encode?(value: T): string
   default?: () => T | Ref<T>
 }
 
@@ -38,8 +38,12 @@ export function useCookie <T = string> (name: string, _opts?: CookieOptions<T>):
         writeServerCookie(useRequestEvent(nuxtApp), name, cookie.value, opts)
       }
     }
-    nuxtApp.hooks.hookOnce('app:rendered', writeFinalCookieValue)
-    nuxtApp.hooks.hookOnce('app:redirected', writeFinalCookieValue)
+    const unhook = nuxtApp.hooks.hookOnce('app:rendered', writeFinalCookieValue)
+    nuxtApp.hooks.hookOnce('app:redirected', (...args) => {
+      // don't write cookie subsequently when app:rendered is called
+      unhook()
+      return writeFinalCookieValue(...args)
+    })
   }
 
   return cookie as CookieRef<T>
