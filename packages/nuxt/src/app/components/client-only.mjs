@@ -18,12 +18,10 @@ export default defineComponent({
   }
 })
 
-
 const cache = new WeakMap()
 
 export function createClientOnly (component) {
-
-  if(cache.has(component)) {
+  if (cache.has(component)) {
     return cache.get(component)
   }
 
