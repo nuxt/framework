@@ -10,6 +10,7 @@ export default defineBuildConfig({
     'unplugin',
     'webpack-virtual-modules',
     'postcss',
+    'h3',
     'postcss-loader',
     'vue-loader',
     'css-loader',
