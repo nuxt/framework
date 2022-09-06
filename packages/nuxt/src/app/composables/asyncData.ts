@@ -195,11 +195,17 @@ export function useAsyncData<
     if (options.watch) {
       watch(options.watch, () => asyncData.refresh())
     }
-    const off = nuxt.hook('app:data:refresh', (keys) => {
-      if (!keys || keys.includes(key)) {
-        return asyncData.refresh()
+    const off = () => {
+      // When initialCache is false, the memory will be deleted, and the memory will be cleaned up to improve performance
+      if (!options.initialCache) {
+        delete nuxt._asyncData[key]
       }
-    })
+      nuxt.hook('app:data:refresh', (keys) => {
+        if (!keys || keys.includes(key)) {
+          return asyncData.refresh()
+        }
+      })
+    }
     if (instance) {
       onUnmounted(off)
     }
