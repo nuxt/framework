@@ -1,5 +1,5 @@
 {
-  "name": "example-reactivity-transform",
+  "name": "example-app-config",
   "private": true,
   "scripts": {
     "build": "nuxi build",
