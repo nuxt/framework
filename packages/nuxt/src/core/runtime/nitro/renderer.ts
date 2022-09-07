@@ -284,8 +284,8 @@ function renderPayloadResponse (ssrContext: NuxtSSRContext) {
     statusCode: ssrContext.event.res.statusCode,
     statusMessage: ssrContext.event.res.statusMessage,
     headers: {
-      'Content-Type': 'text/javascript;charset=UTF-8',
-      'X-Powered-By': 'Nuxt'
+      'content-type': 'text/javascript;charset=UTF-8',
+      'x-powered-by': 'Nuxt'
     }
   }
 }

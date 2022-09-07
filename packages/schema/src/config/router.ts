@@ -154,7 +154,7 @@ export default defineUntypedSchema({
    * linked page when the `<nuxt-link>` is visible in the viewport, making instant navigation.
    * @version 2
    */
-   prefetchPayloads: true,
+  prefetchPayloads: true,
 
   /**
    * If this option is set to `true`, trailing slashes will be appended to every
