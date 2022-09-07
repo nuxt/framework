@@ -254,7 +254,7 @@ export function refreshNuxtData (keys?: string | string[]): Promise<void> {
   return useNuxtApp().callHook('app:data:refresh', _keys)
 }
 
-export function clearNuxtData ({ keys }: {keys: string | string[]}): void {
+export function clearNuxtData (keys?: string | string[]): void {
   const _keys = keys ? Array.isArray(keys) ? keys : [keys] : undefined
   if (_keys === undefined) {
     return
