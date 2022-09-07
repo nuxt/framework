@@ -80,6 +80,7 @@ export async function buildServer (ctx: ViteBuildContext) {
       ]
     },
     build: {
+      sourcemap: ctx.nuxt.options.sourcemap && ctx.nuxt.options.sourcemap !== 'client',
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {

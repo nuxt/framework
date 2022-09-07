@@ -36,10 +36,10 @@ export async function bundle (nuxt: Nuxt) {
   // Configure compilers
   const compilers = webpackConfigs.map((config) => {
     config.plugins!.push(DynamicBasePlugin.webpack({
-      sourcemap: nuxt.options.sourcemap
+      sourcemap: nuxt.options.sourcemap === true || nuxt.options.sourcemap !== config.name
     }))
     config.plugins!.push(composableKeysPlugin.webpack({
-      sourcemap: nuxt.options.sourcemap,
+      sourcemap: nuxt.options.sourcemap === true || nuxt.options.sourcemap !== config.name,
       rootDir: nuxt.options.rootDir
     }))
 

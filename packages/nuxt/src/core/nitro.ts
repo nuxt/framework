@@ -58,7 +58,7 @@ export async function initNitro (nuxt: Nuxt) {
         .concat(nuxt.options._generate ? ['/', ...nuxt.options.generate.routes] : [])
         .concat(nuxt.options.ssr === false ? ['/', '/200.html', '/404.html'] : [])
     },
-    sourceMap: nuxt.options.sourcemap,
+    sourceMap: nuxt.options.sourcemap && nuxt.options.sourcemap !== 'client',
     externals: {
       inline: [
         ...(nuxt.options.dev

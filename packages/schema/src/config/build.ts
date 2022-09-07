@@ -26,10 +26,11 @@ export default defineUntypedSchema({
   /**
    * Whether to generate sourcemaps.
    *
+   * @type {boolean | 'server' | 'client'}
    * @version 3
    */
   sourcemap: {
-    $resolve: (val, get) => val ?? get('dev'),
+    $resolve: (val, get) => val ?? get('dev') ? true : 'server',
   },
   /**
    * Shared build configuration.
