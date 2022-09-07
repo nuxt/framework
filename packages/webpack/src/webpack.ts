@@ -39,7 +39,7 @@ export async function bundle (nuxt: Nuxt) {
       sourcemap: nuxt.options.sourcemap[config.name as 'client' | 'server']
     }))
     config.plugins!.push(composableKeysPlugin.webpack({
-      sourcemap: nuxt.options.sourcemap[config.name as 'client' | 'server']!,
+      sourcemap: nuxt.options.sourcemap[config.name as 'client' | 'server'],
       rootDir: nuxt.options.rootDir
     }))
 

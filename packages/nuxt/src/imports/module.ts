@@ -91,8 +91,8 @@ export default defineNuxtModule<Partial<ImportsOptions>>({
       })
     } else {
       // Transform to inject imports in production mode
-      addVitePlugin(TransformPlugin.vite({ ctx, options, sourcemap: Object.values(nuxt.options.sourcemap).some(Boolean) }))
-      addWebpackPlugin(TransformPlugin.webpack({ ctx, options, sourcemap: Object.values(nuxt.options.sourcemap).some(Boolean) }))
+      addVitePlugin(TransformPlugin.vite({ ctx, options, sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client }))
+      addWebpackPlugin(TransformPlugin.webpack({ ctx, options, sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client }))
     }
 
     const regenerateImports = async () => {

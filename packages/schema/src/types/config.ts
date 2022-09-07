@@ -26,7 +26,7 @@ export type NuxtConfigLayer = ConfigLayer<NuxtConfig & {
 
 /** Normalized Nuxt options available as `nuxt.options.*` */
 export interface NuxtOptions extends ConfigSchema {
-  sourcemap: Exclude<ConfigSchema['sourcemap'], boolean>
+  sourcemap: Required<Exclude<ConfigSchema['sourcemap'], boolean>>
   _layers: NuxtConfigLayer[]
 }
 
