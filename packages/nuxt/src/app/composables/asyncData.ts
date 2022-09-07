@@ -254,26 +254,21 @@ export function refreshNuxtData (keys?: string | string[]): Promise<void> {
   return useNuxtApp().callHook('app:data:refresh', _keys)
 }
 
-export function clearNuxtData (keys?: string | string[]): void {
-  const _keys = keys ? Array.isArray(keys) ? keys : [keys] : undefined
-  if (_keys === undefined) {
-    return
-  }
-
-  const nuxt = useNuxtApp()
-
+export function clearNuxtData (keys: string | string[]): void {
+  const nuxtApp = useNuxtApp()
+  const _keys = Array.from(keys).filter(key => key && typeof key === 'string')
   for (const key of _keys) {
-    if (key in nuxt.payload.data) {
-      nuxt.payload.data[key] = undefined
+    if (key in nuxtApp.payload.data) {
+      nuxtApp.payload.data[key] = undefined
     }
-    if (key in nuxt.payload._errors) {
-      nuxt.payload._errors[key] = undefined
+    if (key in nuxtApp.payload._errors) {
+      nuxtApp.payload._errors[key] = undefined
     }
-    if (key in nuxt._asyncData) {
-      nuxt._asyncData[key] = undefined
+    if (key in nuxtApp._asyncData) {
+      nuxtApp._asyncData[key] = undefined
     }
-    if (key in nuxt._asyncDataPromises) {
-      nuxt._asyncDataPromises[key] = undefined
+    if (key in nuxtApp._asyncDataPromises) {
+      nuxtApp._asyncDataPromises[key] = undefined
     }
   }
 }

@@ -10,9 +10,9 @@ This method is useful if you want to invalidate the data fetching for another pa
 ## Type
 
 ```ts
-clearNuxtData (keys?: string | string[])
+clearNuxtData (keys?: string | string[]): void
 ```
 
 ## Parameters
 
-* `keys`: Provides an array of keys that are used in `useAsyncData` to delete cached data.
+* `keys`: On or an array of keys that are used in `useAsyncData` to delete their cached data.
