@@ -76,10 +76,12 @@ async function initNuxt (nuxt: Nuxt) {
     const removeFromClient = ['onServerPrefetch', 'onRenderTracked', 'onRenderTriggered']
 
     // Add tree-shaking optimisations for SSR - build time only
-    addVitePlugin(TreeShakePlugin.vite({ sourcemap: nuxt.options.sourcemap && nuxt.options.sourcemap !== 'client', treeShake: removeFromServer }), { client: false })
-    addVitePlugin(TreeShakePlugin.vite({ sourcemap: nuxt.options.sourcemap && nuxt.options.sourcemap !== 'server', treeShake: removeFromClient }), { server: false })
-    addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap && nuxt.options.sourcemap !== 'client', treeShake: removeFromServer }), { client: false })
-    addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap && nuxt.options.sourcemap !== 'server', treeShake: removeFromClient }), { server: false })
+    const serverSourcemap = typeof nuxt.options.sourcemap === 'boolean' ? nuxt.options.sourcemap : nuxt.options.sourcemap.server
+    const clientSourcemap = typeof nuxt.options.sourcemap === 'boolean' ? nuxt.options.sourcemap : nuxt.options.sourcemap.client
+    addVitePlugin(TreeShakePlugin.vite({ sourcemap: serverSourcemap, treeShake: removeFromServer }), { client: false })
+    addVitePlugin(TreeShakePlugin.vite({ sourcemap: clientSourcemap, treeShake: removeFromClient }), { server: false })
+    addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: serverSourcemap, treeShake: removeFromServer }), { client: false })
+    addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: clientSourcemap, treeShake: removeFromClient }), { server: false })
   }
 
   // TODO: [Experimental] Avoid emitting assets when flag is enabled
