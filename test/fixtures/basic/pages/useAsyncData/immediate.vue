@@ -20,12 +20,17 @@ if (process.server && data.value !== null) {
 }
 
 await execute()
+await execute()
 
-if (process.server && called.value !== 1) {
-  throw new Error('Should have been called once after execute')
+if (process.server && called.value as number !== 2) {
+  throw new Error('Should have been called once after execute (server) but called ' + called.value + ' times')
 }
 
-if (data.value !== 1) {
+if (process.client && called.value as number !== 2) {
+  throw new Error('Should have been called once after execute (client) but called ' + called.value + ' times')
+}
+
+if (data.value !== 2) {
   throw new Error('Data should be 1 after execute')
 }
 </script>

@@ -63,8 +63,7 @@ If you provide a function or ref as the `url` parameter, or if you provide funct
 
 * **data**: the result of the asynchronous function that is passed in.
 * **pending**: a boolean indicating whether the data is still being fetched.
-* **refresh**: a function that can be used to refresh the data returned by the `handler` function.
-* **execute**: a function that can be used to initially fetch the data returned by the `handler` function (use with `immediate: false`).
+* **refresh**/**execute** : a function that can be used to refresh the data returned by the `handler` function.
 * **error**: an error object if the data fetching failed.
 
 By default, Nuxt waits until a `refresh` is finished before it can be executed again.

@@ -32,15 +32,15 @@ export interface AsyncDataOptions<
   immediate?: boolean
 }
 
-export interface RefreshOptions {
+export interface AsyncDataExecuteOptions {
   _initial?: boolean
 }
 
 export interface _AsyncData<DataT, ErrorT> {
   data: Ref<DataT | null>
   pending: Ref<boolean>
-  refresh: (opts?: RefreshOptions) => Promise<void>
-  execute: () => Promise<void>
+  refresh: (opts?: AsyncDataExecuteOptions) => Promise<void>
+  execute: (opts?: AsyncDataExecuteOptions) => Promise<void>
   error: Ref<ErrorT | null>
 }
 
@@ -114,7 +114,7 @@ export function useAsyncData<
   // TODO: Else, Soemhow check for confliciting keys with different defaults or fetcher
   const asyncData = { ...nuxt._asyncData[key] } as AsyncData<DataT, DataE>
 
-  asyncData.refresh = (opts = {}) => {
+  asyncData.refresh = asyncData.execute = (opts = {}) => {
     // Avoid fetching same key more than once at a time
     if (nuxt._asyncDataPromises[key]) {
       return nuxt._asyncDataPromises[key]
@@ -159,15 +159,6 @@ export function useAsyncData<
   }
 
   const initialFetch = () => asyncData.refresh({ _initial: true })
-
-  asyncData.execute = () => {
-    if (options.immediate) {
-      return asyncData.refresh()
-    }
-    // prevent _initial to be true by default upon the 2nd call
-    asyncData.execute = asyncData.refresh
-    return initialFetch()
-  }
 
   const fetchOnServer = options.server !== false && nuxt.payload.serverRendered
 
