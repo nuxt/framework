@@ -265,8 +265,10 @@ export function clearNuxtData (keys?: string | string[]): void {
     if (key in nuxtApp.payload._errors) {
       nuxtApp.payload._errors[key] = undefined
     }
-    if (key in nuxtApp._asyncData) {
-      nuxtApp._asyncData[key] = undefined
+    if (nuxtApp._asyncData[key]) {
+      nuxtApp._asyncData[key]!.data.value = undefined
+      nuxtApp._asyncData[key]!.error.value = undefined
+      nuxtApp._asyncData[key]!.pending.value = false
     }
     if (key in nuxtApp._asyncDataPromises) {
       nuxtApp._asyncDataPromises[key] = undefined
