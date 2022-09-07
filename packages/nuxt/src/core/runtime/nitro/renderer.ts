@@ -124,7 +124,8 @@ export default defineRenderHandler(async (event) => {
   const renderer = (process.env.NUXT_NO_SSR || ssrContext.noSSR) ? await getSPARenderer() : await getSSRRenderer()
   const _rendered = await renderer.renderToString(ssrContext).catch((err) => {
     if (!ssrError) {
-      throw err
+      // Use explicitly thrown error in preference to subsequent rendering errors
+      throw ssrContext.payload?.error || err
     }
   })
   await ssrContext.nuxt?.hooks.callHook('app:rendered', { ssrContext })
@@ -165,8 +166,8 @@ export default defineRenderHandler(async (event) => {
       _rendered.html
     ],
     bodyAppend: normalizeChunks([
-      `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
-      _rendered.renderScripts(),
+      process.env.NUXT_NO_SCRIPTS ? '' : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`,
+      process.env.NUXT_NO_SCRIPTS ? '' : _rendered.renderScripts(),
       // Note: bodyScripts may contain tags other than <script>
       renderedMeta.bodyScripts
     ])
