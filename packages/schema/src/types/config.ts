@@ -48,10 +48,10 @@ export interface ViteConfig extends ViteUserConfig {
   warmupEntry?: boolean,
 
   /**
-   * Vite Server specific options - disallow setting port because Nuxt launches own server
+   * Disallow setting vite server properties because Nuxt launches it's own server
    * https://github.com/nuxt/framework/issues/7316
    */
-  server: Omit<ServerOptions, 'port'>
+  server: never
 }
 
 
