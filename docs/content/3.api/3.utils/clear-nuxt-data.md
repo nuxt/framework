@@ -15,4 +15,4 @@ clearNuxtData (keys?: string | string[]): void
 
 ## Parameters
 
-* `keys`: On or an array of keys that are used in `useAsyncData` to delete their cached data.
+* `keys`: On or an array of keys that are used in `useAsyncData` to delete their cached data. If no keys are provided, **every data** will be invalidated.
