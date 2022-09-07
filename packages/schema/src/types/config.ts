@@ -1,6 +1,6 @@
 import type { KeepAliveProps, TransitionProps } from 'vue'
 import { ConfigSchema } from '../../schema/config'
-import type { UserConfig as ViteUserConfig } from 'vite'
+import type { ServerOptions, UserConfig as ViteUserConfig } from 'vite'
 import type { Options as VuePluginOptions } from '@vitejs/plugin-vue'
 import type { MetaObject } from './meta'
 
@@ -45,7 +45,13 @@ export interface ViteConfig extends ViteUserConfig {
   /**
    * Warmup vite entrypoint caches on dev startup.
    */
-  warmupEntry?: boolean
+  warmupEntry?: boolean,
+
+  /**
+   * Vite Server specific options - disallow setting port because Nuxt launches own server
+   * https://github.com/nuxt/framework/issues/7316
+   */
+  server: Omit<ServerOptions, 'port'>
 }
 
 
