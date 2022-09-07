@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { joinURL } from 'ufo'
 // import { isWindows } from 'std-env'
-import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
+import { setup, fetch, $fetch, startServer, createPage } from '@nuxt/test-utils'
 // eslint-disable-next-line import/order
 import { expectNoClientErrors, renderPage } from './utils'
 
@@ -202,30 +202,6 @@ describe('navigate external', () => {
   })
 })
 
-describe('errors', () => {
-  it('should render a JSON error page', async () => {
-    const res = await fetch('/error', {
-      headers: {
-        accept: 'application/json'
-      }
-    })
-    expect(res.status).toBe(500)
-    const error = await res.json()
-    delete error.stack
-    expect(error).toMatchObject({
-      message: 'This is a custom error',
-      statusCode: 500,
-      statusMessage: 'Internal Server Error',
-      url: '/error'
-    })
-  })
-
-  it('should render a HTML error page', async () => {
-    const res = await fetch('/error')
-    expect(await res.text()).toContain('This is a custom error')
-  })
-})
-
 describe('middlewares', () => {
   it('should redirect to index with global middleware', async () => {
     const html = await $fetch('/redirect/')
@@ -407,8 +383,23 @@ describe.skipIf(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)('inl
       expect(html).toContain(style)
     }
   })
-  it.todo('does not render style hints for inlined styles')
-  it.todo('renders client-only styles?', async () => {
+
+  it('only renders prefetch for entry styles', async () => {
+    const html: string = await $fetch('/styles')
+    expect(html.match(/<link [^>]*href="[^"]*\.css">/)?.map(m => m.replace(/\.[^.]*\.css/, '.css'))).toMatchInlineSnapshot(`
+        [
+          "<link rel=\\"prefetch stylesheet\\" href=\\"/_nuxt/entry.css\\">",
+        ]
+      `)
+  })
+
+  it('still downloads client-only styles', async () => {
+    const page = await createPage('/styles')
+    await page.waitForLoadState('networkidle')
+    expect(await page.$eval('.client-only-css', e => getComputedStyle(e).color)).toBe('rgb(50, 50, 50)')
+  })
+
+  it.todo('renders client-only styles only', async () => {
     const html = await $fetch('/styles')
     expect(html).toContain('{--client-only:"client-only"}')
   })
@@ -579,5 +570,30 @@ describe('useAsyncData', () => {
 
   it('two requests made at once resolve and sync', async () => {
     await expectNoClientErrors('/useAsyncData/promise-all')
+  })
+})
+
+// TODO: Move back up after https://github.com/vuejs/core/issues/6110 is resolved
+describe('errors', () => {
+  it('should render a JSON error page', async () => {
+    const res = await fetch('/error', {
+      headers: {
+        accept: 'application/json'
+      }
+    })
+    expect(res.status).toBe(422)
+    const error = await res.json()
+    delete error.stack
+    expect(error).toMatchObject({
+      message: 'This is a custom error',
+      statusCode: 422,
+      statusMessage: 'This is a custom error',
+      url: '/error'
+    })
+  })
+
+  it('should render a HTML error page', async () => {
+    const res = await fetch('/error')
+    expect(await res.text()).toContain('This is a custom error')
   })
 })
