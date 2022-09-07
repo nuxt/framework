@@ -104,7 +104,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
 })
 
 const PAYLOAD_CACHE = process.env.prerender ? new Map() : null // TODO: Use LRU cache
-const PAYLOAD_URL_RE = /\/_payload.js(\?.*)?$/
+const PAYLOAD_URL_RE = /\/_payload(\.[a-zA-Z0-9]+)?.js?$/
 
 export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page

@@ -2,15 +2,20 @@ import { parseURL, joinURL } from 'ufo'
 import { useNuxtApp } from '../nuxt'
 import { useHead } from '#app'
 
-export function loadPayload (url: string, forceRefetch: boolean = false) {
+interface LoadPayloadOptions {
+  fresh?: boolean
+  hash?: string
+}
+
+export function loadPayload (url: string, opts: LoadPayloadOptions = {}) {
   if (process.server) { return null }
-  const payloadURL = _getPayloadURL(url)
+  const payloadURL = _getPayloadURL(url, opts)
   const nuxtApp = useNuxtApp()
   const cache = nuxtApp._payloadCache = nuxtApp._payloadCache || {}
-  if (!forceRefetch && cache[payloadURL]) {
+  if (cache[payloadURL]) {
     return cache[payloadURL]
   }
-  cache[url] = _importPayload(payloadURL + (forceRefetch ? '?_=' + Date.now() : '')).then((payload) => {
+  cache[url] = _importPayload(payloadURL).then((payload) => {
     if (!payload) {
       delete cache[url]
       return null
@@ -19,8 +24,8 @@ export function loadPayload (url: string, forceRefetch: boolean = false) {
   return cache[url]
 }
 
-export function preloadPayload (url: string) {
-  const payloadURL = _getPayloadURL(url)
+export function preloadPayload (url: string, opts: LoadPayloadOptions = {}) {
+  const payloadURL = _getPayloadURL(url, opts)
   useHead({
     link: [
       { rel: 'modulepreload', href: payloadURL }
@@ -30,12 +35,13 @@ export function preloadPayload (url: string) {
 
 // --- Internal ---
 
-function _getPayloadURL (url: string) {
+function _getPayloadURL (url: string, opts: LoadPayloadOptions = {}) {
   const parsed = parseURL(url)
   if (parsed.search) {
     throw new Error('Payload URL cannot contain search params: ' + url)
   }
-  return joinURL(parsed.pathname, '_payload.js')
+  const hash = opts.hash || (opts.fresh ? Date.now() : '')
+  return joinURL(parsed.pathname, hash ? `_payload.${hash}.js` : '_payload.js')
 }
 
 async function _importPayload (payloadURL: string) {
