@@ -263,12 +263,17 @@ export function clearNuxtData ({ keys }: {keys: string | string[]}): void {
   const nuxt = useNuxtApp()
 
   for (const key of _keys) {
-    if (nuxt.payload.data[key] !== undefined) {
+    if (key in nuxt.payload.data) {
       nuxt.payload.data[key] = undefined
     }
-
-    if (nuxt.payload._errors[key] !== undefined) {
+    if (key in nuxt.payload._errors) {
       nuxt.payload._errors[key] = undefined
+    }
+    if (key in nuxt._asyncData) {
+      nuxt._asyncData[key] = undefined
+    }
+    if (key in nuxt._asyncDataPromises) {
+      nuxt._asyncDataPromises[key] = undefined
     }
   }
 }
