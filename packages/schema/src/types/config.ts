@@ -48,8 +48,7 @@ export interface ViteConfig extends ViteUserConfig {
   warmupEntry?: boolean,
 
   /**
-   * Disallow setting vite server properties because Nuxt launches it's own server
-   * https://github.com/nuxt/framework/issues/7316
+   * Use environment variables or top level `server` options to configure Nuxt server.
    */
   server: never
 }
