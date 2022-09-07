@@ -64,10 +64,11 @@ function clientHMR (ctx: WebpackConfigContext) {
   // Add HMR support
   const app = (config.entry as any).app as any
   app.unshift(
-      // https://github.com/glenjamin/webpack-hot-middleware#config
-      `webpack-hot-middleware/client?${hotMiddlewareClientOptionsStr}`
+    // https://github.com/glenjamin/webpack-hot-middleware#config
+    `webpack-hot-middleware/client?${hotMiddlewareClientOptionsStr}`
   )
 
+  config.plugins = config.plugins || []
   config.plugins.push(new webpack.HotModuleReplacementPlugin())
 }
 
@@ -97,7 +98,8 @@ function clientPlugins (ctx: WebpackConfigContext) {
 }
 
 function getCspScriptPolicy (ctx: WebpackConfigContext) {
-  const { csp } = ctx.options.render
+  // TODO
+  const { csp } = ctx.options.render as any
   if (typeof csp === 'object') {
     const { policies = {} } = csp
     return policies['script-src'] || policies['default-src'] || []
