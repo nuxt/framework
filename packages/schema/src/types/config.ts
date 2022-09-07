@@ -26,6 +26,7 @@ export type NuxtConfigLayer = ConfigLayer<NuxtConfig & {
 
 /** Normalized Nuxt options available as `nuxt.options.*` */
 export interface NuxtOptions extends ConfigSchema {
+  sourcemap: Exclude<ConfigSchema['sourcemap'], boolean>
   _layers: NuxtConfigLayer[]
 }
 
@@ -53,11 +54,11 @@ export interface ViteConfig extends ViteUserConfig {
 
 type RuntimeConfigNamespace = Record<string, any>
 
-export interface PublicRuntimeConfig extends RuntimeConfigNamespace { }
+export interface PublicRuntimeConfig extends RuntimeConfigNamespace {}
 
 // TODO: remove before release of 3.0.0
 /** @deprecated use RuntimeConfig interface */
-export interface PrivateRuntimeConfig extends RuntimeConfigNamespace { }
+export interface PrivateRuntimeConfig extends RuntimeConfigNamespace {}
 
 export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamespace {
   public: PublicRuntimeConfig
@@ -80,4 +81,4 @@ export interface NuxtAppConfig {
   keepalive: boolean | KeepAliveProps
 }
 
-export interface AppConfig { }
+export interface AppConfig {}

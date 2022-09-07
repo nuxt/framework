@@ -167,17 +167,16 @@ export default defineNuxtModule<ComponentsOptions>({
 
     nuxt.hook('vite:extendConfig', (config, { isClient, isServer }) => {
       const mode = isClient ? 'client' : 'server'
-      const sourcemap = typeof nuxt.options.sourcemap === 'boolean' ? nuxt.options.sourcemap : nuxt.options.sourcemap[mode]
 
       config.plugins = config.plugins || []
       config.plugins.push(loaderPlugin.vite({
-        sourcemap,
+        sourcemap: nuxt.options.sourcemap[mode],
         getComponents,
         mode
       }))
       if (nuxt.options.experimental.treeshakeClientOnly && isServer) {
         config.plugins.push(TreeShakeTemplatePlugin.vite({
-          sourcemap,
+          sourcemap: nuxt.options.sourcemap[mode],
           getComponents
         }))
       }
@@ -185,16 +184,15 @@ export default defineNuxtModule<ComponentsOptions>({
     nuxt.hook('webpack:config', (configs) => {
       configs.forEach((config) => {
         const mode = config.name === 'client' ? 'client' : 'server'
-        const sourcemap = typeof nuxt.options.sourcemap === 'boolean' ? nuxt.options.sourcemap : nuxt.options.sourcemap[mode]
         config.plugins = config.plugins || []
         config.plugins.push(loaderPlugin.webpack({
-          sourcemap,
+          sourcemap: nuxt.options.sourcemap[mode],
           getComponents,
           mode
         }))
         if (nuxt.options.experimental.treeshakeClientOnly && mode === 'server') {
           config.plugins.push(TreeShakeTemplatePlugin.webpack({
-            sourcemap,
+            sourcemap: nuxt.options.sourcemap[mode],
             getComponents
           }))
         }

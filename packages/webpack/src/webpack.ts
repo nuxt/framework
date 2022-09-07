@@ -35,12 +35,11 @@ export async function bundle (nuxt: Nuxt) {
 
   // Configure compilers
   const compilers = webpackConfigs.map((config) => {
-    const sourcemap = typeof nuxt.options.sourcemap === 'boolean' ? nuxt.options.sourcemap : nuxt.options.sourcemap[config.name as 'client' | 'server']!
     config.plugins!.push(DynamicBasePlugin.webpack({
-      sourcemap
+      sourcemap: nuxt.options.sourcemap[config.name as 'client' | 'server']
     }))
     config.plugins!.push(composableKeysPlugin.webpack({
-      sourcemap,
+      sourcemap: nuxt.options.sourcemap[config.name as 'client' | 'server']!,
       rootDir: nuxt.options.rootDir
     }))
 

@@ -22,8 +22,7 @@ export function client (ctx: WebpackConfigContext) {
 }
 
 function clientDevtool (ctx: WebpackConfigContext) {
-  const enableClientSourcemap = typeof ctx.nuxt.options.sourcemap === 'boolean' ? ctx.nuxt.options.sourcemap : ctx.nuxt.options.sourcemap.client
-  if (!enableClientSourcemap) {
+  if (!ctx.nuxt.options.sourcemap.client) {
     ctx.config.devtool = false
     return
   }
