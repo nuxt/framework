@@ -33,6 +33,7 @@ interface RefreshOptions {
 type AsyncData<DataT, ErrorT> = {
   data: Ref<DataT | null>
   pending: Ref<boolean>
+  execute: () => Promise<void>
   refresh: (opts?: RefreshOptions) => Promise<void>
   error: Ref<ErrorT | null>
 }
