@@ -14,7 +14,16 @@ export interface ViteHot {
   decline (): void
   invalidate (): void
 
-  on: (event: 'any', cb: (payload: any) => void) => void
+  on (event: any, cb: (payload: any) => void): void
+  send (event: any, data?: any): void
+}
+
+export interface ViteGlobOptions {
+  as?: string
+  eager?: boolean
+  import?: string
+  query?: string | Record<string, string | number | boolean>
+  exhaustive?: boolean
 }
 
 export interface ViteImportMeta {
@@ -22,8 +31,5 @@ export interface ViteImportMeta {
   readonly hot?: ViteHot
 
   /** vite glob import utility - https://vitejs.dev/guide/features.html#glob-import */
-  glob?(pattern: string): Record<string, () => Promise<Record<string, any>>>
-
-  /** vite glob import utility - https://vitejs.dev/guide/features.html#glob-import */
-  globEager?(pattern: string): Record<string, Record<string, any>>
+  glob (glob: string | string[], options?: ViteGlobOptions): Record<string, () => Promise<Record<string, any>>>
 }

@@ -1,7 +1,6 @@
 import type { Nuxt, NuxtConfig } from '@nuxt/schema'
 import type { ExecaChildProcess } from 'execa'
 import type { Browser, LaunchOptions } from 'playwright'
-import type { Listener } from 'listhen'
 
 export type TestRunner = 'vitest' | 'jest'
 
@@ -32,7 +31,7 @@ export interface TestContext {
   browser?: Browser
   url?: string
   serverProcess?: ExecaChildProcess
-  listener?: Listener
+  mockFn?: Function
 }
 
 export interface TestHooks {

@@ -16,7 +16,7 @@ export async function startServer () {
   if (ctx.options.dev) {
     const nuxiCLI = await kit.resolvePath('nuxi/cli')
     ctx.serverProcess = execa(nuxiCLI, ['dev'], {
-      cwd: ctx.nuxt.options.rootDir,
+      cwd: ctx.nuxt!.options.rootDir,
       stdio: 'inherit',
       env: {
         ...process.env,
@@ -37,7 +37,7 @@ export async function startServer () {
     throw new Error('Timeout waiting for dev server!')
   } else {
     ctx.serverProcess = execa('node', [
-      resolve(ctx.nuxt.options.nitro.output.dir, 'server/index.mjs')
+      resolve(ctx.nuxt!.options.nitro.output!.dir!, 'server/index.mjs')
     ], {
       stdio: 'inherit',
       env: {
@@ -55,9 +55,6 @@ export async function stopServer () {
   if (ctx.serverProcess) {
     await ctx.serverProcess.kill()
   }
-  if (ctx.listener) {
-    await ctx.listener.close()
-  }
 }
 
 export function fetch (path: string, options?: any) {
@@ -71,7 +68,7 @@ export function $fetch (path: string, options?: FetchOptions) {
 export function url (path: string) {
   const ctx = useTestContext()
   if (!ctx.url) {
-    throw new Error('url is not availabe (is server option enabled?)')
+    throw new Error('url is not available (is server option enabled?)')
   }
   return ctx.url + path
 }

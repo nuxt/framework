@@ -6,8 +6,10 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
-    "strict": false,
+    "strict": true,
+    "noImplicitAny": true,
     "allowJs": true,
+    "noEmit": true,
     "noUnusedLocals": true,
     "resolveJsonModule": true,
     "types": [
@@ -23,10 +25,16 @@
       "#head": [
         "./packages/nuxt/src/head/runtime/index"
       ],
+      "#internal/nitro": [
+        "./node_modules/nitropack/dist/runtime"
+      ],
+      "#internal/nitro/utils": [
+        "./node_modules/nitropack/dist/runtime/utils"
+      ]
     }
   },
   "exclude": [
-    "**/*/dist/*",
+    "**/dist/**",
     "**/.nuxt/**",
     "**/nuxt.d.ts",
     "**/examples/**",

@@ -5,15 +5,18 @@ import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, 
 // Temporary until finding better placement
 /* eslint-disable import/no-restricted-paths */
 import escapeRE from 'escape-string-regexp'
+import fse from 'fs-extra'
+import { withoutLeadingSlash } from 'ufo'
 import pagesModule from '../pages/module'
 import metaModule from '../head/module'
 import componentsModule from '../components/module'
-import autoImportsModule from '../auto-imports/module'
+import importsModule from '../imports/module'
 /* eslint-enable */
 import { distDir, pkgDir } from '../dirs'
 import { version } from '../../package.json'
 import { ImportProtectionPlugin, vueAppPatterns } from './plugins/import-protection'
 import { UnctxTransformPlugin } from './plugins/unctx'
+import { TreeShakePlugin } from './plugins/tree-shake'
 import { addModuleTranspiles } from './modules'
 import { initNitro } from './nitro'
 
@@ -53,6 +56,7 @@ async function initNuxt (nuxt: Nuxt) {
     }
     // Add module augmentations directly to NuxtConfig
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/schema.d.ts') })
+    opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/app.config.d.ts') })
   })
 
   // Add import protection
@@ -67,9 +71,32 @@ async function initNuxt (nuxt: Nuxt) {
   addVitePlugin(UnctxTransformPlugin(nuxt).vite({ sourcemap: nuxt.options.sourcemap }))
   addWebpackPlugin(UnctxTransformPlugin(nuxt).webpack({ sourcemap: nuxt.options.sourcemap }))
 
+  if (!nuxt.options.dev) {
+    const removeFromServer = ['onBeforeMount', 'onMounted', 'onBeforeUpdate', 'onRenderTracked', 'onRenderTriggered', 'onActivated', 'onDeactivated', 'onBeforeUnmount']
+    const removeFromClient = ['onServerPrefetch', 'onRenderTracked', 'onRenderTriggered']
+
+    // Add tree-shaking optimisations for SSR - build time only
+    addVitePlugin(TreeShakePlugin.vite({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromServer }), { client: false })
+    addVitePlugin(TreeShakePlugin.vite({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromClient }), { server: false })
+    addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromServer }), { client: false })
+    addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap, treeShake: removeFromClient }), { server: false })
+  }
+
+  // TODO: [Experimental] Avoid emitting assets when flag is enabled
+  if (nuxt.options.experimental.noScripts) {
+    nuxt.hook('build:manifest', async (manifest) => {
+      for (const file in manifest) {
+        if (manifest[file].resourceType === 'script') {
+          await fse.rm(resolve(nuxt.options.buildDir, 'dist/client', withoutLeadingSlash(nuxt.options.app.buildAssetsDir), manifest[file].file), { force: true })
+          manifest[file].file = ''
+        }
+      }
+    })
+  }
+
   // Transpile layers within node_modules
   nuxt.options.build.transpile.push(
-    ...nuxt.options._layers.filter(i => i.cwd && i.cwd.includes('node_modules')).map(i => i.cwd)
+    ...nuxt.options._layers.filter(i => i.cwd.includes('node_modules')).map(i => i.cwd as string)
   )
 
   // Init user modules
@@ -83,7 +110,7 @@ async function initNuxt (nuxt: Nuxt) {
   // Add <NuxtWelcome>
   addComponent({
     name: 'NuxtWelcome',
-    filePath: tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')
+    filePath: tryResolveModule('@nuxt/ui-templates/templates/welcome.vue')!
   })
 
   addComponent({
@@ -115,6 +142,28 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: resolve(nuxt.options.appDir, 'components/nuxt-link')
   })
 
+  // Add <NuxtLoadingIndicator>
+  addComponent({
+    name: 'NuxtLoadingIndicator',
+    filePath: resolve(nuxt.options.appDir, 'components/nuxt-loading-indicator')
+  })
+
+  // Deprecate hooks
+  nuxt.hooks.deprecateHooks({
+    'autoImports:sources': {
+      to: 'imports:sources',
+      message: '`autoImports:sources` hook is deprecated. Use `addImportsSources()` from `@nuxt/kit` or `imports:dirs` with `nuxt>=3.0.0-rc.10`.'
+    },
+    'autoImports:dirs': {
+      to: 'imports:dirs',
+      message: '`autoImports:dirs` hook is deprecated. Use `addImportsDir()` from `@nuxt/kit` or `imports:dirs` with `nuxt>=3.0.0-rc.9`.'
+    },
+    'autoImports:extend': {
+      to: 'imports:extend',
+      message: '`autoImports:extend` hook is deprecated. Use `addImports()` from `@nuxt/kit` or `imports:extend` with `nuxt>=3.0.0-rc.9`.'
+    }
+  })
+
   for (const m of modulesToInstall) {
     if (Array.isArray(m)) {
       await installModule(m[0], m[1])
@@ -143,11 +192,11 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   options.appDir = options.alias['#app'] = resolve(distDir, 'app')
   options._majorVersion = 3
   options._modules.push(pagesModule, metaModule, componentsModule)
-  options._modules.push([autoImportsModule, {
+  options._modules.push([importsModule, {
     transform: {
       include: options._layers
         .filter(i => i.cwd && i.cwd.includes('node_modules'))
-        .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd.split('node_modules/').pop())}(\\/|$)(?!node_modules\\/)`))
+        .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd!.split('node_modules/').pop()!)}(\\/|$)(?!node_modules\\/)`))
     }
   }])
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))

@@ -3,12 +3,14 @@ import type { Server as HttpsServer } from 'node:https'
 import type { Compiler, Configuration, Stats } from 'webpack'
 import type { TSConfig } from 'pkg-types'
 import type { InlineConfig as ViteInlineConfig, ViteDevServer } from 'vite'
+import type { Manifest } from 'vue-bundle-renderer'
+import type { Middleware } from 'h3'
 import type { ModuleContainer } from './module'
 import type { NuxtTemplate, Nuxt, NuxtApp } from './nuxt'
 import type { Preset as ImportPreset, Import } from 'unimport'
 import type { NuxtConfig, NuxtOptions } from './config'
 import type { Nitro, NitroConfig } from 'nitropack'
-import type { Component, ComponentsDir, ScanDir, ComponentsOptions } from './components'
+import type { Component, ComponentsOptions } from './components'
 import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
 
 
@@ -41,6 +43,7 @@ export type NuxtPage = {
   path: string
   file: string
   meta?: Record<string, any>
+  alias?: string[]
   children?: NuxtPage[]
 }
 
@@ -72,16 +75,23 @@ export interface NuxtHooks {
   'app:templatesGenerated': (app: NuxtApp) => HookResult
   'builder:generateApp': () => HookResult
   'pages:extend': (pages: NuxtPage[]) => HookResult
-  'pages:middleware:extend': (middleware: NuxtMiddleware[]) => HookResult
+  'build:manifest': (manifest: Manifest) => HookResult
 
   // Auto imports
+  'imports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
+  'imports:extend': (imports: Import[]) => HookResult
+  'imports:dirs': (dirs: string[]) => HookResult
+
+  /** @deprecated Please use `imports:sources` hook */
   'autoImports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
+  /** @deprecated Please use `imports:extend` hook */
   'autoImports:extend': (imports: Import[]) => HookResult
+  /** @deprecated Please use `imports:dirs` hook */
   'autoImports:dirs': (dirs: string[]) => HookResult
 
   // Components
   'components:dirs': (dirs: ComponentsOptions['dirs']) => HookResult
-  'components:extend': (components: (Component | ComponentsDir | ScanDir)[]) => HookResult
+  'components:extend': (components: Component[]) => HookResult
 
   // @nuxt/builder
   'build:before':
@@ -150,7 +160,7 @@ export interface NuxtHooks {
   'build:compile': (options: { name: string, compiler: Compiler }) => HookResult
   'build:compiled': (options: { name: string, compiler: Compiler, stats: Stats }) => HookResult
   'build:resources': (mfs?: Compiler['outputFileSystem']) => HookResult
-  'server:devMiddleware': (middleware: (req: IncomingMessage, res: ServerResponse, next: (err?: any) => any) => any) => HookResult
+  'server:devMiddleware': (middleware: Middleware) => HookResult
   'bundler:change': (shortPath: string) => void
   'bundler:error': () => void
   'bundler:done': () => void

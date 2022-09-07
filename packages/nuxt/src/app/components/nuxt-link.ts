@@ -1,44 +1,45 @@
-import { defineComponent, h, resolveComponent, PropType, computed, DefineComponent } from 'vue'
-import { RouteLocationRaw, Router } from 'vue-router'
+import { defineComponent, h, resolveComponent, PropType, computed, DefineComponent, ComputedRef } from 'vue'
+import { RouteLocationRaw } from 'vue-router'
 import { hasProtocol } from 'ufo'
 
-import { useRouter } from '#app'
+import { navigateTo, useRouter } from '#app'
 
-const firstNonUndefined = <T>(...args: T[]): T => args.find(arg => arg !== undefined)
+const firstNonUndefined = <T>(...args: (T | undefined)[]) => args.find(arg => arg !== undefined)
 
 const DEFAULT_EXTERNAL_REL_ATTRIBUTE = 'noopener noreferrer'
 
 export type NuxtLinkOptions = {
-  componentName?: string;
-  externalRelAttribute?: string | null;
-  activeClass?: string;
-  exactActiveClass?: string;
+  componentName?: string
+  externalRelAttribute?: string | null
+  activeClass?: string
+  exactActiveClass?: string
 }
 
 export type NuxtLinkProps = {
   // Routing
-  to?: string | RouteLocationRaw;
-  href?: string | RouteLocationRaw;
-  external?: boolean;
+  to?: string | RouteLocationRaw
+  href?: string | RouteLocationRaw
+  external?: boolean
+  replace?: boolean
+  custom?: boolean
 
   // Attributes
-  target?: string;
-  rel?: string;
-  noRel?: boolean;
+  target?: string | null
+  rel?: string | null
+  noRel?: boolean
 
   // Styling
-  activeClass?: string;
-  exactActiveClass?: string;
+  activeClass?: string
+  exactActiveClass?: string
 
   // Vue Router's `<RouterLink>` additional props
-  replace?: boolean;
-  ariaCurrentValue?: string;
+  ariaCurrentValue?: string
 };
 
 export function defineNuxtLink (options: NuxtLinkOptions) {
   const componentName = options.componentName || 'NuxtLink'
 
-  const checkPropConflicts = (props: NuxtLinkProps, main: string, sub: string): void => {
+  const checkPropConflicts = (props: NuxtLinkProps, main: keyof NuxtLinkProps, sub: keyof NuxtLinkProps): void => {
     if (process.dev && props[main] !== undefined && props[sub] !== undefined) {
       console.warn(`[${componentName}] \`${main}\` and \`${sub}\` cannot be used together. \`${sub}\` will be ignored.`)
     }
@@ -115,10 +116,10 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
       }
     },
     setup (props, { slots }) {
-      const router = useRouter() as Router | undefined
+      const router = useRouter()
 
       // Resolving `to` value from `to` and `href` props
-      const to = computed<string | RouteLocationRaw>(() => {
+      const to: ComputedRef<string | RouteLocationRaw> = computed(() => {
         checkPropConflicts(props, 'to', 'href')
 
         return props.to || props.href || '' // Defaults to empty string (won't render any `href` attribute)
@@ -126,7 +127,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
 
       // Resolving link type
       const isExternal = computed<boolean>(() => {
-        // External prop is explictly set
+        // External prop is explicitly set
         if (props.external) {
           return true
         }
@@ -154,9 +155,9 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
               activeClass: props.activeClass || options.activeClass,
               exactActiveClass: props.exactActiveClass || options.exactActiveClass,
               replace: props.replace,
-              ariaCurrentValue: props.ariaCurrentValue
+              ariaCurrentValue: props.ariaCurrentValue,
+              custom: props.custom
             },
-            // TODO: Slot API
             slots.default
           )
         }
@@ -174,6 +175,24 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
           ? null
           // converts `""` to `null` to prevent the attribute from being added as empty (`rel=""`)
           : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, href ? DEFAULT_EXTERNAL_REL_ATTRIBUTE : '') || null
+
+        const navigate = () => navigateTo(href, { replace: props.replace })
+
+        // https://router.vuejs.org/api/#custom
+        if (props.custom) {
+          if (!slots.default) {
+            return null
+          }
+          return slots.default({
+            href,
+            navigate,
+            route: router.resolve(href!),
+            rel,
+            target,
+            isActive: false,
+            isExactActive: false
+          })
+        }
 
         return h('a', { href, rel, target }, slots.default?.())
       }
