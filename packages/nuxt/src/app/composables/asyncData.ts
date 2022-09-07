@@ -255,10 +255,6 @@ export function refreshNuxtData (keys?: string | string[]): Promise<void> {
 }
 
 export function clearNuxtData ({ keys }: {keys: string | string[]}): void {
-  if (process.server) {
-    return
-  }
-
   const _keys = keys ? Array.isArray(keys) ? keys : [keys] : undefined
   if (_keys === undefined) {
     return
