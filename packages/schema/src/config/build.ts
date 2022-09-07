@@ -30,7 +30,7 @@ export default defineUntypedSchema({
    * @version 3
    */
   sourcemap: {
-    $resolve: (val, get) => val ?? get('dev') ? true : 'server',
+    $resolve: (val, get) => val ?? (get('dev') ? true : 'server'),
   },
   /**
    * Shared build configuration.
