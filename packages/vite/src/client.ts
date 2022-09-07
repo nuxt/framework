@@ -14,7 +14,6 @@ import type { OutputOptions } from 'rollup'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
-import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 import { viteNodePlugin } from './vite-node'
 
@@ -52,6 +51,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       dedupe: ['vue']
     },
     build: {
+      sourcemap: ctx.nuxt.options.sourcemap.client,
       manifest: true,
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client'),
       rollupOptions: {
@@ -140,6 +140,4 @@ export async function buildClient (ctx: ViteBuildContext) {
     await ctx.nuxt.callHook('build:resources', wpfs)
     logger.info(`Client built in ${Date.now() - start}ms`)
   }
-
-  await writeManifest(ctx)
 }
