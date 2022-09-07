@@ -28,7 +28,9 @@ export default defineUntypedSchema({
    *
    * @version 3
    */
-  sourcemap: true,
+  sourcemap: {
+    $resolve: (val, get) => val ?? get('dev'),
+  },
   /**
    * Shared build configuration.
    * @version 2

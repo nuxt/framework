@@ -51,6 +51,7 @@ export async function bundle (nuxt: Nuxt) {
         },
         css: resolveCSSOptions(nuxt),
         build: {
+          sourcemap: nuxt.options.sourcemap,
           rollupOptions: {
             output: { sanitizeFileName: sanitizeFilePath }
           },
