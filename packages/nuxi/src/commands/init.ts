@@ -54,5 +54,9 @@ export default defineNuxtCommand({
     for (const step of nextSteps) {
       consola.log(` ${step}\n`)
     }
+
+    if (args.shell) {
+      startShell(dstDir)
+    }
   }
 })
