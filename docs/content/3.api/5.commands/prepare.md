@@ -4,7 +4,7 @@
 npx nuxi prepare [rootDir]
 ```
 
-The `prepare` command create a `.nuxt` directory in your application and generate types.
+The `prepare` command creates a `.nuxt` directory in your application and generates types.
 This can be useful for CI environment.
 
 Option        | Default          | Description
