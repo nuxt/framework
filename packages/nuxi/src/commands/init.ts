@@ -33,7 +33,7 @@ export default defineNuxtCommand({
     // Clone template
     const src = resolveTemplate(args.template || args.t)
     const dstDir = resolve(process.cwd(), args._[0] || 'nuxt-app')
-    if (args.verbose) {
+    if (args.verbose || args.v) {
       process.env.DEBUG = process.env.DEBUG || 'true'
     }
     await downloadRepo(src, dstDir, {
