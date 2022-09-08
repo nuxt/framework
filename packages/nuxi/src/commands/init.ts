@@ -1,4 +1,4 @@
-import { downloadRepo } from 'giget'
+import { downloadRepo, startShell } from 'giget'
 import { relative, resolve } from 'pathe'
 import superb from 'superb'
 import consola from 'consola'
@@ -26,14 +26,21 @@ const resolveTemplate = (template: string | boolean) => {
 export default defineNuxtCommand({
   meta: {
     name: 'init',
-    usage: 'npx nuxi init|create [--verbose|-v] [--template,-t] [dir]',
+    usage: 'npx nuxi init|create [--verbose|-v] [--template,-t] [--force] [--offline] [--prefer-offline] [--shell] [dir]',
     description: 'Initialize a fresh project'
   },
   async invoke (args) {
     // Clone template
     const src = resolveTemplate(args.template || args.t)
     const dstDir = resolve(process.cwd(), args._[0] || 'nuxt-app')
-    await downloadRepo(src, dstDir)
+    if (args.verbose) {
+      process.env.DEBUG = process.env.DEBUG || 'true'
+    }
+    await downloadRepo(src, dstDir, {
+      force: args.force,
+      offline: args.offline,
+      preferOffline: args['prefer-offline']
+    })
 
     // Show next steps
     const relativeDist = rpath(dstDir)
