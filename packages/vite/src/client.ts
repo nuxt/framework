@@ -51,7 +51,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       dedupe: ['vue']
     },
     build: {
-      sourcemap: ctx.nuxt.options.sourcemap.client,
+      sourcemap: ctx.config.build?.sourcemap ?? ctx.nuxt.options.sourcemap.client,
       manifest: true,
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client'),
       rollupOptions: {
