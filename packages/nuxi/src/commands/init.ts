@@ -26,7 +26,7 @@ const resolveTemplate = (template: string | boolean) => {
 export default defineNuxtCommand({
   meta: {
     name: 'init',
-    usage: 'npx nuxi init|create [--verbose|-v] [--template,-t] [--force] [--offline] [--prefer-offline] [--shell] [dir]',
+    usage: 'npx nuxi init|create [--template,-t] [--force] [--offline] [--prefer-offline] [--shell] [dir]',
     description: 'Initialize a fresh project'
   },
   async invoke (args) {
