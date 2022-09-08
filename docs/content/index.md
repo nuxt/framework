@@ -1,6 +1,6 @@
 ---
 navigation: false
-layout: fluid
+layout: page
 title: The Hybrid Vue Framework
 description: 'Build your next application with Vue 3 and experience hybrid rendering, with an improved directory structure and new features Nuxt 3 is an open source framework making web development simple and powerful.'
 ---
@@ -23,12 +23,10 @@ Build your next application with Vue 3 and experience hybrid rendering, powerful
 Nuxt 3 is an open source framework making web development simple and powerful.
 
 #right
-::div{.flex .items-center .justify-center}
-  ::ellipsis
+  ::div{.flex .items-top .justify-center}
+    ::gem
+    ::
   ::
-  ::gem
-  ::
-::
 ::
 
 ::card-grid
@@ -39,101 +37,87 @@ With new features
 Nuxt 3 has been re-architected with a smaller core and optimized for faster performance and better developer experience.
 
 #default
-  ::card
-  ---
-  title: Lighter
-  description: Up to 75x smaller server deployments and smaller client bundle targeting modern browsers.
-  icon: IconFeather
-  ---
+  ::card{icon=IconFeather}
+  #title
+  Lighter
+  #description
+  Up to 75x smaller server deployments and smaller client bundle targeting modern browsers.
   ::
 
-  ::card
-  ---
-  title: Faster
-  description: 'Optimized cold start with dynamic server code-splitting, powered by nitro.'
-  icon: IconRabbit
-  ---
+  ::card{icon=IconRabbit}
+  #title
+  Faster
+  #description
+  Optimized cold start with dynamic server code-splitting, powered by nitro.
   ::
 
-  ::card
-  ---
-  soon: true
-  title: Hybrid
-  description: 'Incremental Static Generation and other advanced modes are now possible.'
-  icon: IconHybrid
-  ---
+  ::card{icon=IconHybrid}
+  #title
+  Hybrid
+  #description
+  Incremental Static Generation and other advanced modes are now possible.
   ::
 
-  ::card
-  ---
-  title: Suspense
-  description: 'Fetch data in any component, before or after navigation.'
-  icon: IconSuspense
-  ---
+  ::card{icon=IconSuspense}
+  #title
+  Suspense
+  #description
+  Fetch data in any component, before or after navigation.
   ::
 
-  ::card
-  ---
-  title: Composition API
-  description: "Use the Composition API and Nuxt 3's composables for true code re-usability."
-  icon: IconCAPI
-  ---
+  ::card{icon=IconCAPI}
+  #title
+  Composition API
+  #description
+  Use the Composition API and Nuxt 3's composables for true code re-usability.
   ::
 
-  ::card
-  ---
-  title: Nuxt CLI
-  description: 'A new zero-dependency experience for easy scaffolding and module integration.'
-  icon: IconCLI
-  ---
+  ::card{icon=IconCLI}
+  #title
+  Nuxt CLI
+  #description
+  A new zero-dependency experience for easy scaffolding and module integration.
   ::
 
-  ::card
-  ---
-  soon: true
-  title: Nuxt DevTools
-  description: 'Work faster with info and quick fixes right in the browser.'
-  icon: IconDevtools
-  ---
+  ::card{icon=IconDevtools}
+  #title
+  Nuxt DevTools
+  #description
+  Work faster with info and quick fixes right in the browser.
   ::
 
-  ::card
-  ---
-  title: Nuxt Kit
-  description: 'Brand new module development with TypeScript and cross-version compatibility.'
-  icon: IconKit
-  ---
+  ::card{icon=IconKit}
+  #title
+  Nuxt Kit
+  #description
+  Brand new module development with TypeScript and cross-version compatibility.
   ::
 
-  ::card
-  ---
-  title: webpack 5
-  description: 'Faster build time and smaller bundle size, with no configuration required.'
-  icon: IconWebpack
-  ---
+  ::card{icon=IconWebpack}
+  #title
+  webpack 5
+  #description
+  Faster build time and smaller bundle size, with no configuration required.
   ::
 
-  ::card
-  ---
-  title: Vite
-  description: 'Experience lightning fast HMR by using Vite as your bundler.'
-  icon: IconVite
-  ---
+  ::card{icon=IconVite}
+  #title
+  Vite
+  #description
+  Experience lightning fast HMR by using Vite as your bundler.
   ::
 
-  ::card
-  ---
-  title: Vue 3
-  description: 'Vue 3 is a solid foundation for your next web app.'
-  icon: IconVue
-  ---
+  ::card{icon=IconVue}
+  #title
+  Vue 3
+  #description
+  Vue 3 is a solid foundation for your next web app.
   ::
 
-  ::card
-  ---
-  title: TypeScript
-  description: 'Built with native TypeScript and ESM - no extra steps required.'
-  icon: IconTypeScript
-  ---
+  ::card{icon=IconTypeScript}
+  #title
+  TypeScript
+  #description
+  Built with native TypeScript and ESM - no extra steps required.
   ::
 ::
