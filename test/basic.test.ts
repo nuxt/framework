@@ -410,6 +410,20 @@ describe('automatically keyed composables', () => {
   })
 })
 
+describe('single suspense tree', () => {
+  it('should generate a single suspense tree on initial hydration', async () => {
+    const page = await createPage()
+    const logs: string[] = []
+    page.on('console', (msg) => {
+      logs.push(msg.text())
+    })
+    await page.goto(url('/another-parent'))
+    await page.waitForLoadState('networkidle')
+    expect(logs.length).toBe(2)
+    expect(logs.every(log => log === 'isHydrating: true'))
+  })
+})
+
 describe.skipIf(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)('inlining component styles', () => {
   it('should inline styles', async () => {
     const html = await $fetch('/styles')

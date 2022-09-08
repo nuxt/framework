@@ -1,9 +1,5 @@
 <template>
   <div>
-    {{ data }}
-    <hr>
-    <NuxtPage />
-    <hr>
     <NuxtLink href="/sync">
       Page SYNC
     </NuxtLink><br>
@@ -18,10 +14,3 @@
     </NuxtLink>
   </div>
 </template>
-
-<script setup>
-await Promise.resolve()
-const a = useNuxtApp()
-const { data } = await useAsyncData(() => new Promise(resolve => resolve({ foo: 'app' }), 400))
-console.log('In App ' + a.isHydrating)
-</script>

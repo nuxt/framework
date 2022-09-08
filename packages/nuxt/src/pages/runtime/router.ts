@@ -76,6 +76,15 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   })
   nuxtApp.vueApp.use(router)
 
+  // Ensure we don't trigger multiple suspenses in page navigation
+  nuxtApp.isResolvingSuspense = true
+  nuxtApp.hook('page:start', () => {
+    nuxtApp.isResolvingSuspense = true
+  })
+  nuxtApp.hook('page:finish', () => {
+    nuxtApp.isResolvingSuspense = false
+  })
+
   const previousRoute = shallowRef(router.currentRoute.value)
   router.afterEach((_to, from) => {
     previousRoute.value = from
