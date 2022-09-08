@@ -194,6 +194,30 @@ describe('navigate', () => {
   })
 })
 
+describe('errors', () => {
+  it('should render a JSON error page', async () => {
+    const res = await fetch('/error', {
+      headers: {
+        accept: 'application/json'
+      }
+    })
+    expect(res.status).toBe(422)
+    const error = await res.json()
+    delete error.stack
+    expect(error).toMatchObject({
+      message: 'This is a custom error',
+      statusCode: 422,
+      statusMessage: 'This is a custom error',
+      url: '/error'
+    })
+  })
+
+  it('should render a HTML error page', async () => {
+    const res = await fetch('/error')
+    expect(await res.text()).toContain('This is a custom error')
+  })
+})
+
 describe('navigate external', () => {
   it('should redirect to example.com', async () => {
     const { headers } = await fetch('/navigate-to-external/', { redirect: 'manual' })
@@ -210,6 +234,15 @@ describe('middlewares', () => {
     // expect(html).toMatchInlineSnapshot()
 
     expect(html).toContain('Hello Nuxt 3!')
+  })
+
+  it('should allow aborting navigation on server-side', async () => {
+    const res = await fetch('/?abort', {
+      headers: {
+        accept: 'application/json'
+      }
+    })
+    expect(res.status).toEqual(401)
   })
 
   it('should inject auth', async () => {
@@ -568,30 +601,5 @@ describe('useAsyncData', () => {
 
   it('two requests made at once resolve and sync', async () => {
     await expectNoClientErrors('/useAsyncData/promise-all')
-  })
-})
-
-// TODO: Move back up after https://github.com/vuejs/core/issues/6110 is resolved
-describe('errors', () => {
-  it('should render a JSON error page', async () => {
-    const res = await fetch('/error', {
-      headers: {
-        accept: 'application/json'
-      }
-    })
-    expect(res.status).toBe(422)
-    const error = await res.json()
-    delete error.stack
-    expect(error).toMatchObject({
-      message: 'This is a custom error',
-      statusCode: 422,
-      statusMessage: 'This is a custom error',
-      url: '/error'
-    })
-  })
-
-  it('should render a HTML error page', async () => {
-    const res = await fetch('/error')
-    expect(await res.text()).toContain('This is a custom error')
   })
 })
