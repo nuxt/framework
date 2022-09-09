@@ -630,7 +630,8 @@ describe('payload rendering', () => {
     // We are not triggering API requests in the payload in client-side nav
     expect(requests).not.toContain('/api/random')
     // We are not refetching payloads we've already prefetched
-    expect(requests.filter(p => p.includes('_payload')).length).toBe(0)
+    // Note: we refetch on dev as urls differ between '' and '?import'
+    expect(requests.filter(p => p.includes('_payload')).length).toBe(process.env.NUXT_TEST_DEV ? 1 : 0)
   })
 })
 
