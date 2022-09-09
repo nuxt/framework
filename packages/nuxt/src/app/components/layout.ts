@@ -1,4 +1,4 @@
-import { computed, defineComponent, isRef, nextTick, h, onMounted, Ref, Transition, VNode, Component } from 'vue'
+import { computed, defineComponent, isRef, nextTick, h, onMounted, Ref, Transition, VNode } from 'vue'
 import { _wrapIf } from './utils'
 import { useRoute } from '#app'
 // @ts-ignore
