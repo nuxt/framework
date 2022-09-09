@@ -104,7 +104,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
 })
 
 const PAYLOAD_CACHE = process.env.prerender ? new Map() : null // TODO: Use LRU cache
-const PAYLOAD_URL_RE = /\/_payload(\.[a-zA-Z0-9]+)?.js?$/
+const PAYLOAD_URL_RE = /\/_payload(\.[a-zA-Z0-9]+)?.js(\?.*)?$/
 
 export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
@@ -208,9 +208,9 @@ export default defineRenderHandler(async (event) => {
       process.env.NUXT_NO_SCRIPTS
         ? undefined
         : (process.env.prerender
-            ? `<script type="module">import p from "${payloadURL}";window.__NUXT__={...p,...(${devalue(splitPayload(ssrContext).initial)})}</script>`
-            : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`
-          ),
+          ? `<script type="module">import p from "${payloadURL}";window.__NUXT__={...p,...(${devalue(splitPayload(ssrContext).initial)})}</script>`
+          : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`
+        ),
       _rendered.renderScripts(),
       // Note: bodyScripts may contain tags other than <script>
       renderedMeta.bodyScripts
@@ -235,7 +235,7 @@ export default defineRenderHandler(async (event) => {
   return response
 })
 
-function lazyCachedFunction <T> (fn: () => Promise<T>): () => Promise<T> {
+function lazyCachedFunction<T> (fn: () => Promise<T>): () => Promise<T> {
   let res: Promise<T> | null = null
   return () => {
     if (res === null) {
