@@ -84,6 +84,9 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   nuxtApp.hook('page:finish', () => {
     nuxtApp.isResolvingSuspense = false
   })
+  nuxtApp.hook('app:suspense:resolve', () => {
+    nuxtApp.isResolvingSuspense = false
+  })
 
   const previousRoute = shallowRef(router.currentRoute.value)
   router.afterEach((_to, from) => {

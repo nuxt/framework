@@ -6,6 +6,6 @@
 </template>
 
 <script setup>
-// await Promise.resolve()
-// console.log('isHydrating: ' + useNuxtApp().isHydrating)
+await Promise.resolve()
+console.log('isHydrating: ' + useNuxtApp().isHydrating)
 </script>

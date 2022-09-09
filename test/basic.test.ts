@@ -415,11 +415,14 @@ describe('single suspense tree', () => {
     const page = await createPage()
     const logs: string[] = []
     page.on('console', (msg) => {
-      logs.push(msg.text())
+      const text = msg.text()
+      if (text.includes('isHydrating')) {
+        logs.push(text)
+      }
     })
     await page.goto(url('/another-parent'))
     await page.waitForLoadState('networkidle')
-    expect(logs.length).toBe(2)
+    expect(logs.length).toBe(3)
     expect(logs.every(log => log === 'isHydrating: true'))
   })
 })
