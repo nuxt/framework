@@ -1,13 +1,16 @@
 <template>
   <Suspense @resolve="onResolve">
     <ErrorComponent v-if="error" :error="error" />
-    <App v-else />
+    <AppComponent v-else />
   </Suspense>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { defineAsyncComponent, onErrorCaptured, provide } from 'vue'
 import { callWithNuxt, isNuxtError, showError, useError, useRoute, useNuxtApp } from '#app'
+
+// @ts-expect-error virtual path
+import AppComponent from '#build/app-component.mjs'
 
 const ErrorComponent = defineAsyncComponent(() => import('#build/error-component.mjs').then(r => r.default || r))
 
