@@ -52,13 +52,13 @@ export async function buildServer (ctx: ViteBuildContext) {
         ...ctx.nuxt.options.experimental.externalVue || ctx.nuxt.options.dev
           ? {}
           : {
-              '@vue/reactivity': _resolve(`@vue/reactivity/dist/reactivity.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
-              '@vue/shared': _resolve(`@vue/shared/dist/shared.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
-              'vue-router': _resolve(`vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
-              'vue/server-renderer': _resolve('vue/server-renderer'),
-              'vue/compiler-sfc': _resolve('vue/compiler-sfc'),
-              vue: _resolve(`vue/dist/vue.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`)
-            }
+            '@vue/reactivity': _resolve(`@vue/reactivity/dist/reactivity.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
+            '@vue/shared': _resolve(`@vue/shared/dist/shared.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
+            'vue-router': _resolve(`vue-router/dist/vue-router.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`),
+            'vue/server-renderer': _resolve('vue/server-renderer'),
+            'vue/compiler-sfc': _resolve('vue/compiler-sfc'),
+            vue: _resolve(`vue/dist/vue.cjs${ctx.nuxt.options.dev ? '' : '.prod'}.js`)
+          }
       }
     },
     ssr: {
@@ -168,13 +168,13 @@ export async function buildServer (ctx: ViteBuildContext) {
     return
   }
 
+  // Write dev client manifest
+  await writeManifest(ctx)
+
   if (!ctx.nuxt.options.ssr) {
     await onBuild()
     return
   }
-
-  // Write dev client manifest
-  await writeManifest(ctx)
 
   // Start development server
   const viteServer = await vite.createServer(serverConfig)
