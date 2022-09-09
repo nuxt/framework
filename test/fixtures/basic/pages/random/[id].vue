@@ -42,8 +42,6 @@ const globalRandom = useRandomState(100)
 
 // TODO: NuxtLink should do this automatically on observed
 if (process.client) {
-  preloadPayload('/random/a')
-  preloadPayload('/random/b')
   preloadPayload('/random/c')
 }
 </script>
