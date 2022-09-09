@@ -1,4 +1,4 @@
-import { computed, defineComponent, isRef, nextTick, h, onMounted, Ref, Transition, VNode } from 'vue'
+import { computed, defineComponent, isRef, nextTick, h, onMounted, Ref, Transition, VNode, Component } from 'vue'
 import { _wrapIf } from './utils'
 import { useRoute } from '#app'
 // @ts-ignore
@@ -25,7 +25,7 @@ const LayoutLoader = defineComponent({
       })
     }
 
-    const LayoutComponent = await layouts[props.name]().then(r => r.default || r)
+    const LayoutComponent = await layouts[props.name]().then((r: any) => r.default || r)
 
     return () => {
       if (process.dev && process.client && props.hasTransition) {
