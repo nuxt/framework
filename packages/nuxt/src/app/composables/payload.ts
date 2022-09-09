@@ -20,6 +20,7 @@ export function loadPayload (url: string, opts: LoadPayloadOptions = {}) {
       delete cache[url]
       return null
     }
+    return payload
   })
   return cache[url]
 }
