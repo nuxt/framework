@@ -18,9 +18,6 @@ import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
-  const useAsyncEntry = ctx.nuxt.options.experimental.asyncEntry
-  ctx.entry = resolve(ctx.nuxt.options.appDir, useAsyncEntry ? 'entry.async' : 'entry')
-
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     entry: ctx.entry,
     base: ctx.nuxt.options.dev
@@ -51,6 +48,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       dedupe: ['vue']
     },
     build: {
+      sourcemap: ctx.nuxt.options.sourcemap.client ? ctx.config.build?.sourcemap ?? true : false,
       manifest: true,
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client'),
       rollupOptions: {

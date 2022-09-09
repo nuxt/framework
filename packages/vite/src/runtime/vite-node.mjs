@@ -22,7 +22,7 @@ export default async (ssrContext) => {
 
   // Execute SSR bundle on demand
   const start = performance.now()
-  render = render || (await runner.executeFile(viteNodeOptions.entryPath)).default
+  render = (updates.has(viteNodeOptions.entryPath) || !render) ? (await runner.executeFile(viteNodeOptions.entryPath)).default : render
   if (updates.size) {
     const time = Math.round((performance.now() - start) * 1000) / 1000
     consola.success(`Vite server hmr ${updates.size} files`, time ? `in ${time}ms` : '')
@@ -37,6 +37,8 @@ function createRunner () {
     root: viteNodeOptions.root, // Equals to Nuxt `srcDir`
     base: viteNodeOptions.base,
     async fetchModule (id) {
+      // TODO: fix in vite-node
+      id = id.replace(/\/\//g, '/')
       return await $fetch('/module/' + encodeURI(id), {
         baseURL: viteNodeOptions.baseURL
       }).catch((err) => {
