@@ -154,7 +154,7 @@ export const layoutTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'layouts.mjs',
   getContents ({ app }) {
     const layoutsObject = genObjectFromRawEntries(Object.values(app.layouts).map(({ name, file }) => {
-      return [name, `defineAsyncComponent(${genDynamicImport(file)})`]
+      return [name, `defineAsyncComponent(${genDynamicImport(file, { interopDefault: true })})`]
     }))
     return [
       'import { defineAsyncComponent } from \'vue\'',
@@ -169,7 +169,7 @@ export const middlewareTemplate: NuxtTemplate<TemplateContext> = {
   getContents ({ app }) {
     const globalMiddleware = app.middleware.filter(mw => mw.global)
     const namedMiddleware = app.middleware.filter(mw => !mw.global)
-    const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path)]))
+    const namedMiddlewareObject = genObjectFromRawEntries(namedMiddleware.map(mw => [mw.name, genDynamicImport(mw.path, { interopDefault: true })]))
     return [
       ...globalMiddleware.map(mw => genImport(mw.path, genSafeVariableName(mw.name))),
       `export const globalMiddleware = ${genArrayFromRaw(globalMiddleware.map(mw => genSafeVariableName(mw.name)))}`,
