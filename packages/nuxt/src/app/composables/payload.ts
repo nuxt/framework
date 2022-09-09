@@ -47,7 +47,7 @@ function _getPayloadURL (url: string, opts: LoadPayloadOptions = {}) {
 
 async function _importPayload (payloadURL: string) {
   if (process.server) { return null }
-  const res = await import(/* @vite-ignore */ payloadURL).catch((err) => {
+  const res = await import(/* webpackIgnore: true */ /* @vite-ignore */ payloadURL).catch((err) => {
     console.warn('[nuxt] Cannot load payload ', payloadURL, err)
   })
   return res?.default || null
