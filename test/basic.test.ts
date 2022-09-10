@@ -603,9 +603,6 @@ describe('payload rendering', () => {
     await page.goto(url('/random/a'))
     await page.waitForLoadState('networkidle')
 
-    // TODO: We should not prefetch the payload we are displaying
-    // expect(requests).not.toContain('/random/a/_payload.js')
-
     const importSuffix = process.env.NUXT_TEST_DEV && !process.env.TEST_WITH_WEBPACK ? '?import' : ''
 
     // We are manually prefetching other payloads
