@@ -32,6 +32,7 @@ export const ImportProtectionPlugin = createUnplugin(function (options: ImportPr
     enforce: 'pre',
     resolveId (id, importer) {
       if (!importer) { return }
+      if (isAbsolute(id)) { id = relative(options.rootDir, id) }
       if (importersToExclude.some(p => typeof p === 'string' ? importer === p : p.test(importer))) { return }
 
       const invalidImports = options.patterns.filter(([pattern]) => pattern instanceof RegExp ? pattern.test(id) : pattern === id)
