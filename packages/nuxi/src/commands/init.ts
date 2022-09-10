@@ -5,7 +5,7 @@ import { defineNuxtCommand } from './index'
 
 const rpath = (p: string) => relative(process.cwd(), p)
 
-const NUXI_INIT_REGISTRY = process.env.NUXI_INIT_REGISTRY || 'https://raw.githubusercontent.com/unjs/giget/main/templates'
+const DEFAULT_REGISTRY = 'https://raw.githubusercontent.com/unjs/giget/main/templates'
 
 export default defineNuxtCommand({
   meta: {
@@ -22,7 +22,7 @@ export default defineNuxtCommand({
       force: args.force,
       offline: args.offline,
       preferOffline: args['prefer-offline'],
-      registry: NUXI_INIT_REGISTRY
+      registry: process.env.NUXI_INIT_REGISTRY || DEFAULT_REGISTRY
     })
 
     // Show next steps
