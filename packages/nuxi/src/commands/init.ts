@@ -5,7 +5,7 @@ import { defineNuxtCommand } from './index'
 
 const rpath = (p: string) => relative(process.cwd(), p)
 
-const DEFAULT_REGISTRY = 'https://raw.githubusercontent.com/unjs/giget/main/templates'
+const DEFAULT_REGISTRY = 'https://raw.githubusercontent.com/nuxt/starter/templates/templates'
 
 export default defineNuxtCommand({
   meta: {
