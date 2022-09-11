@@ -71,19 +71,25 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
           let identifier = map.get(component) || `__nuxt_component_${num++}`
           map.set(component, identifier)
 
+          const isClientOnly = component.mode === 'client'
           if (lazy) {
             imports.add(genImport('vue', [{ name: 'defineAsyncComponent', as: '__defineAsyncComponent' }]))
             identifier += '_lazy'
-            imports.add(`const ${identifier} = /*#__PURE__*/ __defineAsyncComponent(${genDynamicImport(component.filePath)})`)
+
+            if (isClientOnly) {
+              identifier += '_client'
+              imports.add(genImport('#app/components/client-only', [{ name: 'createClientOnly' }]))
+              imports.add(`const ${identifier} = /*#__PURE__*/ __defineAsyncComponent(${genDynamicImport(component.filePath)}.then(c => createClientOnly(c.${component.export})))`)
+            } else {
+              imports.add(`const ${identifier} = /*#__PURE__*/ __defineAsyncComponent(${genDynamicImport(component.filePath)})`)
+            }
           } else {
             imports.add(genImport(component.filePath, [{ name: component.export, as: identifier }]))
-          }
-
-          const isClientOnly = component.mode === 'client'
-          if (isClientOnly) {
-            imports.add(genImport('#app/components/client-only', [{ name: 'createClientOnly' }]))
-            imports.add(`const ${identifier}_client = /*#__PURE__*/ createClientOnly(${identifier})`)
-            identifier += '_client'
+            if (isClientOnly) {
+              identifier += '_client'
+              imports.add(genImport('#app/components/client-only', [{ name: 'createClientOnly' }]))
+              imports.add(`const ${identifier}_client = /*#__PURE__*/ createClientOnly(${identifier})`)
+            }
           }
           return identifier
         }
