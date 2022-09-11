@@ -2692,6 +2692,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/which-pm-runs@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@types/which-pm-runs@npm:1.0.0"
+  checksum: a135d7be3250b6a7aebec035d75a514f02f9d39720b20d903edfd6188cb492be41fe0f3dfd43e7ea6b7a27cb58b2d339c6def393a987ffa5d4eb7464d2ab12ed
+  languageName: node
+  linkType: hard
+
 "@typescript-eslint/eslint-plugin@npm:^5.36.1":
   version: 5.36.1
   resolution: "@typescript-eslint/eslint-plugin@npm:5.36.1"
@@ -10142,6 +10149,7 @@ __metadata:
     "@types/flat": ^5.0.2
     "@types/mri": ^1.1.1
     "@types/semver": ^7
+    "@types/which-pm-runs": ^1.0.0
     c12: ^0.2.11
     chokidar: ^3.5.3
     clear: ^0.1.0
