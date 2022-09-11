@@ -1,6 +1,6 @@
 import { isAbsolute, relative } from 'pathe'
 import type { Component, Nuxt, NuxtPluginTemplate, NuxtTemplate } from '@nuxt/schema'
-import { genDynamicImport, genExport, genImport, genObjectFromRawEntries } from 'knitwork'
+import { genDynamicImport, genImport, genObjectFromRawEntries } from 'knitwork'
 
 export interface ComponentsTemplateContext {
   nuxt: Nuxt
@@ -55,7 +55,7 @@ export const componentsTemplate: NuxtTemplate<ComponentsTemplateContext> = {
   getContents ({ options }) {
     const imports = new Set<string>()
     imports.add('import { defineAsyncComponent } from \'vue\'')
- 
+
     const components = options.getComponents(options.mode).flatMap((c) => {
       const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
       const comment = createImportMagicComments(c)
