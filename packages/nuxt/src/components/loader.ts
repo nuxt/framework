@@ -75,7 +75,7 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
           if (lazy) {
             imports.add(genImport('vue', [{ name: 'defineAsyncComponent', as: '__defineAsyncComponent' }]))
             identifier += isClientOnly ? '_lazy' : '_lazy_client'
-            imports.add(`const ${identifier} = /*#__PURE__*/ __defineAsyncComponent(${genDynamicImport(component.filePath)}${isClientOnly ? `.then(c => c.${component.export})` : ''})`)
+            imports.add(`const ${identifier} = /*#__PURE__*/ __defineAsyncComponent(${genDynamicImport(component.filePath, { interopDefault: true })}${isClientOnly ? `.then(c => c.${component.export})` : ''})`)
           } else {
             imports.add(genImport(component.filePath, [{ name: component.export, as: identifier }]))
 
