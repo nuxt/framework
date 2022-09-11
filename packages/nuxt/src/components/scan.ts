@@ -1,10 +1,11 @@
-import { basename, extname, join, dirname, relative } from 'pathe'
+import { basename, extname, join, dirname, relative, resolve } from 'pathe'
 import { globby } from 'globby'
 import { pascalCase, splitByCase } from 'scule'
 import type { Component, ComponentsDir } from '@nuxt/schema'
 import { isIgnored } from '@nuxt/kit'
 import { hyphenate } from '@vue/shared'
 import { withTrailingSlash } from 'ufo'
+import { pkgDir } from '../dirs'
 
 /**
  * Scan the components inside different components folders
@@ -129,6 +130,18 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
     }
     scannedPaths.push(dir.path)
   }
+
+  // add server placeholder for .client components server side issue: #7085
+  components.forEach((component) => {
+    if (component.mode === 'client' && !components.some(c => c.pascalName === component.pascalName && c.mode === 'server')) {
+      components.push({
+        ...component,
+        mode: 'server',
+        filePath: resolve(pkgDir, 'src/app/components/server-placeholder.ts'),
+        chunkName: 'components/' + component.kebabName
+      })
+    }
+  })
 
   return components
 }
