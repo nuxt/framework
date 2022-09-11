@@ -44,7 +44,8 @@
     "pkg-types": "^0.3.5",
     "scule": "^0.3.2",
     "semver": "^7.3.7",
-    "unbuild": "latest"
+    "unbuild": "latest",
+    "which-pm-runs": "^1.1.0"
   },
   "optionalDependencies": {
     "fsevents": "~2.3.2"

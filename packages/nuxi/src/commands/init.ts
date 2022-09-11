@@ -1,6 +1,8 @@
+import { writeFile } from 'node:fs/promises'
 import { downloadTemplate, startShell } from 'giget'
 import { relative } from 'pathe'
 import consola from 'consola'
+import detectPackageManager from 'which-pm-runs'
 import { defineNuxtCommand } from './index'
 
 const rpath = (p: string) => relative(process.cwd(), p)
@@ -25,11 +27,18 @@ export default defineNuxtCommand({
       registry: process.env.NUXI_INIT_REGISTRY || DEFAULT_REGISTRY
     })
 
+    const pkgManager = detectPackageManager()?.name || 'npm'
+
     // Show next steps
     const relativeDist = rpath(t.dir)
+
+    if (pkgManager === 'pnpm') {
+      await writeFile(`${relativeDist}/.npmrc`, 'shamefully-hoist=true')
+    }
+
     const nextSteps = [
       !args.shell && relativeDist.length > 1 && `\`cd ${relativeDist}\``,
-      'Install dependencies with `npm install` or `yarn install` or `pnpm install --shamefully-hoist`',
+      'Install dependencies with `npm install` or `yarn install` or `pnpm install`',
       'Start development server with `npm run dev` or `yarn dev` or `pnpm run dev`'
     ].filter(Boolean)
 
