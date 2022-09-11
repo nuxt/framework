@@ -55,8 +55,7 @@ export const componentsTemplate: NuxtTemplate<ComponentsTemplateContext> = {
   getContents ({ options }) {
     const imports = new Set<string>()
     imports.add('import { defineAsyncComponent } from \'vue\'')
-
-    let num = 0
+ 
     const components = options.getComponents(options.mode).flatMap((c) => {
       const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
       const comment = createImportMagicComments(c)
@@ -64,13 +63,10 @@ export const componentsTemplate: NuxtTemplate<ComponentsTemplateContext> = {
       const isClient = c.mode === 'client'
       const definitions = []
       if (isClient) {
-        num++
-        const identifier = `__nuxt_component_${num}`
         imports.add(genImport('#app/components/client-only', [{ name: 'createClientOnly' }]))
-        imports.add(genImport(c.filePath, [{ name: c.export, as: identifier }]))
-        definitions.push(`export const ${c.pascalName} = createClientOnly(${identifier})`)
+        definitions.push(`export const ${c.pascalName} = createClientOnly(${genDynamicImport(c.filePath, { comment })}.then(c => ${exp}))`)
       } else {
-        definitions.push(genExport(c.filePath, [{ name: c.export, as: c.pascalName }]))
+        definitions.push(`export const ${c.pascalName} = ${genDynamicImport(c.filePath, { comment })}.then(c => ${exp})`)
       }
       definitions.push(`export const Lazy${c.pascalName} = defineAsyncComponent(${genDynamicImport(c.filePath, { comment })}.then(c => ${isClient ? `createClientOnly(${exp})` : exp}))`)
       return definitions
