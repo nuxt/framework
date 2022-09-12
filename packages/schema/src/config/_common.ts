@@ -4,6 +4,7 @@ import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
 import defu from 'defu'
+import { findWorkspaceDir } from 'pkg-types'
 
 import { RuntimeConfig } from '../types/config'
 
@@ -61,7 +62,7 @@ export default defineUntypedSchema({
    * @version 3
    */
   workspaceDir: {
-    $resolve: (val, get) => val ? resolve(get('rootDir'), val) : ''
+    $resolve: async (val, get) => val ? resolve(await get('rootDir'), val) : await findWorkspaceDir(await get('rootDir'))
   },
 
   /**
