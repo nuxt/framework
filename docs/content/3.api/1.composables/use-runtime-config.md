@@ -4,28 +4,111 @@
 
 ## Usage
 
+```vue [app.vue]
+<script setup lang="ts">
+const config = useRuntimeConfig()
+</script>
+```
+
 ```ts [server/api/foo.ts]
 export default defineEventHandler((event) => {
   const config = useRuntimeConfig()
 })
 ```
 
-`useRuntimeConfig` provides an `app` object with `baseURL` and `cdnURL` out of the box. However, Nuxt provides the ability to update their values at runtime by setting environment variables in the `.env` file.
+## Define Runtime Config
 
-## Examples
+This example below shows how to set base API endpoint URL for public access and secret API token for only accessible on the server-side.
 
-### Update base URL
+We should always define `runtimeConfig` variables inside `nuxt.config`.
 
-By default, the `baseURL` is set to `'/'`.
-However, the `baseURL` can be updated at runtime by setting the `NUXT_APP_BASE_URL` as an environment variable in the `.env` file of your Nuxt App.
+```ts [/nuxt.config.ts]
+export default defineNuxtConfig({
+  runtimeConfig: {
+    // The private keys are only available on server-side
+    apiSecret: '123',
 
-This is particularly useful when there are multiple environments, such as `development`, `test` and `production`, and they share similar variable names with slightly different values.
-
-``` [.env]
-NUXT_APP_BASE_URL = 'https://localhost:5555'
+    // The public keys are exposed to the client-side
+    public: {
+      apiBase: process.env.API_BASE_URL || '/api'
+    }
+  }
+})
 ```
 
-Then, you can access this new base URL using `config.app.baseURL`.
+::alert
+Variables needed to be accessable from server-side are added directly inside `runtimeConfig: {}`.
+Variables needed to be accessable from both client-side and server-side are defined in `runtimeConfig.public: {}.`.
+::
+
+::ReadMore{link="/guide/features/runtime-config"}
+::
+
+## Acess Runtime Config
+
+To access runtime config, we can use `useRuntimeConfig()` composable:
+
+```ts [server/api/test.ts]
+export default async () => {
+  const config = useRuntimeConfig()
+
+  // Access public variables
+  const result = await $fetch(`/test`, {
+    baseURL: config.public.apiBase,
+    headers: {
+      // Access private variable (only available on server-side)
+      Authorization: `Bearer ${config.apiSecret}`
+    }
+  })
+  return result
+}
+```
+
+In this example, since `apiBase` is defined within the `public` namespace, it is universally accessible on both server and client-side, while an `apiSecret` **is only accessible on the server-side**.
+
+## Environment Variables
+
+It is possible to update runtime config values using matching environment variable name prefixed with `NUXT_`.
+
+::ReadMore{link="/guide/features/runtime-config"}
+::
+
+### Using the `.env` File
+
+We can set the environment variables in the `.env` file to make them accessable during **development** and **build/generate**.
+
+``` [.env]
+NUXT_PUBLIC_API_BASE_URL = "https://api.localhost:5555"
+NUXT_APR_SECRET = "123"
+```
+
+::alert{type=info}
+Any environment variables set within `.env` file are accessed using `process.env` in the Nuxt app during **development** and **build/generate**.
+::
+
+::alert{type=warning}
+In **production runtime**, you should use platform environment variables and `.env` is not used.
+::
+
+::alert{type=warning}
+When using git, make sure to add `.env` to the `.gitignore` file to avoid leaking secrets to the git history.
+::
+
+## `app` namespace
+
+Nuxt uses `app` namespace in runtime-config with keys including `baseURL` and `cdnURL`. You can customize their values at runtime by setting environment variables.
+
+::alert{type=info}
+This is a reserved namespace. You cannot not introduce additional keys inside `app`.
+::
+
+### `app.baseURL`
+
+By default, the `baseURL` is set to `'/'`.
+
+However, the `baseURL` can be updated at runtime by setting the `NUXT_APP_BASE_URL` as an environment variable.
+
+Then, you can access this new base URL using `config.app.baseURL`:
 
 ```ts [/plugins/my-plugin.ts]
 export default defineNuxtPlugin((NuxtApp) => {
@@ -36,77 +119,22 @@ export default defineNuxtPlugin((NuxtApp) => {
 })
 ```
 
-### Set CDN URL
+### `app.cdnURL`
 
 This example shows how to set a custom CDN url and access them using `useRuntimeConfig()`.
 
-By default, the `public/` folder is treated as a static content provider. But you can change that by providing your own CDN url through the environment variable.
-
-First, you set the environment variable `NUXT_APP_CDN_URL` in the `.env` file.
-
-``` [.env]
-NUXT_APP_CDN_URL = 'https://cdn.localhost:5555'
-```
+You can use a custom CDN for serving static assets in `.output/public` from using environment variable `NUXT_APP_CDN_URL`.
 
 And then access the new CDN url using `config.app.cdnURL`.
 
 ```ts [server/api/foo.ts]
 export default defineEventHandler((event) => {
   const config = useRuntimeConfig()
-  
+
   // Access cdnURL universally
   const cdnURL = config.app.cdnURL
 })
 ```
-
-### Private and public variables
-
-This example below shows how to set base API endpoint url for public access and secret API token for only accessible on the server-side.
-
-- First, you set the environment variable `API_BASE_URL` in the `.env` file.
-
-``` [.env]
-API_BASE_URL = 'https://api.localhost:5555'
-```
-
-- Then access `API_BASE_URL` within the `nuxt.config` file.
-
-Any environment variables set within `.env` file are accessed using `process.env` in the Nuxt app.
-
-Variables needed to be set during runtime are defined in `runtimeConfig.public: {}`, while the variables needed during build-time are added directly inside `runtimeConfig: {}`.
-
-```ts [/nuxt.config.ts]
-export default defineNuxtConfig({
-    runtimeConfig: {
-        // The private keys are only available on server-side
-        apiSecret: '123',
-
-        // The public keys are exposed to the client-side
-        public: {
-            apiBase: process.env.API_BASE_URL
-        }
-    }
-})
-```
-
-- And finally access both public and private variables on server-side as below.
-
-```ts [server/api/test.ts]
-export default async () => {
-  const config = useRuntimeConfig()
-  
-  // Access public variables
-  const result = await $fetch(`${config.public.apiBase}/test`, {
-    headers: {
-      // Access private variable
-      Authorization: `Bearer ${config.apiSecret}`
-    }
-  })
-  return result
-}
-```
-
-In this example, since `apiBase` is defined within `public:{}` key, it is universally accessible on both server and client-side, while an `apiSecret` is only accessible on the server-side.
 
 ::ReadMore{link="/guide/features/runtime-config"}
 ::
