@@ -37,7 +37,7 @@ export default defineUntypedSchema({
   theme: null,
 
   /**
-   * Define the workspace directory of your application.
+   * Define the root directory of your application.
    *
    * This property can be overwritten (for example, running `nuxt ./my-app/`
    * will set the `rootDir` to the absolute path of `./my-app/` from the
@@ -49,6 +49,19 @@ export default defineUntypedSchema({
    */
   rootDir: {
     $resolve: val => typeof val === 'string' ? resolve(val) : process.cwd()
+  },
+
+  /**
+   * Define the workspace directory of your application.
+   *
+   * Often this is used when in a monorepo setup. Nuxt will attempt to detect
+   * your workspace directory automatically, but you can override it here.
+   *
+   * It is normally not needed to configure this option.
+   * @version 3
+   */
+  workspaceDir: {
+    $resolve: (val, get) => val ? resolve(get('rootDir'), val) : ''
   },
 
   /**

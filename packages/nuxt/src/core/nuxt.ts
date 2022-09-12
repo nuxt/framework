@@ -7,6 +7,7 @@ import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, 
 import escapeRE from 'escape-string-regexp'
 import fse from 'fs-extra'
 import { withoutLeadingSlash } from 'ufo'
+import { findWorkspaceDir } from 'pkg-types'
 import pagesModule from '../pages/module'
 import metaModule from '../head/module'
 import componentsModule from '../components/module'
@@ -204,6 +205,8 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
         .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd!.split('node_modules/').pop()!)}(\\/|$)(?!node_modules\\/)`))
     }
   }])
+  options.workspaceDir = options.workspaceDir || await findWorkspaceDir(options.rootDir)
+  options.modulesDir.push(resolve(options.workspaceDir, 'node_modules'))
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))
   options.build.transpile.push('@nuxt/ui-templates')
   options.alias['vue-demi'] = resolve(options.appDir, 'compat/vue-demi')
