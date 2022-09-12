@@ -68,7 +68,7 @@ export const componentsTemplate: NuxtTemplate<ComponentsTemplateContext> = {
         const identifier = `__nuxt_component_${num}`
         imports.add(genImport('#app/components/client-only', [{ name: 'createClientOnly' }]))
         imports.add(genImport(c.filePath, [{ name: c.export, as: identifier }]))
-        definitions.push(`export const ${c.pascalName} = createClientOnly(${identifier})`)
+        definitions.push(`export const ${c.pascalName} =  /*#__PURE__*/  createClientOnly(${identifier})`)
       } else {
         definitions.push(genExport(c.filePath, [{ name: c.export, as: c.pascalName }]))
       }
