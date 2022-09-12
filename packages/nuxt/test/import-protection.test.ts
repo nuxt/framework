@@ -1,3 +1,4 @@
+import { normalize } from 'pathe'
 import { describe, expect, it } from 'vitest'
 import { ImportProtectionPlugin, vueAppPatterns } from '../src/core/plugins/import-protection'
 
@@ -26,7 +27,7 @@ describe('import protection', () => {
       expect(result).toBeNull()
     } else {
       expect(result).toBeDefined()
-      expect(result).contains('unenv/runtime/mock/proxy')
+      expect(normalize(result)).contains('unenv/runtime/mock/proxy')
     }
   })
 })
