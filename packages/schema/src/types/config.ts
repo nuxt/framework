@@ -26,7 +26,7 @@ export type NuxtConfigLayer = ConfigLayer<NuxtConfig & {
 }>
 
 /** Normalized Nuxt options available as `nuxt.options.*` */
-export interface NuxtOptions extends ConfigSchema {
+export interface NuxtOptions extends Omit<ConfigSchema, 'builder'> {
   sourcemap: Required<Exclude<ConfigSchema['sourcemap'], boolean>>
   builder: '@nuxt/vite-builder' | '@nuxt/webpack-builder' | { bundle: (nuxt: Nuxt) => Promise<void> }
   _layers: NuxtConfigLayer[]
