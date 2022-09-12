@@ -1,6 +1,6 @@
 # `useRuntimeConfig`
 
-`useRuntimeConfig` composable is used to expose config variables within the Nuxt application on both server-side and client-side.
+The `useRuntimeConfig` composable is used to expose config variables within your app.
 
 ## Usage
 
@@ -18,27 +18,26 @@ export default defineEventHandler((event) => {
 
 ## Define Runtime Config
 
-The example below shows how to set base API base URL for public access and secret API token for only accessible on the server-side.
+The example below shows how to set a public API base URL and a secret API token that is only accessible on the server.
 
 We should always define `runtimeConfig` variables inside `nuxt.config`.
 
 ```ts [nuxt.config.ts]
 export default defineNuxtConfig({
   runtimeConfig: {
-    // The private keys are only available on server-side
+    // Private keys are only available on the server
     apiSecret: '123',
 
-    // The public keys are exposed to the client-side
+    // Public keys that are exposed to the client
     public: {
-      apiBase: process.env.API_BASE_URL || '/api'
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || '/api'
     }
   }
 })
 ```
 
 ::alert
-Variables needed to be accessable from server-side are added directly inside `runtimeConfig: {}`.
-Variables needed to be accessable from both client-side and server-side are defined in `runtimeConfig.public: {}.`.
+Variables that need to be accessible on the server are added directly inside `runtimeConfig`. Variables that need to be accessible on both the client and the server are defined in `runtimeConfig.public`.
 ::
 
 ::ReadMore{link="/guide/features/runtime-config"}
@@ -56,7 +55,7 @@ export default async () => {
   const result = await $fetch(`/test`, {
     baseURL: config.public.apiBase,
     headers: {
-      // Access private variable (only available on server-side)
+      // Access a private variable (only available on the server)
       Authorization: `Bearer ${config.apiSecret}`
     }
   })
@@ -64,18 +63,18 @@ export default async () => {
 }
 ```
 
-In this example, since `apiBase` is defined within the `public` namespace, it is universally accessible on both server and client-side, while an `apiSecret` **is only accessible on the server-side**.
+In this example, since `apiBase` is defined within the `public` namespace, it is universally accessible on both server and client-side, while `apiSecret` **is only accessible on the server-side**.
 
 ## Environment Variables
 
-It is possible to update runtime config values using matching environment variable name prefixed with `NUXT_`.
+It is possible to update runtime config values using a matching environment variable name prefixed with `NUXT_`.
 
 ::ReadMore{link="/guide/features/runtime-config"}
 ::
 
 ### Using the `.env` File
 
-We can set the environment variables inside the `.env` file to make them accessable during **development** and **build/generate**.
+We can set the environment variables inside the `.env` file to make them accessible during **development** and **build/generate**.
 
 ``` [.env]
 NUXT_PUBLIC_API_BASE_URL = "https://api.localhost:5555"
@@ -99,7 +98,7 @@ When using git, make sure to add `.env` to the `.gitignore` file to avoid leakin
 Nuxt uses `app` namespace in runtime-config with keys including `baseURL` and `cdnURL`. You can customize their values at runtime by setting environment variables.
 
 ::alert{type=info}
-This is a reserved namespace. You cannot not introduce additional keys inside `app`.
+This is a reserved namespace. You should not introduce additional keys inside `app`.
 ::
 
 ### `app.baseURL`
