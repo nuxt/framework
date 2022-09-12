@@ -62,7 +62,7 @@ export default defineUntypedSchema({
    * @version 3
    */
   workspaceDir: {
-    $resolve: async (val, get) => val ? resolve(await get('rootDir'), val) : await findWorkspaceDir(await get('rootDir'))
+    $resolve: async (val, get) => val ? resolve(await get('rootDir'), val) : await findWorkspaceDir(await get('rootDir')).catch(() => get('rootDir'))
   },
 
   /**
