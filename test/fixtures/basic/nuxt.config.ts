@@ -1,5 +1,6 @@
 import { defineNuxtConfig } from 'nuxt'
-import { addComponent } from '@nuxt/kit'
+import { addComponent, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { createUnplugin } from 'unplugin'
 
 export default defineNuxtConfig({
   app: {
@@ -12,18 +13,24 @@ export default defineNuxtConfig({
   buildDir: process.env.NITRO_BUILD_DIR,
   builder: process.env.TEST_WITH_WEBPACK ? 'webpack' : 'vite',
   theme: './extends/bar',
-  css: ['~/assets/global.css', 'virtual.css'],
-  vite: {
-    plugins: [{
-      name: 'virtual',
-      resolveId (id) {
-        if (id === 'virtual.css') { return 'virtual.css' }
-      },
-      load (id) {
-        if (id === 'virtual.css') { return ':root { color: red }' }
-      }
-    }]
-  },
+  css: ['~/assets/global.css'],
+  modules: [
+    function (_, nuxt) {
+      nuxt.options.css.push('virtual.css')
+      nuxt.options.build.transpile.push(/virtual.css/)
+      const plugin = createUnplugin(() => ({
+        name: 'virtual',
+        resolveId (id) {
+          if (id === 'virtual.css') { return 'virtual.css' }
+        },
+        load (id) {
+          if (id === 'virtual.css') { return ':root { --virtual: red }' }
+        }
+      }))
+      addVitePlugin(plugin.vite())
+      addWebpackPlugin(plugin.webpack())
+    }
+  ],
   extends: [
     './extends/node_modules/foo'
   ],
