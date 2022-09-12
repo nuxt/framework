@@ -36,8 +36,10 @@ export default defineNuxtConfig({
   modules: [
     '~/modules/example',
     function (_, nuxt) {
+      if (process.env.TEST_WITH_WEBPACK) { return }
+
       nuxt.options.css.push('virtual.css')
-      nuxt.options.build.transpile.push(/virtual.css/)
+      nuxt.options.build.transpile.push('virtual.css')
       const plugin = createUnplugin(() => ({
         name: 'virtual',
         resolveId (id) {
