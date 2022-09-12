@@ -18,11 +18,11 @@ export default defineEventHandler((event) => {
 
 ## Define Runtime Config
 
-This example below shows how to set base API endpoint URL for public access and secret API token for only accessible on the server-side.
+The example below shows how to set base API base URL for public access and secret API token for only accessible on the server-side.
 
 We should always define `runtimeConfig` variables inside `nuxt.config`.
 
-```ts [/nuxt.config.ts]
+```ts [nuxt.config.ts]
 export default defineNuxtConfig({
   runtimeConfig: {
     // The private keys are only available on server-side
@@ -75,7 +75,7 @@ It is possible to update runtime config values using matching environment variab
 
 ### Using the `.env` File
 
-We can set the environment variables in the `.env` file to make them accessable during **development** and **build/generate**.
+We can set the environment variables inside the `.env` file to make them accessable during **development** and **build/generate**.
 
 ``` [.env]
 NUXT_PUBLIC_API_BASE_URL = "https://api.localhost:5555"
@@ -123,7 +123,7 @@ export default defineNuxtPlugin((NuxtApp) => {
 
 This example shows how to set a custom CDN url and access them using `useRuntimeConfig()`.
 
-You can use a custom CDN for serving static assets in `.output/public` from using environment variable `NUXT_APP_CDN_URL`.
+You can use a custom CDN for serving static assets inside `.output/public` using the `NUXT_APP_CDN_URL` environment variable.
 
 And then access the new CDN url using `config.app.cdnURL`.
 
