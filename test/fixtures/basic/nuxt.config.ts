@@ -14,23 +14,6 @@ export default defineNuxtConfig({
   builder: process.env.TEST_WITH_WEBPACK ? 'webpack' : 'vite',
   theme: './extends/bar',
   css: ['~/assets/global.css'],
-  modules: [
-    function (_, nuxt) {
-      nuxt.options.css.push('virtual.css')
-      nuxt.options.build.transpile.push(/virtual.css/)
-      const plugin = createUnplugin(() => ({
-        name: 'virtual',
-        resolveId (id) {
-          if (id === 'virtual.css') { return 'virtual.css' }
-        },
-        load (id) {
-          if (id === 'virtual.css') { return ':root { --virtual: red }' }
-        }
-      }))
-      addVitePlugin(plugin.vite())
-      addWebpackPlugin(plugin.webpack())
-    }
-  ],
   extends: [
     './extends/node_modules/foo'
   ],
@@ -50,7 +33,24 @@ export default defineNuxtConfig({
   privateRuntimeConfig: {
     privateConfig: 'secret_key'
   },
-  modules: ['~/modules/example'],
+  modules: [
+    '~/modules/example',
+    function (_, nuxt) {
+      nuxt.options.css.push('virtual.css')
+      nuxt.options.build.transpile.push(/virtual.css/)
+      const plugin = createUnplugin(() => ({
+        name: 'virtual',
+        resolveId (id) {
+          if (id === 'virtual.css') { return 'virtual.css' }
+        },
+        load (id) {
+          if (id === 'virtual.css') { return ':root { --virtual: red }' }
+        }
+      }))
+      addVitePlugin(plugin.vite())
+      addWebpackPlugin(plugin.webpack())
+    }
+  ],
   hooks: {
     'modules:done' () {
       addComponent({
