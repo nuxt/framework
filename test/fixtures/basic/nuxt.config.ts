@@ -12,7 +12,18 @@ export default defineNuxtConfig({
   buildDir: process.env.NITRO_BUILD_DIR,
   builder: process.env.TEST_WITH_WEBPACK ? 'webpack' : 'vite',
   theme: './extends/bar',
-  css: ['~/assets/global.css'],
+  css: ['~/assets/global.css', 'virtual.css'],
+  vite: {
+    plugins: [{
+      name: 'virtual',
+      resolveId (id) {
+        if (id === 'virtual.css') { return 'virtual.css' }
+      },
+      load (id) {
+        if (id === 'virtual.css') { return ':root { color: red }' }
+      }
+    }]
+  },
   extends: [
     './extends/node_modules/foo'
   ],

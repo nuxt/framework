@@ -104,6 +104,7 @@ export function ssrStylesPlugin (options: SSRStylePluginOptions): Plugin {
 
         const resolved = await this.resolve(i.specifier, id)
         if (!resolved) { continue }
+        if (!(await this.resolve(resolved.id + '?inline&used'))) { continue }
 
         const ref = this.emitFile({
           type: 'chunk',
