@@ -68,8 +68,8 @@ export const serverPluginTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'plugins/server.mjs',
   getContents (ctx) {
     const serverPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'client')
-    const exports: string[] = ['preload']
-    const imports: string[] = ["import preload from '#app/plugins/preload.server'"]
+    const exports: string[] = []
+    const imports: string[] = []
     for (const plugin of serverPlugins) {
       const path = relative(ctx.nuxt.options.rootDir, plugin.src)
       const variable = genSafeVariableName(path).replace(/_(45|46|47)/g, '_') + '_' + hash(path)
@@ -114,7 +114,7 @@ export { }
 const adHocModules = ['router', 'pages', 'imports', 'meta', 'components']
 export const schemaTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'types/schema.d.ts',
-  getContents: ({ nuxt }) => {
+  getContents: async ({ nuxt }) => {
     const moduleInfo = nuxt.options._installedModules.map(m => ({
       ...m.meta || {},
       importName: m.entryPath || m.meta?.name
@@ -128,7 +128,7 @@ export const schemaTemplate: NuxtTemplate<TemplateContext> = {
         `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
       ),
       '  }',
-      generateTypes(resolveSchema(Object.fromEntries(Object.entries(nuxt.options.runtimeConfig).filter(([key]) => key !== 'public'))),
+      generateTypes(await resolveSchema(Object.fromEntries(Object.entries(nuxt.options.runtimeConfig).filter(([key]) => key !== 'public'))),
         {
           interfaceName: 'RuntimeConfig',
           addExport: false,
@@ -136,7 +136,7 @@ export const schemaTemplate: NuxtTemplate<TemplateContext> = {
           allowExtraKeys: false,
           indentation: 2
         }),
-      generateTypes(resolveSchema(nuxt.options.runtimeConfig.public),
+      generateTypes(await resolveSchema(nuxt.options.runtimeConfig.public),
         {
           interfaceName: 'PublicRuntimeConfig',
           addExport: false,
@@ -154,7 +154,7 @@ export const layoutTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'layouts.mjs',
   getContents ({ app }) {
     const layoutsObject = genObjectFromRawEntries(Object.values(app.layouts).map(({ name, file }) => {
-      return [name, `defineAsyncComponent(${genDynamicImport(file)})`]
+      return [name, `defineAsyncComponent(${genDynamicImport(file, { interopDefault: true })})`]
     }))
     return [
       'import { defineAsyncComponent } from \'vue\'',
@@ -207,12 +207,13 @@ export const appConfigTemplate: NuxtTemplate = {
   write: true,
   getContents: ({ app, nuxt }) => {
     return `
-import defu from 'defu'
+import { defuFn } from 'defu'
 
 const inlineConfig = ${JSON.stringify(nuxt.options.appConfig, null, 2)}
 
 ${app.configs.map((id: string, index: number) => `import ${`cfg${index}`} from ${JSON.stringify(id)}`).join('\n')}
-export default defu(${app.configs.map((_id: string, index: number) => `cfg${index}`).concat(['inlineConfig']).join(', ')})
+
+export default defuFn(${app.configs.map((_id: string, index: number) => `cfg${index}`).concat(['inlineConfig']).join(', ')})
 `
   }
 }

@@ -11,6 +11,7 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
     name: 'nuxt',
     configFile: 'nuxt.config',
     rcFile: '.nuxtrc',
+    extend: { extendKey: ['theme', 'extends'] },
     dotenv: true,
     globalRc: true,
     ...opts
@@ -33,6 +34,17 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
   // Filter layers
   nuxtConfig._layers = layers.filter(layer => layer.configFile && !layer.configFile.endsWith('.nuxtrc'))
 
+  // Ensure at least one layer remains (without nuxt.config)
+  if (!nuxtConfig._layers.length) {
+    nuxtConfig._layers.push({
+      cwd,
+      config: {
+        rootDir: cwd,
+        srcDir: cwd
+      }
+    })
+  }
+
   // Resolve and apply defaults
-  return applyDefaults(NuxtConfigSchema, nuxtConfig) as NuxtOptions
+  return await applyDefaults(NuxtConfigSchema, nuxtConfig) as NuxtOptions
 }

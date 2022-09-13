@@ -36,8 +36,5 @@ Apart from dynamic parameters and query parameters, `useRoute()` also provides t
 * **path**: encoded pathname section of the URL
 * **redirectedFrom**: route location that was attempted to access before ending up on the current route location
 
-::ReadMore{link="https://router.vuejs.org/api/#routelocationnormalized"}
-::
-
-::ReadMore{link="/guide/features/routing"}
+::ReadMore{link="https://router.vuejs.org/api/interfaces/RouteLocationNormalizedLoaded.html"}
 ::

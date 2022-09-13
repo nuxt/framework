@@ -1,5 +1,7 @@
 ---
-title: "References"
-navigation: false
-redirect: /api/composables/use-async-data
+title: References
+layout.aside: true
+navigation.exclusive: true
+navigation.collapse: true
+navigation.redirect: /api/composables/prefetch-components
 ---

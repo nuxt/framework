@@ -4,7 +4,11 @@ description: "This example shows how to handle errors in different contexts: pag
 toc: false
 ---
 
-::ReadMore{link="/guide/features/error-handling"}
+# Error Handling
+
+This example shows how to handle errors in different contexts: pages, plugins, components and middleware.
+
+::ReadMore{link="/getting-started/error-handling"}
 ::
 
 ::sandbox{repo="nuxt/framework" branch="main" dir="examples/app/error-handling" file="app.vue"}

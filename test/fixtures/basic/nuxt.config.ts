@@ -1,5 +1,6 @@
 import { defineNuxtConfig } from 'nuxt'
-import { addComponent } from '@nuxt/kit'
+import { addComponent, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import { createUnplugin } from 'unplugin'
 
 export default defineNuxtConfig({
   app: {
@@ -11,12 +12,20 @@ export default defineNuxtConfig({
   },
   buildDir: process.env.NITRO_BUILD_DIR,
   builder: process.env.TEST_WITH_WEBPACK ? 'webpack' : 'vite',
+  theme: './extends/bar',
+  css: ['~/assets/global.css'],
   extends: [
-    './extends/bar',
     './extends/node_modules/foo'
   ],
   nitro: {
-    output: { dir: process.env.NITRO_OUTPUT_DIR }
+    output: { dir: process.env.NITRO_OUTPUT_DIR },
+    prerender: {
+      routes: [
+        '/random/a',
+        '/random/b',
+        '/random/c'
+      ]
+    }
   },
   publicRuntimeConfig: {
     testConfig: 123
@@ -24,7 +33,26 @@ export default defineNuxtConfig({
   privateRuntimeConfig: {
     privateConfig: 'secret_key'
   },
-  modules: ['~/modules/example'],
+  modules: [
+    '~/modules/example',
+    function (_, nuxt) {
+      if (process.env.TEST_WITH_WEBPACK) { return }
+
+      nuxt.options.css.push('virtual.css')
+      nuxt.options.build.transpile.push('virtual.css')
+      const plugin = createUnplugin(() => ({
+        name: 'virtual',
+        resolveId (id) {
+          if (id === 'virtual.css') { return 'virtual.css' }
+        },
+        load (id) {
+          if (id === 'virtual.css') { return ':root { --virtual: red }' }
+        }
+      }))
+      addVitePlugin(plugin.vite())
+      addWebpackPlugin(plugin.webpack())
+    }
+  ],
   hooks: {
     'modules:done' () {
       addComponent({
@@ -35,6 +63,7 @@ export default defineNuxtConfig({
     }
   },
   experimental: {
+    inlineSSRStyles: id => !id.includes('assets.vue'),
     reactivityTransform: true,
     treeshakeClientOnly: true
   },

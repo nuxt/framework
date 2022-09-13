@@ -1,5 +1,6 @@
 ---
-title: "Guide"
-navigation: false
-redirect: /guide/concepts/introduction
+title: Guide
+layout.aside: true
+navigation.exclusive: true
+navigation.redirect: /guide/concepts/auto-imports
 ---
