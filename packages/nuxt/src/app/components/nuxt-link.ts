@@ -2,7 +2,7 @@ import { defineComponent, h, ref, resolveComponent, PropType, computed, DefineCo
 import { RouteLocationRaw, Router } from 'vue-router'
 import { hasProtocol } from 'ufo'
 
-import { navigateTo, useRouter } from '#app'
+import { navigateTo, useRouter, useNuxtApp } from '#app'
 
 const firstNonUndefined = <T>(...args: (T | undefined)[]) => args.find(arg => arg !== undefined)
 
@@ -38,7 +38,24 @@ export type NuxtLinkProps = {
 
   // Vue Router's `<RouterLink>` additional props
   ariaCurrentValue?: string
-};
+}
+
+// Polyfills for Safari support
+// https://caniuse.com/requestidlecallback
+const requestIdleCallback: Window['requestIdleCallback'] = process.server
+  ? null as any
+  : (window.requestIdleCallback || ((cb) => {
+      const start = Date.now()
+      const idleDeadline = {
+        didTimeout: false,
+        timeRemaining: () => Math.max(0, 50 - (Date.now() - start))
+      }
+      return setTimeout(() => { cb(idleDeadline) }, 1)
+    }))
+
+const cancelIdleCallback: Window['cancelIdleCallback'] = process.server
+  ? null as any
+  : (window.cancelIdleCallback || ((id) => { clearTimeout(id) }))
 
 export function defineNuxtLink (options: NuxtLinkOptions) {
   const componentName = options.componentName || 'NuxtLink'
@@ -167,26 +184,24 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
       })
 
       // Prefetching
-      const nodeRef = process.server ? null : ref<HTMLElement | null>(null)
-      const setNodeRef = process.server
-        ? null
-        : (ref: object | null) => { nodeRef!.value = ref && '$el' in ref ? (ref as { $el: HTMLElement }).$el : null }
-
       const prefetched = ref(false)
+      const el = process.server ? null : ref<HTMLElement | null>(null)
       if (process.client) {
         checkPropConflicts(props, 'prefetch', 'noPrefetch')
         const shouldPrefetch = props.prefetch !== false && props.noPrefetch !== true && typeof to.value === 'string' && !isSlowConnection()
         if (shouldPrefetch) {
-          const observer = createObserver() // TODO: Reuse same instance
+          const observer = useObserver()
           let idleId: number
           let unobserve: Function | null = null
           onMounted(() => {
             idleId = requestIdleCallback(() => {
-              unobserve = observer!.observe(nodeRef!.value!, () => {
-                prefetchRoute(to.value as string, router)
-                unobserve?.()
-                unobserve = null
-              })
+              if (el?.value) {
+                unobserve = observer!.observe(el.value, () => {
+                  unobserve?.()
+                  unobserve = null
+                  preloadRouteComponents(to.value as string, router)
+                })
+              }
             })
           })
           onBeforeUnmount(() => {
@@ -203,7 +218,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
           return h(
             resolveComponent('RouterLink'),
             {
-              ref: setNodeRef,
+              ref: process.server ? null : (ref: any) => { el!.value = ref?.$el },
               to: to.value,
               class: prefetched.value && (props.prefetchedClass || options.prefetchedClass),
               activeClass: props.activeClass || options.activeClass,
@@ -258,8 +273,14 @@ export default defineNuxtLink({ componentName: 'NuxtLink' })
 
 // --- Prefetching utils ---
 
-function createObserver () {
-  if (process.server) { return null }
+function useObserver () {
+  if (process.server) { return }
+
+  const nuxtApp = useNuxtApp()
+  if (nuxtApp._observer) {
+    return nuxtApp._observer
+  }
+
   let observer: IntersectionObserver | null = null
   type CallbackFn = () => void
   const callbacks = new Map<Element, CallbackFn>()
@@ -286,9 +307,11 @@ function createObserver () {
     }
   }
 
-  return {
+  const _observer = nuxtApp._observer = {
     observe
   }
+
+  return _observer
 }
 
 function isSlowConnection () {
@@ -299,11 +322,19 @@ function isSlowConnection () {
   return false
 }
 
-export async function prefetchRoute (to: string, router: Router) {
+async function preloadRouteComponents (to: string, router: Router & { _nuxtLinkPreloaded?: Set<string> } = useRouter()) {
   if (process.server) { return null }
+
+  console.log('Preloading route components for', to)
+
+  if (!router._nuxtLinkPreloaded) { router._nuxtLinkPreloaded = new Set() }
+  if (router._nuxtLinkPreloaded.has(to)) { return null }
+  router._nuxtLinkPreloaded.add(to)
+
   const components = router.resolve(to).matched
     .map(component => component.components?.default)
     .filter(component => typeof component === 'function')
+
   const promises: Promise<any>[] = []
   for (const component of components) {
     const promise = Promise.resolve((component as Function)()).catch(() => {})
@@ -311,18 +342,3 @@ export async function prefetchRoute (to: string, router: Router) {
   }
   await Promise.all(promises)
 }
-
-const requestIdleCallback: Window['requestIdleCallback'] = process.server
-  ? null as any
-  : (window.requestIdleCallback || ((cb) => {
-      const start = Date.now()
-      const idleDeadline = {
-        didTimeout: false,
-        timeRemaining: () => Math.max(0, 50 - (Date.now() - start))
-      }
-      return window.setTimeout(() => { cb(idleDeadline) }, 1)
-    }))
-
-const cancelIdleCallback: Window['cancelIdleCallback'] = process.server
-  ? null as any
-  : (window.cancelIdleCallback || ((id) => { clearTimeout(id) }))
