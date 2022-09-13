@@ -197,11 +197,12 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
           onMounted(() => {
             idleId = requestIdleCallback(() => {
               if (el?.value) {
-                unobserve = observer!.observe(el.value, () => {
+                unobserve = observer!.observe(el.value, async () => {
                   unobserve?.()
                   unobserve = null
-                  nuxtApp.hooks.callHook('link:prefetch', to.value as string)
-                  preloadRouteComponents(to.value as string, router)
+                  await nuxtApp.hooks.callHook('link:prefetch', to.value as string).catch(() => {})
+                  await preloadRouteComponents(to.value as string, router).catch(() => {})
+                  prefetched.value = true
                 })
               }
             })

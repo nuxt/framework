@@ -384,7 +384,7 @@ describe('extends support', () => {
   describe('app', () => {
     it('extends foo/app/router.options & bar/app/router.options', async () => {
       const html: string = await $fetch('/')
-      const routerLinkClasses = html.match(/href="\/random\/a" class="([^"]*)"/)?.[1].split(' ')
+      const routerLinkClasses = html.match(/href="\/" class="([^"]*)"/)?.[1].split(' ')
       expect(routerLinkClasses).toContain('foo-active-class')
       expect(routerLinkClasses).toContain('bar-exact-active-class')
     })
