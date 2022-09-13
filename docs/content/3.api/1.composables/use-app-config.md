@@ -10,4 +10,4 @@ const appConfig = useAppConfig()
 console.log(appConfig)
 ```
 
-::ReadMore{link="/guide/going-further/app-config"}
+::ReadMore{link="/guide/directory-structure/app.config"}
