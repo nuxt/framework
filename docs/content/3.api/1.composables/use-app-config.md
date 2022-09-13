@@ -1,6 +1,6 @@
 # `useAppConfig`
 
-Access [app config](/guide/features/app-config):
+Access [app config](/guide/directory-structure/app.config):
 
 **Usage:**
 

@@ -1,7 +1,3 @@
----
-title: "useNuxtApp"
----
-
 # `useNuxtApp`
 
 `useNuxtApp` is a built-in composable that provides a way to access shared runtime context of Nuxt, which is available on both client and server side. It helps you access the Vue app instance, runtime hooks, runtime config variables and internal states, such as `ssrContext` and `payload`.
