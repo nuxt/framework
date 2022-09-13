@@ -200,8 +200,10 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
                 unobserve = observer!.observe(el.value, async () => {
                   unobserve?.()
                   unobserve = null
-                  await nuxtApp.hooks.callHook('link:prefetch', to.value as string).catch(() => {})
-                  await preloadRouteComponents(to.value as string, router).catch(() => {})
+                  await Promise.all([
+                    nuxtApp.hooks.callHook('link:prefetch', to.value as string).catch(() => {}),
+                    preloadRouteComponents(to.value as string, router).catch(() => {})
+                  ])
                   prefetched.value = true
                 })
               }
