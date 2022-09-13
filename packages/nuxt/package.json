@@ -13,7 +13,7 @@
   "exports": {
     ".": "./dist/index.mjs",
     "./config": {
-      "import": "./dist/config.mjs",
+      "import": "./config.mjs",
       "require": "./config.cjs",
       "types": "./config.d.ts"
     },
