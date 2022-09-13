@@ -316,6 +316,7 @@ function useObserver () {
 
 function isSlowConnection () {
   if (process.server) { return null }
+
   // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/connection
   const cn = (navigator as any).connection as { saveData: boolean, effectiveType: string } | null
   if (cn && (cn.saveData || /2g/.test(cn.effectiveType))) { return true }
@@ -324,8 +325,6 @@ function isSlowConnection () {
 
 async function preloadRouteComponents (to: string, router: Router & { _nuxtLinkPreloaded?: Set<string> } = useRouter()) {
   if (process.server) { return null }
-
-  console.log('Preloading route components for', to)
 
   if (!router._nuxtLinkPreloaded) { router._nuxtLinkPreloaded = new Set() }
   if (router._nuxtLinkPreloaded.has(to)) { return null }
