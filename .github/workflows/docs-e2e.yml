@@ -10,14 +10,12 @@ on:
   deployment_status:
 
 jobs:
-  e2e:
+  crawl-docs:
     environment:
       name: ${{ github.event.deployment.environment || 'Production' }}
       url: ${{ github.event.inputs.url || github.event.deployment.payload.web_url || github.event.deployment_status.target_url }}
     if: github.event.deployment_status.state == 'success' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.25.2-focal
 
     steps:
       - uses: actions/checkout@v3
