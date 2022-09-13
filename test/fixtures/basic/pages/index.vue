@@ -9,7 +9,7 @@
     <div>Composable | bar: {{ bar }}</div>
     <div>Composable | template: {{ templateAutoImport }}</div>
     <div>Path: {{ $route.fullPath }}</div>
-    <NuxtLink to="/">
+    <NuxtLink to="/random/c">
       Link
     </NuxtLink>
     <SugarCounter :count="12" />

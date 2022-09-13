@@ -1,66 +1,10 @@
-import { defineComponent, h, ref, onBeforeUnmount, onMounted, resolveComponent, PropType, computed, DefineComponent, ComputedRef } from 'vue'
-import { RouteLocationRaw, RouteComponent } from 'vue-router'
+import { defineComponent, h, ref, resolveComponent, PropType, computed, DefineComponent, ComputedRef, onMounted, onBeforeUnmount } from 'vue'
+import { RouteLocationRaw, Router } from 'vue-router'
 import { hasProtocol } from 'ufo'
 
 import { navigateTo, useRouter } from '#app'
 
 const firstNonUndefined = <T>(...args: (T | undefined)[]) => args.find(arg => arg !== undefined)
-
-type CallbackFn = () => void
-type Lazy<T> = () => Promise<T>
-
-const requestIdleCallback: Window['requestIdleCallback'] = process.client
-  ? window.requestIdleCallback || function (cb) {
-    const start = Date.now()
-    const idleDeadline = {
-      didTimeout: false,
-      timeRemaining () {
-        return Math.max(0, 50 - (Date.now() - start))
-      }
-    }
-    return window.setTimeout(function () {
-      cb(idleDeadline)
-    }, 1)
-  }
-  : (() => {}) as any
-
-const cancelIdleCallback: Window['cancelIdleCallback'] = process.client
-  ? window.cancelIdleCallback || function (id) {
-    clearTimeout(id)
-  }
-  : () => {}
-
-let observer: IntersectionObserver | null = null
-const callbacks = new Map<Element, CallbackFn>()
-function observe (element: Element, callback: CallbackFn) {
-  if (!observer) {
-    observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        const callback = callbacks.get(entry.target)
-        const isVisible = entry.isIntersecting || entry.intersectionRatio > 0
-
-        if (isVisible) {
-          callback?.()
-        }
-      })
-    })
-  }
-
-  callbacks.set(element, callback)
-  observer.observe(element)
-
-  return function unobserve () {
-    callbacks.delete(element)
-    observer.unobserve(element)
-
-    if (callbacks.size === 0) {
-      observer.disconnect()
-      observer = null
-    }
-  }
-}
-
-const prefetcheds = new Set()
 
 const DEFAULT_EXTERNAL_REL_ATTRIBUTE = 'noopener noreferrer'
 
@@ -195,11 +139,6 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
     setup (props, { slots }) {
       const router = useRouter()
 
-      const nodeRef = ref<HTMLElement>(null)
-      const setNodeRef = (ref: object | null) => {
-        nodeRef.value = ref && '$el' in ref ? (ref as { $el: HTMLElement }).$el : null
-      }
-
       // Resolving `to` value from `to` and `href` props
       const to: ComputedRef<string | RouteLocationRaw> = computed(() => {
         checkPropConflicts(props, 'to', 'href')
@@ -227,58 +166,36 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
         return to.value === '' || hasProtocol(to.value, true)
       })
 
+      // Prefetching
+      const nodeRef = process.server ? null : ref<HTMLElement | null>(null)
+      const setNodeRef = process.server
+        ? null
+        : (ref: object | null) => { nodeRef!.value = ref && '$el' in ref ? (ref as { $el: HTMLElement }).$el : null }
+
       const prefetched = ref(false)
-      const shouldPrefetch = computed(() => {
+      if (process.client) {
         checkPropConflicts(props, 'prefetch', 'noPrefetch')
-
-        return props.prefetch == null
-          ? props.noPrefetch == null ? true : !props.noPrefetch
-          : props.prefetch
-      })
-
-      let idleId: number
-      let unobserve: ReturnType<typeof observe> | null = null
-
-      const prefetch = () => {
-        const cn = navigator.connection as any
-        if (cn && (cn.saveData || /2g/.test(cn.effectiveType))) { return }
-
-        const components = router.resolve(to.value).matched
-          .map(component => component.components.default)
-          .filter(component => typeof component === 'function' && !prefetcheds.has(component))
-
-        const promises = []
-        components.forEach((component: Lazy<RouteComponent>) => {
-          const promise = component()
-          if (promise instanceof Promise) {
-            promise.catch(() => {})
-          }
-          promises.push(promise)
-          prefetcheds.add(component)
-        })
-
-        Promise.all(promises).then(() => {
-          prefetched.value = true
-        })
-      }
-
-      onMounted(() => {
-        if (!shouldPrefetch.value) { return }
-
-        idleId = requestIdleCallback(() => {
-          unobserve = observe(nodeRef.value, () => {
-            prefetch()
-
+        const shouldPrefetch = props.prefetch !== false && props.noPrefetch !== true && typeof to.value === 'string' && !isSlowConnection()
+        if (shouldPrefetch) {
+          const observer = createObserver() // TODO: Reuse same instance
+          let idleId: number
+          let unobserve: Function | null = null
+          onMounted(() => {
+            idleId = requestIdleCallback(() => {
+              unobserve = observer!.observe(nodeRef!.value!, () => {
+                prefetchRoute(to.value as string, router)
+                unobserve?.()
+                unobserve = null
+              })
+            })
+          })
+          onBeforeUnmount(() => {
+            if (idleId) { cancelIdleCallback(idleId) }
             unobserve?.()
             unobserve = null
           })
-        })
-      })
-
-      onBeforeUnmount(() => {
-        cancelIdleCallback(idleId)
-        unobserve?.()
-      })
+        }
+      }
 
       return () => {
         if (!isExternal.value) {
@@ -338,3 +255,74 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
 }
 
 export default defineNuxtLink({ componentName: 'NuxtLink' })
+
+// --- Prefetching utils ---
+
+function createObserver () {
+  if (process.server) { return null }
+  let observer: IntersectionObserver | null = null
+  type CallbackFn = () => void
+  const callbacks = new Map<Element, CallbackFn>()
+
+  const observe = (element: Element, callback: CallbackFn) => {
+    if (!observer) {
+      observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          const callback = callbacks.get(entry.target)
+          const isVisible = entry.isIntersecting || entry.intersectionRatio > 0
+          if (isVisible && callback) { callback() }
+        }
+      })
+    }
+    callbacks.set(element, callback)
+    observer.observe(element)
+    return () => {
+      callbacks.delete(element)
+      observer!.unobserve(element)
+      if (callbacks.size === 0) {
+        observer!.disconnect()
+        observer = null
+      }
+    }
+  }
+
+  return {
+    observe
+  }
+}
+
+function isSlowConnection () {
+  if (process.server) { return null }
+  // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/connection
+  const cn = (navigator as any).connection as { saveData: boolean, effectiveType: string } | null
+  if (cn && (cn.saveData || /2g/.test(cn.effectiveType))) { return true }
+  return false
+}
+
+export async function prefetchRoute (to: string, router: Router) {
+  if (process.server) { return null }
+  const components = router.resolve(to).matched
+    .map(component => component.components?.default)
+    .filter(component => typeof component === 'function')
+  const promises: Promise<any>[] = []
+  for (const component of components) {
+    const promise = Promise.resolve((component as Function)()).catch(() => {})
+    promises.push(promise)
+  }
+  await Promise.all(promises)
+}
+
+const requestIdleCallback: Window['requestIdleCallback'] = process.server
+  ? null as any
+  : (window.requestIdleCallback || ((cb) => {
+      const start = Date.now()
+      const idleDeadline = {
+        didTimeout: false,
+        timeRemaining: () => Math.max(0, 50 - (Date.now() - start))
+      }
+      return window.setTimeout(() => { cb(idleDeadline) }, 1)
+    }))
+
+const cancelIdleCallback: Window['cancelIdleCallback'] = process.server
+  ? null as any
+  : (window.cancelIdleCallback || ((id) => { clearTimeout(id) }))
