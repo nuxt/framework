@@ -43,7 +43,7 @@ export type NuxtLinkProps = {
 // Polyfills for Safari support
 // https://caniuse.com/requestidlecallback
 const requestIdleCallback: Window['requestIdleCallback'] = process.server
-  ? null as any
+  ? undefined as any
   : (window.requestIdleCallback || ((cb) => {
       const start = Date.now()
       const idleDeadline = {
@@ -185,7 +185,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
 
       // Prefetching
       const prefetched = ref(false)
-      const el = process.server ? null : ref<HTMLElement | null>(null)
+      const el = process.server ? undefined : ref<HTMLElement | null>(null)
       if (process.client) {
         checkPropConflicts(props, 'prefetch', 'noPrefetch')
         const shouldPrefetch = props.prefetch !== false && props.noPrefetch !== true && typeof to.value === 'string' && !isSlowConnection()
@@ -218,7 +218,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
           return h(
             resolveComponent('RouterLink'),
             {
-              ref: process.server ? null : (ref: any) => { el!.value = ref?.$el },
+              ref: process.server ? undefined : (ref: any) => { el!.value = ref?.$el },
               to: to.value,
               class: prefetched.value && (props.prefetchedClass || options.prefetchedClass),
               activeClass: props.activeClass || options.activeClass,
@@ -315,7 +315,7 @@ function useObserver () {
 }
 
 function isSlowConnection () {
-  if (process.server) { return null }
+  if (process.server) { return }
 
   // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/connection
   const cn = (navigator as any).connection as { saveData: boolean, effectiveType: string } | null
@@ -324,10 +324,10 @@ function isSlowConnection () {
 }
 
 async function preloadRouteComponents (to: string, router: Router & { _nuxtLinkPreloaded?: Set<string> } = useRouter()) {
-  if (process.server) { return null }
+  if (process.server) { return }
 
   if (!router._nuxtLinkPreloaded) { router._nuxtLinkPreloaded = new Set() }
-  if (router._nuxtLinkPreloaded.has(to)) { return null }
+  if (router._nuxtLinkPreloaded.has(to)) { return }
   router._nuxtLinkPreloaded.add(to)
 
   const components = router.resolve(to).matched
