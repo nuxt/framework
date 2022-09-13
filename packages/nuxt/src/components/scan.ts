@@ -5,7 +5,7 @@ import type { Component, ComponentsDir } from '@nuxt/schema'
 import { isIgnored } from '@nuxt/kit'
 import { hyphenate } from '@vue/shared'
 import { withTrailingSlash } from 'ufo'
-import { pkgDir } from '../dirs'
+import { distDir } from '../dirs'
 
 /**
  * Scan the components inside different components folders
@@ -137,7 +137,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
       components.push({
         ...component,
         mode: 'server',
-        filePath: resolve(pkgDir, 'src/app/components/server-placeholder.ts'),
+        filePath: resolve(distDir, 'app/components/server-placeholder'),
         chunkName: 'components/' + component.kebabName
       })
     }
