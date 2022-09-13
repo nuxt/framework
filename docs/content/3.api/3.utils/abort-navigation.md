@@ -2,6 +2,8 @@
 title: "abortNavigation"
 ---
 
+# `abortNavigation`
+
 `abortNavigation` is a helper function that prevents navigation from taking place and throws an error if one is set as a parameter.
 
 ::alert{type="warning"}

@@ -3,6 +3,8 @@ title: "useAsyncData"
 description: "Within your pages, components, and plugins you can use useAsyncData to get access to data that resolves asynchronously."
 ---
 
+# `useAsyncData`
+
 ## Type
 
 ```ts [Signature]

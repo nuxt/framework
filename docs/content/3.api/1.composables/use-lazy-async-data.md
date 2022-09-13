@@ -2,6 +2,8 @@
 title: "useLazyAsyncData"
 ---
 
+# `useLazyAsyncData`
+
 ## Description
 
 By default, [useAsyncData](/api/composables/use-async-data) blocks navigation until its async handler is resolved.

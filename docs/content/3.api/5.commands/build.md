@@ -2,6 +2,8 @@
 title: "nuxi build"
 ---
 
+# `nuxi build`
+
 ```{bash}
 npx nuxi build [rootDir]
 ```

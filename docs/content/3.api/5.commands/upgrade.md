@@ -2,6 +2,8 @@
 title: "nuxi upgrade"
 ---
 
+# `nuxi upgrade`
+
 ```{bash}
 npx nuxi upgrade [--force|-f]
 ```

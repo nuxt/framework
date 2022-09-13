@@ -3,6 +3,8 @@ title: "nuxi analyze"
 description: "Analyze the production bundle or your Nuxt application."
 ---
 
+# `nuxi analyze`
+
 ```{bash}
 npx nuxi analyze [rootDir]
 ```

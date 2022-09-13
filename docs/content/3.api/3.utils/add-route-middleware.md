@@ -2,6 +2,8 @@
 title: "addRouteMiddleware"
 ---
 
+# `addRouteMiddleware`
+
 `addRouteMiddleware()` is a helper function to dynamically add route middleware in your Nuxt application.
 
 ::alert{type=info}

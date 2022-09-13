@@ -2,6 +2,8 @@
 title: "$fetch"
 ---
 
+# `$fetch`
+
 ::ReadMore{link="/getting-started/data-fetching"}
 ::
 

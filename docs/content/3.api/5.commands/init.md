@@ -2,6 +2,8 @@
 title: "nuxi init"
 ---
 
+# `nuxi init`
+
 ```{bash}
 npx nuxi init|create [--verbose|-v] [--template,-t] [dir]
 ```

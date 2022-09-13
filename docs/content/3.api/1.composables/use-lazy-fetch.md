@@ -2,6 +2,8 @@
 title: "useLazyFetch"
 ---
 
+# `useLazyFetch`
+
 ## Description
 
 By default, [useFetch](/api/composables/use-fetch) blocks navigation until its async handler is resolved.

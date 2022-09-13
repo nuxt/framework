@@ -2,6 +2,8 @@
 title: "nuxi generate"
 ---
 
+# `nuxi generate`
+
 ```{bash}
 npx nuxi generate [rootDir]
 ```

@@ -2,6 +2,8 @@
 title: "nuxi preview"
 ---
 
+# `nuxi preview`
+
 ```{bash}
 npx nuxi preview [rootDir]
 ```

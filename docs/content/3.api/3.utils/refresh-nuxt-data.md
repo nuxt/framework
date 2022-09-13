@@ -2,6 +2,8 @@
 title: "refreshNuxtData"
 ---
 
+# `refreshNuxtData`
+
 ::ReadMore{link="/getting-started/data-fetching"}
 ::
 

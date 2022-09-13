@@ -2,5 +2,7 @@
 title: "defineNuxtComponent"
 ---
 
+# `defineNuxtComponent`
+
 ::NeedContribution
 ::

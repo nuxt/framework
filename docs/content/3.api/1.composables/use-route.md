@@ -2,6 +2,8 @@
 title: "useRoute"
 ---
 
+# `useRoute`
+
 The `useRoute` composable returns the current route and must be called in a `setup` function, plugin, or route middleware.
 
 Within the template of a Vue component, you can access the route using `$route`.

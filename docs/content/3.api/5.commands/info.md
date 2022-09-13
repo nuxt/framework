@@ -2,6 +2,8 @@
 title: "nuxi info"
 ---
 
+# `nuxi info`
+
 ```{bash}
 npx nuxi info [rootDir]
 ```

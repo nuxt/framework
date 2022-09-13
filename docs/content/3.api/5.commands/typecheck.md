@@ -2,6 +2,8 @@
 title: "nuxi typecheck"
 ---
 
+# `nuxi typecheck`
+
 ```{bash}
 npx nuxi typecheck [rootDir]
 ```
