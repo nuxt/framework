@@ -2,8 +2,9 @@ import defu from 'defu'
 import { join } from 'pathe'
 import { isCI, isTest } from 'std-env'
 import { normalizeURL, withTrailingSlash } from 'ufo'
+import { defineUntypedSchema } from 'untyped'
 
-export default {
+export default defineUntypedSchema({
   /**
    * The builder to use for bundling the Vue part of your application.
    *
@@ -11,23 +12,34 @@ export default {
    * @version 3
    */
   builder: {
-    $resolve: (val, get) => {
+    $resolve: async (val, get) => {
       if (typeof val === 'object') {
         return val
       }
-      const map = {
+      const map: Record<string, string> = {
         vite: '@nuxt/vite-builder',
         webpack: '@nuxt/webpack-builder',
       }
-      return map[val] || (get('vite') === false ? map.webpack : map.vite)
-    },
+      return map[val] || val || (await get('vite') === false ? map.webpack : map.vite)
+    }
   },
   /**
    * Whether to generate sourcemaps.
    *
+   * @type {boolean | { server?: boolean, client?: boolean }}
    * @version 3
    */
-  sourcemap: true,
+  sourcemap: {
+    $resolve: async (val, get) => {
+      if (typeof val === 'boolean') {
+        return { server: val, client: val }
+      }
+      return defu(val, {
+        server: true,
+        client: await get('dev')
+      })
+    },
+  },
   /**
    * Shared build configuration.
    * @version 2
@@ -59,11 +71,11 @@ export default {
      * @type {boolean | typeof import('webpack-bundle-analyzer').BundleAnalyzerPlugin.Options | typeof import('rollup-plugin-visualizer').PluginVisualizerOptions}
      */
     analyze: {
-      $resolve: (val, get) => {
-        if(val !== true) {
+      $resolve: async (val, get) => {
+        if (val !== true) {
           return val ?? false
         }
-        const rootDir = get('rootDir')
+        const rootDir = await get('rootDir')
         return {
           template: 'treemap',
           projectRoot: rootDir,
@@ -138,7 +150,7 @@ export default {
      * @version 2
      */
     cssSourceMap: {
-      $resolve: (val, get) => val ?? get('sourcemap') ?? get('dev')
+      $resolve: async (val, get) => val ?? await get('sourcemap') ?? await get('dev')
     },
 
     /**
@@ -154,12 +166,12 @@ export default {
      * @version 2
      */
     parallel: {
-      $resolve: (val, get) => get('build.extractCSS') ? false : Boolean(val)
+      $resolve: async (val, get) => await get('build.extractCSS') ? false : Boolean(val)
     },
 
     /**
      * Enable caching for [`terser-webpack-plugin`](https://github.com/webpack-contrib/terser-webpack-plugin#options)
-     * and [`cache-loader`](https://github.com/webpack-contrib/cache-loader#cache-loader)
+     * and [`cache-loader`](https://github.com/webpack-contrib/cache-loader#cache-loader).
      *
      * @warning This is an unstable feature.
      * @version 2
@@ -167,7 +179,7 @@ export default {
     cache: false,
 
     /**
-     * Inline server bundle dependencies
+     * Inline server bundle dependencies.
      *
      * This mode bundles `node_modules` that are normally preserved as externals in the server build.
      *
@@ -198,7 +210,7 @@ export default {
      * @version 2
      */
     publicPath: {
-      $resolve: (val, get) => val ? withTrailingSlash(normalizeURL(val)) : get('app').buildAssetsDir
+      $resolve: async (val, get) => val ? withTrailingSlash(normalizeURL(val)) : (await get('app').buildAssetsDir)
     },
 
     /**
@@ -225,15 +237,16 @@ export default {
      *   chunk: ({ isDev }) => (isDev ? '[name].js' : '[id].[contenthash].js')
      * }
      * ```
+     * @type {Record<string, ((arg: any) => string)>}
      * @version 2
      */
     filenames: {
-      app: ({ isDev, isModern }) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
-      chunk: ({ isDev, isModern }) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
-      css: ({ isDev }) => isDev ? '[name].css' : 'css/[contenthash:7].css',
-      img: ({ isDev }) => isDev ? '[path][name].[ext]' : 'img/[name].[contenthash:7].[ext]',
-      font: ({ isDev }) => isDev ? '[path][name].[ext]' : 'fonts/[name].[contenthash:7].[ext]',
-      video: ({ isDev }) => isDev ? '[path][name].[ext]' : 'videos/[name].[contenthash:7].[ext]'
+      app: ({ isDev, isModern }: any) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
+      chunk: ({ isDev, isModern }: any) => isDev ? `[name]${isModern ? '.modern' : ''}.js` : `[contenthash:7]${isModern ? '.modern' : ''}.js`,
+      css: ({ isDev }: any) => isDev ? '[name].css' : 'css/[contenthash:7].css',
+      img: ({ isDev }: any) => isDev ? '[path][name].[ext]' : 'img/[name].[contenthash:7].[ext]',
+      font: ({ isDev }: any) => isDev ? '[path][name].[ext]' : 'fonts/[name].[contenthash:7].[ext]',
+      video: ({ isDev }: any) => isDev ? '[path][name].[ext]' : 'videos/[name].[contenthash:7].[ext]'
     },
 
     /**
@@ -241,7 +254,7 @@ export default {
      * @version 2
      */
     loaders: {
-      $resolve: (val, get) => {
+      $resolve: async (val, get) => {
         const styleLoaders = [
           'css', 'cssModules', 'less',
           'sass', 'scss', 'stylus', 'vueStyle'
@@ -249,7 +262,7 @@ export default {
         for (const name of styleLoaders) {
           const loader = val[name]
           if (loader && loader.sourcemap === undefined) {
-            loader.sourcemap = Boolean(get('build.cssSourceMap'))
+            loader.sourcemap = Boolean(await get('build.cssSourceMap'))
           }
         }
         return val
@@ -259,14 +272,14 @@ export default {
       imgUrl: { esModule: false, limit: 1000 },
       pugPlain: {},
       vue: {
-        productionMode: { $resolve: (val, get) => val ?? !get('dev') },
+        productionMode: { $resolve: async (val, get) => val ?? !(await get('dev')) },
         transformAssetUrls: {
           video: 'src',
           source: 'src',
           object: 'src',
           embed: 'src'
         },
-        compilerOptions: { $resolve: (val, get) => val ?? get('vue.compilerOptions') },
+        compilerOptions: { $resolve: async (val, get) => val ?? await get('vue.compilerOptions') },
       },
       css: {
         importLoaders: 0,
@@ -350,7 +363,7 @@ export default {
      * @version 2
      */
     optimizeCSS: {
-      $resolve: (val, get) => val ?? (get('build.extractCSS') ? {} : false)
+      $resolve: async (val, get) => val ?? (await get('build.extractCSS') ? {} : false)
     },
 
     /**
@@ -360,7 +373,9 @@ export default {
     optimization: {
       runtimeChunk: 'single',
       /** Set minimize to false to disable all minimizers. (It is disabled in development by default) */
-      minimize: { $resolve: (val, get) => val ?? !get('dev') },
+      minimize: {
+        $resolve: async (val, get) => val ?? !(await get('dev'))
+      },
       /** You can set minimizer to a customized array of plugins. */
       minimizer: undefined,
       splitChunks: {
@@ -460,7 +475,7 @@ export default {
        */
       presets: {},
       cacheDirectory: {
-        $resolve: (val, get) => val ?? get('dev')
+        $resolve: async (val, get) => val ?? (await get('dev'))
       }
     },
 
@@ -491,10 +506,10 @@ export default {
     postcss: {
       execute: undefined,
       postcssOptions: {
-        $resolve: (val, get) => {
+        $resolve: async (val, get) => {
           // Ensure we return the same object in `build.postcss.postcssOptions as `postcss`
           // so modules which modify the configuration continue to work.
-          const postcssOptions = get('postcss')
+          const postcssOptions = await get('postcss')
           Object.assign(postcssOptions, defu(postcssOptions, val))
           return postcssOptions
         }
@@ -610,7 +625,7 @@ export default {
      * @version 2
      */
     stats: {
-      $resolve: (val, get) => (val === 'none' || get('build.quiet')) ? false : val,
+      $resolve: async (val, get) => (val === 'none' || (await get('build.quiet'))) ? false : val,
       excludeAssets: [
         /.map$/,
         /index\..+\.html$/,
@@ -618,7 +633,7 @@ export default {
       ]
     },
     /**
-     * Set to `false` to disable the overlay provided by [FriendlyErrorsWebpackPlugin](https://github.com/nuxt/friendly-errors-webpack-plugin)
+     * Set to `false` to disable the overlay provided by [FriendlyErrorsWebpackPlugin](https://github.com/nuxt/friendly-errors-webpack-plugin).
      * @version 2
      */
     friendlyErrors: true,
@@ -639,4 +654,4 @@ export default {
      */
     followSymlinks: false
   }
-}
+})

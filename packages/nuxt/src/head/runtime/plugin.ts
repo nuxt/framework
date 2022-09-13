@@ -3,10 +3,10 @@ import * as Components from './components'
 import { useHead } from './composables'
 import { defineNuxtPlugin, useNuxtApp } from '#app'
 // @ts-ignore
-import metaConfig from '#build/meta.config.mjs'
+import { appHead } from '#build/nuxt.config.mjs'
 
 type MetaComponents = typeof Components
-declare module 'vue' {
+declare module '@vue/runtime-core' {
   export interface GlobalComponents extends MetaComponents {}
 }
 
@@ -28,12 +28,12 @@ const metaMixin = {
 }
 
 export default defineNuxtPlugin((nuxtApp) => {
-  useHead(markRaw({ title: '', ...metaConfig.globalMeta }))
+  useHead(markRaw({ title: '', ...appHead }))
 
   nuxtApp.vueApp.mixin(metaMixin)
 
   for (const name in Components) {
     // eslint-disable-next-line import/namespace
-    nuxtApp.vueApp.component(name, Components[name])
+    nuxtApp.vueApp.component(name, (Components as any)[name])
   }
 })

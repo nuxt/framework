@@ -21,7 +21,7 @@ Build your next application with Vue 3 and experience hybrid rendering, powerful
 Nuxt 3 is an open source framework making web development simple and powerful.
 
 #secondary-button
-:button-link[Get started]{ href="/getting-started/quick-start" size="medium" aria-label="Get started" }
+:button-link[Get started]{ href="/getting-started/introduction" size="medium" aria-label="Get started" }
 ::
 
 ::home-features{.dark:bg-secondary-darkest .bg-gray-50}
@@ -103,7 +103,7 @@ Nuxt 3 has been re-architected with a smaller core and optimized for faster perf
   ::
   ::section-content-item
   ---
-  title: Webpack 5
+  title: webpack 5
   description: 'Faster build time and smaller bundle size, with no configuration required.'
   image: IconWebpack
   imageClass: w-10 h-10

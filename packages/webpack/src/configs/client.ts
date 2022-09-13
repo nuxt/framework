@@ -22,8 +22,13 @@ export function client (ctx: WebpackConfigContext) {
 }
 
 function clientDevtool (ctx: WebpackConfigContext) {
-  if (!ctx.isDev) {
+  if (!ctx.nuxt.options.sourcemap.client) {
     ctx.config.devtool = false
+    return
+  }
+
+  if (!ctx.isDev) {
+    ctx.config.devtool = 'source-map'
     return
   }
 
@@ -64,10 +69,11 @@ function clientHMR (ctx: WebpackConfigContext) {
   // Add HMR support
   const app = (config.entry as any).app as any
   app.unshift(
-      // https://github.com/glenjamin/webpack-hot-middleware#config
-      `webpack-hot-middleware/client?${hotMiddlewareClientOptionsStr}`
+    // https://github.com/glenjamin/webpack-hot-middleware#config
+    `webpack-hot-middleware/client?${hotMiddlewareClientOptionsStr}`
   )
 
+  config.plugins = config.plugins || []
   config.plugins.push(new webpack.HotModuleReplacementPlugin())
 }
 
@@ -97,7 +103,8 @@ function clientPlugins (ctx: WebpackConfigContext) {
 }
 
 function getCspScriptPolicy (ctx: WebpackConfigContext) {
-  const { csp } = ctx.options.render
+  // TODO
+  const { csp } = ctx.options.render as any
   if (typeof csp === 'object') {
     const { policies = {} } = csp
     return policies['script-src'] || policies['default-src'] || []

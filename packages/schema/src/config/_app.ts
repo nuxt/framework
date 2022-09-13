@@ -1,8 +1,11 @@
 import { resolve, join } from 'pathe'
 import { existsSync, readdirSync } from 'node:fs'
 import defu from 'defu'
+import { defineUntypedSchema } from 'untyped'
 
-export default {
+import { MetaObject } from '../types/meta'
+
+export default defineUntypedSchema({
   /**
    * Vue.js config
    * @version 2
@@ -13,17 +16,21 @@ export default {
      * Properties that will be set directly on `Vue.config` for vue@2.
      *
      * @see [vue@2 Documentation](https://v2.vuejs.org/v2/api/#Global-Config)
-     * @type {import('vue/types/vue').VueConfiguration}
+     * @type {typeof import('vue/types/vue').VueConfiguration}
      * @version 2
      */
     config: {
-      silent: { $resolve: (val, get) => val ?? !get('dev') },
-      performance: { $resolve: (val, get) => val ?? get('dev') },
+      silent: {
+        $resolve: async (val, get) => val ?? !(await get('dev'))
+      },
+      performance: {
+        $resolve: async (val, get) => val ?? await get('dev')
+      },
     },
     /**
-     * Options for the Vue compiler that will be passed at build time
+     * Options for the Vue compiler that will be passed at build time.
      * @see [documentation](https://vuejs.org/api/application.html#app-config-compileroptions)
-     * @type {import('@vue/compiler-core').CompilerOptions}
+     * @type {typeof import('@vue/compiler-core').CompilerOptions}
      * @version 3
      */
     compilerOptions: {}
@@ -55,19 +62,19 @@ export default {
      * @version 2
      */
     assetsPath: {
-      $resolve: (val, get) => val ?? get('buildAssetsDir')
+      $resolve: async (val, get) => val ?? (await get('buildAssetsDir'))
     },
     /**
      * An absolute URL to serve the public folder from (production-only).
      *
-     * This can be set to a different value at runtime by setting the NUXT_APP_CDN_URL environment variable.
+     * This can be set to a different value at runtime by setting the `NUXT_APP_CDN_URL` environment variable.
      * @example
      * ```bash
      * NUXT_APP_CDN_URL=https://mycdn.org/ node .output/server/index.mjs
      * ```
-    */
+     */
     cdnURL: {
-      $resolve: (val, get) => get('dev') ? '' : (process.env.NUXT_APP_CDN_URL ?? val) || ''
+      $resolve: async (val, get) => (await get('dev')) ? '' : (process.env.NUXT_APP_CDN_URL ?? val) || ''
     },
     /**
      * Set default configuration for `<head>` on every page.
@@ -92,29 +99,72 @@ export default {
      *     style: [
      *       // <style type="text/css">:root { color: red }</style>
      *       { children: ':root { color: red }', type: 'text/css' }
+     *     ],
+     *     noscript: [
+     *       // <noscript>Javascript is required</noscript>
+     *       { children: 'Javascript is required' }
      *     ]
      *   }
      * }
      * ```
-     * @type {typeof import('../src/types/meta').MetaObject}
+     * @type {typeof import('../src/types/config').NuxtAppConfig['head']}
      * @version 3
      */
     head: {
-      $resolve: (val, get) => {
-        return defu(val, get('meta'), {
-          charset: 'utf-8',
-          viewport: 'width=device-width, initial-scale=1',
+      $resolve: async (val, get) => {
+        const resolved: Required<MetaObject> = defu(val, await get('meta'), {
           meta: [],
           link: [],
           style: [],
-          script: []
+          script: [],
+          noscript: []
         })
+
+        resolved.charset = resolved.charset ?? resolved.meta.find(m => m.charset)?.charset ?? 'utf-8'
+        resolved.viewport = resolved.viewport ?? resolved.meta.find(m => m.name === 'viewport')?.content ?? 'width=device-width, initial-scale=1'
+        resolved.meta = resolved.meta.filter(m => m && m.name !== 'viewport' && !m.charset)
+        resolved.link = resolved.link.filter(Boolean)
+        resolved.style = resolved.style.filter(Boolean)
+        resolved.script = resolved.script.filter(Boolean)
+        resolved.noscript = resolved.noscript.filter(Boolean)
+
+        return resolved
       }
     },
+    /**
+     * Default values for layout transitions.
+     *
+     * This can be overridden with `definePageMeta` on an individual page.
+     * Only JSON-serializable values are allowed.
+     *
+     * @see https://vuejs.org/api/built-in-components.html#transition
+     * @type {typeof import('../src/types/config').NuxtAppConfig['layoutTransition']}
+     */
+    layoutTransition: { name: 'layout', mode: 'out-in' },
+    /**
+     * Default values for page transitions.
+     *
+     * This can be overridden with `definePageMeta` on an individual page.
+     * Only JSON-serializable values are allowed.
+     *
+     * @see https://vuejs.org/api/built-in-components.html#transition
+     * @type {typeof import('../src/types/config').NuxtAppConfig['pageTransition']}
+     */
+    pageTransition: { name: 'page', mode: 'out-in' },
+    /**
+     * Default values for KeepAlive configuration between pages.
+     *
+     * This can be overridden with `definePageMeta` on an individual page.
+     * Only JSON-serializable values are allowed.
+     *
+     * @see https://vuejs.org/api/built-in-components.html#keepalive
+     * @type {typeof import('../src/types/config').NuxtAppConfig['keepalive']}
+     */
+    keepalive: false,
   },
   /**
-   * The path to a templated HTML file for rendering Nuxt responses.
-   * Uses `<srcDir>/app.html` if it exists or the Nuxt default template if not.
+   * The path to an HTML template file for rendering Nuxt responses.
+   * Uses `<srcDir>/app.html` if it exists, or the Nuxt's default template if not.
    *
    * @example
    * ```html
@@ -131,27 +181,27 @@ export default {
    * @version 2
    */
   appTemplatePath: {
-    $resolve: (val, get) => {
+    $resolve: async (val, get) => {
       if (val) {
-        return resolve(get('srcDir'), val)
+        return resolve(await get('srcDir'), val)
       }
-      if (existsSync(join(get('srcDir'), 'app.html'))) {
-        return join(get('srcDir'), 'app.html')
+      if (existsSync(join(await get('srcDir'), 'app.html'))) {
+        return join(await get('srcDir'), 'app.html')
       }
-      return resolve(get('buildDir'), 'views/app.template.html')
+      return resolve(await get('buildDir'), 'views/app.template.html')
     }
   },
 
   /**
-   * Enable or disable vuex store.
+   * Enable or disable Vuex store.
    *
-   * By default it is enabled if there is a `store/` directory
+   * By default, it is enabled if there is a `store/` directory.
    * @version 2
    */
   store: {
-    $resolve: (val, get) => val !== false &&
-      existsSync(join(get('srcDir'), get('dir.store'))) &&
-      readdirSync(join(get('srcDir'), get('dir.store')))
+    $resolve: async (val, get) => val !== false &&
+      existsSync(join(await get('srcDir'), await get('dir.store'))) &&
+      readdirSync(join(await get('srcDir'), await get('dir.store')))
         .find(filename => filename !== 'README.md' && filename[0] !== '.')
   },
 
@@ -159,7 +209,7 @@ export default {
    * Options to pass directly to `vue-meta`.
    *
    * @see [documentation](https://vue-meta.nuxtjs.org/api/#plugin-options).
-   * @type {import('vue-meta').VueMetaOptions}
+   * @type {typeof import('vue-meta').VueMetaOptions}
    * @version 2
    */
   vueMeta: null,
@@ -168,7 +218,7 @@ export default {
    * Set default configuration for `<head>` on every page.
    *
    * @see [documentation](https://vue-meta.nuxtjs.org/api/#metainfo-properties) for specifics.
-   * @type {import('vue-meta').MetaInfo}
+   * @type {typeof import('vue-meta').MetaInfo}
    * @version 2
    */
   head: {
@@ -250,7 +300,7 @@ export default {
    * @example
    * ```js
    * css: [
-   *   // Load a Node.js module directly (here it's a Sass file)
+   *   // Load a Node.js module directly (here it's a Sass file).
    *   'bulma',
    *   // CSS file in the project
    *   '@/assets/css/main.css',
@@ -263,13 +313,13 @@ export default {
    * @version 3
    */
   css: {
-    $resolve: val => (val ?? []).map(c => c.src || c)
+    $resolve: val => (val ?? []).map((c: any) => c.src || c)
   },
 
   /**
    * An object where each key name maps to a path to a layout .vue file.
    *
-   * Normally there is no need to configure this directly.
+   * Normally, there is no need to configure this directly.
    * @type {Record<string, string>}
    * @version 2
    */
@@ -278,7 +328,7 @@ export default {
   /**
    * Set a custom error page layout.
    *
-   * Normally there is no need to configure this directly.
+   * Normally, there is no need to configure this directly.
    * @type {string}
    * @version 2
    */
@@ -291,11 +341,11 @@ export default {
    * @version 2
    */
   loading: {
-    /** CSS color of the progress bar */
+    /** CSS color of the progress bar. */
     color: 'black',
     /**
      * CSS color of the progress bar when an error appended while rendering
-     * the route (if data or fetch sent back an error for example).
+     * the route (if data or fetch sent back an error, for example).
      */
     failedColor: 'red',
     /** Height of the progress bar (used in the style property of the progress bar). */
@@ -314,7 +364,7 @@ export default {
     continuous: false,
     /** Set the direction of the progress bar from right to left. */
     rtl: false,
-    /** Set to false to remove default progress bar styles (and add your own). */
+    /** Set to `false` to remove default progress bar styles (and add your own). */
     css: true
   },
 
@@ -324,19 +374,19 @@ export default {
    * Set to `false` to disable. Alternatively, you can pass a string name or an object for more
    * configuration. The name can refer to an indicator from [SpinKit](https://tobiasahlin.com/spinkit/)
    * or a path to an HTML template of the indicator source code (in this case, all the
-   * other options will be passed to the template.)
+   * other options will be passed to the template).
    * @version 2
    */
   loadingIndicator: {
-    $resolve: (val, get) => {
+    $resolve: async (val, get) => {
       val = typeof val === 'string' ? { name: val } : val
       return defu(val, {
         name: 'default',
-        color: get('loading.color') || '#D3D3D3',
+        color: await get('loading.color') || '#D3D3D3',
         color2: '#F5F5F5',
-        background: (get('manifest') && get('manifest.theme_color')) || 'white',
-        dev: get('dev'),
-        loading: get('messages.loading')
+        background: (await get('manifest') && await get('manifest.theme_color')) || 'white',
+        dev: await get('dev'),
+        loading: await get('messages.loading')
       })
     }
   },
@@ -352,12 +402,12 @@ export default {
    * @version 2
    */
   pageTransition: {
-    $resolve: (val, get) => {
+    $resolve: async (val, get) => {
       val = typeof val === 'string' ? { name: val } : val
       return defu(val, {
         name: 'page',
         mode: 'out-in',
-        appear: get('render.ssr') === false || Boolean(val),
+        appear: await get('render.ssr') === false || Boolean(val),
         appearClass: 'appear',
         appearActiveClass: 'appear-active',
         appearToClass: 'appear-to'
@@ -417,4 +467,4 @@ export default {
     /** Set to false to disable the `<ClientOnly>` component (see [docs](https://github.com/egoist/vue-client-only)) */
     componentClientOnly: true
   }
-}
+})

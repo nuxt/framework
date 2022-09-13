@@ -8,6 +8,9 @@
     "@docus/github",
     "@docus/social-image",
     "@docus/theme",
-    "@docus/twitter"
+    "@docus/twitter",
+    "vitest",
+    "unplugin",
+    "vue-tsc"
   ]
 }
