@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import pify from 'pify'
 import webpack from 'webpack'
+import { promisifyHandler } from 'h3'
 import webpackDevMiddleware, { API, OutputFileSystem } from 'webpack-dev-middleware'
 import webpackHotMiddleware from 'webpack-hot-middleware'
 import type { Compiler, Watching } from 'webpack'
@@ -35,10 +36,10 @@ export async function bundle (nuxt: Nuxt) {
   // Configure compilers
   const compilers = webpackConfigs.map((config) => {
     config.plugins!.push(DynamicBasePlugin.webpack({
-      sourcemap: nuxt.options.sourcemap
+      sourcemap: nuxt.options.sourcemap[config.name as 'client' | 'server']
     }))
     config.plugins!.push(composableKeysPlugin.webpack({
-      sourcemap: nuxt.options.sourcemap,
+      sourcemap: nuxt.options.sourcemap[config.name as 'client' | 'server'],
       rootDir: nuxt.options.rootDir
     }))
 
@@ -80,8 +81,9 @@ async function createDevMiddleware (compiler: Compiler) {
     outputFileSystem: compiler.outputFileSystem as any,
     stats: 'none',
     ...nuxt.options.webpack.devMiddleware
-  })) as API<IncomingMessage, ServerResponse>
+  })) as any as API<IncomingMessage, ServerResponse>
 
+  // @ts-ignore
   nuxt.hook('close', () => pify(devMiddleware.close.bind(devMiddleware))())
 
   const { client: _client, ...hotMiddlewareOptions } = nuxt.options.webpack.hotMiddleware || {}
@@ -90,15 +92,16 @@ async function createDevMiddleware (compiler: Compiler) {
     heartbeat: 10000,
     path: joinURL(nuxt.options.app.baseURL, '__webpack_hmr', compiler.options.name!),
     ...hotMiddlewareOptions
-  }))
+  })) as any as API<IncomingMessage, ServerResponse>
 
   await nuxt.callHook('webpack:devMiddleware', devMiddleware)
   await nuxt.callHook('webpack:hotMiddleware', hotMiddleware)
 
   // Register devMiddleware on server
-  await nuxt.callHook('server:devMiddleware', async (req: IncomingMessage, res: ServerResponse, next: (error?: any) => void) => {
-    for (const mw of [devMiddleware, hotMiddleware]) {
-      await mw?.(req, res, next)
+  const handlers = [promisifyHandler(devMiddleware), promisifyHandler(hotMiddleware)]
+  await nuxt.callHook('server:devMiddleware', async (req, res, next) => {
+    for (const mw of handlers) {
+      await mw?.(req, res)
     }
     next()
   })

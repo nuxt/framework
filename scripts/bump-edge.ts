@@ -1,7 +1,9 @@
 import { promises as fsp } from 'node:fs'
 import { execSync } from 'node:child_process'
+import { $fetch } from 'ohmyfetch'
 import { resolve } from 'pathe'
 import { globby } from 'globby'
+import { inc } from 'semver'
 
 interface Dep {
   name: string,
@@ -100,8 +102,15 @@ async function main () {
   const commit = execSync('git rev-parse --short HEAD').toString('utf-8').trim()
   const date = Math.round(Date.now() / (1000 * 60))
 
+  const nuxtPkg = workspace.find('nuxt')
+  const nitroInfo = await $fetch('https://registry.npmjs.org/nitropack-edge')
+  const latestNitro = nitroInfo['dist-tags'].latest
+  nuxtPkg.data.dependencies.nitropack = `npm:nitropack-edge@^${latestNitro}`
+
   for (const pkg of workspace.packages.filter(p => !p.data.private)) {
-    workspace.setVersion(pkg.data.name, `${pkg.data.version}-${date}.${commit}`)
+    // TODO: Set release type based on changelog after 3.0.0
+    const newVersion = inc(pkg.data.version, 'prerelease', 'rc')
+    workspace.setVersion(pkg.data.name, `${newVersion}-${date}.${commit}`)
     const newname = pkg.data.name === 'nuxt' ? 'nuxt3' : (pkg.data.name + '-edge')
     workspace.rename(pkg.data.name, newname)
   }

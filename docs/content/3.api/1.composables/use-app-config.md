@@ -1,9 +1,6 @@
 # `useAppConfig`
 
-::StabilityEdge
-::
-
-Access [app config](/guide/going-further/app-config):
+Access [app config](/guide/features/app-config):
 
 **Usage:**
 

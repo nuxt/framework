@@ -7,7 +7,7 @@ import type { Nuxt } from '@nuxt/schema'
 import consola from 'consola'
 import { withTrailingSlash } from 'ufo'
 import { setupDotenv } from 'c12'
-import { showBanner } from '../utils/banner'
+import { showBanner, showVersions } from '../utils/banner'
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
 import { importModule } from '../utils/cjs'
@@ -38,6 +38,8 @@ export default defineNuxtCommand({
     }
 
     const rootDir = resolve(args._[0] || '.')
+    showVersions(rootDir)
+
     await setupDotenv({ cwd: rootDir })
 
     const listener = await listen(serverHandler, {
@@ -92,6 +94,7 @@ export default defineNuxtCommand({
         const address = listener.server.address() as AddressInfo
         currentNuxt.options.server.port = address.port
         currentNuxt.options.server.host = address.address
+        currentNuxt.options.server.https = Boolean(args.https)
 
         await Promise.all([
           writeTypes(currentNuxt).catch(console.error),

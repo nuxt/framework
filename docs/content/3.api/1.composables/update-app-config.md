@@ -1,8 +1,5 @@
 # `updateAppConfig`
 
-::StabilityEdge
-::
-
 Updates [app config](/guide/going-further/app-config) using deep assignment. Existing (nested) properties will be preserved.
 
 **Usage:**
