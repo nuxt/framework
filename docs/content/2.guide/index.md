@@ -2,5 +2,5 @@
 title: Guide
 layout.aside: true
 navigation.exclusive: true
-navigation.redirect: /guide/key-concepts/auto-imports
+navigation.redirect: /guide/concepts/auto-imports
 ---

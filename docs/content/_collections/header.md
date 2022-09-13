@@ -5,7 +5,7 @@ links:
     to: '/getting-started/introduction'
   -
     title: 'Guide'
-    to: '/guide/key-concepts/auto-imports'
+    to: '/guide/concepts/auto-imports'
   -
     title: 'API'
     to: '/api/composables/use-async-data'
