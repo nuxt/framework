@@ -42,7 +42,6 @@
 /guide/going-further/testing      /getting-started/testing 302!
 # New structure - migration
 /getting-started/migration        /getting-started/upgrade-guide/migration 302!
-/migration/*                      /getting-started/upgrade-guide/migration/:splat 302!
 /guide/going-further/edge-channel /getting-started/upgrade-guide/edge-channel 302!
 # New structure - Key concepts
 /guide/concepts/vuejs-development /guide/key-concepts/vuejs-development 302!
