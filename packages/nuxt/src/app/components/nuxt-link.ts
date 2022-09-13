@@ -44,7 +44,7 @@ export type NuxtLinkProps = {
 // https://caniuse.com/requestidlecallback
 const requestIdleCallback: Window['requestIdleCallback'] = process.server
   ? undefined as any
-  : (window.requestIdleCallback || ((cb) => {
+  : (globalThis.requestIdleCallback || ((cb) => {
       const start = Date.now()
       const idleDeadline = {
         didTimeout: false,
@@ -55,7 +55,7 @@ const requestIdleCallback: Window['requestIdleCallback'] = process.server
 
 const cancelIdleCallback: Window['cancelIdleCallback'] = process.server
   ? null as any
-  : (window.cancelIdleCallback || ((id) => { clearTimeout(id) }))
+  : (globalThis.cancelIdleCallback || ((id) => { clearTimeout(id) }))
 
 export function defineNuxtLink (options: NuxtLinkOptions) {
   const componentName = options.componentName || 'NuxtLink'
