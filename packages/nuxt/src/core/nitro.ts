@@ -108,6 +108,10 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
         'nuxt/dist',
         'nuxt3/dist',
         distDir
+      ],
+      traceInclude: [
+        // force include files used in generated code from the runtime-compiler
+        ...(nuxt.options.experimental.externalVue && nuxt.options.vue.runtimeCompiler) ? ['./node_modules/vue/server-renderer/index.js'] : []
       ]
     },
     alias: {
