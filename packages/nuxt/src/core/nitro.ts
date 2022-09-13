@@ -111,7 +111,14 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
       ],
       traceInclude: [
         // force include files used in generated code from the runtime-compiler
-        ...(nuxt.options.experimental.externalVue && nuxt.options.vue.runtimeCompiler) ? ['./node_modules/vue/server-renderer/index.js'] : []
+        ...(nuxt.options.experimental.externalVue && nuxt.options.vue.runtimeCompiler)
+          ? [
+              ...nuxt.options.modulesDir.reduce<string[]>((targets, path) => {
+                targets.push(resolve(path, 'vue/server-renderer/index.js'))
+                return targets
+              }, [])
+            ]
+          : []
       ]
     },
     alias: {
@@ -153,11 +160,14 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     commonJS: {
       dynamicRequireTargets: (!nuxt.options.experimental.externalVue && nuxt.options.vue.runtimeCompiler && !nuxt.options.dev)
         ? [
-            './node_modules/vue',
-            './node_modules/@vue/compiler-core',
-            './node_modules/@vue/compiler-dom',
-            './node_modules/@vue/compiler-ssr',
-            './node_modules/vue/server-renderer'
+            ...nuxt.options.modulesDir.reduce<string[]>((targets, path) => {
+              targets.push(resolve(path, 'vue'),
+                resolve(path, '@vue/compiler-core'),
+                resolve(path, '@vue/compiler-dom'),
+                resolve(path, '@vue/compiler-ssr'),
+                resolve(path, 'vue/server-renderer'))
+              return targets
+            }, [])
           ]
         : []
     }
