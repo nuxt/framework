@@ -12,6 +12,11 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
     configFile: 'nuxt.config',
     rcFile: '.nuxtrc',
     extend: { extendKey: ['theme', 'extends'] },
+    jitiOptions: {
+      alias: {
+        nuxt: 'nuxt/config'
+      }
+    },
     dotenv: true,
     globalRc: true,
     ...opts
