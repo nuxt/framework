@@ -12,6 +12,11 @@
   },
   "exports": {
     ".": "./dist/index.mjs",
+    "./config": {
+      "import": "./config.mjs",
+      "require": "./config.cjs",
+      "types": "./config.d.ts"
+    },
     "./app": "./dist/app/index.mjs",
     "./package.json": "./package.json"
   },
@@ -24,7 +29,8 @@
     "app.d.ts",
     "bin",
     "types.d.ts",
-    "dist"
+    "dist",
+    "config.*"
   ],
   "scripts": {
     "prepack": "unbuild"
@@ -52,7 +58,7 @@
     "knitwork": "^0.1.2",
     "magic-string": "^0.26.3",
     "mlly": "^0.5.14",
-    "nitropack": "^0.5.1",
+    "nitropack": "^0.5.2",
     "nuxi": "3.0.0-rc.9",
     "ohash": "^0.1.5",
     "ohmyfetch": "^0.4.18",
