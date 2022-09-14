@@ -45,6 +45,13 @@ export function useFetch<
   if (!request) {
     throw new Error('[nuxt] [useFetch] request is missing.')
   }
+
+  const functionKey = typeof _key === 'function' ? _key() : undefined
+  // check for undefined so '' can be used as key
+  if (functionKey !== undefined && typeof functionKey !== 'string') {
+    throw new TypeError('[nuxt] [useFetch] key function must return a string: ' + functionKey)
+  }
+
   const key = () => '$f' + (typeof _key === 'string' ? _key : _key())
 
   const _request = computed(() => {

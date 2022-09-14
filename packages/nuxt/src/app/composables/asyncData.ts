@@ -73,7 +73,7 @@ export function useAsyncData<
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (...args: any[]): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
   const autoKey = typeof args[args.length - 1] === 'string' || typeof args[args.length - 1] === 'function' ? args.pop() : undefined
-  if (typeof args[0] !== 'string' && typeof args[0] !== 'string') { args.unshift(autoKey) }
+  if (typeof args[0] !== 'string' && typeof args[0] !== 'function') { args.unshift(autoKey) }
 
   // eslint-disable-next-line prefer-const
   let [_key, handler, options = {}] = args as [string | (() => string), (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
@@ -86,8 +86,14 @@ export function useAsyncData<
     throw new TypeError('[nuxt] [asyncData] handler must be a function.')
   }
 
+  const functionKey = typeof _key === 'function' ? _key() : undefined
+  // check for undefined so '' can be used as key
+  if (functionKey !== undefined && typeof functionKey !== 'string') {
+    throw new TypeError('[nuxt] [asyncData] key function must return a string: ' + functionKey)
+  }
+
   // Get key
-  const key = typeof _key === 'function' ? _key() : _key
+  const key = functionKey ?? (_key as string)
 
   // Apply defaults
   options.server = options.server ?? true
