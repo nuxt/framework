@@ -20,11 +20,11 @@ export default defineComponent({
     },
     transition: {
       type: [Boolean, Object] as any as () => boolean | TransitionProps,
-      required: false
+      default: undefined
     },
     keepalive: {
       type: [Boolean, Object] as any as () => boolean | KeepAliveProps,
-      required: false
+      default: undefined
     },
     route: {
       type: Object as () => RouteLocationNormalized
