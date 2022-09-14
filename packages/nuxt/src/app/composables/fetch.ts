@@ -11,7 +11,7 @@ export interface UseFetchOptions<
   Transform extends _Transform<DataT, any> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > extends AsyncDataOptions<DataT, Transform, PickKeys>, FetchOptions {
-  key?: string
+  key?: string | (() => string)
 }
 
 export function useFetch<
@@ -34,18 +34,18 @@ export function useFetch<
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   request: Ref<ReqT> | ReqT | (() => ReqT),
-  arg1?: string | UseFetchOptions<_ResT, Transform, PickKeys>,
-  arg2?: string
+  arg1?: string | (() => string) | UseFetchOptions<_ResT, Transform, PickKeys>,
+  arg2?: string | (() => string)
 ) {
-  const [opts = {}, autoKey] = typeof arg1 === 'string' ? [{}, arg1] : [arg1, arg2]
+  const [opts = {}, autoKey] = typeof arg1 === 'string' || typeof arg1 === 'function' ? [{}, arg1] : [arg1, arg2]
   const _key = opts.key || autoKey
-  if (!_key || typeof _key !== 'string') {
-    throw new TypeError('[nuxt] [useFetch] key must be a string: ' + _key)
+  if (!_key || (typeof _key !== 'string' && typeof _key !== 'function')) {
+    throw new TypeError('[nuxt] [useFetch] key must be a string or a function which returns a string: ' + _key)
   }
   if (!request) {
     throw new Error('[nuxt] [useFetch] request is missing.')
   }
-  const key = '$f' + _key
+  const key = () => '$f' + (typeof _key === 'string' ? _key : _key())
 
   const _request = computed(() => {
     let r = request
@@ -111,10 +111,10 @@ export function useLazyFetch<
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
 > (
   request: Ref<ReqT> | ReqT | (() => ReqT),
-  arg1?: string | Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'lazy'>,
-  arg2?: string
+  arg1?: string | (() => string) | Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'lazy'>,
+  arg2?: string | (() => string)
 ) {
-  const [opts, autoKey] = typeof arg1 === 'string' ? [{}, arg1] : [arg1, arg2]
+  const [opts, autoKey] = typeof arg1 === 'string' || typeof arg1 === 'function' ? [{}, arg1] : [arg1, arg2]
 
   return useFetch<ResT, ErrorT, ReqT, _ResT, Transform, PickKeys>(request, {
     ...opts,
