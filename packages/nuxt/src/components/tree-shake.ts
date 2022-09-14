@@ -1,6 +1,8 @@
 import { pathToFileURL } from 'node:url'
 import { parseURL } from 'ufo'
 import MagicString from 'magic-string'
+import { parseFragment } from 'parse5'
+import type { DocumentFragment, ChildNode } from 'parse5/dist/tree-adapters/default'
 import { createUnplugin } from 'unplugin'
 import type { Component } from '@nuxt/schema'
 
@@ -10,7 +12,6 @@ interface TreeShakeTemplatePluginOptions {
 }
 
 export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplatePluginOptions) => {
-  const regexpMap = new WeakMap<Component[], RegExp>()
   return {
     name: 'nuxt:tree-shake-template',
     enforce: 'pre',
@@ -19,23 +20,28 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
       return pathname.endsWith('.vue')
     },
     transform (code, id) {
+      const template = code.match(/<template>([\s\S]*)<\/template>/)
+      if (!template) { return }
+
       const components = options.getComponents()
 
-      if (!regexpMap.has(components)) {
-        const clientOnlyComponents = components
-          .filter(c => c.mode === 'client' && !components.some(other => other.mode !== 'client' && other.pascalName === c.pascalName))
-          .map(c => `${c.pascalName}|${c.kebabName}`)
-          .concat('ClientOnly|client-only')
-          .map(component => `<(${component})[^>]*>[\\s\\S]*?<\\/(${component})>`)
+      const clientOnlyComponents = components
+        .filter(c => c.mode === 'client' && !components.some(other => other.mode !== 'client' && other.pascalName === c.pascalName))
+        .flatMap(c => [c.pascalName.toLowerCase(), c.kebabName])
+        .concat(['clientonly', 'client-only'])
 
-        regexpMap.set(components, new RegExp(`(${clientOnlyComponents.join('|')})`, 'g'))
-      }
-
-      const COMPONENTS_RE = regexpMap.get(components)!
       const s = new MagicString(code)
 
-      // Do not render client-only slots on SSR, but preserve attributes
-      s.replace(COMPONENTS_RE, r => r.replace(/<([^>]*[^/])\/?>[\s\S]*$/, '<$1 />'))
+      const ast = parseFragment(code, { sourceCodeLocationInfo: true })
+      walkFragment(ast, (node) => {
+        if (node && 'tagName' in node && clientOnlyComponents.includes(node.tagName)) {
+          const fallback = node.childNodes?.find(n => n.nodeName === 'template' && n.attrs?.find(a => a.name.includes('fallback')))
+          const text = fallback ? code.slice(fallback.sourceCodeLocation!.startOffset, fallback.sourceCodeLocation!.endOffset) : ''
+          // Replace node content
+          s.overwrite(node.childNodes[0].sourceCodeLocation!.startOffset, node.childNodes[node.childNodes.length - 1].sourceCodeLocation!.endOffset, text)
+          return false
+        }
+      })
 
       if (s.hasChanged()) {
         return {
@@ -48,3 +54,13 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
     }
   }
 })
+
+function walkFragment (node: ChildNode | DocumentFragment, callback: (node?: ChildNode | DocumentFragment) => false | void) {
+  if (callback(node) === false || !('childNodes' in node)) {
+    return false
+  }
+
+  for (const child of [...node.childNodes || [], ...'content' in node ? node.content.childNodes : []]) {
+    walkFragment(child, callback)
+  }
+}
