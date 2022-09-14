@@ -8,7 +8,7 @@ import type { Component } from '@nuxt/schema'
 
 interface TreeShakeTemplatePluginOptions {
   sourcemap?: boolean
-  getComponents(): Component[]
+  getComponents (): Component[]
 }
 
 export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplatePluginOptions) => {
@@ -35,7 +35,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
       const ast = parseFragment(code, { sourceCodeLocationInfo: true })
       walkFragment(ast, (node) => {
         if (node && 'tagName' in node && clientOnlyComponents.includes(node.tagName)) {
-          const fallback = node.childNodes?.find(n => n.nodeName === 'template' && n.attrs?.find(a => a.name.includes('fallback')))
+          const fallback = node.childNodes?.find(n => n.nodeName === 'template' && n.attrs?.find(a => a.name.includes('fallback') || a.name.includes('placeholder')))
           const text = fallback ? code.slice(fallback.sourceCodeLocation!.startOffset, fallback.sourceCodeLocation!.endOffset) : ''
           // Replace node content
           s.overwrite(node.childNodes[0].sourceCodeLocation!.startOffset, node.childNodes[node.childNodes.length - 1].sourceCodeLocation!.endOffset, text)
