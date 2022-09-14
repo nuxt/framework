@@ -69,10 +69,7 @@ export async function initNitro (nuxt: Nuxt) {
               '@nuxt/',
               nuxt.options.buildDir
             ]),
-        distDir,
-        // This simplifies windows inlining test
-        'nuxt/dist',
-        'nuxt3/dist'
+        distDir
       ]
     },
     alias: {
