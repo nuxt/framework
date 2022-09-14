@@ -18,6 +18,7 @@ export async function initNitro (nuxt: Nuxt) {
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
     rootDir: nuxt.options.rootDir,
+    workspaceDir: nuxt.options.workspaceDir,
     srcDir: join(nuxt.options.srcDir, 'server'),
     dev: nuxt.options.dev,
     preset: nuxt.options.dev ? 'nitro-dev' : undefined,
@@ -58,7 +59,7 @@ export async function initNitro (nuxt: Nuxt) {
         .concat(nuxt.options._generate ? ['/', ...nuxt.options.generate.routes] : [])
         .concat(nuxt.options.ssr === false ? ['/', '/200.html', '/404.html'] : [])
     },
-    sourcemap: nuxt.options.sourcemap,
+    sourceMap: nuxt.options.sourcemap.server,
     externals: {
       inline: [
         ...(nuxt.options.dev

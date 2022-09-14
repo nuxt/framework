@@ -1,8 +1,8 @@
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { joinURL } from 'ufo'
-// import { isWindows } from 'std-env'
-import { setup, fetch, $fetch, startServer, createPage } from '@nuxt/test-utils'
+import { isWindows } from 'std-env'
+import { setup, fetch, $fetch, startServer, createPage, url } from '@nuxt/test-utils'
 // eslint-disable-next-line import/order
 import { expectNoClientErrors, renderPage } from './utils'
 
@@ -194,6 +194,30 @@ describe('navigate', () => {
   })
 })
 
+describe('errors', () => {
+  it('should render a JSON error page', async () => {
+    const res = await fetch('/error', {
+      headers: {
+        accept: 'application/json'
+      }
+    })
+    expect(res.status).toBe(422)
+    const error = await res.json()
+    delete error.stack
+    expect(error).toMatchObject({
+      message: 'This is a custom error',
+      statusCode: 422,
+      statusMessage: 'This is a custom error',
+      url: '/error'
+    })
+  })
+
+  it('should render a HTML error page', async () => {
+    const res = await fetch('/error')
+    expect(await res.text()).toContain('This is a custom error')
+  })
+})
+
 describe('navigate external', () => {
   it('should redirect to example.com', async () => {
     const { headers } = await fetch('/navigate-to-external/', { redirect: 'manual' })
@@ -210,6 +234,15 @@ describe('middlewares', () => {
     // expect(html).toMatchInlineSnapshot()
 
     expect(html).toContain('Hello Nuxt 3!')
+  })
+
+  it('should allow aborting navigation on server-side', async () => {
+    const res = await fetch('/?abort', {
+      headers: {
+        accept: 'application/json'
+      }
+    })
+    expect(res.status).toEqual(401)
   })
 
   it('should inject auth', async () => {
@@ -553,6 +586,52 @@ describe('app config', () => {
   })
 })
 
+describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () => {
+  it('renders a payload', async () => {
+    const payload = await $fetch('/random/a/_payload.js', { responseType: 'text' })
+    expect(payload).toMatch(
+      /export default \{data:\{\$frand_a:\[[^\]]*\]\},state:\{"\$srandom:rand_a":\d*,"\$srandom:default":\d*\},prerenderedAt:\d*\}/
+    )
+  })
+
+  it('does not fetch a prefetched payload', async () => {
+    const page = await createPage()
+    const requests = [] as string[]
+    page.on('request', (req) => {
+      requests.push(req.url().replace(url('/'), '/'))
+    })
+    await page.goto(url('/random/a'))
+    await page.waitForLoadState('networkidle')
+
+    const importSuffix = process.env.NUXT_TEST_DEV && !process.env.TEST_WITH_WEBPACK ? '?import' : ''
+
+    // We are manually prefetching other payloads
+    expect(requests).toContain('/random/c/_payload.js')
+
+    // We are not triggering API requests in the payload
+    expect(requests).not.toContain(expect.stringContaining('/api/random'))
+    requests.length = 0
+
+    await page.click('[href="/random/b"]')
+    await page.waitForLoadState('networkidle')
+    // We are not triggering API requests in the payload in client-side nav
+    expect(requests).not.toContain('/api/random')
+    // We are fetching a payload we did not prefetch
+    expect(requests).toContain('/random/b/_payload.js' + importSuffix)
+    // We are not refetching payloads we've already prefetched
+    expect(requests.filter(p => p.includes('_payload')).length).toBe(1)
+    requests.length = 0
+
+    await page.click('[href="/random/c"]')
+    await page.waitForLoadState('networkidle')
+    // We are not triggering API requests in the payload in client-side nav
+    expect(requests).not.toContain('/api/random')
+    // We are not refetching payloads we've already prefetched
+    // Note: we refetch on dev as urls differ between '' and '?import'
+    expect(requests.filter(p => p.includes('_payload')).length).toBe(process.env.NUXT_TEST_DEV ? 1 : 0)
+  })
+})
+
 describe('useAsyncData', () => {
   it('single request resolves', async () => {
     await expectNoClientErrors('/useAsyncData/single')
@@ -568,30 +647,5 @@ describe('useAsyncData', () => {
 
   it('two requests made at once resolve and sync', async () => {
     await expectNoClientErrors('/useAsyncData/promise-all')
-  })
-})
-
-// TODO: Move back up after https://github.com/vuejs/core/issues/6110 is resolved
-describe('errors', () => {
-  it('should render a JSON error page', async () => {
-    const res = await fetch('/error', {
-      headers: {
-        accept: 'application/json'
-      }
-    })
-    expect(res.status).toBe(422)
-    const error = await res.json()
-    delete error.stack
-    expect(error).toMatchObject({
-      message: 'This is a custom error',
-      statusCode: 422,
-      statusMessage: 'This is a custom error',
-      url: '/error'
-    })
-  })
-
-  it('should render a HTML error page', async () => {
-    const res = await fetch('/error')
-    expect(await res.text()).toContain('This is a custom error')
   })
 })

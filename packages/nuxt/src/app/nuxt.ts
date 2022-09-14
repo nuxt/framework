@@ -69,11 +69,12 @@ interface _NuxtApp {
     data: Ref<any>
     pending: Ref<boolean>
     error: Ref<any>
-  }>,
+  } | undefined>,
 
   ssrContext?: NuxtSSRContext
   payload: {
     serverRendered?: boolean
+    prerenderedAt?: number
     data: Record<string, any>
     state: Record<string, any>
     rendered?: Function

@@ -4,6 +4,7 @@ import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
 import defu from 'defu'
+import { findWorkspaceDir } from 'pkg-types'
 
 import { RuntimeConfig } from '../types/config'
 
@@ -34,10 +35,10 @@ export default defineUntypedSchema({
    *
    * @version 3
    */
-   theme: null,
+  theme: null,
 
   /**
-   * Define the workspace directory of your application.
+   * Define the root directory of your application.
    *
    * This property can be overwritten (for example, running `nuxt ./my-app/`
    * will set the `rootDir` to the absolute path of `./my-app/` from the
@@ -49,6 +50,19 @@ export default defineUntypedSchema({
    */
   rootDir: {
     $resolve: val => typeof val === 'string' ? resolve(val) : process.cwd()
+  },
+
+  /**
+   * Define the workspace directory of your application.
+   *
+   * Often this is used when in a monorepo setup. Nuxt will attempt to detect
+   * your workspace directory automatically, but you can override it here.
+   *
+   * It is normally not needed to configure this option.
+   * @version 3
+   */
+  workspaceDir: {
+    $resolve: async (val, get) => val ? resolve(await get('rootDir'), val) : await findWorkspaceDir(await get('rootDir')).catch(() => get('rootDir'))
   },
 
   /**
@@ -82,7 +96,7 @@ export default defineUntypedSchema({
    * @version 3
    */
   srcDir: {
-    $resolve: (val, get) => resolve(get('rootDir'), val || '.')
+    $resolve: async (val, get) => resolve(await get('rootDir'), val || '.')
   },
 
   /**
@@ -101,7 +115,7 @@ export default defineUntypedSchema({
    * @version 3
    */
   buildDir: {
-    $resolve: (val, get) => resolve(get('rootDir'), val || '.nuxt')
+    $resolve: async (val, get) => resolve(await get('rootDir'), val || '.nuxt')
   },
 
   /**
@@ -126,7 +140,7 @@ export default defineUntypedSchema({
    * @version 2
    */
   debug: {
-    $resolve: (val, get) => val ?? get('dev')
+    $resolve: async (val, get) => val ?? await get('dev')
   },
 
   /**
@@ -199,13 +213,15 @@ export default defineUntypedSchema({
    * @version 2
    * @version 3
    */
-  ssr: true,
+  ssr: {
+    $resolve: (val) => val ?? true,
+  },
 
   /**
    * @deprecated use `ssr` option
    */
   mode: {
-    $resolve: (val, get) => val || (get('ssr') ? 'spa' : 'universal'),
+    $resolve: async (val, get) => val || ((await get('ssr')) ? 'spa' : 'universal'),
     $schema: { deprecated: '`mode` option is deprecated' }
   },
 
@@ -444,8 +460,8 @@ export default defineUntypedSchema({
    */
   modulesDir: {
     $default: ['node_modules'],
-    $resolve: (val, get) => [
-      ...val.map((dir: string) => resolve(get('rootDir'), dir)),
+    $resolve: async (val, get) => [
+      ...await Promise.all(val.map(async (dir: string) => resolve(await get('rootDir'), dir))),
       resolve(process.cwd(), 'node_modules')
     ]
   },
@@ -492,12 +508,12 @@ export default defineUntypedSchema({
      * @version 3
      */
     public: {
-      $resolve: (val, get) => val || get('dir.static') || 'public',
+      $resolve: async (val, get) => val || await get('dir.static') || 'public',
     },
     /** @version 2 */
     static: {
       $schema: { deprecated: 'use `dir.public` option instead' },
-      $resolve: (val, get) => val || get('dir.public') || 'public',
+      $resolve: async (val, get) => val || await get('dir.public') || 'public',
     },
     /**
      * The folder which will be used to auto-generate your Vuex store structure.
@@ -568,13 +584,13 @@ export default defineUntypedSchema({
    * @version 3
    */
   alias: {
-    $resolve: (val, get) => ({
-      '~~': get('rootDir'),
-      '@@': get('rootDir'),
-      '~': get('srcDir'),
-      '@': get('srcDir'),
-      [get('dir.assets')]: join(get('srcDir'), get('dir.assets')),
-      [get('dir.public')]: join(get('srcDir'), get('dir.public')),
+    $resolve: async (val, get) => ({
+      '~~': await get('rootDir'),
+      '@@': await get('rootDir'),
+      '~': await get('srcDir'),
+      '@': await get('srcDir'),
+      [await get('dir.assets')]: join(await get('srcDir'), await get('dir.assets')),
+      [await get('dir.public')]: join(await get('srcDir'), await get('dir.public')),
       ...val
     })
   },
@@ -610,11 +626,11 @@ export default defineUntypedSchema({
    * @version 3
    */
   ignore: {
-    $resolve: (val, get) => [
+    $resolve: async (val, get) => [
       '**/*.stories.{js,ts,jsx,tsx}', // ignore storybook files
       '**/*.{spec,test}.{js,ts,jsx,tsx}', // ignore tests
       '.output',
-      get('ignorePrefix') && `**/${get('ignorePrefix')}*.*`
+      await get('ignorePrefix') && `**/${await get('ignorePrefix')}*.*`
     ].concat(val).filter(Boolean)
   },
 
@@ -634,9 +650,9 @@ export default defineUntypedSchema({
    * @version 2
    */
   watch: {
-    $resolve: (val, get) => {
-      const rootDir = get('rootDir')
-      return Array.from(new Set([].concat(val, get('_nuxtConfigFiles'))
+    $resolve: async (val, get) => {
+      const rootDir = await get('rootDir')
+      return Array.from(new Set([].concat(val, await get('_nuxtConfigFiles'))
         .filter(Boolean).map(p => resolve(rootDir, p))
       ))
     }
@@ -738,14 +754,14 @@ export default defineUntypedSchema({
    * @version 3
    */
   runtimeConfig: {
-    $resolve: (val: RuntimeConfig, get) => defu(val, {
-      ...get('publicRuntimeConfig'),
-      ...get('privateRuntimeConfig'),
-      public: get('publicRuntimeConfig'),
+    $resolve: async (val: RuntimeConfig, get) => defu(val, {
+      ...await get('publicRuntimeConfig'),
+      ...await get('privateRuntimeConfig'),
+      public: await get('publicRuntimeConfig'),
       app: {
-        baseURL: get('app').baseURL,
-        buildAssetsDir: get('app').buildAssetsDir,
-        cdnURL: get('app').cdnURL,
+        baseURL: (await get('app')).baseURL,
+        buildAssetsDir: (await get('app')).buildAssetsDir,
+        cdnURL: (await get('app')).cdnURL,
       }
     })
   },
