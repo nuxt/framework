@@ -1,4 +1,5 @@
 import { existsSync, promises as fsp } from 'node:fs'
+import { pathToFileURL } from 'node:url'
 import { resolve, join } from 'pathe'
 import { createNitro, createDevServer, build, prepare, copyPublicAssets, writeTypes, scanHandlers, prerender } from 'nitropack'
 import type { NitroEventHandler, NitroDevEventHandler, NitroConfig } from 'nitropack'
@@ -69,7 +70,10 @@ export async function initNitro (nuxt: Nuxt) {
               '@nuxt/',
               nuxt.options.buildDir
             ]),
-        distDir
+        distDir,
+        // This simplifies windows inlining test
+        'nuxt/dist',
+        'nuxt3/dist'
       ]
     },
     alias: {
