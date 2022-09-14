@@ -87,8 +87,7 @@ export function useAsyncData<
   }
 
   // Get key
-  const isFunctionKey = typeof key === 'function'
-  const key = isFunctionKey ? key() : key
+  const key = typeof _key === 'function' ? _key() : _key
 
   // Apply defaults
   options.server = options.server ?? true
@@ -119,8 +118,7 @@ export function useAsyncData<
   const asyncData = { ...nuxt._asyncData[key] } as AsyncData<DataT, DataE>
 
   asyncData.refresh = asyncData.execute = (opts = {}) => {
-
-    const currentKey = isFunctionKey ? key() : key
+    const currentKey = typeof _key === 'function' ? _key() : _key
 
     // Avoid fetching same key more than once at a time
     if (nuxt._asyncDataPromises[currentKey]) {
