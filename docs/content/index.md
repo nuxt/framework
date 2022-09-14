@@ -9,7 +9,7 @@ description: 'Build your next application with Vue 3 and experience hybrid rende
 ---
 cta:
   - Get started
-  - /getting-started/quick-start
+  - /getting-started/installation
 secondary:
   - Star on GitHub →
   - https://github.com/nuxt/framework
