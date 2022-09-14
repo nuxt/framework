@@ -1,4 +1,3 @@
-
 export default defineNuxtConfig({
   modules: [
     '~/modules/pages',
