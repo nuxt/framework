@@ -1,6 +1,6 @@
 import type { KeepAliveProps, TransitionProps } from 'vue'
 import { ConfigSchema } from '../../schema/config'
-import type { ViteServerOptions, UserConfig as ViteUserConfig } from 'vite'
+import type { ServerOptions as ViteServerOptions, UserConfig as ViteUserConfig } from 'vite'
 import type { Options as VuePluginOptions } from '@vitejs/plugin-vue'
 import type { MetaObject } from './meta'
 import type { Nuxt } from './nuxt'
