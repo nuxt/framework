@@ -139,7 +139,7 @@ export default defineRenderHandler(async (event) => {
   }
 
   // Whether we are prerendering route
-  const payloadURL = process.env.prerender ? joinURL(url, '_payload.js') : undefined
+  const payloadURL = (process.env.prerender && !ssrContext.noSSR) ? joinURL(url, '_payload.js') : undefined
   if (process.env.prerender) {
     ssrContext.payload.prerenderedAt = Date.now()
   }
@@ -209,7 +209,7 @@ export default defineRenderHandler(async (event) => {
     bodyAppend: normalizeChunks([
       process.env.NUXT_NO_SCRIPTS
         ? undefined
-        : (process.env.prerender
+        : ((process.env.prerender && !ssrContext.noSSR)
             ? `<script type="module">import p from "${payloadURL}";window.__NUXT__={...p,...(${devalue(splitPayload(ssrContext).initial)})}</script>`
             : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`
           ),
