@@ -52,7 +52,7 @@ export function addDevServerHandler (handler: NitroDevEventHandler) {
  *
  * **Note:** You can call `useNitro()` only after `ready` hook.
  *
- * **Note:** Moditifcations to the Nitro instance configuration are not reflected.
+ * **Note:** Changes to the Nitro instance configuration are not applied.
  *
  * @example
  *
