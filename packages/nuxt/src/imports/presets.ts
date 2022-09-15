@@ -30,6 +30,7 @@ const appPreset = defineUnimportPreset({
     'defineNuxtPlugin',
     'useRuntimeConfig',
     'useState',
+    'useData',
     'useFetch',
     'useLazyFetch',
     'useCookie',

@@ -40,8 +40,8 @@ const pageKey = 'rand_' + route.params.id
 
 const { data: randomNumbers, refresh } = await useFetch('/api/random', { key: pageKey as string })
 
-const random = useRandomState(100, pageKey)
-const globalRandom = useRandomState(100)
+const random = useRandomData(100, pageKey)
+const globalRandom = useRandomData(100)
 </script>
 
 <style scoped>
