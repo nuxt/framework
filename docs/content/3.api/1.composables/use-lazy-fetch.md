@@ -2,7 +2,6 @@
 
 `useLazyFetch` provides a wrapper around `useFetch` that triggers navigation before the handler is resolved by setting the `lazy` option to `true`.
 
-
 ## Description
 
 By default, [useFetch](/api/composables/use-fetch) blocks navigation until its async handler is resolved.
