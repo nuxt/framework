@@ -48,13 +48,22 @@ export default defineComponent({
           const key = generateRouteKey(props.pageKey, routeProps)
           const transitionProps = props.transition ?? routeProps.route.meta.pageTransition ?? (defaultPageTransition as TransitionProps)
 
+          let done: () => {}
+
+          if (!isNested) {
+            done = nuxtApp.deferHydration()
+          }
+
           return _wrapIf(Transition, transitionProps,
-            wrapInKeepAlive(props.keepalive ?? routeProps.route.meta.keepalive ?? (defaultKeepaliveConfig as KeepAliveProps), isNested && nuxtApp.isHydrating
+            wrapInKeepAlive(props.keepalive ?? routeProps.route.meta.keepalive ?? (defaultKeepaliveConfig as KeepAliveProps), isNested
               // Include route children in parent suspense
               ? h(Component, { key, routeProps, pageKey: key, hasTransition: !!transitionProps } as {})
               : h(Suspense, {
                 onPending: () => nuxtApp.callHook('page:start', routeProps.Component),
-                onResolve: () => nuxtApp.callHook('page:finish', routeProps.Component)
+                onResolve: () => {
+                  done?.()
+                  nuxtApp.callHook('page:finish', routeProps.Component)
+                }
               }, { default: () => h(Component, { key, routeProps, pageKey: key, hasTransition: !!transitionProps } as {}) })
             )).default()
         }

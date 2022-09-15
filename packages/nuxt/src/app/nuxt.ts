@@ -108,6 +108,7 @@ export interface CreateOptions {
 }
 
 export function createNuxtApp (options: CreateOptions) {
+  let hydratingCount: number = 0
   const nuxtApp: NuxtApp = {
     provide: undefined,
     globalName: 'nuxt',
@@ -118,6 +119,28 @@ export function createNuxtApp (options: CreateOptions) {
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
     isHydrating: process.client,
+    deferHydration () {
+      if (nuxtApp.isHydrating) {
+        hydratingCount++
+        let called = false
+        return () => {
+          if (called) {
+            return
+          } else {
+            called = true
+          }
+
+          hydratingCount--
+
+          if (hydratingCount === 0) {
+            nuxtApp.isHydrating = false
+            nuxtApp.callHook('app:suspense:resolve')
+          }
+        }
+      } else {
+        return () => {}
+      }
+    },
     _asyncDataPromises: {},
     _asyncData: {},
     ...options
