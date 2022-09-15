@@ -64,8 +64,8 @@ export function addDevServerHandler (handler: NitroDevEventHandler) {
  */
 export function useNitro (): Nitro {
   const nuxt = useNuxt()
-  if (!nuxt._nitro) {
+  if (!(nuxt as any)._nitro) {
     throw new Error('Nitro is not initialized yet. You can call `useNitro()` only after `ready` hook.')
   }
-  return nuxt._nitro
+  return (nuxt as any)._nitro
 }
