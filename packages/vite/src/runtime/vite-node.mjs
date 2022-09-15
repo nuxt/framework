@@ -40,6 +40,8 @@ function createRunner () {
         if (!errorData) {
           throw err
         }
+        errorData.stack = errorData.stack || err.stack
+        errorData.reason = errorData.reason || err.message
         let _err
         try {
           const { message, stack } = formatViteError(errorData)
