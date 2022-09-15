@@ -134,7 +134,8 @@ export async function initNitro (nuxt: Nuxt) {
   // Init nitro
   const nitro = await createNitro(nitroConfig)
 
-  // Expose nitro to modules
+  // Expose nitro to modules and kit
+  nuxt._nitro = nitro
   await nuxt.callHook('nitro:init', nitro)
 
   // Connect vfs storages

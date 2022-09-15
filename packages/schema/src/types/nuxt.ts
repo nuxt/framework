@@ -1,5 +1,6 @@
 import type { Hookable } from 'hookable'
 import type { Ignore } from 'ignore'
+import type { Nitro } from 'nitropack'
 import type { NuxtHooks, NuxtLayout, NuxtMiddleware } from './hooks'
 import type { NuxtOptions } from './config'
 
@@ -7,6 +8,7 @@ export interface Nuxt {
   // Private fields.
   _version: string
   _ignore?: Ignore
+  _nitro?: Nitro
 
   /** The resolved Nuxt configuration. */
   options: NuxtOptions

@@ -1,5 +1,5 @@
 import type { Middleware } from 'h3'
-import type { NitroEventHandler, NitroDevEventHandler } from 'nitropack'
+import type { NitroEventHandler, NitroDevEventHandler, Nitro } from 'nitropack'
 import { useNuxt } from './context'
 
 export interface LegacyServerMiddleware {
@@ -45,4 +45,25 @@ export function addServerHandler (handler: NitroEventHandler) {
  */
 export function addDevServerHandler (handler: NitroDevEventHandler) {
   useNuxt().options.devServerHandlers.push(handler)
+}
+
+/**
+ * Access to nitro instance
+ *
+ * **Note:** You can use useNitro() You can call `useNitro()` only after `ready` hook.
+ *
+ * @example
+ *
+ * ```ts
+ * nuxt.hook('ready', () => {
+ *   console.log(useNitro())
+ * })
+ * ```
+ */
+export function useNitro (): Nitro {
+  const nuxt = useNuxt()
+  if (!nuxt._nitro) {
+    throw new Error('Nitro is not initialized yet. You can call `useNitro()` only after `ready` hook.')
+  }
+  return nuxt._nitro
 }
