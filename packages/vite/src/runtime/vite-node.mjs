@@ -54,7 +54,7 @@ function createRunner () {
           throw createError({
             statusMessage: 'Vite Error',
             message: errorData.message || 'Vite Error',
-            stack: `Internal error while formatting error\nat ${id}`
+            stack: `Internal error while formatting error\nat ${id} [check console]`
           })
         }
         throw _err
@@ -64,7 +64,7 @@ function createRunner () {
 }
 
 function formatViteError (errorData) {
-  const errorCode = errorData.name || errorData.reasonCode || errorData.code
+  const errorCode = errorData.foo.name || errorData.reasonCode || errorData.code
   const frame = errorData.frame || errorData.source || errorData.pluginCode
 
   const getLocId = (locObj = {}) => locObj.file || locObj.id || locObj.url || ''
