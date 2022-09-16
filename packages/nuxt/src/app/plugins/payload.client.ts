@@ -10,7 +10,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Load payload into cache
   nuxtApp.hooks.hook('link:prefetch', to => loadPayload(to))
 
-  // Load payload after final route is resolved
+  // Load payload after middleware & once final route is resolved
   useRouter().beforeResolve(async (to, from) => {
     if (to.path === from.path) { return }
     const payload = await loadPayload(to.path)
