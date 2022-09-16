@@ -40,7 +40,6 @@ function createRunner () {
         if (!errorData) {
           throw err
         }
-        errorData.reason = errorData.reason || err.message
         let _err
         try {
           const { message, stack } = formatViteError(errorData)
@@ -51,11 +50,11 @@ function createRunner () {
           })
         } catch (err) {
           // This should not happen unless there is an internal error with formatViteError!
-          consola.error('Error while formatting vite error:', errorData)
+          consola.error('Internal error while formatting error for transformating', id, errorData)
           throw createError({
             statusMessage: 'Vite Error',
             message: errorData.message || 'Vite Error',
-            stack: 'Vite Error\nat [check console]'
+            stack: `Internal error while formatting error\nat ${id}`
           })
         }
         throw _err
