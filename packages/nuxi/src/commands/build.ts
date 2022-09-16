@@ -28,7 +28,7 @@ export default defineNuxtCommand({
       }
     })
 
-    const nitro = useNitro()
+    const nitro = useNitro?.()
 
     await clearDir(nuxt.options.buildDir)
 
