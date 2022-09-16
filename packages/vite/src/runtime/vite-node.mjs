@@ -48,13 +48,14 @@ function createRunner () {
             message,
             stack
           })
-        } catch (err) {
-          // This should not happen unless there is an internal error with formatViteError!
-          consola.error('Internal error while formatting error for transformating', id, errorData)
+        } catch (formatError) {
+          consola.warn('Internal nuxt error while formatting vite-node error. Please report this!', formatError)
+          const message = `[vite-node] [TransformError] ${errorData?.message || '-'}`
+          consola.error(message, errorData)
           throw createError({
             statusMessage: 'Vite Error',
-            message: errorData.message || 'Vite Error',
-            stack: `Internal error while formatting error\nat ${id} [check console]`
+            message,
+            stack: `${message}\nat ${id}\n` + (errorData?.stack || '')
           })
         }
         throw _err
@@ -64,7 +65,7 @@ function createRunner () {
 }
 
 function formatViteError (errorData) {
-  const errorCode = errorData.foo.name || errorData.reasonCode || errorData.code
+  const errorCode = errorData.name || errorData.reasonCode || errorData.code
   const frame = errorData.frame || errorData.source || errorData.pluginCode
 
   const getLocId = (locObj = {}) => locObj.file || locObj.id || locObj.url || ''
