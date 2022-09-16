@@ -58,8 +58,6 @@ export async function writeModuleTypes (distDir: string, { meta }: IWriteTypesOp
     }
   }
 
-  console.log(typeExports)
-  
   const dtsContents = `
 import { ${moduleImports.join(', ')} } from './module'
 ${schemaShims.length ? `declare module '@nuxt/schema' {\n${schemaShims.join('\n')}\n}\n` : ''}
