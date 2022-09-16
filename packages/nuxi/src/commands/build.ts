@@ -42,8 +42,9 @@ export default defineNuxtCommand({
     await buildNuxt(nuxt)
 
     if (args.prerender) {
+      // TODO: revisit later if/when nuxt build --prerender will output hybrid
       const dir = nitro?.options.output.publicDir
-      const publicDir = dir ? relative(rootDir, dir) : '.output/public'
+      const publicDir = dir ? relative(process.cwd(), dir) : '.output/public'
       consola.success(`You can now deploy \`${publicDir}\` to any static hosting!`)
     }
   }
