@@ -16,6 +16,7 @@ const keyedFunctions = [
   'useState', 'useFetch', 'useAsyncData', 'useLazyAsyncData', 'useLazyFetch'
 ]
 const KEYED_FUNCTIONS_RE = new RegExp(`(${keyedFunctions.join('|')})`)
+const stringTypes = ['Literal', 'TemplateLiteral']
 
 export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptions) => {
   return {
@@ -37,13 +38,30 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
         enter (_node) {
           if (_node.type !== 'CallExpression' || (_node as CallExpression).callee.type !== 'Identifier') { return }
           const node: CallExpression = _node as CallExpression
-          if (keyedFunctions.includes((node.callee as any).name) && node.arguments.length < 4) {
-            const end = (node as any).end
-            s.appendLeft(
-              codeIndex + end - 1,
-              (node.arguments.length ? ', ' : '') + "'$" + hash(`${relativeID}-${++count}`) + "'"
-            )
+          const name = 'name' in node.callee && node.callee.name
+          if (!name || !keyedFunctions.includes(name) || node.arguments.length >= 4) { return }
+
+          switch (name) {
+            case 'useState':
+              if (node.arguments.length >= 2 || stringTypes.includes(node.arguments[0].type)) { return }
+              break
+
+            case 'useFetch':
+            case 'useLazyFetch':
+              if (node.arguments.length >= 2) { return }
+              break
+
+            case 'useAsyncData':
+            case 'useLazyAsyncData':
+              if (node.arguments.length >= 3 || stringTypes.includes(node.arguments[0].type) || stringTypes.includes(node.arguments[node.arguments.length - 1].type)) { return }
+              break
           }
+
+          const end = (node as any).end
+          s.appendLeft(
+            codeIndex + end - 1,
+            (node.arguments.length ? ', ' : '') + "'$" + hash(`${relativeID}-${++count}`) + "'"
+          )
         }
       })
       if (s.hasChanged()) {
