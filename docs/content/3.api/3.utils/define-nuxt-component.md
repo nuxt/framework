@@ -12,7 +12,7 @@ Any Vue 3 components written in Nuxt application without `<script setup lang=“
   <script lang="ts">
     export default defineNuxtComponent({
       async setup(props) {
-        const { data } = await useAsyncData('count', () => Promise.resolve({data: { name: 'Hello world!'}}))
+        const { data } = await useAsyncData(() => Promise.resolve('Hello world!'))
   
         return {
             data
