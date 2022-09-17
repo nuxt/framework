@@ -22,9 +22,11 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
   return {
     name: 'nuxt:composable-keys',
     enforce: 'post',
-    transform (code, id) {
+    transformInclude (id) {
       const { pathname, search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
-      if (!pathname.match(/\.(m?[jt]sx?|vue)/) || parseQuery(search).type === 'style') { return }
+      return pathname.match(/node_modules\/nuxt3?\//) && pathname.match(/\.(m?[jt]sx?|vue)/) && parseQuery(search).type !== 'style'
+    },
+    transform (code, id) {
       if (!KEYED_FUNCTIONS_RE.test(code)) { return }
       const { 0: script = code, index: codeIndex = 0 } = code.match(/(?<=<script[^>]*>)[\S\s.]*?(?=<\/script>)/) || []
       const s = new MagicString(code)
