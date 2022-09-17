@@ -50,7 +50,7 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
 
             case 'useFetch':
             case 'useLazyFetch':
-              if (node.arguments.length >= 2) { return }
+              if (node.arguments.length >= 3 || stringTypes.includes(node.arguments[1]?.type)) { return }
               break
 
             case 'useAsyncData':
@@ -59,9 +59,8 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
               break
           }
 
-          const end = (node as any).end
           s.appendLeft(
-            codeIndex + end - 1,
+            codeIndex + (node as any).end - 1,
             (node.arguments.length ? ', ' : '') + "'$" + hash(`${relativeID}-${++count}`) + "'"
           )
         }
