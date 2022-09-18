@@ -31,6 +31,7 @@ export interface RuntimeNuxtHooks {
   'app:error': (err: any) => HookResult
   'app:error:cleared': (options: { redirect?: string }) => HookResult
   'app:data:refresh': (keys?: string[]) => HookResult
+  'link:prefetch': (link: string) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
   'vue:setup': () => void
@@ -74,6 +75,7 @@ interface _NuxtApp {
   ssrContext?: NuxtSSRContext
   payload: {
     serverRendered?: boolean
+    prerenderedAt?: number
     data: Record<string, any>
     state: Record<string, any>
     rendered?: Function

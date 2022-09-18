@@ -8,8 +8,6 @@ import { getPort } from 'get-port-please'
 import { joinURL, withLeadingSlash, withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import escapeRE from 'escape-string-regexp'
 import defu from 'defu'
-import { sanitizeFilePath } from 'mlly'
-import { filename } from 'pathe/utils'
 import type { OutputOptions } from 'rollup'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { wpfs } from './utils/wpfs'
@@ -18,9 +16,6 @@ import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
-  const useAsyncEntry = ctx.nuxt.options.experimental.asyncEntry
-  ctx.entry = resolve(ctx.nuxt.options.appDir, useAsyncEntry ? 'entry.async' : 'entry')
-
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     entry: ctx.entry,
     base: ctx.nuxt.options.dev
@@ -51,7 +46,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       dedupe: ['vue']
     },
     build: {
-      sourcemap: ctx.nuxt.options.sourcemap.client,
+      sourcemap: ctx.nuxt.options.sourcemap.client ? ctx.config.build?.sourcemap ?? true : false,
       manifest: true,
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client'),
       rollupOptions: {
@@ -83,10 +78,6 @@ export async function buildClient (ctx: ViteBuildContext) {
   // We want to respect users' own rollup output options
   clientConfig.build!.rollupOptions = defu(clientConfig.build!.rollupOptions!, {
     output: {
-      // https://github.com/vitejs/vite/tree/main/packages/vite/src/node/build.ts#L464-L478
-      assetFileNames: ctx.nuxt.options.dev
-        ? undefined
-        : chunk => withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, `${sanitizeFilePath(filename(chunk.name!))}.[hash].[ext]`)),
       chunkFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].js')),
       entryFileNames: ctx.nuxt.options.dev ? 'entry.js' : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].js'))
     } as OutputOptions

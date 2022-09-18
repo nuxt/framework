@@ -1,11 +1,13 @@
 import * as vite from 'vite'
-import { join } from 'pathe'
+import { join, resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
-import { logger, isIgnored } from '@nuxt/kit'
+import { logger, isIgnored, resolvePath } from '@nuxt/kit'
 import type { Options } from '@vitejs/plugin-vue'
 import replace from '@rollup/plugin-replace'
 import { sanitizeFilePath } from 'mlly'
+import { withoutLeadingSlash } from 'ufo'
+import { filename } from 'pathe/utils'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
@@ -28,9 +30,12 @@ export interface ViteBuildContext {
 }
 
 export async function bundle (nuxt: Nuxt) {
+  const useAsyncEntry = nuxt.options.experimental.asyncEntry ||
+    (nuxt.options.vite.devBundler === 'vite-node' && nuxt.options.dev)
+  const entry = await resolvePath(resolve(nuxt.options.appDir, useAsyncEntry ? 'entry.async' : 'entry'))
   const ctx: ViteBuildContext = {
     nuxt,
-    entry: null!,
+    entry,
     config: vite.mergeConfig(
       {
         resolve: {
@@ -52,7 +57,13 @@ export async function bundle (nuxt: Nuxt) {
         css: resolveCSSOptions(nuxt),
         build: {
           rollupOptions: {
-            output: { sanitizeFileName: sanitizeFilePath }
+            output: {
+              sanitizeFileName: sanitizeFilePath,
+              // https://github.com/vitejs/vite/tree/main/packages/vite/src/node/build.ts#L464-L478
+              assetFileNames: nuxt.options.dev
+                ? undefined
+                : chunk => withoutLeadingSlash(join(nuxt.options.app.buildAssetsDir, `${sanitizeFilePath(filename(chunk.name!))}.[hash].[ext]`))
+            }
           },
           watch: {
             exclude: nuxt.options.ignore
@@ -101,7 +112,11 @@ export async function bundle (nuxt: Nuxt) {
       }
     })
 
-    if (nuxt.options.vite.warmupEntry !== false) {
+    if (
+      nuxt.options.vite.warmupEntry !== false &&
+      // https://github.com/nuxt/framework/issues/7510
+      !(env.isServer && ctx.nuxt.options.vite.devBundler !== 'legacy')
+    ) {
       const start = Date.now()
       warmupViteServer(server, [join('/@fs/', ctx.entry)], env.isServer)
         .then(() => logger.info(`Vite ${env.isClient ? 'client' : 'server'} warmed up in ${Date.now() - start}ms`))

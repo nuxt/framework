@@ -1,11 +1,9 @@
 import { performance } from 'node:perf_hooks'
 import { createError } from 'h3'
 import { ViteNodeRunner } from 'vite-node/client'
-import { $fetch } from 'ohmyfetch'
 import consola from 'consola'
-import { getViteNodeOptions } from './vite-node-shared.mjs'
+import { viteNodeOptions, viteNodeFetch } from './vite-node-shared.mjs'
 
-const viteNodeOptions = getViteNodeOptions()
 const runner = createRunner()
 let render
 
@@ -15,14 +13,12 @@ export default async (ssrContext) => {
   process.server = true
 
   // Invalidate cache for files changed since last rendering
-  const invalidates = await $fetch('/invalidates', {
-    baseURL: viteNodeOptions.baseURL
-  })
+  const invalidates = await viteNodeFetch('/invalidates')
   const updates = runner.moduleCache.invalidateDepTree(invalidates)
 
   // Execute SSR bundle on demand
   const start = performance.now()
-  render = render || (await runner.executeFile(viteNodeOptions.entryPath)).default
+  render = (updates.has(viteNodeOptions.entryPath) || !render) ? (await runner.executeFile(viteNodeOptions.entryPath)).default : render
   if (updates.size) {
     const time = Math.round((performance.now() - start) * 1000) / 1000
     consola.success(`Vite server hmr ${updates.size} files`, time ? `in ${time}ms` : '')
@@ -37,29 +33,32 @@ function createRunner () {
     root: viteNodeOptions.root, // Equals to Nuxt `srcDir`
     base: viteNodeOptions.base,
     async fetchModule (id) {
-      return await $fetch('/module/' + encodeURI(id), {
-        baseURL: viteNodeOptions.baseURL
-      }).catch((err) => {
+      // TODO: fix in vite-node
+      id = id.replace(/\/\//g, '/')
+      return await viteNodeFetch('/module/' + encodeURI(id)).catch((err) => {
         const errorData = err?.data?.data
         if (!errorData) {
           throw err
         }
+        let _err
         try {
           const { message, stack } = formatViteError(errorData)
-          throw createError({
+          _err = createError({
             statusMessage: 'Vite Error',
             message,
             stack
           })
-        } catch (err) {
-          // This should not happen unless there is an internal error with formatViteError!
-          consola.error('Error while formatting vite error:', errorData)
+        } catch (formatError) {
+          consola.warn('Internal nuxt error while formatting vite-node error. Please report this!', formatError)
+          const message = `[vite-node] [TransformError] ${errorData?.message || '-'}`
+          consola.error(message, errorData)
           throw createError({
             statusMessage: 'Vite Error',
-            message: errorData.message || 'Vite Error',
-            stack: 'Vite Error\nat [check console]'
+            message,
+            stack: `${message}\nat ${id}\n` + (errorData?.stack || '')
           })
         }
+        throw _err
       })
     }
   })

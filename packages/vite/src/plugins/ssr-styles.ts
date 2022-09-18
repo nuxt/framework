@@ -20,6 +20,8 @@ export function ssrStylesPlugin (options: SSRStylePluginOptions): Plugin {
 
   const relativeToSrcDir = (path: string) => relative(options.srcDir, path)
 
+  const warnCache = new Set<string>()
+
   return {
     name: 'ssr-styles',
     generateBundle (outputOptions) {
@@ -60,11 +62,11 @@ export function ssrStylesPlugin (options: SSRStylePluginOptions): Plugin {
         source:
           [
             ...globalStylesArray.map((css, i) => `import style_${i} from './${css}';`),
-            `const globalStyles = [${globalStylesArray.map((_, i) => `style_${i}`).join(', ')}]`,
-            'const resolveStyles = r => globalStyles.concat(r.default || r || [])',
-            `export default ${genObjectFromRawEntries(
-              Object.entries(emitted).map(([key, value]) => [key, `() => import('./${this.getFileName(value)}').then(resolveStyles)`])
-            )}`
+            'const interopDefault = r => r.default || r || []',
+            `export default ${genObjectFromRawEntries([
+              ['entry', `() => [${globalStylesArray.map((_, i) => `style_${i}`).join(', ')}]`],
+              ...Object.entries(emitted).map(([key, value]) => [key, `() => import('./${this.getFileName(value)}').then(interopDefault)`]) as [string, string][]
+            ])}`
           ].join('\n')
       })
     },
@@ -104,6 +106,13 @@ export function ssrStylesPlugin (options: SSRStylePluginOptions): Plugin {
 
         const resolved = await this.resolve(i.specifier, id)
         if (!resolved) { continue }
+        if (!(await this.resolve(resolved.id + '?inline&used'))) {
+          if (!warnCache.has(resolved.id)) {
+            warnCache.add(resolved.id)
+            this.warn(`[nuxt] Cannot extract styles for \`${i.specifier}\`. Its styles will not be inlined when server-rendering.`)
+          }
+          continue
+        }
 
         const ref = this.emitFile({
           type: 'chunk',

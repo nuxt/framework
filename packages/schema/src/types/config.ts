@@ -1,8 +1,9 @@
 import type { KeepAliveProps, TransitionProps } from 'vue'
 import { ConfigSchema } from '../../schema/config'
-import type { UserConfig as ViteUserConfig } from 'vite'
+import type { ServerOptions as ViteServerOptions, UserConfig as ViteUserConfig } from 'vite'
 import type { Options as VuePluginOptions } from '@vitejs/plugin-vue'
 import type { MetaObject } from './meta'
+import type { Nuxt } from './nuxt'
 
 type DeepPartial<T> = T extends Function ? T : T extends Record<string, any> ? { [P in keyof T]?: DeepPartial<T[P]> } : T
 
@@ -25,8 +26,9 @@ export type NuxtConfigLayer = ConfigLayer<NuxtConfig & {
 }>
 
 /** Normalized Nuxt options available as `nuxt.options.*` */
-export interface NuxtOptions extends ConfigSchema {
+export interface NuxtOptions extends Omit<ConfigSchema, 'builder'> {
   sourcemap: Required<Exclude<ConfigSchema['sourcemap'], boolean>>
+  builder: '@nuxt/vite-builder' | '@nuxt/webpack-builder' | { bundle: (nuxt: Nuxt) => Promise<void> }
   _layers: NuxtConfigLayer[]
 }
 
@@ -51,7 +53,7 @@ export interface ViteConfig extends ViteUserConfig {
   /**
    * Use environment variables or top level `server` options to configure Nuxt server.
    */
-  server?: never
+  server?: Omit<ViteServerOptions, 'port' | 'host'>
 }
 
 
@@ -59,11 +61,11 @@ export interface ViteConfig extends ViteUserConfig {
 
 type RuntimeConfigNamespace = Record<string, any>
 
-export interface PublicRuntimeConfig extends RuntimeConfigNamespace {}
+export interface PublicRuntimeConfig extends RuntimeConfigNamespace { }
 
 // TODO: remove before release of 3.0.0
 /** @deprecated use RuntimeConfig interface */
-export interface PrivateRuntimeConfig extends RuntimeConfigNamespace {}
+export interface PrivateRuntimeConfig extends RuntimeConfigNamespace { }
 
 export interface RuntimeConfig extends PrivateRuntimeConfig, RuntimeConfigNamespace {
   public: PublicRuntimeConfig
@@ -86,4 +88,4 @@ export interface NuxtAppConfig {
   keepalive: boolean | KeepAliveProps
 }
 
-export interface AppConfig {}
+export interface AppConfig { }
