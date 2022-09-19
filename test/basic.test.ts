@@ -265,6 +265,12 @@ describe('middlewares', () => {
     expect(html).toContain('auth: ')
     expect(html).not.toContain('Injected by injectAuth middleware')
   })
+
+  it('should redirect to index with http 307 with navigateTo on server side', async () => {
+    const html = await fetch('/navigate-to-redirect', { redirect: 'manual' })
+    expect(html.headers.get('location')).toEqual('/')
+    expect(html.status).toEqual(307)
+  })
 })
 
 describe('plugins', () => {
@@ -590,7 +596,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () 
   it('renders a payload', async () => {
     const payload = await $fetch('/random/a/_payload.js', { responseType: 'text' })
     expect(payload).toMatch(
-      /export default \{data:\{\$frand_a:\[[^\]]*\]\},state:\{"\$srandom:rand_a":\d*,"\$srandom:default":\d*\},prerenderedAt:\d*\}/
+      /export default \{data:\{\$frand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
     )
   })
 
