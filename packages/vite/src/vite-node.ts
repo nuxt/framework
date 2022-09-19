@@ -102,7 +102,7 @@ function createViteNodeMiddleware (ctx: ViteBuildContext, invalidates: Set<strin
     node.shouldExternalize = async (id: string) => {
       const result = await isExternal(id)
       if (result?.external) {
-        return resolveModule(result.id, { url: ctx.nuxt.options.rootDir })
+        return resolveModule(result.id, { url: ctx.nuxt.options.modulesDir })
       }
       return false
     }
@@ -113,7 +113,13 @@ function createViteNodeMiddleware (ctx: ViteBuildContext, invalidates: Set<strin
         throw createError({ statusCode: 400 })
       }
       const module = await node.fetchModule(moduleId).catch((err) => {
-        throw createError({ data: err })
+        const errorData = {
+          code: 'VITE_ERROR',
+          id: moduleId,
+          stack: '',
+          ...err
+        }
+        throw createError({ data: errorData })
       })
       return module
     }
