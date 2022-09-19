@@ -1,11 +1,9 @@
 import { performance } from 'node:perf_hooks'
 import { createError } from 'h3'
 import { ViteNodeRunner } from 'vite-node/client'
-import { $fetch } from 'ohmyfetch'
 import consola from 'consola'
-import { getViteNodeOptions } from './vite-node-shared.mjs'
+import { viteNodeOptions, viteNodeFetch } from './vite-node-shared.mjs'
 
-const viteNodeOptions = getViteNodeOptions()
 const runner = createRunner()
 let render
 
@@ -15,9 +13,7 @@ export default async (ssrContext) => {
   process.server = true
 
   // Invalidate cache for files changed since last rendering
-  const invalidates = await $fetch('/invalidates', {
-    baseURL: viteNodeOptions.baseURL
-  })
+  const invalidates = await viteNodeFetch('/invalidates')
   const updates = runner.moduleCache.invalidateDepTree(invalidates)
 
   // Execute SSR bundle on demand
@@ -33,34 +29,36 @@ export default async (ssrContext) => {
 }
 
 function createRunner () {
+  const _importers = new Map()
   return new ViteNodeRunner({
     root: viteNodeOptions.root, // Equals to Nuxt `srcDir`
     base: viteNodeOptions.base,
+    resolveId (id, importer) { _importers.set(id, importer) },
     async fetchModule (id) {
-      // TODO: fix in vite-node
-      id = id.replace(/\/\//g, '/')
-      return await $fetch('/module/' + encodeURI(id), {
-        baseURL: viteNodeOptions.baseURL
-      }).catch((err) => {
+      const importer = _importers.get(id)
+      _importers.delete(id)
+      id = id.replace(/\/\//g, '/') // TODO: fix in vite-node
+      return await viteNodeFetch('/module/' + encodeURI(id)).catch((err) => {
         const errorData = err?.data?.data
         if (!errorData) {
           throw err
         }
         let _err
         try {
-          const { message, stack } = formatViteError(errorData)
+          const { message, stack } = formatViteError(errorData, id, importer)
           _err = createError({
             statusMessage: 'Vite Error',
             message,
             stack
           })
-        } catch (err) {
-          // This should not happen unless there is an internal error with formatViteError!
-          consola.error('Error while formatting vite error:', errorData)
+        } catch (formatError) {
+          consola.warn('Internal nuxt error while formatting vite-node error. Please report this!', formatError)
+          const message = `[vite-node] [TransformError] ${errorData?.message || '-'}`
+          consola.error(message, errorData)
           throw createError({
             statusMessage: 'Vite Error',
-            message: errorData.message || 'Vite Error',
-            stack: 'Vite Error\nat [check console]'
+            message,
+            stack: `${message}\nat ${id}\n` + (errorData?.stack || '')
           })
         }
         throw _err
@@ -69,11 +67,11 @@ function createRunner () {
   })
 }
 
-function formatViteError (errorData) {
+function formatViteError (errorData, id, importer) {
   const errorCode = errorData.name || errorData.reasonCode || errorData.code
   const frame = errorData.frame || errorData.source || errorData.pluginCode
 
-  const getLocId = (locObj = {}) => locObj.file || locObj.id || locObj.url || ''
+  const getLocId = (locObj = {}) => locObj.file || locObj.id || locObj.url || id || ''
   const getLocPos = (locObj = {}) => locObj.line ? `${locObj.line}:${locObj.column || 0}` : ''
   const locId = getLocId(errorData.loc) || getLocId(errorData.location) || getLocId(errorData.input) || getLocId(errorData)
   const locPos = getLocPos(errorData.loc) || getLocPos(errorData.location) || getLocPos(errorData.input) || getLocPos(errorData)
@@ -90,7 +88,7 @@ function formatViteError (errorData) {
 
   const stack = [
     message,
-    'at ' + loc,
+    `at ${loc} ${importer ? `(imported from ${importer})` : ''}`,
     errorData.stack
   ].filter(Boolean).join('\n')
 
