@@ -266,7 +266,7 @@ describe('middlewares', () => {
     expect(html).not.toContain('Injected by injectAuth middleware')
   })
 
-  it('should redirect to index with http 307 with navigateToOption', async () => {
+  it('should redirect to index with http 307 with navigateTo on server side', async () => {
     const html = await fetch('/navigate-to-redirect', { redirect: 'manual' })
     expect(html.headers.get('location')).toEqual('/')
     expect(html.status).toEqual(307)
