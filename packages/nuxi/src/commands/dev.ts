@@ -40,8 +40,8 @@ export default defineNuxtCommand({
     const rootDir = resolve(args._[0] || '.')
     showVersions(rootDir)
 
-    const envWrkDir = args.dotenv ? resolve(rootDir, args.dotenv) : rootDir
-    await setupDotenv({ cwd: envWrkDir })
+    const dotenvDir = args.dotenv ? resolve(rootDir, args.dotenv) : rootDir
+    await setupDotenv({ cwd: dotenvDir })
 
     const listener = await listen(serverHandler, {
       showURL: false,
