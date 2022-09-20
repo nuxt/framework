@@ -26,7 +26,7 @@ export default defineUntypedSchema({
      * Tree shakes contents of client-only components from server bundle.
      * @see https://github.com/nuxt/framework/pull/5750
      */
-    treeshakeClientOnly: false,
+    treeshakeClientOnly: true,
 
     /**
      * Use vite-node for on-demand server chunk loading
@@ -61,8 +61,8 @@ export default defineUntypedSchema({
      * @type {boolean | ((id?: string) => boolean)}
      */
     inlineSSRStyles: {
-      $resolve (val, get) {
-        if (val === false || get('dev') || get('ssr') === false || get('builder') === '@nuxt/webpack-builder') {
+      async $resolve (val, get) {
+        if (val === false || (await get('dev')) || (await get('ssr')) === false || (await get('builder')) === '@nuxt/webpack-builder') {
           return false
         }
         // Enabled by default for vite prod with ssr
@@ -74,5 +74,10 @@ export default defineUntypedSchema({
      * Turn off rendering of Nuxt scripts and JS resource hints.
      */
     noScripts: false,
+
+    /**
+     * When this option is enabled (by default) payload of pages generated with `nuxt generate` are extracted
+     */
+    payloadExtraction: true,
   }
 })

@@ -48,8 +48,7 @@ export default defineNuxtCommand({
       open: args.open || args.o,
       port: args.port || args.p || process.env.NUXT_PORT,
       hostname: args.host || args.h || process.env.NUXT_HOST,
-      https: Boolean(args.https),
-      certificate: (args['ssl-cert'] && args['ssl-key']) && {
+      https: args.https && {
         cert: args['ssl-cert'],
         key: args['ssl-key']
       }
@@ -92,9 +91,10 @@ export default defineNuxtCommand({
 
         await currentNuxt.hooks.callHook('listen', listener.server, listener)
         const address = listener.server.address() as AddressInfo
+        currentNuxt.options.server.url = listener.url
         currentNuxt.options.server.port = address.port
         currentNuxt.options.server.host = address.address
-        currentNuxt.options.server.https = Boolean(args.https)
+        currentNuxt.options.server.https = listener.https
 
         await Promise.all([
           writeTypes(currentNuxt).catch(console.error),

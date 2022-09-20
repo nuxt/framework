@@ -2,7 +2,9 @@ import { getCurrentInstance, inject } from 'vue'
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure, RouteLocationPathRaw } from 'vue-router'
 import { sendRedirect } from 'h3'
 import { hasProtocol, joinURL, parseURL } from 'ufo'
-import { useNuxtApp, useRuntimeConfig, useState, createError, NuxtError } from '#app'
+import { useNuxtApp, useRuntimeConfig } from '../nuxt'
+import { createError, NuxtError } from './error'
+import { useState } from './state'
 
 export const useRouter = () => {
   return useNuxtApp()?.$router as Router
@@ -77,7 +79,7 @@ export const navigateTo = (to: RouteLocationRaw | undefined | null, options?: Na
   }
 
   // Early redirect on client-side
-  if (!isExternal && isProcessingMiddleware()) {
+  if (process.client && !isExternal && isProcessingMiddleware()) {
     return to
   }
 
