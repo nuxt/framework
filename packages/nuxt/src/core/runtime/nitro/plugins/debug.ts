@@ -1,6 +1,6 @@
 import type { NitroAppPlugin } from 'nitropack'
 
-const wrapName = (event: string) => process.server ? `[nitro] ${event}` : event
+const wrapName = (event: string) => `[nitro] ${event}`
 
 export default <NitroAppPlugin> function (nitro) {
   nitro.hooks.beforeEach(({ name }) => {
