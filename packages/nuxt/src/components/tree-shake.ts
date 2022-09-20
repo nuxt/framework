@@ -12,6 +12,7 @@ interface TreeShakeTemplatePluginOptions {
 }
 
 export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplatePluginOptions) => {
+  const regexpMap = new WeakMap<Component[], [RegExp, string[]]>()
   return {
     name: 'nuxt:tree-shake-template',
     enforce: 'pre',
@@ -25,10 +26,19 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
 
       const components = options.getComponents()
 
-      const clientOnlyComponents = components
-        .filter(c => c.mode === 'client' && !components.some(other => other.mode !== 'client' && other.pascalName === c.pascalName))
-        .flatMap(c => [c.pascalName.toLowerCase(), c.kebabName])
-        .concat(['clientonly', 'client-only'])
+      if (!regexpMap.has(components)) {
+        const clientOnlyComponents = components
+          .filter(c => c.mode === 'client' && !components.some(other => other.mode !== 'client' && other.pascalName === c.pascalName))
+          .flatMap(c => [c.pascalName.toLowerCase(), c.kebabName])
+          .concat(['clientonly', 'client-only'])
+        const tags = clientOnlyComponents
+          .map(component => `<(${component})[^>]*>[\\s\\S]*?<\\/(${component})>`)
+
+        regexpMap.set(components, [new RegExp(`(${tags.join('|')})`, 'gi'), clientOnlyComponents])
+      }
+
+      const [COMPONENTS_RE, clientOnlyComponents] = regexpMap.get(components)!
+      if (!COMPONENTS_RE.test(code)) { return }
 
       const s = new MagicString(code)
 
