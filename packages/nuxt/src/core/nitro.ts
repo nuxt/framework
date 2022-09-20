@@ -129,6 +129,11 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     exclude: [/core[\\/]runtime[\\/]nitro[\\/]renderer/]
   }))
 
+  if (nuxt.options.debug) {
+    nitroConfig.plugins = nitroConfig.plugins || []
+    nitroConfig.plugins.push(resolve(distDir, 'core/runtime/nitro/plugins/debug'))
+  }
+
   // Extend nitro config with hook
   await nuxt.callHook('nitro:config', nitroConfig)
 

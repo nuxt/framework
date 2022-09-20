@@ -148,12 +148,15 @@ export default defineUntypedSchema({
 
   /**
    * Set to `true` to enable debug mode.
+   * 
+   * At the moment, it prints out hook names and timings on the server, and
+   * logs hook arguments as well in the browser.
    *
-   * By default, it's only enabled in development mode.
    * @version 2
+   * @version 3
    */
   debug: {
-    $resolve: async (val, get) => val ?? await get('dev')
+    $resolve: async (val, get) => val ?? false
   },
 
   /**

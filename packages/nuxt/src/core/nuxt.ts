@@ -183,6 +183,11 @@ async function initNuxt (nuxt: Nuxt) {
     addPlugin(resolve(nuxt.options.appDir, 'plugins/preload.server'))
   }
 
+  // Track components used to render for webpack
+  if (nuxt.options.debug) {
+    addPlugin(resolve(nuxt.options.appDir, 'plugins/debug'))
+  }
+
   for (const m of modulesToInstall) {
     if (Array.isArray(m)) {
       await installModule(m[0], m[1])
