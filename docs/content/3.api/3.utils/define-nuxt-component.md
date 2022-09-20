@@ -29,21 +29,3 @@ export default defineNuxtComponent({
 })
 </script>
 ```
-
-## `setup` function
-
-`defineNuxtComponent()` also takes care of resolving the promise returned by `useAsyncData()` in Vue components found at `components/` and `pages/` directory, or in the `~/app.vue` component found at the root of your Nuxt application:
-
-```vue [pages/index.vue]
-<script lang="ts">
-export default defineNuxtComponent({
-  async setup(props) {
-    const { data } = await useAsyncData(() => Promise.resolve('Hello world!'))
-
-    return {
-      data
-    }
-  }
-})
-</script>
-```
