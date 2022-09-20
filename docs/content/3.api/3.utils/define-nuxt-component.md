@@ -14,21 +14,18 @@ Using `<script setup lang="ts">` is the recommended way of declaring Vue compone
 
 ## `asyncData()`
 
-If you choose to use options API to define components in your Nuxt 3, you can use `asyncData()` utility:
+If you choose not to use `setup()` in your app, you can use the `asyncData()` method within your component definition:
 
 ```vue [pages/index.vue]
 <script lang="ts">
 export default defineNuxtComponent({
-  asyncData() {
+  async asyncData() {
     return {
       data: {
         greetings: 'hello world!'
       }
     }
   },
-  async setup(props) {
-    // ...
-  }
 })
 </script>
 ```
