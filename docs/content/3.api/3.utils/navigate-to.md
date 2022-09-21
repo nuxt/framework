@@ -70,20 +70,20 @@ An object accepting the following properties:
 
 ```vue
 <script setup>
-  // passing 'to' as a string
-  await navigateTo('/search')
+// passing 'to' as a string
+await navigateTo('/search')
 
-  // ... or as a route object
-  await navigateTo({ path: '/search' })
+// ... or as a route object
+await navigateTo({ path: '/search' })
 
-  // ... or as a route object with query parameters
-  await navigateTo({
-    path: '/search',
-    query: {
-      page: 1,
-      sort: 'asc'
-    }
-  })
+// ... or as a route object with query parameters
+await navigateTo({
+  path: '/search',
+  query: {
+    page: 1,
+    sort: 'asc'
+  }
+})
 </script>
 ```
 
@@ -103,13 +103,13 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
 ```vue
 <script setup>
-  // will throw an error;
-  // navigating to an external URL is not allowed by default
-  await navigateTo('https://v3.nuxtjs.org')
+// will throw an error;
+// navigating to an external URL is not allowed by default
+await navigateTo('https://v3.nuxtjs.org')
 
-  // will redirect successfully with the 'external' parameter set to 'true'
-  await navigateTo('https://v3.nuxtjs.org', {
-    external: true
-  })
+// will redirect successfully with the 'external' parameter set to 'true'
+await navigateTo('https://v3.nuxtjs.org', {
+  external: true
+})
 </script>
 ```
