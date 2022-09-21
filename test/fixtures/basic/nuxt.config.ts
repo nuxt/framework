@@ -16,11 +16,6 @@ export default defineNuxtConfig({
   extends: [
     './extends/node_modules/foo'
   ],
-  hooks: {
-    'prepare:types' ({ tsConfig }) {
-      tsConfig.include = tsConfig.include.filter(i => i !== '../**/**/*')
-    }
-  },
   nitro: {
     output: { dir: process.env.NITRO_OUTPUT_DIR },
     prerender: {
@@ -58,6 +53,9 @@ export default defineNuxtConfig({
     }
   ],
   hooks: {
+    'prepare:types' ({ tsConfig }) {
+      tsConfig.include = tsConfig.include.filter(i => i !== '../**/**/*')
+    },
     'modules:done' () {
       addComponent({
         name: 'CustomComponent',
