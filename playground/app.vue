@@ -1,27 +1,12 @@
+<script setup lang="ts">
+</script>
+
 <template>
+  <!-- Edit this file to play around with Nuxt but never commit changes! -->
   <div>
-    {{ data }}
-    <hr>
-    <NuxtPage />
-    <hr>
-    <NuxtLink href="/sync">
-      Page SYNC
-    </NuxtLink><br>
-    <NuxtLink href="/a">
-      Page A
-    </NuxtLink><br>
-    <NuxtLink href="/b/b1">
-      Page B1
-    </NuxtLink><br>
-    <NuxtLink href="/c/c1">
-      Page C1
-    </NuxtLink>
+    Nuxt 3 Playground
   </div>
 </template>
 
-<script setup>
-await Promise.resolve()
-const a = useNuxtApp()
-const { data } = await useAsyncData(() => new Promise(resolve => resolve({ foo: 'app' }), 400))
-console.log('In App ' + a.isHydrating)
-</script>
+<style scoped>
+</style>
