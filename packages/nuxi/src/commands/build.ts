@@ -19,12 +19,14 @@ export default defineNuxtCommand({
     const rootDir = resolve(args._[0] || '.')
     showVersions(rootDir)
 
-    const dotenvDir = args.dotenv ? resolve(rootDir, args.dotenv) : rootDir
     const { loadNuxt, buildNuxt, useNitro } = await loadKit(rootDir)
 
     const nuxt = await loadNuxt({
       rootDir,
-      dotenv: dotenvDir,
+      dotenv: {
+        cwd: rootDir,
+        fileName: args.dotenv
+      },
       overrides: {
         _generate: args.prerender
       }
