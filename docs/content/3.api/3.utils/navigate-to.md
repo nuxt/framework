@@ -70,20 +70,20 @@ An object accepting the following properties:
 
 ```vue
 <script setup>
-// passing 'to' as a string
-return navigateTo('/search')
+  // passing 'to' as a string
+  await navigateTo('/search')
 
-// ... or as a route object
-return navigateTo({ path: '/search' })
+  // ... or as a route object
+  await navigateTo({ path: '/search' })
 
-// ... or as a route object with query parameters
-return navigateTo({
-  path: '/search',
-  query: {
-    page: 1,
-    sort: 'asc'
-  }
-})
+  // ... or as a route object with query parameters
+  await navigateTo({
+    path: '/search',
+    query: {
+      page: 1,
+      sort: 'asc'
+    }
+  })
 </script>
 ```
 
