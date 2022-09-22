@@ -3,7 +3,7 @@ import { getRandomPort, waitForPort } from 'get-port-please'
 import { fetch as _fetch, $fetch as _$fetch, FetchOptions } from 'ohmyfetch'
 import * as _kit from '@nuxt/kit'
 import { resolve } from 'pathe'
-import { stringifyQuery } from 'vue-router'
+import { stringifyQuery } from 'ufo'
 import { useTestContext } from './context'
 
 // @ts-ignore type cast

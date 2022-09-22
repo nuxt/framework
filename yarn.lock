@@ -1772,7 +1772,9 @@ __metadata:
     get-port-please: ^2.6.1
     jiti: ^1.16.0
     ohmyfetch: ^0.4.19
+    pathe: ^0.3.8
     playwright: ^1.26.0
+    ufo: ^0.8.5
     unbuild: latest
     vitest: ~0.19.1
   peerDependencies:
