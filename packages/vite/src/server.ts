@@ -11,6 +11,7 @@ import { cacheDirPlugin } from './plugins/cache-dir'
 import { initViteNodeServer } from './vite-node'
 import { ssrStylesPlugin } from './plugins/ssr-styles'
 import { writeManifest } from './manifest'
+import { transpile } from './utils/transpile'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = (id: string) => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
@@ -66,7 +67,7 @@ export async function buildServer (ctx: ViteBuildContext) {
         ? ['#internal/nitro', '#internal/nitro/utils', 'vue', 'vue-router']
         : ['#internal/nitro', '#internal/nitro/utils'],
       noExternal: [
-        ...ctx.nuxt.options.build.transpile,
+        ...transpile(ctx),
         // TODO: Use externality for production (rollup) build
         /\/esm\/.*\.js$/,
         /\.(es|esm|esm-browser|esm-bundler).js$/,
