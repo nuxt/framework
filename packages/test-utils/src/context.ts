@@ -58,7 +58,7 @@ export function exposeContextToEnv () {
     options,
     browser,
     url
-  } = currentContext
+  } = currentContext!
   process.env.NUXT_TEST_CONTEXT = JSON.stringify({
     options,
     browser,
