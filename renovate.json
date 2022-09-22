@@ -3,12 +3,14 @@
     "@nuxtjs"
   ],
   "ignoreDeps": [
-    "vue-router",
     "docus",
     "@docus/app",
     "@docus/github",
     "@docus/social-image",
     "@docus/theme",
-    "@docus/twitter"
+    "@docus/twitter",
+    "vitest",
+    "unplugin",
+    "vue-tsc"
   ]
 }

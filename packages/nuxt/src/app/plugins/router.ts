@@ -1,9 +1,8 @@
 import { reactive, h } from 'vue'
-import { parseURL, parseQuery, withoutBase, isEqual, joinURL } from 'ufo'
+import { parseURL, stringifyParsedURL, parseQuery, stringifyQuery, withoutBase, isEqual, joinURL } from 'ufo'
 import { createError } from 'h3'
-import { defineNuxtPlugin } from '..'
+import { defineNuxtPlugin, clearError, navigateTo, showError, useRuntimeConfig, useState } from '..'
 import { callWithNuxt } from '../nuxt'
-import { clearError, navigateTo, throwError, useRuntimeConfig } from '#app'
 // @ts-ignore
 import { globalMiddleware } from '#build/middleware'
 
@@ -29,9 +28,13 @@ interface Route {
     meta: Record<string, any>;
 }
 
-function getRouteFromPath (fullPath: string | Record<string, unknown>) {
+function getRouteFromPath (fullPath: string | Partial<Route>) {
   if (typeof fullPath === 'object') {
-    throw new TypeError('[nuxt] Route location object cannot be resolved when vue-router is disabled (no pages).')
+    fullPath = stringifyParsedURL({
+      pathname: fullPath.path || '',
+      search: stringifyQuery(fullPath.query || {}),
+      hash: fullPath.hash || ''
+    })
   }
 
   const url = parseURL(fullPath.toString())
@@ -80,7 +83,7 @@ interface Router {
   afterEach: (guard: RouterHooks['navigate:after']) => () => void
   onError: (handler: RouterHooks['error']) => () => void
   // Routes
-  resolve: (url: string | Record<string, unknown>) => Route
+  resolve: (url: string | Partial<Route>) => Route
   addRoute: (parentName: string, route: Route) => void
   getRoutes: () => any[]
   hasRoute: (name: string) => boolean
@@ -90,8 +93,9 @@ interface Router {
 export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   const initialURL = process.client
     ? withoutBase(window.location.pathname, useRuntimeConfig().app.baseURL) + window.location.search + window.location.hash
-    : nuxtApp.ssrContext.url
-  const routes = []
+    : nuxtApp.ssrContext!.url
+
+  const routes: Route[] = []
 
   const hooks: { [key in keyof RouterHooks]: RouterHooks[key][] } = {
     'navigate:before': [],
@@ -107,7 +111,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   const baseURL = useRuntimeConfig().app.baseURL
 
   const route: Route = reactive(getRouteFromPath(initialURL))
-  async function handleNavigation (url: string, replace?: boolean): Promise<void> {
+  async function handleNavigation (url: string | Partial<Route>, replace?: boolean): Promise<void> {
     try {
       // Resolve route
       const to = getRouteFromPath(url)
@@ -127,7 +131,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
       // Perform navigation
       Object.assign(route, to)
       if (process.client) {
-        window.history[replace ? 'replaceState' : 'pushState']({}, '', joinURL(baseURL, url))
+        window.history[replace ? 'replaceState' : 'pushState']({}, '', joinURL(baseURL, to.fullPath))
         if (!nuxtApp.isHydrating) {
           // Clear any existing errors
           await callWithNuxt(nuxtApp, clearError)
@@ -150,7 +154,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   const router: Router = {
     currentRoute: route,
     isReady: () => Promise.resolve(),
-    //
+    // These options provide a similar API to vue-router but have no effect
     options: {},
     install: () => Promise.resolve(),
     // Navigation
@@ -194,7 +198,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
         const route = router.resolve(props.to)
         return props.custom
           ? slots.default?.({ href: props.to, navigate, route })
-          : h('a', { href: props.to, onClick: (e) => { e.preventDefault(); return navigate() } }, slots)
+          : h('a', { href: props.to, onClick: (e: MouseEvent) => { e.preventDefault(); return navigate() } }, slots)
       }
     }
   })
@@ -214,9 +218,13 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
     named: {}
   }
 
+  const initialLayout = useState('_layout')
   nuxtApp.hooks.hookOnce('app:created', async () => {
     router.beforeEach(async (to, from) => {
       to.meta = reactive(to.meta || {})
+      if (nuxtApp.isHydrating) {
+        to.meta.layout = initialLayout.value ?? to.meta.layout
+      }
       nuxtApp._processingMiddleware = true
 
       const middlewareEntries = new Set<RouteGuard>([...globalMiddleware, ...nuxtApp._middleware.global])
@@ -228,7 +236,7 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
             const error = result || createError({
               statusMessage: `Route navigation aborted: ${initialURL}`
             })
-            return callWithNuxt(nuxtApp, throwError, [error])
+            return callWithNuxt(nuxtApp, showError, [error])
           }
         }
         if (result || result === false) { return result }

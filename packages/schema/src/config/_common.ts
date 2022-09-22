@@ -4,11 +4,15 @@ import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
 import defu from 'defu'
+import { findWorkspaceDir } from 'pkg-types'
+
 import { RuntimeConfig } from '../types/config'
 
-export default {
+import { defineUntypedSchema } from 'untyped'
+
+export default defineUntypedSchema({
   /**
-   * Extend nested configurations from multiple local or remote sources
+   * Extend project from multiple local or remote sources.
    *
    * Value should be either a string or array of strings pointing to source directories or config path relative to current config.
    *
@@ -21,7 +25,20 @@ export default {
   extends: null,
 
   /**
-   * Define the workspace directory of your application.
+   * Extend project from a local or remote source.
+   *
+   * Value should be a string pointing to source directory or config path relative to current config.
+   *
+   * You can use `github:`, `gitlab:`, `bitbucket:` or `https://` to extend from a remote git repository.
+   *
+   * @type {string}
+   *
+   * @version 3
+   */
+  theme: null,
+
+  /**
+   * Define the root directory of your application.
    *
    * This property can be overwritten (for example, running `nuxt ./my-app/`
    * will set the `rootDir` to the absolute path of `./my-app/` from the
@@ -36,14 +53,27 @@ export default {
   },
 
   /**
+   * Define the workspace directory of your application.
+   *
+   * Often this is used when in a monorepo setup. Nuxt will attempt to detect
+   * your workspace directory automatically, but you can override it here.
+   *
+   * It is normally not needed to configure this option.
+   * @version 3
+   */
+  workspaceDir: {
+    $resolve: async (val, get) => val ? resolve(await get('rootDir'), val) : await findWorkspaceDir(await get('rootDir')).catch(() => get('rootDir'))
+  },
+
+  /**
    * Define the source directory of your Nuxt application.
    *
-   * If a relative path is specified it will be relative to the `rootDir`.
+   * If a relative path is specified, it will be relative to the `rootDir`.
    *
    * @example
    * ```js
    * export default {
-   *   srcDir: 'client/'
+   *   srcDir: 'src/'
    * }
    * ```
    * This would work with the following folder structure:
@@ -52,7 +82,7 @@ export default {
    * ---| node_modules/
    * ---| nuxt.config.js
    * ---| package.json
-   * ---| client/
+   * ---| src/
    * ------| assets/
    * ------| components/
    * ------| layouts/
@@ -61,12 +91,13 @@ export default {
    * ------| plugins/
    * ------| static/
    * ------| store/
+   * ------| server/
    * ```
    * @version 2
    * @version 3
    */
   srcDir: {
-    $resolve: (val, get) => resolve(get('rootDir'), val || '.')
+    $resolve: async (val, get) => resolve(await get('rootDir'), val || '.')
   },
 
   /**
@@ -85,38 +116,38 @@ export default {
    * @version 3
    */
   buildDir: {
-    $resolve: (val, get) => resolve(get('rootDir'), val || '.nuxt')
+    $resolve: async (val, get) => resolve(await get('rootDir'), val || '.nuxt')
   },
 
   /**
    * Whether Nuxt is running in development mode.
    *
-   * Normally you should not need to set this.
+   * Normally, you should not need to set this.
    * @version 2
    * @version 3
    */
   dev: Boolean(isDevelopment),
 
   /**
-   * Whether your app is being unit tested
+   * Whether your app is being unit tested.
    * @version 2
    */
   test: Boolean(isDevelopment),
 
   /**
-   * Set to true to enable debug mode.
+   * Set to `true` to enable debug mode.
    *
-   * By default it's only enabled in development mode.
+   * By default, it's only enabled in development mode.
    * @version 2
    */
   debug: {
-    $resolve: (val, get) => val ?? get('dev')
+    $resolve: async (val, get) => val ?? await get('dev')
   },
 
   /**
-   * The env property defines environment variables that should be available
+   * The `env` property defines environment variables that should be available
    * throughout your app (server- and client-side). They can be assigned using
-   * server side environment variables.
+   * server-side environment variables.
    *
    * @note Nuxt uses webpack's `definePlugin` to define these environment variables.
    * This means that the actual `process` or `process.env` from Node.js is neither
@@ -152,12 +183,13 @@ export default {
   createRequire: {
     $resolve: (val: any) => {
       val = process.env.NUXT_CREATE_REQUIRE || val ||
+        // @ts-expect-error global type
         (typeof globalThis.jest !== 'undefined' ? 'native' : 'jiti')
       if (val === 'jiti') {
-        return p => jiti(typeof p === 'string' ? p : p.filename)
+        return (p: string | { filename: string }) => jiti(typeof p === 'string' ? p : p.filename, { esmResolve: true })
       }
       if (val === 'native') {
-        return p => createRequire(typeof p === 'string' ? p : p.filename)
+        return (p: string | { filename: string }) => createRequire(typeof p === 'string' ? p : p.filename)
       }
       return val
     }
@@ -182,13 +214,15 @@ export default {
    * @version 2
    * @version 3
    */
-  ssr: true,
+  ssr: {
+    $resolve: (val) => val ?? true,
+  },
 
   /**
-   * @deprecated use ssr option
+   * @deprecated use `ssr` option
    */
   mode: {
-    $resolve: (val, get) => val || (get('ssr') ? 'spa' : 'universal'),
+    $resolve: async (val, get) => val || ((await get('ssr')) ? 'spa' : 'universal'),
     $schema: { deprecated: '`mode` option is deprecated' }
   },
 
@@ -216,7 +250,7 @@ export default {
   modern: undefined,
 
   /**
-   * Modules are Nuxt extensions which can extend its core functionality and add endless integrations
+   * Modules are Nuxt extensions which can extend its core functionality and add endless integrations.
    *
    * Each module is either a string (which can refer to a package, or be a path to a file), a
    * tuple with the module as first string and the options as a second object, or an inline module function.
@@ -248,7 +282,7 @@ export default {
   /**
    * Modules that are only required during development and build time.
    *
-   * Modules are Nuxt extensions which can extend its core functionality and add endless integrations
+   * Modules are Nuxt extensions which can extend its core functionality and add endless integrations.
    *
    * Each module is either a string (which can refer to a package, or be a path to a file), a
    * tuple with the module as first string and the options as a second object, or an inline module function.
@@ -283,18 +317,18 @@ export default {
   buildModules: [],
 
   /**
-   * Built-in ad-hoc modules
+   * Built-in ad-hoc modules.
    *
    *  @private
    */
   _modules: [],
 
   /**
-   * Installed module metadata
+   * Installed module metadata.
    *
    * @version 3
    * @private
-  */
+   */
   _installedModules: [],
 
   /**
@@ -312,17 +346,17 @@ export default {
    */
   globals: {
     /** @type {(globalName: string) => string} */
-    id: globalName => `__${globalName}`,
+    id: (globalName: string) => `__${globalName}`,
     /** @type {(globalName: string) => string} */
-    nuxt: globalName => `$${globalName}`,
+    nuxt: (globalName: string) => `$${globalName}`,
     /** @type {(globalName: string) => string} */
-    context: globalName => `__${globalName.toUpperCase()}__`,
+    context: (globalName: string) => `__${globalName.toUpperCase()}__`,
     /** @type {(globalName: string) => string} */
-    pluginPrefix: globalName => globalName,
+    pluginPrefix: (globalName: string) => globalName,
     /** @type {(globalName: string) => string} */
-    readyCallback: globalName => `on${pascalCase(globalName)}Ready`,
+    readyCallback: (globalName: string) => `on${pascalCase(globalName)}Ready`,
     /** @type {(globalName: string) => string} */
-    loadedCallback: globalName => `_on${pascalCase(globalName)}Loaded`
+    loadedCallback: (globalName: string) => `_on${pascalCase(globalName)}Loaded`
   },
 
   /**
@@ -333,8 +367,8 @@ export default {
    * for an external server.
    *
    * You can pass a string, which can be the name of a node dependency or a path to a file. You
-   * can also pass an object with `path` and `handler` keys. (`handler` can be a path or a
-   * function.)
+   * can also pass an object with `path` and `handler` keys (`handler` can be a path or a
+   * function).
    *
    * @note If you pass a function directly, it will only run in development mode.
    *
@@ -427,14 +461,14 @@ export default {
    */
   modulesDir: {
     $default: ['node_modules'],
-    $resolve: (val, get) => [].concat(
-      val.map(dir => resolve(get('rootDir'), dir)),
+    $resolve: async (val, get) => [
+      ...await Promise.all(val.map(async (dir: string) => resolve(await get('rootDir'), dir))),
       resolve(process.cwd(), 'node_modules')
-    )
+    ]
   },
 
   /**
-   * Customize default directory structure used by nuxt.
+   * Customize default directory structure used by Nuxt.
    *
    * It is better to stick with defaults unless needed.
    * @version 2
@@ -442,7 +476,7 @@ export default {
    */
   dir: {
     /**
-     * The assets directory (aliased as `~assets` in your build)
+     * The assets directory (aliased as `~assets` in your build).
      * @version 2
      */
     assets: 'assets',
@@ -475,12 +509,12 @@ export default {
      * @version 3
      */
     public: {
-      $resolve: (val, get) => val || get('dir.static') || 'public',
+      $resolve: async (val, get) => val || await get('dir.static') || 'public',
     },
     /** @version 2 */
     static: {
       $schema: { deprecated: 'use `dir.public` option instead' },
-      $resolve: (val, get) => val || get('dir.public') || 'public',
+      $resolve: async (val, get) => val || await get('dir.public') || 'public',
     },
     /**
      * The folder which will be used to auto-generate your Vuex store structure.
@@ -551,13 +585,13 @@ export default {
    * @version 3
    */
   alias: {
-    $resolve: (val, get) => ({
-      '~~': get('rootDir'),
-      '@@': get('rootDir'),
-      '~': get('srcDir'),
-      '@': get('srcDir'),
-      [get('dir.assets')]: join(get('srcDir'), get('dir.assets')),
-      [get('dir.public')]: join(get('srcDir'), get('dir.public')),
+    $resolve: async (val, get) => ({
+      '~~': await get('rootDir'),
+      '@@': await get('rootDir'),
+      '~': await get('srcDir'),
+      '@': await get('srcDir'),
+      [await get('dir.assets')]: join(await get('srcDir'), await get('dir.assets')),
+      [await get('dir.public')]: join(await get('srcDir'), await get('dir.public')),
       ...val
     })
   },
@@ -593,11 +627,11 @@ export default {
    * @version 3
    */
   ignore: {
-    $resolve: (val, get) => [
+    $resolve: async (val, get) => [
       '**/*.stories.{js,ts,jsx,tsx}', // ignore storybook files
       '**/*.{spec,test}.{js,ts,jsx,tsx}', // ignore tests
       '.output',
-      get('ignorePrefix') && `**/${get('ignorePrefix')}*.*`
+      await get('ignorePrefix') && `**/${await get('ignorePrefix')}*.*`
     ].concat(val).filter(Boolean)
   },
 
@@ -617,9 +651,9 @@ export default {
    * @version 2
    */
   watch: {
-    $resolve: (val, get) => {
-      const rootDir = get('rootDir')
-      return Array.from(new Set([].concat(val, get('_nuxtConfigFiles'))
+    $resolve: async (val, get) => {
+      const rootDir = await get('rootDir')
+      return Array.from(new Set([].concat(val, await get('_nuxtConfigFiles'))
         .filter(Boolean).map(p => resolve(rootDir, p))
       ))
     }
@@ -704,7 +738,7 @@ export default {
    * Anything under `public` and `app` will be exposed to the frontend as well.
    *
    * Values are automatically replaced by matching env variables at runtime, e.g. setting an environment
-   * variable `API_KEY=my-api-key PUBLIC_BASE_URL=/foo/` would overwrite the two values in the example below.
+   * variable `NUXT_API_KEY=my-api-key NUXT_PUBLIC_BASE_URL=/foo/` would overwrite the two values in the example below.
    *
    * @example
    * ```js
@@ -721,14 +755,14 @@ export default {
    * @version 3
    */
   runtimeConfig: {
-    $resolve: (val: RuntimeConfig, get) => defu(val, {
-      ...get('publicRuntimeConfig'),
-      ...get('privateRuntimeConfig'),
-      public: get('publicRuntimeConfig'),
+    $resolve: async (val: RuntimeConfig, get) => defu(val, {
+      ...await get('publicRuntimeConfig'),
+      ...await get('privateRuntimeConfig'),
+      public: await get('publicRuntimeConfig'),
       app: {
-        baseURL: get('app').baseURL,
-        buildAssetsDir: get('app').buildAssetsDir,
-        cdnURL: get('app').cdnURL,
+        baseURL: (await get('app')).baseURL,
+        buildAssetsDir: (await get('app')).buildAssetsDir,
+        cdnURL: (await get('app')).cdnURL,
       }
     })
   },
@@ -737,7 +771,7 @@ export default {
    * @type {typeof import('../src/types/config').PrivateRuntimeConfig}
    * @version 2
    * @version 3
-   * @deprecated Use `runtimeConfig` option
+   * @deprecated Use `runtimeConfig` option.
    */
   privateRuntimeConfig: {},
 
@@ -745,7 +779,18 @@ export default {
    * @type {typeof import('../src/types/config').PublicRuntimeConfig}
    * @version 2
    * @version 3
-   * @deprecated Use `runtimeConfig` option with `public` key (`runtimeConfig.public.*`)
+   * @deprecated Use `runtimeConfig` option with `public` key (`runtimeConfig.public.*`).
    */
-  publicRuntimeConfig: {}
-}
+  publicRuntimeConfig: {},
+
+  /**
+   * Additional app configuration
+   *
+   * For programmatic usage and type support, you can directly provide app config with this option.
+   * It will be merged with `app.config` file as default value.
+   *
+   * @type {typeof import('../src/types/config').AppConfig}
+   * @version 3
+   */
+  appConfig: {},
+})

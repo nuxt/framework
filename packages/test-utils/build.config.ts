@@ -6,10 +6,9 @@ export default defineBuildConfig({
     'src/index',
     { input: 'src/runtime/', outDir: 'dist/runtime', format: 'esm' }
   ],
-  dependencies: [
-  ],
   externals: [
     'vitest',
+    'jest',
     'playwright',
     'playwright-core',
     'listhen'

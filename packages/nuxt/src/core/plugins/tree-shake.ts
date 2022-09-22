@@ -10,17 +10,17 @@ interface TreeShakePluginOptions {
 }
 
 export const TreeShakePlugin = createUnplugin((options: TreeShakePluginOptions) => {
-  const COMPOSABLE_RE = new RegExp(`($|\\s+)(${options.treeShake.join('|')})(?=\\()`, 'gm')
+  const COMPOSABLE_RE = new RegExp(`($\\s+)(${options.treeShake.join('|')})(?=\\()`, 'gm')
 
   return {
     name: 'nuxt:server-treeshake:transfrom',
     enforce: 'post',
     transformInclude (id) {
       const { pathname, search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
-      const { type, macro } = parseQuery(search)
+      const { type } = parseQuery(search)
 
       // vue files
-      if (pathname.endsWith('.vue') && (type === 'script' || macro || !search)) {
+      if (pathname.endsWith('.vue') && (type === 'script' || !search)) {
         return true
       }
 
@@ -35,13 +35,15 @@ export const TreeShakePlugin = createUnplugin((options: TreeShakePluginOptions) 
       const s = new MagicString(code)
       const strippedCode = stripLiteral(code)
       for (const match of strippedCode.matchAll(COMPOSABLE_RE) || []) {
-        s.overwrite(match.index, match.index + match[0].length, `${match[1]} /*#__PURE__*/ false && ${match[2]}`)
+        s.overwrite(match.index!, match.index! + match[0].length, `${match[1]} /*#__PURE__*/ false && ${match[2]}`)
       }
 
       if (s.hasChanged()) {
         return {
           code: s.toString(),
-          map: options.sourcemap && s.generateMap({ source: id, includeContent: true })
+          map: options.sourcemap
+            ? s.generateMap({ source: id, includeContent: true })
+            : undefined
         }
       }
     }

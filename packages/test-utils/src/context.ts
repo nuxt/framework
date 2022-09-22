@@ -2,7 +2,7 @@ import { resolve } from 'node:path'
 import defu from 'defu'
 import type { TestContext, TestOptions, TestRunner } from './types'
 
-let currentContext: TestContext
+let currentContext: TestContext | undefined
 
 export function createTestContext (options: Partial<TestOptions>): TestContext {
   const _options: Partial<TestOptions> = defu(options, {
@@ -18,11 +18,13 @@ export function createTestContext (options: Partial<TestOptions>): TestContext {
     // TODO: auto detect based on process.env
     runner: <TestRunner>'vitest',
     browserOptions: {
-      type: 'chromium'
+      type: 'chromium' as const
     }
   })
 
-  return setTestContext({ options: _options as TestOptions })
+  return setTestContext({
+    options: _options as TestOptions
+  })
 }
 
 export function useTestContext (): TestContext {
@@ -33,7 +35,9 @@ export function useTestContext (): TestContext {
   return currentContext
 }
 
-export function setTestContext (context: TestContext): TestContext {
+export function setTestContext (context: TestContext): TestContext
+export function setTestContext (context?: TestContext): TestContext | undefined
+export function setTestContext (context?: TestContext): TestContext | undefined {
   currentContext = context
   return currentContext
 }

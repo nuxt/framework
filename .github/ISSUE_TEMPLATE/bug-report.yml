@@ -10,7 +10,7 @@ body:
 
         Please use a template below to create a minimal reproduction
         👉 https://stackblitz.com/github/nuxt/starter/tree/v3-stackblitz
-        👉 https://codesandbox.io/s/github/nuxt/starter/tree/v3-codesandbox
+        👉 https://codesandbox.io/p/github/nuxt/starter/v3-codesandbox
   - type: textarea
     id: bug-env
     attributes:
@@ -39,7 +39,7 @@ body:
     id: additonal
     attributes:
       label: Additional context
-      description: If applicable, add any other context about the problem here`
+      description: If applicable, add any other context about the problem here
   - type: textarea
     id: logs
     attributes:

@@ -8,7 +8,6 @@
     "test": "nuxi test"
   },
   "devDependencies": {
-    "@nuxt/test-utils": "npm:@nuxt/test-utils-edge@latest",
-    "nuxt": "npm:nuxt3@latest"
+    "nuxt": "^3.0.0-rc.10"
   }
 }

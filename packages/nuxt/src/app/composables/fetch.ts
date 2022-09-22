@@ -1,4 +1,4 @@
-import type { FetchOptions, FetchRequest } from 'ohmyfetch'
+import type { FetchError, FetchOptions } from 'ohmyfetch'
 import type { TypedInternalResponse, NitroFetchRequest } from 'nitropack'
 import { computed, isRef, Ref } from 'vue'
 import type { AsyncDataOptions, _Transform, KeyOfRes, AsyncData, PickFrom } from './asyncData'
@@ -16,7 +16,7 @@ export interface UseFetchOptions<
 
 export function useFetch<
   ResT = void,
-  ErrorT = Error,
+  ErrorT = FetchError,
   ReqT extends NitroFetchRequest = NitroFetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
@@ -27,7 +27,7 @@ export function useFetch<
 ): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | null | true>
 export function useFetch<
   ResT = void,
-  ErrorT = Error,
+  ErrorT = FetchError,
   ReqT extends NitroFetchRequest = NitroFetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
@@ -37,7 +37,7 @@ export function useFetch<
   arg1?: string | UseFetchOptions<_ResT, Transform, PickKeys>,
   arg2?: string
 ) {
-  const [opts, autoKey] = typeof arg1 === 'string' ? [{}, arg1] : [arg1, arg2]
+  const [opts = {}, autoKey] = typeof arg1 === 'string' ? [{}, arg1] : [arg1, arg2]
   const _key = opts.key || autoKey
   if (!_key || typeof _key !== 'string') {
     throw new TypeError('[nuxt] [useFetch] key must be a string: ' + _key)
@@ -48,11 +48,11 @@ export function useFetch<
   const key = '$f' + _key
 
   const _request = computed(() => {
-    let r = request as Ref<FetchRequest> | FetchRequest | (() => FetchRequest)
+    let r = request
     if (typeof r === 'function') {
       r = r()
     }
-    return (isRef(r) ? r.value : r) as NitroFetchRequest
+    return (isRef(r) ? r.value : r)
   })
 
   const {
@@ -85,7 +85,7 @@ export function useFetch<
   }
 
   const asyncData = useAsyncData<_ResT, ErrorT, Transform, PickKeys>(key, () => {
-    return $fetch(_request.value, _fetchOptions)
+    return $fetch(_request.value, _fetchOptions) as Promise<_ResT>
   }, _asyncDataOptions)
 
   return asyncData
@@ -93,7 +93,7 @@ export function useFetch<
 
 export function useLazyFetch<
   ResT = void,
-  ErrorT = Error,
+  ErrorT = FetchError,
   ReqT extends NitroFetchRequest = NitroFetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
@@ -104,7 +104,7 @@ export function useLazyFetch<
 ): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | null | true>
 export function useLazyFetch<
   ResT = void,
-  ErrorT = Error,
+  ErrorT = FetchError,
   ReqT extends NitroFetchRequest = NitroFetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
