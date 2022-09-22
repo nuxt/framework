@@ -1,12 +1,12 @@
 import { NuxtHooks } from './hooks'
-import type { Nuxt, NuxtTemplate } from "./nuxt"
+import type { Nuxt, NuxtPluginTemplate, NuxtTemplate } from "./nuxt"
 import type { NuxtCompatibility } from './compatibility'
 
 export interface ModuleMeta {
-  /** Module name */
+  /** Module name. */
   name?: string
 
-  /** Module version */
+  /** Module version. */
   version?: string
 
   /**
@@ -16,17 +16,17 @@ export interface ModuleMeta {
   configKey?: string
 
   /**
-   * Constraints for the versions of Nuxt or features this module requires
+   * Constraints for the versions of Nuxt or features this module requires.
    */
   compatibility?: NuxtCompatibility
 
   [key: string]: any
 }
 
-/** The options received  */
+/** The options received.  */
 export type ModuleOptions = Record<string, any>
 
-/** Input module passed to defineNuxtModule */
+/** Input module passed to defineNuxtModule. */
 export interface ModuleDefinition<T extends ModuleOptions = ModuleOptions> {
   meta?: ModuleMeta
   defaults?: T | ((nuxt: Nuxt) => T)
@@ -35,7 +35,7 @@ export interface ModuleDefinition<T extends ModuleOptions = ModuleOptions> {
   setup?: (this: void, resolvedOptions: T, nuxt: Nuxt) => void | Promise<void>
 }
 
-/** Nuxt modules are always a simple function */
+/** Nuxt modules are always a simple function. */
 export interface NuxtModule<T extends ModuleOptions = ModuleOptions> {
   (this: void, inlineOptions: T, nuxt: Nuxt): void | Promise<void>
   getOptions?: (inlineOptions?: T, nuxt?: Nuxt) => Promise<T>
@@ -58,24 +58,27 @@ export interface ModuleContainer {
   /** Renders given template using lodash template during build into the project buildDir (`.nuxt`).*/
   addTemplate(template: string | NuxtTemplate): NuxtTemplate
 
-  /** Register a custom layout. If its name is 'error' it will override the default error layout. */
+  /** Registers a custom plugin. */
+  addPlugin(template: NuxtPluginTemplate): NuxtPluginTemplate
+
+  /** Registers a custom layout. If its name is 'error' it will override the default error layout. */
   addLayout(tmpl: NuxtTemplate, name: string): any
 
-  /** Set the layout that will render Nuxt errors. It should already have been added via addLayout or addTemplate. */
+  /** Sets the layout that will render Nuxt errors. It should already have been added via addLayout or addTemplate. */
   addErrorLayout(dst: string): void
 
   /** Adds a new server middleware to the end of the server middleware array. */
   addServerMiddleware(arg1: any): void
 
   /** Allows extending webpack build config by chaining `options.build.extend` function. */
-  extendBuild(fn): void
+  extendBuild(fn: Function): void
 
   /** Allows extending routes by chaining `options.router.extendRoutes` function. */
-  extendRoutes(fn): void
+  extendRoutes(fn: Function): void
 
-  /** Registers a module */
+  /** Registers a module. */
   requireModule(installOptions: any, opts: any): Promise<void>
 
-  /** Registers a module */
+  /** Registers a module. */
   addModule(installOptions: any, opts: any): Promise<void>
 }

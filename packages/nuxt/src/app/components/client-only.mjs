@@ -1,4 +1,4 @@
-import { ref, onMounted, defineComponent, createElementBlock, h } from 'vue'
+import { ref, onMounted, defineComponent, createElementBlock, h, Fragment } from 'vue'
 
 export default defineComponent({
   name: 'ClientOnly',
@@ -18,19 +18,48 @@ export default defineComponent({
   }
 })
 
+const cache = new WeakMap()
+
 export function createClientOnly (component) {
-  return defineComponent({
-    name: 'ClientOnlyWrapper',
-    inheritAttrs: false,
-    setup (_props, { attrs, slots }) {
-      const mounted = ref(false)
-      onMounted(() => { mounted.value = true })
-      return () => {
-        if (mounted.value) {
-          return h(component, attrs, slots)
-        }
-        return h('div', { class: attrs.class, style: attrs.style })
-      }
+  if (cache.has(component)) {
+    return cache.get(component)
+  }
+
+  const clone = { ...component }
+
+  if (clone.render) {
+    // override the component render (non script setup component)
+    clone.render = (ctx, ...args) => {
+      return ctx.mounted$
+        ? h(Fragment, ctx.$attrs ?? ctx._.attrs, component.render(ctx, ...args))
+        : h('div', ctx.$attrs ?? ctx._.attrs)
     }
-  })
+  } else if (clone.template) {
+    // handle runtime-compiler template
+    clone.template = `
+      <template v-if="mounted$">${component.template}</template>
+      <template v-else><div></div></template>
+    `
+  }
+
+  clone.setup = (props, ctx) => {
+    const mounted$ = ref(false)
+    onMounted(() => { mounted$.value = true })
+
+    return Promise.resolve(component.setup?.(props, ctx) || {})
+      .then((setupState) => {
+        return typeof setupState !== 'function'
+          ? { ...setupState, mounted$ }
+          : (...args) => {
+              return mounted$.value
+                // use Fragment to avoid oldChildren is null issue
+                ? h(Fragment, ctx.attrs, setupState(...args))
+                : h('div', ctx.attrs)
+            }
+      })
+  }
+
+  cache.set(component, clone)
+
+  return clone
 }

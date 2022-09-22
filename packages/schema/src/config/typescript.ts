@@ -1,4 +1,6 @@
-export default {
+import { defineUntypedSchema } from 'untyped'
+
+export default defineUntypedSchema({
   /**
    * Configuration for Nuxt's TypeScript integration.
    *
@@ -23,7 +25,7 @@ export default {
     typeCheck: false,
 
     /**
-     * You can extend generated `.nuxt/tsconfig.json` using this option
+     * You can extend generated `.nuxt/tsconfig.json` using this option.
      * @type {typeof import('pkg-types')['readPackageJSON']}
      */
     tsConfig: {},
@@ -35,4 +37,4 @@ export default {
      */
     shim: true
   }
-}
+})
