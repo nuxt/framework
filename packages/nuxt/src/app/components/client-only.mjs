@@ -1,4 +1,4 @@
-import { ref, onMounted, defineComponent, createElementBlock, h, Fragment } from 'vue'
+import { ref, onMounted, defineComponent, createElementBlock, h } from 'vue'
 
 export default defineComponent({
   name: 'ClientOnly',
@@ -31,7 +31,7 @@ export function createClientOnly (component) {
     // override the component render (non script setup component)
     clone.render = (ctx, ...args) => {
       return ctx.mounted$
-        ? h(Fragment, ctx.$attrs ?? ctx._.attrs, component.render(ctx, ...args))
+        ? h(component.render(ctx, ...args))
         : h('div', ctx.$attrs ?? ctx._.attrs)
     }
   } else if (clone.template) {
@@ -52,8 +52,7 @@ export function createClientOnly (component) {
           ? { ...setupState, mounted$ }
           : (...args) => {
               return mounted$.value
-                // use Fragment to avoid oldChildren is null issue
-                ? h(Fragment, ctx.attrs, setupState(...args))
+                ? h(setupState(...args))
                 : h('div', ctx.attrs)
             }
       })
