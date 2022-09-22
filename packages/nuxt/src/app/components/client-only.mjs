@@ -51,9 +51,14 @@ export function createClientOnly (component) {
         return typeof setupState !== 'function'
           ? { ...setupState, mounted$ }
           : (...args) => {
-              return mounted$.value
-                ? h(setupState(...args))
-                : h('div', ctx.attrs)
+              if (mounted$.value) {
+                const res = setupState(...args)
+                return (res.children === null || typeof res.children === 'string')
+                  ? createElementBlock(res.type, res.props, res.children, res.patchFlag, res.dynamicProps, res.shapeFlag)
+                  : h(res)
+              } else {
+                return h('div', ctx.attrs)
+              }
             }
       })
   }
