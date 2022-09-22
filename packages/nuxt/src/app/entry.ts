@@ -26,10 +26,10 @@ const plugins = normalizePlugins(_plugins)
 if (process.server) {
   entry = async function createNuxtAppServer (ssrContext: CreateOptions['ssrContext']) {
     const vueApp = createApp(RootComponent)
-    if (process.dev && ssrContext.url.startsWith('/__nuxt_component_test__/')) {
+    if (process.dev && ssrContext!.url.startsWith('/__nuxt_component_test__/')) {
       // @ts-ignore
       vueApp.component('App', await import('#build/test-component-wrapper.mjs')
-        .then(r => r.default(ssrContext.url)))
+        .then(r => r.default(ssrContext!.url)))
     } else {
       vueApp.component('App', AppComponent)
     }
