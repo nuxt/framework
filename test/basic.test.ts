@@ -144,11 +144,12 @@ describe('pages', () => {
   })
 
   it('/client-only-components', async () => {
-    // ensure components are not rendered server-side
     const html = await $fetch('/client-only-components')
+    // ensure fallbacks with classes and arbitrary attributes are rendered
     expect(html).toContain('<div class="client-only-script" foo="bar">')
     expect(html).toContain('<div class="client-only-script-setup" foo="hello">')
     expect(html).toContain('<div>Fallback</div>')
+    // ensure components are not rendered server-side
     expect(html).not.toContain('Should not be server rendered')
 
     await expectNoClientErrors('/client-only-components')
