@@ -30,9 +30,14 @@ export function createClientOnly (component) {
   if (clone.render) {
     // override the component render (non script setup component)
     clone.render = (ctx, ...args) => {
-      return ctx.mounted$
-        ? h(component.render(ctx, ...args))
-        : h('div', ctx.$attrs ?? ctx._.attrs)
+      if (ctx.mounted$) {
+        const res = component.render(ctx, ...args)
+        return (res.children === null || typeof res.children === 'string')
+          ? createElementBlock(res.type, res.props, res.children, res.patchFlag, res.dynamicProps, res.shapeFlag)
+          : h(res)
+      } else {
+        return h('div', ctx.attrs)
+      }
     }
   } else if (clone.template) {
     // handle runtime-compiler template
