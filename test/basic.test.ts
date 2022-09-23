@@ -196,6 +196,13 @@ describe('pages', () => {
     expect(await page.locator('.multi-root-node-script-count').innerHTML()).toBe('1')
     expect(await page.locator('.client-only-script-setup button').innerHTML()).toBe('1')
     expect(await page.locator('.client-only-script button').innerHTML()).toBe('1')
+
+    // ensure component ref is working and reactive
+    await page.locator('button.test-ref').click()
+    expect(await page.locator('.client-only-script-setup button').innerHTML()).toBe('2')
+    expect(await page.locator('.client-only-script button').innerHTML()).toBe('2')
+    expect(await page.locator('.string-stateful-script').innerHTML()).toBe('1')
+    expect(await page.locator('.string-stateful').innerHTML()).toBe('1')
   })
 })
 

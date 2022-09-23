@@ -1,27 +1,33 @@
 <script lang="ts">
 export default defineNuxtComponent({
-  name: "ClientScript",
+  name: 'ClientScript',
   props: {
     foo: {
-      type: String,
-    },
+      type: String
+    }
   },
-  setup() {
-    const count = ref(0);
-    const add = () => count.value++;
+  setup (_p, ctx) {
+    const count = ref(0)
+    const add = () => count.value++
+
+    ctx.expose({ add })
 
     return {
       count,
-      add,
-    };
-  },
-});
+      add
+    }
+  }
+})
 </script>
 
 <template>
   <div>
-    <div class="client-only-css">client only script component {{ foo }}</div>
-    <button @click="add">{{ count }}</button>
+    <div class="client-only-css">
+      client only script component {{ foo }}
+    </div>
+    <button @click="add">
+      {{ count }}
+    </button>
     <slot name="test" />
   </div>
 </template>

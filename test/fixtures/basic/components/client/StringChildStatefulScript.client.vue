@@ -1,16 +1,16 @@
 <script lang="ts">
 export default defineNuxtComponent({
-  setup(_p, ctx) {
-    const state = ref(0);
+  setup (_p, ctx) {
+    const state = ref(0)
 
-    const add = () => state.value++;
+    const add = () => state.value++
 
-    ctx.expose({ add, state });
+    ctx.expose({ add, state })
     return {
-      state,
-    };
-  },
-});
+      state
+    }
+  }
+})
 </script>
 
 <template>
