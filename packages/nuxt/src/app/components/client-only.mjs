@@ -36,7 +36,7 @@ export function createClientOnly (component) {
           ? createElementBlock(res.type, res.props, res.children, res.patchFlag, res.dynamicProps, res.shapeFlag)
           : h(res)
       } else {
-        return h('div', ctx.attrs)
+        return h('div', ctx.$attrs ?? ctx._.attrs)
       }
     }
   } else if (clone.template) {
