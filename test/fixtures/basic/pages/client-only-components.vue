@@ -22,7 +22,7 @@
     <ClientMultiRootNode class="multi-root-node" />
     <ClientMultiRootNodeScript class="multi-root-node-script" />
 
-    <!-- ensure component with a single single child are correctly rendered -->
+    <!-- ensure components with a single single child are correctly rendered -->
     <ClientStringChildStateful ref="stringStatefulComp" class="string-stateful" />
     <ClientStringChildStatefulScript
       ref="stringStatefulScriptComp"
@@ -37,16 +37,16 @@
     />
     <ClientNoState class="no-state" />
 
-    <button class="test-ref" @click="stringStatefulComp.add">
+    <button class="test-ref-1" @click="stringStatefulComp.add">
       increment count
     </button>
-    <button class="test-ref" @click="stringStatefulScriptComp.add">
+    <button class="test-ref-2" @click="stringStatefulScriptComp.add">
       increment count
     </button>
-    <button class="test-ref" @click="clientScript.add">
+    <button class="test-ref-3" @click="clientScript.add">
       increment count
     </button>
-    <button class="test-ref" @click="clientSetupScript.add">
+    <button class="test-ref-4" @click="clientSetupScript.add">
       increment count
     </button>
   </div>
