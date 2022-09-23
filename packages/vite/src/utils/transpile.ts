@@ -1,6 +1,6 @@
-import { ViteBuildContext } from "../vite"
 import escapeRegExp from 'escape-string-regexp'
 import { normalize } from 'pathe'
+import { ViteBuildContext } from '../vite'
 
 export function transpile (ctx: ViteBuildContext) {
   const transpile = []
