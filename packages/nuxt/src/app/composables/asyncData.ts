@@ -91,7 +91,6 @@ export function useAsyncData<
   options.default = options.default ?? getDefault
 
   const config = useRuntimeConfig()
-  console.log(config)
 
   // TODO: remove support for `defer` in Nuxt 3 RC
   if ((options as any).defer) {
