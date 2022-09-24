@@ -1,5 +1,5 @@
-import { resolve, join } from 'pathe'
 import { existsSync, readdirSync } from 'node:fs'
+import { resolve, join } from 'pathe'
 import defu from 'defu'
 import { defineUntypedSchema } from 'untyped'
 
@@ -8,6 +8,7 @@ import { MetaObject } from '../types/meta'
 export default defineUntypedSchema({
   /**
    * Vue.js config
+   *
    * @version 2
    * @version 3
    */
@@ -25,10 +26,11 @@ export default defineUntypedSchema({
       },
       performance: {
         $resolve: async (val, get) => val ?? await get('dev')
-      },
+      }
     },
     /**
      * Options for the Vue compiler that will be passed at build time.
+     *
      * @see [documentation](https://vuejs.org/api/application.html#app-config-compileroptions)
      * @type {typeof import('@vue/compiler-core').CompilerOptions}
      * @version 3
@@ -38,6 +40,7 @@ export default defineUntypedSchema({
 
   /**
    * Nuxt App configuration.
+   *
    * @version 2
    * @version 3
    */
@@ -46,6 +49,7 @@ export default defineUntypedSchema({
      * The base path of your Nuxt application.
      *
      * This can be set at runtime by setting the NUXT_APP_BASE_URL environment variable.
+     *
      * @example
      * ```bash
      * NUXT_APP_BASE_URL=/prefix/ node .output/server/index.mjs
@@ -58,6 +62,7 @@ export default defineUntypedSchema({
 
     /**
      * The folder name for the built site assets, relative to `baseURL` (or `cdnURL` if set).
+     *
      * @deprecated - use `buildAssetsDir` instead
      * @version 2
      */
@@ -68,6 +73,7 @@ export default defineUntypedSchema({
      * An absolute URL to serve the public folder from (production-only).
      *
      * This can be set to a different value at runtime by setting the `NUXT_APP_CDN_URL` environment variable.
+     *
      * @example
      * ```bash
      * NUXT_APP_CDN_URL=https://mycdn.org/ node .output/server/index.mjs
@@ -161,6 +167,24 @@ export default defineUntypedSchema({
      * @type {typeof import('../src/types/config').NuxtAppConfig['keepalive']}
      */
     keepalive: false,
+    /**
+     * Default value for `initialCache` configuration when fetching data.
+     *
+     * This can be overridden with `{ initialCache: true|false }` on a per-case
+     * basis.
+     *
+     * @type {typeof import('../src/types/config').NuxtAppConfig['initialCache']}
+     * @version 3
+     * @example
+     * ```js
+     * export default {
+     *   app: {
+     *     initialCache: false
+     *   }
+     * }
+     * ```
+     */
+    initialCache: true
   },
   /**
    * The path to an HTML template file for rendering Nuxt responses.
@@ -196,6 +220,7 @@ export default defineUntypedSchema({
    * Enable or disable Vuex store.
    *
    * By default, it is enabled if there is a `store/` directory.
+   *
    * @version 2
    */
   store: {
@@ -246,6 +271,7 @@ export default defineUntypedSchema({
 
   /**
    * Configuration for the Nuxt `fetch()` hook.
+   *
    * @version 2
    */
   fetch: {
@@ -284,6 +310,7 @@ export default defineUntypedSchema({
    * You may want to extend plugins or change their order. For this, you can pass
    * a function using `extendPlugins`. It accepts an array of plugin objects and
    * should return an array of plugin objects.
+   *
    * @type {(plugins: Array<{ src: string, mode?: 'client' | 'server' }>) => Array<{ src: string, mode?: 'client' | 'server' }>}
    * @version 2
    */
@@ -320,6 +347,7 @@ export default defineUntypedSchema({
    * An object where each key name maps to a path to a layout .vue file.
    *
    * Normally, there is no need to configure this directly.
+   *
    * @type {Record<string, string>}
    * @version 2
    */
@@ -329,6 +357,7 @@ export default defineUntypedSchema({
    * Set a custom error page layout.
    *
    * Normally, there is no need to configure this directly.
+   *
    * @type {string}
    * @version 2
    */
@@ -338,6 +367,7 @@ export default defineUntypedSchema({
    * Configure the Nuxt loading progress bar component that's shown between
    * routes. Set to `false` to disable. You can also customize it or create
    * your own component.
+   *
    * @version 2
    */
   loading: {
@@ -375,6 +405,7 @@ export default defineUntypedSchema({
    * configuration. The name can refer to an indicator from [SpinKit](https://tobiasahlin.com/spinkit/)
    * or a path to an HTML template of the indicator source code (in this case, all the
    * other options will be passed to the template).
+   *
    * @version 2
    */
   loadingIndicator: {
@@ -426,7 +457,7 @@ export default defineUntypedSchema({
    * @version 2
    */
   layoutTransition: {
-    $resolve: val => {
+    $resolve: (val) => {
       val = typeof val === 'string' ? { name: val } : val
       return defu(val, {
         name: 'layout',
@@ -437,6 +468,7 @@ export default defineUntypedSchema({
 
   /**
    * You can disable specific Nuxt features that you do not want.
+   *
    * @version 2
    */
   features: {
