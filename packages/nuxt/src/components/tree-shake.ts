@@ -10,6 +10,8 @@ interface TreeShakeTemplatePluginOptions {
   getComponents (): Component[]
 }
 
+const PLACEHOLDER_RE = /^(v-slot|#)(fallback|placeholder)/
+
 export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplatePluginOptions) => {
   const regexpMap = new WeakMap<Component[], [RegExp, string[]]>()
   return {
@@ -48,8 +50,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
 
           const fallback = node.children.find(
             (n: Node) => n.name === 'template' &&
-              Object.entries(n.attributes as Record<string, string>)?.flat()
-                .some(attr => attr.includes('fallback') || attr.includes('placeholder'))
+              Object.entries(n.attributes as Record<string, string>)?.flat().some(attr => PLACEHOLDER_RE.test(attr))
           )
           try {
             // Replace node content
