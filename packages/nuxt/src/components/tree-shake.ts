@@ -56,7 +56,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
 
         try {
           // Replace node content
-          const text = fallback ? code.slice(fallback.loc[0].start, fallback.loc[fallback.loc.length - 1].end) : ''
+          const text = fallback ? code.slice(template.index + fallback.loc[0].start, template.index + fallback.loc[fallback.loc.length - 1].end) : ''
           s.overwrite(template.index + node.loc[0].end, template.index + node.loc[node.loc.length - 1].start, text)
         } catch (err) {
           // This may fail if we have a nested client-only component and are trying
