@@ -45,21 +45,22 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
 
       const ast = parse(template[0])
       await walk(ast, (node) => {
-        if (node.type === ELEMENT_NODE && clientOnlyComponents.includes(node.name)) {
-          if (!node.children?.length) { return }
+        if (node.type !== ELEMENT_NODE || !clientOnlyComponents.includes(node.name) || !node.children?.length) {
+          return
+        }
 
-          const fallback = node.children.find(
-            (n: Node) => n.name === 'template' &&
-              Object.entries(n.attributes as Record<string, string>)?.flat().some(attr => PLACEHOLDER_RE.test(attr))
-          )
-          try {
-            // Replace node content
-            const text = fallback ? code.slice(fallback.loc[0].start, fallback.loc[fallback.loc.length - 1].end) : ''
-            s.overwrite(template.index + node.loc[0].end, template.index + node.loc[node.loc.length - 1].start, text)
-          } catch (err) {
-            // This may fail if we have a nested client-only component and are trying
-            // to replace some text that has already been replaced
-          }
+        const fallback = node.children.find(
+          (n: Node) => n.name === 'template' &&
+            Object.entries(n.attributes as Record<string, string>)?.flat().some(attr => PLACEHOLDER_RE.test(attr))
+        )
+
+        try {
+          // Replace node content
+          const text = fallback ? code.slice(fallback.loc[0].start, fallback.loc[fallback.loc.length - 1].end) : ''
+          s.overwrite(template.index + node.loc[0].end, template.index + node.loc[node.loc.length - 1].start, text)
+        } catch (err) {
+          // This may fail if we have a nested client-only component and are trying
+          // to replace some text that has already been replaced
         }
       })
 
