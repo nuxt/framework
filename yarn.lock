@@ -5741,13 +5741,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"entities@npm:^4.4.0":
-  version: 4.4.0
-  resolution: "entities@npm:4.4.0"
-  checksum: 84d250329f4b56b40fa93ed067b194db21e8815e4eb9b59f43a086f0ecd342814f6bc483de8a77da5d64e0f626033192b1b4f1792232a7ea6b970ebe0f3187c2
-  languageName: node
-  linkType: hard
-
 "entities@npm:~3.0.1":
   version: 3.0.1
   resolution: "entities@npm:3.0.1"
@@ -10562,12 +10555,12 @@ __metadata:
     nuxi: 3.0.0-rc.11
     ohash: ^0.1.5
     ohmyfetch: ^0.4.19
-    parse5: ^7.1.1
     pathe: ^0.3.8
     perfect-debounce: ^0.1.3
     scule: ^0.3.2
     strip-literal: ^0.4.2
     ufo: ^0.8.5
+    ultrahtml: ^0.1.1
     unbuild: latest
     unctx: ^2.0.2
     unenv: ^0.6.2
@@ -11045,15 +11038,6 @@ __metadata:
   dependencies:
     parse-path: ^7.0.0
   checksum: b93e21ab4c93c7d7317df23507b41be7697694d4c94f49ed5c8d6288b01cba328fcef5ba388e147948eac20453dee0df9a67ab2012415189fff85973bdffe8d9
-  languageName: node
-  linkType: hard
-
-"parse5@npm:^7.1.1":
-  version: 7.1.1
-  resolution: "parse5@npm:7.1.1"
-  dependencies:
-    entities: ^4.4.0
-  checksum: 8f72fbfa6df83a3f29f58e1818f7bd46b47ff3e26d79c74e10b8fc7ef7ee76163f205113f1b2f6a5b8dc4e31e726f490444f04890cead6e974dbcbe8172b1321
   languageName: node
   linkType: hard
 
@@ -13550,6 +13534,13 @@ __metadata:
   bin:
     uglifyjs: bin/uglifyjs
   checksum: 5e24ad48e096d309e77a462fa0508a9bfe33e2ab00e1bd21dc8bd5d035cf0b58063914bef1c6d6aca78e9e5bbe619714b142ffc646165702e3714f4cfbc7151c
+  languageName: node
+  linkType: hard
+
+"ultrahtml@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "ultrahtml@npm:0.1.1"
+  checksum: a074b6d41e942b0ae3a4ea7372043bee32f5bad08009278adff04a96d784b316e68085d5f44b52c5c03ac0bf1d2a142090e58e555f953d9c69eb9639fd2f70d5
   languageName: node
   linkType: hard
 

@@ -1,8 +1,7 @@
 import { pathToFileURL } from 'node:url'
 import { parseURL } from 'ufo'
 import MagicString from 'magic-string'
-import { parseFragment } from 'parse5'
-import type { DocumentFragment, ChildNode } from 'parse5/dist/tree-adapters/default'
+import { parse, walk, ELEMENT_NODE, Node } from 'ultrahtml'
 import { createUnplugin } from 'unplugin'
 import type { Component } from '@nuxt/schema'
 
@@ -20,7 +19,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
       const { pathname } = parseURL(decodeURIComponent(pathToFileURL(id).href))
       return pathname.endsWith('.vue')
     },
-    transform (code, id) {
+    async transform (code, id) {
       const template = code.match(/<template>([\s\S]*)<\/template>/)
       if (!template) { return }
 
@@ -29,12 +28,12 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
       if (!regexpMap.has(components)) {
         const clientOnlyComponents = components
           .filter(c => c.mode === 'client' && !components.some(other => other.mode !== 'client' && other.pascalName === c.pascalName))
-          .flatMap(c => [c.pascalName.toLowerCase(), c.kebabName])
-          .concat(['clientonly', 'client-only'])
+          .flatMap(c => [c.pascalName, c.kebabName])
+          .concat(['ClientOnly', 'client-only'])
         const tags = clientOnlyComponents
           .map(component => `<(${component})[^>]*>[\\s\\S]*?<\\/(${component})>`)
 
-        regexpMap.set(components, [new RegExp(`(${tags.join('|')})`, 'gi'), clientOnlyComponents])
+        regexpMap.set(components, [new RegExp(`(${tags.join('|')})`, 'g'), clientOnlyComponents])
       }
 
       const [COMPONENTS_RE, clientOnlyComponents] = regexpMap.get(components)!
@@ -42,14 +41,24 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
 
       const s = new MagicString(code)
 
-      const ast = parseFragment(code, { sourceCodeLocationInfo: true })
-      walkFragment(ast, (node) => {
-        if (node && 'tagName' in node && clientOnlyComponents.includes(node.tagName)) {
-          const fallback = node.childNodes?.find(n => n.nodeName === 'template' && n.attrs?.find(a => a.name.includes('fallback') || a.name.includes('placeholder')))
-          const text = fallback ? code.slice(fallback.sourceCodeLocation!.startOffset, fallback.sourceCodeLocation!.endOffset) : ''
-          // Replace node content
-          s.overwrite(node.childNodes[0].sourceCodeLocation!.startOffset, node.childNodes[node.childNodes.length - 1].sourceCodeLocation!.endOffset, text)
-          return false
+      const ast = parse(template[0])
+      await walk(ast, (node) => {
+        if (node.type === ELEMENT_NODE && clientOnlyComponents.includes(node.name)) {
+          if (!node.children?.length) { return }
+
+          const fallback = node.children.find(
+            (n: Node) => n.name === 'template' &&
+              Object.entries(n.attributes as Record<string, string>)?.flat()
+                .some(attr => attr.includes('fallback') || attr.includes('placeholder'))
+          )
+          try {
+            // Replace node content
+            const text = fallback ? code.slice(fallback.loc[0].start, fallback.loc[fallback.loc.length - 1].end) : ''
+            s.overwrite(template.index + node.loc[0].end, template.index + node.loc[node.loc.length - 1].start, text)
+          } catch (err) {
+            // This may fail if we have a nested client-only component and are trying
+            // to replace some text that has already been replaced
+          }
         }
       })
 
@@ -64,13 +73,3 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
     }
   }
 })
-
-function walkFragment (node: ChildNode | DocumentFragment, callback: (node?: ChildNode | DocumentFragment) => false | void) {
-  if (callback(node) === false || !('childNodes' in node)) {
-    return false
-  }
-
-  for (const child of [...node.childNodes || [], ...'content' in node ? node.content.childNodes : []]) {
-    walkFragment(child, callback)
-  }
-}
