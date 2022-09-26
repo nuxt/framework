@@ -209,17 +209,17 @@ export default defineRenderHandler(async (event) => {
 
   // Response for component islands
   if (islandContext && islandContext.format !== 'html') {
-    const islandReponse: NuxtIslandResponse = {
+    const islandResponse: NuxtIslandResponse = {
       id: islandContext.id,
       html: ssrContext.teleports!['nuxt-island'].replace(/<!--.*-->/g, ''),
       state: ssrContext.payload.state,
       tags: htmlContext.head.flatMap(head => extractHTMLTags(head))
     }
 
-    await nitroApp.hooks.callHook('render:island', islandReponse, { event, islandContext })
+    await nitroApp.hooks.callHook('render:island', islandResponse, { event, islandContext })
 
     const response: RenderResponse = {
-      body: JSON.stringify(islandReponse, null, 2),
+      body: JSON.stringify(islandResponse, null, 2),
       statusCode: event.res.statusCode,
       statusMessage: event.res.statusMessage,
       headers: {
