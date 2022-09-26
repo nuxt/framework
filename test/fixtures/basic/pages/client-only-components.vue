@@ -28,14 +28,15 @@
       ref="stringStatefulScriptComp"
       class="string-stateful-script"
     />
+    <ClientNoState class="no-state" />
     <!-- ensure directives are correctly passed -->
-    <ClientStringChildStateful v-show="false" class="string-stateful-should-be-hidden" />
-    <ClientSetupScript v-show="false" class="client-script-should-be-hidden" foo="bar" />
+    <ClientStringChildStateful v-show="show" class="string-stateful-should-be-hidden" />
+    <ClientSetupScript v-show="show" class="client-script-should-be-hidden" foo="bar" />
     <ClientStringChildStatefulScript
-      v-show="false"
+      v-show="show"
       class="string-stateful-script-should-be-hidden"
     />
-    <ClientNoState class="no-state" />
+    <ClientNoState v-show="show" class="no-state-hidden" />
 
     <button class="test-ref-1" @click="stringStatefulComp.add">
       increment count
@@ -49,6 +50,10 @@
     <button class="test-ref-4" @click="clientSetupScript.add">
       increment count
     </button>
+
+    <button id="show-all" @click="show = true">
+      Show all
+    </button>
   </div>
 </template>
 
@@ -57,4 +62,6 @@ const stringStatefulComp = ref(null)
 const stringStatefulScriptComp = ref(null)
 const clientScript = ref(null)
 const clientSetupScript = ref(null)
+
+const show = ref(false)
 </script>

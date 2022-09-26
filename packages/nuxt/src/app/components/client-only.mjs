@@ -1,4 +1,4 @@
-import { ref, onMounted, defineComponent, createElementBlock, h } from 'vue'
+import { ref, onMounted, defineComponent, createElementBlock, h, createElementVNode } from 'vue'
 
 export default defineComponent({
   name: 'ClientOnly',
@@ -33,7 +33,7 @@ export function createClientOnly (component) {
       if (ctx.mounted$) {
         const res = component.render(ctx, ...args)
         return (res.children === null || typeof res.children === 'string')
-          ? createElementBlock(res.type, res.props, res.children, res.patchFlag, res.dynamicProps, res.shapeFlag)
+          ? createElementVNode(res.type, res.props, res.children, res.patchFlag, res.dynamicProps, res.shapeFlag)
           : h(res)
       } else {
         return h('div', ctx.$attrs ?? ctx._.attrs)
@@ -59,7 +59,7 @@ export function createClientOnly (component) {
               if (mounted$.value) {
                 const res = setupState(...args)
                 return (res.children === null || typeof res.children === 'string')
-                  ? createElementBlock(res.type, res.props, res.children, res.patchFlag, res.dynamicProps, res.shapeFlag)
+                  ? createElementVNode(res.type, res.props, res.children, res.patchFlag, res.dynamicProps, res.shapeFlag)
                   : h(res)
               } else {
                 return h('div', ctx.attrs)

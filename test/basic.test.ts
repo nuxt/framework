@@ -161,7 +161,8 @@ describe('pages', () => {
     const hiddenSelectors = [
       '.string-stateful-should-be-hidden',
       '.client-script-should-be-hidden',
-      '.string-stateful-script-should-be-hidden'
+      '.string-stateful-script-should-be-hidden',
+      '.no-state-hidden'
     ]
     const visibleSelectors = [
       '.string-stateful',
@@ -207,6 +208,11 @@ describe('pages', () => {
     expect(await page.locator('.client-only-script button').innerHTML()).toContain('2')
     expect(await page.locator('.string-stateful-script').innerHTML()).toContain('1')
     expect(await page.locator('.string-stateful').innerHTML()).toContain('1')
+
+    // ensure directives are reactive
+    await page.locator('button#show-all').click()
+    await Promise.all(hiddenSelectors.map(selector => page.locator(selector).isVisible()))
+      .then(results => results.forEach(isVisible => expect(isVisible).toBeTruthy()))
   })
 })
 
