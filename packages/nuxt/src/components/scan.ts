@@ -64,7 +64,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
 
       const island = /\.(island)(\.global)?$/.test(fileName) || dir.island
       const global = /\.(global)(\.island)?$/.test(fileName) || dir.global
-      const mode = island ? 'server' : (fileName.match(/(?<=\.)(client|server)(\.global|\.island)*$/)?.[1] || 'all') as 'client' | 'server' || 'all'
+      const mode = island ? 'server' : (fileName.match(/(?<=\.)(client|server)(\.global|\.island)*$/)?.[1] || 'all') as 'client' | 'server' | 'all'
       fileName = fileName.replace(/(\.(client|server))?(\.global|\.island)*$/, '')
 
       if (fileName.toLowerCase() === 'index') {
