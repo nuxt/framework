@@ -334,19 +334,23 @@ function renderHTMLDocument (html: NuxtRenderHTMLContext) {
 }
 
 // TOOD: Move to external library
-const HTML_TAG_RE = /<(?<tag>[a-z]+)(?<rawAttrs> [^>]*)>/g
+const HTML_TAG_RE = /<(?<tag>[a-z]+)(?<rawAttrs> [^>]*)?>(?:(?<children>[\s\S]*?)<\/\k<tag>)?/g
 const HTML_TAG_ATTR_RE = /(?<name>[a-z]+)="(?<value>[^"]*)"/g
 function extractHTMLTags (html: string) {
   const tags: [tag: string, attrs?: Record<string, string>][] = []
   for (const tagMatch of html.matchAll(HTML_TAG_RE)) {
-    const attrs = {} as Record<string, string>
-    for (const attraMatch of tagMatch.groups!.rawAttrs.matchAll(HTML_TAG_ATTR_RE)) {
-      attrs[attraMatch.groups!.name] = attraMatch.groups!.value
+    const attrs: Record<string, string> = {}
+    for (const attrMatch of tagMatch.groups!.rawAttrs?.matchAll(HTML_TAG_ATTR_RE) || []) {
+      attrs[attrMatch.groups!.name] = attrMatch.groups!.value
+    }
+    if (tagMatch.groups!.children) {
+      attrs.children = tagMatch.groups!.children
     }
     tags.push([tagMatch.groups!.tag, attrs])
   }
   return tags
 }
+
 async function renderInlineStyles (usedModules: Set<string> | string[]) {
   const styleMap = await getSSRStyles()
   const inlinedStyles = new Set<string>()

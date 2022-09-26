@@ -608,137 +608,166 @@ describe('app config', () => {
 describe('component islands', () => {
   it('renders components with route', async () => {
     const result: NuxtIslandResponse = await $fetch('/__nuxt_island/RouteComponent?url=/foo')
-    result.tags = result.tags.map(([tag, attrs]) => attrs?.href ? [tag, { ...attrs, href: attrs.href.replace(/\.[\w\d]+(\.[\w]+)$/, '$1') }] : [tag, attrs])
-    expect(result).toMatchInlineSnapshot(`
-      {
-        "html": "<pre>    Route: /foo
-        </pre>",
-        "state": {},
-        "tags": [
-          [
-            "meta",
-            {
-              "charset": "utf-8",
-            },
-          ],
-          [
-            "meta",
-            {
-              "content": "width=1024, initial-scale=1",
-              "name": "viewport",
-            },
-          ],
-          [
-            "meta",
-            {
-              "content": "2",
-              "name": "head:count",
-            },
-          ],
-          [
-            "link",
-            {
-              "as": "script",
-              "href": "/_nuxt/entry.js",
-              "rel": "modulepreload",
-            },
-          ],
-          [
-            "link",
-            {
-              "as": "script",
-              "href": "/_nuxt/injectAuth.js",
-              "rel": "prefetch",
-            },
-          ],
-          [
-            "link",
-            {
-              "as": "script",
-              "href": "/_nuxt/sets-layout.js",
-              "rel": "prefetch",
-            },
-          ],
-          [
-            "link",
-            {
-              "as": "script",
-              "href": "/_nuxt/override.js",
-              "rel": "prefetch",
-            },
-          ],
-          [
-            "link",
-            {
-              "as": "script",
-              "href": "/_nuxt/foo.js",
-              "rel": "prefetch",
-            },
-          ],
-          [
-            "link",
-            {
-              "as": "script",
-              "href": "/_nuxt/error-component.js",
-              "rel": "prefetch",
-            },
-          ],
-          [
-            "link",
-            {
-              "as": "script",
-              "href": "/_nuxt/PascalCase.js",
-              "rel": "prefetch",
-            },
-          ],
-          [
-            "link",
-            {
-              "as": "script",
-              "href": "/_nuxt/custom.js",
-              "rel": "prefetch",
-            },
-          ],
-          [
-            "link",
-            {
-              "as": "script",
-              "href": "/_nuxt/invalid-root.js",
-              "rel": "prefetch",
-            },
-          ],
-          [
-            "link",
-            {
-              "as": "script",
-              "href": "/_nuxt/override.js",
-              "rel": "prefetch",
-            },
-          ],
-          [
-            "link",
-            {
-              "as": "script",
-              "href": "/_nuxt/default.js",
-              "rel": "prefetch",
-            },
-          ],
-          [
-            "link",
-            {
-              "href": "/_nuxt/entry.css",
-              "rel": "prefetch stylesheet",
-            },
-          ],
-        ],
-      }
-    `)
     expect(result.state).toMatchInlineSnapshot('{}')
     expect(Object.keys(result)).toMatchInlineSnapshot(`
       [
         "html",
         "state",
         "tags",
+      ]
+    `)
+
+    expect(result.html).toMatchInlineSnapshot(`
+      "<pre>    Route: /foo
+        </pre>"
+    `)
+
+    if (process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK) { return }
+
+    const tags = result.tags
+      .sort((a, b) => a[0].localeCompare(b[0]) || a[1]?.href?.localeCompare(b[1]?.href || '') || 0)
+      .map(([tag, attrs]) => attrs?.href ? [tag, { ...attrs, href: attrs.href.replace(/\.[\w\d]+(\.[\w]+)$/, '$1') }] : [tag, attrs])
+    expect(tags).toMatchInlineSnapshot(`
+      [
+        [
+          "link",
+          {
+            "as": "script",
+            "href": "/_nuxt/custom.js",
+            "rel": "prefetch",
+          },
+        ],
+        [
+          "link",
+          {
+            "as": "script",
+            "href": "/_nuxt/default.js",
+            "rel": "prefetch",
+          },
+        ],
+        [
+          "link",
+          {
+            "href": "/_nuxt/entry.css",
+            "rel": "prefetch stylesheet",
+          },
+        ],
+        [
+          "link",
+          {
+            "as": "script",
+            "href": "/_nuxt/entry.js",
+            "rel": "modulepreload",
+          },
+        ],
+        [
+          "link",
+          {
+            "as": "script",
+            "href": "/_nuxt/error-component.js",
+            "rel": "prefetch",
+          },
+        ],
+        [
+          "link",
+          {
+            "as": "script",
+            "href": "/_nuxt/foo.js",
+            "rel": "prefetch",
+          },
+        ],
+        [
+          "link",
+          {
+            "as": "script",
+            "href": "/_nuxt/injectAuth.js",
+            "rel": "prefetch",
+          },
+        ],
+        [
+          "link",
+          {
+            "as": "script",
+            "href": "/_nuxt/invalid-root.js",
+            "rel": "prefetch",
+          },
+        ],
+        [
+          "link",
+          {
+            "as": "script",
+            "href": "/_nuxt/override.js",
+            "rel": "prefetch",
+          },
+        ],
+        [
+          "link",
+          {
+            "as": "script",
+            "href": "/_nuxt/override.js",
+            "rel": "prefetch",
+          },
+        ],
+        [
+          "link",
+          {
+            "as": "script",
+            "href": "/_nuxt/PascalCase.js",
+            "rel": "prefetch",
+          },
+        ],
+        [
+          "link",
+          {
+            "as": "script",
+            "href": "/_nuxt/sets-layout.js",
+            "rel": "prefetch",
+          },
+        ],
+        [
+          "meta",
+          {
+            "charset": "utf-8",
+          },
+        ],
+        [
+          "meta",
+          {
+            "content": "width=1024, initial-scale=1",
+            "name": "viewport",
+          },
+        ],
+        [
+          "meta",
+          {
+            "content": "2",
+            "name": "head:count",
+          },
+        ],
+        [
+          "style",
+          {
+            "children": ":root{--global:\\"global\\"}",
+          },
+        ],
+        [
+          "style",
+          {
+            "children": ":root{--functional:\\"functional\\"}",
+          },
+        ],
+        [
+          "style",
+          {
+            "children": ":root{--plugin:\\"plugin\\"}",
+          },
+        ],
+        [
+          "title",
+          {
+            "children": " - Fixture",
+          },
+        ],
       ]
     `)
   })
@@ -769,9 +798,6 @@ describe('component islands', () => {
         "$shasRouter": true,
       }
     `)
-
-    // TODO: Test response differes!
-    // expect(result.html.head.join(' ')).toMatch(/PureComponent[^"']*.css/)
 
     expect(Object.keys(result)).toMatchInlineSnapshot(`
       [
