@@ -11,7 +11,21 @@ export default defineNuxtComponent({
 
 <template>
   <div>
-    <div>client only script component {{ foo }}</div>
+    <div class="client-only-css">
+      client only script component {{ foo }}
+    </div>
     <slot name="test" />
   </div>
 </template>
+
+<style>
+  :root {
+    --client-only: 'client-only';
+  }
+</style>
+
+<style scoped>
+  .client-only-css {
+    color: rgb(50, 50, 50);
+  }
+</style>

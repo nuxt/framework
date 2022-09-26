@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import { getCurrentInstance, reactive } from 'vue'
+import { getCurrentInstance, reactive, Ref } from 'vue'
 import type { App, onErrorCaptured, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
 import type { RuntimeConfig, AppConfigInput } from '@nuxt/schema'
@@ -33,9 +33,9 @@ export interface RuntimeNuxtHooks {
   'app:error': (err: any) => HookResult
   'app:error:cleared': (options: { redirect?: string }) => HookResult
   'app:data:refresh': (keys?: string[]) => HookResult
+  'link:prefetch': (link: string) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
-  'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
   'vue:setup': () => void
   'vue:error': (...args: Parameters<Parameters<typeof onErrorCaptured>[0]>) => HookResult
 }
@@ -69,10 +69,16 @@ interface _NuxtApp {
   [key: string]: any
 
   _asyncDataPromises: Record<string, Promise<any> | undefined>
+  _asyncData: Record<string, {
+    data: Ref<any>
+    pending: Ref<boolean>
+    error: Ref<any>
+  } | undefined>,
 
   ssrContext?: NuxtSSRContext
   payload: {
     serverRendered?: boolean
+    prerenderedAt?: number
     data: Record<string, any>
     state: Record<string, any>
     rendered?: Function
@@ -83,14 +89,14 @@ interface _NuxtApp {
       message: string
       description: string
       data?: any
-    }
+    } | null
     [key: string]: any
   }
 
   provide: (name: string, value: any) => void
 }
 
-export interface NuxtApp extends _NuxtApp { }
+export interface NuxtApp extends _NuxtApp {}
 
 export const NuxtPluginIndicator = '__nuxt_plugin'
 export interface Plugin<Injections extends Record<string, any> = Record<string, any>> {
@@ -116,6 +122,7 @@ export function createNuxtApp (options: CreateOptions) {
     }),
     isHydrating: process.client,
     _asyncDataPromises: {},
+    _asyncData: {},
     ...options
   } as any as NuxtApp
 
@@ -234,7 +241,7 @@ export function normalizePlugins (_plugins: Plugin[]) {
   return plugins as Plugin[]
 }
 
-export function defineNuxtPlugin<T> (plugin: Plugin<T>) {
+export function defineNuxtPlugin<T extends Record<string, any>> (plugin: Plugin<T>) {
   plugin[NuxtPluginIndicator] = true
   return plugin
 }

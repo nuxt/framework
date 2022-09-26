@@ -1,5 +1,5 @@
 import { NuxtHooks } from './hooks'
-import type { Nuxt, NuxtTemplate } from "./nuxt"
+import type { Nuxt, NuxtPluginTemplate, NuxtTemplate } from "./nuxt"
 import type { NuxtCompatibility } from './compatibility'
 
 export interface ModuleMeta {
@@ -58,6 +58,9 @@ export interface ModuleContainer {
   /** Renders given template using lodash template during build into the project buildDir (`.nuxt`).*/
   addTemplate(template: string | NuxtTemplate): NuxtTemplate
 
+  /** Registers a custom plugin. */
+  addPlugin(template: NuxtPluginTemplate): NuxtPluginTemplate
+
   /** Registers a custom layout. If its name is 'error' it will override the default error layout. */
   addLayout(tmpl: NuxtTemplate, name: string): any
 
@@ -68,10 +71,10 @@ export interface ModuleContainer {
   addServerMiddleware(arg1: any): void
 
   /** Allows extending webpack build config by chaining `options.build.extend` function. */
-  extendBuild(fn): void
+  extendBuild(fn: Function): void
 
   /** Allows extending routes by chaining `options.router.extendRoutes` function. */
-  extendRoutes(fn): void
+  extendRoutes(fn: Function): void
 
   /** Registers a module. */
   requireModule(installOptions: any, opts: any): Promise<void>

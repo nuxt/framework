@@ -1,7 +1,9 @@
+import { SchemaDefinition } from 'untyped'
+
 /**
  * @version 2
  */
-export default {
+export default <SchemaDefinition>{
   /**
    * Use this option to customize the Vue SSR bundle renderer.
    * This option is skipped if `ssr: false`.
@@ -10,9 +12,11 @@ export default {
    */
   bundleRenderer: {
     shouldPrefetch: () => false,
-    shouldPreload: (_fileWithoutQuery, asType) => ['script', 'style'].includes(asType),
+    shouldPreload: (_fileWithoutQuery: string, asType: string) => ['script', 'style'].includes(asType),
     /** enabled by default for development */
-    runInNewContext: { $resolve: (val, get) => val ?? get('dev') }
+    runInNewContext: {
+      $resolve: async (val, get) => val ?? (await get('dev'))
+    }
   },
 
   /**
@@ -41,7 +45,9 @@ export default {
    *
    * Set to `collapsed` to collapse the logs, or `false` to disable.
    */
-  ssrLog: { $resolve: (val, get) => get('dev') ? Boolean(val) : false },
+  ssrLog: {
+    $resolve: async (val, get) => (await get('dev')) ? Boolean(val) : false
+  },
 
   /**
    * Configuration for HTTP2 push headers.
@@ -207,7 +213,7 @@ export default {
    * ```
    */
   csp: {
-    $resolve: (val, get) => {
+    $resolve: async (val, get) => {
       if (!val) { return false }
       return {
         hashAlgorithm: 'sha256',
@@ -224,7 +230,7 @@ export default {
          * if hashes are present. (Set option `unsafeInlineCompatibility` to true to
          * disable this behavior.)
          */
-        addMeta: Boolean(get('target') === 'static'),
+        addMeta: Boolean((await get('target')) === 'static'),
         /**
          * Set option `unsafeInlineCompatibility` to `true` if you want both hashes and
          * 'unsafe-inline' for CSPv1 compatibility. In that case the `<meta>` tag will
@@ -233,7 +239,7 @@ export default {
          * HTTP response header.
          */
         unsafeInlineCompatibility: false,
-        reportOnly: get('debug'),
+        reportOnly: (await get('debug')),
         ...val
       }
     }

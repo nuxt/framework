@@ -26,7 +26,6 @@ export default defineBuildConfig({
     'hookable',
     'nitropack',
     'webpack',
-    'pkg-types',
     'webpack-bundle-analyzer',
     'rollup-plugin-visualizer',
     'vite',
@@ -35,12 +34,14 @@ export default defineBuildConfig({
     'terser-webpack-plugin',
     'css-minimizer-webpack-plugin',
     'webpack-dev-middleware',
+    'h3',
     'webpack-hot-middleware',
     'postcss',
     'consola',
     'ignore',
     // Implicit
     '@vue/compiler-core',
-    '@vue/shared'
+    '@vue/shared',
+    'untyped'
   ]
 })

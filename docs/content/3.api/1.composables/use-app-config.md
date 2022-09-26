@@ -1,8 +1,5 @@
 # `useAppConfig`
 
-::StabilityEdge
-::
-
 Access [app config](/guide/features/app-config):
 
 **Usage:**
@@ -13,4 +10,4 @@ const appConfig = useAppConfig()
 console.log(appConfig)
 ```
 
-::ReadMore{link="/guide/features/app-config"}
+::ReadMore{link="/guide/directory-structure/app.config"}

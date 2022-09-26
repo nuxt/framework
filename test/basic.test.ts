@@ -1,10 +1,11 @@
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-// import { isWindows } from 'std-env'
-import { setup, fetch, $fetch, startServer } from '@nuxt/test-utils'
-import { withQuery } from 'ufo'
+import { joinURL, withQuery } from 'ufo'
+import { isWindows } from 'std-env'
+import { setup, fetch, $fetch, startServer, createPage, url } from '@nuxt/test-utils'
 import type { NuxtIslandResponse } from '../packages/nuxt/src/core/runtime/nitro/renderer'
-import { expectNoClientErrors } from './utils'
+// eslint-disable-next-line import/order
+import { expectNoClientErrors, renderPage } from './utils'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
@@ -53,6 +54,16 @@ describe('pages', () => {
     expect(html).toContain('global component via suffix')
 
     await expectNoClientErrors('/')
+  })
+
+  it('respects aliases in page metadata', async () => {
+    const html = await $fetch('/some-alias')
+    expect(html).toContain('Hello Nuxt 3!')
+  })
+
+  it('respects redirects in page metadata', async () => {
+    const { headers } = await fetch('/redirect', { redirect: 'manual' })
+    expect(headers.get('location')).toEqual('/')
   })
 
   it('render 404', async () => {
@@ -137,6 +148,8 @@ describe('pages', () => {
     const html = await $fetch('/client-only-components')
     expect(html).toContain('<div class="client-only-script" foo="bar">')
     expect(html).toContain('<div class="client-only-script-setup" foo="hello">')
+    expect(html).toContain('<div>Fallback</div>')
+    expect(html).not.toContain('Should not be server rendered')
 
     await expectNoClientErrors('/client-only-components')
   })
@@ -165,11 +178,25 @@ describe('head tags', () => {
     expect(indexHtml).toContain('<title>Basic fixture</title>')
   })
 
+  it('should render http-equiv correctly', async () => {
+    const html = await $fetch('/head')
+    // http-equiv should be rendered kebab case
+    expect(html).toContain('<meta content="default-src https" http-equiv="content-security-policy">')
+  })
+
   // TODO: Doesn't adds header in test environment
   // it.todo('should render stylesheet link tag (SPA mode)', async () => {
   //   const html = await $fetch('/head', { headers: { 'x-nuxt-no-ssr': '1' } })
   //   expect(html).toMatch(/<link rel="stylesheet" href="\/_nuxt\/[^>]*.css"/)
   // })
+})
+
+describe('legacy async data', () => {
+  it('should work with defineNuxtComponent', async () => {
+    const html = await $fetch('/legacy/async-data')
+    expect(html).toContain('<div>Hello API</div>')
+    expect(html).toContain('{hello:"Hello API"}')
+  })
 })
 
 describe('navigate', () => {
@@ -187,13 +214,13 @@ describe('errors', () => {
         accept: 'application/json'
       }
     })
-    expect(res.status).toBe(500)
+    expect(res.status).toBe(422)
     const error = await res.json()
     delete error.stack
     expect(error).toMatchObject({
       message: 'This is a custom error',
-      statusCode: 500,
-      statusMessage: 'Internal Server Error',
+      statusCode: 422,
+      statusMessage: 'This is a custom error',
       url: '/error'
     })
   })
@@ -201,6 +228,14 @@ describe('errors', () => {
   it('should render a HTML error page', async () => {
     const res = await fetch('/error')
     expect(await res.text()).toContain('This is a custom error')
+  })
+})
+
+describe('navigate external', () => {
+  it('should redirect to example.com', async () => {
+    const { headers } = await fetch('/navigate-to-external/', { redirect: 'manual' })
+
+    expect(headers.get('location')).toEqual('https://example.com/')
   })
 })
 
@@ -212,6 +247,15 @@ describe('middlewares', () => {
     // expect(html).toMatchInlineSnapshot()
 
     expect(html).toContain('Hello Nuxt 3!')
+  })
+
+  it('should allow aborting navigation on server-side', async () => {
+    const res = await fetch('/?abort', {
+      headers: {
+        accept: 'application/json'
+      }
+    })
+    expect(res.status).toEqual(401)
   })
 
   it('should inject auth', async () => {
@@ -233,6 +277,12 @@ describe('middlewares', () => {
     expect(html).toContain('no-auth.vue')
     expect(html).toContain('auth: ')
     expect(html).not.toContain('Injected by injectAuth middleware')
+  })
+
+  it('should redirect to index with http 307 with navigateTo on server side', async () => {
+    const html = await fetch('/navigate-to-redirect', { redirect: 'manual' })
+    expect(html.headers.get('location')).toEqual('/')
+    expect(html.status).toEqual(307)
   })
 })
 
@@ -257,6 +307,16 @@ describe('layouts', () => {
 
     expect(html).toContain('with-layout.vue')
     expect(html).toContain('Custom Layout:')
+  })
+  it('should work with a dynamically set layout', async () => {
+    const html = await $fetch('/with-dynamic-layout')
+
+    // Snapshot
+    // expect(html).toMatchInlineSnapshot()
+
+    expect(html).toContain('with-dynamic-layout')
+    expect(html).toContain('Custom Layout:')
+    await expectNoClientErrors('/with-dynamic-layout')
   })
 })
 
@@ -343,7 +403,7 @@ describe('extends support', () => {
   describe('app', () => {
     it('extends foo/app/router.options & bar/app/router.options', async () => {
       const html: string = await $fetch('/')
-      const routerLinkClasses = html.match(/href="\/" class="([^"]*)"/)[1].split(' ')
+      const routerLinkClasses = html.match(/href="\/" class="([^"]*)"/)?.[1].split(' ')
       expect(routerLinkClasses).toContain('foo-active-class')
       expect(routerLinkClasses).toContain('bar-exact-active-class')
     })
@@ -361,32 +421,92 @@ describe('automatically keyed composables', () => {
   })
 })
 
-describe('dynamic paths', () => {
-  if (process.env.NUXT_TEST_DEV) {
-    // TODO:
-    it.todo('dynamic paths in dev')
-    return
-  }
+describe.skipIf(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)('inlining component styles', () => {
+  it('should inline styles', async () => {
+    const html = await $fetch('/styles')
+    for (const style of [
+      '{--assets:"assets"}', // <script>
+      '{--scoped:"scoped"}', // <style lang=css>
+      '{--postcss:"postcss"}', // <style lang=postcss>
+      '{--global:"global"}', // entryfile dependency
+      '{--plugin:"plugin"}', // plugin dependency
+      '{--functional:"functional"}' // functional component with css import
+    ]) {
+      expect(html).toContain(style)
+    }
+  })
 
+  it('only renders prefetch for entry styles', async () => {
+    const html: string = await $fetch('/styles')
+    expect(html.match(/<link [^>]*href="[^"]*\.css">/)?.map(m => m.replace(/\.[^.]*\.css/, '.css'))).toMatchInlineSnapshot(`
+        [
+          "<link rel=\\"prefetch stylesheet\\" href=\\"/_nuxt/entry.css\\">",
+        ]
+      `)
+  })
+
+  it('still downloads client-only styles', async () => {
+    const page = await createPage('/styles')
+    await page.waitForLoadState('networkidle')
+    expect(await page.$eval('.client-only-css', e => getComputedStyle(e).color)).toBe('rgb(50, 50, 50)')
+  })
+
+  it.todo('renders client-only styles only', async () => {
+    const html = await $fetch('/styles')
+    expect(html).toContain('{--client-only:"client-only"}')
+  })
+})
+
+describe('prefetching', () => {
+  it('should prefetch components', async () => {
+    await expectNoClientErrors('/prefetch/components')
+  })
+  it('should not prefetch certain dynamic imports by default', async () => {
+    const html = await $fetch('/auth')
+    // should not prefetch global components
+    expect(html).not.toMatch(/<link [^>]*\/_nuxt\/TestGlobal[^>]*\.js"/)
+    // should not prefetch all other pages
+    expect(html).not.toMatch(/<link [^>]*\/_nuxt\/navigate-to[^>]*\.js"/)
+  })
+})
+
+describe.runIf(process.env.NUXT_TEST_DEV)('detecting invalid root nodes', () => {
+  it('should detect invalid root nodes in pages', async () => {
+    for (const path of ['1', '2', '3', '4']) {
+      const { consoleLogs } = await renderPage(joinURL('/invalid-root', path))
+      const consoleLogsWarns = consoleLogs.filter(i => i.type === 'warning').map(w => w.text).join('\n')
+      expect(consoleLogsWarns).toContain('does not have a single root node and will cause errors when navigating between routes')
+    }
+  })
+
+  it('should not complain if there is no transition', async () => {
+    for (const path of ['fine']) {
+      const { consoleLogs } = await renderPage(joinURL('/invalid-root', path))
+
+      const consoleLogsWarns = consoleLogs.filter(i => i.type === 'warning')
+
+      expect(consoleLogsWarns.length).toEqual(0)
+    }
+  })
+})
+
+// TODO: dynamic paths in dev
+describe.skipIf(process.env.NUXT_TEST_DEV)('dynamic paths', () => {
   it('should work with no overrides', async () => {
-    const html = await $fetch('/assets')
-    for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
-      const url = match[2]
+    const html: string = await $fetch('/assets')
+    for (const match of html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)) {
+      const url = match[2] || match[3]
       expect(url.startsWith('/_nuxt/') || url === '/public.svg').toBeTruthy()
     }
   })
 
-  it('adds relative paths to CSS', async () => {
-    if (process.env.TEST_WITH_WEBPACK) {
-      // Webpack injects CSS differently
-      return
-    }
-
-    const html = await $fetch('/assets')
-    const urls = Array.from(html.matchAll(/(href|src)="(.*?)"/g)).map(m => m[2])
+  // Webpack injects CSS differently
+  it.skipIf(process.env.TEST_WITH_WEBPACK)('adds relative paths to CSS', async () => {
+    const html: string = await $fetch('/assets')
+    const urls = Array.from(html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)).map(m => m[2] || m[3])
     const cssURL = urls.find(u => /_nuxt\/assets.*\.css$/.test(u))
     expect(cssURL).toBeDefined()
-    const css = await $fetch(cssURL)
+    const css: string = await $fetch(cssURL!)
     const imageUrls = Array.from(css.matchAll(/url\(([^)]*)\)/g)).map(m => m[1].replace(/[-.][\w]{8}\./g, '.'))
     expect(imageUrls).toMatchInlineSnapshot(`
         [
@@ -404,8 +524,8 @@ describe('dynamic paths', () => {
     await startServer()
 
     const html = await $fetch('/foo/assets')
-    for (const match of html.matchAll(/(href|src)="(.`*?)"/g)) {
-      const url = match[2]
+    for (const match of html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)) {
+      const url = match[2] || match[3]
       expect(
         url.startsWith('/foo/_other/') ||
         url === '/foo/public.svg' ||
@@ -421,8 +541,8 @@ describe('dynamic paths', () => {
     await startServer()
 
     const html = await $fetch('/assets')
-    for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
-      const url = match[2]
+    for (const match of html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)) {
+      const url = match[2] || match[3]
       expect(
         url.startsWith('./_nuxt/') ||
         url === './public.svg' ||
@@ -449,8 +569,8 @@ describe('dynamic paths', () => {
     await startServer()
 
     const html = await $fetch('/foo/assets')
-    for (const match of html.matchAll(/(href|src)="(.*?)"/g)) {
-      const url = match[2]
+    for (const match of html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)) {
+      const url = match[2] || match[3]
       expect(
         url.startsWith('https://example.com/_cdn/') ||
         url === 'https://example.com/public.svg' ||
@@ -660,5 +780,76 @@ describe('component islands', () => {
         "tags",
       ]
     `)
+  })
+})
+
+describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () => {
+  it('renders a payload', async () => {
+    const payload = await $fetch('/random/a/_payload.js', { responseType: 'text' })
+    expect(payload).toMatch(
+      /export default \{data:\{\$frand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
+    )
+  })
+
+  it('does not fetch a prefetched payload', async () => {
+    const page = await createPage()
+    const requests = [] as string[]
+
+    page.on('request', (req) => {
+      requests.push(req.url().replace(url('/'), '/'))
+    })
+
+    await page.goto(url('/random/a'))
+    await page.waitForLoadState('networkidle')
+
+    const importSuffix = process.env.NUXT_TEST_DEV && !process.env.TEST_WITH_WEBPACK ? '?import' : ''
+
+    // We are manually prefetching other payloads
+    expect(requests).toContain('/random/c/_payload.js')
+
+    // We are not triggering API requests in the payload
+    expect(requests).not.toContain(expect.stringContaining('/api/random'))
+    // requests.length = 0
+
+    await page.click('[href="/random/b"]')
+    await page.waitForLoadState('networkidle')
+
+    // We are not triggering API requests in the payload in client-side nav
+    expect(requests).not.toContain('/api/random')
+
+    // We are fetching a payload we did not prefetch
+    expect(requests).toContain('/random/b/_payload.js' + importSuffix)
+
+    // We are not refetching payloads we've already prefetched
+    // expect(requests.filter(p => p.includes('_payload')).length).toBe(1)
+    // requests.length = 0
+
+    await page.click('[href="/random/c"]')
+    await page.waitForLoadState('networkidle')
+
+    // We are not triggering API requests in the payload in client-side nav
+    expect(requests).not.toContain('/api/random')
+
+    // We are not refetching payloads we've already prefetched
+    // Note: we refetch on dev as urls differ between '' and '?import'
+    // expect(requests.filter(p => p.includes('_payload')).length).toBe(process.env.NUXT_TEST_DEV ? 1 : 0)
+  })
+})
+
+describe.skipIf(isWindows)('useAsyncData', () => {
+  it('single request resolves', async () => {
+    await expectNoClientErrors('/useAsyncData/single')
+  })
+
+  it('two requests resolve', async () => {
+    await expectNoClientErrors('/useAsyncData/double')
+  })
+
+  it('two requests resolve and sync', async () => {
+    await $fetch('/useAsyncData/refresh')
+  })
+
+  it('two requests made at once resolve and sync', async () => {
+    await expectNoClientErrors('/useAsyncData/promise-all')
   })
 })
