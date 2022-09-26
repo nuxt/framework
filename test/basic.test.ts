@@ -2,10 +2,10 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { joinURL, withQuery } from 'ufo'
 import { isWindows } from 'std-env'
+import { setup, fetch, $fetch, startServer, createPage, url } from '@nuxt/test-utils'
 import type { NuxtIslandResponse } from '../packages/nuxt/src/core/runtime/nitro/renderer'
 // eslint-disable-next-line import/order
 import { expectNoClientErrors, renderPage } from './utils'
-import { setup, fetch, $fetch, startServer, createPage, url } from '@nuxt/test-utils'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
