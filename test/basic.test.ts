@@ -2,10 +2,10 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { joinURL, withQuery } from 'ufo'
 import { isWindows } from 'std-env'
-import { setup, fetch, $fetch, startServer, createPage, url } from '@nuxt/test-utils'
 import type { NuxtIslandResponse } from '../packages/nuxt/src/core/runtime/nitro/renderer'
 // eslint-disable-next-line import/order
 import { expectNoClientErrors, renderPage } from './utils'
+import { setup, fetch, $fetch, startServer, createPage, url } from '@nuxt/test-utils'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
@@ -608,6 +608,7 @@ describe('app config', () => {
 describe('component islands', () => {
   it('renders components with route', async () => {
     const result: NuxtIslandResponse = await $fetch('/__nuxt_island/RouteComponent?url=/foo')
+    result.tags = result.tags.map(([tag, attrs]) => attrs?.href ? [tag, { ...attrs, href: attrs.href.replace(/\.[\w\d]+(\.[\w]+)$/, '$1') }] : [tag, attrs])
     expect(result).toMatchInlineSnapshot(`
       {
         "html": "<pre>    Route: /foo
@@ -638,7 +639,7 @@ describe('component islands', () => {
             "link",
             {
               "as": "script",
-              "href": "/_nuxt/entry.ed3d904c.js",
+              "href": "/_nuxt/entry.js",
               "rel": "modulepreload",
             },
           ],
@@ -646,7 +647,7 @@ describe('component islands', () => {
             "link",
             {
               "as": "script",
-              "href": "/_nuxt/TestGlobal.8b601198.js",
+              "href": "/_nuxt/injectAuth.js",
               "rel": "prefetch",
             },
           ],
@@ -654,7 +655,7 @@ describe('component islands', () => {
             "link",
             {
               "as": "script",
-              "href": "/_nuxt/WithSuffix.global.19532f4e.js",
+              "href": "/_nuxt/sets-layout.js",
               "rel": "prefetch",
             },
           ],
@@ -662,7 +663,7 @@ describe('component islands', () => {
             "link",
             {
               "as": "script",
-              "href": "/_nuxt/BreaksServer.9d9aeeb9.js",
+              "href": "/_nuxt/override.js",
               "rel": "prefetch",
             },
           ],
@@ -670,7 +671,7 @@ describe('component islands', () => {
             "link",
             {
               "as": "script",
-              "href": "/_nuxt/injectAuth.2083679e.js",
+              "href": "/_nuxt/foo.js",
               "rel": "prefetch",
             },
           ],
@@ -678,7 +679,7 @@ describe('component islands', () => {
             "link",
             {
               "as": "script",
-              "href": "/_nuxt/override.af1cd5ce.js",
+              "href": "/_nuxt/error-component.js",
               "rel": "prefetch",
             },
           ],
@@ -686,7 +687,7 @@ describe('component islands', () => {
             "link",
             {
               "as": "script",
-              "href": "/_nuxt/foo.72febae8.js",
+              "href": "/_nuxt/PascalCase.js",
               "rel": "prefetch",
             },
           ],
@@ -694,7 +695,7 @@ describe('component islands', () => {
             "link",
             {
               "as": "script",
-              "href": "/_nuxt/error-component.eceba4d2.js",
+              "href": "/_nuxt/custom.js",
               "rel": "prefetch",
             },
           ],
@@ -702,7 +703,7 @@ describe('component islands', () => {
             "link",
             {
               "as": "script",
-              "href": "/_nuxt/PascalCase.87deb145.js",
+              "href": "/_nuxt/invalid-root.js",
               "rel": "prefetch",
             },
           ],
@@ -710,7 +711,7 @@ describe('component islands', () => {
             "link",
             {
               "as": "script",
-              "href": "/_nuxt/custom.daf0d259.js",
+              "href": "/_nuxt/override.js",
               "rel": "prefetch",
             },
           ],
@@ -718,16 +719,15 @@ describe('component islands', () => {
             "link",
             {
               "as": "script",
-              "href": "/_nuxt/override.62df4802.js",
+              "href": "/_nuxt/default.js",
               "rel": "prefetch",
             },
           ],
           [
             "link",
             {
-              "as": "script",
-              "href": "/_nuxt/default.b7809d21.js",
-              "rel": "prefetch",
+              "href": "/_nuxt/entry.css",
+              "rel": "prefetch stylesheet",
             },
           ],
         ],
