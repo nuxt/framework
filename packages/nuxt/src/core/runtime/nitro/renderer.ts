@@ -249,16 +249,14 @@ export default defineRenderHandler(async (event) => {
     ]),
     body: islandContext
       ? []
-      : [
-        _rendered.html
-      ],
+      : [_rendered.html],
     bodyAppend: normalizeChunks([
       process.env.NUXT_NO_SCRIPTS
         ? undefined
         : (_PAYLOAD_EXTRACTION
-          ? `<script type="module">import p from "${payloadURL}";window.__NUXT__={...p,...(${devalue(splitPayload(ssrContext).initial)})}</script>`
-          : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`
-        ),
+            ? `<script type="module">import p from "${payloadURL}";window.__NUXT__={...p,...(${devalue(splitPayload(ssrContext).initial)})}</script>`
+            : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`
+          ),
       _rendered.renderScripts(),
       // Note: bodyScripts may contain tags other than <script>
       renderedMeta.bodyScripts
