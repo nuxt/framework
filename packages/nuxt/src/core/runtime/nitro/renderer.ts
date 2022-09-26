@@ -152,7 +152,7 @@ export default defineRenderHandler(async (event) => {
     ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error>
     : null
   const islandContext = event.req.url?.startsWith('/__nuxt_island') ? await getIslandContext(event) : undefined
-  let url = ssrError?.url as string || event.req.url!
+  let url = ssrError?.url as string || islandContext?.url || event.req.url!
 
   // Whether we are rendering payload route
   const isRenderingPayload = PAYLOAD_URL_RE.test(url)
