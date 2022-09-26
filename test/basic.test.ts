@@ -625,8 +625,8 @@ describe('component islands', () => {
     if (process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK) { return }
 
     const tags = result.tags
-      .sort((a, b) => a[0].localeCompare(b[0]) || a[1]?.href?.localeCompare(b[1]?.href || '') || 0)
       .map(([tag, attrs]) => attrs?.href ? [tag, { ...attrs, href: attrs.href.replace(/\.[\w\d]+(\.[\w]+)$/, '$1') }] : [tag, attrs])
+      .sort((a: any, b: any) => a[0].localeCompare(b[0]) || a[1]?.href?.localeCompare(b[1]?.href || '') || 0)
     expect(tags).toMatchInlineSnapshot(`
       [
         [
