@@ -31,7 +31,7 @@ export function createClientOnly (component) {
     // override the component render (non script setup component)
     clone.render = (ctx, ...args) => {
       return ctx.mounted$
-        ? h(Fragment, ctx.$attrs ?? ctx._.attrs, component.render(ctx, ...args))
+        ? h(Fragment, null, [h(component.render(ctx, ...args), ctx.$attrs ?? ctx._.attrs)])
         : h('div', ctx.$attrs ?? ctx._.attrs)
     }
   } else if (clone.template) {
