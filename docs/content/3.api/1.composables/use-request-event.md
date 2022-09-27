@@ -1,6 +1,6 @@
 ---
 title: "useRequestEvent"
-description: "Nuxt provides composables and utilities for first-class server-side-rendering support."
+description: "You can use useRequestEvent to access the incoming request."
 ---
 
 # `useRequestEvent`

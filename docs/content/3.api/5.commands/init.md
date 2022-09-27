@@ -1,5 +1,6 @@
 ---
 title: "nuxi init"
+description: The init command initializes a fresh Nuxt project.
 ---
 
 # `nuxi init`

@@ -1,8 +1,11 @@
+---
+description: setResponseStatus sets the statusCode (and optionally the statusMessage) of the response.
+---
 # `setResponseStatus`
 
 Nuxt provides composables and utilities for first-class server-side-rendering support.
 
-You can use `setResponseStatus` to set the statusCode (and optionally the statusMessage) of the response.
+`setResponseStatus` sets the statusCode (and optionally the statusMessage) of the response.
 
 `setResponseStatus` can only be called within component setup functions, plugins, and route middleware.
 

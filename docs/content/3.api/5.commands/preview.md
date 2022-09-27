@@ -1,5 +1,6 @@
 ---
 title: "nuxi preview"
+description: The preview command starts a server to preview your application after the build command.
 ---
 
 # `nuxi preview`

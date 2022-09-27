@@ -1,5 +1,6 @@
 ---
 title: "nuxi generate"
+description: Pre-renders every route of the application and stores the result in plain HTML files.
 ---
 
 # `nuxi generate`

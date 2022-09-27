@@ -1,3 +1,7 @@
+---
+description: Nuxt provides utilities to give you control over prefetching and preloading components.
+---
+
 # `prefetchComponents`
 
 Nuxt provides composables and utilities to give you fine-grained control over prefetching and preloading components.

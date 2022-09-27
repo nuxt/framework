@@ -1,6 +1,6 @@
 ---
 title: "clearError"
-description: "Nuxt provides a composable to clear all handled errors."
+description: "The clearError composable clears all handled errors."
 ---
 
 # `clearError`

@@ -1,5 +1,6 @@
 ---
 title: "addRouteMiddleware"
+description: addRouteMiddleware() is a helper function to dynamically add middleware in your application.
 ---
 
 # `addRouteMiddleware`

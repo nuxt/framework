@@ -1,5 +1,6 @@
 ---
 title: "nuxi dev"
+description: The dev command starts a development server with hot module replacement at http://localhost:3000
 ---
 
 # `nuxi dev`

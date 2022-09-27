@@ -1,3 +1,7 @@
+---
+description: This wrapper around useFetch triggers navigation immediately.
+---
+
 # `useLazyFetch`
 
 `useLazyFetch` provides a wrapper around `useFetch` that triggers navigation before the handler is resolved by setting the `lazy` option to `true`.

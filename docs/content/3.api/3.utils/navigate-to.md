@@ -1,5 +1,6 @@
 ---
 title: "navigateTo"
+description: navigateTo is a helper function that programmatically navigates users.
 ---
 
 # `navigateTo`

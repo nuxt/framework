@@ -1,5 +1,6 @@
 ---
 title: "useRoute"
+description: The useRoute composable returns the current route.
 ---
 
 # `useRoute`

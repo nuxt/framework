@@ -1,3 +1,7 @@
+---
+description: useCookie is an SSR-friendly composable to read and write cookies.
+---
+
 # `useCookie`
 
 Within your pages, components and plugins you can use `useCookie`, an SSR-friendly composable to read and write cookies.

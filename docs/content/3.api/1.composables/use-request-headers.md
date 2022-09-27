@@ -1,6 +1,6 @@
 ---
 title: "useRequestHeaders"
-description: "Nuxt provides composables and utilities for first-class server-side-rendering support."
+description: "You can use useRequestHeaders to access the incoming request headers."
 ---
 
 # `useRequestHeaders`

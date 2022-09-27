@@ -1,5 +1,6 @@
 ---
 title: "useState"
+description: The useState composable creates a reactive and SSR-friendly shared state.
 ---
 
 # `useState`

@@ -1,3 +1,7 @@
+---
+description: This wrapper around useAsyncData triggers navigation immediately.
+---
+
 # `useLazyAsyncData`
 
 `useLazyAsyncData` provides a wrapper around `useAsyncData` that triggers navigation before the handler is resolved by setting the `lazy` option to `true`.
