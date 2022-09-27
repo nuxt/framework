@@ -19,7 +19,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
     rootDir: nuxt.options.rootDir,
     workspaceDir: nuxt.options.workspaceDir,
-    srcDir: join(nuxt.options.srcDir, 'server'),
+    srcDir: nuxt.options.serverDir,
     dev: nuxt.options.dev,
     preset: nuxt.options.dev ? 'nitro-dev' : undefined,
     buildDir: nuxt.options.buildDir,
