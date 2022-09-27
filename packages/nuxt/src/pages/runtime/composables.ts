@@ -1,14 +1,14 @@
-import { NuxtError } from '#app'
 import { KeepAliveProps, TransitionProps, UnwrapRef } from 'vue'
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded, RouteRecordRedirectOption } from 'vue-router'
+import type { NuxtError } from '#app'
 
 export interface PageMeta {
   [key: string]: any
   /**
    * Validate whether a given route can validly be rendered with this page.
-   * 
+   *
    * Return true if it is valid, or false if not. If another match can't be found,
-   * this will mean a 404. You can also directly return an object with 
+   * this will mean a 404. You can also directly return an object with
    * statusCode/statusMessage to respond immediately with an error (other matches
    * will not be checked).
    */
