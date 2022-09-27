@@ -89,20 +89,12 @@ export function useFetch<
   let controller: AbortController
 
   const asyncData = useAsyncData<_ResT, ErrorT, Transform, PickKeys>(key, () => {
+    controller?.abort?.()
     controller = typeof AbortController !== 'undefined' ? new AbortController() : {} as AbortController
     return $fetch(_request.value, { signal: controller.signal, ..._fetchOptions }) as Promise<_ResT>
   }, _asyncDataOptions)
 
-  const originalRefresh = asyncData.refresh
-
-  asyncData.refresh = asyncData.execute = (opts?: AsyncDataExecuteOptions) => {
-    if (opts?.override) {
-      controller?.abort?.()
-    }
-    return originalRefresh(opts)
-  }
-
-  return asyncData.then(r => ({ ...r, refresh: asyncData.refresh, execute: asyncData.refresh }))
+  return asyncData
 }
 
 export function useLazyFetch<
