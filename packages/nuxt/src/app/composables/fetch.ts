@@ -2,7 +2,7 @@ import type { FetchError, FetchOptions } from 'ohmyfetch'
 import type { TypedInternalResponse, NitroFetchRequest } from 'nitropack'
 import { computed, unref, Ref } from 'vue'
 import type { AsyncDataOptions, _Transform, KeyOfRes, AsyncData, PickFrom } from './asyncData'
-import { useAsyncData } from './asyncData'
+import { useAsyncData, AsyncDataExecuteOptions } from './asyncData'
 
 export type FetchResult<ReqT extends NitroFetchRequest> = TypedInternalResponse<ReqT, unknown>
 
@@ -86,11 +86,23 @@ export function useFetch<
     ]
   }
 
+  let controller: AbortController
+
   const asyncData = useAsyncData<_ResT, ErrorT, Transform, PickKeys>(key, () => {
-    return $fetch(_request.value, _fetchOptions) as Promise<_ResT>
+    controller = typeof AbortController !== 'undefined' ? new AbortController() : {} as AbortController
+    return $fetch(_request.value, { signal: controller.signal, ..._fetchOptions }) as Promise<_ResT>
   }, _asyncDataOptions)
 
-  return asyncData
+  const originalRefresh = asyncData.refresh
+
+  asyncData.refresh = asyncData.execute = (opts?: AsyncDataExecuteOptions) => {
+    if (opts?.override) {
+      controller?.abort?.()
+    }
+    return originalRefresh(opts)
+  }
+
+  return asyncData.then(r => ({ ...r, refresh: asyncData.refresh, execute: asyncData.refresh }))
 }
 
 export function useLazyFetch<
