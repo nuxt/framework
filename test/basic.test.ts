@@ -55,6 +55,16 @@ describe('pages', () => {
     await expectNoClientErrors('/')
   })
 
+  it('respects aliases in page metadata', async () => {
+    const html = await $fetch('/some-alias')
+    expect(html).toContain('Hello Nuxt 3!')
+  })
+
+  it('respects redirects in page metadata', async () => {
+    const { headers } = await fetch('/redirect', { redirect: 'manual' })
+    expect(headers.get('location')).toEqual('/')
+  })
+
   it('render 404', async () => {
     const html = await $fetch('/not-found')
 
@@ -137,6 +147,8 @@ describe('pages', () => {
     const html = await $fetch('/client-only-components')
     expect(html).toContain('<div class="client-only-script" foo="bar">')
     expect(html).toContain('<div class="client-only-script-setup" foo="hello">')
+    expect(html).toContain('<div>Fallback</div>')
+    expect(html).not.toContain('Should not be server rendered')
 
     await expectNoClientErrors('/client-only-components')
   })
@@ -264,6 +276,12 @@ describe('middlewares', () => {
     expect(html).toContain('no-auth.vue')
     expect(html).toContain('auth: ')
     expect(html).not.toContain('Injected by injectAuth middleware')
+  })
+
+  it('should redirect to index with http 307 with navigateTo on server side', async () => {
+    const html = await fetch('/navigate-to-redirect', { redirect: 'manual' })
+    expect(html.headers.get('location')).toEqual('/')
+    expect(html.status).toEqual(307)
   })
 })
 
@@ -590,7 +608,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () 
   it('renders a payload', async () => {
     const payload = await $fetch('/random/a/_payload.js', { responseType: 'text' })
     expect(payload).toMatch(
-      /export default \{data:\{\$frand_a:\[[^\]]*\]\},state:\{"\$srandom:rand_a":\d*,"\$srandom:default":\d*\},prerenderedAt:\d*\}/
+      /export default \{data:\{\$frand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
     )
   })
 

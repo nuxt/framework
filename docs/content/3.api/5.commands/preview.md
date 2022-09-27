@@ -5,7 +5,7 @@ title: "nuxi preview"
 # `nuxi preview`
 
 ```{bash}
-npx nuxi preview [rootDir]
+npx nuxi preview [rootDir] [--dotenv]
 ```
 
 The `preview` command starts a server to preview your Nuxt application after running the `build` command.
@@ -13,6 +13,7 @@ The `preview` command starts a server to preview your Nuxt application after run
 Option        | Default          | Description
 -------------------------|-----------------|------------------
 `rootDir` | `.` | The root directory of the application to preview.
+`--dotenv` | `.` | Point to another `.env` file to load, **relative** to the root directory.
 
 This command sets `process.env.NODE_ENV` to `production`. To override, define `NODE_ENV` in a `.env` file or as command-line argument.
 
