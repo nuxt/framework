@@ -2,7 +2,7 @@ import type { FetchError, FetchOptions } from 'ohmyfetch'
 import type { TypedInternalResponse, NitroFetchRequest } from 'nitropack'
 import { computed, unref, Ref } from 'vue'
 import type { AsyncDataOptions, _Transform, KeyOfRes, AsyncData, PickFrom } from './asyncData'
-import { useAsyncData, AsyncDataExecuteOptions } from './asyncData'
+import { useAsyncData } from './asyncData'
 
 export type FetchResult<ReqT extends NitroFetchRequest> = TypedInternalResponse<ReqT, unknown>
 
