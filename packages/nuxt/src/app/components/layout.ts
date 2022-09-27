@@ -1,4 +1,4 @@
-import { defineComponent, isRef, nextTick, onMounted, Ref, Transition, VNode } from 'vue'
+import { defineComponent, unref, nextTick, onMounted, Ref, Transition, VNode } from 'vue'
 import { _wrapIf } from './utils'
 import { useRoute } from '#app'
 // @ts-ignore
@@ -21,7 +21,7 @@ export default defineComponent({
     if (process.dev && process.client) {
       onMounted(() => {
         nextTick(() => {
-          if (_layout && ['#comment', '#text'].includes(vnode?.el?.nodeName)) {
+          if (_layout && _layout in layouts && ['#comment', '#text'].includes(vnode?.el?.nodeName)) {
             console.warn(`[nuxt] \`${_layout}\` layout does not have a single root node and will cause errors when navigating between routes.`)
           }
         })
@@ -29,7 +29,7 @@ export default defineComponent({
     }
 
     return () => {
-      const layout = (isRef(props.name) ? props.name.value : props.name) ?? route.meta.layout as string ?? 'default'
+      const layout = unref(props.name) ?? route.meta.layout as string ?? 'default'
 
       const hasLayout = layout && layout in layouts
       if (process.dev && layout && !hasLayout && layout !== 'default') {
