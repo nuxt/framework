@@ -148,6 +148,12 @@ export default defineRenderHandler(async (event) => {
     ssrContext.payload.prerenderedAt = Date.now()
   }
 
+  if (!isRenderingPayload && !process.env.prerender && event.res.socket) {
+    const { link } = await getEarlyHints()
+    // TODO: use https://github.com/nodejs/node/pull/44180 when we drop support for node 16
+    event.res.socket!.write(`HTTP/1.1 103 Early Hints\r\nLink: ${link}\r\n\r\n`, 'utf-8',)
+  }
+
   // Render app
   const renderer = (process.env.NUXT_NO_SSR || ssrContext.noSSR) ? await getSPARenderer() : await getSSRRenderer()
   const _rendered = await renderer.renderToString(ssrContext).catch((err) => {
@@ -303,3 +309,11 @@ function splitPayload (ssrContext: NuxtSSRContext) {
     payload: { data, prerenderedAt }
   }
 }
+
+const getEarlyHints = lazyCachedFunction(async () => {
+  const renderer = process.env.NUXT_NO_SSR ? await getSPARenderer() : await getSSRRenderer()
+  const result = await renderer.renderToString({
+    runtimeConfig: useRuntimeConfig() as NuxtSSRContext['runtimeConfig'],
+  } as any)
+  return result.renderResourceHeaders()
+})
