@@ -1,4 +1,4 @@
-import { createRenderer } from 'vue-bundle-renderer/runtime'
+import { createRenderer, renderResourceHeaders } from 'vue-bundle-renderer/runtime'
 import type { RenderResponse } from 'nitropack'
 import type { Manifest } from 'vite'
 import { appendHeader, getQuery } from 'h3'
@@ -100,7 +100,10 @@ const getSPARenderer = lazyCachedFunction(async () => {
     return Promise.resolve(result)
   }
 
-  return { renderToString }
+  return {
+    rendererContext: renderer.rendererContext,
+    renderToString
+  }
 })
 
 const PAYLOAD_CACHE = (process.env.NUXT_PAYLOAD_EXTRACTION && process.env.prerender) ? new Map() : null // TODO: Use LRU cache
@@ -148,14 +151,16 @@ export default defineRenderHandler(async (event) => {
     ssrContext.payload.prerenderedAt = Date.now()
   }
 
+  // Render app
+  const renderer = (process.env.NUXT_NO_SSR || ssrContext.noSSR) ? await getSPARenderer() : await getSSRRenderer()
+
+  // Render 103 Early Hints
   if (!isRenderingPayload && !process.env.prerender && event.res.socket) {
-    const { link } = await getEarlyHints()
+    const { link } = renderResourceHeaders({}, renderer.rendererContext)
     // TODO: use https://github.com/nodejs/node/pull/44180 when we drop support for node 16
     event.res.socket!.write(`HTTP/1.1 103 Early Hints\r\nLink: ${link}\r\n\r\n`, 'utf-8',)
   }
 
-  // Render app
-  const renderer = (process.env.NUXT_NO_SSR || ssrContext.noSSR) ? await getSPARenderer() : await getSSRRenderer()
   const _rendered = await renderer.renderToString(ssrContext).catch((err) => {
     if (!ssrError) {
       // Use explicitly thrown error in preference to subsequent rendering errors
@@ -309,11 +314,3 @@ function splitPayload (ssrContext: NuxtSSRContext) {
     payload: { data, prerenderedAt }
   }
 }
-
-const getEarlyHints = lazyCachedFunction(async () => {
-  const renderer = process.env.NUXT_NO_SSR ? await getSPARenderer() : await getSSRRenderer()
-  const result = await renderer.renderToString({
-    runtimeConfig: useRuntimeConfig() as NuxtSSRContext['runtimeConfig'],
-  } as any)
-  return result.renderResourceHeaders()
-})
