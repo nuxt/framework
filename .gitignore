@@ -3,7 +3,7 @@ node_modules
 jspm_packages
 
 package-lock.json
-# */**/yarn.lock
+*/**/yarn.lock
 
 # Logs
 *.log
@@ -12,10 +12,6 @@ package-lock.json
 .temp
 .tmp
 .cache
-
-# Yarn
-**/.yarn/cache
-**/.yarn/*state*
 
 # Generated dirs
 dist

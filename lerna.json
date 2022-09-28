@@ -1,11 +1,9 @@
 {
   "version": "3.0.0-rc.11",
-  "npmClient": "yarn",
+  "npmClient": "pnpm",
   "useWorkspaces": true,
   "conventionalCommits": true,
-  "packages": [
-    "packages/*"
-  ],
+  "packages": ["packages/*"],
   "command": {
     "publish": {
       "npmClient": "npm"

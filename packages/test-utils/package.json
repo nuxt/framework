@@ -13,8 +13,8 @@
     "prepack": "unbuild"
   },
   "dependencies": {
-    "@nuxt/kit": "3.0.0-rc.11",
-    "@nuxt/schema": "3.0.0-rc.11",
+    "@nuxt/kit": "workspace:*",
+    "@nuxt/schema": "workspace:*",
     "consola": "^2.15.3",
     "defu": "^6.1.0",
     "execa": "^6.1.0",

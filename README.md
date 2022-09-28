@@ -48,9 +48,9 @@ Nuxt's goal is to make web development intuitive and performant with a great dev
 
 - Clone repository
 - Ensure you have the latest LTS version of Node.js installed
-- Install dependencies with `npx yarn install`
-- Run `npx yarn stub` to activate passive development
-- Open playground with `npx yarn dev`
+- Install dependencies with `npx pnpm install`
+- Run `npx pnpm stub` to activate passive development
+- Open playground with `npx pnpm dev`
 
 Learn more about in our documentation on [how to contribute to Nuxt](https://v3.nuxtjs.org/community/contribution).
 
@@ -60,7 +60,7 @@ We are using [Docus](https://nuxtlabs.com/docus) for documentation (*It is plann
 
 We recommend to install the [Docus extension](https://marketplace.visualstudio.com/items?itemName=NuxtLabs.docus) for VS Code.
 
-- Run `npx yarn stub` once in the root directory
+- Run `npx pnpm stub` once in the root directory
 - Go into the docs directory: `cd docs`
 - Install docs dependencies with `npx yarn install`
 - Run `npx yarn dev` to start Docus in development mode
