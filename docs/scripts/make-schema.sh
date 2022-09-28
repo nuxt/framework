@@ -2,6 +2,5 @@
 set -e
 
 cd ..
-yarn install
-cd packages/schema
-yarn prepack --stub
+npx pnpm@7.12.0 install
+npx pnpm@7.12.0 --filter @nuxt/schema prepack --stub
