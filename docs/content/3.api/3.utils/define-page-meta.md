@@ -81,11 +81,13 @@ interface PageMeta {
 
     Where to redirect if the route is directly matched. The redirection happens before any navigation guard and triggers a new navigation with the new target location.
 
+    :StabilityEdge
+
   **`alias`**
 
   - **Type**: `string | string[]`
   
-    Aliases for the record. Allows defining extra paths that will behave like a copy of the record. Allows having paths shorthands like `/users/:id` and `/u/:id`. All `alias` and `path` values must share the same params. 
+    Aliases for the record. Allows defining extra paths that will behave like a copy of the record. Allows having paths shorthands like `/users/:id` and `/u/:id`. All `alias` and `path` values must share the same params.
 
   **`[key: string]`**
 
