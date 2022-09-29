@@ -1,6 +1,6 @@
 # `useAppConfig`
 
-Access the reactive [app config](/guide/directory-structure/app.config) define in the project.
+Access the reactive [app config](/guide/directory-structure/app.config) defined in the project.
 
 **Usage:**
 
