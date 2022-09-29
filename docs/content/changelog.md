@@ -1,5 +1,4 @@
 ---
-layout: docs
 aside: false
 toc: false
 icon: heroicons-outline:newspaper
