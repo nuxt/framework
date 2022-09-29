@@ -5,19 +5,31 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@algolia/autocomplete-core@npm:1.6.3":
-  version: 1.6.3
-  resolution: "@algolia/autocomplete-core@npm:1.6.3"
+"@algolia/autocomplete-core@npm:1.7.1":
+  version: 1.7.1
+  resolution: "@algolia/autocomplete-core@npm:1.7.1"
   dependencies:
-    "@algolia/autocomplete-shared": 1.6.3
-  checksum: 2dec8ca31360c595a596e83ac0c075e21cf7d3235b0e069d13d8e4e9de7305eaa75f8247475e813ed8cc0e35740cb79099ebfb0cde3a83d2c79db2084e8c62b4
+    "@algolia/autocomplete-shared": 1.7.1
+  checksum: 511176e9c2a9f2e2be62552e48e72dadfcc6638cda4a2990fd3453aed3ce4e7d8ca1bd6a9ccb912430c77734b00a8b836aaad97facc1987157af4ac00f590f4a
   languageName: node
   linkType: hard
 
-"@algolia/autocomplete-shared@npm:1.6.3":
-  version: 1.6.3
-  resolution: "@algolia/autocomplete-shared@npm:1.6.3"
-  checksum: 2688f54bd82506ac1e6580476772a4d310a9cfa28fbd29c6e207ddc327f62b55e007d5ed5a83af3edd2faf06b09f2e989f9eb7c14d2472fb7a657bb9539fb730
+"@algolia/autocomplete-preset-algolia@npm:1.7.1":
+  version: 1.7.1
+  resolution: "@algolia/autocomplete-preset-algolia@npm:1.7.1"
+  dependencies:
+    "@algolia/autocomplete-shared": 1.7.1
+  peerDependencies:
+    "@algolia/client-search": ^4.9.1
+    algoliasearch: ^4.9.1
+  checksum: cb031d5ed43f2e10f325f6291cfab851cc5622d96ae8ba1913815ead16b7ce2969b0c51f921d54c47195b2200af8ceecf1c587d2580f842c337f1d8e2f6317c2
+  languageName: node
+  linkType: hard
+
+"@algolia/autocomplete-shared@npm:1.7.1":
+  version: 1.7.1
+  resolution: "@algolia/autocomplete-shared@npm:1.7.1"
+  checksum: 0e137f1a470fab9b1bc493284b0be9b83503bda8aa37be9726a8fddf4791dccbd28f9eec399a7c75c1eb3196510dac7be454307fc97fbca2999f3fbc30756c28
   languageName: node
   linkType: hard
 
@@ -576,35 +588,43 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docsearch/css@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@docsearch/css@npm:3.1.0"
-  checksum: 05e6ed291e47fed4382790aec726317e37418ee4a600b64525a30a6cf54c187bb35ab0fd24fadad0125b8ceb66cb58d456992666d78233bfd8bce29ebe64b599
+"@docsearch/css@npm:3.2.1, @docsearch/css@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "@docsearch/css@npm:3.2.1"
+  checksum: ab7a36a34c8eaab9cdf837db2748c71d35903c05a055ebfc5fd74ebc62ed95e39c5778228e1259ab1c9db9229700feaffecd849f58252673555f74f500584e01
   languageName: node
   linkType: hard
 
-"@docsearch/js@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@docsearch/js@npm:3.1.0"
+"@docsearch/js@npm:^3.2.1":
+  version: 3.2.1
+  resolution: "@docsearch/js@npm:3.2.1"
   dependencies:
-    "@docsearch/react": 3.1.0
+    "@docsearch/react": 3.2.1
     preact: ^10.0.0
-  checksum: 182cdbc6d289abc5d98c395427d4fe6c82e5e055a7f11e7ca104039e1ac429538913c1b2b3b3e243dd5ee7c7bd320513aa508d644df49c2568ebb989ff26a682
+  checksum: 30df5d0eb8083fadbd0e0d1298f4606be2a7b755c31c14fc82632eb12c41e52fd6dd6bac9ee7e03d8839e5f102f0b8bd294aab71196718051735d4d1e7f8f699
   languageName: node
   linkType: hard
 
-"@docsearch/react@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@docsearch/react@npm:3.1.0"
+"@docsearch/react@npm:3.2.1":
+  version: 3.2.1
+  resolution: "@docsearch/react@npm:3.2.1"
   dependencies:
-    "@algolia/autocomplete-core": 1.6.3
-    "@docsearch/css": 3.1.0
+    "@algolia/autocomplete-core": 1.7.1
+    "@algolia/autocomplete-preset-algolia": 1.7.1
+    "@docsearch/css": 3.2.1
     algoliasearch: ^4.0.0
   peerDependencies:
     "@types/react": ">= 16.8.0 < 19.0.0"
     react: ">= 16.8.0 < 19.0.0"
     react-dom: ">= 16.8.0 < 19.0.0"
-  checksum: d812fd68e1274281e1cedeba2414e33b568488b00ac77c6d27dc36c49cee7bb6f8945e438fece937e9613c3e0f2cceb02c09bd3b11c104f14a876c429dfb6377
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 62e4b45bc1c710ca600e3aee0558259448934678f528199bcb41975671d7df9853f813aca09a126c8c235cef613a36a59c52296fc04c76e6bec88f53e872c580
   languageName: node
   linkType: hard
 
@@ -818,6 +838,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nuxt-themes/docus@npm:@nuxt-themes/docus-edge@0.1.0-b345610":
+  version: 0.1.0-b345610
+  resolution: "@nuxt-themes/docus-edge@npm:0.1.0-b345610"
+  dependencies:
+    "@docsearch/css": ^3.2.1
+    "@docsearch/js": ^3.2.1
+    "@fontsource/inter": ^4.5.12
+    "@iconify/vue": ^4.0.0
+    "@nuxt/content": 2.1.1
+    "@nuxtjs/algolia": ^1.1.1
+    "@nuxtjs/color-mode": ^3.1.5
+    "@nuxtjs/tailwindcss": ^5.3.3
+    "@tailwindcss/aspect-ratio": ^0.4.2
+    "@tailwindcss/forms": ^0.5.3
+    "@tailwindcss/line-clamp": ^0.4.2
+    "@tailwindcss/typography": ^0.5.7
+    "@vueuse/core": ^9.2.0
+    "@vueuse/nuxt": ^9.2.0
+    pinceau: latest
+    vue-plausible: ^1.3.2
+  checksum: 3742039eee8302ef075e21f3b2ed99b79b0db1cc48d4cf1f51e9c410dd6445f11ad319f973bc5455f5f19b86b8f1f68af6944df9756f473ec699b2349a0707b3
+  languageName: node
+  linkType: hard
+
 "@nuxt-themes/docus@npm:@nuxt-themes/docus-edge@latest":
   version: 0.1.0-3499f3e
   resolution: "@nuxt-themes/docus-edge@npm:0.1.0-3499f3e"
@@ -842,23 +886,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt-themes/nuxt3-docs@npm:1.0.3":
-  version: 1.0.3
-  resolution: "@nuxt-themes/nuxt3-docs@npm:1.0.3"
+"@nuxt-themes/website@npm:0.1.1":
+  version: 0.1.1
+  resolution: "@nuxt-themes/website@npm:0.1.1"
   dependencies:
-    "@docsearch/css": ^3.1.1
-    "@docsearch/js": ^3.1.1
     "@nuxt-themes/docus": "npm:@nuxt-themes/docus-edge@latest"
-    "@nuxtjs/algolia": 0.9.2
     "@nuxtlabs/github-module": "npm:@nuxtlabs/github-module-edge@latest"
-    fs-extra: ^10.1.0
-    jiti: ^1.14.0
     pathe: ^0.3.2
-    rimraf: ^3.0.2
     scule: ^0.2.1
     three: ^0.142.0
     vue-plausible: ^1.3.2
-  checksum: bdfc21752768edac983d407742a2e704e13727957b43e0e4758370a58a8412e39246d958944ace535bc52abe7a899d633d97466e143b9468e85017e4b77c7bfc
+  checksum: dc76a983aa5f14ae9a2fc2f3804e0cb38f27571c83a0619139bf7be18a6f0dee3c572509ce23a82935d78fb2b887b227f847a321c6d6f2e000a5959ce15c3661
   languageName: node
   linkType: hard
 
@@ -912,7 +950,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/kit@npm:3.0.0-rc.11, @nuxt/kit@npm:^3.0.0-rc.10, @nuxt/kit@npm:^3.0.0-rc.11, @nuxt/kit@npm:^3.0.0-rc.3, @nuxt/kit@npm:^3.0.0-rc.5, @nuxt/kit@npm:^3.0.0-rc.9":
+"@nuxt/kit@npm:3.0.0-rc.11, @nuxt/kit@npm:^3.0.0-rc.10, @nuxt/kit@npm:^3.0.0-rc.5, @nuxt/kit@npm:^3.0.0-rc.9":
   version: 3.0.0-rc.11
   resolution: "@nuxt/kit@npm:3.0.0-rc.11"
   dependencies:
@@ -954,7 +992,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/schema@npm:3.0.0-rc.11, @nuxt/schema@npm:^3.0.0-rc.11":
+"@nuxt/schema@npm:3.0.0-rc.11":
   version: 3.0.0-rc.11
   resolution: "@nuxt/schema@npm:3.0.0-rc.11"
   dependencies:
@@ -1050,34 +1088,6 @@ __metadata:
   peerDependencies:
     vue: ^3.2.39
   checksum: e279f473d8d6105f3a5ac888d81f6e73b6e5b65073c1ef48232828bdae29041360574e4697a712a33277f90fb490744a82150525787fd87caed986006c6c7e61
-  languageName: node
-  linkType: hard
-
-"@nuxthq/studio@npm:@nuxthq/studio-edge@latest":
-  version: 0.1.0-27736247.29f6499
-  resolution: "@nuxthq/studio-edge@npm:0.1.0-27736247.29f6499"
-  dependencies:
-    "@nuxt/kit": ^3.0.0-rc.11
-    "@nuxt/schema": ^3.0.0-rc.11
-    defu: ^6.1.0
-    nuxt-component-meta: ^0.2.3
-    socket.io-client: ^4.5.2
-    ufo: ^0.8.5
-  checksum: 28aa757d8b14f4ef0f62c386bd2caa1f9f11d56976d2eaf7bb6e84cd624c74f68dbd422d6d0609120846e16f3d96612b1c386fbbf663db2fe3ef9e35f5e8e54e
-  languageName: node
-  linkType: hard
-
-"@nuxtjs/algolia@npm:0.9.2":
-  version: 0.9.2
-  resolution: "@nuxtjs/algolia@npm:0.9.2"
-  dependencies:
-    "@algolia/recommend": ^4.12.2
-    "@nuxt/kit": ^3.0.0-rc.3
-    algoliasearch: ^4.11.0
-    instantsearch.css: ^7.4.5
-    metadata-scraper: ^0.2.49
-    vue-instantsearch: ^4.3.2
-  checksum: 284783b2ec6d29b534bc1b61d70612da3b7ababb01a78b35acdf30c0b46bd819c69946d4e44d543215c1158c88ee9a3f9adf9d3651efe400cc8850a943b2883e
   languageName: node
   linkType: hard
 
@@ -1406,13 +1416,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@socket.io/component-emitter@npm:~3.1.0":
-  version: 3.1.0
-  resolution: "@socket.io/component-emitter@npm:3.1.0"
-  checksum: db069d95425b419de1514dffe945cc439795f6a8ef5b9465715acf5b8b50798e2c91b8719cbf5434b3fe7de179d6cdcd503c277b7871cb3dd03febb69bdd50fa
-  languageName: node
-  linkType: hard
-
 "@szmarczak/http-timer@npm:^4.0.5":
   version: 4.0.6
   resolution: "@szmarczak/http-timer@npm:4.0.6"
@@ -1707,7 +1710,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@volar/vue-language-core@npm:0.40.13, @volar/vue-language-core@npm:^0.40.13":
+"@volar/vue-language-core@npm:^0.40.13":
   version: 0.40.13
   resolution: "@volar/vue-language-core@npm:0.40.13"
   dependencies:
@@ -3268,7 +3271,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:~4.3.1, debug@npm:~4.3.2":
+"debug@npm:4, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4":
   version: 4.3.4
   resolution: "debug@npm:4.3.4"
   dependencies:
@@ -3482,10 +3485,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "docs@workspace:."
   dependencies:
-    "@nuxt-themes/nuxt3-docs": 1.0.3
-    "@nuxthq/studio": "npm:@nuxthq/studio-edge@latest"
+    "@nuxt-themes/docus": "npm:@nuxt-themes/docus-edge@0.1.0-b345610"
+    "@nuxt-themes/website": 0.1.1
     jiti: ^1.14.0
-    nuxt: ^3.0.0-rc.8
+    nuxt: ^3.0.0-rc.11
   languageName: unknown
   linkType: soft
 
@@ -3638,26 +3641,6 @@ __metadata:
   dependencies:
     once: ^1.4.0
   checksum: 530a5a5a1e517e962854a31693dbb5c0b2fc40b46dad2a56a2deec656ca040631124f4795823acc68238147805f8b021abbe221f4afed5ef3c8e8efc2024908b
-  languageName: node
-  linkType: hard
-
-"engine.io-client@npm:~6.2.1":
-  version: 6.2.2
-  resolution: "engine.io-client@npm:6.2.2"
-  dependencies:
-    "@socket.io/component-emitter": ~3.1.0
-    debug: ~4.3.1
-    engine.io-parser: ~5.0.3
-    ws: ~8.2.3
-    xmlhttprequest-ssl: ~2.0.0
-  checksum: bda989d88d663cda5f1fbe6b235dba35b80ba9e947685b94b40d3daf4545ccdcb54232d2ad210bbe9b5e0b73b0e019b54716d1285ed300e1f1c7ad97fd6cafaf
-  languageName: node
-  linkType: hard
-
-"engine.io-parser@npm:~5.0.3":
-  version: 5.0.4
-  resolution: "engine.io-parser@npm:5.0.4"
-  checksum: d4ad0cef6ff63c350e35696da9bb3dbd180f67b56e93e90375010cc40393e6c0639b780d5680807e1d93a7e2e3d7b4a1c3b27cf75db28eb8cbf605bc1497da03
   languageName: node
   linkType: hard
 
@@ -7176,18 +7159,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxt-component-meta@npm:^0.2.3":
-  version: 0.2.3
-  resolution: "nuxt-component-meta@npm:0.2.3"
-  dependencies:
-    "@nuxt/kit": ^3.0.0-rc.10
-    scule: ^0.3.2
-    vue-component-meta: ^0.40.13
-  checksum: f583323431bde61b8a90dac6a5926cbba4add3b29198567e852af0b9736a4a16c34a243b72547e940cecac2c58adcb4f78d68e37a41bdc530ba50e76c8f20fdb
-  languageName: node
-  linkType: hard
-
-"nuxt@npm:^3.0.0-rc.8":
+"nuxt@npm:^3.0.0-rc.11":
   version: 3.0.0-rc.11
   resolution: "nuxt@npm:3.0.0-rc.11"
   dependencies:
@@ -9010,28 +8982,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socket.io-client@npm:^4.5.2":
-  version: 4.5.2
-  resolution: "socket.io-client@npm:4.5.2"
-  dependencies:
-    "@socket.io/component-emitter": ~3.1.0
-    debug: ~4.3.2
-    engine.io-client: ~6.2.1
-    socket.io-parser: ~4.2.0
-  checksum: f3196a731d7f502bcce8b54a3430485d2015d0e7d74050c1be8fa0622da0b62977719f903ec0dfb113d4be1564f6509d73f2fc257cf3972f3be877722aeabeb9
-  languageName: node
-  linkType: hard
-
-"socket.io-parser@npm:~4.2.0":
-  version: 4.2.1
-  resolution: "socket.io-parser@npm:4.2.1"
-  dependencies:
-    "@socket.io/component-emitter": ~3.1.0
-    debug: ~4.3.1
-  checksum: 2582202f22538d7e6b4436991378cb4cea3b2f8219cda24923ae35afd291ab5ad6120e7d093e41738256b6c6ad10c667dd25753c2d9a2340fead04e9286f152d
-  languageName: node
-  linkType: hard
-
 "socks-proxy-agent@npm:^7.0.0":
   version: 7.0.0
   resolution: "socks-proxy-agent@npm:7.0.0"
@@ -10119,17 +10069,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-component-meta@npm:^0.40.13":
-  version: 0.40.13
-  resolution: "vue-component-meta@npm:0.40.13"
-  dependencies:
-    "@volar/vue-language-core": 0.40.13
-  peerDependencies:
-    typescript: "*"
-  checksum: 0fd192922482188cc8baee62d3ec9fccc1bb84ec5084681fbf81283b662aec8b63557f1cbb52a0930eac6efb12df85cedb01d4c3222f87ad2a3568e35c3e9ca0
-  languageName: node
-  linkType: hard
-
 "vue-demi@npm:*":
   version: 0.13.11
   resolution: "vue-demi@npm:0.13.11"
@@ -10321,28 +10260,6 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 23aa0f021b2eb65c108ec4c3e08c0d81ba01f82b500432dfe327fd6be36079c1d81fdb0eac6464d2a0eb49904d34a9ab8c59619d673fa07b8346f83aeb0cbf12
-  languageName: node
-  linkType: hard
-
-"ws@npm:~8.2.3":
-  version: 8.2.3
-  resolution: "ws@npm:8.2.3"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ^5.0.2
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: c869296ccb45f218ac6d32f8f614cd85b50a21fd434caf11646008eef92173be53490810c5c23aea31bc527902261fbfd7b062197eea341b26128d4be56a85e4
-  languageName: node
-  linkType: hard
-
-"xmlhttprequest-ssl@npm:~2.0.0":
-  version: 2.0.0
-  resolution: "xmlhttprequest-ssl@npm:2.0.0"
-  checksum: 1e98df67f004fec15754392a131343ea92e6ab5ac4d77e842378c5c4e4fd5b6a9134b169d96842cc19422d77b1606b8df84a5685562b3b698cb68441636f827e
   languageName: node
   linkType: hard
 
