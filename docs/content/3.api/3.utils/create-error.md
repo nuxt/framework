@@ -31,7 +31,7 @@ if (!data.value) {
 
 ## Throwing Errors in API Routes
 
-You can use `createError` to trigger error handling in server API routes.
+Use `createError` to trigger error handling in server API routes.
 
 ### Example
 

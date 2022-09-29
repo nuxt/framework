@@ -65,7 +65,7 @@ export default defineNuxtPlugin(() => {
 
 ### Global Route Middleware
 
-You can set an optional, third argument `{ global: true }` to indicate whether the route middleware is global:
+Set an optional, third argument `{ global: true }` to indicate whether the route middleware is global:
 
 ```ts [plugins/my-plugin.ts]
 export default defineNuxtPlugin(() => {

@@ -1,6 +1,6 @@
 ---
 title: "useRequestHeaders"
-description: "You can use useRequestHeaders to access the incoming request headers."
+description: "Use useRequestHeaders to access the incoming request headers."
 ---
 
 # `useRequestHeaders`

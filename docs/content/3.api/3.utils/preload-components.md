@@ -8,7 +8,7 @@ Nuxt provides composables and utilities to give you fine-grained control over pr
 
 > Preloading components loads components that your page will need very soon, which you want to start loading early in rendering lifecycle. This ensures they are available earlier and are less likely to block the page's render, improving performance.
 
-You can use `preloadComponents` to manually preload individual components that have been registered globally in your Nuxt app. (By default Nuxt registers these as async components.) You must use the Pascal-cased version of the component name.
+Use `preloadComponents` to manually preload individual components that have been registered globally in your Nuxt app. (By default Nuxt registers these as async components.) You must use the Pascal-cased version of the component name.
 
 ```js
 await preloadComponents('MyGlobalComponent')
