@@ -10335,7 +10335,7 @@ __metadata:
 
 "nitropack@patch:nitropack@npm%3A0.5.4#./.yarn/patches/nitropack-npm-0.5.4-5e2d943316.patch::locator=nuxt-framework%40workspace%3A.":
   version: 0.5.4
-  resolution: "nitropack@patch:nitropack@npm%3A0.5.4#./.yarn/patches/nitropack-npm-0.5.4-5e2d943316.patch::version=0.5.4&hash=1b77c7&locator=nuxt-framework%40workspace%3A."
+  resolution: "nitropack@patch:nitropack@npm%3A0.5.4#./.yarn/patches/nitropack-npm-0.5.4-5e2d943316.patch::version=0.5.4&hash=74abde&locator=nuxt-framework%40workspace%3A."
   dependencies:
     "@cloudflare/kv-asset-handler": ^0.2.0
     "@netlify/functions": ^1.2.0
@@ -10398,7 +10398,7 @@ __metadata:
   bin:
     nitro: dist/cli.mjs
     nitropack: dist/cli.mjs
-  checksum: ce4db7175633dc4cf23487f496a444718b2f6fd5e8cb2134e8ddeb6ca0933df9d1bf9c2ae1fa41250d4b150b567441649455cb723105aabae8be017d9f476a34
+  checksum: 69519d97c107a2b9b6c0cb245edb4faf0e2ebea3353a3ab9d5de6f674518295e95bbbf81b95fb3ed83415d20374dd9928dc6d8fea2751709ed5c44512d2022a8
   languageName: node
   linkType: hard
 

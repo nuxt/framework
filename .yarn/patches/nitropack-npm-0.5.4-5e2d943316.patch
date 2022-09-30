@@ -23,7 +23,7 @@ index 19eb8a835f1ed68a51c5cd7365181290af05e338..9af21efb1e9ec3e04bd915f2e7be446f
 +  let retry = 0
 +  let error, errors = 0
 +  while (retry++ < retries) {
-+    try { await fn(); if (errors) { throw error } } catch (err) {
++    try { await fn(); if (errors) { throw error }; return } catch (err) {
 +      error = err; errors++
 +      await new Promise(resolve => setTimeout(resolve, 2))
 +    }
