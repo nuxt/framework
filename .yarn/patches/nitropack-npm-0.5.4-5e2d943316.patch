@@ -24,7 +24,7 @@ index 19eb8a835f1ed68a51c5cd7365181290af05e338..9af21efb1e9ec3e04bd915f2e7be446f
 +  let error
 +  while (retry++ < retries) {
 +    try { return await fn() } catch (err) {
-+      error = err
++      error = err; console.warn('caught error', err)
 +      await new Promise(resolve => setTimeout(resolve, 2))
 +    }
 +  }
