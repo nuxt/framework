@@ -44,7 +44,8 @@
     "nuxt": "link:./packages/nuxt",
     "nuxt3": "link:./packages/nuxt",
     "vite": "~3.1.3",
-    "unbuild": "^0.8.11"
+    "unbuild": "^0.8.11",
+    "nitropack@^0.5.4": "patch:nitropack@npm%3A0.5.4#./.yarn/patches/nitropack-npm-0.5.4-5e2d943316.patch"
   },
   "devDependencies": {
     "@actions/core": "^1.9.1",

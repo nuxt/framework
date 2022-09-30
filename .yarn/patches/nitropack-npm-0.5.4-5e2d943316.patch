@@ -1,0 +1,32 @@
+diff --git a/dist/shared/nitro.9c828268.mjs b/dist/shared/nitro.9c828268.mjs
+index 19eb8a835f1ed68a51c5cd7365181290af05e338..9af21efb1e9ec3e04bd915f2e7be446f328409af 100644
+--- a/dist/shared/nitro.9c828268.mjs
++++ b/dist/shared/nitro.9c828268.mjs
+@@ -449,7 +449,9 @@ function externals(opts) {
+         await promises.mkdir(dirname(dst), { recursive: true });
+         await promises.copyFile(src, dst);
+       };
+-      await Promise.all(tracedFiles.map(writeFile));
++      await Promise.all(
++        tracedFiles.map(file => retry(() => writeFile(file), 3))
++      )
+       await promises.writeFile(resolve(opts.outDir, "package.json"), JSON.stringify({
+         name: "nitro-output",
+         version: "0.0.0",
+@@ -2777,3 +2779,16 @@ function getExtension(path) {
+ }
+ 
+ export { GLOB_SCAN_PATTERN as G, createNitro as a, build as b, copyPublicAssets as c, scanMiddleware as d, scanRoutes as e, scanPlugins as f, createDevServer as g, defineNitroConfig as h, prerender as i, defineNitroPreset as j, loadOptions as l, prepare as p, scanHandlers as s, writeTypes as w };
++
++
++async function retry (fn, retries) {
++  let retry = 0
++  let error
++  while (retry++ < retries) {
++    try { return await fn() } catch (err) {
++      error = err
++      await new Promise(resolve => setTimeout(resolve, 2))
++    }
++  }
++  throw error
++}
