@@ -196,7 +196,7 @@ export default defineRenderHandler(async (event) => {
     head: normalizeChunks([
       renderedMeta.headTags,
       _PAYLOAD_EXTRACTION ? `<link rel="modulepreload" href="${payloadURL}">` : null,
-      _rendered.renderResourceHints(),
+      _rendered.renderScripts(),
       _rendered.renderStyles(),
       inlinedStyles,
       ssrContext.styles
@@ -217,7 +217,6 @@ export default defineRenderHandler(async (event) => {
             ? `<script type="module">import p from "${payloadURL}";window.__NUXT__={...p,...(${devalue(splitPayload(ssrContext).initial)})}</script>`
             : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`
           ),
-      _rendered.renderScripts(),
       // Note: bodyScripts may contain tags other than <script>
       renderedMeta.bodyScripts
     ])
