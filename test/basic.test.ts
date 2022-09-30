@@ -458,6 +458,37 @@ describe('page key', () => {
     })
 
     try {
+      await page.goto(url('/fixed-keyed-child-parent/0'))
+      await page.waitForLoadState('networkidle')
+
+      await page.click('[href="/fixed-keyed-child-parent/1"]')
+      await page.waitForSelector('#page-1')
+
+      // Wait for all pending micro ticks to be cleared,
+      // so we are not resolved too early when there are repeated page loading
+      await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 0)))
+
+      expect(logs.length).toBe(1)
+    } finally {
+      done = true
+    }
+  })
+  it('will cause run of setup if navigation changed page key', async () => {
+    let done = false
+    const page = await createPage()
+    const logs: string[] = []
+
+    page.on('console', (msg) => {
+      const text = msg.text()
+      if (text.includes('Running Child Setup')) {
+        if (done) {
+          throw new Error('Test finished prematurely')
+        }
+        logs.push(text)
+      }
+    })
+
+    try {
       await page.goto(url('/keyed-child-parent/0'))
       await page.waitForLoadState('networkidle')
 
@@ -468,7 +499,7 @@ describe('page key', () => {
       // so we are not resolved too early when there are repeated page loading
       await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 0)))
 
-      expect(logs.length).toBe(1)
+      expect(logs.length).toBe(2)
     } finally {
       done = true
     }
