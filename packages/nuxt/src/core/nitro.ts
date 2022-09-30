@@ -16,7 +16,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
 
   // Resolve config
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
-  const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig> {
+  const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
     rootDir: nuxt.options.rootDir,
     workspaceDir: nuxt.options.workspaceDir,
     srcDir: join(nuxt.options.srcDir, 'server'),
@@ -65,10 +65,10 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
         ...(nuxt.options.dev
           ? []
           : [
-            ...nuxt.options.experimental.externalVue ? [] : ['vue', '@vue/'],
-            '@nuxt/',
-            nuxt.options.buildDir
-          ]),
+              ...nuxt.options.experimental.externalVue ? [] : ['vue', '@vue/'],
+              '@nuxt/',
+              nuxt.options.buildDir
+            ]),
         'nuxt/dist',
         'nuxt3/dist',
         distDir
@@ -79,10 +79,10 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
         ? {}
         : {
 
-          'vue/compiler-sfc': 'vue/compiler-sfc',
-          'vue/server-renderer': 'vue/server-renderer',
-          vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
-        },
+            'vue/compiler-sfc': 'vue/compiler-sfc',
+            'vue/server-renderer': 'vue/server-renderer',
+            vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
+          },
       // Vue 3 mocks
       'estree-walker': 'unenv/runtime/mock/proxy',
       '@babel/parser': 'unenv/runtime/mock/proxy',
