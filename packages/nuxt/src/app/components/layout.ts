@@ -1,4 +1,4 @@
-import { computed, defineComponent, h, isRef, nextTick, onMounted, Ref, Transition, VNode } from 'vue'
+import { computed, defineComponent, h, nextTick, onMounted, Ref, Transition, unref, VNode } from 'vue'
 import { _wrapIf } from './utils'
 import { useRouter } from '#app'
 // @ts-ignore
@@ -47,7 +47,7 @@ export default defineComponent({
     // Use router.currentRoute.value instead because this must be changed synchronized with route
     const router = useRouter()
     const route = computed(() => router.currentRoute.value)
-    const layout = computed(() => (isRef(props.name) ? props.name.value : props.name) ?? route.value.meta.layout as string ?? 'default')
+    const layout = computed(() => unref(props.name) ?? route.value.meta.layout as string ?? 'default')
 
     let vnode: VNode
     let _layout: string | false
