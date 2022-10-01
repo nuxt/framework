@@ -43,15 +43,12 @@ export default defineComponent({
           const key = generateRouteKey(props.pageKey, routeProps)
           const transitionProps = props.transition ?? routeProps.route.meta.pageTransition ?? (defaultPageTransition as TransitionProps)
 
-          const done: () => {} = nuxtApp.deferHydration()
+          const done = nuxtApp.deferHydration()
 
           return _wrapIf(Transition, transitionProps,
             wrapInKeepAlive(props.keepalive ?? routeProps.route.meta.keepalive ?? (defaultKeepaliveConfig as KeepAliveProps), h(Suspense, {
               onPending: () => nuxtApp.callHook('page:start', routeProps.Component),
-              onResolve: () => {
-                done?.()
-                nuxtApp.callHook('page:finish', routeProps.Component)
-              }
+              onResolve: () => nuxtApp.callHook('page:finish', routeProps.Component).finally(done)
             }, { default: () => h(Component, { key, routeProps, pageKey: key, hasTransition: !!transitionProps } as {}) })
             )).default()
         }

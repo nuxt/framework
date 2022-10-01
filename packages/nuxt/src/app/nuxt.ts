@@ -70,7 +70,10 @@ interface _NuxtApp {
     data: Ref<any>
     pending: Ref<boolean>
     error: Ref<any>
-  } | undefined>,
+  } | undefined>
+
+  isHydrating?: boolean
+  deferHydration: () => () => void | Promise<void>
 
   ssrContext?: NuxtSSRContext
   payload: {
@@ -108,7 +111,7 @@ export interface CreateOptions {
 }
 
 export function createNuxtApp (options: CreateOptions) {
-  let hydratingCount: number = 0
+  let hydratingCount = 0
   const nuxtApp: NuxtApp = {
     provide: undefined,
     globalName: 'nuxt',
@@ -120,25 +123,21 @@ export function createNuxtApp (options: CreateOptions) {
     }),
     isHydrating: process.client,
     deferHydration () {
-      if (nuxtApp.isHydrating) {
-        hydratingCount++
-        let called = false
-        return () => {
-          if (called) {
-            return
-          } else {
-            called = true
-          }
+      if (!nuxtApp.isHydrating) { return () => {} }
 
-          hydratingCount--
+      hydratingCount++
+      let called = false
 
-          if (hydratingCount === 0) {
-            nuxtApp.isHydrating = false
-            nuxtApp.callHook('app:suspense:resolve')
-          }
+      return () => {
+        if (called) { return }
+
+        called = true
+        hydratingCount--
+
+        if (hydratingCount === 0) {
+          nuxtApp.isHydrating = false
+          return nuxtApp.callHook('app:suspense:resolve')
         }
-      } else {
-        return () => {}
       }
     },
     _asyncDataPromises: {},
