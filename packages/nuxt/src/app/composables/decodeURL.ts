@@ -6,14 +6,17 @@ import { H3Event } from 'h3'
 export function useDecodeURI (event: string | H3Event) {
   if (typeof event === 'string') {
     try {
-      return decodeURI(event)
+      const newUrl = decodeURI(event)
+      return {
+        url: newUrl,
+        params: difference(event, newUrl)
+      }
     } catch {
       return event
     }
   } else {
     const referer = (event.req.headers.referer as string).replace(/\/$/, '')
     const url = referer + event.req.url
-    console.log(url)
     const decoded = decodeURI(url)
     return {
       url: decoded,
