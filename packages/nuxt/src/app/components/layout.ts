@@ -1,6 +1,7 @@
-import { computed, defineComponent, h, nextTick, onMounted, Ref, Transition, unref, VNode } from 'vue'
+import { computed, defineComponent, h, inject, nextTick, onMounted, Ref, Transition, unref, VNode } from 'vue'
 import { _wrapIf } from './utils'
-import { useRouter } from '#app'
+import { RouteLocationNormalizedLoaded, useRoute as useVueRouterRoute } from 'vue-router'
+import { useRoute } from '#app'
 // @ts-ignore
 import layouts from '#build/layouts'
 // @ts-ignore
@@ -44,10 +45,10 @@ export default defineComponent({
     }
   },
   setup (props, context) {
-    // Use router.currentRoute.value instead because this must be changed synchronized with route
-    const router = useRouter()
-    const route = computed(() => router.currentRoute.value)
-    const layout = computed(() => unref(props.name) ?? route.value.meta.layout as string ?? 'default')
+    // Need to ensure (if we are not a child of `<NuxtPage>`) that we use synchronous route (not deferred)
+    const injectedRoute = inject('_route') as RouteLocationNormalizedLoaded
+    const route = injectedRoute === useRoute() ? useVueRouterRoute() : injectedRoute
+    const layout = computed(() => unref(props.name) ?? route.meta.layout as string ?? 'default')
 
     let vnode: VNode
     let _layout: string | false
@@ -67,7 +68,7 @@ export default defineComponent({
         console.warn(`Invalid layout \`${layout.value}\` selected.`)
       }
 
-      const transitionProps = route.value.meta.layoutTransition ?? defaultLayoutTransition
+      const transitionProps = route.meta.layoutTransition ?? defaultLayoutTransition
 
       // We avoid rendering layout transition if there is no layout to render
       return _wrapIf(Transition, hasLayout && transitionProps, {
