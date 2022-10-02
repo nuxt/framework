@@ -20,7 +20,7 @@ export default defineUntypedSchema({
   },
 
   /**
-   * Route rules for nitro server routes
+   * Rules applied by nitro to your routes when building and at runtime
    *
    * @see https://nitro.unjs.io/config/
    *
