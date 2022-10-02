@@ -10,7 +10,25 @@ export default defineUntypedSchema({
    * @version 2
    * @version 3
    */
-  nitro: {},
+  nitro: {
+    routes: {
+      $resolve: async (val, get) => ({
+        ...await get('routes') || {},
+        ...val || {}
+      })
+    }
+  },
+
+  /**
+   * Route rules for nitro server routes
+   *
+   * @see https://nitro.unjs.io/config/
+   *
+   * @type {typeof import('nitropack')['NitroConfig']['routes']}
+   * @version 2
+   * @version 3
+   */
+  routes: {},
 
   /**
    * Nitro server handlers.
