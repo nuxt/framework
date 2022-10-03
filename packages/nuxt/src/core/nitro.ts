@@ -56,8 +56,8 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     prerender: {
       crawlLinks: nuxt.options._generate ? nuxt.options.generate.crawler : false,
       routes: ([] as string[])
-        .concat(nuxt.options._generate ? ['/200.html', '/404.html', ...nuxt.options.generate.routes] : [])
-        .concat(nuxt.options._generate ? [nuxt.options.ssr ? '/' : '/index.html'] : [])
+        .concat(nuxt.options.generate.routes)
+        .concat(nuxt.options._generate ? [nuxt.options.ssr ? '/' : '/index.html', '/200.html', '/404.html'] : [])
     },
     sourceMap: nuxt.options.sourcemap.server,
     externals: {
