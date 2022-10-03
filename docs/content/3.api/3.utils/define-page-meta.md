@@ -20,6 +20,8 @@ definePageMeta(meta: PageMeta) => void
 
 interface PageMeta {
   validate?: (route: RouteLocationNormalized) => boolean | Promise<boolean> | Partial<NuxtError> | Promise<Partial<NuxtError>>
+  redirect?: RouteRecordRedirectOption
+  alias?: string | string[]
   pageTransition?: boolean | TransitionProps
   layoutTransition?: boolean | TransitionProps
   key?: false | string | ((route: RouteLocationNormalizedLoaded) => string)
