@@ -140,6 +140,17 @@ describe('pages', () => {
 
     await expectNoClientErrors('/client-only-components')
   })
+
+  it('/client-only-explicit-import', async () => {
+    const html = await $fetch('/client-only-explicit-import')
+
+    // ensure fallbacks with classes and arbitrary attributes are rendered
+    expect(html).toContain('<div class="client-only-script" foo="bar">')
+    expect(html).toContain('<div class="lazy-client-only-script-setup" foo="hello">')
+    // ensure components are not rendered server-side
+    expect(html).not.toContain('client only script')
+    await expectNoClientErrors('/client-only-components')
+  })
 })
 
 describe('head tags', () => {
