@@ -10,7 +10,7 @@
     },
     {
       "source": "/getting-started/bridge",
-      "destination": "/bridge",
+      "destination": "/bridge/overview",
       "permanent": false
     },
     {
@@ -20,7 +20,7 @@
     },
     {
       "source": "/concepts/introduction",
-      "destination": "/guide/getting-started/introduction",
+      "destination": "/getting-started/introduction",
       "permanent": false
     },
     {
@@ -55,17 +55,17 @@
     },
     {
       "source": "/docs/usage/data-fetching",
-      "destination": "/guide/getting-started/data-fetching",
+      "destination": "/getting-started/data-fetching",
       "permanent": false
     },
     {
       "source": "/docs/usage/state",
-      "destination": "/guide/getting-started/state-management",
+      "destination": "/getting-started/state-management",
       "permanent": false
     },
     {
       "source": "/docs/usage/meta-tags",
-      "destination": "/guide/getting-started/seo-meta",
+      "destination": "/getting-started/seo-meta",
       "permanent": false
     },
     {
@@ -95,7 +95,7 @@
     },
     {
       "source": "/docs/usage/error-handling",
-      "destination": "/guide/getting-started/error-handling",
+      "destination": "/getting-started/error-handling",
       "permanent": false
     },
     {
@@ -120,7 +120,7 @@
     },
     {
       "source": "/docs/advanced/testing",
-      "destination": "/guide/getting-started/testing",
+      "destination": "/getting-started/testing",
       "permanent": false
     },
     {
