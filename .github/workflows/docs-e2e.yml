@@ -9,6 +9,9 @@ on:
         type: string
   deployment_status:
 
+permissions:
+  contents: read
+
 jobs:
   crawl-docs:
     environment:
