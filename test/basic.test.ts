@@ -1,8 +1,8 @@
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { joinURL } from 'ufo'
-// import { isWindows } from 'std-env'
-import { setup, fetch, $fetch, startServer, createPage } from '@nuxt/test-utils'
+import { isWindows } from 'std-env'
+import { setup, fetch, $fetch, startServer, createPage, url } from '@nuxt/test-utils'
 // eslint-disable-next-line import/order
 import { expectNoClientErrors, renderPage } from './utils'
 
@@ -53,6 +53,16 @@ describe('pages', () => {
     expect(html).toContain('global component via suffix')
 
     await expectNoClientErrors('/')
+  })
+
+  it('respects aliases in page metadata', async () => {
+    const html = await $fetch('/some-alias')
+    expect(html).toContain('Hello Nuxt 3!')
+  })
+
+  it('respects redirects in page metadata', async () => {
+    const { headers } = await fetch('/redirect', { redirect: 'manual' })
+    expect(headers.get('location')).toEqual('/')
   })
 
   it('render 404', async () => {
@@ -135,10 +145,74 @@ describe('pages', () => {
 
   it('/client-only-components', async () => {
     const html = await $fetch('/client-only-components')
+    // ensure fallbacks with classes and arbitrary attributes are rendered
     expect(html).toContain('<div class="client-only-script" foo="bar">')
     expect(html).toContain('<div class="client-only-script-setup" foo="hello">')
+    expect(html).toContain('<div>Fallback</div>')
+    // ensure components are not rendered server-side
+    expect(html).not.toContain('Should not be server rendered')
 
     await expectNoClientErrors('/client-only-components')
+
+    const page = await createPage('/client-only-components')
+
+    await page.waitForLoadState('networkidle')
+
+    const hiddenSelectors = [
+      '.string-stateful-should-be-hidden',
+      '.client-script-should-be-hidden',
+      '.string-stateful-script-should-be-hidden',
+      '.no-state-hidden'
+    ]
+    const visibleSelectors = [
+      '.string-stateful',
+      '.string-stateful-script',
+      '.client-only-script',
+      '.client-only-script-setup',
+      '.no-state'
+    ]
+    // ensure directives are correctly applied
+    await Promise.all(hiddenSelectors.map(selector => page.locator(selector).isHidden()))
+      .then(results => results.forEach(isHidden => expect(isHidden).toBeTruthy()))
+    // ensure hidden components are still rendered
+    await Promise.all(hiddenSelectors.map(selector => page.locator(selector).innerHTML()))
+      .then(results => results.forEach(innerHTML => expect(innerHTML).not.toBe('')))
+
+    // ensure single root node components are rendered once on client (should not be empty)
+    await Promise.all(visibleSelectors.map(selector => page.locator(selector).innerHTML()))
+      .then(results => results.forEach(innerHTML => expect(innerHTML).not.toBe('')))
+
+    // ensure multi-root-node is correctly rendered
+    expect(await page.locator('.multi-root-node-count').innerHTML()).toContain('0')
+    expect(await page.locator('.multi-root-node-button').innerHTML()).toContain('add 1 to count')
+    expect(await page.locator('.multi-root-node-script-count').innerHTML()).toContain('0')
+    expect(await page.locator('.multi-root-node-script-button').innerHTML()).toContain('add 1 to count')
+
+    // ensure components reactivity
+    await page.locator('.multi-root-node-button').click()
+    await page.locator('.multi-root-node-script-button').click()
+    await page.locator('.client-only-script button').click()
+    await page.locator('.client-only-script-setup button').click()
+
+    expect(await page.locator('.multi-root-node-count').innerHTML()).toContain('1')
+    expect(await page.locator('.multi-root-node-script-count').innerHTML()).toContain('1')
+    expect(await page.locator('.client-only-script-setup button').innerHTML()).toContain('1')
+    expect(await page.locator('.client-only-script button').innerHTML()).toContain('1')
+
+    // ensure components ref is working and reactive
+    await page.locator('button.test-ref-1').click()
+    await page.locator('button.test-ref-2').click()
+    await page.locator('button.test-ref-3').click()
+    await page.locator('button.test-ref-4').click()
+    expect(await page.locator('.client-only-script-setup button').innerHTML()).toContain('2')
+    expect(await page.locator('.client-only-script button').innerHTML()).toContain('2')
+    expect(await page.locator('.string-stateful-script').innerHTML()).toContain('1')
+    expect(await page.locator('.string-stateful').innerHTML()).toContain('1')
+
+    // ensure directives are reactive
+    await page.locator('button#show-all').click()
+    await Promise.all(hiddenSelectors.map(selector => page.locator(selector).isVisible()))
+      .then(results => results.forEach(isVisible => expect(isVisible).toBeTruthy()))
   })
 })
 
@@ -264,6 +338,12 @@ describe('middlewares', () => {
     expect(html).toContain('no-auth.vue')
     expect(html).toContain('auth: ')
     expect(html).not.toContain('Injected by injectAuth middleware')
+  })
+
+  it('should redirect to index with http 307 with navigateTo on server side', async () => {
+    const html = await fetch('/navigate-to-redirect', { redirect: 'manual' })
+    expect(html.headers.get('location')).toEqual('/')
+    expect(html.status).toEqual(307)
   })
 })
 
@@ -586,7 +666,60 @@ describe('app config', () => {
   })
 })
 
-describe('useAsyncData', () => {
+describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () => {
+  it('renders a payload', async () => {
+    const payload = await $fetch('/random/a/_payload.js', { responseType: 'text' })
+    expect(payload).toMatch(
+      /export default \{data:\{\$frand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
+    )
+  })
+
+  it('does not fetch a prefetched payload', async () => {
+    const page = await createPage()
+    const requests = [] as string[]
+
+    page.on('request', (req) => {
+      requests.push(req.url().replace(url('/'), '/'))
+    })
+
+    await page.goto(url('/random/a'))
+    await page.waitForLoadState('networkidle')
+
+    const importSuffix = process.env.NUXT_TEST_DEV && !process.env.TEST_WITH_WEBPACK ? '?import' : ''
+
+    // We are manually prefetching other payloads
+    expect(requests).toContain('/random/c/_payload.js')
+
+    // We are not triggering API requests in the payload
+    expect(requests).not.toContain(expect.stringContaining('/api/random'))
+    // requests.length = 0
+
+    await page.click('[href="/random/b"]')
+    await page.waitForLoadState('networkidle')
+
+    // We are not triggering API requests in the payload in client-side nav
+    expect(requests).not.toContain('/api/random')
+
+    // We are fetching a payload we did not prefetch
+    expect(requests).toContain('/random/b/_payload.js' + importSuffix)
+
+    // We are not refetching payloads we've already prefetched
+    // expect(requests.filter(p => p.includes('_payload')).length).toBe(1)
+    // requests.length = 0
+
+    await page.click('[href="/random/c"]')
+    await page.waitForLoadState('networkidle')
+
+    // We are not triggering API requests in the payload in client-side nav
+    expect(requests).not.toContain('/api/random')
+
+    // We are not refetching payloads we've already prefetched
+    // Note: we refetch on dev as urls differ between '' and '?import'
+    // expect(requests.filter(p => p.includes('_payload')).length).toBe(process.env.NUXT_TEST_DEV ? 1 : 0)
+  })
+})
+
+describe.skipIf(isWindows)('useAsyncData', () => {
   it('single request resolves', async () => {
     await expectNoClientErrors('/useAsyncData/single')
   })

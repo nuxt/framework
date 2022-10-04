@@ -2,14 +2,12 @@ import { join, resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
-import type { Connect, HmrOptions } from 'vite'
+import type { Connect, ServerOptions } from 'vite'
 import { logger } from '@nuxt/kit'
 import { getPort } from 'get-port-please'
 import { joinURL, withLeadingSlash, withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import escapeRE from 'escape-string-regexp'
 import defu from 'defu'
-import { sanitizeFilePath } from 'mlly'
-import { filename } from 'pathe/utils'
 import type { OutputOptions } from 'rollup'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { wpfs } from './utils/wpfs'
@@ -80,10 +78,6 @@ export async function buildClient (ctx: ViteBuildContext) {
   // We want to respect users' own rollup output options
   clientConfig.build!.rollupOptions = defu(clientConfig.build!.rollupOptions!, {
     output: {
-      // https://github.com/vitejs/vite/tree/main/packages/vite/src/node/build.ts#L464-L478
-      assetFileNames: ctx.nuxt.options.dev
-        ? undefined
-        : chunk => withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, `${sanitizeFilePath(filename(chunk.name!))}.[hash].[ext]`)),
       chunkFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].js')),
       entryFileNames: ctx.nuxt.options.dev ? 'entry.js' : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].js'))
     } as OutputOptions
@@ -95,10 +89,12 @@ export async function buildClient (ctx: ViteBuildContext) {
       port: hmrPortDefault,
       ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
     })
-    clientConfig.server.hmr = defu(clientConfig.server.hmr as HmrOptions, {
-      // https://github.com/nuxt/framework/issues/4191
-      protocol: 'ws',
-      port: hmrPort
+    clientConfig.server = defu(clientConfig.server, <ServerOptions> {
+      https: ctx.nuxt.options.server.https,
+      hmr: {
+        protocol: ctx.nuxt.options.server.https ? 'wss' : 'ws',
+        port: hmrPort
+      }
     })
   }
 

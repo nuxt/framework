@@ -25,6 +25,7 @@ const appPreset = defineUnimportPreset({
     'useAsyncData',
     'useLazyAsyncData',
     'refreshNuxtData',
+    'clearNuxtData',
     'defineNuxtComponent',
     'useNuxtApp',
     'defineNuxtPlugin',
@@ -55,7 +56,10 @@ const appPreset = defineUnimportPreset({
     'updateAppConfig',
     'defineAppConfig',
     'preloadComponents',
-    'prefetchComponents'
+    'prefetchComponents',
+    'loadPayload',
+    'preloadPayload',
+    'isPrerendered'
   ]
 })
 

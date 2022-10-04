@@ -18,7 +18,7 @@ import { defineNuxtCommand } from './index'
 export default defineNuxtCommand({
   meta: {
     name: 'dev',
-    usage: 'npx nuxi dev [rootDir] [--clipboard] [--open, -o] [--port, -p] [--host, -h] [--https] [--ssl-cert] [--ssl-key]',
+    usage: 'npx nuxi dev [rootDir] [--dotenv] [--clipboard] [--open, -o] [--port, -p] [--host, -h] [--https] [--ssl-cert] [--ssl-key]',
     description: 'Run nuxt development server'
   },
   async invoke (args) {
@@ -40,7 +40,7 @@ export default defineNuxtCommand({
     const rootDir = resolve(args._[0] || '.')
     showVersions(rootDir)
 
-    await setupDotenv({ cwd: rootDir })
+    await setupDotenv({ cwd: rootDir, fileName: args.dotenv })
 
     const listener = await listen(serverHandler, {
       showURL: false,
@@ -48,8 +48,7 @@ export default defineNuxtCommand({
       open: args.open || args.o,
       port: args.port || args.p || process.env.NUXT_PORT,
       hostname: args.host || args.h || process.env.NUXT_HOST,
-      https: Boolean(args.https),
-      certificate: (args['ssl-cert'] && args['ssl-key']) && {
+      https: args.https && {
         cert: args['ssl-cert'],
         key: args['ssl-key']
       }
@@ -92,9 +91,10 @@ export default defineNuxtCommand({
 
         await currentNuxt.hooks.callHook('listen', listener.server, listener)
         const address = listener.server.address() as AddressInfo
+        currentNuxt.options.server.url = listener.url
         currentNuxt.options.server.port = address.port
         currentNuxt.options.server.host = address.address
-        currentNuxt.options.server.https = Boolean(args.https)
+        currentNuxt.options.server.https = listener.https
 
         await Promise.all([
           writeTypes(currentNuxt).catch(console.error),
