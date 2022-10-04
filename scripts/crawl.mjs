@@ -87,7 +87,7 @@ const crawler = new Crawler({
       return done()
     }
 
-    $('a:not([href*=mailto])').each((_, el) => {
+    $('a:not([href*=mailto]):not([href*=tel])').each((_, el) => {
       if ('attribs' in el && 'href' in el.attribs) {
         queue(el.attribs.href, uri)
       }
