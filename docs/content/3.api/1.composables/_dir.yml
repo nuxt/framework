@@ -1,2 +1,2 @@
-icon: heroicons-outline:switch-horizontal
+navigation.icon: heroicons-outline:switch-horizontal
 titleTemplate: '%s · Nuxt Composables'

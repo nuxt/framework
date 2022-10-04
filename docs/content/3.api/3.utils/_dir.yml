@@ -1,2 +1,2 @@
 titleTemplate: '%s · Nuxt Utils'
-icon: uil:adjust-circle
+navigation.icon: uil:adjust-circle
