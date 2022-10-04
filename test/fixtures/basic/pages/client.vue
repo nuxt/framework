@@ -1,12 +1,12 @@
 <script setup lang="ts">
-onMounted(() => import('~/components/BreaksServer'))
-onBeforeMount(() => import('~/components/BreaksServer'))
-onBeforeUpdate(() => import('~/components/BreaksServer'))
-onRenderTracked(() => import('~/components/BreaksServer'))
-onRenderTriggered(() => import('~/components/BreaksServer'))
-onActivated(() => import('~/components/BreaksServer'))
-onDeactivated(() => import('~/components/BreaksServer'))
-onBeforeUnmount(() => import('~/components/BreaksServer'))
+onMounted(() => import('~~/components/BreaksServer.client.ts'))
+onBeforeMount(() => import('~~/components/BreaksServer.client.ts'))
+onBeforeUpdate(() => import('~~/components/BreaksServer.client.ts'))
+onRenderTracked(() => import('~~/components/BreaksServer.client.ts'))
+onRenderTriggered(() => import('~~/components/BreaksServer.client.ts'))
+onActivated(() => import('~~/components/BreaksServer.client.ts'))
+onDeactivated(() => import('~~/components/BreaksServer.client.ts'))
+onBeforeUnmount(() => import('~~/components/BreaksServer.client.ts'))
 </script>
 
 <template>
