@@ -120,7 +120,7 @@ export const NoScript = defineComponent({
       .map(({ children }) => children)
       .join('')
     if (textContent) {
-      noscript.innerHtml = textContent
+      noscript.innerHTML = textContent
     }
     return {
       noscript: [noscript]
