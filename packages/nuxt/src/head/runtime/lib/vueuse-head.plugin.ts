@@ -1,8 +1,9 @@
-import { createHead, renderHeadToString } from '@vueuse/head'
-import { computed, ref, watchEffect, onBeforeUnmount, getCurrentInstance, ComputedGetter } from 'vue'
+import { createHead, HeadEntryOptions, renderHeadToString } from '@vueuse/head'
+import { computed, ref, watchEffect, onBeforeUnmount, getCurrentInstance, isRef } from 'vue'
 import defu from 'defu'
-import type { MetaObject } from '..'
-import { defineNuxtPlugin } from '#app'
+import { MaybeComputedRef } from '@vueuse/shared'
+import type { MetaObject, MetaObjectPlain } from '@nuxt/schema'
+import { defineNuxtPlugin, useRouter } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const head = createHead()
@@ -15,19 +16,35 @@ export default defineNuxtPlugin((nuxtApp) => {
     headReady = true
   })
 
-  nuxtApp._useHead = (_meta: MetaObject | ComputedGetter<MetaObject>) => {
-    const meta = ref<MetaObject>(_meta)
+  // pause dom updates in between page transitions
+  let pauseDOMUpdates = false
+  head.hookBeforeDomUpdate.push(() => !pauseDOMUpdates)
+  nuxtApp.hooks.hookOnce('page:finish', () => {
+    pauseDOMUpdates = false
+    // start pausing DOM updates when route changes (trigger immediately)
+    useRouter().beforeEach(() => {
+      pauseDOMUpdates = true
+    })
+    // watch for new route before unpausing dom updates (triggered after suspense resolved)
+    useRouter().afterEach(() => {
+      pauseDOMUpdates = false
+      head.updateDOM()
+    })
+  })
+
+  nuxtApp._useHead = (_meta: MaybeComputedRef<MetaObject>, options: HeadEntryOptions) => {
+    const meta = isRef(_meta) ? _meta : ref<MetaObject>(_meta as MetaObject)
     const headObj = computed(() => {
-      const overrides: MetaObject = { meta: [] }
+      const overrides: MetaObjectPlain = { meta: [] }
       if (meta.value.charset) {
-        overrides.meta!.push({ key: 'charset', charset: meta.value.charset })
+        overrides.meta!.push({ charset: meta.value.charset })
       }
       if (meta.value.viewport) {
         overrides.meta!.push({ name: 'viewport', content: meta.value.viewport })
       }
       return defu(overrides, meta.value)
     })
-    head.addHeadObjs(headObj as any)
+    const removeHeadObjs = head.addHeadObjs(headObj as any, options)
 
     if (process.server) { return }
 
@@ -39,7 +56,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     if (!vm) { return }
 
     onBeforeUnmount(() => {
-      head.removeHeadObjs(headObj as any)
+      removeHeadObjs()
       head.updateDOM()
     })
   }
