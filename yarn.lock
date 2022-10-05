@@ -3219,7 +3219,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/reactivity@npm:^3.2.40":
+"@vue/reactivity@npm:^3.2.39":
   version: 3.2.40
   resolution: "@vue/reactivity@npm:3.2.40"
   dependencies:
@@ -10587,7 +10587,7 @@ __metadata:
     "@nuxt/vite-builder": 3.0.0-rc.11
     "@types/fs-extra": ^9.0.13
     "@types/hash-sum": ^1.0.0
-    "@vue/reactivity": ^3.2.40
+    "@vue/reactivity": ^3.2.39
     "@vue/shared": ^3.2.39
     "@vueuse/head": ^0.9.6
     chokidar: ^3.5.3
