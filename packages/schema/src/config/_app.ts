@@ -3,7 +3,7 @@ import { existsSync, readdirSync } from 'node:fs'
 import defu from 'defu'
 import { defineUntypedSchema } from 'untyped'
 
-import { MetaObject } from '../types/meta'
+import {MetaObject, MetaObjectPlain} from '../types/meta'
 
 export default defineUntypedSchema({
   /**
@@ -112,7 +112,7 @@ export default defineUntypedSchema({
      */
     head: {
       $resolve: async (val, get) => {
-        const resolved: Required<MetaObject> = defu(val, await get('meta'), {
+        const resolved: Required<MetaObjectPlain> = defu(val, await get('meta'), {
           meta: [],
           link: [],
           style: [],
@@ -233,7 +233,7 @@ export default defineUntypedSchema({
   },
 
   /**
-   * @type {typeof import('../src/types/meta').MetaObject}
+   * @type {typeof import('../src/types/meta').MetaObjectPlain}
    * @version 3
    * @deprecated - use `head` instead
    */

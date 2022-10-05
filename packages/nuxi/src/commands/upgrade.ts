@@ -19,6 +19,16 @@ async function getNuxtVersion (path: string): Promise<string|null> {
   }
 }
 
+const nuxtVersionToGitIdentifier = (version: string) => {
+  const parts = version.split('.')
+  // match the git identifier in the release, for example: 3.0.0-rc.8-27677607.a3a8706
+  if (parts.length > 4) {
+    return parts.pop()
+  }
+  // match github tag, for example 3.0.0-rc.8
+  return `v${version}`
+}
+
 export default defineNuxtCommand({
   meta: {
     name: 'upgrade',
