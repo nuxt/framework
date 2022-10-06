@@ -2,11 +2,11 @@
   "name": "docs",
   "private": true,
   "scripts": {
-    "dev": "yarn gendocs && nuxi dev",
-    "build": "yarn gendocs && nuxi generate --force-build",
-    "build:ci": "./scripts/make-schema.sh && yarn build",
-    "lint:docs": "cd .. && yarn lint:docs",
-    "lint:docs:fix": "cd .. && yarn lint:docs:fix",
+    "dev": "pnpm gendocs && nuxi dev",
+    "build": "pnpm gendocs && nuxi generate --force-build",
+    "build:ci": "./scripts/make-schema.sh && pnpm build",
+    "lint:docs": "cd .. && pnpm lint:docs",
+    "lint:docs:fix": "cd .. && pnpm lint:docs:fix",
     "gendocs": "jiti ./scripts/gen-docs.ts"
   },
   "dependencies": {
@@ -15,5 +15,5 @@
     "jiti": "^1.16.0",
     "nuxt": "^3.0.0-rc.11"
   },
-  "packageManager": "yarn@3.2.4"
+  "packageManager": "pnpm@7.12.0"
 }
