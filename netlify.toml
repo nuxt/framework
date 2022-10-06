@@ -7,7 +7,7 @@
 
 [build]
 base = "."
-command = "npx pnpm@7.12.0 install && npx pnpm@7.12.0 stub && npx pnpm@7.12.0 --filter docs build"
+command = "npx pnpm@7.12.0 install && npx pnpm@7.12.0 stub && npx pnpm@7.12.0 --filter docs gendocs && npx pnpm@7.12.0 nuxi generate docs"
 publish = "docs/dist"
 
 [build.environment]
