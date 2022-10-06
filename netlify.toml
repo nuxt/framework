@@ -6,7 +6,7 @@
 # “publish” is the directory to publish (relative to the root of your repo).
 
 [build]
-base = "docs"
+base = "."
 command = "npx pnpm@7.12.0 install && npx pnpm@7.12.0 stub && npx pnpm@7.12.0 --filter docs build:ci"
 publish = "docs/dist"
 
