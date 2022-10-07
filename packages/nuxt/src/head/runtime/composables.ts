@@ -1,5 +1,6 @@
 import type { MetaObject } from '@nuxt/schema'
 import { MaybeComputedRef } from '@vueuse/shared'
+import type { UseHeadRawInput } from '@vueuse/head'
 import { useNuxtApp } from '#app'
 
 /**
@@ -18,7 +19,7 @@ export function useHead (meta: MaybeComputedRef<MetaObject>) {
  *
  * Warning: This function opens you up to XSS attacks. Only use this if you trust the source of the meta tag data.
  */
-export function useHeadRaw (meta: MaybeComputedRef<MetaObject>) {
+export function useHeadRaw (meta: UseHeadRawInput) {
   useNuxtApp()._useHead(meta, { raw: true })
 }
 
