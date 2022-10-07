@@ -30,19 +30,6 @@ export type MetaObjectPlain = HeadObjectPlain<HeadAugmentations> & {
 
 export interface MetaObject {
   /**
-   * The character encoding in which the document is encoded => `<meta charset="<value>" />`
-   *
-   * @default `'utf-8'`
-   */
-  charset?: string
-  /**
-   * Configuration of the viewport (the area of the window in which web content can be seen),
-   * mapped to => `<meta name="viewport" content="<value>" />`
-   *
-   * @default `'width=device-width, initial-scale=1'`
-   */
-  viewport?: string
-  /**
    * The <title> HTML element defines the document's title that is shown in a browser's title bar or a page's tab.
    * It only contains text; tags within the element are ignored.
    *

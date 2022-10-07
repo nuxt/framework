@@ -1,6 +1,5 @@
 import { createHead, HeadEntryOptions, renderHeadToString } from '@vueuse/head'
-import { computed, ref, watchEffect, onBeforeUnmount, getCurrentInstance, isRef } from 'vue'
-import defu from 'defu'
+import { watchEffect, onBeforeUnmount, getCurrentInstance, isRef } from 'vue'
 import { MaybeComputedRef } from '@vueuse/shared'
 import type { MetaObject, MetaObjectPlain } from '@nuxt/schema'
 import { defineNuxtPlugin, useRouter } from '#app'
@@ -10,17 +9,13 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   nuxtApp.vueApp.use(head)
 
-  let headReady = false
-  nuxtApp.hooks.hookOnce('app:mounted', () => {
-    watchEffect(() => { head.updateDOM() })
-    headReady = true
-  })
-
-  // pause dom updates in between page transitions
-  let pauseDOMUpdates = false
+  // pause dom updates until page is ready and between page transitions
+  let pauseDOMUpdates = true
   head.hookBeforeDomUpdate.push(() => !pauseDOMUpdates)
-  nuxtApp.hooks.hookOnce('page:finish', () => {
+  nuxtApp.hooks.hookOnce('app:mounted', () => {
     pauseDOMUpdates = false
+    head.updateDOM()
+
     // start pausing DOM updates when route changes (trigger immediately)
     useRouter().beforeEach(() => {
       pauseDOMUpdates = true
@@ -32,31 +27,43 @@ export default defineNuxtPlugin((nuxtApp) => {
     })
   })
 
-  nuxtApp._useHead = (_meta: MaybeComputedRef<MetaObject>, options: HeadEntryOptions) => {
-    const meta = isRef(_meta) ? _meta : ref<MetaObject>(_meta as MetaObject)
-    const headObj = computed(() => {
-      const overrides: MetaObjectPlain = { meta: [] }
-      if (meta.value.charset) {
-        overrides.meta!.push({ charset: meta.value.charset })
+  nuxtApp._useHead = (_meta: MaybeComputedRef<MetaObject> | MetaObjectPlain, options: HeadEntryOptions) => {
+    const removeSideEffectFns: (() => void)[] = []
+
+    // Handle shortcuts from plain meta only (avoids ref packing / unpacking)
+    if (!isRef(_meta) && typeof _meta === 'object') {
+      const plainMeta = _meta as MetaObjectPlain
+      const shortcutMeta = []
+      if (plainMeta.charset) {
+        shortcutMeta.push({
+          charset: plainMeta.charset
+        })
       }
-      if (meta.value.viewport) {
-        overrides.meta!.push({ name: 'viewport', content: meta.value.viewport })
+      if (plainMeta.viewport) {
+        shortcutMeta.push({
+          name: 'viewport',
+          content: plainMeta.viewport
+        })
       }
-      return defu(overrides, meta.value)
-    })
-    const removeHeadObjs = head.addHeadObjs(headObj as any, options)
+      if (shortcutMeta.length) {
+        removeSideEffectFns.push(head.addHeadObjs({
+          meta: shortcutMeta
+        }))
+      }
+    }
+
+    removeSideEffectFns.push(head.addHeadObjs(_meta, options))
 
     if (process.server) { return }
 
-    if (headReady) {
-      watchEffect(() => { head.updateDOM() })
-    }
+    // will happen next tick
+    watchEffect(() => { head.updateDOM() })
 
     const vm = getCurrentInstance()
     if (!vm) { return }
 
     onBeforeUnmount(() => {
-      removeHeadObjs()
+      removeSideEffectFns.forEach(fn => fn())
       head.updateDOM()
     })
   }

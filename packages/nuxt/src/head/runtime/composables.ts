@@ -1,5 +1,3 @@
-import { isFunction } from '@vue/shared'
-import { computed } from 'vue'
 import type { MetaObject } from '@nuxt/schema'
 import { MaybeComputedRef } from '@vueuse/shared'
 import { useNuxtApp } from '#app'
@@ -12,8 +10,7 @@ import { useNuxtApp } from '#app'
  * that returns a meta object.
  */
 export function useHead (meta: MaybeComputedRef<MetaObject>) {
-  const resolvedMeta = isFunction(meta) ? computed(meta) : meta
-  useNuxtApp()._useHead(resolvedMeta)
+  useNuxtApp()._useHead(meta)
 }
 
 /**
@@ -22,8 +19,7 @@ export function useHead (meta: MaybeComputedRef<MetaObject>) {
  * Warning: This function opens you up to XSS attacks. Only use this if you trust the source of the meta tag data.
  */
 export function useHeadRaw (meta: MaybeComputedRef<MetaObject>) {
-  const resolvedMeta = isFunction(meta) ? computed(meta) : meta
-  useNuxtApp()._useHead(resolvedMeta, { raw: true })
+  useNuxtApp()._useHead(meta, { raw: true })
 }
 
 // TODO: remove useMeta support when Nuxt 3 is stable
