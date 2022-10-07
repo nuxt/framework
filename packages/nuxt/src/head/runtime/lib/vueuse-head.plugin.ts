@@ -9,23 +9,25 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   nuxtApp.vueApp.use(head)
 
-  // pause dom updates until page is ready and between page transitions
-  let pauseDOMUpdates = true
-  head.hookBeforeDomUpdate.push(() => !pauseDOMUpdates)
-  nuxtApp.hooks.hookOnce('app:mounted', () => {
-    pauseDOMUpdates = false
-    head.updateDOM()
-
-    // start pausing DOM updates when route changes (trigger immediately)
-    useRouter().beforeEach(() => {
-      pauseDOMUpdates = true
-    })
-    // watch for new route before unpausing dom updates (triggered after suspense resolved)
-    useRouter().afterEach(() => {
+  if (process.client) {
+    // pause dom updates until page is ready and between page transitions
+    let pauseDOMUpdates = true
+    head.hookBeforeDomUpdate.push(() => !pauseDOMUpdates)
+    nuxtApp.hooks.hookOnce('app:mounted', () => {
       pauseDOMUpdates = false
       head.updateDOM()
+
+      // start pausing DOM updates when route changes (trigger immediately)
+      useRouter().beforeEach(() => {
+        pauseDOMUpdates = true
+      })
+      // watch for new route before unpausing dom updates (triggered after suspense resolved)
+      useRouter().afterEach(() => {
+        pauseDOMUpdates = false
+        head.updateDOM()
+      })
     })
-  })
+  }
 
   nuxtApp._useHead = (_meta: MaybeComputedRef<MetaObject> | MetaObjectPlain, options: HeadEntryOptions) => {
     const removeSideEffectFns: (() => void)[] = []
