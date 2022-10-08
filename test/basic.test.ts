@@ -412,7 +412,6 @@ describe('extends support', () => {
 // Bug #7337
 describe('deferred app suspense resolve', () => {
   async function behaviour (path: string) {
-
     await withLogs(async (page, logs) => {
       await page.goto(url(path))
       await page.waitForLoadState('networkidle')

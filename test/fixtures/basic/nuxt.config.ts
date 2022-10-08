@@ -63,10 +63,10 @@ export default defineNuxtConfig({
         meta: {
           ...page.meta || {},
           layout: undefined,
-          _layout: page.meta?.layout,
+          _layout: page.meta?.layout
         }
       })
-      nuxt.hook('pages:extend', pages => {
+      nuxt.hook('pages:extend', (pages) => {
         const newPages = []
         for (const page of pages) {
           if (routesToDuplicate.includes(page.path)) {
