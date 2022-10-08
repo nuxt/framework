@@ -1,6 +1,6 @@
 import { expect } from 'vitest'
-import { createPage, getBrowser, url, useTestContext } from '@nuxt/test-utils'
 import type { Page } from 'playwright'
+import { createPage, getBrowser, url, useTestContext } from '@nuxt/test-utils'
 
 export async function renderPage (path = '/') {
   const ctx = useTestContext()
