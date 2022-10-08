@@ -1,7 +1,7 @@
 <template>
   <div :id="`page-${route.params.foo}`">
     [fixed-keyed-child-parent/{{ route.params.foo }}]
-    <NuxtLink href="/fixed-keyed-child-parent/1">
+    <NuxtLink to="../fixed-keyed-child-parent/1">
       To another
     </NuxtLink>
   </div>

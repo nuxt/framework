@@ -7,7 +7,7 @@ definePageMeta({
 <template>
   <div>
     <div>with-layout.vue</div>
-    <NuxtLink href="/with-layout2">
+    <NuxtLink to="./with-layout2">
       to another page
     </NuxtLink>
   </div>
