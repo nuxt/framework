@@ -50,7 +50,7 @@ export default defineComponent({
         transition: 'width 0.1s, height 0.4s, opacity 0.4s',
         zIndex: 999999
       }
-    }, slots.default())
+    }, slots)
   }
 })
 
