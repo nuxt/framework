@@ -1,3 +1,6 @@
+---
+description: useAsyncData provides access to data that resolves asynchronously.
+---
 # `useAsyncData`
 
 Within your pages, components, and plugins you can use useAsyncData to get access to data that resolves asynchronously.
@@ -79,5 +82,5 @@ const { data, pending, error, refresh } = await useAsyncData(
 )
 ```
 
-::ReadMore{link="/guide/features/data-fetching"}
+::ReadMore{link="/getting-started/data-fetching"}
 ::

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+// explicit import to bypass client import protection
+import BreaksServer from '../components/BreaksServer.client'
+
 onMounted(() => import('~/components/BreaksServer.client'))
 onBeforeMount(() => import('~/components/BreaksServer.client'))
 onBeforeUpdate(() => import('~/components/BreaksServer.client'))

@@ -1,4 +1,4 @@
-import { resolve } from 'pathe'
+import { relative, resolve } from 'pathe'
 import consola from 'consola'
 import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
@@ -10,7 +10,7 @@ import { defineNuxtCommand } from './index'
 export default defineNuxtCommand({
   meta: {
     name: 'build',
-    usage: 'npx nuxi build [--prerender] [rootDir]',
+    usage: 'npx nuxi build [--prerender] [--dotenv] [rootDir]',
     description: 'Build nuxt for production deployment'
   },
   async invoke (args) {
@@ -19,14 +19,21 @@ export default defineNuxtCommand({
     const rootDir = resolve(args._[0] || '.')
     showVersions(rootDir)
 
-    const { loadNuxt, buildNuxt } = await loadKit(rootDir)
+    const { loadNuxt, buildNuxt, useNitro } = await loadKit(rootDir)
 
     const nuxt = await loadNuxt({
       rootDir,
+      dotenv: {
+        cwd: rootDir,
+        fileName: args.dotenv
+      },
       overrides: {
         _generate: args.prerender
       }
     })
+
+    // Use ? for backward compatibility for Nuxt <= RC.10
+    const nitro = useNitro?.()
 
     await clearDir(nuxt.options.buildDir)
 
@@ -38,5 +45,12 @@ export default defineNuxtCommand({
     })
 
     await buildNuxt(nuxt)
+
+    if (args.prerender) {
+      // TODO: revisit later if/when nuxt build --prerender will output hybrid
+      const dir = nitro?.options.output.publicDir
+      const publicDir = dir ? relative(process.cwd(), dir) : '.output/public'
+      consola.success(`You can now deploy \`${publicDir}\` to any static hosting!`)
+    }
   }
 })
