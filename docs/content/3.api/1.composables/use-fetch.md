@@ -1,6 +1,8 @@
 # `useFetch`
 
-This composable provides a convenient wrapper around [`useAsyncData`](/api/composables/use-async-data) and [`$fetch`](/api/utils/$fetch). It automatically generates a key based on URL and fetch options, provides type hints for request url based on server routes, and infers API response type.
+This composable provides a convenient wrapper around [`useAsyncData`](/api/composables/use-async-data) and [`$fetch`](/api/utils/dollarfetch).
+
+It automatically generates a key based on URL and fetch options, provides type hints for request url based on server routes, and infers API response type.
 
 ## Type
 
@@ -102,6 +104,6 @@ const { data, pending, error, refresh } = await useFetch('/api/auth/login', {
 })
 ```
 
-:ReadMore{link="/guide/features/data-fetching"}
+:ReadMore{link="/getting-started/data-fetching"}
 
 :LinkExample{link="/examples/composables/use-fetch"}

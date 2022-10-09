@@ -1,6 +1,9 @@
-# `clearError`
+---
+title: "clearError"
+description: "The clearError composable clears all handled errors."
+---
 
-Nuxt provides a composable to clear all handled errors.
+# `clearError`
 
 Within your pages, components, and plugins, you can use `clearError` to clear all errors and redirect the user.
 
@@ -20,5 +23,5 @@ clearError({ redirect: '/homepage' })
 
 Errors are set in state using [`useError()`](/api/composables/use-error). The `clearError` composable will reset this state and calls the `app:error:cleared` hook with the provided options.
 
-::ReadMore{link="/guide/features/error-handling"}
+::ReadMore{link="/getting-started/error-handling"}
 ::

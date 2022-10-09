@@ -1,6 +1,10 @@
+---
+title: "definePageMeta"
+---
+
 # `definePageMeta`
 
-`definePageMeta` is a compiler macro that you can use to set metadata for your **page** components located in the `pages/` directory (unless [set otherwise](https://v3.nuxtjs.org/api/configuration/nuxt.config#pages)). This way you can set custom metadata for each static or dynamic route of your Nuxt application.
+`definePageMeta` is a compiler macro that you can use to set metadata for your **page** components located in the `pages/` directory (unless [set otherwise](https://v3.nuxtjs.org/api/configuration/nuxt-config#pages)). This way you can set custom metadata for each static or dynamic route of your Nuxt application.
 
 ```vue [pages/some-page.vue]
 <script setup>
@@ -19,6 +23,8 @@
 definePageMeta(meta: PageMeta) => void
 
 interface PageMeta {
+  redirect?: RouteRecordRedirectOption
+  alias?: string | string[]
   pageTransition?: boolean | TransitionProps
   layoutTransition?: boolean | TransitionProps
   key?: false | string | ((route: RouteLocationNormalizedLoaded) => string)
@@ -72,6 +78,20 @@ interface PageMeta {
   - **Type**: `MiddlewareKey` | [`NavigationGuard`](https://router.vuejs.org/api/interfaces/NavigationGuard.html#navigationguard) | `Array<MiddlewareKey | NavigationGuard>`
 
     Define anonymous or named middleware directly within `definePageMeta`. Learn more about [route middleware](/docs/directory-structure/middleware).
+
+  **`redirect`**
+
+  - **Type**: [`RouteRecordRedirectOption`](https://router.vuejs.org/guide/essentials/redirect-and-alias.html#redirect-and-alias)
+
+    Where to redirect if the route is directly matched. The redirection happens before any navigation guard and triggers a new navigation with the new target location.
+
+    :StabilityEdge
+
+  **`alias`**
+
+  - **Type**: `string | string[]`
+  
+    Aliases for the record. Allows defining extra paths that will behave like a copy of the record. Allows having paths shorthands like `/users/:id` and `/u/:id`. All `alias` and `path` values must share the same params.
 
   **`[key: string]`**
 
@@ -147,6 +167,3 @@ You can define the layout that matches the layout's file name located (by defaul
   })
 </script>
 ```
-
-::ReadMore{link="/guide/features/routing"}
-::

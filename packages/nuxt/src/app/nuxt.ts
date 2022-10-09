@@ -31,6 +31,7 @@ export interface RuntimeNuxtHooks {
   'app:error': (err: any) => HookResult
   'app:error:cleared': (options: { redirect?: string }) => HookResult
   'app:data:refresh': (keys?: string[]) => HookResult
+  'link:prefetch': (link: string) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
   'vue:setup': () => void
@@ -69,7 +70,10 @@ interface _NuxtApp {
     data: Ref<any>
     pending: Ref<boolean>
     error: Ref<any>
-  } | undefined>,
+  } | undefined>
+
+  isHydrating?: boolean
+  deferHydration: () => () => void | Promise<void>
 
   ssrContext?: NuxtSSRContext
   payload: {
@@ -107,6 +111,7 @@ export interface CreateOptions {
 }
 
 export function createNuxtApp (options: CreateOptions) {
+  let hydratingCount = 0
   const nuxtApp: NuxtApp = {
     provide: undefined,
     globalName: 'nuxt',
@@ -117,6 +122,24 @@ export function createNuxtApp (options: CreateOptions) {
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
     isHydrating: process.client,
+    deferHydration () {
+      if (!nuxtApp.isHydrating) { return () => {} }
+
+      hydratingCount++
+      let called = false
+
+      return () => {
+        if (called) { return }
+
+        called = true
+        hydratingCount--
+
+        if (hydratingCount === 0) {
+          nuxtApp.isHydrating = false
+          return nuxtApp.callHook('app:suspense:resolve')
+        }
+      }
+    },
     _asyncDataPromises: {},
     _asyncData: {},
     ...options

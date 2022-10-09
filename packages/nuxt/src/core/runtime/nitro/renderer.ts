@@ -103,8 +103,10 @@ const getSPARenderer = lazyCachedFunction(async () => {
   return { renderToString }
 })
 
-const PAYLOAD_CACHE = process.env.prerender ? new Map() : null // TODO: Use LRU cache
+const PAYLOAD_CACHE = (process.env.NUXT_PAYLOAD_EXTRACTION && process.env.prerender) ? new Map() : null // TODO: Use LRU cache
 const PAYLOAD_URL_RE = /\/_payload(\.[a-zA-Z0-9]+)?.js(\?.*)?$/
+
+const PRERENDER_NO_SSR_ROUTES = new Set(['/index.html', '/200.html', '/404.html'])
 
 export default defineRenderHandler(async (event) => {
   // Whether we're rendering an error page
@@ -130,14 +132,18 @@ export default defineRenderHandler(async (event) => {
     req: event.req,
     res: event.res,
     runtimeConfig: useRuntimeConfig() as NuxtSSRContext['runtimeConfig'],
-    noSSR: !!event.req.headers['x-nuxt-no-ssr'],
+    noSSR:
+      !!(process.env.NUXT_NO_SSR) ||
+      !!(event.req.headers['x-nuxt-no-ssr']) ||
+      (process.env.prerender ? PRERENDER_NO_SSR_ROUTES.has(url) : false),
     error: !!ssrError,
     nuxt: undefined!, /* NuxtApp */
     payload: (ssrError ? { error: ssrError } : {}) as NuxtSSRContext['payload']
   }
 
   // Whether we are prerendering route
-  const payloadURL = process.env.prerender ? joinURL(url, '_payload.js') : undefined
+  const _PAYLOAD_EXTRACTION = process.env.prerender && process.env.NUXT_PAYLOAD_EXTRACTION && !ssrContext.noSSR
+  const payloadURL = _PAYLOAD_EXTRACTION ? joinURL(useRuntimeConfig().app.baseURL, url, '_payload.js') : undefined
   if (process.env.prerender) {
     ssrContext.payload.prerenderedAt = Date.now()
   }
@@ -169,9 +175,9 @@ export default defineRenderHandler(async (event) => {
     return response
   }
 
-  if (process.env.prerender) {
+  if (_PAYLOAD_EXTRACTION) {
     // Hint nitro to prerender payload for this route
-    appendHeader(event, 'x-nitro-prerender', payloadURL!)
+    appendHeader(event, 'x-nitro-prerender', joinURL(url, '_payload.js'))
     // Use same ssr context to generate payload for this route
     PAYLOAD_CACHE!.set(url, renderPayloadResponse(ssrContext))
   }
@@ -189,7 +195,7 @@ export default defineRenderHandler(async (event) => {
     htmlAttrs: normalizeChunks([renderedMeta.htmlAttrs]),
     head: normalizeChunks([
       renderedMeta.headTags,
-      !process.env.NUXT_NO_SCRIPTS && process.env.prerender ? `<link rel="modulepreload" href="${payloadURL}">` : null,
+      _PAYLOAD_EXTRACTION ? `<link rel="modulepreload" href="${payloadURL}">` : null,
       _rendered.renderResourceHints(),
       _rendered.renderStyles(),
       inlinedStyles,
@@ -207,7 +213,7 @@ export default defineRenderHandler(async (event) => {
     bodyAppend: normalizeChunks([
       process.env.NUXT_NO_SCRIPTS
         ? undefined
-        : (process.env.prerender
+        : (_PAYLOAD_EXTRACTION
             ? `<script type="module">import p from "${payloadURL}";window.__NUXT__={...p,...(${devalue(splitPayload(ssrContext).initial)})}</script>`
             : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`
           ),
@@ -291,9 +297,9 @@ function renderPayloadResponse (ssrContext: NuxtSSRContext) {
 }
 
 function splitPayload (ssrContext: NuxtSSRContext) {
-  const { data, state, prerenderedAt, ...initial } = ssrContext.payload
+  const { data, prerenderedAt, ...initial } = ssrContext.payload
   return {
     initial: { ...initial, prerenderedAt },
-    payload: { data, state, prerenderedAt }
+    payload: { data, prerenderedAt }
   }
 }
