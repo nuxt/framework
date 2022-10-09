@@ -3,8 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm gendocs && nuxi dev",
-    "build": "pnpm gendocs && nuxi generate --force-build",
-    "build:ci": "./scripts/make-schema.sh && pnpm build",
+    "build": "pnpm gendocs && nuxi generate",
     "lint:docs": "cd .. && pnpm lint:docs",
     "lint:docs:fix": "cd .. && pnpm lint:docs:fix",
     "gendocs": "jiti ./scripts/gen-docs.ts"
