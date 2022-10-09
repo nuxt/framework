@@ -1,9 +1,13 @@
+---
+description:  useHead customizes the head properties of individual pages of your Nuxt app.
+---
+
 # `useHead`
 
-Nuxt provides the `useHead` composable to add and customize the head properties of individual pages of your Nuxt app. `useHead` uses [@vueuse/head](https://github.com/vueuse/head) under the hood.
+Nuxt provides the `useHead` composable to add and customize the head properties of individual pages of your Nuxt app. It uses [@vueuse/head](https://github.com/vueuse/head) under the hood.
 
 ::alert{icon=👉}
-**`useHead` must be placed within the `setup` function**.
+`useHead` only works during `setup` or `Lifecycle Hooks`.
 ::
 
 ## Type
@@ -26,7 +30,7 @@ interface MetaObject extends Record<string, any> {
 }
 ```
 
-Application-wide configuration of the head metadata is possible through [nuxt.config](/api/configuration/nuxt.config#head), or by placing the `useHead` in the `app.vue` file.
+Application-wide configuration of the head metadata is possible through [nuxt.config](/api/configuration/nuxt-config#head), or by placing the `useHead` in the `app.vue` file.
 
 ::alert{type=info}
 The properties of `useHead` can be dynamic, accepting `ref`, `computed` and `reactive` properties. `meta` parameter can also accept a function returning an object to make the entire object reactive.

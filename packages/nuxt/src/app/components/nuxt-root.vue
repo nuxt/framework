@@ -16,7 +16,7 @@ const IslandRendererer = process.server
   : () => null
 
 const nuxtApp = useNuxtApp()
-const onResolve = () => nuxtApp.callHook('app:suspense:resolve')
+const onResolve = nuxtApp.deferHydration()
 
 // Inject default route (outside of pages) as active route
 provide('_route', useRoute())
