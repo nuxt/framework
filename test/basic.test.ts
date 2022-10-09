@@ -782,7 +782,23 @@ describe('component islands', () => {
           "link",
           {
             "as": "script",
+            "href": "/_nuxt/custom-async.js",
+            "rel": "prefetch",
+          },
+        ],
+        [
+          "link",
+          {
+            "as": "script",
             "href": "/_nuxt/custom.js",
+            "rel": "prefetch",
+          },
+        ],
+        [
+          "link",
+          {
+            "as": "script",
+            "href": "/_nuxt/custom2.js",
             "rel": "prefetch",
           },
         ],
