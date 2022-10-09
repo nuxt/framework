@@ -56,8 +56,8 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     prerender: {
       crawlLinks: nuxt.options._generate ? nuxt.options.generate.crawler : false,
       routes: ([] as string[])
-        .concat(nuxt.options._generate ? ['/', '/200.html', ...nuxt.options.generate.routes] : [])
-        .concat(nuxt.options.ssr === false ? ['/index.html', '/200.html', '/404.html'] : [])
+        .concat(nuxt.options.generate.routes)
+        .concat(nuxt.options._generate ? [nuxt.options.ssr ? '/' : '/index.html', '/200.html', '/404.html'] : [])
     },
     sourceMap: nuxt.options.sourcemap.server,
     externals: {
@@ -99,7 +99,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     },
     replace: {
       'process.env.NUXT_NO_SSR': nuxt.options.ssr === false,
-      'process.env.NUXT_NO_SCRIPTS': !!nuxt.options.experimental.noScripts,
+      'process.env.NUXT_NO_SCRIPTS': !!nuxt.options.experimental.noScripts && !nuxt.options.dev,
       'process.env.NUXT_INLINE_STYLES': !!nuxt.options.experimental.inlineSSRStyles,
       'process.env.NUXT_PAYLOAD_EXTRACTION': !!nuxt.options.experimental.payloadExtraction,
       'process.dev': nuxt.options.dev,
