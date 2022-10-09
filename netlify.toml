@@ -12,3 +12,4 @@ publish = "docs/dist"
 
 [build.environment]
 NPM_FLAGS="--version"
+NITRO_PRESET="node-server"
