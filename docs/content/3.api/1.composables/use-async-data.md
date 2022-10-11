@@ -1,3 +1,6 @@
+---
+description: useAsyncData provides access to data that resolves asynchronously.
+---
 # `useAsyncData`
 
 Within your pages, components, and plugins you can use useAsyncData to get access to data that resolves asynchronously.
@@ -27,7 +30,7 @@ type AsyncDataOptions<DataT> = {
 }
 
 interface RefreshOptions {
-  _initial?: boolean
+  override?: boolean
 }
 
 type AsyncData<DataT, ErrorT> = {
