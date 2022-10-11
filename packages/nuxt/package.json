@@ -44,7 +44,7 @@
     "@nuxt/vite-builder": "3.0.0-rc.11",
     "@vue/reactivity": "^3.2.39",
     "@vue/shared": "^3.2.39",
-    "@vueuse/head": "^0.9.7",
+    "@vueuse/head": "1.0.0-rc.4",
     "chokidar": "^3.5.3",
     "cookie-es": "^0.5.0",
     "defu": "^6.1.0",

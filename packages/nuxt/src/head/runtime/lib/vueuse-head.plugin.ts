@@ -1,5 +1,6 @@
-import { createHead, HeadEntryOptions, renderHeadToString } from '@vueuse/head'
-import { watchEffect, onBeforeUnmount, getCurrentInstance, isRef } from 'vue'
+import type { HeadEntryOptions, HeadObjectApi } from '@vueuse/head'
+import { createHead, renderHeadToString } from '@vueuse/head'
+import { onBeforeUnmount, getCurrentInstance, isRef } from 'vue'
 import { MaybeComputedRef } from '@vueuse/shared'
 import type { MetaObject, MetaObjectPlain } from '@nuxt/schema'
 import { defineNuxtPlugin, useRouter } from '#app'
@@ -12,7 +13,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   if (process.client) {
     // pause dom updates until page is ready and between page transitions
     let pauseDOMUpdates = true
-    head.hookBeforeDomUpdate.push(() => !pauseDOMUpdates)
+    head.hooks['before:dom'].push(() => !pauseDOMUpdates)
     nuxtApp.hooks.hookOnce('app:mounted', () => {
       pauseDOMUpdates = false
       head.updateDOM()
@@ -30,7 +31,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
 
   nuxtApp._useHead = (_meta: MaybeComputedRef<MetaObject> | MetaObjectPlain, options: HeadEntryOptions) => {
-    const removeSideEffectFns: (() => void)[] = []
+    const removeSideEffectFns: HeadObjectApi[] = []
 
     // Handle shortcuts from plain meta only (avoids ref packing / unpacking)
     if (!isRef(_meta) && typeof _meta === 'object') {
@@ -48,31 +49,32 @@ export default defineNuxtPlugin((nuxtApp) => {
         })
       }
       if (shortcutMeta.length) {
-        removeSideEffectFns.push(head.addHeadObjs({
+        removeSideEffectFns.push(head.addEntry({
           meta: shortcutMeta
         }))
       }
     }
 
-    removeSideEffectFns.push(head.addHeadObjs(_meta, options))
+    if (process.server) {
+      head.addEntry(_meta, options)
+      return
+    }
 
-    if (process.server) { return }
-
-    // will happen next tick
-    watchEffect(() => { head.updateDOM() })
+    const cleanUp = head.addReactiveEntry(_meta, options)
 
     const vm = getCurrentInstance()
     if (!vm) { return }
 
     onBeforeUnmount(() => {
-      removeSideEffectFns.forEach(fn => fn())
+      cleanUp()
+      removeSideEffectFns.forEach(fn => fn.remove())
       head.updateDOM()
     })
   }
 
   if (process.server) {
-    nuxtApp.ssrContext!.renderMeta = () => {
-      const meta = renderHeadToString(head)
+    nuxtApp.ssrContext!.renderMeta = async () => {
+      const meta = await renderHeadToString(head)
       return {
         ...meta,
         // resolves naming difference with NuxtMeta and @vueuse/head

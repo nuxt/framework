@@ -99,7 +99,7 @@ export const Script = defineComponent({
       .map(({ children }) => children)
       .join('')
     if (textContent) {
-      script.innerHTML = textContent
+      script.children = textContent
     }
     return {
       script: [script]
@@ -124,7 +124,7 @@ export const NoScript = defineComponent({
       .map(({ children }) => children)
       .join('')
     if (textContent) {
-      noscript.innerHTML = textContent
+      noscript.children = textContent
     }
     return {
       noscript: [noscript]
@@ -254,7 +254,7 @@ export const Style = defineComponent({
       if (process.dev && typeof textContent !== 'string') {
         console.error('<Style> can only take a string in its default slot.')
       }
-      style.textContent = textContent
+      style.children = textContent
     }
     return {
       style: [style]
