@@ -65,6 +65,11 @@ describe('pages', () => {
     expect(headers.get('location')).toEqual('/')
   })
 
+  it('validates routes', async () => {
+    const { status } = await fetch('/forbidden')
+    expect(status).toEqual(404)
+  })
+
   it('render 404', async () => {
     const html = await $fetch('/not-found')
 
@@ -828,6 +833,10 @@ describe.skipIf(isWindows)('useAsyncData', () => {
 
   it('two requests resolve and sync', async () => {
     await $fetch('/useAsyncData/refresh')
+  })
+
+  it('requests can be cancelled/overridden', async () => {
+    await expectNoClientErrors('/useAsyncData/override')
   })
 
   it('two requests made at once resolve and sync', async () => {
