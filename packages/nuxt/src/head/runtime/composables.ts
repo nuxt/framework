@@ -1,6 +1,5 @@
 import type { MetaObject } from '@nuxt/schema'
 import { MaybeComputedRef } from '@vueuse/shared'
-import type { UseHeadRawInput } from '@vueuse/head'
 import { useNuxtApp } from '#app'
 
 /**
@@ -12,15 +11,6 @@ import { useNuxtApp } from '#app'
  */
 export function useHead (meta: MaybeComputedRef<MetaObject>) {
   useNuxtApp()._useHead(meta)
-}
-
-/**
- * Same as `useHead` but will render meta tags without encoding.
- *
- * Warning: This function opens you up to XSS attacks. Only use this if you trust the source of the meta tag data.
- */
-export function useHeadRaw (meta: UseHeadRawInput) {
-  useNuxtApp()._useHead(meta, { raw: true })
 }
 
 // TODO: remove useMeta support when Nuxt 3 is stable

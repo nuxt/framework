@@ -1835,7 +1835,7 @@ __metadata:
     "@types/lodash.template": ^4
     "@types/semver": ^7
     "@vitejs/plugin-vue": ^3.1.2
-    "@vueuse/head": 1.0.0-rc.4
+    "@vueuse/head": ^1.0.0-rc.5
     c12: ^0.2.13
     create-require: ^1.1.1
     defu: ^6.1.0
@@ -3461,16 +3461,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/head@npm:1.0.0-rc.4":
-  version: 1.0.0-rc.4
-  resolution: "@vueuse/head@npm:1.0.0-rc.4"
+"@vueuse/head@npm:^1.0.0-rc.5":
+  version: 1.0.0-rc.5
+  resolution: "@vueuse/head@npm:1.0.0-rc.5"
   dependencies:
     "@vueuse/shared": ^9.3.0
     "@zhead/schema": ^0.8.5
     "@zhead/schema-vue": ^0.8.5
   peerDependencies:
     vue: ">=2.7 || >=3"
-  checksum: debbdbc15a7d94b5a8ade227ba2e8e6b4fa9c562a0de68939f2e585adf2c9897d5420d314f69232090520fbb3f4d1c473381c2bed94de6dfacc0700ba5f87fae
+  checksum: 6169bd008c2bb74a73152a76e3329d13f64a86273c6514c7aaa04bfcfffce6e7f757c41eaa873253ead1d8dfd8efd4de7d598a1ed297df2d12c3393a57f669a5
   languageName: node
   linkType: hard
 
@@ -10942,7 +10942,7 @@ __metadata:
     "@types/hash-sum": ^1.0.0
     "@vue/reactivity": ^3.2.40
     "@vue/shared": ^3.2.40
-    "@vueuse/head": 1.0.0-rc.4
+    "@vueuse/head": ^1.0.0-rc.5
     chokidar: ^3.5.3
     cookie-es: ^0.5.0
     defu: ^6.1.0
