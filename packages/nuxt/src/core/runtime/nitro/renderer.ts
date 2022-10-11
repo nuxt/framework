@@ -133,7 +133,7 @@ export default defineRenderHandler(async (event) => {
   }
 
   // TODO: share across endpoints on event context
-  const routeOptions = routerOptions.lookup(url) || {}
+  const routeOptions = event.context.routeOptions || routerOptions.lookup(url) || {}
 
   // Initialize ssr context
   const ssrContext: NuxtSSRContext = {
