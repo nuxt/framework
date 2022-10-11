@@ -29,6 +29,12 @@ describe('server api', () => {
   })
 })
 
+describe('route rules', () => {
+  it('should enable spa mode', async () => {
+    expect(await $fetch('/route-rules/spa')).toContain('serverRendered:false')
+  })
+})
+
 describe('pages', () => {
   it('render index', async () => {
     const html = await $fetch('/')
@@ -218,6 +224,17 @@ describe('pages', () => {
     await page.locator('button#show-all').click()
     await Promise.all(hiddenSelectors.map(selector => page.locator(selector).isVisible()))
       .then(results => results.forEach(isVisible => expect(isVisible).toBeTruthy()))
+  })
+
+  it('/client-only-explicit-import', async () => {
+    const html = await $fetch('/client-only-explicit-import')
+
+    // ensure fallbacks with classes and arbitrary attributes are rendered
+    expect(html).toContain('<div class="client-only-script" foo="bar">')
+    expect(html).toContain('<div class="lazy-client-only-script-setup" foo="hello">')
+    // ensure components are not rendered server-side
+    expect(html).not.toContain('client only script')
+    await expectNoClientErrors('/client-only-components')
   })
 })
 
