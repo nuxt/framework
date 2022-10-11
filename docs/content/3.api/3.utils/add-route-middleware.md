@@ -1,9 +1,14 @@
+---
+title: "addRouteMiddleware"
+description: addRouteMiddleware() is a helper function to dynamically add middleware in your application.
+---
+
 # `addRouteMiddleware`
 
 `addRouteMiddleware()` is a helper function to dynamically add route middleware in your Nuxt application.
 
 ::alert{type=info}
-Route middleware are navigation guards stored in the [`middleware/`](/guide/directory-structure/middleware) directory of your Nuxt application (unless [set otherwise](/api/configuration/nuxt.config#middleware)).
+Route middleware are navigation guards stored in the [`middleware/`](/guide/directory-structure/middleware) directory of your Nuxt application (unless [set otherwise](/api/configuration/nuxt-config#middleware)).
 ::
 
 ## Usage
@@ -60,7 +65,7 @@ export default defineNuxtPlugin(() => {
 
 ### Global Route Middleware
 
-You can set an optional, third argument `{ global: true }` to indicate whether the route middleware is global:
+Set an optional, third argument `{ global: true }` to indicate whether the route middleware is global:
 
 ```ts [plugins/my-plugin.ts]
 export default defineNuxtPlugin(() => {
