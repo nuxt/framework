@@ -147,18 +147,18 @@ export default defineNuxtModule<ComponentsOptions>({
     nuxt.hook('app:templates', async () => {
       const newComponents = await scanComponents(componentDirs, nuxt.options.srcDir!)
       await nuxt.callHook('components:extend', newComponents)
-      context.components = newComponents
       // add server placeholder for .client components server side. issue: #7085
-      context.components.forEach((component) => {
-        if (component.mode === 'client' && !context.components.some(c => c.pascalName === component.pascalName && c.mode === 'server')) {
-          context.components.push({
+      for (const component of newComponents) {
+        if (component.mode === 'client' && !newComponents.some(c => c.pascalName === component.pascalName && c.mode === 'server')) {
+          newComponents.push({
             ...component,
             mode: 'server',
             filePath: resolve(distDir, 'app/components/server-placeholder'),
             chunkName: 'components/' + component.kebabName
           })
         }
-      })
+      }
+      context.components = newComponents
     })
 
     nuxt.hook('prepare:types', ({ references, tsConfig }) => {
