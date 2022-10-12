@@ -1,7 +1,6 @@
 import type { HeadEntryOptions } from '@vueuse/head'
-import { createHead, renderHeadToString } from '@vueuse/head'
+import { createHead, renderHeadToString, MaybeComputedRef } from '@vueuse/head'
 import { onBeforeUnmount, getCurrentInstance } from 'vue'
-import { MaybeComputedRef } from '@vueuse/shared'
 import type { MetaObject } from '@nuxt/schema'
 import { defineNuxtPlugin, useRouter } from '#app'
 // @ts-expect-error untyped
