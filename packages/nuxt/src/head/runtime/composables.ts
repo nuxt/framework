@@ -1,5 +1,5 @@
 import type { MetaObject } from '@nuxt/schema'
-import { MaybeComputedRef } from '@vueuse/shared'
+import type { MaybeComputedRef } from '@vueuse/head'
 import { useNuxtApp } from '#app'
 
 /**
