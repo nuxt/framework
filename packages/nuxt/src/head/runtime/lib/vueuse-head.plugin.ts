@@ -1,8 +1,8 @@
-import type { HeadEntryOptions, HeadObjectApi } from '@vueuse/head'
+import type { HeadEntryOptions } from '@vueuse/head'
 import { createHead, renderHeadToString } from '@vueuse/head'
-import { onBeforeUnmount, getCurrentInstance, isRef } from 'vue'
+import { onBeforeUnmount, getCurrentInstance } from 'vue'
 import { MaybeComputedRef } from '@vueuse/shared'
-import type { MetaObject, MetaObjectPlain } from '@nuxt/schema'
+import type { MetaObject } from '@nuxt/schema'
 import { defineNuxtPlugin, useRouter } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -30,31 +30,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     })
   }
 
-  nuxtApp._useHead = (_meta: MaybeComputedRef<MetaObject> | MetaObjectPlain, options: HeadEntryOptions) => {
-    const removeSideEffectFns: HeadObjectApi[] = []
-
-    // Handle shortcuts from plain meta only (avoids ref packing / unpacking)
-    if (!isRef(_meta) && typeof _meta === 'object') {
-      const plainMeta = _meta as MetaObjectPlain
-      const shortcutMeta = []
-      if (plainMeta.charset) {
-        shortcutMeta.push({
-          charset: plainMeta.charset
-        })
-      }
-      if (plainMeta.viewport) {
-        shortcutMeta.push({
-          name: 'viewport',
-          content: plainMeta.viewport
-        })
-      }
-      if (shortcutMeta.length) {
-        removeSideEffectFns.push(head.addEntry({
-          meta: shortcutMeta
-        }))
-      }
-    }
-
+  nuxtApp._useHead = (_meta: MaybeComputedRef<MetaObject>, options: HeadEntryOptions) => {
     if (process.server) {
       head.addEntry(_meta, options)
       return
@@ -67,7 +43,6 @@ export default defineNuxtPlugin((nuxtApp) => {
 
     onBeforeUnmount(() => {
       cleanUp()
-      removeSideEffectFns.forEach(fn => fn.remove())
       head.updateDOM()
     })
   }

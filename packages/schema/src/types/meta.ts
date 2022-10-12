@@ -12,7 +12,9 @@ export interface HeadAugmentations {
   bodyAttrs?: {};
 }
 
-export type MetaObjectPlain = HeadObjectPlain<HeadAugmentations> & {
+export type MetaObjectRaw = HeadObjectPlain<HeadAugmentations>
+
+export type AppHeadMetaObject = MetaObjectRaw & {
   /**
    * The character encoding in which the document is encoded => `<meta charset="<value>" />`
    *
