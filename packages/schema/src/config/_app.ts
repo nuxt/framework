@@ -116,7 +116,6 @@ export default defineUntypedSchema({
     head: {
       $resolve: async (val, get) => {
         const resolved: Required<AppHeadMetaObject> = defu(val, await get('meta'), {
-          title: '',
           meta: [],
           link: [],
           style: [],
