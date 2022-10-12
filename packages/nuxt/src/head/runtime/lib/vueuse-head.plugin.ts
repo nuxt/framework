@@ -4,9 +4,13 @@ import { onBeforeUnmount, getCurrentInstance } from 'vue'
 import { MaybeComputedRef } from '@vueuse/shared'
 import type { MetaObject } from '@nuxt/schema'
 import { defineNuxtPlugin, useRouter } from '#app'
+// @ts-expect-error untyped
+import { appHead } from '#build/nuxt.config.mjs'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const head = createHead()
+
+  head.addEntry(appHead, { resolved: true })
 
   nuxtApp.vueApp.use(head)
 

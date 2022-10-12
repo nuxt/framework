@@ -116,6 +116,7 @@ export default defineUntypedSchema({
     head: {
       $resolve: async (val, get) => {
         const resolved: Required<AppHeadMetaObject> = defu(val, await get('meta'), {
+          title: '',
           meta: [],
           link: [],
           style: [],
@@ -123,9 +124,15 @@ export default defineUntypedSchema({
           noscript: []
         })
 
-        resolved.charset = resolved.charset ?? resolved.meta.find(m => m.charset)?.charset ?? 'utf-8'
-        resolved.viewport = resolved.viewport ?? resolved.meta.find(m => m.name === 'viewport')?.content ?? 'width=device-width, initial-scale=1'
-        resolved.meta = resolved.meta.filter(m => m && m.name !== 'viewport' && !m.charset)
+        // provides default charset and viewport if not set
+        if (!resolved.meta.find(m => m.charset)?.charset) {
+          resolved.meta.unshift({ charset: resolved.charset || 'utf-8' })
+        }
+        if (!resolved.meta.find(m => m.name === 'viewport')?.content) {
+          resolved.meta.unshift({ name: 'viewport', content: resolved.viewport || 'width=device-width, initial-scale=1' })
+        }
+
+        resolved.meta = resolved.meta.filter(Boolean)
         resolved.link = resolved.link.filter(Boolean)
         resolved.style = resolved.style.filter(Boolean)
         resolved.script = resolved.script.filter(Boolean)
