@@ -13,7 +13,6 @@ Nuxt provides the `useHead` composable to add and customize the head properties 
 ::ReadMore{link="/getting-started/seo-meta"}
 ::
 
-
 ## Type
 
 ```ts
@@ -137,7 +136,6 @@ useHead({
 
 :ReadMore{link="/guide/directory-structure/pages/#page-metadata"}
 
-
 ### Add Dynamic Title
 
 In the example below, `titleTemplate` is set either as a string with the `%s` placeholder or as a `function`, which allows greater flexibility in setting the page title dynamically for each route of your Nuxt app:
@@ -159,7 +157,6 @@ In the example below, `titleTemplate` is set either as a string with the `%s` pl
 ```
 
 `nuxt.config` is also used as an alternative way of setting the page title. However, `nuxt.config` does not allow the page title to be dynamic. Therefore, it is recommended to use `titleTemplate` in the `app.vue` file to add a dynamic title, which is then applied to all routes of your Nuxt app.
-
 
 ### Add Third-party Scripts
 
@@ -203,4 +200,3 @@ The example below inserts Google Fonts using the `link` property of the `useHead
   })
 </script>
 ```
-
