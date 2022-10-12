@@ -157,6 +157,12 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: resolve(nuxt.options.appDir, 'components/nuxt-loading-indicator')
   })
 
+  // Add <NuxtPage>
+  addComponent({
+    name: 'NuxtPage',
+    filePath: resolve(distDir, 'pages/runtime/page')
+  })
+
   // Deprecate hooks
   nuxt.hooks.deprecateHooks({
     'autoImports:sources': {
