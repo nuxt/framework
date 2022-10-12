@@ -19,7 +19,7 @@ Nuxt provides the `useHead` composable to add and customize the head properties 
 useHead(meta: MaybeComputedRef<MetaObject>): void
 ```
 
-The below is the non-reactive types for `useMeta`. See [zhead](https://github.com/harlan-zw/zhead/tree/main/packages/schema/src) for more detailed types.
+Below are the non-reactive types for `useMeta`. See [zhead](https://github.com/harlan-zw/zhead/tree/main/packages/schema/src) for more detailed types.
 
 ```ts
 interface MetaObject {
@@ -30,9 +30,9 @@ interface MetaObject {
   meta?: Meta[]
   style?: Style[]
   script?: Script[]
-  noscript?: Noscript[];
-  htmlAttrs?: HtmlAttributes;
-  bodyAttrs?: BodyAttributes;
+  noscript?: Noscript[]
+  htmlAttrs?: HtmlAttributes
+  bodyAttrs?: BodyAttributes
 }
 ```
 

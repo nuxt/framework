@@ -2,7 +2,7 @@ import { resolve, join } from 'pathe'
 import { existsSync, readdirSync } from 'node:fs'
 import defu from 'defu'
 import { defineUntypedSchema } from 'untyped'
-import { AppHeadMetaObject } from '../types/meta'
+import type { AppHeadMetaObject } from '../types/meta'
 
 export default defineUntypedSchema({
   /**

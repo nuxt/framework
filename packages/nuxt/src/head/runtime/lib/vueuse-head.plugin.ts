@@ -1,5 +1,5 @@
-import type { HeadEntryOptions } from '@vueuse/head'
-import { createHead, renderHeadToString, MaybeComputedRef } from '@vueuse/head'
+import type { HeadEntryOptions, MaybeComputedRef } from '@vueuse/head'
+import { createHead, renderHeadToString } from '@vueuse/head'
 import { onBeforeUnmount, getCurrentInstance } from 'vue'
 import type { MetaObject } from '@nuxt/schema'
 import { defineNuxtPlugin, useRouter } from '#app'
