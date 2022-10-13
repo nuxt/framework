@@ -37,24 +37,26 @@ export default defineComponent({
 
     function getTransitionProps (routeProps: RouterViewSlotProps) {
       const metaTransition = routeProps.route.meta.pageTransition
+      const propTransition = props.transition
+
       const onAfterLeave = () => {
         nuxtApp.callHook('page:transition:finish', routeProps.Component)
         if (metaTransition?.onAfterLeave) {
           metaTransition.onAfterLeave()
         }
+        if (propTransition?.onAfterLeave) {
+          propTransition.onAfterLeave()
+        }
       }
 
-      if (typeof metaTransition === 'boolean') {
-        return metaTransition && {
-          ...defaultPageTransition,
-          onAfterLeave
-        }
-      } else {
-        return {
-          ...defaultPageTransition,
-          ...(metaTransition || {}),
-          onAfterLeave
-        }
+      if (metaTransition === false || propTransition === false) {
+        return false
+      }
+      return {
+        ...defaultPageTransition,
+        ...(typeof propTransition !== 'object' ? {} : propTransition),
+        ...(typeof metaTransition !== 'object' ? {} : metaTransition),
+        onAfterLeave
       }
     }
 
