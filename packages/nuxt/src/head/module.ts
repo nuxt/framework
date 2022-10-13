@@ -2,6 +2,8 @@ import { resolve } from 'pathe'
 import { addComponent, addPlugin, defineNuxtModule } from '@nuxt/kit'
 import { distDir } from '../dirs'
 
+const components = ['Script', 'NoScript', 'Link', 'Base', 'Title', 'Meta', 'Style', 'Head', 'Html', 'Body']
+
 export default defineNuxtModule({
   meta: {
     name: 'meta'
@@ -17,18 +19,7 @@ export default defineNuxtModule({
 
     // Register components
     const componentsPath = resolve(runtimeDir, 'components')
-    for (const componentName of [
-      'Script',
-      'NoScript',
-      'Link',
-      'Base',
-      'Title',
-      'Meta',
-      'Style',
-      'Head',
-      'Html',
-      'Body'
-    ]) {
+    for (const componentName of components) {
       addComponent({
         name: componentName,
         filePath: componentsPath,
