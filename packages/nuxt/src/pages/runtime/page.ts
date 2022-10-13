@@ -39,6 +39,9 @@ export default defineComponent({
       const metaTransition = routeProps.route.meta.pageTransition
       const onAfterLeave = () => {
         nuxtApp.callHook('page:transition:finish', routeProps.Component)
+        if (metaTransition?.onAfterLeave) {
+          metaTransition.onAfterLeave()
+        }
       }
 
       if (typeof metaTransition === 'boolean') {
