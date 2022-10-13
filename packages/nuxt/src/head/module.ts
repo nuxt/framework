@@ -1,6 +1,8 @@
 import { resolve } from 'pathe'
-import { addPlugin, defineNuxtModule } from '@nuxt/kit'
+import { addComponent, addPlugin, defineNuxtModule } from '@nuxt/kit'
 import { distDir } from '../dirs'
+
+const components = ['Script', 'NoScript', 'Link', 'Base', 'Title', 'Meta', 'Style', 'Head', 'Html', 'Body']
 
 export default defineNuxtModule({
   meta: {
@@ -20,5 +22,13 @@ export default defineNuxtModule({
 
     // Add library specific plugin
     addPlugin({ src: resolve(runtimeDir, 'lib/vueuse-head.plugin') })
+
+    for (const name of components) {
+      addComponent({
+        name,
+        filePath: resolve(runtimeDir, 'components'),
+        export: name
+      })
+    }
   }
 })
