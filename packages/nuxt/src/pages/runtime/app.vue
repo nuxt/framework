@@ -5,5 +5,5 @@
 </template>
 
 <script setup>
-import { NuxtPage, NuxtLayout } from '#components'
+import NuxtPage from './page'
 </script>
