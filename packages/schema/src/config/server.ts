@@ -1,5 +1,7 @@
+import { SchemaDefinition } from 'untyped'
+
 /** @version 2 */
-export default {
+export default <SchemaDefinition>{
   /**
    * Whether to enable HTTPS.
    *
@@ -17,6 +19,8 @@ export default {
    * ```
    *
    * @version 2
+   *
+   * @type {false | { key: string; cert: string }}
    *
    * @deprecated  This option is ignored with Bridge and Nuxt 3
    */
@@ -37,5 +41,10 @@ export default {
    * time spent on server-side rendering.
    */
   /** @deprecated This option is ignored with Bridge and Nuxt 3 */
-  timing: (val: any) => val ? ({ total: true, ...val }) : false
+  timing: (val: any) => val ? ({ total: true, ...val }) : false,
+
+  /**
+   * Listening dev server url
+   */
+  url: 'http://localhost:3000',
 }

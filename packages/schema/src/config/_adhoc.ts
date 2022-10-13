@@ -1,4 +1,6 @@
-export default {
+import { defineUntypedSchema } from 'untyped'
+
+export default defineUntypedSchema({
   /**
    * Configure Nuxt component auto-registration.
    *
@@ -13,7 +15,7 @@ export default {
    * @version 3
    */
   components: {
-    $resolve: (val, get) => {
+    $resolve: (val) => {
       if (Array.isArray(val)) {
         return { dirs: val }
       }
@@ -24,14 +26,17 @@ export default {
     }
   },
 
+  /** @deprecated Please use `imports` config. */
+  autoImports: null,
+
   /**
    * Configure how Nuxt auto-imports composables into your application.
    *
    * @see [Nuxt 3 documentation](https://v3.nuxtjs.org/guide/directory-structure/composables)
-   * @type {typeof import('../src/types/imports').AutoImportsOptions}
+   * @type {typeof import('../src/types/imports').ImportsOptions}
    * @version 3
    */
-  autoImports: {
+  imports: {
     global: false,
     dirs: []
   },
@@ -54,4 +59,4 @@ export default {
    * @version 3
   */
   telemetry: undefined
-}
+})

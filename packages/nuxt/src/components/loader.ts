@@ -7,7 +7,7 @@ import MagicString from 'magic-string'
 import { pascalCase } from 'scule'
 
 interface LoaderOptions {
-  getComponents(): Component[]
+  getComponents (): Component[]
   mode: 'server' | 'client'
   sourcemap?: boolean
   transform?: ComponentsOptions['transform']
@@ -65,23 +65,32 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
       const s = new MagicString(code)
 
       // replace `_resolveComponent("...")` to direct import
-      s.replace(/(?<=[ (])_?resolveComponent\(\s*["'](lazy-|Lazy)?([^'"]*?)["'][\s,]*\)/g, (full, lazy, name) => {
+      s.replace(/(?<=[ (])_?resolveComponent\(\s*["'](lazy-|Lazy)?([^'"]*?)["'][\s,]*[^)]*\)/g, (full, lazy, name) => {
         const component = findComponent(components, name, options.mode)
         if (component) {
-          const identifier = map.get(component) || `__nuxt_component_${num++}`
+          let identifier = map.get(component) || `__nuxt_component_${num++}`
           map.set(component, identifier)
+
           const isClientOnly = component.mode === 'client'
           if (isClientOnly) {
             imports.add(genImport('#app/components/client-only', [{ name: 'createClientOnly' }]))
+            identifier += '_client'
           }
+
           if (lazy) {
             imports.add(genImport('vue', [{ name: 'defineAsyncComponent', as: '__defineAsyncComponent' }]))
-            imports.add(`const ${identifier}_lazy = __defineAsyncComponent(${genDynamicImport(component.filePath)})`)
-            return isClientOnly ? `createClientOnly(${identifier}_lazy)` : `${identifier}_lazy`
+            identifier += '_lazy'
+            imports.add(`const ${identifier} = /*#__PURE__*/ __defineAsyncComponent(${genDynamicImport(component.filePath, { interopDefault: true })}${isClientOnly ? '.then(c => createClientOnly(c))' : ''})`)
           } else {
             imports.add(genImport(component.filePath, [{ name: component.export, as: identifier }]))
-            return isClientOnly ? `createClientOnly(${identifier})` : identifier
+
+            if (isClientOnly) {
+              imports.add(`const ${identifier}_wrapped = /*#__PURE__*/ createClientOnly(${identifier})`)
+              identifier += '_wrapped'
+            }
           }
+
+          return identifier
         }
         // no matched
         return full
@@ -94,7 +103,9 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
       if (s.hasChanged()) {
         return {
           code: s.toString(),
-          map: options.sourcemap && s.generateMap({ source: id, includeContent: true })
+          map: options.sourcemap
+            ? s.generateMap({ source: id, includeContent: true })
+            : undefined
         }
       }
     }

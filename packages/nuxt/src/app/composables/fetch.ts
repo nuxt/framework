@@ -1,6 +1,6 @@
-import type { FetchOptions } from 'ohmyfetch'
+import type { FetchError, FetchOptions } from 'ohmyfetch'
 import type { TypedInternalResponse, NitroFetchRequest } from 'nitropack'
-import { computed, isRef, Ref } from 'vue'
+import { computed, unref, Ref } from 'vue'
 import type { AsyncDataOptions, _Transform, KeyOfRes, AsyncData, PickFrom } from './asyncData'
 import { useAsyncData } from './asyncData'
 
@@ -16,7 +16,7 @@ export interface UseFetchOptions<
 
 export function useFetch<
   ResT = void,
-  ErrorT = Error,
+  ErrorT = FetchError,
   ReqT extends NitroFetchRequest = NitroFetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
@@ -27,7 +27,7 @@ export function useFetch<
 ): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | null | true>
 export function useFetch<
   ResT = void,
-  ErrorT = Error,
+  ErrorT = FetchError,
   ReqT extends NitroFetchRequest = NitroFetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
@@ -52,7 +52,7 @@ export function useFetch<
     if (typeof r === 'function') {
       r = r()
     }
-    return (isRef(r) ? r.value : r)
+    return unref(r)
   })
 
   const {
@@ -63,6 +63,7 @@ export function useFetch<
     pick,
     watch,
     initialCache,
+    immediate,
     ...fetchOptions
   } = opts
 
@@ -78,14 +79,19 @@ export function useFetch<
     transform,
     pick,
     initialCache,
+    immediate,
     watch: [
       _request,
       ...(watch || [])
     ]
   }
 
+  let controller: AbortController
+
   const asyncData = useAsyncData<_ResT, ErrorT, Transform, PickKeys>(key, () => {
-    return $fetch(_request.value, _fetchOptions) as Promise<_ResT>
+    controller?.abort?.()
+    controller = typeof AbortController !== 'undefined' ? new AbortController() : {} as AbortController
+    return $fetch(_request.value, { signal: controller.signal, ..._fetchOptions }) as Promise<_ResT>
   }, _asyncDataOptions)
 
   return asyncData
@@ -93,7 +99,7 @@ export function useFetch<
 
 export function useLazyFetch<
   ResT = void,
-  ErrorT = Error,
+  ErrorT = FetchError,
   ReqT extends NitroFetchRequest = NitroFetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,
@@ -104,7 +110,7 @@ export function useLazyFetch<
 ): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | null | true>
 export function useLazyFetch<
   ResT = void,
-  ErrorT = Error,
+  ErrorT = FetchError,
   ReqT extends NitroFetchRequest = NitroFetchRequest,
   _ResT = ResT extends void ? FetchResult<ReqT> : ResT,
   Transform extends (res: _ResT) => any = (res: _ResT) => _ResT,

@@ -50,6 +50,11 @@ export default defineNuxtModule({
       if (app.mainComponent!.includes('@nuxt/ui-templates')) {
         app.mainComponent = resolve(runtimeDir, 'app.vue')
       }
+      app.middleware.unshift({
+        name: 'validate',
+        path: resolve(runtimeDir, 'validate'),
+        global: true
+      })
     })
 
     // Prerender all non-dynamic page routes when generating app
@@ -78,8 +83,8 @@ export default defineNuxtModule({
       })
     }
 
-    nuxt.hook('autoImports:extend', (autoImports) => {
-      autoImports.push(
+    nuxt.hook('imports:extend', (imports) => {
+      imports.push(
         { name: 'definePageMeta', as: 'definePageMeta', from: resolve(runtimeDir, 'composables') },
         { name: 'useLink', as: 'useLink', from: 'vue-router' }
       )
@@ -88,7 +93,7 @@ export default defineNuxtModule({
     // Extract macros from pages
     const macroOptions: TransformMacroPluginOptions = {
       dev: nuxt.options.dev,
-      sourcemap: nuxt.options.sourcemap,
+      sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client,
       macros: {
         definePageMeta: 'meta'
       }
@@ -136,7 +141,7 @@ export default defineNuxtModule({
         const defaultOptsFile = resolve(distDir, 'pages/routing/default-router.options')
         const routerOptionsFiles = (await Promise.all(nuxt.options._layers.map(
           async layer => await findPath(resolve(layer.config.srcDir, 'app/router.options'))
-        ))).filter(Boolean)
+        ))).filter(Boolean) as string[]
 
         const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router.options)
           .map(([key, value]) => [key, genString(value as string)]))

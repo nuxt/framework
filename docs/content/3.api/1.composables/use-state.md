@@ -1,3 +1,8 @@
+---
+title: "useState"
+description: The useState composable creates a reactive and SSR-friendly shared state.
+---
+
 # `useState`
 
 ```ts
@@ -13,5 +18,5 @@ useState<T>(key: string, init?: () => T | Ref<T>): Ref<T>
 Because the data inside `useState` will be serialized to JSON, it is important that it does not contain anything that cannot be serialized, such as classes, functions or symbols.
 ::
 
-::ReadMore{link="/guide/features/state-management"}
+::ReadMore{link="/getting-started/state-management"}
 ::

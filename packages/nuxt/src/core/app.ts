@@ -104,8 +104,8 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
       ...(config.plugins || []),
       ...config.srcDir
         ? await resolveFiles(config.srcDir, [
-          'plugins/*.{ts,js,mjs,cjs,mts,cts}',
-          'plugins/*/index.*{ts,js,mjs,cjs,mts,cts}'
+          `${config.dir?.plugins || 'plugins'}/*.{ts,js,mjs,cjs,mts,cts}`,
+          `${config.dir?.plugins || 'plugins'}/*/index.*{ts,js,mjs,cjs,mts,cts}`
         ])
         : []
     ].map(plugin => normalizePlugin(plugin as NuxtPlugin)))
@@ -114,6 +114,15 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   // Normalize and de-duplicate plugins and middleware
   app.middleware = uniqueBy(await resolvePaths(app.middleware, 'path'), 'name')
   app.plugins = uniqueBy(await resolvePaths(app.plugins, 'src'), 'src')
+
+  // Resolve app.config
+  app.configs = []
+  for (const config of nuxt.options._layers.map(layer => layer.config)) {
+    const appConfigPath = await findPath(resolve(config.srcDir, 'app.config'))
+    if (appConfigPath) {
+      app.configs.push(appConfigPath)
+    }
+  }
 
   // Extend app
   await nuxt.callHook('app:resolve', app)

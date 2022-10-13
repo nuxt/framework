@@ -1,48 +1,103 @@
+---
+description: useHead customizes the head properties of individual pages of your Nuxt app.
+---
+
 # `useHead`
 
-::ReadMore{link="/guide/features/head-management"}
-
-Nuxt provides a composable to update the head properties of your page with an [`MetaObject`](/api/composables/use-head/#metaobject) of meta properties with keys corresponding to meta tags:
-
-`title`, `base`, `script`, `noscript`, `style`, `meta` and `link`, as well as `htmlAttrs` and `bodyAttrs`. Alternatively, you can pass a function returning the object for reactive metadata.
-
-```js
-useHead(options: MetaObject)
-```
+Nuxt provides the `useHead` composable to add and customize the head properties of individual pages of your Nuxt app. It uses [@vueuse/head](https://github.com/vueuse/head) under the hood.
 
 ::alert{icon=👉}
-**`useHead` only works during `setup`**.
+`useHead` only works during `setup` or `Lifecycle Hooks`.
 ::
 
-## Example
+::ReadMore{link="/getting-started/seo-meta"}
+::
 
-The example below changes the website's title in the `meta` and inserts a Google Font using the `link` property.
+## Type
 
-```js
-export default {
-  setup () {
-    useHead({
-      meta: [
-        { name: 'title' content: 'Nuxt 3 - The Hybrid Vue Framework' }
-      ],
-      link: [
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Roboto&display=swap', crossorigin: '' },
-      ]
-    })
-  }
+```ts
+useHead(meta: MaybeComputedRef<MetaObject>): void
+```
+
+Below are the non-reactive types for `useMeta`. See [zhead](https://github.com/harlan-zw/zhead/tree/main/packages/schema/src) for more detailed types.
+
+```ts
+interface MetaObject {
+  title?: string
+  titleTemplate?: string | ((title?: string) => string)
+  base?: Base
+  link?: Link[]
+  meta?: Meta[]
+  style?: Style[]
+  script?: Script[]
+  noscript?: Noscript[]
+  htmlAttrs?: HtmlAttributes
+  bodyAttrs?: BodyAttributes
 }
 ```
 
-## `MetaObject`
+::alert{type=info}
+The properties of `useHead` can be dynamic, accepting `ref`, `computed` and `reactive` properties. `meta` parameter can also accept a function returning an object to make the entire object reactive.
+::
 
-* **charset**: the character encoding in which the document is encoded => `<meta charset="<value>" />` (default: `'utf-8'`)
-* **viewport**: configuration of the viewport (the area of the window in which web content can be seen) => `<meta name="viewport" content="<value>" />` (default: `'width=device-width, initial-scale=1'`)
-* **meta**: array, each item maps to a newly-created `<meta>` element, where object properties map to attributes.
-* **link**: array, each item maps to a newly-created `<link>` element, where object properties map to attributes.
-* **style**: array, each item maps to a newly-created `<style>` element, where object properties map to attributes.
-* **script**: array, each item maps to a newly-created `<script>` element, where object properties map to attributes.
-* **noscript**: array, each item maps to a newly-created `<noscript>` element, where object properties map to attributes.
+## Parameters
 
-All elements in the meta object are optional. You can also pass only single values.
+### `meta`
+
+**Type**: `MetaObject`
+
+An object accepting the following head metadata:
+
+- `meta`
+
+  **Type**: `Array<Record<string, any>>`
+
+  Each element in the array is mapped to a newly-created `<meta>` tag, where object properties are mapped to the corresponding attributes.
+
+- `link`
+
+  **Type**: `Array<Record<string, any>>`
+
+  Each element in the array is mapped to a newly-created `<link>` tag, where object properties are mapped to the corresponding attributes.
+
+- `style`
+
+  **Type**: `Array<Record<string, any>>`
+
+  Each element in the array is mapped to a newly-created `<style>` tag, where object properties are mapped to the corresponding attributes.
+
+- `script`
+
+  **Type**: `Array<Record<string, any>>`
+
+  Each element in the array is mapped to a newly-created `<script>` tag, where object properties are mapped to the corresponding attributes.
+
+- `noscript`
+
+  **Type**: `Array<Record<string, any>>`
+
+  Each element in the array is mapped to a newly-created `<noscript>` tag, where object properties are mapped to the corresponding attributes.
+
+- `titleTemplate`
+
+  **Type**: `string` | `((title: string) => string)`
+
+  Configures dynamic template to customize the page title on an individual page.
+
+- `title`
+
+  **Type**: `string`
+
+  Sets static page title on an individual page.
+
+- `bodyAttrs`
+
+  **Type**: `Record<string, any>`
+
+  Sets attributes of the `<body>` tag. Each object property is mapped to the corresponding attribute.
+
+- `htmlAttrs`
+
+  **Type**: `Record<string, any>`
+
+  Sets attributes of the `<html>` tag. Each object property is mapped to the corresponding attribute.

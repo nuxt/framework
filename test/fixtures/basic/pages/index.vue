@@ -12,7 +12,7 @@
     <NuxtLink to="/">
       Link
     </NuxtLink>
-    <SugarCounter :count="12" />
+    <NestedSugarCounter :count="12" />
     <CustomComponent />
     <component :is="`test${'-'.toString()}global`" />
     <component :is="`with${'-'.toString()}suffix`" />
@@ -21,9 +21,16 @@
 </template>
 
 <script setup>
+import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import { useRuntimeConfig } from '#imports'
 
+setupDevtoolsPlugin({}, () => {})
+
 const config = useRuntimeConfig()
+
+definePageMeta({
+  alias: '/some-alias'
+})
 
 // reset title template example
 useHead({

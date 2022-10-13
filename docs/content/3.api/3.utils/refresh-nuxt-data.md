@@ -1,6 +1,13 @@
+---
+title: "refreshNuxtData"
+description: refreshNuxtData refetches all data from the server and updates the page.
+---
+
 # `refreshNuxtData`
 
-::ReadMore{link="/guide/features/data-fetching"}
+`refreshNuxtData` refetches all data from the server and updates the page.
+
+::ReadMore{link="/getting-started/data-fetching"}
 ::
 
 ```ts
