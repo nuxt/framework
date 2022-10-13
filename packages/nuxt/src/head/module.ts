@@ -1,5 +1,5 @@
 import { resolve } from 'pathe'
-import { addPlugin, defineNuxtModule } from '@nuxt/kit'
+import { addComponent, addPlugin, defineNuxtModule } from '@nuxt/kit'
 import { distDir } from '../dirs'
 
 export default defineNuxtModule({
@@ -15,8 +15,9 @@ export default defineNuxtModule({
     // Add #head alias
     nuxt.options.alias['#head'] = runtimeDir
 
+    // Register components
     const componentsPath = resolve(runtimeDir, 'components')
-    const headComponents = [
+    for (const componentName of [
       'Script',
       'NoScript',
       'Link',
@@ -27,21 +28,15 @@ export default defineNuxtModule({
       'Head',
       'Html',
       'Body'
-    ].map(c => ({
-      // kebab case version of these tags is not valid
-      kebabName: c,
-      pascalName: c,
-      export: c,
-      preload: false,
-      prefetch: false,
-      filePath: componentsPath,
-      import: `require(${JSON.stringify(componentsPath)})['${c}']`,
-      chunkName: `components/${c}`,
-      shortPath: componentsPath
-    }))
-    nuxt.hook('components:extend', (components) => {
-      components.push(...headComponents)
-    })
+    ]) {
+      addComponent({
+        name: componentName,
+        filePath: componentsPath,
+        export: componentName,
+        // kebab case version of these tags is not valid
+        kebabName: componentName
+      })
+    }
 
     // Add mixin plugin
     addPlugin({ src: resolve(runtimeDir, 'mixin-plugin') })
