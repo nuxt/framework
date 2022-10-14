@@ -118,10 +118,15 @@ export function requireModule (id: string, opts: RequireModuleOptions = {}) {
     clearRequireCache(resolvedPath)
   }
 
-  // Try to require
-  const requiredModule = _require(resolvedPath)
+  try {
+    // Try to require
+    const requiredModule = _require(resolvedPath)
 
-  return requiredModule
+    return requiredModule
+  } catch (error: unknown) {
+    console.error(`Error while requiring module \`${id.split('/').pop()}\`: ${error}`)
+    throw error
+  }
 }
 
 export function importModule (id: string, opts: RequireModuleOptions = {}) {
