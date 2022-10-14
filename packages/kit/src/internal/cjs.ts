@@ -1,4 +1,3 @@
-import { relative } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { join, normalize } from 'pathe'
 import { interopDefault } from 'mlly'
@@ -119,15 +118,10 @@ export function requireModule (id: string, opts: RequireModuleOptions = {}) {
     clearRequireCache(resolvedPath)
   }
 
-  try {
-    // Try to require
-    const requiredModule = _require(resolvedPath)
+  // Try to require
+  const requiredModule = _require(resolvedPath)
 
-    return requiredModule
-  } catch (error: unknown) {
-    console.error(`Error while requiring module \`${relative(process.cwd(), resolvedPath)}\`: ${error}`)
-    throw error
-  }
+  return requiredModule
 }
 
 export function importModule (id: string, opts: RequireModuleOptions = {}) {
