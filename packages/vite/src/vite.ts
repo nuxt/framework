@@ -22,8 +22,6 @@ export interface ViteOptions extends InlineConfig {
 }
 
 export interface ViteBuildContext {
-  isServer?: boolean
-  isClient?: boolean
   isDev: boolean
   nuxt: Nuxt
   config: ViteOptions
@@ -128,6 +126,6 @@ export async function bundle (nuxt: Nuxt) {
     }
   })
 
-  await buildClient({ ...ctx, isServer: false, isClient: true })
-  await buildServer({ ...ctx, isServer: true, isClient: false })
+  await buildClient(ctx)
+  await buildServer(ctx)
 }

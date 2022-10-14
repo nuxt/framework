@@ -1,13 +1,20 @@
+import { useNuxt } from '@nuxt/kit'
 import escapeRegExp from 'escape-string-regexp'
 import { normalize } from 'pathe'
-import { ViteBuildContext } from '../vite'
 
-export function transpile (ctx: ViteBuildContext) {
+interface Envs {
+  isDev: boolean
+  isClient?: boolean
+  isServer?: boolean
+}
+
+export function transpile (envs: Envs): RegExp[] {
+  const nuxt = useNuxt()
   const transpile = []
 
-  for (let pattern of ctx.nuxt.options.build.transpile) {
+  for (let pattern of nuxt.options.build.transpile) {
     if (typeof pattern === 'function') {
-      pattern = pattern(ctx)
+      pattern = pattern(envs)
     }
     if (typeof pattern === 'string') {
       transpile.push(new RegExp(escapeRegExp(normalize(pattern))))
