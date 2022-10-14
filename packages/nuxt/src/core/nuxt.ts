@@ -1,5 +1,5 @@
 import { join, normalize, resolve } from 'pathe'
-import { createHooks, createDebugger } from 'hookable'
+import { createHooks } from 'hookable'
 import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
 import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule, addPlugin } from '@nuxt/kit'
 // Temporary until finding better placement
