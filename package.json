@@ -31,6 +31,7 @@
     "test:fixtures:webpack": "NUXT_TELEMETRY_DISABLED=1 TEST_WITH_WEBPACK=1 yarn test:fixtures",
     "test:types": "yarn run nuxi prepare test/fixtures/basic && cd test/fixtures/basic && npx vue-tsc --noEmit",
     "test:unit": "JITI_ESM_RESOLVE=1 yarn vitest run --dir packages",
+    "test:size": "ASSERT_SIZE=1 JITI_ESM_RESOLVE=1 yarn vitest run test/bundle.test.ts",
     "typecheck": "tsc --noEmit",
     "version": "yarn && git add yarn.lock"
   },

@@ -9,6 +9,8 @@ const rootDir = fileURLToPath(new URL('..', import.meta.url))
 const publicDir = join(rootDir, '.output/public')
 const serverDir = join(rootDir, '.output/server')
 
+const testSize = !!process.env.ASSERT_SIZE
+
 describe('minimal nuxt application', () => {
   beforeAll(async () => {
     await execaCommand('yarn nuxi build', {
@@ -18,8 +20,10 @@ describe('minimal nuxt application', () => {
 
   it('default client bundle size', async () => {
     const { files, size } = await measure('**/*.js', publicDir)
-    expect(size).toBeLessThan(110000)
-    // expect(size).toMatchInlineSnapshot('106916')
+    if (testSize) {
+      expect(size).toBeLessThan(110000)
+      // expect(size).toMatchInlineSnapshot('106916')
+    }
     expect(files.map(f => f.replace(/\..*\.js/, '.js'))).toMatchInlineSnapshot(`
       [
         "_nuxt/entry.js",
@@ -31,13 +35,17 @@ describe('minimal nuxt application', () => {
   })
 
   it('default server bundle size', async () => {
-    const serverBundle = await measure(['**/*.mjs', '!node_modules'], serverDir)
-    expect(serverBundle.size).toBeLessThan(120000)
-    // expect(serverBundle.size).toMatchInlineSnapshot('114018')
+    if (testSize) {
+      const serverBundle = await measure(['**/*.mjs', '!node_modules'], serverDir)
+      expect(serverBundle.size).toBeLessThan(120000)
+      // expect(serverBundle.size).toMatchInlineSnapshot('114018')
+    }
 
     const modules = await measure('node_modules/**/*', serverDir)
-    expect(modules.size).toBeLessThan(2700000)
-    // expect(modules.size).toMatchInlineSnapshot('2637251')
+    if (testSize) {
+      expect(modules.size).toBeLessThan(2700000)
+      // expect(modules.size).toMatchInlineSnapshot('2637251')
+    }
 
     const packages = modules.files
       .filter(m => m.endsWith('package.json'))
