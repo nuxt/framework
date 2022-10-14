@@ -62,6 +62,7 @@ describe('minimal nuxt application', () => {
         "@vue/runtime-dom",
         "@vue/server-renderer",
         "@vue/shared",
+        "@vueuse/shared",
         "buffer-from",
         "cookie-es",
         "defu",
@@ -83,6 +84,7 @@ describe('minimal nuxt application', () => {
         "unstorage",
         "vue",
         "vue-bundle-renderer",
+        "vue-demi",
       ]
     `)
   })
