@@ -1,4 +1,3 @@
-import { relative } from 'node:path'
 import type { Nuxt, NuxtModule } from '@nuxt/schema'
 import { useNuxt } from '../context'
 import { resolveModule, requireModule, importModule } from '../internal/cjs'
