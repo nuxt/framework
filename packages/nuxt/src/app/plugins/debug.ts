@@ -1,20 +1,9 @@
+import { createDebugger } from 'hookable'
 import { defineNuxtPlugin } from '#app'
 
-const wrapName = (event: string) => process.server ? `[nuxt] ${event}` : event
-
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.hooks.beforeEach(({ name }) => {
-    console.time(wrapName(name))
-  })
-
-  nuxtApp.hooks.afterEach(({ name, args }) => {
-    if (process.client) {
-      console.groupCollapsed(name)
-      console.timeLog(name, args)
-      console.groupEnd()
-    }
-    if (process.server) {
-      console.timeEnd(wrapName(name))
-    }
+  // @ts-expect-error remove in next version of hookable
+  createDebugger(nuxtApp.hooks, {
+    tag: 'nuxt app'
   })
 })

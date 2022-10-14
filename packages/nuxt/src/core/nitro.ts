@@ -7,6 +7,7 @@ import { resolvePath } from '@nuxt/kit'
 import defu from 'defu'
 import fsExtra from 'fs-extra'
 import { toEventHandler, dynamicEventHandler } from 'h3'
+import { createDebugger } from 'hookable'
 import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
@@ -149,6 +150,13 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
 
   // Connect hooks
   nuxt.hook('close', () => nitro.hooks.callHook('close'))
+  if (nuxt.options.debug) {
+    // @ts-expect-error remove in next version of hookable
+    const { close } = createDebugger(nitro.hooks, {
+      tag: 'nitro build'
+    })
+    nitro.hooks.hook('close', close)
+  }
 
   // Setup handlers
   const devMiddlewareHandler = dynamicEventHandler()
