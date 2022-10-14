@@ -8286,10 +8286,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hookable@npm:^5.2.2, hookable@npm:^5.3.0":
-  version: 5.3.0
-  resolution: "hookable@npm:5.3.0"
-  checksum: 5a170b790fc472fae11cc8ebc7a1336e7063c3f0a9697cefb5b18d455fcda4d1eadf21c254a27c0625fbbe31f736fd662797c21e6425e9c8cf073182b2ecae7f
+"hookable@npm:^5.2.2, hookable@npm:^5.3.0, hookable@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "hookable@npm:5.4.0"
+  checksum: 810376b27eab8a8c05684c2c4cb394c7837ac3cf7a91a63f0468cef908a87c982ab2f0320dce0bceaa5fac99006f361a113eb739d0ae3801a9137586b4707f0a
   languageName: node
   linkType: hard
 
@@ -10942,7 +10942,7 @@ __metadata:
     globby: ^13.1.2
     h3: ^0.7.21
     hash-sum: ^2.0.0
-    hookable: ^5.3.0
+    hookable: ^5.4.0
     knitwork: ^0.1.2
     magic-string: ^0.26.7
     mlly: ^0.5.16
