@@ -15,7 +15,14 @@ import AppComponent from '#build/app-component.mjs'
 if (!globalThis.$fetch) {
   // @ts-ignore
   globalThis.$fetch = $fetch.create({
-    baseURL: baseURL()
+    // @ts-ignore
+    onRequest ({ request, options }) {
+      if (/^https?:\/\//gm.test(<string>request) && !options.baseURL) {
+        options.baseURL = ''
+      } else {
+        options.baseURL = baseURL()
+      }
+    }
   })
 }
 
