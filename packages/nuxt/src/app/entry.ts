@@ -19,7 +19,7 @@ if (!globalThis.$fetch) {
     onRequest ({ request, options }) {
       if (/^https?:\/\//gm.test(<string>request) && !options.baseURL) {
         options.baseURL = ''
-      } else {
+      } else if (!options.baseURL) {
         options.baseURL = baseURL()
       }
     }
