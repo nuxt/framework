@@ -98,7 +98,7 @@ export const Script = defineComponent({
   },
   setup: setupForUseMeta((props, { slots }) => {
     if (process.dev && !scriptDeprecated) {
-      console.log(`[nuxt] \`<Script>\` is deprecated and may be removed in a future release. We advise using \`useHead()\` directly.`)
+      console.log('[nuxt] `<Script>` is deprecated and may be removed in a future release. We advise using `useHead()` directly.')
       scriptDeprecated = true
     }
 
