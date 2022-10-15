@@ -189,7 +189,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
       const el = process.server ? undefined : ref<HTMLElement | null>(null)
       if (process.client) {
         checkPropConflicts(props, 'prefetch', 'noPrefetch')
-        const shouldPrefetch = props.prefetch !== false && props.noPrefetch !== true && typeof to.value === 'string' && !isSlowConnection()
+        const shouldPrefetch = props.prefetch !== false && props.noPrefetch !== true && typeof to.value === 'string' && props.target !== '_blank' && !isSlowConnection()
         if (shouldPrefetch) {
           const nuxtApp = useNuxtApp()
           const observer = useObserver()
