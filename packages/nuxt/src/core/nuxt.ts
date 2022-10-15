@@ -1,5 +1,5 @@
 import { join, normalize, resolve } from 'pathe'
-import { createHooks } from 'hookable'
+import { createHooks, createDebugger } from 'hookable'
 import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
 import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule, addPlugin } from '@nuxt/kit'
 // Temporary until finding better placement
@@ -234,13 +234,9 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
 
   const nuxt = createNuxt(options)
 
-  // TODO: parallel kit:compatibility calls in defineModule
-  // if (nuxt.options.debug) {
-  //   // @ts-expect-error remove in next version of hookable
-  //   createDebugger(nuxt.hooks, {
-  //     tag: 'nuxt build'
-  //   })
-  // }
+  if (nuxt.options.debug) {
+    createDebugger(nuxt.hooks, { tag: 'nuxt' })
+  }
 
   if (opts.ready !== false) {
     await nuxt.ready()
