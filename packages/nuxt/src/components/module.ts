@@ -3,6 +3,7 @@ import { relative, resolve } from 'pathe'
 import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate, updateTemplates } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { distDir } from '../dirs'
+import { clientIfFailPlugin } from './client-if-fail-auto-id'
 import { componentsPluginTemplate, componentsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
 import { loaderPlugin } from './loader'
@@ -193,6 +194,10 @@ export default defineNuxtModule<ComponentsOptions>({
         getComponents,
         mode
       }))
+      config.plugins.push(clientIfFailPlugin.vite({
+        sourcemap: nuxt.options.sourcemap[mode],
+        rootDir: nuxt.options.rootDir
+      }))
       if (nuxt.options.experimental.treeshakeClientOnly && isServer) {
         config.plugins.push(TreeShakeTemplatePlugin.vite({
           sourcemap: nuxt.options.sourcemap[mode],
@@ -208,6 +213,10 @@ export default defineNuxtModule<ComponentsOptions>({
           sourcemap: nuxt.options.sourcemap[mode],
           getComponents,
           mode
+        }))
+        config.plugins.push(clientIfFailPlugin.webpack({
+          sourcemap: nuxt.options.sourcemap[mode],
+          rootDir: nuxt.options.rootDir
         }))
         if (nuxt.options.experimental.treeshakeClientOnly && mode === 'server') {
           config.plugins.push(TreeShakeTemplatePlugin.webpack({
