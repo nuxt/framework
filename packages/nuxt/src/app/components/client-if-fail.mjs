@@ -8,7 +8,6 @@ export default defineComponent({
     }
   },
   setup (props, ctx) {
-    const slot = ctx.slots.default()
     if (process.server) {
       const error = ref(false)
 
@@ -22,7 +21,7 @@ export default defineComponent({
         }
         return false
       })
-      return () => slot
+      return () => ctx.slots.default()
     }
     const mounted = ref(false)
     const ssrFailed = useState(`error_component_${props.uid}`)
@@ -32,8 +31,8 @@ export default defineComponent({
     }
     return () => ssrFailed.value
       ? mounted.value
-        ? slot
-        : slot.map(() => createElementBlock('div'))
-      : slot
+        ? ctx.slots.default()
+        : ctx.slots.default().map(() => createElementBlock('div'))
+      : ctx.slots.default()
   }
 })
