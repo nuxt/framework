@@ -269,7 +269,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
           })
         }
 
-        return h('a', { href, rel, target }, slots.default?.())
+        return h('a', { ref: el, href, rel, target }, slots.default?.())
       }
     }
   }) as unknown as DefineComponent<NuxtLinkProps>
