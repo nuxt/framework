@@ -21,7 +21,7 @@ export default defineComponent({
         }
         return false
       })
-      return () => ctx.slots.default()
+      return () => ctx.slots.default?.()
     }
     const mounted = ref(false)
     const ssrFailed = useState(`error_component_${props.uid}`)
@@ -31,8 +31,8 @@ export default defineComponent({
     }
     return () => ssrFailed.value
       ? mounted.value
-        ? ctx.slots.default()
-        : ctx.slots.default().map(() => createElementBlock('div'))
-      : ctx.slots.default()
+        ? ctx.slots.default?.()
+        : ctx.slots.default?.().map(() => createElementBlock('div'))
+      : ctx.slots.default?.()
   }
 })
