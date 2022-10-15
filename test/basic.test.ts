@@ -242,9 +242,15 @@ describe('pages', () => {
     // ensure failed components are not rendered server-side
     expect(html).not.toContain('This breaks in server-side setup.')
     // ensure not failed component should be rendered
-    expect(html).toContain('Sugar Counter')
+    expect(html).toContain('Sugar Counter 0 x 2 = 0')
 
     await expectNoClientErrors('/client-if-fail')
+
+    const page = await createPage('/client-if-fail')
+    await page.waitForLoadState('networkidle')
+    // ensure components reactivity
+    await page.locator('#increment-count').click()
+    expect(await page.locator('#sugar-counter').innerHTML()).toContain('Sugar Counter 1 x 2 = 2')
   })
 })
 

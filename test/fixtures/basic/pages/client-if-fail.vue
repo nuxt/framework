@@ -11,9 +11,12 @@
       </ClientIfFail>
       <ClientIfFail uid="partially-successfull">
         <BreakInSetup />
-        <SugarCounter :count="count" />
+        <SugarCounter id="sugar-counter" :count="count" />
       </ClientIfFail>
     </div>
+    <button id="increment-count" @click="count++">
+      increment count
+    </button>
   </div>
 </template>
 
