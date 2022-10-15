@@ -236,6 +236,16 @@ describe('pages', () => {
     expect(html).not.toContain('client only script')
     await expectNoClientErrors('/client-only-explicit-import')
   })
+
+  it('client-if-fail', async () => {
+    const html = await $fetch('/client-if-fail')
+    // ensure failed components are not rendered server-side
+    expect(html).not.toContain('This breaks in server-side setup.')
+    // ensure not failed component should be rendered
+    expect(html).toContain('Sugar Counter')
+
+    await expectNoClientErrors('/client-if-fail')
+  })
 })
 
 describe('head tags', () => {
