@@ -22,7 +22,6 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     workspaceDir: nuxt.options.workspaceDir,
     srcDir: nuxt.options.serverDir,
     dev: nuxt.options.dev,
-    preset: nuxt.options.dev ? 'nitro-dev' : undefined,
     buildDir: nuxt.options.buildDir,
     analyze: nuxt.options.build.analyze && {
       template: 'treemap',
