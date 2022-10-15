@@ -243,6 +243,8 @@ describe('pages', () => {
     expect(html).not.toContain('This breaks in server-side setup.')
     // ensure not failed component should be rendered
     expect(html).toContain('Sugar Counter 0 x 2 = 0')
+    // ensure failed component render a div with attributes
+    expect(html).toContain('<div class="broke-in-ssr"></div>')
 
     await expectNoClientErrors('/client-if-fail')
 

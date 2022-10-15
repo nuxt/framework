@@ -1,4 +1,5 @@
 import { defineComponent, createElementBlock, onErrorCaptured } from 'vue'
+import { ssrRenderAttrs } from 'vue/server-renderer'
 
 export default defineComponent({
   props: {
@@ -7,7 +8,7 @@ export default defineComponent({
       required: true
     }
   },
-  setup (props, ctx) {
+  setup (props, { slots }) {
     if (process.server) {
       const error = ref(false)
 
@@ -17,11 +18,11 @@ export default defineComponent({
         useState(`error_component_${props.uid}`, () => true)
         // modify ssr render to force render a simple div
         instance._.ssrRender = (_ctx, _push, _parent, _attrs) => {
-          _push('<div></div>')
+          _push(`<div${ssrRenderAttrs(_attrs)}></div>`)
         }
         return false
       })
-      return () => ctx.slots.default?.()
+      return () => slots.default?.()
     }
     const mounted = ref(false)
     const ssrFailed = useState(`error_component_${props.uid}`)
@@ -29,10 +30,10 @@ export default defineComponent({
     if (ssrFailed.value) {
       onMounted(() => { mounted.value = true })
     }
-    return () => ssrFailed.value
+    return ctx => ssrFailed.value
       ? mounted.value
-        ? ctx.slots.default?.()
-        : ctx.slots.default?.().map(() => createElementBlock('div'))
-      : ctx.slots.default?.()
+        ? slots.default?.()
+        : slots.default?.().map(() => createElementBlock('div', ctx.$attrs))
+      : slots.default?.()
   }
 })

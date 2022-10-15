@@ -6,7 +6,7 @@
         <BreakInSetup />
       </ClientIfFail>
       <ClientIfFail uid="multiChild">
-        <BreakInSetup />
+        <BreakInSetup class="broke-in-ssr" />
         <BreakInSetup />
       </ClientIfFail>
       <ClientIfFail uid="partially-successfull">
