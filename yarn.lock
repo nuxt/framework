@@ -1980,7 +1980,7 @@ __metadata:
     externality: ^0.2.2
     fs-extra: ^10.1.0
     get-port-please: ^2.6.1
-    h3: ^0.7.21
+    h3: ^0.8.0
     knitwork: ^0.1.2
     magic-string: ^0.26.7
     mlly: ^0.5.16
@@ -8586,6 +8586,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"h3@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "h3@npm:0.8.0"
+  dependencies:
+    cookie-es: ^0.5.0
+    destr: ^1.1.1
+    radix3: ^0.2.0
+    ufo: ^0.8.5
+  checksum: b468883939cae0ed7a918294fe8dde76d8331d03cd707ec5cb1d9d7dca095fbb3112683d764672ae1c42ae56a0e1dcc2f8d565ca23f8ca67e50b7194d52aa514
+  languageName: node
+  linkType: hard
+
 "handlebars@npm:^4.7.7":
   version: 4.7.7
   resolution: "handlebars@npm:4.7.7"
@@ -11284,7 +11296,7 @@ __metadata:
     flat: ^5.0.2
     fsevents: ~2.3.2
     giget: ^0.1.7
-    h3: ^0.7.21
+    h3: ^0.8.0
     jiti: ^1.16.0
     listhen: ^0.3.4
     mlly: ^0.5.16
@@ -11374,7 +11386,7 @@ __metadata:
     escape-string-regexp: ^5.0.0
     fs-extra: ^10.1.0
     globby: ^13.1.2
-    h3: ^0.7.21
+    h3: ^0.8.0
     hash-sum: ^2.0.0
     hookable: ^5.4.1
     knitwork: ^0.1.2
@@ -12676,6 +12688,13 @@ __metadata:
   version: 0.1.2
   resolution: "radix3@npm:0.1.2"
   checksum: 483ecb97ae51e8dbda04e1c393bb001739635799bd1d7a7d1086193458df61d85f9e936c44c7bde81aba370dfd6bce8ccbf0fa691911bb8ba83379c90f96fea4
+  languageName: node
+  linkType: hard
+
+"radix3@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "radix3@npm:0.2.0"
+  checksum: e52b1aba82b61de32c64f543def87f06334ebe70dc9c468d2acd3e311024a50bb2d3aa026ad559b761d03cd1540efb2f471d980b3e51c2625cbec2b8cb59ad75
   languageName: node
   linkType: hard
 
