@@ -139,8 +139,6 @@ export default defineRenderHandler(async (event) => {
   const ssrContext: NuxtSSRContext = {
     url,
     event,
-    req: event.req,
-    res: event.res,
     runtimeConfig: useRuntimeConfig() as NuxtSSRContext['runtimeConfig'],
     noSSR:
       !!(process.env.NUXT_NO_SSR) ||
