@@ -2,14 +2,14 @@
   <div>
     Hello World
     <div id="locator-for-playwright">
-      <ClientIfFail uid="singleChild">
+      <ClientIfFail>
         <BreakInSetup />
       </ClientIfFail>
-      <ClientIfFail uid="multiChild">
+      <ClientIfFail>
         <BreakInSetup class="broke-in-ssr" />
         <BreakInSetup />
       </ClientIfFail>
-      <ClientIfFail uid="partially-successfull">
+      <ClientIfFail>
         <BreakInSetup />
         <SugarCounter id="sugar-counter" :count="count" />
       </ClientIfFail>
