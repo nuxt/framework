@@ -2,12 +2,13 @@ import { join, resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
-import type { Connect, ServerOptions } from 'vite'
+import type { ServerOptions } from 'vite'
 import { logger } from '@nuxt/kit'
 import { getPort } from 'get-port-please'
 import { joinURL, withoutLeadingSlash } from 'ufo'
 import defu from 'defu'
 import type { OutputOptions } from 'rollup'
+import { fromNodeMiddleware } from 'h3'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
@@ -109,17 +110,18 @@ export async function buildClient (ctx: ViteBuildContext) {
     const viteServer = await vite.createServer(clientConfig)
     ctx.clientServer = viteServer
     await ctx.nuxt.callHook('vite:serverCreated', viteServer, { isClient: true, isServer: false })
-    const viteMiddleware: Connect.NextHandleFunction = (req, res, next) => {
+    const viteMiddleware = fromNodeMiddleware((req, res, next) => {
       // Workaround: vite devmiddleware modifies req.url
       const originalURL = req.url!
       if (!originalURL.startsWith('/__nuxt_vite_node__') && !originalURL.startsWith(clientConfig.base!)) {
         req.url = joinURL('/__url', originalURL)
       }
-      viteServer.middlewares.handle(req, res, (err: unknown) => {
+
+      viteServer.middlewares.handle(req, res, (err: Error) => {
         req.url = originalURL
-        next(err)
+        next!(err)
       })
-    }
+    })
     await ctx.nuxt.callHook('server:devMiddleware', viteMiddleware)
 
     ctx.nuxt.hook('close', async () => {

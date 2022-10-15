@@ -1873,7 +1873,7 @@ __metadata:
     externality: ^0.2.2
     fs-extra: ^10.1.0
     get-port-please: ^2.6.1
-    h3: ^0.8.0
+    h3: ^0.8.1
     knitwork: ^0.1.2
     magic-string: ^0.26.7
     mlly: ^0.5.16
@@ -2841,22 +2841,6 @@ __metadata:
     "@typescript-eslint/types": 5.40.0
     eslint-visitor-keys: ^3.3.0
   checksum: a11787f7e6ac7018b22848028c9116d028f89782b0ee120517f0384e9db260e3001ad897512d9c3cf15ce16073ae4c1dc7f81f29d6d40dec78b5e8c8e79f344f
-  languageName: node
-  linkType: hard
-
-"@unjsio/rollup-plugin-dts@npm:^5.0.0-rc.1":
-  version: 5.0.0-rc.1
-  resolution: "@unjsio/rollup-plugin-dts@npm:5.0.0-rc.1"
-  dependencies:
-    "@babel/code-frame": ^7.18.6
-    magic-string: ^0.26.7
-  peerDependencies:
-    rollup: ^3.0.0
-    typescript: ^4.1
-  dependenciesMeta:
-    "@babel/code-frame":
-      optional: true
-  checksum: d3de0c98f06f54a401f00668a153e4f102d677ca498c2d24f27f61aa04166b20a8d439394f56440d760c64ae891ee31459f6d048ec66605a0ba4796ac7aaa529
   languageName: node
   linkType: hard
 
@@ -6420,7 +6404,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:^0.15.10, esbuild@npm:^0.15.11, esbuild@npm:^0.15.6, esbuild@npm:^0.15.9":
+"esbuild@npm:^0.15.11, esbuild@npm:^0.15.6, esbuild@npm:^0.15.9":
   version: 0.15.11
   resolution: "esbuild@npm:0.15.11"
   dependencies:
@@ -8055,15 +8039,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"h3@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "h3@npm:0.8.0"
+"h3@npm:^0.8.0, h3@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "h3@npm:0.8.1"
   dependencies:
     cookie-es: ^0.5.0
     destr: ^1.1.1
-    radix3: ^0.2.0
+    radix3: ^0.2.1
     ufo: ^0.8.5
-  checksum: b468883939cae0ed7a918294fe8dde76d8331d03cd707ec5cb1d9d7dca095fbb3112683d764672ae1c42ae56a0e1dcc2f8d565ca23f8ca67e50b7194d52aa514
+  checksum: 2f4f4925dcee721ea7f8f7c3d06b64dbaecf9d61a82dc3e85c8c70ae6127b821bf0cf9d48a4b3c5a45ac29abe5a4b94e8feba8e2e16276f8dd2aee6255e255ad
   languageName: node
   linkType: hard
 
@@ -8187,7 +8171,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hookable@npm:^5.4.0, hookable@npm:^5.4.1":
+"hookable@npm:^5.4.1":
   version: 5.4.1
   resolution: "hookable@npm:5.4.1"
   checksum: 2a48150436bf70b4b756bcf15694809032c490c1747aba363a6de928a96712e808b0918de06c933e082cc2042c3f051b593d400df6af4773cd9ad1e85d677839
@@ -10744,7 +10728,7 @@ __metadata:
     flat: ^5.0.2
     fsevents: ~2.3.2
     giget: ^0.1.7
-    h3: ^0.8.0
+    h3: ^0.8.1
     jiti: ^1.16.0
     listhen: ^0.3.4
     mlly: ^0.5.16
@@ -10834,7 +10818,7 @@ __metadata:
     escape-string-regexp: ^5.0.0
     fs-extra: ^10.1.0
     globby: ^13.1.2
-    h3: ^0.8.0
+    h3: ^0.8.1
     hash-sum: ^2.0.0
     hookable: ^5.4.1
     knitwork: ^0.1.2
@@ -12110,10 +12094,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"radix3@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "radix3@npm:0.2.0"
-  checksum: e52b1aba82b61de32c64f543def87f06334ebe70dc9c468d2acd3e311024a50bb2d3aa026ad559b761d03cd1540efb2f471d980b3e51c2625cbec2b8cb59ad75
+"radix3@npm:^0.2.0, radix3@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "radix3@npm:0.2.1"
+  checksum: 4d7b7360000efb96bf542a7327aafe6f23a21b25add40f173ade2fb1a757be5f3dc4fd2caf6fab746b68d1b0f176d56fc9f529e8493307d69cc3cb4ca4fcb57e
   languageName: node
   linkType: hard
 
@@ -12487,6 +12471,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-dts@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "rollup-plugin-dts@npm:5.0.0"
+  dependencies:
+    "@babel/code-frame": ^7.18.6
+    magic-string: ^0.26.7
+  peerDependencies:
+    rollup: ^3.0.0
+    typescript: ^4.1
+  dependenciesMeta:
+    "@babel/code-frame":
+      optional: true
+  checksum: feb2d614528c255ee698120be0fd404b0a4fa312362a3d687d76551157464decc66be6dfecb624c42bc64a9e6298ed21e13e689dc9b144acab8294cd08a53455
+  languageName: node
+  linkType: hard
+
 "rollup-plugin-terser@npm:^7.0.2":
   version: 7.0.2
   resolution: "rollup-plugin-terser@npm:7.0.2"
@@ -12502,20 +12502,20 @@ __metadata:
   linkType: hard
 
 "rollup-plugin-visualizer@npm:^5.8.2":
-  version: 5.8.2
-  resolution: "rollup-plugin-visualizer@npm:5.8.2"
+  version: 5.8.3
+  resolution: "rollup-plugin-visualizer@npm:5.8.3"
   dependencies:
     open: ^8.4.0
     source-map: ^0.7.4
     yargs: ^17.5.1
   peerDependencies:
-    rollup: ^2.0.0
+    rollup: 2.x || 3.x
   peerDependenciesMeta:
     rollup:
       optional: true
   bin:
     rollup-plugin-visualizer: dist/bin/cli.js
-  checksum: e4d5507e1991adbd3d454ef3855a57815587b37718b1b48aef8fb281f81011dd03b7a43a3811802a7115a78b60e7b674453c742e33d9df6457e7be5abb6895d7
+  checksum: 0ed4b4b49be8c38fa4820190286daf6f94446a05190a6f1932f2718cb8d7e2a1afacc9f94bf75934087ec856a634a5c9355c078d77482a5796465d15deb988c9
   languageName: node
   linkType: hard
 
@@ -12542,7 +12542,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^3.1.0":
+"rollup@npm:^3.2.0":
   version: 3.2.0
   resolution: "rollup@npm:3.2.0"
   dependencies:
@@ -13857,8 +13857,8 @@ __metadata:
   linkType: hard
 
 "unbuild@npm:^0.9.2":
-  version: 0.9.2
-  resolution: "unbuild@npm:0.9.2"
+  version: 0.9.4
+  resolution: "unbuild@npm:0.9.4"
   dependencies:
     "@rollup/plugin-alias": ^4.0.0
     "@rollup/plugin-commonjs": ^23.0.0
@@ -13866,13 +13866,12 @@ __metadata:
     "@rollup/plugin-node-resolve": ^15.0.0
     "@rollup/plugin-replace": ^5.0.0
     "@rollup/pluginutils": ^5.0.1
-    "@unjsio/rollup-plugin-dts": ^5.0.0-rc.1
     chalk: ^5.1.2
     consola: ^2.15.3
     defu: ^6.1.0
-    esbuild: ^0.15.10
+    esbuild: ^0.15.11
     globby: ^13.1.2
-    hookable: ^5.4.0
+    hookable: ^5.4.1
     jiti: ^1.16.0
     magic-string: ^0.26.7
     mkdirp: ^1.0.4
@@ -13883,13 +13882,14 @@ __metadata:
     pkg-types: ^0.3.5
     pretty-bytes: ^6.0.0
     rimraf: ^3.0.2
-    rollup: ^3.1.0
+    rollup: ^3.2.0
+    rollup-plugin-dts: ^5.0.0
     scule: ^0.3.2
     typescript: ^4.8.4
     untyped: ^0.5.0
   bin:
     unbuild: dist/cli.mjs
-  checksum: 305752176903a0b70d66ef66500f9d3a77cf9abbad1ba3773bec3c916620e9ed74c9e0794a20c9a8240abbeeca4610e330953b33c5a76ad853ba4af5c0f10072
+  checksum: 6e80e87547b28325e5136a9f84cc4b4f67855f09cdf9b67308f6e104896ae110cce1758c74eeecdc7dbd3963b5f35b89e96ce6a795d4bdeed684c9477225e927
   languageName: node
   linkType: hard
 
