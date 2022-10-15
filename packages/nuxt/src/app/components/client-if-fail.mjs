@@ -8,7 +8,8 @@ export default defineComponent({
       required: true
     }
   },
-  setup (props, { slots }) {
+  emits: ['ssr-error'],
+  setup (props, { slots, emit }) {
     if (process.server) {
       const error = ref(false)
 
@@ -20,6 +21,7 @@ export default defineComponent({
         instance._.ssrRender = (_ctx, _push, _parent, _attrs) => {
           _push(`<div${ssrRenderAttrs(_attrs)}></div>`)
         }
+        emit('ssr-error', instance)
         return false
       })
       return () => slots.default?.()
