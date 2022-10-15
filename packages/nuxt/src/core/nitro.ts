@@ -229,7 +229,7 @@ async function resolveHandlers (nuxt: Nuxt) {
 }
 
 declare module 'nitropack' {
-  interface NitroRouteOption {
+  interface NitroRouteOptions {
     ssr?: boolean
   }
 }
