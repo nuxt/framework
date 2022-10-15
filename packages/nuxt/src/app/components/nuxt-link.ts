@@ -1,11 +1,11 @@
 import { defineComponent, h, ref, resolveComponent, PropType, computed, DefineComponent, ComputedRef, onMounted, onBeforeUnmount } from 'vue'
-import { RouteLocationRaw, Router } from 'vue-router'
+import type { RouteLocationRaw, Router } from 'vue-router'
 import { hasProtocol } from 'ufo'
 
 import { navigateTo, useRouter } from '../composables/router'
 import { useNuxtApp } from '../nuxt'
 
-const firstNonUndefined = <T>(...args: (T | undefined)[]) => args.find(arg => arg !== undefined)
+const firstNonUndefined = <T> (...args: (T | undefined)[]) => args.find(arg => arg !== undefined)
 
 const DEFAULT_EXTERNAL_REL_ATTRIBUTE = 'noopener noreferrer'
 
@@ -26,7 +26,7 @@ export type NuxtLinkProps = {
   custom?: boolean
 
   // Attributes
-  target?: string | null
+  target?: '_blank' | '_parent' | '_self' | '_top' | (string & {}) | null
   rel?: string | null
   noRel?: boolean
 
