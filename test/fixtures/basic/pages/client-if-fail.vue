@@ -3,16 +3,16 @@
     Hello World
     <div id="locator-for-playwright">
       <ClientIfFail uid="singleChild">
-        <BreakinSetup />
+        <BreakInSetup />
       </ClientIfFail>
-      <CLientIfFail uid="multiChild">
-        <BreakinSetup />
-        <BreakinSetup />
-      </CLientIfFail>
-      <CLientIfFail uid="partially-successfull">
-        <BreakinSetup />
+      <ClientIfFail uid="multiChild">
+        <BreakInSetup />
+        <BreakInSetup />
+      </ClientIfFail>
+      <ClientIfFail uid="partially-successfull">
+        <BreakInSetup />
         <SugarCounter :count="count" />
-      </CLientIfFail>
+      </ClientIfFail>
     </div>
   </div>
 </template>
