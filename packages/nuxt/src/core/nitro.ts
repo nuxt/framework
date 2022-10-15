@@ -189,7 +189,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     nuxt.hook('build:compile', ({ compiler }) => {
       compiler.outputFileSystem = { ...fsExtra, join } as any
     })
-    nuxt.hook('server:devMiddleware', (m) => { devMiddlewareHandler.set(toEventHandler(m)) })
+    nuxt.hook('server:devHandler', (h) => { devMiddlewareHandler.set(h) })
     nuxt.server = createDevServer(nitro)
     nuxt.hook('build:resources', () => {
       nuxt.server.reload()
