@@ -443,7 +443,7 @@ importers:
       knitwork: ^0.1.2
       magic-string: ^0.26.7
       mlly: ^0.5.16
-      nitropack: npm:nitropack-edge
+      nitropack: npm:nitropack-edge@0.6.0-27765421.6d4b416
       nuxi: workspace:*
       ohash: ^0.1.5
       ohmyfetch: ^0.4.19
@@ -2437,7 +2437,7 @@ packages:
       '@docsearch/js': 3.2.1
       '@fontsource/inter': 4.5.13
       '@iconify/vue': 4.0.0
-      '@nuxt/content': /@nuxt/content-edge/2.1.1-27762558.2f410e8
+      '@nuxt/content': /@nuxt/content-edge/2.1.1-27765453.0b781f1
       '@nuxtjs/algolia': 1.1.4
       '@nuxtjs/color-mode': 3.1.6
       '@nuxtjs/tailwindcss': 5.3.3
@@ -2477,7 +2477,7 @@ packages:
       '@docsearch/js': 3.2.1
       '@fontsource/inter': 4.5.13
       '@iconify/vue': 4.0.0
-      '@nuxt/content': /@nuxt/content-edge/2.1.1-27762558.2f410e8
+      '@nuxt/content': /@nuxt/content-edge/2.1.1-27765453.0b781f1
       '@nuxtjs/algolia': 1.1.4
       '@nuxtjs/color-mode': 3.1.6
       '@nuxtjs/tailwindcss': 5.3.3
@@ -2540,8 +2540,8 @@ packages:
       - webpack
     dev: false
 
-  /@nuxt/content-edge/2.1.1-27762558.2f410e8:
-    resolution: {integrity: sha512-MYtdqmsLi83CeyeGlFqBhOgg3nQ2UtYAFSz+ElqPGrK99RUxW+QICVr6oVIqOGQ6OjMv0lQl2aIKPiVr8APyBg==}
+  /@nuxt/content-edge/2.1.1-27765453.0b781f1:
+    resolution: {integrity: sha512-0QDbZtXzYthGHDWHsf/VdRQLngUdxODFaxU8gUDJM9olPTY49xrEYgB4CSlg8DvVdkbWxYeDzfmhdG9xLmKrxQ==}
     dependencies:
       '@nuxt/kit': link:packages/kit
       consola: 2.15.3
