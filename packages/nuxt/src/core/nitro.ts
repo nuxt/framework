@@ -6,7 +6,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { resolvePath } from '@nuxt/kit'
 import defu from 'defu'
 import fsExtra from 'fs-extra'
-import { toEventHandler, dynamicEventHandler } from 'h3'
+import { dynamicEventHandler } from 'h3'
 import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
@@ -17,11 +17,11 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   // Resolve config
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
+    debug: nuxt.options.debug,
     rootDir: nuxt.options.rootDir,
     workspaceDir: nuxt.options.workspaceDir,
     srcDir: nuxt.options.serverDir,
     dev: nuxt.options.dev,
-    preset: nuxt.options.dev ? 'nitro-dev' : undefined,
     buildDir: nuxt.options.buildDir,
     analyze: nuxt.options.build.analyze && {
       template: 'treemap',
@@ -189,7 +189,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     nuxt.hook('build:compile', ({ compiler }) => {
       compiler.outputFileSystem = { ...fsExtra, join } as any
     })
-    nuxt.hook('server:devMiddleware', (m) => { devMiddlewareHandler.set(toEventHandler(m)) })
+    nuxt.hook('server:devHandler', (h) => { devMiddlewareHandler.set(h) })
     nuxt.server = createDevServer(nitro)
     nuxt.hook('build:resources', () => {
       nuxt.server.reload()
@@ -229,7 +229,10 @@ async function resolveHandlers (nuxt: Nuxt) {
 }
 
 declare module 'nitropack' {
-  interface NitroRouteOption {
+  interface NitroRouteConfig {
+    ssr?: boolean
+  }
+  interface NitroRouteOptions {
     ssr?: boolean
   }
 }
