@@ -3,4 +3,3 @@ packages:
   - "examples/**"
   - "playground"
   - "text/fixtures/*"
-  - "docs"

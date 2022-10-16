@@ -2,10 +2,8 @@
   "name": "docs",
   "private": true,
   "scripts": {
-    "dev": "pnpm gendocs && nuxi dev",
-    "build": "pnpm gendocs && nuxi generate",
-    "lint:docs": "cd .. && pnpm lint:docs",
-    "lint:docs:fix": "cd .. && pnpm lint:docs:fix",
+    "dev": "yarn gendocs && nuxi dev",
+    "build": "yarn gendocs && nuxi generate",
     "gendocs": "jiti ./scripts/gen-docs.ts"
   },
   "dependencies": {
