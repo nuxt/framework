@@ -168,10 +168,10 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: resolve(nuxt.options.appDir, 'components/nuxt-loading-indicator')
   })
 
-  // Add <ClientIfFail>
+  // Add <ClientFallback>
   addComponent({
-    name: 'ClientIfFail',
-    filePath: resolve(nuxt.options.appDir, 'components/client-if-fail')
+    name: 'ClientFallback',
+    filePath: resolve(nuxt.options.appDir, 'components/client-fallback')
   })
 
   // Deprecate hooks

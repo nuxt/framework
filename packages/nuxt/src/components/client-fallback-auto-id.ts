@@ -11,12 +11,12 @@ interface LoaderOptions {
   rootDir: string
 }
 
-export const clientIfFailPlugin = createUnplugin((options: LoaderOptions) => {
+export const clientFallbackAutoIdPlugin = createUnplugin((options: LoaderOptions) => {
   const exclude = options.transform?.exclude || []
   const include = options.transform?.include || []
 
   return {
-    name: 'nuxt:client-if-fail-auto-id',
+    name: 'nuxt:client-fallback-auto-id',
     enforce: 'pre',
     transformInclude (id) {
       if (exclude.some(pattern => id.match(pattern))) {

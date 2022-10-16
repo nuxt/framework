@@ -237,8 +237,8 @@ describe('pages', () => {
     await expectNoClientErrors('/client-only-explicit-import')
   })
 
-  it('client-if-fail', async () => {
-    const html = await $fetch('/client-if-fail')
+  it('client-fallback', async () => {
+    const html = await $fetch('/client-fallback')
     // ensure failed components are not rendered server-side
     expect(html).not.toContain('This breaks in server-side setup.')
     // ensure not failed component should be rendered
@@ -246,9 +246,9 @@ describe('pages', () => {
     // ensure failed component render a div with attributes
     expect(html).toContain('<div class="broke-in-ssr"></div>')
 
-    await expectNoClientErrors('/client-if-fail')
+    await expectNoClientErrors('/client-fallback')
 
-    const page = await createPage('/client-if-fail')
+    const page = await createPage('/client-fallback')
     await page.waitForLoadState('networkidle')
     // ensure components reactivity
     await page.locator('#increment-count').click()

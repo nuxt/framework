@@ -2,17 +2,17 @@
   <div>
     Hello World
     <div id="locator-for-playwright">
-      <ClientIfFail>
+      <ClientFallback>
         <BreakInSetup />
-      </ClientIfFail>
-      <ClientIfFail>
+      </ClientFallback>
+      <ClientFallback>
         <BreakInSetup class="broke-in-ssr" />
         <BreakInSetup />
-      </ClientIfFail>
-      <ClientIfFail>
+      </ClientFallback>
+      <ClientFallback>
         <BreakInSetup />
         <SugarCounter id="sugar-counter" :count="count" />
-      </ClientIfFail>
+      </ClientFallback>
     </div>
     <button id="increment-count" @click="count++">
       increment count

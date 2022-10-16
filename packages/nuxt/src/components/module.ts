@@ -3,7 +3,7 @@ import { relative, resolve } from 'pathe'
 import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate, updateTemplates } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { distDir } from '../dirs'
-import { clientIfFailPlugin } from './client-if-fail-auto-id'
+import { clientFallbackAutoIdPlugin } from './client-fallback-auto-id'
 import { componentsPluginTemplate, componentsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
 import { loaderPlugin } from './loader'
@@ -194,7 +194,7 @@ export default defineNuxtModule<ComponentsOptions>({
         getComponents,
         mode
       }))
-      config.plugins.push(clientIfFailPlugin.vite({
+      config.plugins.push(clientFallbackAutoIdPlugin.vite({
         sourcemap: nuxt.options.sourcemap[mode],
         rootDir: nuxt.options.rootDir
       }))
@@ -214,7 +214,7 @@ export default defineNuxtModule<ComponentsOptions>({
           getComponents,
           mode
         }))
-        config.plugins.push(clientIfFailPlugin.webpack({
+        config.plugins.push(clientFallbackAutoIdPlugin.webpack({
           sourcemap: nuxt.options.sourcemap[mode],
           rootDir: nuxt.options.rootDir
         }))
