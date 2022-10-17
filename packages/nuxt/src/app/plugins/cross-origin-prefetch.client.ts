@@ -22,7 +22,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   })
   nuxtApp.hook('link:prefetch', (url) => {
     const { protocol } = parseURL(url)
-    if (!protocol || ['http:', 'https:'].includes(protocol)) {
+    if (protocol && ['http:', 'https:'].includes(protocol)) {
       externalURLs.value.add(url)
     }
   })
