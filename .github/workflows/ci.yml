@@ -88,8 +88,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Stub
-        run: pnpm stub
+      - name: Build (stub)
+        run: pnpm build:stub
 
       - name: Typecheck
         run: pnpm typecheck
@@ -117,7 +117,7 @@ jobs:
 
       # https://github.com/vitejs/vite/blob/main/.github/workflows/ci.yml#L62
       # Install playwright's binary under custom directory to cache
-      - name: Set Playwright path (non-windows)
+      - name: Set Playwright path
         if: runner.os != 'Windows'
         run: echo "PLAYWRIGHT_BROWSERS_PATH=$HOME/.cache/playwright-bin" >> $GITHUB_ENV
       - name: Set Playwright path (windows)
@@ -136,8 +136,8 @@ jobs:
         # does not need to explicitly set chromium after https://github.com/microsoft/playwright/issues/14862 is solved
         run: pnpm playwright install chromium
 
-      - name: Stub
-        run: pnpm stub
+      - name: Build (stub)
+        run: pnpm build:stub
 
       - name: Test (unit)
         run: pnpm test:unit
@@ -192,8 +192,8 @@ jobs:
         # does not need to explicitly set chromium after https://github.com/microsoft/playwright/issues/14862 is solved
         run: pnpm playwright install chromium
 
-      - name: Stub
-        run: pnpm stub
+      - name: Build (stub)
+        run: pnpm build:stub
 
       - name: Test (fixtures)
         run: pnpm test:fixtures:webpack

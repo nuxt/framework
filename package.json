@@ -6,11 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "FORCE_COLOR=1 pnpm --filter './packages/**' prepack",
-    "changelog": "changelogen",
-    "cleanup": "rimraf 'packages/**/node_modules' 'examples/**/node_modules' 'node_modules'",
-    "dev": "pnpm nuxi dev playground",
-    "dev:build": "pnpm nuxi build playground",
-    "dev:preview": "pnpm nuxi preview playground",
+    "build:stub": "pnpm --filter './packages/**' prepack --stub",
+    "cleanup": "rimraf 'packages/**/node_modules' 'examples/**/node_modules' 'docs/node_modules' 'playground/node_modules' 'node_modules'",
     "example": "./scripts/example.sh dev",
     "example:build": "./scripts/example.sh build",
     "lint": "eslint --ext .vue,.ts,.js,.mjs .",
@@ -18,15 +15,15 @@
     "lint:docs:fix": "markdownlint ./docs/content --fix && case-police 'docs/content**/*.md' --fix",
     "nuxi": "NUXT_TELEMETRY_DISABLED=1 JITI_ESM_RESOLVE=1 nuxi",
     "nuxt": "NUXT_TELEMETRY_DISABLED=1 JITI_ESM_RESOLVE=1 nuxi",
-    "play": "echo use pnpm dev && exit 1",
-    "stub": "pnpm --filter './packages/**' prepack --stub",
+    "play": "pnpm nuxi build playground",
+    "play:build": "pnpm nuxi build playground",
+    "play:preview": "pnpm nuxi preview playground",
     "test:fixtures": "NUXT_TELEMETRY_DISABLED=1 pnpm nuxi prepare test/fixtures/basic && JITI_ESM_RESOLVE=1 vitest run --dir test",
     "test:fixtures:dev": "NUXT_TELEMETRY_DISABLED=1 NUXT_TEST_DEV=true pnpm test:fixtures",
     "test:fixtures:webpack": "NUXT_TELEMETRY_DISABLED=1 TEST_WITH_WEBPACK=1 pnpm test:fixtures",
     "test:types": "pnpm nuxi prepare test/fixtures/basic && cd test/fixtures/basic && npx vue-tsc --noEmit",
     "test:unit": "JITI_ESM_RESOLVE=1 vitest run --dir packages",
-    "typecheck": "tsc --noEmit",
-    "version": "pnpm i && git add pnpm-lock.yaml"
+    "typecheck": "tsc --noEmit"
   },
   "resolutions": {
     "@nuxt/kit": "workspace:*",
