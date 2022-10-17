@@ -20,12 +20,13 @@ export default defineUntypedSchema({
   },
 
   /**
-   * Universal rules applied to your routes when building and at runtime
+   * Global route options applied to matching server routes.
    *
-   * @see https://nitro.unjs.io/config/
+   * @experimental This is an experimental feature and API may change in the future.
+   *
+   * @see https://nitro.unjs.io/config/#routes
    *
    * @type {typeof import('nitropack')['NitroConfig']['routes']}
-   * @version 2
    * @version 3
    */
   routes: {},
