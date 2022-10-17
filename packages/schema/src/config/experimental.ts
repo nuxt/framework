@@ -83,7 +83,7 @@ export default defineUntypedSchema({
     /** Enable cross-origin prefetch using the Speculation Rules API. */
     crossOriginPrefetch: false,
 
-    /** write early hints when using node server */
+    /** Write early hints when using node server */
     writeEarlyHints: true
   }
 })
