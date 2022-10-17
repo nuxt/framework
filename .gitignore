@@ -4,7 +4,7 @@ jspm_packages
 
 package-lock.json
 */**/yarn.lock
-.yarn
+/.yarn
 
 # Logs
 *.log
