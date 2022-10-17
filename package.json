@@ -1,6 +1,7 @@
 {
   "name": "nuxt-framework",
   "private": true,
+  "repository": "nuxt/framework",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -18,7 +19,6 @@
     "nuxi": "NUXT_TELEMETRY_DISABLED=1 JITI_ESM_RESOLVE=1 nuxi",
     "nuxt": "NUXT_TELEMETRY_DISABLED=1 JITI_ESM_RESOLVE=1 nuxi",
     "play": "echo use pnpm dev && exit 1",
-    "release": "pnpm i && pnpm lint && FORCE_COLOR=1 lerna publish -m \"chore: release\" && pnpm stub",
     "stub": "pnpm --filter './packages/**' prepack --stub",
     "test:fixtures": "NUXT_TELEMETRY_DISABLED=1 pnpm nuxi prepare test/fixtures/basic && JITI_ESM_RESOLVE=1 vitest run --dir test",
     "test:fixtures:dev": "NUXT_TELEMETRY_DISABLED=1 NUXT_TEST_DEV=true pnpm test:fixtures",
@@ -37,9 +37,9 @@
     "nuxi": "workspace:*",
     "nuxt": "workspace:*",
     "nuxt3": "workspace:nuxt@*",
-    "vue": "3.2.40",
+    "unbuild": "^0.9.4",
     "vite": "^3.1.8",
-    "unbuild": "^0.9.4"
+    "vue": "3.2.40"
   },
   "devDependencies": {
     "@actions/core": "^1.10.0",
@@ -63,11 +63,10 @@
     "expect-type": "^0.14.2",
     "globby": "^13.1.2",
     "jiti": "^1.16.0",
-    "lerna": "^6.0.1",
     "markdownlint-cli": "^0.32.2",
-    "ohmyfetch": "^0.4.19",
     "nuxi": "workspace:*",
     "nuxt": "workspace:*",
+    "ohmyfetch": "^0.4.19",
     "pathe": "^0.3.9",
     "rimraf": "^3.0.2",
     "semver": "^7.3.8",
