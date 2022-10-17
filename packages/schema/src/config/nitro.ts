@@ -13,7 +13,7 @@ export default defineUntypedSchema({
   nitro: {
     routes: {
       $resolve: async (val, get) => ({
-        ...await get('routes') || {},
+        ...await get('routeRules') || {},
         ...val || {}
       })
     }
@@ -29,7 +29,7 @@ export default defineUntypedSchema({
    * @type {typeof import('nitropack')['NitroConfig']['routes']}
    * @version 3
    */
-  routes: {},
+  routeRules: {},
 
   /**
    * Nitro server handlers.
