@@ -159,7 +159,6 @@ export default defineRenderHandler(async (event) => {
   // Render 103 Early Hints
   if (!isRenderingPayload && !process.env.prerender && event.res.socket) {
     const { link } = renderResourceHeaders({}, renderer.rendererContext)
-    // TODO: use https://github.com/nodejs/node/pull/44180 when we drop support for node 16
     writeEarlyHints(event, link)
   }
 
