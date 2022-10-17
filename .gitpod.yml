@@ -1,7 +1,7 @@
 tasks:
   - init: |
       npx pnpm install
-      npx pnpm stub
+      npx pnpm build:stub
     command: npx pnpm play
 
 ports:
