@@ -42,7 +42,7 @@ type Package = ThenArg<ReturnType<typeof loadPackage>>
 
 async function loadWorkspace (dir: string) {
   const workspacePkg = await loadPackage(dir)
-  const pkgDirs = (await globby(workspacePkg.data.workspaces || [], { onlyDirectories: true })).sort()
+  const pkgDirs = (await globby(['packages/*'], { onlyDirectories: true })).sort()
 
   const packages: Package[] = []
 
