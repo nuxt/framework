@@ -234,13 +234,14 @@ describe('pages', () => {
     expect(html).toContain('<div class="lazy-client-only-script-setup" foo="hello">')
     // ensure components are not rendered server-side
     expect(html).not.toContain('client only script')
-    await expectNoClientErrors('/client-only-components')
+    await expectNoClientErrors('/client-only-explicit-import')
   })
 })
 
 describe('head tags', () => {
   it('should render tags', async () => {
     const headHtml = await $fetch('/head')
+
     expect(headHtml).toContain('<title>Using a dynamic component - Title Template Fn Change</title>')
     expect(headHtml).not.toContain('<meta name="description" content="first">')
     expect(headHtml).toContain('<meta charset="utf-16">')
@@ -252,7 +253,7 @@ describe('head tags', () => {
     expect(headHtml).toMatch(/<html[^>]*class="html-attrs-test"/)
     expect(headHtml).toMatch(/<body[^>]*class="body-attrs-test"/)
     expect(headHtml).toContain('script>console.log("works with useMeta too")</script>')
-    expect(headHtml).toContain('<script src="https://a-body-appended-script.com" data-meta-body="true"></script></body>')
+    expect(headHtml).toContain('<script src="https://a-body-appended-script.com" data-meta-body></script></body>')
 
     const indexHtml = await $fetch('/')
     // should render charset by default
@@ -598,7 +599,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)('inl
       '{--assets:"assets"}', // <script>
       '{--scoped:"scoped"}', // <style lang=css>
       '{--postcss:"postcss"}', // <style lang=postcss>
-      '{--global:"global"}', // entryfile dependency
+      '{--global:"global"', // entryfile dependency
       '{--plugin:"plugin"}', // plugin dependency
       '{--functional:"functional"}' // functional component with css import
     ]) {
