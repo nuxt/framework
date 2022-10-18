@@ -5,6 +5,10 @@ export default defineComponent({
   props: {
     uid: {
       type: String
+    },
+    fallbackTag: {
+      type: String,
+      default: () => 'div'
     }
   },
   emits: ['ssr-error'],
@@ -18,7 +22,7 @@ export default defineComponent({
         useState(`${props.uid}`, () => true)
         // modify ssr render to force render a simple div
         instance._.ssrRender = (_ctx, _push, _parent, _attrs) => {
-          _push(`<div${ssrRenderAttrs(_attrs)}></div>`)
+          _push(`<${props.fallbackTag}${ssrRenderAttrs(_attrs)}></${props.fallbackTag}>`)
         }
         emit('ssr-error', instance)
         return false
@@ -34,7 +38,7 @@ export default defineComponent({
     return ctx => ssrFailed.value
       ? mounted.value
         ? slots.default?.()
-        : slots.default?.().map(() => createElementBlock('div', ctx.$attrs))
+        : slots.default?.().map(() => createElementBlock(props.fallbackTag, ctx.$attrs))
       : slots.default?.()
   }
 })
