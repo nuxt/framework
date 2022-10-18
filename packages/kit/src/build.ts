@@ -127,9 +127,13 @@ export function addWebpackPlugin (plugin: WebpackPluginInstance, options?: Exten
 /**
  * Append Vite plugin to the config.
  */
-export function addVitePlugin (plugin: VitePlugin, options?: ExtendViteConfigOptions) {
+export function addVitePlugin (plugin: VitePlugin | VitePlugin[], options?: ExtendViteConfigOptions) {
   extendViteConfig((config) => {
     config.plugins = config.plugins || []
-    config.plugins.push(plugin)
+    if (Array.isArray(plugin)) {
+      config.plugins.push(...plugin)
+    } else {
+      config.plugins.push(plugin)
+    }
   }, options)
 }
