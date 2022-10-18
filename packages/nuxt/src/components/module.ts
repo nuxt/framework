@@ -189,14 +189,15 @@ export default defineNuxtModule<ComponentsOptions>({
       const mode = isClient ? 'client' : 'server'
 
       config.plugins = config.plugins || []
+
+      config.plugins.push(clientFallbackAutoIdPlugin.vite({
+        sourcemap: nuxt.options.sourcemap[mode],
+        rootDir: nuxt.options.rootDir
+      }))
       config.plugins.push(loaderPlugin.vite({
         sourcemap: nuxt.options.sourcemap[mode],
         getComponents,
         mode
-      }))
-      config.plugins.push(clientFallbackAutoIdPlugin.vite({
-        sourcemap: nuxt.options.sourcemap[mode],
-        rootDir: nuxt.options.rootDir
       }))
       if (nuxt.options.experimental.treeshakeClientOnly && isServer) {
         config.plugins.push(TreeShakeTemplatePlugin.vite({
@@ -209,14 +210,14 @@ export default defineNuxtModule<ComponentsOptions>({
       configs.forEach((config) => {
         const mode = config.name === 'client' ? 'client' : 'server'
         config.plugins = config.plugins || []
+        config.plugins.push(clientFallbackAutoIdPlugin.webpack({
+          sourcemap: nuxt.options.sourcemap[mode],
+          rootDir: nuxt.options.rootDir
+        }))
         config.plugins.push(loaderPlugin.webpack({
           sourcemap: nuxt.options.sourcemap[mode],
           getComponents,
           mode
-        }))
-        config.plugins.push(clientFallbackAutoIdPlugin.webpack({
-          sourcemap: nuxt.options.sourcemap[mode],
-          rootDir: nuxt.options.rootDir
         }))
         if (nuxt.options.experimental.treeshakeClientOnly && mode === 'server') {
           config.plugins.push(TreeShakeTemplatePlugin.webpack({
