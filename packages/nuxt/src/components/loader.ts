@@ -27,7 +27,7 @@ function isVueTemplate (id: string) {
   const query = parseQuery(search)
 
   // Macro
-  if (query.macro) {
+  if (id.startsWith('virtual:page-meta')) {
     return true
   }
 

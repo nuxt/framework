@@ -91,9 +91,8 @@ export function ssrStylesPlugin (options: SSRStylePluginOptions): Plugin {
       return null
     },
     async transform (code, id) {
-      const { pathname, search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
-      const query = parseQuery(search)
-      if (!pathname.match(/\.(vue|((c|m)?j|t)sx?)$/g) || query.macro) { return }
+      const { pathname } = parseURL(decodeURIComponent(pathToFileURL(id).href))
+      if (!pathname.match(/\.(vue|((c|m)?j|t)sx?)$/g) || id.startsWith('virtual:page-meta')) { return }
       if (options.shouldInline && !options.shouldInline(id)) { return }
 
       const relativeId = relativeToSrcDir(id)

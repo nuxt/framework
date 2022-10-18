@@ -25,7 +25,7 @@ export const TransformPlugin = createUnplugin(({ ctx, options, sourcemap }: { ct
       // Vue files
       if (
         id.endsWith('.vue') ||
-        'macro' in query ||
+        id.startsWith('virtual:page-meta') ||
         ('vue' in query && (query.type === 'template' || query.type === 'script' || 'setup' in query))
       ) {
         return true
