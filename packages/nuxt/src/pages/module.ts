@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs'
-import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin, findPath } from '@nuxt/kit'
+import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlugin, findPath, addComponent } from '@nuxt/kit'
 import { relative, resolve } from 'pathe'
 import { genString, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
@@ -18,8 +18,10 @@ export default defineNuxtModule({
       layer => resolve(layer.config.srcDir, layer.config.dir?.pages || 'pages')
     )
 
+    const isRouterOptionsPresent = nuxt.options._layers.some(layer => existsSync(resolve(layer.config.srcDir, 'app/router.options.ts')))
+
     // Disable module (and use universal router) if pages dir do not exists or user has disabled it
-    if (nuxt.options.pages === false || (nuxt.options.pages !== true && !pagesDirs.some(dir => existsSync(dir)))) {
+    if ((nuxt.options.pages === false || (nuxt.options.pages !== true && !pagesDirs.some(dir => existsSync(dir)))) && !isRouterOptionsPresent) {
       addPlugin(resolve(distDir, 'app/plugins/router'))
       return
     }
@@ -192,6 +194,12 @@ export default defineNuxtModule({
           '}'
         ].join('\n')
       }
+    })
+
+    // Add <NuxtPage>
+    addComponent({
+      name: 'NuxtPage',
+      filePath: resolve(distDir, 'pages/runtime/page')
     })
 
     // Add declarations for middleware keys

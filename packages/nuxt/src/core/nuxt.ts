@@ -1,5 +1,5 @@
 import { join, normalize, resolve } from 'pathe'
-import { createHooks } from 'hookable'
+import { createHooks, createDebugger } from 'hookable'
 import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
 import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule, addPlugin } from '@nuxt/kit'
 // Temporary until finding better placement
@@ -178,9 +178,19 @@ async function initNuxt (nuxt: Nuxt) {
     addPlugin(resolve(nuxt.options.appDir, 'plugins/payload.client'))
   }
 
+  // Add experimental cross-origin prefetch support using Speculation Rules API
+  if (nuxt.options.experimental.crossOriginPrefetch) {
+    addPlugin(resolve(nuxt.options.appDir, 'plugins/cross-origin-prefetch.client'))
+  }
+
   // Track components used to render for webpack
   if (nuxt.options.builder === '@nuxt/webpack-builder') {
     addPlugin(resolve(nuxt.options.appDir, 'plugins/preload.server'))
+  }
+
+  // Add nuxt app debugger
+  if (nuxt.options.debug) {
+    addPlugin(resolve(nuxt.options.appDir, 'plugins/debug'))
   }
 
   for (const m of modulesToInstall) {
@@ -228,6 +238,10 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   }
 
   const nuxt = createNuxt(options)
+
+  if (nuxt.options.debug) {
+    createDebugger(nuxt.hooks, { tag: 'nuxt' })
+  }
 
   if (opts.ready !== false) {
     await nuxt.ready()
