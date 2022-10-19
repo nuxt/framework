@@ -4,8 +4,9 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { execaCommand } from 'execa'
 import { globby } from 'globby'
 import { join } from 'pathe'
+import { isWindows } from 'std-env'
 
-describe('minimal nuxt application', () => {
+describe.skipIf(isWindows)('minimal nuxt application', () => {
   const rootDir = fileURLToPath(new URL('./fixtures/minimal', import.meta.url))
   const publicDir = join(rootDir, '.output/public')
   const serverDir = join(rootDir, '.output/server')
