@@ -6,7 +6,8 @@ import type { Nuxt } from '@nuxt/schema'
 import { resolvePath } from '@nuxt/kit'
 import defu from 'defu'
 import fsExtra from 'fs-extra'
-import { toEventHandler, dynamicEventHandler } from 'h3'
+import { dynamicEventHandler } from 'h3'
+import type { Plugin } from 'rollup'
 import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
@@ -17,11 +18,11 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   // Resolve config
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
+    debug: nuxt.options.debug,
     rootDir: nuxt.options.rootDir,
     workspaceDir: nuxt.options.workspaceDir,
     srcDir: nuxt.options.serverDir,
     dev: nuxt.options.dev,
-    preset: nuxt.options.dev ? 'nitro-dev' : undefined,
     buildDir: nuxt.options.buildDir,
     analyze: nuxt.options.build.analyze && {
       template: 'treemap',
@@ -36,6 +37,9 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     devHandlers: [],
     baseURL: nuxt.options.app.baseURL,
     virtual: {},
+    routeRules: {
+      '/__nuxt_error': { cache: false }
+    },
     runtimeConfig: {
       ...nuxt.options.runtimeConfig,
       nitro: {
@@ -99,6 +103,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     },
     replace: {
       'process.env.NUXT_NO_SSR': nuxt.options.ssr === false,
+      'process.env.NUXT_EARLY_HINTS': nuxt.options.experimental.writeEarlyHints !== false,
       'process.env.NUXT_NO_SCRIPTS': !!nuxt.options.experimental.noScripts && !nuxt.options.dev,
       'process.env.NUXT_INLINE_STYLES': !!nuxt.options.experimental.inlineSSRStyles,
       'process.env.NUXT_PAYLOAD_EXTRACTION': !!nuxt.options.experimental.payloadExtraction,
@@ -120,14 +125,16 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   }
 
   // Register nuxt protection patterns
-  nitroConfig.rollupConfig!.plugins!.push(ImportProtectionPlugin.rollup({
-    rootDir: nuxt.options.rootDir,
-    patterns: [
-      ...['#app', /^#build(\/|$)/]
-        .map(p => [p, 'Vue app aliases are not allowed in server routes.']) as [RegExp | string, string][]
-    ],
-    exclude: [/core[\\/]runtime[\\/]nitro[\\/]renderer/]
-  }))
+  nitroConfig.rollupConfig!.plugins!.push(
+    ImportProtectionPlugin.rollup({
+      rootDir: nuxt.options.rootDir,
+      patterns: [
+        ...['#app', /^#build(\/|$)/]
+          .map(p => [p, 'Vue app aliases are not allowed in server routes.']) as [RegExp | string, string][]
+      ],
+      exclude: [/core[\\/]runtime[\\/]nitro[\\/]renderer/]
+    }) as Plugin
+  )
 
   // Extend nitro config with hook
   await nuxt.callHook('nitro:config', nitroConfig)
@@ -189,7 +196,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     nuxt.hook('build:compile', ({ compiler }) => {
       compiler.outputFileSystem = { ...fsExtra, join } as any
     })
-    nuxt.hook('server:devMiddleware', (m) => { devMiddlewareHandler.set(toEventHandler(m)) })
+    nuxt.hook('server:devHandler', (h) => { devMiddlewareHandler.set(h) })
     nuxt.server = createDevServer(nitro)
     nuxt.hook('build:resources', () => {
       nuxt.server.reload()
@@ -229,7 +236,10 @@ async function resolveHandlers (nuxt: Nuxt) {
 }
 
 declare module 'nitropack' {
-  interface NitroRouteOption {
+  interface NitroRouteConfig {
+    ssr?: boolean
+  }
+  interface NitroRouteOptions {
     ssr?: boolean
   }
 }

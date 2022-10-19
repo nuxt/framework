@@ -1,6 +1,7 @@
 import { withQuery } from 'ufo'
 import type { NitroErrorHandler } from 'nitropack'
 import type { H3Error } from 'h3'
+import { getRequestHeaders } from 'h3'
 import { normalizeError, isJsonRequest } from '#internal/nitro/utils'
 
 export default <NitroErrorHandler> async function errorhandler (error: H3Error, event) {
@@ -20,9 +21,10 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
   }
 
   // Set response code and message
-  event.res.statusCode = errorObject.statusCode as any as number
-  event.res.statusMessage = errorObject.statusMessage
-
+  event.res.statusCode = (errorObject.statusCode !== 200 && errorObject.statusCode) as any as number || 500
+  if (errorObject.statusMessage) {
+    event.res.statusMessage = errorObject.statusMessage
+  }
   // Console output
   if (error.unhandled || error.fatal) {
     const tags = [
@@ -44,7 +46,11 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
 
   // HTML response (via SSR)
   const isErrorPage = event.req.url?.startsWith('/__nuxt_error')
-  let html = !isErrorPage ? await $fetch(withQuery('/__nuxt_error', errorObject)).catch(() => null) : null
+  let html = !isErrorPage
+    ? await $fetch(withQuery('/__nuxt_error', errorObject), {
+      headers: getRequestHeaders(event) as HeadersInit
+    }).catch(() => null)
+    : null
 
   // Fallback to static rendered error page
   if (!html) {

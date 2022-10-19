@@ -5,7 +5,7 @@ import { createHooks, Hookable } from 'hookable'
 import type { RuntimeConfig, AppConfigInput } from '@nuxt/schema'
 import { getContext } from 'unctx'
 import type { SSRContext } from 'vue-bundle-renderer/runtime'
-import type { CompatibilityEvent } from 'h3'
+import type { H3Event } from 'h3'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
@@ -34,17 +34,14 @@ export interface RuntimeNuxtHooks {
   'link:prefetch': (link: string) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
+  'page:transition:finish': (Component?: VNode) => HookResult
   'vue:setup': () => void
   'vue:error': (...args: Parameters<Parameters<typeof onErrorCaptured>[0]>) => HookResult
 }
 
 export interface NuxtSSRContext extends SSRContext {
   url: string
-  event: CompatibilityEvent
-  /** @deprecated Use `event` instead. */
-  req?: CompatibilityEvent['req']
-  /** @deprecated Use `event` instead. */
-  res?: CompatibilityEvent['res']
+  event: H3Event
   runtimeConfig: RuntimeConfig
   noSSR: boolean
   /** whether we are rendering an SSR error */

@@ -234,7 +234,7 @@ describe('pages', () => {
     expect(html).toContain('<div class="lazy-client-only-script-setup" foo="hello">')
     // ensure components are not rendered server-side
     expect(html).not.toContain('client only script')
-    await expectNoClientErrors('/client-only-components')
+    await expectNoClientErrors('/client-only-explicit-import')
   })
 })
 
@@ -611,7 +611,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)('inl
     const html: string = await $fetch('/styles')
     expect(html.match(/<link [^>]*href="[^"]*\.css">/)?.map(m => m.replace(/\.[^.]*\.css/, '.css'))).toMatchInlineSnapshot(`
         [
-          "<link rel=\\"prefetch stylesheet\\" href=\\"/_nuxt/entry.css\\">",
+          "<link rel=\\"prefetch\\" as=\\"style\\" href=\\"/_nuxt/entry.css\\">",
         ]
       `)
   })

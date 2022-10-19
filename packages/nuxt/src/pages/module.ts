@@ -18,8 +18,10 @@ export default defineNuxtModule({
       layer => resolve(layer.config.srcDir, layer.config.dir?.pages || 'pages')
     )
 
+    const isRouterOptionsPresent = nuxt.options._layers.some(layer => existsSync(resolve(layer.config.srcDir, 'app/router.options.ts')))
+
     // Disable module (and use universal router) if pages dir do not exists or user has disabled it
-    if (nuxt.options.pages === false || (nuxt.options.pages !== true && !pagesDirs.some(dir => existsSync(dir)))) {
+    if ((nuxt.options.pages === false || (nuxt.options.pages !== true && !pagesDirs.some(dir => existsSync(dir)))) && !isRouterOptionsPresent) {
       addPlugin(resolve(distDir, 'app/plugins/router'))
       return
     }
@@ -137,10 +139,13 @@ export default defineNuxtModule({
     addTemplate({
       filename: 'router.options.mjs',
       getContents: async () => {
-        // Check for router options
+        // Scan and register app/router.options files
         const routerOptionsFiles = (await Promise.all(nuxt.options._layers.map(
           async layer => await findPath(resolve(layer.config.srcDir, 'app/router.options'))
         ))).filter(Boolean) as string[]
+
+        // Add default options
+        routerOptionsFiles.push(resolve(runtimeDir, 'router.options'))
 
         const configRouterOptions = genObjectFromRawEntries(Object.entries(nuxt.options.router.options)
           .map(([key, value]) => [key, genString(value as string)]))

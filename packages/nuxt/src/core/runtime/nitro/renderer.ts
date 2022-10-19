@@ -1,17 +1,21 @@
 import { createRenderer, renderResourceHeaders } from 'vue-bundle-renderer/runtime'
 import type { RenderResponse } from 'nitropack'
 import type { Manifest } from 'vite'
-import { appendHeader, getQuery } from 'h3'
+import { appendHeader, getQuery, writeEarlyHints } from 'h3'
 import devalue from '@nuxt/devalue'
-import { createRouter as createMatcher } from 'radix3'
 import { joinURL } from 'ufo'
 import { renderToString as _renderToString } from 'vue/server-renderer'
-import { useRuntimeConfig, useNitroApp, defineRenderHandler } from '#internal/nitro'
+import { useRuntimeConfig, useNitroApp, defineRenderHandler, getRouteRules } from '#internal/nitro'
 // eslint-disable-next-line import/no-restricted-paths
 import type { NuxtApp, NuxtSSRContext } from '#app'
 
 // @ts-ignore
-import { buildAssetsURL } from '#paths'
+import { buildAssetsURL, publicAssetsURL } from '#paths'
+
+// @ts-ignore
+globalThis.__buildAssetsURL = buildAssetsURL
+// @ts-ignore
+globalThis.__publicAssetsURL = publicAssetsURL
 
 export interface NuxtRenderHTMLContext {
   htmlAttrs: string[]
@@ -107,9 +111,6 @@ const getSPARenderer = lazyCachedFunction(async () => {
   }
 })
 
-// Set up route rule matcher
-const routerOptions = createMatcher({ routes: useRuntimeConfig().nitro.routes })
-
 const PAYLOAD_CACHE = (process.env.NUXT_PAYLOAD_EXTRACTION && process.env.prerender) ? new Map() : null // TODO: Use LRU cache
 const PAYLOAD_URL_RE = /\/_payload(\.[a-zA-Z0-9]+)?.js(\?.*)?$/
 
@@ -132,15 +133,13 @@ export default defineRenderHandler(async (event) => {
     }
   }
 
-  // TODO: share across endpoints on event context
-  const routeOptions = event.context.routeOptions || routerOptions.lookup(url) || {}
+  // Get route options (currently to apply `ssr: false`)
+  const routeOptions = getRouteRules(event)
 
   // Initialize ssr context
   const ssrContext: NuxtSSRContext = {
     url,
     event,
-    req: event.req,
-    res: event.res,
     runtimeConfig: useRuntimeConfig() as NuxtSSRContext['runtimeConfig'],
     noSSR:
       !!(process.env.NUXT_NO_SSR) ||
@@ -163,10 +162,9 @@ export default defineRenderHandler(async (event) => {
   const renderer = (process.env.NUXT_NO_SSR || ssrContext.noSSR) ? await getSPARenderer() : await getSSRRenderer()
 
   // Render 103 Early Hints
-  if (!isRenderingPayload && !process.env.prerender && event.res.socket) {
+  if (process.env.NUXT_EARLY_HINTS && !isRenderingPayload && !process.env.prerender) {
     const { link } = renderResourceHeaders({}, renderer.rendererContext)
-    // TODO: use https://github.com/nodejs/node/pull/44180 when we drop support for node 16
-    event.res.socket!.write(`HTTP/1.1 103 Early Hints\r\nLink: ${link}\r\n\r\n`, 'utf-8')
+    writeEarlyHints(event, link)
   }
 
   const _rendered = await renderer.renderToString(ssrContext).catch((err) => {
@@ -205,7 +203,7 @@ export default defineRenderHandler(async (event) => {
   const renderedMeta = await ssrContext.renderMeta?.() ?? {}
 
   // Render inline styles
-  const inlinedStyles = process.env.NUXT_INLINE_STYLES && !(process.env.NUXT_NO_SSR || ssrContext.noSSR)
+  const inlinedStyles = process.env.NUXT_INLINE_STYLES
     ? await renderInlineStyles(ssrContext.modules ?? ssrContext._registeredComponents ?? [])
     : ''
 
@@ -291,6 +289,7 @@ function renderHTMLDocument (html: NuxtRenderHTMLContext) {
 }
 
 async function renderInlineStyles (usedModules: Set<string> | string[]) {
+  const { entryCSS } = await getClientManifest()
   const styleMap = await getSSRStyles()
   const inlinedStyles = new Set<string>()
   for (const mod of ['entry', ...usedModules]) {
@@ -299,6 +298,9 @@ async function renderInlineStyles (usedModules: Set<string> | string[]) {
         inlinedStyles.add(`<style>${style}</style>`)
       }
     }
+  }
+  for (const css of entryCSS?.css || []) {
+    inlinedStyles.add(`<link rel="stylesheet" href=${JSON.stringify(buildAssetsURL(css))} media="print" onload="this.media='all'; this.onload=null;">`)
   }
   return Array.from(inlinedStyles).join('')
 }
