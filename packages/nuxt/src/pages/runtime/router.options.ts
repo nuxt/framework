@@ -17,7 +17,7 @@ export default <RouterConfig> {
     let position: ScrollPosition = savedPosition || undefined
 
     // Scroll to top if route is changed by default
-    if (!position && from && to && to.meta.scrollToTop !== false && isDifferentRoute(a, b)) {
+    if (!position && from && to && to.meta.scrollToTop !== false && _isDifferentRoute(a, b)) {
       position = { left: 0, top: 0 }
     }
 
@@ -54,7 +54,7 @@ function _getHashElementScrollMarginTop (selector: string): number {
   return 0
 }
 
-function isDifferentRoute (a: RouteLocationNormalized, b: RouteLocationNormalized): boolean {
+function _isDifferentRoute (a: RouteLocationNormalized, b: RouteLocationNormalized): boolean {
   const samePageComponent = a.matched[0] === b.matched[0]
   if (!samePageComponent) {
     return true
