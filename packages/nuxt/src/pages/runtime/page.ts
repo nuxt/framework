@@ -39,8 +39,10 @@ export default defineComponent({
       return h(RouterView, { name: props.name, route: props.route, ...attrs }, {
         default: (routeProps: RouterViewSlotProps) => {
           if (!routeProps.Component) { return }
+
           const key = generateRouteKey(props.pageKey, routeProps)
           const done = nuxtApp.deferHydration()
+
           const hasTransition = !!(props.transition ?? routeProps.route.meta.pageTransition ?? defaultPageTransition)
           const transitionProps = hasTransition && _mergeTransitionProps([
             props.transition,
@@ -48,12 +50,11 @@ export default defineComponent({
             defaultPageTransition,
             { onAfterLeave: () => { nuxtApp.callHook('page:transition:finish', routeProps.Component) } }
           ].filter(Boolean))
+
           return _wrapIf(Transition, hasTransition && transitionProps,
             wrapInKeepAlive(props.keepalive ?? routeProps.route.meta.keepalive ?? (defaultKeepaliveConfig as KeepAliveProps), h(Suspense, {
               onPending: () => nuxtApp.callHook('page:start', routeProps.Component),
-              onResolve: () => {
-                nextTick(() => nuxtApp.callHook('page:finish', routeProps.Component).finally(done))
-              }
+              onResolve: () => { nextTick(() => nuxtApp.callHook('page:finish', routeProps.Component).finally(done)) }
             }, { default: () => h(Component, { key, routeProps, pageKey: key, hasTransition } as {}) })
             )).default()
         }
