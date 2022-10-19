@@ -16,11 +16,8 @@ export default <RouterConfig> {
     let position: ScrollPosition = savedPosition || undefined
 
     // Scroll to top if route is changed by default
-    if (
-      !position &&
-      (from && to && from.matched[0] !== to.matched[0]) &&
-      to.meta.scrollToTop !== false
-    ) {
+    const isDifferentRoute = from && to && (from.matched[0] !== to.matched[0] || (from.matched[0] === to.matched[0] && JSON.stringify(from.params) !== JSON.stringify(to.params)))
+    if (!position && isDifferentRoute && to.meta.scrollToTop !== false) {
       position = { left: 0, top: 0 }
     }
 
