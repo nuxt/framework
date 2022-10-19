@@ -611,7 +611,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)('inl
     const html: string = await $fetch('/styles')
     expect(html.match(/<link [^>]*href="[^"]*\.css">/)?.map(m => m.replace(/\.[^.]*\.css/, '.css'))).toMatchInlineSnapshot(`
         [
-          "<link rel=\\"prefetch stylesheet\\" href=\\"/_nuxt/entry.css\\">",
+          "<link rel=\\"prefetch\\" as=\\"style\\" href=\\"/_nuxt/entry.css\\">",
         ]
       `)
   })
