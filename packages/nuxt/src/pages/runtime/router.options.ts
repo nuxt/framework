@@ -3,20 +3,20 @@ import type { RouterScrollBehavior } from 'vue-router'
 import { nextTick } from 'vue'
 import { useNuxtApp } from '#app'
 
-type ScrollPosition = Exclude<Awaited<ReturnType<RouterScrollBehavior>>, false|void>
+type ScrollPosition = Awaited<ReturnType<RouterScrollBehavior>>
 
+// Default router options
 // https://router.vuejs.org/api/#routeroptions
-export default <RouterConfig>{
+export default <RouterConfig> {
   scrollBehavior (to, from, savedPosition) {
     const nuxtApp = useNuxtApp()
 
     // By default when the returned position is falsy or an empty object, vue-router will retain the current scroll position
-    let position: ScrollPosition
+    // savedPosition is only available for popstate navigations (back button)
+    let position: ScrollPosition = savedPosition || undefined
 
-    // SavedPosition is only available for popstate navigations (back button)
-    if (savedPosition) {
-      position = savedPosition
-    } else if (to !== from /* Route changed */) {
+    // Scroll to top if route is changed by default
+    if (!position && to !== from) {
       position = { left: 0, top: 0 }
     }
 
@@ -26,24 +26,18 @@ export default <RouterConfig>{
         return { left: 0, top: 0 }
       }
       if (to.hash) {
-        return {
-          el: to.hash,
-          top: _getHashElementScrollMarginTop(to.hash)
-        }
+        return { el: to.hash, top: _getHashElementScrollMarginTop(to.hash) }
       }
     }
 
-    // Wait for page:transition:finish or page:finish depending on transitions enabled or not
+    // Wait for `page:transition:finish` or `page:finish` depending on if transitions are enabled or not
     const hasTransition = to.meta.pageTransition !== false && from.meta.pageTransition !== false
     const hookToWait = hasTransition ? 'page:transition:finish' : 'page:finish'
     return new Promise((resolve) => {
       nuxtApp.hooks.hookOnce(hookToWait, async () => {
         await nextTick()
         if (to.hash) {
-          position = {
-            el: to.hash,
-            top: _getHashElementScrollMarginTop(to.hash)
-          }
+          position = { el: to.hash, top: _getHashElementScrollMarginTop(to.hash) }
         }
         resolve(position)
       })

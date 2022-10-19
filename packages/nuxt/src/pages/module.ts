@@ -140,7 +140,7 @@ export default defineNuxtModule({
       filename: 'router.options.mjs',
       getContents: async () => {
         // Check for router options
-        const defaultOptsFile = resolve(distDir, 'pages/routing/default-router.options')
+        const defaultOptsFile = resolve(distDir, 'pages/runtime/router.options')
         const routerOptionsFiles = (await Promise.all(nuxt.options._layers.map(
           async layer => await findPath(resolve(layer.config.srcDir, 'app/router.options'))
         ))).filter(Boolean) as string[]
