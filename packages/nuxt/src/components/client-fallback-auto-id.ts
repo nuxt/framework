@@ -31,12 +31,17 @@ export const clientFallbackAutoIdPlugin = createUnplugin((options: LoaderOptions
     transform (code, id) {
       const s = new MagicString(code)
       const relativeID = isAbsolute(id) ? relative(options.rootDir, id) : id
-
       const imports = new Set()
+
+      const uidkey = 'clientFallbackUid$'
+
+      // webpack workaround -- don't transform if already transformed
+      if (code.includes(uidkey)) { return }
+
       let hasClientFallback = false
       let count = 0
-      const uidkey = 'clientFallbackUid$'
       const isSFCRender = code.includes('function _sfc_render(') || code.includes('function _sfc_ssrRender(')
+
       s.replace(/(_createVNode|_ssrRenderComponent)\((.*[cC]lient-?[fF]allback),(.*),/g, (full, renderFunction, name, props) => {
         hasClientFallback = true
         // slice to remove object curly braces {}
