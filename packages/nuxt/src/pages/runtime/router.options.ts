@@ -59,7 +59,7 @@ function isDifferentRoute (a: RouteLocationNormalized, b: RouteLocationNormalize
   if (!samePageComponent) {
     return true
   }
-  if (!samePageComponent && !isEqual(a.params, b.params)) {
+  if (samePageComponent && !isEqual(a.params, b.params)) {
     return true
   }
   return false
