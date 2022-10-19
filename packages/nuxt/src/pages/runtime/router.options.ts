@@ -16,7 +16,11 @@ export default <RouterConfig> {
     let position: ScrollPosition = savedPosition || undefined
 
     // Scroll to top if route is changed by default
-    if (!position && from.matched[0] !== to.matched[0]) {
+    if (
+      !position &&
+      (from && to && from.matched[0] !== to.matched[0]) &&
+      to.meta.scrollToTop !== false
+    ) {
       position = { left: 0, top: 0 }
     }
 
