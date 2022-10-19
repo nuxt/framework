@@ -1,30 +1,32 @@
 import { fileURLToPath } from 'node:url'
 import fsp from 'node:fs/promises'
-import { beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { execaCommand } from 'execa'
 import { globby } from 'globby'
 import { join } from 'pathe'
 
-const rootDir = fileURLToPath(new URL('..', import.meta.url))
-const publicDir = join(rootDir, '.output/public')
-const serverDir = join(rootDir, '.output/server')
-
-const testSize = !!process.env.ASSERT_SIZE
-
 describe('minimal nuxt application', () => {
+  const rootDir = fileURLToPath(new URL('./fixtures/minimal', import.meta.url))
+  const publicDir = join(rootDir, '.output/public')
+  const serverDir = join(rootDir, '.output/server')
+
+  const stats = {
+    client: { totalBytes: 0, files: [] as string[] },
+    server: { totalBytes: 0, files: [] as string[] }
+  }
+
   beforeAll(async () => {
-    await execaCommand('yarn nuxi build', {
-      cwd: rootDir
-    })
+    await execaCommand(`pnpm nuxi build ${rootDir}`)
   }, 120 * 1000)
 
+  afterAll(async () => {
+    await fsp.writeFile(join(rootDir, '.output/test-stats.json'), JSON.stringify(stats, null, 2))
+  })
+
   it('default client bundle size', async () => {
-    const { files, size } = await measure('**/*.js', publicDir)
-    if (testSize) {
-      expect(size).toBeLessThan(110000)
-      // expect(size).toMatchInlineSnapshot('106916')
-    }
-    expect(files.map(f => f.replace(/\..*\.js/, '.js'))).toMatchInlineSnapshot(`
+    stats.client = await analyzeSizes('**/*.js', publicDir)
+    expect(stats.client.totalBytes).toBeLessThan(110000)
+    expect(stats.client.files.map(f => f.replace(/\..*\.js/, '.js'))).toMatchInlineSnapshot(`
       [
         "_nuxt/entry.js",
         "_nuxt/error-404.js",
@@ -35,17 +37,11 @@ describe('minimal nuxt application', () => {
   })
 
   it('default server bundle size', async () => {
-    if (testSize) {
-      const serverBundle = await measure(['**/*.mjs', '!node_modules'], serverDir)
-      expect(serverBundle.size).toBeLessThan(120000)
-      // expect(serverBundle.size).toMatchInlineSnapshot('114018')
-    }
+    stats.server = await analyzeSizes(['**/*.mjs', '!node_modules'], serverDir)
+    expect(stats.server.totalBytes).toBeLessThan(120000)
 
-    const modules = await measure('node_modules/**/*', serverDir)
-    if (testSize) {
-      expect(modules.size).toBeLessThan(2700000)
-      // expect(modules.size).toMatchInlineSnapshot('2637251')
-    }
+    const modules = await analyzeSizes('node_modules/**/*', serverDir)
+    expect(modules.totalBytes).toBeLessThan(2700000)
 
     const packages = modules.files
       .filter(m => m.endsWith('package.json'))
@@ -90,12 +86,12 @@ describe('minimal nuxt application', () => {
   })
 })
 
-async function measure (pattern: string | string[], rootDir: string) {
-  const files = await globby(pattern, { cwd: rootDir })
-  let size = 0
+async function analyzeSizes (pattern: string | string[], rootDir: string) {
+  const files: string[] = await globby(pattern, { cwd: rootDir })
+  let totalBytes = 0
   for (const file of files) {
-    const stats = await fsp.stat(join(rootDir, file))
-    size += stats.size
+    const bytes = Buffer.byteLength(await fsp.readFile(join(rootDir, file)))
+    totalBytes += bytes
   }
-  return { files, size }
+  return { files, totalBytes }
 }
