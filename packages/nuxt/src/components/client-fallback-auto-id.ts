@@ -40,12 +40,12 @@ export const clientFallbackAutoIdPlugin = createUnplugin((options: LoaderOptions
 
       let hasClientFallback = false
       let count = 0
-      const isSFCRender = code.includes('function _sfc_render(') || code.includes('function _sfc_ssrRender(')
+      const isSFCRender = code.includes('function _sfc_render(') || code.includes('function _sfc_ssrRender(') || code.includes('function ssrRender(')
 
-      s.replace(/(_createVNode|_ssrRenderComponent)\((.*[cC]lient-?[fF]allback),(.*),/g, (full, renderFunction, name, props) => {
+      s.replace(/(_createVNode|_ssrRenderComponent)\((.*[cC]lient-?[fF]allback),\s*?(?:{(.*?)}|(null))\s*?,/gs, (full, renderFunction, name, props) => {
         hasClientFallback = true
-        // slice to remove object curly braces {}
-        const oldProps = props.trim() !== 'null' ? props.trim().slice(1, -1) : ''
+
+        const oldProps = props.trim() !== 'null' ? props : ''
         // generate string to include the uidkey into the component props
         const newProps = `{ uid: ${isSFCRender ? '$setup.' : ''}${uidkey} + '${count}'${oldProps ? `, ${oldProps}` : ''} }`
         count++

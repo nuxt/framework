@@ -241,16 +241,20 @@ describe('pages', () => {
     const html = await $fetch('/client-fallback')
     // ensure failed components are not rendered server-side
     expect(html).not.toContain('This breaks in server-side setup.')
-    // ensure not failed component should be rendered
-    expect(html).toContain('Sugar Counter 0 x 2 = 0')
-    // ensure failed component render a div with attributes
-    expect(html).toContain('<div class="broke-in-ssr"></div>')
+    // ensure not failed component not be rendered
+    expect(html).not.toContain('Sugar Counter 0 x 2 = 0')
+    // ensure ClientFallback is being rendered with its fallback tag and attributes
+    expect(html).toContain('<span class="break-in-ssr"></span>')
+
+    // ensure not failed component are correctly rendered
+    expect(html).not.toContain('<p></p>')
+    expect(html).toContain('hi')
 
     await expectNoClientErrors('/client-fallback')
 
     const page = await createPage('/client-fallback')
     await page.waitForLoadState('networkidle')
-    // ensure components reactivity
+    // ensure components reactivity once mounted
     await page.locator('#increment-count').click()
     expect(await page.locator('#sugar-counter').innerHTML()).toContain('Sugar Counter 1 x 2 = 2')
   })

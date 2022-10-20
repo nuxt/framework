@@ -2,16 +2,30 @@
   <div>
     Hello World
     <div id="locator-for-playwright">
-      <ClientFallback>
+      <!-- single child -->
+      <ClientFallback fallback-tag="span" class="break-in-ssr">
         <BreakInSetup />
       </ClientFallback>
+      <!-- multi child -->
       <ClientFallback>
         <BreakInSetup class="broke-in-ssr" />
         <BreakInSetup />
       </ClientFallback>
+      <!-- don't render if one child fails in ssr -->
       <ClientFallback>
         <BreakInSetup />
         <SugarCounter id="sugar-counter" :count="count" />
+      </ClientFallback>
+      <!-- nested children fails -->
+      <ClientFallback>
+        <div>
+          <BreakInSetup />
+        </div>
+        <SugarCounter :count="count" />
+      </ClientFallback>
+      <!-- should be rendered -->
+      <ClientFallback fallback-tag="p">
+        <FunctionalComponent />
       </ClientFallback>
     </div>
     <button id="increment-count" @click="count++">
