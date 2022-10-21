@@ -244,7 +244,9 @@ describe('pages', () => {
     // ensure not failed component not be rendered
     expect(html).not.toContain('Sugar Counter 0 x 2 = 0')
     // ensure ClientFallback is being rendered with its fallback tag and attributes
-    expect(html).toContain('<span class="break-in-ssr"></span>')
+    expect(html).toContain('<span class="break-in-ssr">this failed to render</span>')
+    // ensure Fallback slot is being rendered server side
+    expect(html).toContain('Hello world !')
 
     // ensure not failed component are correctly rendered
     expect(html).not.toContain('<p></p>')

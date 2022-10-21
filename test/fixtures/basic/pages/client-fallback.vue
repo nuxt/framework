@@ -3,7 +3,7 @@
     Hello World
     <div id="locator-for-playwright">
       <!-- single child -->
-      <ClientFallback fallback-tag="span" class="break-in-ssr">
+      <ClientFallback fallback-tag="span" class="break-in-ssr" fallback="this failed to render">
         <BreakInSetup />
       </ClientFallback>
       <!-- multi child -->
@@ -26,6 +26,13 @@
       <!-- should be rendered -->
       <ClientFallback fallback-tag="p">
         <FunctionalComponent />
+      </ClientFallback>
+      <!-- fallback -->
+      <ClientFallback>
+        <BreakInSetup />
+        <template #fallback>
+          <div>Hello world !</div>
+        </template>
       </ClientFallback>
     </div>
     <button id="increment-count" @click="count++">

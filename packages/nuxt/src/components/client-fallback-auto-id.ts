@@ -29,27 +29,25 @@ export const clientFallbackAutoIdPlugin = createUnplugin((options: LoaderOptions
       return isVueTemplate(id)
     },
     transform (code, id) {
+      const uidkey = 'clientFallbackUid$'
+      if (code.includes(uidkey) || !/[cC]lient-?[fF]allback/.test(code)) { return }
+
       const s = new MagicString(code)
       const relativeID = isAbsolute(id) ? relative(options.rootDir, id) : id
       const imports = new Set()
-
-      const uidkey = 'clientFallbackUid$'
-
-      // webpack workaround -- don't transform if already transformed
-      if (code.includes(uidkey)) { return }
 
       let hasClientFallback = false
       let count = 0
       const isSFCRender = code.includes('function _sfc_render(') || code.includes('function _sfc_ssrRender(') || code.includes('function ssrRender(')
 
-      s.replace(/(_createVNode|_ssrRenderComponent)\((.*[cC]lient-?[fF]allback),\s*?(?:{(.*?)}|(null))\s*?,/gs, (full, renderFunction, name, props) => {
+      s.replace(/(_createVNode|_ssrRenderComponent)\((.*[cC]lient-?[fF]allback),\s*?(?:(({|null)))/g, (full, renderFunction, name, props) => {
         hasClientFallback = true
 
-        const oldProps = props.trim() !== 'null' ? props : ''
+        const nullProps = props.trim() === 'null'
         // generate string to include the uidkey into the component props
-        const newProps = `{ uid: ${isSFCRender ? '$setup.' : ''}${uidkey} + '${count}'${oldProps ? `, ${oldProps}` : ''} }`
+        const newProps = `{ uid: ${isSFCRender ? '$setup.' : ''}${uidkey} + '${count}'${nullProps ? '}' : ','}`
         count++
-        return `${renderFunction}(${name}, ${newProps} ,`
+        return `${renderFunction}(${name}, ${newProps}`
       })
 
       if (hasClientFallback) {
