@@ -1,6 +1,6 @@
 import { statSync } from 'node:fs'
 import { relative, resolve } from 'pathe'
-import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate, updateTemplates } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { distDir } from '../dirs'
 import { componentsPluginTemplate, componentsTemplate, componentsTypeTemplate } from './templates'
@@ -173,7 +173,14 @@ export default defineNuxtModule<ComponentsOptions>({
       }
       const fPath = resolve(nuxt.options.srcDir, path)
       if (componentDirs.find(dir => fPath.startsWith(dir.path))) {
-        await nuxt.callHook('builder:generateApp')
+        await updateTemplates({
+          limiter: template => [
+            'components.plugin.mjs',
+            'components.d.ts',
+            'components.server.mjs',
+            'components.client.mjs'
+          ].includes(template.filename)
+        })
       }
     })
 
