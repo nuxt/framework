@@ -67,7 +67,7 @@ export interface ImportPresetWithDeprecation extends ImportPreset {
 }
 
 export interface GenerateAppOptions {
-  limiter?: (template: ResolvedNuxtTemplate<any>) => boolean
+  filter?: (template: ResolvedNuxtTemplate<any>) => boolean
 }
 
 export interface NuxtHooks {

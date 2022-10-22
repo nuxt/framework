@@ -16,7 +16,7 @@ export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp 
   } as unknown as NuxtApp) as NuxtApp
 }
 
-export async function generateApp (nuxt: Nuxt, app: NuxtApp, options: { limiter?: (template: ResolvedNuxtTemplate<any>) => boolean } = {}) {
+export async function generateApp (nuxt: Nuxt, app: NuxtApp, options: { filter?: (template: ResolvedNuxtTemplate<any>) => boolean } = {}) {
   // Resolve app
   await resolveApp(nuxt, app)
 
@@ -32,7 +32,7 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp, options: { limiter?
   // Compile templates into vfs
   const templateContext = { utils: templateUtils, nuxt, app }
   await Promise.all((app.templates as Array<ReturnType<typeof normalizeTemplate>>)
-    .filter(template => !options.limiter || options.limiter(template))
+    .filter(template => !options.filter || options.filter(template))
     .map(async (template) => {
       const contents = await compileTemplate(template, templateContext)
 

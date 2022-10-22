@@ -125,7 +125,7 @@ export default defineNuxtModule<Partial<ImportsOptions>>({
       const _resolved = resolve(nuxt.options.srcDir, path)
       if (composablesDirs.find(dir => _resolved.startsWith(dir))) {
         await updateTemplates({
-          limiter: template => templates.includes(template.filename)
+          filter: template => templates.includes(template.filename)
         })
       }
     })
