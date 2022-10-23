@@ -1,3 +1,6 @@
+---
+description: useAsyncData provides access to data that resolves asynchronously.
+---
 # `useAsyncData`
 
 Within your pages, components, and plugins you can use useAsyncData to get access to data that resolves asynchronously.
@@ -18,19 +21,27 @@ function useAsyncData(
 type AsyncDataOptions<DataT> = {
   server?: boolean
   lazy?: boolean
-  default?: () => DataT | Ref<DataT>
+  default?: () => DataT | Ref<DataT> | null
   transform?: (input: DataT) => DataT
   pick?: string[]
   watch?: WatchSource[]
   initialCache?: boolean
+  immediate?: boolean
 }
 
-type AsyncData<DataT> = {
-  data: Ref<DataT>
-  pending: Ref<boolean>
-  refresh: () => Promise<void>
-  error: Ref<any>
+interface RefreshOptions {
+  dedupe?: boolean
 }
+
+type AsyncData<DataT, ErrorT> = {
+  data: Ref<DataT | null>
+  pending: Ref<boolean>
+  execute: () => Promise<void>
+  refresh: (opts?: RefreshOptions) => Promise<void>
+  error: Ref<ErrorT | null>
+}
+
+
 ```
 
 ## Params
@@ -45,6 +56,7 @@ type AsyncData<DataT> = {
   * _pick_: only pick specified keys in this array from the `handler` function result
   * _watch_: watch reactive sources to auto-refresh
   * _initialCache_: When set to `false`, will skip payload cache for initial fetch. (defaults to `true`)
+  * _immediate_: When set to `false`, will prevent the request from firing immediately. (defaults to `true`)
 
 Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the route before the data has been fetched. Consider using `lazy: true` and implementing a loading state instead for a snappier user experience.
 
@@ -52,7 +64,7 @@ Under the hood, `lazy: false` uses `<Suspense>` to block the loading of the rout
 
 * **data**: the result of the asynchronous function that is passed in
 * **pending**: a boolean indicating whether the data is still being fetched
-* **refresh**: a function that can be used to refresh the data returned by the `handler` function
+* **refresh**/**execute**: a function that can be used to refresh the data returned by the `handler` function
 * **error**: an error object if the data fetching failed
 
 By default, Nuxt waits until a `refresh` is finished before it can be executed again.
@@ -70,5 +82,5 @@ const { data, pending, error, refresh } = await useAsyncData(
 )
 ```
 
-::ReadMore{link="/guide/features/data-fetching"}
+::ReadMore{link="/getting-started/data-fetching"}
 ::

@@ -2,6 +2,7 @@ import { statSync } from 'node:fs'
 import { relative, resolve } from 'pathe'
 import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
+import { distDir } from '../dirs'
 import { componentsPluginTemplate, componentsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
 import { loaderPlugin } from './loader'
@@ -9,7 +10,7 @@ import { TreeShakeTemplatePlugin } from './tree-shake'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
 const isDirectory = (p: string) => { try { return statSync(p).isDirectory() } catch (_e) { return false } }
-function compareDirByPathLength ({ path: pathA }: { path: string}, { path: pathB }: { path: string}) {
+function compareDirByPathLength ({ path: pathA }: { path: string }, { path: pathB }: { path: string }) {
   return pathB.split(/[\\/]/).filter(Boolean).length - pathA.split(/[\\/]/).filter(Boolean).length
 }
 
@@ -146,6 +147,17 @@ export default defineNuxtModule<ComponentsOptions>({
     nuxt.hook('app:templates', async () => {
       const newComponents = await scanComponents(componentDirs, nuxt.options.srcDir!)
       await nuxt.callHook('components:extend', newComponents)
+      // add server placeholder for .client components server side. issue: #7085
+      for (const component of newComponents) {
+        if (component.mode === 'client' && !newComponents.some(c => c.pascalName === component.pascalName && c.mode === 'server')) {
+          newComponents.push({
+            ...component,
+            mode: 'server',
+            filePath: resolve(distDir, 'app/components/server-placeholder'),
+            chunkName: 'components/' + component.kebabName
+          })
+        }
+      }
       context.components = newComponents
     })
 
@@ -165,31 +177,34 @@ export default defineNuxtModule<ComponentsOptions>({
       }
     })
 
-    nuxt.hook('vite:extendConfig', (config, { isClient }) => {
+    nuxt.hook('vite:extendConfig', (config, { isClient, isServer }) => {
+      const mode = isClient ? 'client' : 'server'
+
       config.plugins = config.plugins || []
       config.plugins.push(loaderPlugin.vite({
-        sourcemap: nuxt.options.sourcemap,
+        sourcemap: nuxt.options.sourcemap[mode],
         getComponents,
-        mode: isClient ? 'client' : 'server'
+        mode
       }))
-      if (nuxt.options.experimental.treeshakeClientOnly) {
+      if (nuxt.options.experimental.treeshakeClientOnly && isServer) {
         config.plugins.push(TreeShakeTemplatePlugin.vite({
-          sourcemap: nuxt.options.sourcemap,
+          sourcemap: nuxt.options.sourcemap[mode],
           getComponents
         }))
       }
     })
     nuxt.hook('webpack:config', (configs) => {
       configs.forEach((config) => {
+        const mode = config.name === 'client' ? 'client' : 'server'
         config.plugins = config.plugins || []
         config.plugins.push(loaderPlugin.webpack({
-          sourcemap: nuxt.options.sourcemap,
+          sourcemap: nuxt.options.sourcemap[mode],
           getComponents,
-          mode: config.name === 'client' ? 'client' : 'server'
+          mode
         }))
-        if (nuxt.options.experimental.treeshakeClientOnly) {
+        if (nuxt.options.experimental.treeshakeClientOnly && mode === 'server') {
           config.plugins.push(TreeShakeTemplatePlugin.webpack({
-            sourcemap: nuxt.options.sourcemap,
+            sourcemap: nuxt.options.sourcemap[mode],
             getComponents
           }))
         }

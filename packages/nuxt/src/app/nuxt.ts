@@ -5,7 +5,7 @@ import { createHooks, Hookable } from 'hookable'
 import type { RuntimeConfig, AppConfigInput } from '@nuxt/schema'
 import { getContext } from 'unctx'
 import type { SSRContext } from 'vue-bundle-renderer/runtime'
-import type { CompatibilityEvent } from 'h3'
+import type { H3Event } from 'h3'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
@@ -31,19 +31,17 @@ export interface RuntimeNuxtHooks {
   'app:error': (err: any) => HookResult
   'app:error:cleared': (options: { redirect?: string }) => HookResult
   'app:data:refresh': (keys?: string[]) => HookResult
+  'link:prefetch': (link: string) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
+  'page:transition:finish': (Component?: VNode) => HookResult
   'vue:setup': () => void
   'vue:error': (...args: Parameters<Parameters<typeof onErrorCaptured>[0]>) => HookResult
 }
 
 export interface NuxtSSRContext extends SSRContext {
   url: string
-  event: CompatibilityEvent
-  /** @deprecated Use `event` instead. */
-  req?: CompatibilityEvent['req']
-  /** @deprecated Use `event` instead. */
-  res?: CompatibilityEvent['res']
+  event: H3Event
   runtimeConfig: RuntimeConfig
   noSSR: boolean
   /** whether we are rendering an SSR error */
@@ -69,11 +67,15 @@ interface _NuxtApp {
     data: Ref<any>
     pending: Ref<boolean>
     error: Ref<any>
-  }>,
+  } | undefined>
+
+  isHydrating?: boolean
+  deferHydration: () => () => void | Promise<void>
 
   ssrContext?: NuxtSSRContext
   payload: {
     serverRendered?: boolean
+    prerenderedAt?: number
     data: Record<string, any>
     state: Record<string, any>
     rendered?: Function
@@ -106,6 +108,7 @@ export interface CreateOptions {
 }
 
 export function createNuxtApp (options: CreateOptions) {
+  let hydratingCount = 0
   const nuxtApp: NuxtApp = {
     provide: undefined,
     globalName: 'nuxt',
@@ -116,6 +119,24 @@ export function createNuxtApp (options: CreateOptions) {
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
     isHydrating: process.client,
+    deferHydration () {
+      if (!nuxtApp.isHydrating) { return () => {} }
+
+      hydratingCount++
+      let called = false
+
+      return () => {
+        if (called) { return }
+
+        called = true
+        hydratingCount--
+
+        if (hydratingCount === 0) {
+          nuxtApp.isHydrating = false
+          return nuxtApp.callHook('app:suspense:resolve')
+        }
+      }
+    },
     _asyncDataPromises: {},
     _asyncData: {},
     ...options

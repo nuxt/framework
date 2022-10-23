@@ -1,7 +1,7 @@
-import type { IncomingMessage, ServerResponse } from 'node:http'
 import pify from 'pify'
 import webpack from 'webpack'
-import webpackDevMiddleware, { API, OutputFileSystem } from 'webpack-dev-middleware'
+import { fromNodeMiddleware, defineEventHandler, NodeMiddleware } from 'h3'
+import webpackDevMiddleware, { OutputFileSystem } from 'webpack-dev-middleware'
 import webpackHotMiddleware from 'webpack-hot-middleware'
 import type { Compiler, Watching } from 'webpack'
 
@@ -35,10 +35,10 @@ export async function bundle (nuxt: Nuxt) {
   // Configure compilers
   const compilers = webpackConfigs.map((config) => {
     config.plugins!.push(DynamicBasePlugin.webpack({
-      sourcemap: nuxt.options.sourcemap
+      sourcemap: nuxt.options.sourcemap[config.name as 'client' | 'server']
     }))
     config.plugins!.push(composableKeysPlugin.webpack({
-      sourcemap: nuxt.options.sourcemap,
+      sourcemap: nuxt.options.sourcemap[config.name as 'client' | 'server'],
       rootDir: nuxt.options.rootDir
     }))
 
@@ -75,34 +75,34 @@ async function createDevMiddleware (compiler: Compiler) {
   logger.debug('Creating webpack middleware...')
 
   // Create webpack dev middleware
-  const devMiddleware = pify(webpackDevMiddleware(compiler, {
+  const devMiddleware = webpackDevMiddleware(compiler, {
     publicPath: joinURL(nuxt.options.app.baseURL, nuxt.options.app.buildAssetsDir),
     outputFileSystem: compiler.outputFileSystem as any,
     stats: 'none',
     ...nuxt.options.webpack.devMiddleware
-  })) as any as API<IncomingMessage, ServerResponse>
+  })
 
   // @ts-ignore
   nuxt.hook('close', () => pify(devMiddleware.close.bind(devMiddleware))())
 
   const { client: _client, ...hotMiddlewareOptions } = nuxt.options.webpack.hotMiddleware || {}
-  const hotMiddleware = pify(webpackHotMiddleware(compiler, {
+  const hotMiddleware = webpackHotMiddleware(compiler, {
     log: false,
     heartbeat: 10000,
     path: joinURL(nuxt.options.app.baseURL, '__webpack_hmr', compiler.options.name!),
     ...hotMiddlewareOptions
-  })) as any as API<IncomingMessage, ServerResponse>
+  })
 
   await nuxt.callHook('webpack:devMiddleware', devMiddleware)
   await nuxt.callHook('webpack:hotMiddleware', hotMiddleware)
 
   // Register devMiddleware on server
-  await nuxt.callHook('server:devMiddleware', async (req: IncomingMessage, res: ServerResponse, next: (error?: any) => void) => {
-    for (const mw of [devMiddleware, hotMiddleware]) {
-      await mw?.(req, res, next)
-    }
-    next()
-  })
+  const devHandler = fromNodeMiddleware(devMiddleware as NodeMiddleware)
+  const hotHandler = fromNodeMiddleware(hotMiddleware as NodeMiddleware)
+  await nuxt.callHook('server:devHandler', defineEventHandler(async (event) => {
+    await devHandler(event)
+    await hotHandler(event)
+  }))
 
   return devMiddleware
 }

@@ -18,7 +18,7 @@ import routerOptions from '#build/router.options'
 // @ts-ignore
 import { globalMiddleware, namedMiddleware } from '#build/middleware'
 
-declare module 'vue' {
+declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     NuxtPage: typeof NuxtPage
     /** @deprecated */
@@ -50,11 +50,6 @@ function createCurrentLocation (
 }
 
 export default defineNuxtPlugin(async (nuxtApp) => {
-  nuxtApp.vueApp.component('NuxtPage', NuxtPage)
-  // TODO: remove before release - present for backwards compatibility & intentionally undocumented
-  nuxtApp.vueApp.component('NuxtNestedPage', NuxtPage)
-  nuxtApp.vueApp.component('NuxtChild', NuxtPage)
-
   let routerBase = useRuntimeConfig().app.baseURL
   if (routerOptions.hashMode && !routerBase.includes('#')) {
     // allow the user to provide a `#` in the middle: `/base/#/app`
@@ -159,7 +154,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       if (process.server || (!nuxtApp.payload.serverRendered && nuxtApp.isHydrating)) {
         if (result === false || result instanceof Error) {
           const error = result || createError({
-            statusMessage: `Route navigation aborted: ${initialURL}`
+            statusCode: 404,
+            statusMessage: `Page Not Found: ${initialURL}`
           })
           return callWithNuxt(nuxtApp, showError, [error])
         }

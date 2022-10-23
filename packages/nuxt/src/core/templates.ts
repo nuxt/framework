@@ -1,7 +1,7 @@
 import type { Nuxt, NuxtApp, NuxtTemplate } from '@nuxt/schema'
 import { genArrayFromRaw, genDynamicImport, genExport, genImport, genObjectFromRawEntries, genString, genSafeVariableName } from 'knitwork'
 
-import { isAbsolute, join, relative } from 'pathe'
+import { isAbsolute, join, relative, resolve } from 'pathe'
 import { resolveSchema, generateTypes } from 'untyped'
 import escapeRE from 'escape-string-regexp'
 import { hash } from 'ohash'
@@ -68,8 +68,8 @@ export const serverPluginTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'plugins/server.mjs',
   getContents (ctx) {
     const serverPlugins = ctx.app.plugins.filter(p => !p.mode || p.mode !== 'client')
-    const exports: string[] = ['preload']
-    const imports: string[] = ["import preload from '#app/plugins/preload.server'"]
+    const exports: string[] = []
+    const imports: string[] = []
     for (const plugin of serverPlugins) {
       const path = relative(ctx.nuxt.options.rootDir, plugin.src)
       const variable = genSafeVariableName(path).replace(/_(45|46|47)/g, '_') + '_' + hash(path)
@@ -114,21 +114,23 @@ export { }
 const adHocModules = ['router', 'pages', 'imports', 'meta', 'components']
 export const schemaTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'types/schema.d.ts',
-  getContents: ({ nuxt }) => {
+  getContents: async ({ nuxt }) => {
     const moduleInfo = nuxt.options._installedModules.map(m => ({
       ...m.meta || {},
       importName: m.entryPath || m.meta?.name
     })).filter(m => m.configKey && m.name && !adHocModules.includes(m.name))
+
+    const relativeRoot = relative(resolve(nuxt.options.buildDir, 'types'), nuxt.options.rootDir)
 
     return [
       "import { NuxtModule } from '@nuxt/schema'",
       "declare module '@nuxt/schema' {",
       '  interface NuxtConfig {',
       ...moduleInfo.filter(Boolean).map(meta =>
-        `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
+        `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName.startsWith('.') ? './' + join(relativeRoot, meta.importName) : meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
       ),
       '  }',
-      generateTypes(resolveSchema(Object.fromEntries(Object.entries(nuxt.options.runtimeConfig).filter(([key]) => key !== 'public'))),
+      generateTypes(await resolveSchema(Object.fromEntries(Object.entries(nuxt.options.runtimeConfig).filter(([key]) => key !== 'public'))),
         {
           interfaceName: 'RuntimeConfig',
           addExport: false,
@@ -136,7 +138,7 @@ export const schemaTemplate: NuxtTemplate<TemplateContext> = {
           allowExtraKeys: false,
           indentation: 2
         }),
-      generateTypes(resolveSchema(nuxt.options.runtimeConfig.public),
+      generateTypes(await resolveSchema(nuxt.options.runtimeConfig.public),
         {
           interfaceName: 'PublicRuntimeConfig',
           addExport: false,
@@ -154,10 +156,9 @@ export const layoutTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'layouts.mjs',
   getContents ({ app }) {
     const layoutsObject = genObjectFromRawEntries(Object.values(app.layouts).map(({ name, file }) => {
-      return [name, `defineAsyncComponent(${genDynamicImport(file)})`]
+      return [name, genDynamicImport(file, { interopDefault: true })]
     }))
     return [
-      'import { defineAsyncComponent } from \'vue\'',
       `export default ${layoutsObject}`
     ].join('\n')
   }
@@ -239,8 +240,11 @@ export const publicPathTemplate: NuxtTemplate = {
       '  return path.length ? joinURL(publicBase, ...path) : publicBase',
       '}',
 
-      'globalThis.__buildAssetsURL = buildAssetsURL',
-      'globalThis.__publicAssetsURL = publicAssetsURL'
+      // On server these are registered directly in packages/nuxt/src/core/runtime/nitro/renderer.ts
+      'if (process.client) {',
+      '  globalThis.__buildAssetsURL = buildAssetsURL',
+      '  globalThis.__publicAssetsURL = publicAssetsURL',
+      '}'
     ].filter(Boolean).join('\n')
   }
 }

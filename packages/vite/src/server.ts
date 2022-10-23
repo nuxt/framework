@@ -1,4 +1,3 @@
-import { resolveTSConfig } from 'pkg-types'
 import { resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
@@ -10,12 +9,9 @@ import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { initViteNodeServer } from './vite-node'
 import { ssrStylesPlugin } from './plugins/ssr-styles'
+import { writeManifest } from './manifest'
 
 export async function buildServer (ctx: ViteBuildContext) {
-  const useAsyncEntry = ctx.nuxt.options.experimental.asyncEntry ||
-    (ctx.nuxt.options.vite.devBundler === 'vite-node' && ctx.nuxt.options.dev)
-  ctx.entry = resolve(ctx.nuxt.options.appDir, useAsyncEntry ? 'entry.async' : 'entry')
-
   const _resolve = (id: string) => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     entry: ctx.entry,
@@ -75,11 +71,12 @@ export async function buildServer (ctx: ViteBuildContext) {
         /\.(es|esm|esm-browser|esm-bundler).js$/,
         '/__vue-jsx',
         '#app',
-        /(nuxt|nuxt3)\/(dist|src|app)/,
-        /@nuxt\/nitro\/(dist|src)/
+        /^nuxt(\/|$)/,
+        /(nuxt|nuxt3)\/(dist|src|app)/
       ]
     },
     build: {
+      sourcemap: ctx.nuxt.options.sourcemap.server ? ctx.config.build?.sourcemap ?? true : false,
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/server'),
       ssr: ctx.nuxt.options.ssr ?? true,
       rollupOptions: {
@@ -113,22 +110,35 @@ export async function buildServer (ctx: ViteBuildContext) {
   } as ViteOptions)
 
   if (ctx.nuxt.options.experimental.inlineSSRStyles) {
+    const chunksWithInlinedCSS = new Set<string>()
     serverConfig.plugins!.push(ssrStylesPlugin({
       srcDir: ctx.nuxt.options.srcDir,
+      chunksWithInlinedCSS,
       shouldInline: typeof ctx.nuxt.options.experimental.inlineSSRStyles === 'function'
         ? ctx.nuxt.options.experimental.inlineSSRStyles
         : undefined
     }))
-  }
 
-  // Add type-checking
-  if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
-    const checker = await import('vite-plugin-checker').then(r => r.default)
-    serverConfig.plugins!.push(checker({
-      vueTsc: {
-        tsconfigPath: await resolveTSConfig(ctx.nuxt.options.rootDir)
+    // Remove CSS entries for files that will have inlined styles
+    ctx.nuxt.hook('build:manifest', (manifest) => {
+      for (const key in manifest) {
+        const entry = manifest[key]
+        const shouldRemoveCSS = chunksWithInlinedCSS.has(key)
+        if (shouldRemoveCSS) {
+          entry.css = []
+        }
+        // Add entry CSS as prefetch (non-blocking)
+        if (entry.isEntry) {
+          manifest.entryCSS = {
+            file: '',
+            css: entry.css
+          }
+          entry.css = []
+          entry.dynamicImports = entry.dynamicImports || []
+          entry.dynamicImports.push('entryCSS')
+        }
       }
-    }))
+    })
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
@@ -140,10 +150,15 @@ export async function buildServer (ctx: ViteBuildContext) {
     const start = Date.now()
     logger.info('Building server...')
     await vite.build(serverConfig)
+    // Write production client manifest
+    await writeManifest(ctx)
     await onBuild()
     logger.success(`Server built in ${Date.now() - start}ms`)
     return
   }
+
+  // Write dev client manifest
+  await writeManifest(ctx)
 
   if (!ctx.nuxt.options.ssr) {
     await onBuild()

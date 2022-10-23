@@ -1,3 +1,8 @@
+---
+title: "navigateTo"
+description: navigateTo is a helper function that programmatically navigates users.
+---
+
 # `navigateTo`
 
 `navigateTo` is a router helper function that allows programmatically navigating users through your Nuxt application.
@@ -71,13 +76,13 @@ An object accepting the following properties:
 ```vue
 <script setup>
 // passing 'to' as a string
-return navigateTo('/search')
+await navigateTo('/search')
 
 // ... or as a route object
-return navigateTo({ path: '/search' })
+await navigateTo({ path: '/search' })
 
 // ... or as a route object with query parameters
-return navigateTo({
+await navigateTo({
   path: '/search',
   query: {
     page: 1,
@@ -103,13 +108,13 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
 ```vue
 <script setup>
-  // will throw an error;
-  // navigating to an external URL is not allowed by default
-  await navigateTo('https://v3.nuxtjs.org')
+// will throw an error;
+// navigating to an external URL is not allowed by default
+await navigateTo('https://v3.nuxtjs.org')
 
-  // will redirect successfully with the 'external' parameter set to 'true'
-  await navigateTo('https://v3.nuxtjs.org', {
-    external: true
-  })
+// will redirect successfully with the 'external' parameter set to 'true'
+await navigateTo('https://v3.nuxtjs.org', {
+  external: true
+})
 </script>
 ```

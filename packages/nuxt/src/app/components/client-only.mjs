@@ -1,4 +1,4 @@
-import { ref, onMounted, defineComponent, createElementBlock, h, Fragment } from 'vue'
+import { ref, onMounted, defineComponent, createElementBlock, h, createElementVNode } from 'vue'
 
 export default defineComponent({
   name: 'ClientOnly',
@@ -18,39 +18,57 @@ export default defineComponent({
   }
 })
 
+const cache = new WeakMap()
+
 export function createClientOnly (component) {
-  const { setup, render: _render, template: _template } = component
-  if (_render) {
+  if (cache.has(component)) {
+    return cache.get(component)
+  }
+
+  const clone = { ...component }
+
+  if (clone.render) {
     // override the component render (non script setup component)
-    component.render = (ctx, ...args) => {
-      return ctx.mounted$
-        ? h(Fragment, null, [h(_render(ctx, ...args), ctx.$attrs ?? ctx._.attrs)])
-        : h('div', ctx.$attrs ?? ctx._.attrs)
+    clone.render = (ctx, ...args) => {
+      if (ctx.mounted$) {
+        const res = component.render(ctx, ...args)
+        return (res.children === null || typeof res.children === 'string')
+          ? createElementVNode(res.type, res.props, res.children, res.patchFlag, res.dynamicProps, res.shapeFlag)
+          : h(res)
+      } else {
+        return h('div', ctx.$attrs ?? ctx._.attrs)
+      }
     }
-  } else if (_template) {
+  } else if (clone.template) {
     // handle runtime-compiler template
-    component.template = `
-      <template v-if="mounted$">${_template}</template>
+    clone.template = `
+      <template v-if="mounted$">${component.template}</template>
       <template v-else><div></div></template>
     `
   }
-  return defineComponent({
-    ...component,
-    setup (props, ctx) {
-      const mounted$ = ref(false)
-      onMounted(() => { mounted$.value = true })
 
-      return Promise.resolve(setup?.(props, ctx) || {})
-        .then((setupState) => {
-          return typeof setupState !== 'function'
-            ? { ...setupState, mounted$ }
-            : (...args) => {
-                return mounted$.value
-                // use Fragment to avoid oldChildren is null issue
-                  ? h(Fragment, null, [h(setupState(...args), ctx.attrs)])
-                  : h('div', ctx.attrs)
+  clone.setup = (props, ctx) => {
+    const mounted$ = ref(false)
+    onMounted(() => { mounted$.value = true })
+
+    return Promise.resolve(component.setup?.(props, ctx) || {})
+      .then((setupState) => {
+        return typeof setupState !== 'function'
+          ? { ...setupState, mounted$ }
+          : (...args) => {
+              if (mounted$.value) {
+                const res = setupState(...args)
+                return (res.children === null || typeof res.children === 'string')
+                  ? createElementVNode(res.type, res.props, res.children, res.patchFlag, res.dynamicProps, res.shapeFlag)
+                  : h(res)
+              } else {
+                return h('div', ctx.attrs)
               }
-        })
-    }
-  })
+            }
+      })
+  }
+
+  cache.set(component, clone)
+
+  return clone
 }

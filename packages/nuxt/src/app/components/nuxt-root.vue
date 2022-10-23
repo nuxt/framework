@@ -9,10 +9,10 @@
 import { defineAsyncComponent, onErrorCaptured, provide } from 'vue'
 import { callWithNuxt, isNuxtError, showError, useError, useRoute, useNuxtApp } from '#app'
 
-const ErrorComponent = defineAsyncComponent(() => import('#build/error-component.mjs'))
+const ErrorComponent = defineAsyncComponent(() => import('#build/error-component.mjs').then(r => r.default || r))
 
 const nuxtApp = useNuxtApp()
-const onResolve = () => nuxtApp.callHook('app:suspense:resolve')
+const onResolve = nuxtApp.deferHydration()
 
 // Inject default route (outside of pages) as active route
 provide('_route', useRoute())

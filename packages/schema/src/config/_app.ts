@@ -2,8 +2,7 @@ import { resolve, join } from 'pathe'
 import { existsSync, readdirSync } from 'node:fs'
 import defu from 'defu'
 import { defineUntypedSchema } from 'untyped'
-
-import { MetaObject } from '../types/meta'
+import type { AppHeadMetaObject } from '../types/meta'
 
 export default defineUntypedSchema({
   /**
@@ -21,10 +20,10 @@ export default defineUntypedSchema({
      */
     config: {
       silent: {
-        $resolve: (val, get) => val ?? !get('dev')
+        $resolve: async (val, get) => val ?? !(await get('dev'))
       },
       performance: {
-        $resolve: (val, get) => val ?? get('dev')
+        $resolve: async (val, get) => val ?? await get('dev')
       },
     },
     /**
@@ -51,10 +50,14 @@ export default defineUntypedSchema({
      * NUXT_APP_BASE_URL=/prefix/ node .output/server/index.mjs
      * ```
      */
-    baseURL: process.env.NUXT_APP_BASE_URL || '/',
+    baseURL: {
+      $resolve: async (val) => val || process.env.NUXT_APP_BASE_URL || '/',
+    },
 
     /** The folder name for the built site assets, relative to `baseURL` (or `cdnURL` if set). This is set at build time and should not be customized at runtime. */
-    buildAssetsDir: process.env.NUXT_APP_BUILD_ASSETS_DIR || '/_nuxt/',
+    buildAssetsDir: {
+      $resolve: async (val) => val || process.env.NUXT_APP_BUILD_ASSETS_DIR || '/_nuxt/',
+    },
 
     /**
      * The folder name for the built site assets, relative to `baseURL` (or `cdnURL` if set).
@@ -62,7 +65,7 @@ export default defineUntypedSchema({
      * @version 2
      */
     assetsPath: {
-      $resolve: (val, get) => val ?? get('buildAssetsDir')
+      $resolve: async (val, get) => val ?? (await get('buildAssetsDir'))
     },
     /**
      * An absolute URL to serve the public folder from (production-only).
@@ -74,7 +77,7 @@ export default defineUntypedSchema({
      * ```
      */
     cdnURL: {
-      $resolve: (val, get) => get('dev') ? '' : (process.env.NUXT_APP_CDN_URL ?? val) || ''
+      $resolve: async (val, get) => (await get('dev')) ? '' : (process.env.NUXT_APP_CDN_URL ?? val) || ''
     },
     /**
      * Set default configuration for `<head>` on every page.
@@ -111,8 +114,8 @@ export default defineUntypedSchema({
      * @version 3
      */
     head: {
-      $resolve: (val, get) => {
-        const resolved: Required<MetaObject> = defu(val, get('meta'), {
+      $resolve: async (val, get) => {
+        const resolved: Required<AppHeadMetaObject> = defu(val, await get('meta'), {
           meta: [],
           link: [],
           style: [],
@@ -120,9 +123,15 @@ export default defineUntypedSchema({
           noscript: []
         })
 
-        resolved.charset = resolved.charset ?? resolved.meta.find(m => m.charset)?.charset ?? 'utf-8'
-        resolved.viewport = resolved.viewport ?? resolved.meta.find(m => m.name === 'viewport')?.content ?? 'width=device-width, initial-scale=1'
-        resolved.meta = resolved.meta.filter(m => m && m.name !== 'viewport' && !m.charset)
+        // provides default charset and viewport if not set
+        if (!resolved.meta.find(m => m.charset)?.charset) {
+          resolved.meta.unshift({ charset: resolved.charset || 'utf-8' })
+        }
+        if (!resolved.meta.find(m => m.name === 'viewport')?.content) {
+          resolved.meta.unshift({ name: 'viewport', content: resolved.viewport || 'width=device-width, initial-scale=1' })
+        }
+
+        resolved.meta = resolved.meta.filter(Boolean)
         resolved.link = resolved.link.filter(Boolean)
         resolved.style = resolved.style.filter(Boolean)
         resolved.script = resolved.script.filter(Boolean)
@@ -181,14 +190,14 @@ export default defineUntypedSchema({
    * @version 2
    */
   appTemplatePath: {
-    $resolve: (val, get) => {
+    $resolve: async (val, get) => {
       if (val) {
-        return resolve(get('srcDir'), val)
+        return resolve(await get('srcDir'), val)
       }
-      if (existsSync(join(get('srcDir'), 'app.html'))) {
-        return join(get('srcDir'), 'app.html')
+      if (existsSync(join(await get('srcDir'), 'app.html'))) {
+        return join(await get('srcDir'), 'app.html')
       }
-      return resolve(get('buildDir'), 'views/app.template.html')
+      return resolve(await get('buildDir'), 'views/app.template.html')
     }
   },
 
@@ -199,9 +208,9 @@ export default defineUntypedSchema({
    * @version 2
    */
   store: {
-    $resolve: (val, get) => val !== false &&
-      existsSync(join(get('srcDir'), get('dir.store'))) &&
-      readdirSync(join(get('srcDir'), get('dir.store')))
+    $resolve: async (val, get) => val !== false &&
+      existsSync(join(await get('srcDir'), await get('dir.store'))) &&
+      readdirSync(join(await get('srcDir'), await get('dir.store')))
         .find(filename => filename !== 'README.md' && filename[0] !== '.')
   },
 
@@ -233,7 +242,7 @@ export default defineUntypedSchema({
   },
 
   /**
-   * @type {typeof import('../src/types/meta').MetaObject}
+   * @type {typeof import('../src/types/meta').AppHeadMetaObject}
    * @version 3
    * @deprecated - use `head` instead
    */
@@ -378,15 +387,15 @@ export default defineUntypedSchema({
    * @version 2
    */
   loadingIndicator: {
-    $resolve: (val, get) => {
+    $resolve: async (val, get) => {
       val = typeof val === 'string' ? { name: val } : val
       return defu(val, {
         name: 'default',
-        color: get('loading.color') || '#D3D3D3',
+        color: await get('loading.color') || '#D3D3D3',
         color2: '#F5F5F5',
-        background: (get('manifest') && get('manifest.theme_color')) || 'white',
-        dev: get('dev'),
-        loading: get('messages.loading')
+        background: (await get('manifest') && await get('manifest.theme_color')) || 'white',
+        dev: await get('dev'),
+        loading: await get('messages.loading')
       })
     }
   },
@@ -402,12 +411,12 @@ export default defineUntypedSchema({
    * @version 2
    */
   pageTransition: {
-    $resolve: (val, get) => {
+    $resolve: async (val, get) => {
       val = typeof val === 'string' ? { name: val } : val
       return defu(val, {
         name: 'page',
         mode: 'out-in',
-        appear: get('render.ssr') === false || Boolean(val),
+        appear: await get('render.ssr') === false || Boolean(val),
         appearClass: 'appear',
         appearActiveClass: 'appear-active',
         appearToClass: 'appear-to'

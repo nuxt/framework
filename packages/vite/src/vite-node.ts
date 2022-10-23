@@ -1,5 +1,5 @@
 import { pathToFileURL } from 'node:url'
-import { createApp, createError, defineEventHandler, defineLazyEventHandler } from 'h3'
+import { createApp, createError, defineEventHandler, defineLazyEventHandler, eventHandler, toNodeListener } from 'h3'
 import { ViteNodeServer } from 'vite-node/server'
 import fse from 'fs-extra'
 import { resolve } from 'pathe'
@@ -21,7 +21,7 @@ export function viteNodePlugin (ctx: ViteBuildContext): VitePlugin {
     name: 'nuxt:vite-node-server',
     enforce: 'post',
     configureServer (server) {
-      server.middlewares.use('/__nuxt_vite_node__', createViteNodeMiddleware(ctx, invalidates))
+      server.middlewares.use('/__nuxt_vite_node__', toNodeListener(createViteNodeApp(ctx, invalidates)))
     },
     handleHotUpdate ({ file, server }) {
       function markInvalidate (mod: ModuleNode) {
@@ -43,7 +43,7 @@ export function viteNodePlugin (ctx: ViteBuildContext): VitePlugin {
 export function registerViteNodeMiddleware (ctx: ViteBuildContext) {
   addDevServerHandler({
     route: '/__nuxt_vite_node__/',
-    handler: createViteNodeMiddleware(ctx)
+    handler: createViteNodeApp(ctx).handler
   })
 }
 
@@ -69,7 +69,7 @@ function getManifest (ctx: ViteBuildContext) {
   return manifest
 }
 
-function createViteNodeMiddleware (ctx: ViteBuildContext, invalidates: Set<string> = new Set()) {
+function createViteNodeApp (ctx: ViteBuildContext, invalidates: Set<string> = new Set()) {
   const app = createApp()
 
   app.use('/manifest', defineEventHandler(() => {
@@ -102,41 +102,38 @@ function createViteNodeMiddleware (ctx: ViteBuildContext, invalidates: Set<strin
     node.shouldExternalize = async (id: string) => {
       const result = await isExternal(id)
       if (result?.external) {
-        return resolveModule(result.id, { url: ctx.nuxt.options.rootDir })
+        return resolveModule(result.id, { url: ctx.nuxt.options.modulesDir })
       }
       return false
     }
 
-    return async (event) => {
+    return eventHandler(async (event) => {
       const moduleId = decodeURI(event.req.url!).substring(1)
       if (moduleId === '/') {
         throw createError({ statusCode: 400 })
       }
       const module = await node.fetchModule(moduleId).catch((err) => {
-        throw createError({ data: err })
+        const errorData = {
+          code: 'VITE_ERROR',
+          id: moduleId,
+          stack: '',
+          ...err
+        }
+        throw createError({ data: errorData })
       })
       return module
-    }
+    })
   }))
 
   return app
 }
 
 export async function initViteNodeServer (ctx: ViteBuildContext) {
-  let entryPath = resolve(ctx.nuxt.options.appDir, 'entry.async.mjs')
-  if (!fse.existsSync(entryPath)) {
-    entryPath = resolve(ctx.nuxt.options.appDir, 'entry.async')
-  }
-
-  const host = ctx.nuxt.options.server.host || 'localhost'
-  const port = ctx.nuxt.options.server.port || '3000'
-  const protocol = ctx.nuxt.options.server.https ? 'https' : 'http'
-
   // Serialize and pass vite-node runtime options
   const viteNodeServerOptions = {
-    baseURL: `${protocol}://${host}:${port}/__nuxt_vite_node__`,
+    baseURL: `${ctx.nuxt.options.server.url}__nuxt_vite_node__`,
     root: ctx.nuxt.options.srcDir,
-    entryPath,
+    entryPath: ctx.entry,
     base: ctx.ssrServer!.config.base || '/_nuxt/'
   }
   process.env.NUXT_VITE_NODE_OPTIONS = JSON.stringify(viteNodeServerOptions)

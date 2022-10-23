@@ -22,13 +22,17 @@ export async function runTests (opts: RunTestOptions) {
   }
 
   // @ts-ignore missing types
-  const { startVitest } = await import('vitest/dist/node.mjs')
+  const { startVitest } = await import('vitest/dist/node.mjs') as typeof import('vitest/dist/node')
   const succeeded = await startVitest(
+    'test',
     [] /* argv */,
     // Vitest options
     {
       root: opts.rootDir,
-      run: !opts.watch
+      run: !opts.watch,
+      deps: {
+        inline: [/@nuxt\/test-utils/]
+      }
     },
     // Vite options
     {
