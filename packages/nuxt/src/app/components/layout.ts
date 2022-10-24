@@ -3,7 +3,7 @@ import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { _wrapIf } from './utils'
 import { useRoute } from '#app'
 // @ts-ignore
-import { useRoute as useVueRouterRoute } from '#build/vue-router-imports'
+import { useRoute as useVueRouterRoute } from '#build/pages'
 // @ts-ignore
 import layouts from '#build/layouts'
 // @ts-ignore

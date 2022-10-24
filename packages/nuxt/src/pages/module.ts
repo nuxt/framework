@@ -25,7 +25,7 @@ export default defineNuxtModule({
       addPlugin(resolve(distDir, 'app/plugins/router'))
       // Add vue-router import for `<NuxtLayout>` integration
       addTemplate({
-        filename: 'vue-router-imports.mjs',
+        filename: 'pages.mjs',
         getContents: () => 'export { useRoute } from \'#app\''
       })
       return
@@ -142,7 +142,7 @@ export default defineNuxtModule({
 
     // Add vue-router import for `<NuxtLayout>` integration
     addTemplate({
-      filename: 'vue-router-imports.mjs',
+      filename: 'pages.mjs',
       getContents: () => 'export { useRoute } from \'vue-router\''
     })
 
