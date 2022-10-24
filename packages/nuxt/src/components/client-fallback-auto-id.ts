@@ -35,22 +35,14 @@ export const clientFallbackAutoIdPlugin = createUnplugin((options: LoaderOptions
       const s = new MagicString(code)
       const relativeID = isAbsolute(id) ? relative(options.rootDir, id) : id
       const imports = new Set()
-
-      let hasClientFallback = false
       let count = 0
-      const isSFCRender = code.includes('function _sfc_render(') || code.includes('function _sfc_ssrRender(') || code.includes('function ssrRender(')
 
       s.replace(/(_createVNode|_ssrRenderComponent)\((.*[cC]lient-?[fF]allback),\s*?(?:(({|null)))/g, (full, renderFunction, name, props) => {
-        hasClientFallback = true
-
+        const isSetupRender = !/const __returned__ = {(.*)}/g.test(code)
         const nullProps = props.trim() === 'null'
         // generate string to include the uidkey into the component props
-        const newProps = `{ uid: ${isSFCRender ? '$setup.' : ''}${uidkey} + '${count}'${nullProps ? '}' : ','}`
-        count++
-        return `${renderFunction}(${name}, ${newProps}`
-      })
+        const newProps = `{ uid: ${isSetupRender ? `${uidkey}.value` : `$setup.${uidkey}`} + '${count}'${nullProps ? '}' : ','}`
 
-      if (hasClientFallback) {
         imports.add(genImport('vue', [{ name: 'computed', as: '__computed' }]))
         s.replace(/setup ?\((.*)\) ?{/g, (full, args) => {
           const [propsName = '_props', ctxName = '_ctx'] = args.split(',')
@@ -59,11 +51,13 @@ export const clientFallbackAutoIdPlugin = createUnplugin((options: LoaderOptions
             const ${uidkey} = __computed(() => "${hash(relativeID)}" + JSON.stringify(${propsName}));
           `
         })
-
         s.replace(/const __returned__ = {(.*)}/g, (full, content) => {
           return `const __returned__ = {${content ? content + ',' : ''} ${uidkey}}`
         })
-      }
+        count++
+        return `${renderFunction}(${name}, ${newProps}`
+      })
+
       if (imports.size) {
         s.prepend([...imports, ''].join('\n'))
       }
