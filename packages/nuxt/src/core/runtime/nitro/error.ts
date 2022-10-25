@@ -1,7 +1,6 @@
 import { withQuery } from 'ufo'
 import type { NitroErrorHandler } from 'nitropack'
-import type { H3Error } from 'h3'
-import { getRequestHeaders, H3Response } from 'h3'
+import { H3Error, setResponseHeader, getRequestHeaders } from 'h3'
 import { useNitroApp } from '#internal/nitro'
 import { normalizeError, isJsonRequest } from '#internal/nitro/utils'
 
@@ -66,12 +65,21 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
       (errorObject as any).description = errorObject.message
     }
     event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
-    return event.res.end(template(errorObject))
+    event.res.end(template(errorObject))
+    return
   }
 
-  event.respondWith(new H3Response(await res.text(), {
-    headers: res.headers,
-    status: res.status === 200 ? errorObject.statusCode : res.status,
-    statusText: res.statusText || errorObject.statusMessage
-  }))
+  for (const [header, value] of res.headers.entries()) {
+    setResponseHeader(event, header, value)
+  }
+
+  if (res.status && res.status !== 200) {
+    event.res.statusCode = res.status
+  }
+
+  if (res.statusText) {
+    event.res.statusMessage = res.statusText
+  }
+
+  event.res.end(await res.text())
 }
