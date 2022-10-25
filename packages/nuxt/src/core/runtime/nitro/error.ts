@@ -1,7 +1,8 @@
 import { withQuery } from 'ufo'
 import type { NitroErrorHandler } from 'nitropack'
 import type { H3Error } from 'h3'
-import { getRequestHeaders } from 'h3'
+import { getRequestHeaders, H3Response } from 'h3'
+import { useNitroApp } from '#internal/nitro'
 import { normalizeError, isJsonRequest } from '#internal/nitro/utils'
 
 export default <NitroErrorHandler> async function errorhandler (error: H3Error, event) {
@@ -46,14 +47,15 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
 
   // HTML response (via SSR)
   const isErrorPage = event.req.url?.startsWith('/__nuxt_error')
-  let html = !isErrorPage
-    ? await $fetch(withQuery('/__nuxt_error', errorObject), {
-      headers: getRequestHeaders(event) as HeadersInit
+  const res = !isErrorPage
+    ? await useNitroApp().localFetch(withQuery('/__nuxt_error', errorObject), {
+      headers: getRequestHeaders(event) as Record<string, string>,
+      redirect: 'manual'
     }).catch(() => null)
     : null
 
   // Fallback to static rendered error page
-  if (!html) {
+  if (!res) {
     const { template } = process.dev
       // @ts-ignore
       ? await import('@nuxt/ui-templates/templates/error-dev.mjs')
@@ -63,9 +65,13 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
       // TODO: Support `message` in template
       (errorObject as any).description = errorObject.message
     }
-    html = template(errorObject)
+    event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
+    return event.res.end(template(errorObject))
   }
 
-  event.res.setHeader('Content-Type', 'text/html;charset=UTF-8')
-  event.res.end(html)
+  event.respondWith(new H3Response(await res.text(), {
+    headers: res.headers,
+    status: res.status,
+    statusText: res.statusText
+  }))
 }
