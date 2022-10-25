@@ -71,7 +71,7 @@ export default <NitroErrorHandler> async function errorhandler (error: H3Error, 
 
   event.respondWith(new H3Response(await res.text(), {
     headers: res.headers,
-    status: res.status,
-    statusText: res.statusText
+    status: res.status === 200 ? errorObject.statusCode : res.status,
+    statusText: res.statusText || errorObject.statusMessage
   }))
 }
