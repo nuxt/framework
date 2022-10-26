@@ -21,7 +21,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     debug: nuxt.options.debug,
     rootDir: nuxt.options.rootDir,
     workspaceDir: nuxt.options.workspaceDir,
-    srcDir: nuxt.options.devServerDir,
+    srcDir: nuxt.options.serverDir,
     dev: nuxt.options.dev,
     buildDir: nuxt.options.buildDir,
     analyze: nuxt.options.build.analyze && {
