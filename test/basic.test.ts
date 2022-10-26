@@ -238,9 +238,16 @@ describe('pages', () => {
   })
 
   it('client-fallback', async () => {
+    const classes = [
+      'clientfallback-non-stateful-setup',
+      'clientfallback-non-stateful',
+      'clientfallback-stateful-setup',
+      'clientfallback-stateful'
+    ]
     const html = await $fetch('/client-fallback')
     // ensure failed components are not rendered server-side
     expect(html).not.toContain('This breaks in server-side setup.')
+    classes.forEach(c => expect(html).not.toContain(c))
     // ensure not failed component not be rendered
     expect(html).not.toContain('Sugar Counter 0 x 2 = 0')
     // ensure ClientFallback is being rendered with its fallback tag and attributes

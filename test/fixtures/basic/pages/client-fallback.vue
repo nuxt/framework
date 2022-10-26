@@ -34,6 +34,10 @@
           <div>Hello world !</div>
         </template>
       </ClientFallback>
+      <ClientFallbackStateful />
+      <ClientFallbackStatefulSetup />
+      <ClientFallbackNonStatefulSetup />
+      <ClientFallbackNonStateful />
     </div>
     <button id="increment-count" @click="count++">
       increment count
