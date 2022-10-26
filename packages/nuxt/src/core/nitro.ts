@@ -206,7 +206,7 @@ declare module 'nitropack' {
   interface NitroRouteConfig {
     ssr?: boolean
   }
-  interface NitroRouteOptions {
+  interface NitroRouteRules {
     ssr?: boolean
   }
 }
