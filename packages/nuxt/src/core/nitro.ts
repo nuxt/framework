@@ -55,7 +55,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
         .map(dir => ({ dir }))
     ],
     prerender: {
-      crawlLinks: nuxt.options._generate ? nuxt.options.generate.crawler : false,
+      crawlLinks: nuxt.options._generate ?? undefined,
       routes: ([] as string[])
         .concat(nuxt.options.generate.routes)
         .concat(nuxt.options._generate ? [nuxt.options.ssr ? '/' : '/index.html', '/200.html', '/404.html'] : [])
@@ -190,14 +190,13 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
 
   // nuxt dev
   if (nuxt.options.dev) {
-    nuxt.hook('build:compile', ({ compiler }) => {
-      compiler.outputFileSystem = { ...fsExtra, join } as any
-    })
+    nuxt.hook('webpack:compile', ({ compiler }) => { compiler.outputFileSystem = { ...fsExtra, join } as any })
+    nuxt.hook('webpack:compiled', () => { nuxt.server.reload() })
+    nuxt.hook('vite:compiled', () => { nuxt.server.reload() })
+
     nuxt.hook('server:devHandler', (h) => { devMiddlewareHandler.set(h) })
     nuxt.server = createDevServer(nitro)
-    nuxt.hook('build:resources', () => {
-      nuxt.server.reload()
-    })
+
     const waitUntilCompile = new Promise<void>(resolve => nitro.hooks.hook('compiled', () => resolve()))
     nuxt.hook('build:done', () => waitUntilCompile)
   }

@@ -10,12 +10,11 @@ import defu from 'defu'
 import type { OutputOptions } from 'rollup'
 import { defineEventHandler } from 'h3'
 import { cacheDirPlugin } from './plugins/cache-dir'
-import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 import { viteNodePlugin } from './vite-node'
 
-export async function buildClient(ctx: ViteBuildContext) {
+export async function buildClient (ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     entry: ctx.entry,
     base: ctx.nuxt.options.dev
@@ -132,7 +131,7 @@ export async function buildClient(ctx: ViteBuildContext) {
     // Build
     const start = Date.now()
     await vite.build(clientConfig)
-    await ctx.nuxt.callHook('build:resources', wpfs)
+    await ctx.nuxt.callHook('vite:compiled')
     logger.info(`Client built in ${Date.now() - start}ms`)
   }
 }

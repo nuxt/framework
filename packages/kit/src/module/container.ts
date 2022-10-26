@@ -66,7 +66,7 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
 
     addErrorLayout (dst) {
       const relativeBuildDir = relative(nuxt.options.rootDir, nuxt.options.buildDir)
-      nuxt.options.ErrorPage = `~/${relativeBuildDir}/${dst}`
+      ;(nuxt as any).options.ErrorPage = `~/${relativeBuildDir}/${dst}`
     },
 
     extendBuild (fn) {
@@ -80,7 +80,7 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
 
     extendRoutes (fn) {
       if (isNuxt2(nuxt)) {
-        nuxt.options.router.extendRoutes = chainFn(nuxt.options.router.extendRoutes, fn)
+        (nuxt.options.router as any).extendRoutes = chainFn((nuxt.options.router as any).extendRoutes, fn)
       } else {
         nuxt.hook('pages:extend', async (pages, ...args) => {
           const maybeRoutes = await fn(pages, ...args)

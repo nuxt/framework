@@ -1,5 +1,6 @@
-import defu from 'defu'
 import { defineUntypedSchema } from 'untyped'
+import defu from 'defu'
+import { join } from 'pathe'
 
 export default defineUntypedSchema({
   /**
@@ -79,5 +80,33 @@ export default defineUntypedSchema({
      * ```
      */
     templates: [],
+
+        /**
+     * Nuxt uses `webpack-bundle-analyzer` to visualize your bundles and how to optimize them.
+     *
+     * Set to `true` to enable bundle analysis, or pass an object with options: [for webpack](https://github.com/webpack-contrib/webpack-bundle-analyzer#options-for-plugin) or [for vite](https://github.com/btd/rollup-plugin-visualizer#options).
+     *
+     * @example
+     * ```js
+     * analyze: {
+     *   analyzerMode: 'static'
+     * }
+     * ```
+     * @type {boolean | typeof import('webpack-bundle-analyzer').BundleAnalyzerPlugin.Options | typeof import('rollup-plugin-visualizer').PluginVisualizerOptions}
+     *
+     */
+      analyze: {
+      $resolve: async (val, get) => {
+        if (val !== true) {
+          return val ?? false
+        }
+        const rootDir = await get('rootDir')
+        return {
+          template: 'treemap',
+          projectRoot: rootDir,
+          filename: join(rootDir, '.nuxt/stats', '{name}.html')
+        }
+      }
+    },
   }
 })
