@@ -20,18 +20,23 @@ export default defineNuxtModule({
 
     // Disable module (and use universal router) if pages dir do not exists or user has disabled it
     const isNonEmptyDir = (dir: string) => existsSync(dir) && readdirSync(dir).length
-    const checkPagesEnabled = () => {
-      if (nuxt.options.pages === false) { return false }
-      if (nuxt.options.pages === true) { return true }
-      if (nuxt.options._layers.some(layer =>
-        existsSync(resolve(layer.config.srcDir, 'app/router.options.ts'))
-      )) { return true }
+    const isPagesEnabled = () => {
+      if (nuxt.options.pages === false) {
+        return false
+      }
+      if (nuxt.options.pages === true) {
+        return true
+      }
+      if (nuxt.options._layers.some(layer => existsSync(resolve(layer.config.srcDir, 'app/router.options.ts')))) {
+        return true
+      }
       if (pagesDirs.some(dir => isNonEmptyDir(dir))) {
         return true
       }
       return false
     }
-    nuxt.options.pages = checkPagesEnabled()
+    nuxt.options.pages = isPagesEnabled()
+
     if (!nuxt.options.pages) {
       addPlugin(resolve(distDir, 'app/plugins/router'))
       addTemplate({
@@ -40,7 +45,7 @@ export default defineNuxtModule({
       })
       addComponent({
         name: 'NuxtPage',
-        filePath: resolve(distDir, 'pages/runtime/page-disabled')
+        filePath: resolve(distDir, 'pages/runtime/page-placeholder')
       })
       return
     }

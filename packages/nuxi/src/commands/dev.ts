@@ -145,13 +145,12 @@ export default defineNuxtCommand({
         }
       }
 
-      if (currentNuxt && file.startsWith(pagesDir)) {
+      if (file.startsWith(pagesDir)) {
         const pagesDirFiles = readdirSync(pagesDir)
-        console.log(file, pagesDirFiles)
-        if (!currentNuxt.options.pages && pagesDirFiles.length) {
+        if (currentNuxt && !currentNuxt.options.pages && pagesDirFiles.length) {
           return dLoad(true, 'Enabling pages...')
         }
-        if (currentNuxt.options.pages && !pagesDirFiles.length) {
+        if (currentNuxt && currentNuxt.options.pages && !pagesDirFiles.length) {
           return dLoad(true, 'Disabling pages...')
         }
       }
