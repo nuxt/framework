@@ -1,7 +1,7 @@
 import { existsSync, promises as fsp } from 'node:fs'
 import { resolve, join } from 'pathe'
 import { createNitro, createDevServer, build, prepare, copyPublicAssets, writeTypes, scanHandlers, prerender, Nitro } from 'nitropack'
-import type { NitroEventHandler, NitroDevEventHandler, NitroConfig } from 'nitropack'
+import type { NitroConfig } from 'nitropack'
 import type { Nuxt } from '@nuxt/schema'
 import { resolvePath } from '@nuxt/kit'
 import defu from 'defu'
@@ -12,9 +12,6 @@ import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
 export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
-  // Resolve handlers
-  const { handlers, devHandlers } = await resolveHandlers(nuxt)
-
   // Resolve config
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
@@ -33,7 +30,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     renderer: resolve(distDir, 'core/runtime/nitro/renderer'),
     errorHandler: resolve(distDir, 'core/runtime/nitro/error'),
     nodeModulesDirs: nuxt.options.modulesDir,
-    handlers,
+    handlers: nuxt.options.serverHandlers,
     devHandlers: [],
     baseURL: nuxt.options.app.baseURL,
     virtual: {},
@@ -155,7 +152,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   // Setup handlers
   const devMiddlewareHandler = dynamicEventHandler()
   nitro.options.devHandlers.unshift({ handler: devMiddlewareHandler })
-  nitro.options.devHandlers.push(...devHandlers)
+  nitro.options.devHandlers.push(...nuxt.options.devServerHandlers)
   nitro.options.handlers.unshift({
     route: '/__nuxt_error',
     lazy: true,
@@ -203,16 +200,6 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     })
     const waitUntilCompile = new Promise<void>(resolve => nitro.hooks.hook('compiled', () => resolve()))
     nuxt.hook('build:done', () => waitUntilCompile)
-  }
-}
-
-function resolveHandlers (nuxt: Nuxt) {
-  const handlers: NitroEventHandler[] = [...nuxt.options.devServerHandlers]
-  const devHandlers: NitroDevEventHandler[] = [...nuxt.options.devServerHandlers]
-
-  return {
-    handlers,
-    devHandlers
   }
 }
 
