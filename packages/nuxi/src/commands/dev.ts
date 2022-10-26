@@ -1,5 +1,6 @@
 import type { AddressInfo } from 'node:net'
 import { RequestListener } from 'node:http'
+import { readdirSync } from 'node:fs'
 import { resolve, relative, normalize } from 'pathe'
 import chokidar from 'chokidar'
 import { debounce } from 'perfect-debounce'
@@ -129,16 +130,29 @@ export default defineNuxtCommand({
 
       const isDirChange = ['addDir', 'unlinkDir'].includes(event)
       const isFileChange = ['add', 'unlink'].includes(event)
-      const reloadDirs = [currentNuxt.options.dir.pages, 'components', 'composables']
-        .map(d => resolve(currentNuxt.options.srcDir, d))
+      const pagesDir = resolve(currentNuxt.options.srcDir, currentNuxt.options.dir.pages)
+      const reloadDirs = ['components', 'composables'].map(d => resolve(currentNuxt.options.srcDir, d))
 
       if (isDirChange) {
         if (reloadDirs.includes(file)) {
-          dLoad(true, `Directory \`${relativePath}/\` ${event === 'addDir' ? 'created' : 'removed'}`)
+          return dLoad(true, `Directory \`${relativePath}/\` ${event === 'addDir' ? 'created' : 'removed'}`)
         }
-      } else if (isFileChange) {
+      }
+
+      if (isFileChange) {
         if (file.match(/(app|error|app\.config)\.(js|ts|mjs|jsx|tsx|vue)$/)) {
-          dLoad(true, `\`${relativePath}\` ${event === 'add' ? 'created' : 'removed'}`)
+          return dLoad(true, `\`${relativePath}\` ${event === 'add' ? 'created' : 'removed'}`)
+        }
+      }
+
+      if (currentNuxt && file.startsWith(pagesDir)) {
+        const pagesDirFiles = readdirSync(pagesDir)
+        console.log(file, pagesDirFiles)
+        if (!currentNuxt.options.pages && pagesDirFiles.length) {
+          return dLoad(true, 'Enabling pages...')
+        }
+        if (currentNuxt.options.pages && !pagesDirFiles.length) {
+          return dLoad(true, 'Disabling pages...')
         }
       }
     })
