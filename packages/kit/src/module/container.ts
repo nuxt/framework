@@ -3,7 +3,6 @@ import type { Nuxt, ModuleContainer } from '@nuxt/schema'
 import { chainFn } from '../internal/task'
 import { addTemplate } from '../template'
 import { addLayout } from '../layout'
-import { addServerMiddleware } from '../nitro'
 import { isNuxt2 } from '../compatibility'
 import { addPluginTemplate } from '../plugin'
 import { useNuxt } from '../context'
@@ -44,7 +43,8 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
     requireModule,
     addModule: requireModule,
 
-    addServerMiddleware,
+    // TODO
+    addServerMiddleware: () => { },
 
     addTemplate (template) {
       if (typeof template === 'string') {

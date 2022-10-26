@@ -21,7 +21,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     debug: nuxt.options.debug,
     rootDir: nuxt.options.rootDir,
     workspaceDir: nuxt.options.workspaceDir,
-    srcDir: nuxt.options.serverDir,
+    srcDir: nuxt.options.devServerDir,
     dev: nuxt.options.dev,
     buildDir: nuxt.options.buildDir,
     analyze: nuxt.options.build.analyze && {
@@ -185,7 +185,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
       } else {
         const distDir = resolve(nuxt.options.rootDir, 'dist')
         if (!existsSync(distDir)) {
-          await fsp.symlink(nitro.options.output.publicDir, distDir, 'junction').catch(() => {})
+          await fsp.symlink(nitro.options.output.publicDir, distDir, 'junction').catch(() => { })
         }
       }
     }
@@ -206,28 +206,9 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   }
 }
 
-async function resolveHandlers (nuxt: Nuxt) {
-  const handlers: NitroEventHandler[] = [...nuxt.options.serverHandlers]
+function resolveHandlers (nuxt: Nuxt) {
+  const handlers: NitroEventHandler[] = [...nuxt.options.devServerHandlers]
   const devHandlers: NitroDevEventHandler[] = [...nuxt.options.devServerHandlers]
-
-  // Map legacy serverMiddleware to handlers
-  for (let m of nuxt.options.serverMiddleware) {
-    if (typeof m === 'string' || typeof m === 'function' /* legacy middleware */) { m = { handler: m } }
-    const route = m.path || m.route || '/'
-    const handler = m.handler || m.handle
-    if (typeof handler !== 'string' || typeof route !== 'string') {
-      devHandlers.push({ route, handler })
-    } else {
-      delete m.handler
-      delete m.path
-      handlers.push({
-        ...m,
-        route,
-        middleware: true,
-        handler: await resolvePath(handler)
-      })
-    }
-  }
 
   return {
     handlers,

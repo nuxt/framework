@@ -15,7 +15,7 @@ import type { ViteBuildContext, ViteOptions } from './vite'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 import { viteNodePlugin } from './vite-node'
 
-export async function buildClient (ctx: ViteBuildContext) {
+export async function buildClient(ctx: ViteBuildContext) {
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     entry: ctx.entry,
     base: ctx.nuxt.options.dev
@@ -89,10 +89,10 @@ export async function buildClient (ctx: ViteBuildContext) {
       port: hmrPortDefault,
       ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
     })
-    clientConfig.server = defu(clientConfig.server, <ServerOptions> {
-      https: ctx.nuxt.options.server.https,
+    clientConfig.server = defu(clientConfig.server, <ServerOptions>{
+      https: ctx.nuxt.options.devServer.https,
       hmr: {
-        protocol: ctx.nuxt.options.server.https ? 'wss' : 'ws',
+        protocol: ctx.nuxt.options.devServer.https ? 'wss' : 'ws',
         port: hmrPort
       }
     })

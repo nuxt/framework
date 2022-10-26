@@ -15,7 +15,21 @@ export default defineBuildConfig({
         }
       }
     },
-    'src/index'
+    'src/index',
+    // Nuxt 2
+    {
+      input: 'src/nuxt2/config/index',
+      outDir: 'schema/nuxt2',
+      name: 'config',
+      builder: 'untyped',
+      defaults: {
+        rootDir: '/<rootDir>/',
+        vite: {
+          base: '/'
+        }
+      }
+    },
+    'src/nuxt2/index',
   ],
   externals: [
     // Type imports
