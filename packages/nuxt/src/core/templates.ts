@@ -156,10 +156,9 @@ export const layoutTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'layouts.mjs',
   getContents ({ app }) {
     const layoutsObject = genObjectFromRawEntries(Object.values(app.layouts).map(({ name, file }) => {
-      return [name, `defineAsyncComponent(${genDynamicImport(file, { interopDefault: true })})`]
+      return [name, genDynamicImport(file, { interopDefault: true })]
     }))
     return [
-      'import { defineAsyncComponent } from \'vue\'',
       `export default ${layoutsObject}`
     ].join('\n')
   }
@@ -241,8 +240,11 @@ export const publicPathTemplate: NuxtTemplate = {
       '  return path.length ? joinURL(publicBase, ...path) : publicBase',
       '}',
 
-      'globalThis.__buildAssetsURL = buildAssetsURL',
-      'globalThis.__publicAssetsURL = publicAssetsURL'
+      // On server these are registered directly in packages/nuxt/src/core/runtime/nitro/renderer.ts
+      'if (process.client) {',
+      '  globalThis.__buildAssetsURL = buildAssetsURL',
+      '  globalThis.__publicAssetsURL = publicAssetsURL',
+      '}'
     ].filter(Boolean).join('\n')
   }
 }

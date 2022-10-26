@@ -2,8 +2,7 @@ import { resolve, join } from 'pathe'
 import { existsSync, readdirSync } from 'node:fs'
 import defu from 'defu'
 import { defineUntypedSchema } from 'untyped'
-
-import { MetaObject } from '../types/meta'
+import type { AppHeadMetaObject } from '../types/meta'
 
 export default defineUntypedSchema({
   /**
@@ -51,10 +50,14 @@ export default defineUntypedSchema({
      * NUXT_APP_BASE_URL=/prefix/ node .output/server/index.mjs
      * ```
      */
-    baseURL: process.env.NUXT_APP_BASE_URL || '/',
+    baseURL: {
+      $resolve: async (val) => val || process.env.NUXT_APP_BASE_URL || '/',
+    },
 
     /** The folder name for the built site assets, relative to `baseURL` (or `cdnURL` if set). This is set at build time and should not be customized at runtime. */
-    buildAssetsDir: process.env.NUXT_APP_BUILD_ASSETS_DIR || '/_nuxt/',
+    buildAssetsDir: {
+      $resolve: async (val) => val || process.env.NUXT_APP_BUILD_ASSETS_DIR || '/_nuxt/',
+    },
 
     /**
      * The folder name for the built site assets, relative to `baseURL` (or `cdnURL` if set).
@@ -112,7 +115,7 @@ export default defineUntypedSchema({
      */
     head: {
       $resolve: async (val, get) => {
-        const resolved: Required<MetaObject> = defu(val, await get('meta'), {
+        const resolved: Required<AppHeadMetaObject> = defu(val, await get('meta'), {
           meta: [],
           link: [],
           style: [],
@@ -120,9 +123,15 @@ export default defineUntypedSchema({
           noscript: []
         })
 
-        resolved.charset = resolved.charset ?? resolved.meta.find(m => m.charset)?.charset ?? 'utf-8'
-        resolved.viewport = resolved.viewport ?? resolved.meta.find(m => m.name === 'viewport')?.content ?? 'width=device-width, initial-scale=1'
-        resolved.meta = resolved.meta.filter(m => m && m.name !== 'viewport' && !m.charset)
+        // provides default charset and viewport if not set
+        if (!resolved.meta.find(m => m.charset)?.charset) {
+          resolved.meta.unshift({ charset: resolved.charset || 'utf-8' })
+        }
+        if (!resolved.meta.find(m => m.name === 'viewport')?.content) {
+          resolved.meta.unshift({ name: 'viewport', content: resolved.viewport || 'width=device-width, initial-scale=1' })
+        }
+
+        resolved.meta = resolved.meta.filter(Boolean)
         resolved.link = resolved.link.filter(Boolean)
         resolved.style = resolved.style.filter(Boolean)
         resolved.script = resolved.script.filter(Boolean)
@@ -140,7 +149,7 @@ export default defineUntypedSchema({
      * @see https://vuejs.org/api/built-in-components.html#transition
      * @type {typeof import('../src/types/config').NuxtAppConfig['layoutTransition']}
      */
-    layoutTransition: { name: 'layout', mode: 'out-in' },
+    layoutTransition: false,
     /**
      * Default values for page transitions.
      *
@@ -150,7 +159,7 @@ export default defineUntypedSchema({
      * @see https://vuejs.org/api/built-in-components.html#transition
      * @type {typeof import('../src/types/config').NuxtAppConfig['pageTransition']}
      */
-    pageTransition: { name: 'page', mode: 'out-in' },
+    pageTransition: false,
     /**
      * Default values for KeepAlive configuration between pages.
      *
@@ -233,7 +242,7 @@ export default defineUntypedSchema({
   },
 
   /**
-   * @type {typeof import('../src/types/meta').MetaObject}
+   * @type {typeof import('../src/types/meta').AppHeadMetaObject}
    * @version 3
    * @deprecated - use `head` instead
    */

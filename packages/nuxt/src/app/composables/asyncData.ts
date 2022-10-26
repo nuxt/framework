@@ -34,6 +34,12 @@ export interface AsyncDataOptions<
 
 export interface AsyncDataExecuteOptions {
   _initial?: boolean
+  /**
+   * Force a refresh, even if there is already a pending request. Previous requests will
+   * not be cancelled, but their result will not affect the data/pending state - and any
+   * previously awaited promises will not resolve until this new request resolves.
+   */
+  dedupe?: boolean
 }
 
 export interface _AsyncData<DataT, ErrorT> {
@@ -115,9 +121,12 @@ export function useAsyncData<
   const asyncData = { ...nuxt._asyncData[key] } as AsyncData<DataT, DataE>
 
   asyncData.refresh = asyncData.execute = (opts = {}) => {
-    // Avoid fetching same key more than once at a time
     if (nuxt._asyncDataPromises[key]) {
-      return nuxt._asyncDataPromises[key]
+      if (opts.dedupe === false) {
+        // Avoid fetching same key more than once at a time
+        return nuxt._asyncDataPromises[key]
+      }
+      (nuxt._asyncDataPromises[key] as any).cancelled = true
     }
     // Avoid fetching same key that is already fetched
     if (opts._initial && useInitialCache()) {
@@ -125,7 +134,7 @@ export function useAsyncData<
     }
     asyncData.pending.value = true
     // TODO: Cancel previous promise
-    nuxt._asyncDataPromises[key] = new Promise<DataT>(
+    const promise = new Promise<DataT>(
       (resolve, reject) => {
         try {
           resolve(handler(nuxt))
@@ -134,6 +143,9 @@ export function useAsyncData<
         }
       })
       .then((result) => {
+        // If this request is cancelled, resolve to the latest request.
+        if ((promise as any).cancelled) { return nuxt._asyncDataPromises[key] }
+
         if (options.transform) {
           result = options.transform(result)
         }
@@ -144,10 +156,15 @@ export function useAsyncData<
         asyncData.error.value = null
       })
       .catch((error: any) => {
+        // If this request is cancelled, resolve to the latest request.
+        if ((promise as any).cancelled) { return nuxt._asyncDataPromises[key] }
+
         asyncData.error.value = error
         asyncData.data.value = unref(options.default?.() ?? null)
       })
       .finally(() => {
+        if ((promise as any).cancelled) { return }
+
         asyncData.pending.value = false
         nuxt.payload.data[key] = asyncData.data.value
         if (asyncData.error.value) {
@@ -155,6 +172,7 @@ export function useAsyncData<
         }
         delete nuxt._asyncDataPromises[key]
       })
+    nuxt._asyncDataPromises[key] = promise
     return nuxt._asyncDataPromises[key]
   }
 
@@ -246,12 +264,12 @@ export function useLazyAsyncData<
   return useAsyncData(key, handler, { ...options, lazy: true }, null)
 }
 
-export function refreshNuxtData (keys?: string | string[]): Promise<void> {
+export async function refreshNuxtData (keys?: string | string[]): Promise<void> {
   if (process.server) {
     return Promise.resolve()
   }
   const _keys = keys ? Array.isArray(keys) ? keys : [keys] : undefined
-  return useNuxtApp().callHook('app:data:refresh', _keys)
+  await useNuxtApp().hooks.callHookParallel('app:data:refresh', _keys)
 }
 
 export function clearNuxtData (keys?: string | string[] | ((key: string) => boolean)): void {

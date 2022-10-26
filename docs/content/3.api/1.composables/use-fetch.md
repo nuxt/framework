@@ -1,6 +1,8 @@
 # `useFetch`
 
-This composable provides a convenient wrapper around [`useAsyncData`](/api/composables/use-async-data) and [`$fetch`](/api/utils/$fetch). It automatically generates a key based on URL and fetch options, provides type hints for request url based on server routes, and infers API response type.
+This composable provides a convenient wrapper around [`useAsyncData`](/api/composables/use-async-data) and [`$fetch`](/api/utils/dollarfetch).
+
+It automatically generates a key based on URL and fetch options, provides type hints for request url based on server routes, and infers API response type.
 
 ## Type
 
@@ -30,7 +32,7 @@ type UseFetchOptions = {
 type AsyncData<DataT> = {
   data: Ref<DataT>
   pending: Ref<boolean>
-  refresh: () => Promise<void>
+  refresh: (opts?: { dedupe?: boolean }) => Promise<void>
   execute: () => Promise<void>
   error: Ref<Error | boolean>
 }
@@ -45,6 +47,11 @@ type AsyncData<DataT> = {
   * `body`: Request body - automatically stringified (if an object is passed).
   * `headers`: Request headers.
   * `baseURL`: Base URL for the request.
+
+::alert{type=info}
+All fetch options can be given a `computed` or `ref` value. These will be watched and new requests made automatically with any new values if they are updated.
+::
+
 * **Options (from `useAsyncData`)**:
   * `key`: a unique key to ensure that data fetching can be properly de-duplicated across requests, if not provided, it will be generated based on the static code location where `useAyncData` is used.
   * `server`: Whether to fetch the data on the server (defaults to `true`).
@@ -104,4 +111,5 @@ const { data, pending, error, refresh } = await useFetch('/api/auth/login', {
 
 :ReadMore{link="/getting-started/data-fetching"}
 
-:LinkExample{link="/examples/composables/use-fetch"}
+::LinkExample{link="/examples/composables/use-fetch"}
+::

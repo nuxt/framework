@@ -1,5 +1,5 @@
 import { join, resolve } from 'pathe'
-import { isDevelopment } from 'std-env'
+import { isDebug, isDevelopment } from 'std-env'
 import createRequire from 'create-require'
 import { pascalCase } from 'scule'
 import jiti from 'jiti'
@@ -101,6 +101,18 @@ export default defineUntypedSchema({
   },
 
   /**
+   * Define the server directory of your Nuxt application, where Nitro
+   * routes, middleware and plugins are kept.
+   *
+   * If a relative path is specified, it will be relative to your `rootDir`.
+   *
+   * @version 3
+   */
+  serverDir: {
+    $resolve: async (val, get) => resolve(await get('rootDir'), val || resolve(await get('srcDir'), 'server'))
+  },
+
+  /**
    * Define the directory where your built Nuxt files will be placed.
    *
    * Many tools assume that `.nuxt` is a hidden directory (because it starts
@@ -137,11 +149,14 @@ export default defineUntypedSchema({
   /**
    * Set to `true` to enable debug mode.
    *
-   * By default, it's only enabled in development mode.
+   * At the moment, it prints out hook names and timings on the server, and
+   * logs hook arguments as well in the browser.
+   *
    * @version 2
+   * @version 3
    */
   debug: {
-    $resolve: async (val, get) => val ?? await get('dev')
+    $resolve: async (val, get) => val ?? isDebug
   },
 
   /**
@@ -503,6 +518,11 @@ export default defineUntypedSchema({
      * @version 3
      */
     pages: 'pages',
+    /**
+     * The plugins directory, each file of which will be auto-registered as a Nuxt plugin.
+     * @version 3
+     */
+    plugins: 'plugins',
     /**
      * The directory containing your static files, which will be directly accessible via the Nuxt server
      * and copied across into your `dist` folder when your app is generated.

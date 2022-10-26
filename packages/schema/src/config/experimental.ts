@@ -79,5 +79,15 @@ export default defineUntypedSchema({
      * When this option is enabled (by default) payload of pages generated with `nuxt generate` are extracted
      */
     payloadExtraction: true,
+
+    /** Enable cross-origin prefetch using the Speculation Rules API. */
+    crossOriginPrefetch: false,
+
+    /**
+     * Write early hints when using node server.
+     *
+     * @note nginx does not support 103 Early hints in the current version.
+     */
+    writeEarlyHints: false
   }
 })
