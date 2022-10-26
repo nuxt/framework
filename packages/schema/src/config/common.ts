@@ -209,6 +209,11 @@ export default defineUntypedSchema({
    */
   dir: {
     /**
+     * The assets directory (aliased as `~assets` in your build).
+     */
+    assets: 'assets',
+
+    /**
      * The layouts directory, each file of which will be auto-registered as a Nuxt layout.
      */
     layouts: 'layouts',
