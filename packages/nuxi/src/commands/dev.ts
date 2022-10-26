@@ -1,6 +1,6 @@
 import type { AddressInfo } from 'node:net'
 import { RequestListener } from 'node:http'
-import { readdirSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 import { resolve, relative, normalize } from 'pathe'
 import chokidar from 'chokidar'
 import { debounce } from 'perfect-debounce'
@@ -146,11 +146,11 @@ export default defineNuxtCommand({
       }
 
       if (file.startsWith(pagesDir)) {
-        const pagesDirFiles = readdirSync(pagesDir)
-        if (currentNuxt && !currentNuxt.options.pages && pagesDirFiles.length) {
+        const hasPages = existsSync(pagesDir) ? readdirSync(pagesDir).length > 0 : false
+        if (currentNuxt && !currentNuxt.options.pages && hasPages) {
           return dLoad(true, 'Enabling pages...')
         }
-        if (currentNuxt && currentNuxt.options.pages && !pagesDirFiles.length) {
+        if (currentNuxt && currentNuxt.options.pages && !hasPages) {
           return dLoad(true, 'Disabling pages...')
         }
       }
