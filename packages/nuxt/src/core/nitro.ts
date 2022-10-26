@@ -201,12 +201,3 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     nuxt.hook('build:done', () => waitUntilCompile)
   }
 }
-
-declare module 'nitropack' {
-  interface NitroRouteConfig {
-    ssr?: boolean
-  }
-  interface NitroRouteRules {
-    ssr?: boolean
-  }
-}
