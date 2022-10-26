@@ -4,9 +4,9 @@ import type { Server as HttpsServer } from 'node:https'
 import type { InlineConfig as ViteInlineConfig, ViteDevServer } from 'vite'
 import type { Manifest } from 'vue-bundle-renderer'
 import type { EventHandler } from 'h3'
-import type { Nuxt, NuxtApp, ResolvedNuxtTemplate } from './nuxt'
-import type { Preset as ImportPreset, Import } from 'unimport'
+import type { Import, InlinePreset } from 'unimport'
 import type { Compiler, Configuration, Stats } from 'webpack'
+import type { Nuxt, NuxtApp, ResolvedNuxtTemplate } from './nuxt'
 import type { Nitro, NitroConfig } from 'nitropack'
 import type { Component, ComponentsOptions } from './components'
 import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
@@ -39,7 +39,7 @@ export type NuxtLayout = {
   file: string
 }
 
-export interface ImportPresetWithDeprecation extends ImportPreset {
+export interface ImportPresetWithDeprecation extends InlinePreset {
   /**
    * @deprecated renamed to `imports`
    */
@@ -83,6 +83,7 @@ export interface NuxtHooks {
   'autoImports:extend': (imports: Import[]) => HookResult
   /** @deprecated Please use `imports:dirs` hook */
   'autoImports:dirs': (dirs: string[]) => HookResult
+
   'imports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
   'imports:extend': (imports: Import[]) => HookResult
   'imports:dirs': (dirs: string[]) => HookResult

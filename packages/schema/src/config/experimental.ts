@@ -82,7 +82,11 @@ export default defineUntypedSchema({
     /** Enable cross-origin prefetch using the Speculation Rules API. */
     crossOriginPrefetch: false,
 
-    /** Write early hints when using node server */
-    writeEarlyHints: true
+    /**
+     * Write early hints when using node server.
+     *
+     * @note nginx does not support 103 Early hints in the current version.
+     */
+    writeEarlyHints: false
   }
 })
