@@ -169,22 +169,8 @@ export function useAsyncData<
         asyncData.pending.value = false
         nuxt.payload.data[key] = asyncData.data.value
         if (asyncData.error.value) {
-          // Use `createError` to normalize the error
-          const _err = createError(asyncData.error.value)
-          const err = { ..._err }
-          // Strip as many keys out as possible to reduce payload size
-          err.message = _err.message
-          delete err.stack
-          // @ts-expect-error
-          delete err.__nuxt_error
-          // @ts-expect-error
-          delete err.fatal
-          // @ts-expect-error
-          delete err.unhandled
-          if (err.data && !Object.keys(err.data).length) {
-            delete err.data
-          }
-          nuxt.payload._errors[key] = err
+          // We use `createError` and its .toJSON() property to normalize the error
+          nuxt.payload._errors[key] = createError(asyncData.error.value)
         }
         delete nuxt._asyncDataPromises[key]
       })
