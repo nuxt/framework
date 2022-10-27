@@ -181,7 +181,7 @@ export function useAsyncData<
           delete err.fatal
           // @ts-expect-error
           delete err.unhandled
-          if (!Object.keys(err.data).length) {
+          if (err.data && !Object.keys(err.data).length) {
             delete err.data
           }
           nuxt.payload._errors[key] = err
