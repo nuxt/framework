@@ -59,9 +59,11 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
               break
           }
 
+          const endsWithComma = code.slice(codeIndex + (node as any).start, codeIndex + (node as any).end - 1).trim().endsWith(',')
+
           s.appendLeft(
             codeIndex + (node as any).end - 1,
-            (node.arguments.length ? ', ' : '') + "'$" + hash(`${relativeID}-${++count}`) + "'"
+            (node.arguments.length && !endsWithComma ? ', ' : '') + "'$" + hash(`${relativeID}-${++count}`) + "'"
           )
         }
       })
