@@ -40,7 +40,10 @@ export const PageMetaPlugin = createUnplugin((options: PageMetaPluginOptions) =>
       // Remove any references to the macro from our pages
       if (!parseQuery(search).macro) {
         if (macroMatch) {
-          walk(this.parse(code), {
+          walk(this.parse(code, {
+            sourceType: 'module',
+            ecmaVersion: 'latest'
+          }), {
             enter (_node) {
               if (_node.type !== 'CallExpression' || (_node as CallExpression).callee.type !== 'Identifier') { return }
               const node = _node as CallExpression & { start: number, end: number }
@@ -97,7 +100,10 @@ export const PageMetaPlugin = createUnplugin((options: PageMetaPluginOptions) =>
         }
       }
 
-      walk(this.parse(code), {
+      walk(this.parse(code, {
+        sourceType: 'module',
+        ecmaVersion: 'latest'
+      }), {
         enter (_node) {
           if (_node.type !== 'CallExpression' || (_node as CallExpression).callee.type !== 'Identifier') { return }
           const node = _node as CallExpression & { start: number, end: number }
