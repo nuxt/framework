@@ -58,8 +58,8 @@ describe('API routes', () => {
     expectTypeOf(useLazyFetch('/api/other').data).toEqualTypeOf<Ref<unknown>>()
     expectTypeOf(useLazyFetch<TestResponse>('/test').data).toEqualTypeOf<Ref<TestResponse>>()
 
-    expectTypeOf(useLazyFetch('/error').error).toEqualTypeOf<Ref<FetchError | null | true>>()
-    expectTypeOf(useLazyFetch<any, string>('/error').error).toEqualTypeOf<Ref<string | null | true>>()
+    expectTypeOf(useLazyFetch('/error').error).toEqualTypeOf<Ref<FetchError | null>>()
+    expectTypeOf(useLazyFetch<any, string>('/error').error).toEqualTypeOf<Ref<string | null>>()
   })
 })
 
