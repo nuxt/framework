@@ -168,6 +168,12 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: resolve(nuxt.options.appDir, 'components/nuxt-loading-indicator')
   })
 
+  // Add <ClientIfFail>
+  addComponent({
+    name: 'ClientIfFail',
+    filePath: resolve(nuxt.options.appDir, 'components/client-if-fail')
+  })
+
   // Deprecate hooks
   nuxt.hooks.deprecateHooks({
     'autoImports:sources': {
