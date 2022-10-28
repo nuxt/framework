@@ -4,8 +4,10 @@ import { ComponentsOptions } from '@nuxt/schema'
 import MagicString from 'magic-string'
 import { isAbsolute, relative } from 'pathe'
 import { hash } from 'ohash'
+import { parse } from 'acorn'
+import { walk } from 'estree-walker'
+import type { Node, ReturnStatement } from 'estree'
 import { isVueTemplate } from './helpers'
-
 interface LoaderOptions {
   sourcemap?: boolean
   transform?: ComponentsOptions['transform'],
@@ -36,27 +38,68 @@ export const clientFallbackAutoIdPlugin = createUnplugin((options: LoaderOptions
       const relativeID = isAbsolute(id) ? relative(options.rootDir, id) : id
       const imports = new Set()
       let count = 0
+      // ctx argument name for render function
+      let renderCtx: string|undefined = /(?:function ?)(?:_sfc_render|_sfc_ssrRender|ssrRender|render)\(([^,]*)(?:,)/g.exec(code)?.[1]
+      const isStateful = /setup ?\((.*)\) ?{/g.test(code)
 
-      s.replace(/(_createVNode|_ssrRenderComponent)\((.*[cC]lient-?[fF]allback),\s*?(?:(({|null)))/g, (full, renderFunction, name, props) => {
-        const isSetupRender = !/const __returned__ = {(.*)}/g.test(code)
-        const nullProps = props.trim() === 'null'
-        // generate string to include the uidkey into the component props
-        const newProps = `{ uid: ${isSetupRender ? `${uidkey}.value` : `$setup.${uidkey}`} + '${count}'${nullProps ? '}' : ','}`
+      const ast = parse(code, { ecmaVersion: 'latest', sourceType: 'module' })
+      walk(ast, {
+        // @ts-expect-error - see https://github.com/Rich-Harris/estree-walker/pull/24
+        enter (node: Node) {
+          // replace setup return statement
+          if (node.type === 'Property' && node.key.type === 'Identifier' && node.key.name === 'setup' && node.value.type === 'FunctionExpression') {
+            const returnStatement = node.value.body.body.find(n => n.type === 'ReturnStatement') as ReturnStatement
+            if (!returnStatement) { this.skip() }
+            const { argument } = returnStatement
+            if (!argument) {
+              this.skip()
+            } else if (argument.type === 'ObjectExpression') {
+              // add the uid to the return object
+              // @ts-ignore
+              s.appendRight(argument.start + 1, uidkey + ',')
+            } else if (argument.type === 'Identifier') {
+              // dev only
+              // expect to be an object -- destructure it
+              // @ts-ignore
+              s.overwrite(argument.start, argument.end, ` { ...${argument.name}, ${uidkey}}`)
+            } else if (argument.type === 'ArrowFunctionExpression' || argument.type === 'FunctionExpression') {
+              const [param] = argument.params
+              if (param && param.type === 'Identifier') {
+                renderCtx = param.name
+              } else {
+                renderCtx = '_ctx'
+                // @ts-ignore
+                s.appendRight(argument.start + 1, `${renderCtx},`)
+              }
+            }
+          } else if (node.type === 'CallExpression') {
+            const { callee } = node
+            if (callee.type === 'Identifier' && /(createVNode|ssrRenderComponent)/g.test(callee.name)) {
+              const props = node.arguments[1]
+              if (props?.type === 'Literal' && !props.value) {
+                // @ts-ignore
+                s.overwrite(props.start, props.end, isStateful ? `{ uid: ${renderCtx ? `${renderCtx}.${uidkey}` : `${uidkey}.value`} }` : `{uid: "${hash(relativeID)}${count}"}`)
+              } else if (props?.type === 'ObjectExpression') {
+                // @ts-ignore
+                s.appendRight(props.start + 1, isStateful ? `uid: ${renderCtx ? `${renderCtx}.${uidkey}` : `${uidkey}.value`}  + "${count}",` : `uid: "${hash(relativeID)}${count}",`)
+              }
+              count++
+            }
+          }
+        }
+      })
 
-        imports.add(genImport('vue', [{ name: 'computed', as: '__computed' }]))
+      if (isStateful) {
         s.replace(/setup ?\((.*)\) ?{/g, (full, args) => {
-          const [propsName = '_props', ctxName = '_ctx'] = args.split(',')
-
+          imports.add(genImport('vue', [{ name: 'computed', as: '__computed' }]))
+          let [propsName, ctxName] = args.split(',')
+          if (!propsName) { propsName = '_props' }
+          if (!ctxName) { ctxName = '_ctx' }
           return `setup(${propsName}, ${ctxName}) {
             const ${uidkey} = __computed(() => "${hash(relativeID)}" + JSON.stringify(${propsName}));
           `
         })
-        s.replace(/const __returned__ = {(.*)}/g, (full, content) => {
-          return `const __returned__ = {${content ? content + ',' : ''} ${uidkey}}`
-        })
-        count++
-        return `${renderFunction}(${name}, ${newProps}`
-      })
+      }
 
       if (imports.size) {
         s.prepend([...imports, ''].join('\n'))
