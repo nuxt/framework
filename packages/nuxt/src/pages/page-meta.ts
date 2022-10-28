@@ -68,7 +68,7 @@ export const PageMetaPlugin = createUnplugin((options: PageMetaPluginOptions) =>
         const url = isAbsolute(scriptImport.specifier) ? pathToFileURL(scriptImport.specifier).href : scriptImport.specifier
         const parsed = parseURL(decodeURIComponent(url).replace('?macro=true', ''))
         const specifier = withQuery(parsed.pathname, { macro: 'true', ...parseQuery(parsed.search) })
-        s.overwrite(0, code.length, `export { default } from "${specifier}"`)
+        s.overwrite(0, code.length, `export { default } from ${JSON.stringify(specifier)}`)
         return result()
       }
 
@@ -83,7 +83,7 @@ export const PageMetaPlugin = createUnplugin((options: PageMetaPluginOptions) =>
           continue
         }
         if (match.specifier && match._type === 'named') {
-          s.overwrite(0, code.length, `export { default } from "${match.specifier}"`)
+          s.overwrite(0, code.length, `export { default } from ${JSON.stringify(match.specifier)}`)
           return result()
         }
       }
