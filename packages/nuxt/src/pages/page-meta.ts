@@ -1,11 +1,11 @@
 import { pathToFileURL } from 'node:url'
 import { createUnplugin } from 'unplugin'
-import { parseQuery, parseURL, withQuery } from 'ufo'
+import { parseQuery, parseURL, stringifyQuery } from 'ufo'
 import { findStaticImports, findExports, StaticImport, parseStaticImport } from 'mlly'
 import type { CallExpression, Expression } from 'estree'
 import { walk } from 'estree-walker'
 import MagicString from 'magic-string'
-import { isAbsolute } from 'pathe'
+import { isAbsolute, normalize } from 'pathe'
 
 export interface PageMetaPluginOptions {
   dirs: Array<string | RegExp>
@@ -18,12 +18,20 @@ export const PageMetaPlugin = createUnplugin((options: PageMetaPluginOptions) =>
     name: 'nuxt:pages-macros-transform',
     enforce: 'post',
     transformInclude (id) {
-      return options.dirs.some(dir => typeof dir === 'string' ? id.startsWith(dir) : dir.test(id))
+      const query = parseMacroQuery(id)
+      id = normalize(id)
+
+      const isPagesDir = options.dirs.some(dir => typeof dir === 'string' ? id.startsWith(dir) : dir.test(id))
+      if (!isPagesDir && !query.macro) { return false }
+
+      const { pathname } = parseURL(decodeURIComponent(pathToFileURL(id).href))
+      return /\.(m?[jt]sx?|vue)/.test(pathname)
     },
     transform (code, id) {
-      const s = new MagicString(code)
-      const { search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
+      const query = parseMacroQuery(id)
+      if (query.type && query.type !== 'script') { return }
 
+      const s = new MagicString(code)
       function result () {
         if (s.hasChanged()) {
           return {
@@ -35,11 +43,11 @@ export const PageMetaPlugin = createUnplugin((options: PageMetaPluginOptions) =>
         }
       }
 
-      const macroMatch = code.match(/\bdefinePageMeta\s*\(\s*/)
+      const hasMacro = code.match(/\bdefinePageMeta\s*\(\s*/)
 
       // Remove any references to the macro from our pages
-      if (!parseQuery(search).macro) {
-        if (macroMatch) {
+      if (!query.macro) {
+        if (hasMacro) {
           walk(this.parse(code, {
             sourceType: 'module',
             ecmaVersion: 'latest'
@@ -59,37 +67,33 @@ export const PageMetaPlugin = createUnplugin((options: PageMetaPluginOptions) =>
 
       const imports = findStaticImports(code)
 
-      // [webpack] Re-export any imports from script blocks in the components
-      // with workaround for vue-loader bug: https://github.com/vuejs/vue-loader/pull/1911
-      const scriptImport = imports.find(i => parseQuery(i.specifier.replace('?macro=true', '')).type === 'script')
+      // [vite] Re-export any script imports
+      const scriptImport = imports.find(i => parseMacroQuery(i.specifier).type === 'script')
       if (scriptImport) {
-        // https://github.com/vuejs/vue-loader/pull/1911
-        // https://github.com/vitejs/vite/issues/8473
-        const url = isAbsolute(scriptImport.specifier) ? pathToFileURL(scriptImport.specifier).href : scriptImport.specifier
-        const parsed = parseURL(decodeURIComponent(url).replace('?macro=true', ''))
-        const specifier = withQuery(parsed.pathname, { macro: 'true', ...parseQuery(parsed.search) })
+        const specifier = rewriteQuery(scriptImport.specifier)
         s.overwrite(0, code.length, `export { default } from ${JSON.stringify(specifier)}`)
         return result()
       }
 
-      if (!macroMatch && !code.includes('export { default }') && !code.includes('__nuxt_page_meta')) {
+      // [webpack] Re-export any exports from script blocks in the components
+      const currentExports = findExports(code)
+      for (const match of currentExports) {
+        if (match.type !== 'default' || !match.specifier) {
+          continue
+        }
+
+        const specifier = rewriteQuery(match.specifier)
+        s.overwrite(0, code.length, `export { default } from ${JSON.stringify(specifier)}`)
+        return result()
+      }
+
+      if (!hasMacro && !code.includes('export { default }') && !code.includes('__nuxt_page_meta')) {
         s.overwrite(0, code.length, 'export default {}')
         return result()
       }
 
-      const currentExports = findExports(code)
-      for (const match of currentExports) {
-        if (match.type !== 'default') {
-          continue
-        }
-        if (match.specifier && match._type === 'named') {
-          s.overwrite(0, code.length, `export { default } from ${JSON.stringify(match.specifier)}`)
-          return result()
-        }
-      }
-
       const importMap = new Map<string, StaticImport>()
-      for (const i of findStaticImports(code)) {
+      for (const i of imports) {
         const parsed = parseStaticImport(i)
         for (const name of [
           parsed.defaultImport,
@@ -138,3 +142,19 @@ export const PageMetaPlugin = createUnplugin((options: PageMetaPluginOptions) =>
     }
   }
 })
+
+// https://github.com/vuejs/vue-loader/pull/1911
+// https://github.com/vitejs/vite/issues/8473
+function rewriteQuery (id: string) {
+  const query = stringifyQuery({ macro: 'true', ...parseMacroQuery(id) })
+  return id.replace(/\?.+$/, '?' + query)
+}
+
+function parseMacroQuery (id: string) {
+  const { search } = parseURL(decodeURIComponent(isAbsolute(id) ? pathToFileURL(id).href : id).replace(/\?macro=true$/, ''))
+  const query = parseQuery(search)
+  if (id.includes('?macro=true')) {
+    return { macro: 'true', ...query }
+  }
+  return query
+}
