@@ -24,6 +24,9 @@ export function useState <T> (...args: any): Ref<T> {
 
   const nuxt = useNuxtApp()
   const state = toRef(nuxt.payload.state, key)
+  if (state.value !== undefined && init !== undefined) {
+    console.warn(`useState ${key} has already initialized.`)
+  }
   if (state.value === undefined && init) {
     const initialValue = init()
     if (isRef(initialValue)) {
