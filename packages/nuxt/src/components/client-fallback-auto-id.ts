@@ -1,5 +1,5 @@
 import { createUnplugin } from 'unplugin'
-import { ComponentsOptions } from '@nuxt/schema'
+import type { ComponentsOptions } from '@nuxt/schema'
 import MagicString from 'magic-string'
 import { isAbsolute, relative } from 'pathe'
 import { hash } from 'ohash'
