@@ -11,6 +11,8 @@ import _plugins from '#build/plugins'
 import RootComponent from '#build/root-component.mjs'
 // @ts-ignore
 import AppComponent from '#build/app-component.mjs'
+// @ts-ignore
+import appConfig from "#build/app.config.mjs"
 
 if (!globalThis.$fetch) {
   // @ts-ignore
@@ -68,7 +70,8 @@ if (process.client) {
     try {
       await nuxt.hooks.callHook('app:created', vueApp)
       await nuxt.hooks.callHook('app:beforeMount', vueApp)
-      vueApp.mount('#__nuxt')
+      const el = appConfig.el ?? '#__nuxt'
+      vueApp.mount(el)
       await nuxt.hooks.callHook('app:mounted', vueApp)
       await nextTick()
     } catch (err) {
