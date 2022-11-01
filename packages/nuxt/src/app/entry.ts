@@ -12,7 +12,7 @@ import RootComponent from '#build/root-component.mjs'
 // @ts-ignore
 import AppComponent from '#build/app-component.mjs'
 // @ts-ignore
-import appConfig from "#build/app.config.mjs"
+import appConfig from '#build/app.config.mjs'
 
 if (!globalThis.$fetch) {
   // @ts-ignore
