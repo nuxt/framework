@@ -77,7 +77,10 @@ interface _NuxtApp {
     serverRendered?: boolean
     prerenderedAt?: number
     data: Record<string, any>
-    state: Record<string, any>
+    state: {
+      currentValue: Record<string, any>
+      init: Record<string, () => any | Ref<any>>
+    },
     rendered?: Function
     error?: Error | {
       url: string
@@ -114,7 +117,10 @@ export function createNuxtApp (options: CreateOptions) {
     globalName: 'nuxt',
     payload: reactive({
       data: {},
-      state: {},
+      state: {
+        currentValue: {},
+        init: {}
+      },
       _errors: {},
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
