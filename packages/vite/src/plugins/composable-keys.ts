@@ -59,6 +59,7 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
               break
           }
 
+          // TODO: Optimize me (https://github.com/nuxt/framework/pull/8529)
           const endsWithComma = code.slice(codeIndex + (node as any).start, codeIndex + (node as any).end - 1).trim().endsWith(',')
 
           s.appendLeft(
