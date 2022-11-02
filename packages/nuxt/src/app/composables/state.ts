@@ -23,19 +23,15 @@ export function useState <T> (...args: any): Ref<T> {
   const key = '$s' + _key
 
   const nuxt = useNuxtApp()
-  const state = toRef(nuxt.payload.state.currentValue, key)
-  const initState = nuxt.payload.state.init[key]
-  if (process.dev && initState !== undefined && init !== undefined) {
-    console.warn(`useState ${key} has already been initialized.`)
-  }
-  if (initState === undefined && init !== undefined) {
-    nuxt.payload.state.init[key] = init
+  const state = toRef(nuxt.payload.state, key)
+  if (state.value !== undefined && init !== undefined) {
+    console.warn(`useState ${key} has already initialized.`)
   }
   if (state.value === undefined && init) {
     const initialValue = init()
     if (isRef(initialValue)) {
       // vue will unwrap the ref for us
-      nuxt.payload.state.currentValue[key] = initialValue
+      nuxt.payload.state[key] = initialValue
       return initialValue as Ref<T>
     }
     state.value = initialValue

@@ -99,10 +99,7 @@ const getSPARenderer = lazyCachedFunction(async () => {
         app: config.app
       },
       data: {},
-      state: {
-        currentValue: {},
-        init: {}
-      }
+      state: {}
     }
     ssrContext!.renderMeta = ssrContext!.renderMeta ?? (() => ({}))
     return Promise.resolve(result)
