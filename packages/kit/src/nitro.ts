@@ -31,6 +31,15 @@ export function addDevServerHandler (handler: NitroDevEventHandler) {
 }
 
 /**
+ * Adds a nitro plugin
+ */
+export function addServerPlugin (plugin: string) {
+  const nuxt = useNuxt()
+  nuxt.options.nitro.plugins = nuxt.options.nitro.plugins || []
+  nuxt.options.nitro.plugins.push(plugin)
+}
+
+/**
  * Access to the Nitro instance
  *
  * **Note:** You can call `useNitro()` only after `ready` hook.
