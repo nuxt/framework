@@ -22,8 +22,6 @@ export function useState <T> (...args: any): Ref<T> {
   }
   const key = '$s' + _key
 
-  const nuxt = useNuxtApp()
-  const state = toRef(nuxt.payload.state, key)
   if (process.dev) {
     const map = new Map<string, string>()
     const defineInit = map.get(key)
@@ -35,6 +33,9 @@ export function useState <T> (...args: any): Ref<T> {
       map.set(key, init.toString())
     }
   }
+
+  const nuxt = useNuxtApp()
+  const state = toRef(nuxt.payload.state, key)
   if (state.value === undefined && init) {
     const initialValue = init()
     if (isRef(initialValue)) {
