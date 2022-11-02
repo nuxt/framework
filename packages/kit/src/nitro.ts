@@ -1,4 +1,5 @@
 import type { NitroEventHandler, NitroDevEventHandler, Nitro } from 'nitropack'
+import { normalize } from 'pathe'
 import { useNuxt } from './context'
 
 /**
@@ -36,7 +37,7 @@ export function addDevServerHandler (handler: NitroDevEventHandler) {
 export function addServerPlugin (plugin: string) {
   const nuxt = useNuxt()
   nuxt.options.nitro.plugins = nuxt.options.nitro.plugins || []
-  nuxt.options.nitro.plugins.push(plugin)
+  nuxt.options.nitro.plugins.push(normalize(plugin))
 }
 
 /**
