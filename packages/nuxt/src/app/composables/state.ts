@@ -24,8 +24,16 @@ export function useState <T> (...args: any): Ref<T> {
 
   const nuxt = useNuxtApp()
   const state = toRef(nuxt.payload.state, key)
-  if (state.value !== undefined && init !== undefined) {
-    console.warn(`useState ${key} has already initialized.`)
+  if (process.dev) {
+    const map = new Map<string, string>()
+    const defineInit = map.get(key)
+
+    if (defineInit && init && defineInit !== init.toString()) {
+      console.warn(`useState ${key} has already initialized.`)
+    }
+    if (defineInit === undefined && init) {
+      map.set(key, init.toString())
+    }
   }
   if (state.value === undefined && init) {
     const initialValue = init()
