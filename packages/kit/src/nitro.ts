@@ -32,7 +32,7 @@ export function addDevServerHandler (handler: NitroDevEventHandler) {
 }
 
 /**
- * Adds a nitro plugin
+ * Adds a Nitro plugin
  */
 export function addServerPlugin (plugin: string) {
   const nuxt = useNuxt()
