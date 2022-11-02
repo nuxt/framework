@@ -29,7 +29,7 @@ export function useState <T> (...args: any): Ref<T> {
     const defineInit = map.get(key)
 
     if (defineInit && init && defineInit !== init.toString()) {
-      console.warn(`useState ${key} has already initialized.`)
+      console.warn(`useState ${key} has already been initialized.`)
     }
     if (defineInit === undefined && init) {
       map.set(key, init.toString())
