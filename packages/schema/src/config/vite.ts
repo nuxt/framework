@@ -64,7 +64,6 @@ export default defineUntypedSchema({
     },
     server: {
       fs: {
-        strict: false,
         allow: {
           $resolve: async (val, get) => [
             await get('buildDir'),
