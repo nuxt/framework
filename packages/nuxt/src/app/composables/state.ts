@@ -1,7 +1,7 @@
 import { isRef, toRef } from 'vue'
 import type { Ref } from 'vue'
 import { useNuxtApp } from '../nuxt'
-
+const map = new Map<string, string>()
 /**
  * Create a global reactive ref that will be hydrated but not shared across ssr requests
  *
@@ -23,7 +23,6 @@ export function useState <T> (...args: any): Ref<T> {
   const key = '$s' + _key
 
   if (process.dev) {
-    const map = new Map<string, string>()
     const defineInit = map.get(key)
 
     if (defineInit && init && defineInit !== init.toString()) {
