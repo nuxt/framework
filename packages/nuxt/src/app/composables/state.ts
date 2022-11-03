@@ -24,12 +24,13 @@ export function useState <T> (...args: any): Ref<T> {
 
   if (process.dev) {
     const defineInit = map.get(key)
+    const newInit = init?.toString()
 
-    if (defineInit && init && defineInit !== init.toString()) {
-      console.warn(`useState ${key} has already been initialized.`)
+    if (defineInit && newInit && defineInit !== newInit) {
+      console.warn(`useState ${key} has already been initialized with a different initializer.`, defineInit, newInit)
     }
-    if (defineInit === undefined && init) {
-      map.set(key, init.toString())
+    if (defineInit === undefined && newInit) {
+      map.set(key, newInit)
     }
   }
 
