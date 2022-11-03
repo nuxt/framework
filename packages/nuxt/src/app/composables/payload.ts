@@ -1,4 +1,4 @@
-import { parseURL, joinURL } from 'ufo'
+import { joinURL } from 'ufo'
 import { useNuxtApp } from '../nuxt'
 import { useHead, useRuntimeConfig } from '..'
 
