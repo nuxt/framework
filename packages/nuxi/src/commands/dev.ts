@@ -13,7 +13,7 @@ import { writeTypes } from '../utils/prepare'
 import { loadKit } from '../utils/kit'
 import { importModule } from '../utils/cjs'
 import { overrideEnv } from '../utils/env'
-import { writeNuxtManifest, loadNuxtManifest, cleanupNuxtDirs } from '../utils/nuxt'
+import { writeNuxtManifest, loadNuxtManifest, cleanupNuxtDirs, checkForNitroConfig } from '../utils/nuxt'
 import { defineNuxtCommand } from './index'
 
 export default defineNuxtCommand({
@@ -100,7 +100,8 @@ export default defineNuxtCommand({
 
         await Promise.all([
           writeTypes(currentNuxt).catch(console.error),
-          buildNuxt(currentNuxt)
+          buildNuxt(currentNuxt),
+          checkForNitroConfig(currentNuxt)
         ])
         currentHandler = toNodeListener(currentNuxt.server.app)
         if (isRestart && args.clear !== false) {

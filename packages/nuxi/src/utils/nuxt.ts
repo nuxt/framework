@@ -3,7 +3,7 @@ import { resolve, dirname } from 'pathe'
 import consola from 'consola'
 import { hash } from 'ohash'
 import type { Nuxt } from '@nuxt/schema'
-import { rmRecursive } from './fs'
+import { exists, rmRecursive } from './fs'
 
 export interface NuxtProjectManifest {
   _hash: string | null
@@ -65,4 +65,16 @@ export async function loadNuxtManifest (buildDir: string): Promise<NuxtProjectMa
     .then(data => JSON.parse(data) as NuxtProjectManifest)
     .catch(() => null)
   return manifest
+}
+
+export async function checkForNitroConfig (nuxt: Nuxt): Promise<void> {
+  const possibleNitroConfigs = ['nitro.config.ts', 'nitro.config.js']
+  await Promise.all(possibleNitroConfigs.map(async (config) => {
+    const configPath = resolve(nuxt.options.rootDir, config)
+    const hasConfig = await exists(configPath)
+    if (hasConfig) {
+      const ending = config === 'nitro.config.ts' ? 'ts' : 'js'
+      consola.warn(`A standalone ${config} is not supported. Please use the nitro key in your nuxt.config.${ending} instead.`)
+    }
+  }))
 }
