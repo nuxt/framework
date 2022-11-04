@@ -33,8 +33,8 @@ export default <RouterConfig> {
     }
 
     // Wait for `page:transition:finish` or `page:finish` depending on if transitions are enabled or not
-    const hasTransition = defaultPageTransition || (to.meta.pageTransition && from.meta.pageTransition)
-    const hookToWait = hasTransition ? 'page:transition:finish' : 'page:finish'
+    const hasTransition = (route: RouteLocationNormalized) => !!(route.meta.pageTransition ?? defaultPageTransition)
+    const hookToWait = (hasTransition(from) && hasTransition(to)) ? 'page:transition:finish' : 'page:finish'
     return new Promise((resolve) => {
       nuxtApp.hooks.hookOnce(hookToWait, async () => {
         await nextTick()
