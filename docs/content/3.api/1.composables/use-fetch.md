@@ -88,7 +88,7 @@ const { data, pending, error, refresh } = await useFetch('https://api.nuxtjs.dev
     pick: ['title']
 })
 ```
-## Adding Query Search Params
+Adding Query Search Params:
 
 Using the `query` option, you can add search parameters to your query. This option is extended from [unjs/ohmyfetch](https://github.com/unjs/ohmyfetch) and is using [ufo](https://github.com/unjs/ufo) to create the URL. Objects are automatically stringified.
 
