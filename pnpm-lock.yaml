@@ -444,7 +444,6 @@ importers:
       scule: ^1.0.0
       strip-literal: ^1.0.0
       ufo: ^1.0.0
-      ultrahtml: ^1.0.0
       unbuild: ^0.9.4
       unctx: ^2.1.0
       unenv: ^1.0.0
@@ -491,7 +490,6 @@ importers:
       scule: 1.0.0
       strip-literal: 1.0.0
       ufo: 1.0.0
-      ultrahtml: 1.0.0
       unctx: 2.1.0
       unenv: 1.0.0
       unhead: 0.6.7
@@ -2603,7 +2601,7 @@ packages:
       '@vueuse/core': 9.3.0
       '@vueuse/metadata': 9.3.0
       local-pkg: 0.4.2
-      nuxt: link:packages/nuxt
+      nuxt: link:packages\nuxt
       vue-demi: 0.13.11
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -8350,10 +8348,6 @@ packages:
 
   /ufo/1.0.0:
     resolution: {integrity: sha512-DRty0ZBNlJ2R59y4mEupJRKLbkLQsc4qtxjpQv78AwEDuBkaUogMc2LkeqW3HddFlw6NwnXYfdThEZOiNgkmmQ==}
-
-  /ultrahtml/1.0.0:
-    resolution: {integrity: sha512-BOtReLegZ/OlSTVOSt4aH+wrUPwxoXvapUHXjwhDE4k4kMISWdfUR4PH5wvt/vgKjFcAcEUPFEZQiPiB87XO3Q==}
-    dev: false
 
   /unbox-primitive/1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
