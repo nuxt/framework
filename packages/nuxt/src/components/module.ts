@@ -190,7 +190,8 @@ export default defineNuxtModule<ComponentsOptions>({
       config.plugins = config.plugins || []
       if (nuxt.options.experimental.treeshakeClientOnly && isServer) {
         config.plugins.push(TreeShakeTemplatePlugin.vite({
-          sourcemap: nuxt.options.sourcemap[mode]
+          sourcemap: nuxt.options.sourcemap[mode],
+          getComponents
         }))
       }
       config.plugins.push(loaderPlugin.vite({
@@ -205,7 +206,8 @@ export default defineNuxtModule<ComponentsOptions>({
         config.plugins = config.plugins || []
         if (nuxt.options.experimental.treeshakeClientOnly && mode === 'server') {
           config.plugins.push(TreeShakeTemplatePlugin.webpack({
-            sourcemap: nuxt.options.sourcemap[mode]
+            sourcemap: nuxt.options.sourcemap[mode],
+            getComponents
           }))
         }
         config.plugins.push(loaderPlugin.webpack({

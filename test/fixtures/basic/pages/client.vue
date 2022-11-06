@@ -19,15 +19,21 @@ onBeforeUnmount(() => import('~/components/BreaksServer.client'))
   <div>
     This page should not crash when rendered.
     <ClientOnly class="something">
-      test
+      <span>rendered client-side</span>
       <BreaksServer />
       <BreaksServer>Some slot content</BreaksServer>
     </ClientOnly>
     This should render.
     <div>
       <ClientOnly class="another">
-        test
+        <span>rendered client-side</span>
         <BreaksServer />
+        <template #fallback>
+          <div>fallback for ClientOnly</div>
+        </template>
+        <template #test>
+          <div>This should not be rendered</div>
+        </template>
       </ClientOnly>
     </div>
     <div>
@@ -40,6 +46,12 @@ onBeforeUnmount(() => import('~/components/BreaksServer.client'))
           <TestGlobal />
         </div>
       </ClientOnly>
+      <ClientOnlyScript>
+        <template #test>
+          <BreaksServer />
+          <div id="client-side">This should be rendered client-side</div>
+        </template>
+      </ClientOnlyScript>
       <div class="blue">
         i'm blue
       </div>

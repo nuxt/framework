@@ -5,12 +5,16 @@ import { walk } from 'estree-walker'
 import type { CallExpression, Property, Identifier, ImportDeclaration, MemberExpression, Literal, ReturnStatement, VariableDeclaration, ObjectExpression } from 'estree'
 import { createUnplugin } from 'unplugin'
 import escapeStringRegexp from 'escape-string-regexp'
+import type { Component } from '@nuxt/schema'
 
 interface TreeShakeTemplatePluginOptions {
-  sourcemap?: boolean
+  sourcemap?: boolean,
+  getComponents (): Component[]
 }
 
 type AcornNode<N> = N & { start: number, end: number }
+
+const SSR_RENDER_RE = /ssrRenderComponent/
 
 export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplatePluginOptions) => {
   return {
@@ -21,14 +25,25 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
       return pathname.endsWith('.vue')
     },
     transform (code, id) {
-      const CLIENTONLY_RE = /(ClientOnly|client-only)/
-      const hasClientOnly = CLIENTONLY_RE.test(code)
-      if (!hasClientOnly) { return }
+      const regexpMap = new WeakMap<Component[], [RegExp, string[]]>()
+
+      const components = options.getComponents()
+
+      if (!regexpMap.has(components)) {
+        const clientOnlyComponents = components
+          .filter(c => c.mode === 'client' && !components.some(other => other.mode !== 'client' && other.pascalName === c.pascalName))
+          .flatMap(c => [c.pascalName, c.kebabName])
+          .concat(['ClientOnly', 'client-only'])
+
+        regexpMap.set(components, [new RegExp(`(${clientOnlyComponents.join('|')})`), clientOnlyComponents])
+      }
 
       const s = new MagicString(code)
-      const SSR_RENDER_RE = /ssrRenderComponent/
       const parse = this.parse
       const importDeclarations: AcornNode<ImportDeclaration>[] = []
+
+      const [COMPONENTS_RE] = regexpMap.get(components)!
+      if (!COMPONENTS_RE.test(code)) { return }
 
       walk(parse(code, { sourceType: 'module', ecmaVersion: 'latest' }), {
         enter (_node) {
@@ -39,13 +54,13 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
             node.callee.type === 'Identifier' &&
             SSR_RENDER_RE.test(node.callee.name)) {
             const [identifier, _, children] = node.arguments
-            if (identifier.type === 'Identifier' && CLIENTONLY_RE.test(identifier.name)) {
+            if (identifier.type === 'Identifier' && COMPONENTS_RE.test(identifier.name)) {
               if (children?.type === 'ObjectExpression') {
-                const defaultSlot = children.properties.find(prop => prop.type === 'Property' && prop.key.type === 'Identifier' && prop.key.name === 'default') as AcornNode<Property>
+                const nonFallbackSlots = children.properties.filter(prop => prop.type === 'Property' && prop.key.type === 'Identifier' && prop.key.name !== 'fallback') as AcornNode<Property>[]
 
-                if (defaultSlot) {
-                  s.remove(defaultSlot.start, defaultSlot.end + 1)
-                  const removedCode = code.slice(defaultSlot.start, defaultSlot.end + 1)
+                for (const slot of nonFallbackSlots) {
+                  s.remove(slot.start, slot.end + 1)
+                  const removedCode = code.slice(slot.start, slot.end + 1)
                   const componentsSet = new Set<string>()
                   const currentCode = s.toString()
                   walk(parse('({' + removedCode + '})', { sourceType: 'module', ecmaVersion: 'latest' }), {
@@ -86,8 +101,8 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
                       }
                     }
                   })
-                  const components = [...componentsSet]
-                  for (const componentName of components) {
+                  const componentsToRemove = [...componentsSet]
+                  for (const componentName of componentsToRemove) {
                     let removed = false
                     // remove const _component_ = resolveComponent...
                     const VAR_RE = new RegExp(`(?:const|let|var) ${componentName} = ([^;]*);`)
