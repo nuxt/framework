@@ -4,6 +4,7 @@ import MagicString from 'magic-string'
 import { walk } from 'estree-walker'
 import type { CallExpression, Property, Identifier, ImportDeclaration, MemberExpression, Literal, ReturnStatement, VariableDeclaration, ObjectExpression } from 'estree'
 import { createUnplugin } from 'unplugin'
+import escapeStringRegexp from 'escape-string-regexp'
 
 interface TreeShakeTemplatePluginOptions {
   sourcemap?: boolean
@@ -150,9 +151,5 @@ function findImportDeclaration (declarations: AcornNode<ImportDeclaration>[], im
  * @param name component name
  */
 function isRenderedInCode (code: string, name: string) {
-  return new RegExp(`ssrRenderComponent\\(${escapeRegExp(name)}`).test(code)
-}
-
-function escapeRegExp (string: string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return new RegExp(`ssrRenderComponent\\(${escapeStringRegexp(name)}`).test(code)
 }
