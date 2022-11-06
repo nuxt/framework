@@ -15,6 +15,7 @@ interface TreeShakeTemplatePluginOptions {
 type AcornNode<N> = N & { start: number, end: number }
 
 const SSR_RENDER_RE = /ssrRenderComponent/
+const PLACEHOLDER_EXACT_RE = /^(fallback|placeholder)$/
 
 export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplatePluginOptions) => {
   return {
@@ -56,7 +57,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
             const [identifier, _, children] = node.arguments
             if (identifier.type === 'Identifier' && COMPONENTS_RE.test(identifier.name)) {
               if (children?.type === 'ObjectExpression') {
-                const nonFallbackSlots = children.properties.filter(prop => prop.type === 'Property' && prop.key.type === 'Identifier' && prop.key.name !== 'fallback') as AcornNode<Property>[]
+                const nonFallbackSlots = children.properties.filter(prop => prop.type === 'Property' && prop.key.type === 'Identifier' && !PLACEHOLDER_EXACT_RE.test(prop.key.name)) as AcornNode<Property>[]
 
                 for (const slot of nonFallbackSlots) {
                   s.remove(slot.start, slot.end + 1)
