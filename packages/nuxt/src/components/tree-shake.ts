@@ -140,7 +140,7 @@ function findImportDeclaration (declarations: AcornNode<ImportDeclaration>[], im
     return false
   })
 
-  if (declaration) { return declaration }
+  return declaration
 }
 
 /**
