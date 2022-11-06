@@ -20,7 +20,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
       return pathname.endsWith('.vue')
     },
     transform (code, id) {
-      const CLIENTONLY_RE = /[c|C]lient[_|-]?[O|o]nly/
+      const CLIENTONLY_RE = /(ClientOnly|client-only)/
       const hasClientOnly = CLIENTONLY_RE.test(code)
       if (!hasClientOnly) { return }
 
