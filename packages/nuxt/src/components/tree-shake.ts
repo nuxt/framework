@@ -4,6 +4,8 @@ import MagicString from 'magic-string'
 import { parse, walk, ELEMENT_NODE, Node } from 'ultrahtml'
 import { createUnplugin } from 'unplugin'
 import type { Component } from '@nuxt/schema'
+import { resolve } from 'pathe'
+import { distDir } from '../dirs'
 
 interface TreeShakeTemplatePluginOptions {
   sourcemap?: boolean
@@ -29,7 +31,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
 
       if (!regexpMap.has(components)) {
         const clientOnlyComponents = components
-          .filter(c => c.mode === 'client' && !components.some(other => other.mode !== 'client' && other.pascalName === c.pascalName))
+          .filter(c => c.mode === 'client' && !components.some(other => other.mode !== 'client' && other.pascalName === c.pascalName && other.filePath !== resolve(distDir, 'app/components/server-placeholder')))
           .flatMap(c => [c.pascalName, c.kebabName])
           .concat(['ClientOnly', 'client-only'])
         const tags = clientOnlyComponents
