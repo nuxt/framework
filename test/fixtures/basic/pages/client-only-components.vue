@@ -9,6 +9,7 @@
       <template #test>
         <div class="slot-test">
           Hello
+          <BreaksServer />
         </div>
       </template>
     </ClientSetupScript>
@@ -59,6 +60,8 @@
 
 <script setup lang="ts">
 import { Ref } from 'vue'
+// bypass client import protection to ensure this is treeshaken from .client components
+import BreaksServer from '~~/components/BreaksServer.client'
 type Comp = Ref<{ add: () => void }>
 
 const stringStatefulComp = ref(null) as any as Comp
