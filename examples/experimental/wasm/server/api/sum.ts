@@ -1,6 +1,6 @@
-import { defineLazyHandler } from 'h3'
+import { lazyEventHandler } from 'h3'
 
-export default defineLazyHandler(async () => {
+export default lazyEventHandler(async () => {
   const { exports: { sum } } = await loadWasmInstance(
     // @ts-ignore
     () => import('~/server/wasm/sum.wasm')
