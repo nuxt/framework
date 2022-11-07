@@ -1,3 +1,4 @@
+import { isUndefined, isFunction } from '@nuxt/utils'
 export function sequence<T, R> (
   tasks: T[],
   fn: (task: T) => R
@@ -16,16 +17,16 @@ export function parallel<T, R> (
 }
 
 export function chainFn<Fn> (base: Fn, fn: Fn): Fn {
-  if (typeof fn !== 'function') {
+  if (!isFunction(fn)) {
     return base
   }
   return function (this: any, ...args: any[]) {
-    if (typeof base !== 'function') {
+    if (!isFunction(base)) {
       return fn.apply(this, args)
     }
     let baseResult = base.apply(this, args)
     // Allow function to mutate the first argument instead of returning the result
-    if (baseResult === undefined) {
+    if (isUndefined(baseResult)) {
       [baseResult] = args
     }
     const fnResult = fn.call(
@@ -34,7 +35,7 @@ export function chainFn<Fn> (base: Fn, fn: Fn): Fn {
       ...Array.prototype.slice.call(args, 1)
     )
     // Return mutated argument if no result was returned
-    if (fnResult === undefined) {
+    if (isUndefined(fnResult)) {
       return baseResult
     }
     return fnResult

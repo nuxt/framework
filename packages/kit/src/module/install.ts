@@ -1,4 +1,5 @@
 import type { Nuxt, NuxtModule } from '@nuxt/schema'
+import { isString, isFunction } from '@nuxt/utils'
 import { useNuxt } from '../context'
 import { resolveModule, requireModule, importModule } from '../internal/cjs'
 import { resolveAlias } from '../resolve'
@@ -20,7 +21,7 @@ export async function installModule (moduleToInstall: string | NuxtModule, _inli
   nuxt.options._installedModules = nuxt.options._installedModules || []
   nuxt.options._installedModules.push({
     meta: await nuxtModule.getMeta?.(),
-    entryPath: typeof moduleToInstall === 'string' ? resolveAlias(moduleToInstall) : undefined
+    entryPath: isString(moduleToInstall) ? resolveAlias(moduleToInstall) : undefined
   })
 }
 
@@ -38,7 +39,7 @@ async function normalizeModule (nuxtModule: string | NuxtModule, inlineOptions?:
   }
 
   // Import if input is string
-  if (typeof nuxtModule === 'string') {
+  if (isString(nuxtModule)) {
     const _src = resolveModule(resolveAlias(nuxtModule), { paths: nuxt.options.modulesDir })
     // TODO: also check with type: 'module' in closest `package.json`
     const isESM = _src.endsWith('.mjs')
@@ -46,7 +47,7 @@ async function normalizeModule (nuxtModule: string | NuxtModule, inlineOptions?:
   }
 
   // Throw error if input is not a function
-  if (typeof nuxtModule !== 'function') {
+  if (!isFunction(nuxtModule)) {
     throw new TypeError('Nuxt module should be a function: ' + nuxtModule)
   }
 

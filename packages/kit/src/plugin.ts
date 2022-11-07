@@ -1,20 +1,15 @@
 import { normalize } from 'pathe'
 import type { NuxtPlugin, NuxtPluginTemplate } from '@nuxt/schema'
+import { isString } from '@nuxt/utils'
 import { useNuxt } from './context'
 import { addTemplate } from './template'
 import { resolveAlias } from './resolve'
-
 /**
  * Normalize a nuxt plugin object
  */
 export function normalizePlugin (plugin: NuxtPlugin | string): NuxtPlugin {
   // Normalize src
-  if (typeof plugin === 'string') {
-    plugin = { src: plugin }
-  } else {
-    plugin = { ...plugin }
-  }
-
+  plugin = isString(plugin) ? { src: plugin } : { ...plugin }
   if (!plugin.src) {
     throw new Error('Invalid plugin. src option is required: ' + JSON.stringify(plugin))
   }
@@ -70,7 +65,7 @@ export function addPlugin (_plugin: NuxtPlugin | string, opts: AddPluginOptions 
  * Adds a template and registers as a nuxt plugin.
  */
 export function addPluginTemplate (plugin: NuxtPluginTemplate | string, opts: AddPluginOptions = {}): NuxtPlugin {
-  const normalizedPlugin: NuxtPlugin = typeof plugin === 'string'
+  const normalizedPlugin: NuxtPlugin = isString(plugin)
     ? { src: plugin }
     // Update plugin src to template destination
     : { ...plugin, src: addTemplate(plugin).dst! }

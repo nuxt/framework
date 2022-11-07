@@ -4,7 +4,7 @@ import { loadConfig, LoadConfigOptions } from 'c12'
 import type { NuxtOptions, NuxtConfig } from '@nuxt/schema'
 import { NuxtConfigSchema } from '@nuxt/schema'
 
-export interface LoadNuxtConfigOptions extends LoadConfigOptions<NuxtConfig> {}
+export interface LoadNuxtConfigOptions extends LoadConfigOptions<NuxtConfig> { }
 
 export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<NuxtOptions> {
   (globalThis as any).defineNuxtConfig = (c: any) => c
@@ -27,11 +27,10 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
   nuxtConfig._nuxtConfigFiles = [configFile]
 
   // Resolve `rootDir` & `srcDir` of layers
-  for (const layer of layers) {
-    layer.config = layer.config || {}
-    layer.config.rootDir = layer.config.rootDir ?? layer.cwd
-    layer.config.srcDir = resolve(layer.config.rootDir!, layer.config.srcDir!)
-  }
+  layers.forEach(layer => Object.assign(layer.config || (layer.config = {}), {
+    rootDir: layer.config.rootDir ?? layer.cwd,
+    srcDir: resolve(layer.config.rootDir!, layer.config.srcDir!)
+  }))
 
   // Filter layers
   nuxtConfig._layers = layers.filter(layer => layer.configFile && !layer.configFile.endsWith('.nuxtrc'))

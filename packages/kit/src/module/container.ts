@@ -1,5 +1,6 @@
 import { relative } from 'pathe'
 import type { Nuxt, ModuleContainer } from '@nuxt/schema'
+import { isString, isArray, isObject, isUndefined } from '@nuxt/utils'
 import { chainFn } from '../internal/task'
 import { addTemplate } from '../template'
 import { addLayout } from '../layout'
@@ -17,11 +18,11 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
 
   async function requireModule (moduleOpts: any) {
     let src, inlineOptions
-    if (typeof moduleOpts === 'string') {
+    if (isString(moduleOpts)) {
       src = moduleOpts
-    } else if (Array.isArray(moduleOpts)) {
+    } else if (isArray(moduleOpts)) {
       [src, inlineOptions] = moduleOpts
-    } else if (typeof moduleOpts === 'object') {
+    } else if (isObject(moduleOpts)) {
       if (moduleOpts.src || moduleOpts.handler) {
         src = moduleOpts.src || moduleOpts.handler
         inlineOptions = moduleOpts.options
@@ -39,7 +40,7 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
     options: nuxt.options,
 
     ready () { return Promise.resolve() },
-    addVendor () {},
+    addVendor () { },
 
     requireModule,
     addModule: requireModule,
@@ -47,10 +48,10 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
     addServerMiddleware,
 
     addTemplate (template) {
-      if (typeof template === 'string') {
+      if (isString(template)) {
         template = { src: template }
       }
-      if (template.write === undefined) {
+      if (isUndefined(template.write)) {
         template.write = true
       }
       return addTemplate(template)

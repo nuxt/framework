@@ -36,6 +36,7 @@
   },
   "resolutions": {
     "@nuxt/kit": "link:./packages/kit",
+    "@nuxt/utils": "link:./packages/utils",
     "@nuxt/schema": "link:./packages/schema",
     "@nuxt/test-utils": "link:./packages/test-utils",
     "@nuxt/vite": "link:./packages/vite",

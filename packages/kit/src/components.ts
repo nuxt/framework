@@ -17,7 +17,7 @@ export async function addComponentsDir (dir: ComponentsDir) {
 }
 
 export type AddComponentOptions = { name: string, filePath: string } & Partial<Exclude<Component,
-'shortPath' | 'async' | 'level' | 'import' | 'asyncImport'
+  'shortPath' | 'async' | 'level' | 'import' | 'asyncImport'
 >>
 
 /**
@@ -53,12 +53,12 @@ export async function addComponent (opts: AddComponentOptions) {
 
   nuxt.hook('components:extend', (components: Component[]) => {
     const existingComponent = components.find(c => (c.pascalName === component.pascalName || c.kebabName === component.kebabName) && c.mode === component.mode)
-    if (existingComponent) {
-      const name = existingComponent.pascalName || existingComponent.kebabName
-      console.warn(`Overriding ${name} component.`)
-      Object.assign(existingComponent, component)
-    } else {
+    if (!existingComponent) {
       components.push(component)
+      return
     }
+    const name = existingComponent.pascalName || existingComponent.kebabName
+    console.warn(`Overriding ${name} component.`)
+    Object.assign(existingComponent, component)
   })
 }

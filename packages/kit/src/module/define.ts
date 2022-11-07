@@ -3,18 +3,18 @@ import defu from 'defu'
 import { applyDefaults } from 'untyped'
 import { dirname } from 'pathe'
 import type { Nuxt, NuxtModule, ModuleOptions, ModuleDefinition, NuxtOptions, ResolvedNuxtTemplate } from '@nuxt/schema'
+import { isFunction } from '@nuxt/utils'
 import { logger } from '../logger'
 import { useNuxt, nuxtCtx, tryUseNuxt } from '../context'
 import { isNuxt2, checkNuxtCompatibility } from '../compatibility'
 import { templateUtils, compileTemplate } from '../internal/template'
-
 /**
  * Define a Nuxt module, automatically merging defaults with user provided options, installing
  * any hooks that are provided, and calling an optional setup function for full control.
  */
 export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: ModuleDefinition<OptionsT>): NuxtModule<OptionsT> {
   // Legacy format. TODO: Remove in RC
-  if (typeof definition === 'function') {
+  if (isFunction(definition)) {
     // @ts-ignore
     definition = definition(useNuxt())
     logger.warn('Module definition as function is deprecated and will be removed in the future versions', definition)

@@ -1,5 +1,6 @@
 import satisfies from 'semver/functions/satisfies.js' // npm/node-semver#381
 import type { Nuxt, NuxtCompatibility, NuxtCompatibilityIssues } from '@nuxt/schema'
+import { isTrue, isFalse } from '@nuxt/utils'
 import { useNuxt } from './context'
 
 /**
@@ -25,12 +26,12 @@ export async function checkNuxtCompatibility (constraints: NuxtCompatibility, nu
   if (isNuxt2(nuxt)) {
     const bridgeRequirement = constraints.bridge
     const hasBridge = !!(nuxt.options as any).bridge
-    if (bridgeRequirement === true && !hasBridge) {
+    if (isTrue(bridgeRequirement) && !hasBridge) {
       issues.push({
         name: 'bridge',
         message: 'Nuxt bridge is required'
       })
-    } else if (bridgeRequirement === false && hasBridge) {
+    } else if (isFalse(bridgeRequirement) && hasBridge) {
       issues.push({
         name: 'bridge',
         message: 'Nuxt bridge is not supported'

@@ -30,7 +30,7 @@
       ],
       "#internal/nitro/utils": [
         "./node_modules/nitropack/dist/runtime/utils"
-      ]
+      ],
     }
   },
   "exclude": [

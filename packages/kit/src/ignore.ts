@@ -25,8 +25,8 @@ export function isIgnored (pathname: string): boolean {
   }
 
   const relativePath = relative(nuxt.options.rootDir, pathname)
-  if (relativePath.startsWith('..')) {
-    return false
-  }
-  return !!(relativePath && nuxt._ignore.ignores(relativePath))
+
+  return relativePath.startsWith('..')
+    ? false
+    : !!(relativePath && nuxt._ignore.ignores(relativePath))
 }

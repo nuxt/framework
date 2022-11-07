@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { basename, dirname, resolve, join, normalize, isAbsolute } from 'pathe'
 import { globby } from 'globby'
 import { normalizeAliases } from 'pathe/utils'
+import { isArray } from '@nuxt/utils'
 import { tryUseNuxt, useNuxt } from './context'
 import { tryResolveModule } from './internal/cjs'
 import { isIgnored } from './ignore'
@@ -83,8 +84,8 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
 /**
  * Try to resolve first existing file in paths
  */
-export async function findPath (paths: string|string[], opts?: ResolvePathOptions, pathType: 'file' | 'dir' = 'file'): Promise<string|null> {
-  if (!Array.isArray(paths)) {
+export async function findPath (paths: string | string[], opts?: ResolvePathOptions, pathType: 'file' | 'dir' = 'file'): Promise<string | null> {
+  if (!isArray(paths)) {
     paths = [paths]
   }
   for (const path of paths) {

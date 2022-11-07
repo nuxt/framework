@@ -4,9 +4,5 @@ import { isNuxt2 } from './compatibility'
 
 export function extendPages (cb: NuxtHooks['pages:extend']) {
   const nuxt = useNuxt()
-  if (isNuxt2(nuxt)) {
-    nuxt.hook('build:extendRoutes', cb)
-  } else {
-    nuxt.hook('pages:extend', cb)
-  }
+  nuxt.hook(isNuxt2(nuxt) ? 'build:extendRoutes' : 'pages:extend', cb)
 }

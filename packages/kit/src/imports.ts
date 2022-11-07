@@ -1,14 +1,14 @@
 import type { Import } from 'unimport'
 import type { ImportPresetWithDeprecation } from '@nuxt/schema'
+import { isArray } from '@nuxt/utils'
 import { useNuxt } from './context'
 import { assertNuxtCompatibility } from './compatibility'
-
 export function addImports (imports: Import | Import[]) {
   assertNuxtCompatibility({ bridge: true })
 
   // TODO: Use imports:* when widely adopted
   useNuxt().hook('autoImports:extend', (_imports) => {
-    _imports.push(...(Array.isArray(imports) ? imports : [imports]))
+    _imports.push(...(isArray(imports) ? imports : [imports]))
   }, { allowDeprecated: true })
 }
 
@@ -22,7 +22,7 @@ export function addImportsDir (dirs: string | string[]) {
 
   // TODO: Use imports:* when widely adopted
   useNuxt().hook('autoImports:dirs', (_dirs: string[]) => {
-    for (const dir of (Array.isArray(dirs) ? dirs : [dirs])) {
+    for (const dir of (isArray(dirs) ? dirs : [dirs])) {
       _dirs.push(dir)
     }
   }, { allowDeprecated: true })
@@ -37,9 +37,7 @@ export function addImportsSources (presets: ImportPresetWithDeprecation | Import
   assertNuxtCompatibility({ bridge: true })
 
   // TODO: Use imports:* when widely adopted
-  useNuxt().hook('autoImports:sources', (_presets: ImportPresetWithDeprecation[]) => {
-    for (const preset of (Array.isArray(presets) ? presets : [presets])) {
-      _presets.push(preset)
-    }
-  }, { allowDeprecated: true })
+  useNuxt().hook('autoImports:sources', (_presets: ImportPresetWithDeprecation[]) =>
+    (isArray(presets) ? presets : [presets]).forEach(preset => _presets.push(preset)),
+  { allowDeprecated: true })
 }

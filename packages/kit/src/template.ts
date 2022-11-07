@@ -1,4 +1,5 @@
 import { existsSync } from 'node:fs'
+import { isString } from '@nuxt/utils'
 import { basename, parse, resolve } from 'pathe'
 import hash from 'hash-sum'
 import type { NuxtTemplate, ResolvedNuxtTemplate } from '@nuxt/schema'
@@ -32,12 +33,7 @@ export function normalizeTemplate (template: NuxtTemplate<any> | string): Resolv
   }
 
   // Normalize
-  if (typeof template === 'string') {
-    template = { src: template }
-  } else {
-    template = { ...template }
-  }
-
+  template = isString(template) ? { src: template } : { ...template }
   // Use src if provided
   if (template.src) {
     if (!existsSync(template.src)) {
