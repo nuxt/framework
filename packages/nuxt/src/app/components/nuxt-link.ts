@@ -265,7 +265,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
             route: router.resolve(href!),
             rel,
             target,
-            isExternal,
+            isExternal: isExternal.value,
             isActive: false,
             isExactActive: false
           })
