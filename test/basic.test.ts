@@ -160,6 +160,7 @@ describe('pages', () => {
     expect(html).toContain('<div class="client-only-script" foo="bar">')
     expect(html).toContain('<div class="client-only-script-setup" foo="hello">')
     expect(html).toContain('<div>Fallback</div>')
+    expect(html).toContain('<div>Fallback, this should not visible once mounted</div>')
     // ensure components are not rendered server-side
     expect(html).not.toContain('Should not be server rendered')
 
@@ -168,6 +169,7 @@ describe('pages', () => {
     const page = await createPage('/client-only-components')
 
     await page.waitForLoadState('networkidle')
+    expect(await page.textContent('body')).not.toContain('Fallback, this should not visible once mounted')
 
     const hiddenSelectors = [
       '.string-stateful-should-be-hidden',

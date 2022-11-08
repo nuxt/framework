@@ -27,7 +27,14 @@
     <ClientStringChildStatefulScript
       ref="stringStatefulScriptComp"
       class="string-stateful-script"
-    />
+    >
+      <template #fallback>
+        <div>
+          <!-- test fallback slot -->
+          Fallback, this should not visible once mounted
+        </div>
+      </template>
+    </ClientStringChildStatefulScript>
     <ClientNoState class="no-state" />
     <!-- ensure directives are correctly passed -->
     <ClientStringChildStateful v-show="show" class="string-stateful-should-be-hidden" />
@@ -35,8 +42,19 @@
     <ClientStringChildStatefulScript
       v-show="show"
       class="string-stateful-script-should-be-hidden"
-    />
+    >
+      <template #fallback>
+        <div>Fallback, this should not visible once mounted</div>
+      </template>
+    </ClientStringChildStatefulScript>
     <ClientNoState v-show="show" class="no-state-hidden" />
+    <ClientStringChildStateful>
+      <template #fallback>
+        <!-- test fragment as fallback slot -->
+        <div>Fallback, this should not visible once mounted</div>
+        <div>Fallback, this should not visible once mounted</div>
+      </template>
+    </ClientStringChildStateful>
 
     <button class="test-ref-1" @click="stringStatefulComp.add">
       increment count

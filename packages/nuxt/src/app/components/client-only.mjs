@@ -36,6 +36,11 @@ export function createClientOnly (component) {
           ? createElementVNode(res.type, res.props, res.children, res.patchFlag, res.dynamicProps, res.shapeFlag)
           : h(res)
       } else {
+        const slot = ctx.$slots.fallback || ctx.$slots.placeholder
+        if (slot) {
+          const res = slot()
+          return res.length === 1 ? res[0] : res
+        }
         return h('div', ctx.$attrs ?? ctx._.attrs)
       }
     }
@@ -43,6 +48,8 @@ export function createClientOnly (component) {
     // handle runtime-compiler template
     clone.template = `
       <template v-if="mounted$">${component.template}</template>
+      <template v-else-if="$slots.placeholder"><slot name="placeholder" /></template>
+      <template v-else-if="$slots.fallback"><slot name="fallback" /></template>
       <template v-else><div></div></template>
     `
   }
@@ -50,6 +57,8 @@ export function createClientOnly (component) {
   clone.setup = (props, ctx) => {
     const mounted$ = ref(false)
     onMounted(() => { mounted$.value = true })
+
+    const slot = ctx.slots.fallback || ctx.slots.placeholder
 
     return Promise.resolve(component.setup?.(props, ctx) || {})
       .then((setupState) => {
@@ -62,6 +71,10 @@ export function createClientOnly (component) {
                   ? createElementVNode(res.type, res.props, res.children, res.patchFlag, res.dynamicProps, res.shapeFlag)
                   : h(res)
               } else {
+                if (slot) {
+                  const res = slot()
+                  return res.length === 1 ? res[0] : res
+                }
                 return h('div', ctx.attrs)
               }
             }
