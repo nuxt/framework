@@ -5,10 +5,10 @@ import type { AppConfig } from '@nuxt/schema'
 
 import type { FetchError } from 'ohmyfetch'
 import { NavigationFailure, RouteLocationNormalizedLoaded, RouteLocationRaw, useRouter as vueUseRouter } from 'vue-router'
+import { defineNuxtConfig } from '~~/../../../packages/nuxt/config'
 import type { NavigateToOptions } from '~~/../../../packages/nuxt/dist/app/composables/router'
 // eslint-disable-next-line import/order
 import { isVue3 } from '#app'
-import { defineNuxtConfig } from '~~/../../../packages/nuxt/config'
 import { useRouter } from '#imports'
 
 interface TestResponse { message: string }
