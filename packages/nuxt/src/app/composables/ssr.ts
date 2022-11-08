@@ -1,4 +1,3 @@
-/* eslint-disable no-redeclare */
 import type { H3Event } from 'h3'
 import { useNuxtApp, NuxtApp } from '../nuxt'
 
@@ -8,7 +7,7 @@ export function useRequestHeaders (include?: any[]) {
   if (process.client) { return {} }
   const headers = useNuxtApp().ssrContext?.event.req.headers ?? {}
   if (!include) { return headers }
-  return Object.fromEntries(include.filter(key => headers[key]).map(key => [key, headers[key]]))
+  return Object.fromEntries(include.filter(key => headers[String(key).toLowerCase()]).map(key => [key, headers[String(key).toLowerCase()]]))
 }
 
 export function useRequestEvent (nuxtApp: NuxtApp = useNuxtApp()): H3Event {
