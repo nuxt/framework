@@ -2,7 +2,7 @@
 import type { H3Event } from 'h3'
 import { useNuxtApp, NuxtApp } from '../nuxt'
 
-export function useRequestHeaders<K extends string = string> (include: K[]): Record<K, string | undefined>
+export function useRequestHeaders<K extends string = string> (include: K[]): Record<Lowercase<K>, string | undefined>
 export function useRequestHeaders (): Readonly<Record<string, string | undefined>>
 export function useRequestHeaders (include?: any[]) {
   if (process.client) { return {} }
