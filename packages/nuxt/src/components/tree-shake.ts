@@ -28,7 +28,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
       return pathname.endsWith('.vue')
     },
     transform (code, id) {
-      const regexpMap = new WeakMap<Component[], [RegExp, string[]]>()
+      const regexpMap = new WeakMap<Component[], [RegExp, RegExp, string[]]>()
 
       const components = options.getComponents()
 
@@ -38,14 +38,14 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
           .flatMap(c => [c.pascalName, c.kebabName.replaceAll('-', '_')])
           .concat(['ClientOnly', 'client_only'])
 
-        regexpMap.set(components, [new RegExp(`(${clientOnlyComponents.join('|')})`), clientOnlyComponents])
+        regexpMap.set(components, [new RegExp(`(${clientOnlyComponents.join('|')})`), new RegExp(`^(${clientOnlyComponents.map(c => `_component_${c}`).join('|')})$`), clientOnlyComponents])
       }
 
       const s = new MagicString(code)
       const parse = this.parse
       const importDeclarations: AcornNode<ImportDeclaration>[] = []
 
-      const [COMPONENTS_RE] = regexpMap.get(components)!
+      const [COMPONENTS_RE, COMPONENTS_IDENTIFIERS_RE] = regexpMap.get(components)!
       if (!COMPONENTS_RE.test(code)) { return }
 
       walk(parse(code, { sourceType: 'module', ecmaVersion: 'latest' }), {
@@ -57,7 +57,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
             node.callee.type === 'Identifier' &&
             SSR_RENDER_RE.test(node.callee.name)) {
             const [identifier, _, children] = node.arguments
-            if (identifier.type === 'Identifier' && COMPONENTS_RE.test(identifier.name)) {
+            if (identifier.type === 'Identifier' && COMPONENTS_IDENTIFIERS_RE.test(identifier.name)) {
               if (children?.type === 'ObjectExpression') {
                 const nonFallbackSlots = children.properties.filter(prop => prop.type === 'Property' && prop.key.type === 'Identifier' && !PLACEHOLDER_EXACT_RE.test(prop.key.name)) as AcornNode<Property>[]
 
