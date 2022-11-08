@@ -47,13 +47,13 @@ export type NuxtLinkProps = {
 const requestIdleCallback: Window['requestIdleCallback'] = process.server
   ? undefined as any
   : (globalThis.requestIdleCallback || ((cb) => {
-      const start = Date.now()
-      const idleDeadline = {
-        didTimeout: false,
-        timeRemaining: () => Math.max(0, 50 - (Date.now() - start))
-      }
-      return setTimeout(() => { cb(idleDeadline) }, 1)
-    }))
+    const start = Date.now()
+    const idleDeadline = {
+      didTimeout: false,
+      timeRemaining: () => Math.max(0, 50 - (Date.now() - start))
+    }
+    return setTimeout(() => { cb(idleDeadline) }, 1)
+  }))
 
 const cancelIdleCallback: Window['cancelIdleCallback'] = process.server
   ? null as any
@@ -203,8 +203,8 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
                   unobserve?.()
                   unobserve = null
                   await Promise.all([
-                    nuxtApp.hooks.callHook('link:prefetch', to.value as string).catch(() => {}),
-                    !isExternal.value && preloadRouteComponents(to.value as string, router).catch(() => {})
+                    nuxtApp.hooks.callHook('link:prefetch', to.value as string).catch(() => { }),
+                    !isExternal.value && preloadRouteComponents(to.value as string, router).catch(() => { })
                   ])
                   prefetched.value = true
                 })
@@ -265,6 +265,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
             route: router.resolve(href!),
             rel,
             target,
+            isExternal,
             isActive: false,
             isExactActive: false
           })
