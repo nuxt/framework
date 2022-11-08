@@ -22,7 +22,7 @@ export async function runTests (opts: RunTestOptions) {
   }
 
   // @ts-ignore missing types
-  const { startVitest } = await import('vitest/dist/node.mjs') as typeof import('vitest/dist/node')
+  const { startVitest } = await import('vitest/dist/node.js') as typeof import('vitest/dist/node')
   const succeeded = await startVitest(
     'test',
     [] /* argv */,
