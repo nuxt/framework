@@ -47,13 +47,13 @@ export type NuxtLinkProps = {
 const requestIdleCallback: Window['requestIdleCallback'] = process.server
   ? undefined as any
   : (globalThis.requestIdleCallback || ((cb) => {
-    const start = Date.now()
-    const idleDeadline = {
-      didTimeout: false,
-      timeRemaining: () => Math.max(0, 50 - (Date.now() - start))
-    }
-    return setTimeout(() => { cb(idleDeadline) }, 1)
-  }))
+      const start = Date.now()
+      const idleDeadline = {
+        didTimeout: false,
+        timeRemaining: () => Math.max(0, 50 - (Date.now() - start))
+      }
+      return setTimeout(() => { cb(idleDeadline) }, 1)
+    }))
 
 const cancelIdleCallback: Window['cancelIdleCallback'] = process.server
   ? null as any
