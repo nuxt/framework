@@ -49,7 +49,9 @@ onBeforeUnmount(() => import('~/components/BreaksServer.client'))
       <ClientOnlyScript>
         <template #test>
           <BreaksServer />
-          <div id="client-side">This should be rendered client-side</div>
+          <div id="client-side">
+            This should be rendered client-side
+          </div>
         </template>
       </ClientOnlyScript>
       <div class="blue">
