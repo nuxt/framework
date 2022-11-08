@@ -7,7 +7,7 @@ export const useDefaultLocale = (fallback = 'en-US') => {
   if (process.server) {
     // Learn more about the nuxtApp interface on https://v3.nuxtjs.org/docs/usage/nuxt-app#nuxtapp-interface-advanced
     const nuxtApp = useNuxtApp()
-    const reqLocale = nuxtApp.ssrContext?.event.req.headers['accept-language']?.split(',')[0]
+    const reqLocale = useRequestHeaders()['accept-language']?.split(',')[0];
     if (reqLocale) {
       locale.value = reqLocale
     }
