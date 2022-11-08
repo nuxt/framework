@@ -8,7 +8,7 @@ export function useRequestHeaders (include?: any[]) {
   if (process.client) { return {} }
   const headers = useNuxtApp().ssrContext?.event.req.headers ?? {}
   if (!include) { return headers }
-  return Object.fromEntries(include.filter(key => headers[key]).map(key => [key, headers[key]]))
+  return Object.fromEntries(include.map(key => key.toLowerCase()).filter(key => headers[key]).map(key => [key, headers[key]]))
 }
 
 export function useRequestEvent (nuxtApp: NuxtApp = useNuxtApp()): H3Event {
