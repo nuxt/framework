@@ -38,7 +38,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
           .flatMap(c => [c.pascalName, c.kebabName.replaceAll('-', '_')])
           .concat(['ClientOnly', 'client_only'])
 
-        regexpMap.set(components, [new RegExp(`(${clientOnlyComponents.join('|')})`), new RegExp(`^(${clientOnlyComponents.map(c => `_component_${c}`).join('|')})$`), clientOnlyComponents])
+        regexpMap.set(components, [new RegExp(`(${clientOnlyComponents.join('|')})`), new RegExp(`^(${clientOnlyComponents.map(c => `^(?:_component_)?${c}`).join('|')})$`), clientOnlyComponents])
       }
 
       const s = new MagicString(code)
@@ -53,12 +53,16 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
           const node = _node as AcornNode<CallExpression | ImportDeclaration>
           if (node.type === 'ImportDeclaration') {
             importDeclarations.push(node)
-          } else if (node.type === 'CallExpression' &&
+          } else if (
+            node.type === 'CallExpression' &&
             node.callee.type === 'Identifier' &&
-            SSR_RENDER_RE.test(node.callee.name)) {
-            const [identifier, _, children] = node.arguments
-            if (identifier.type === 'Identifier' && COMPONENTS_IDENTIFIERS_RE.test(identifier.name)) {
-              if (children?.type === 'ObjectExpression') {
+            SSR_RENDER_RE.test(node.callee.name)
+          ) {
+            const [componentCall, _, children] = node.arguments
+            if (componentCall.type === 'Identifier' || componentCall.type === 'MemberExpression') {
+              const isClientComponent = COMPONENTS_IDENTIFIERS_RE.test(componentCall.type === 'Identifier' ? componentCall.name : (componentCall.property as Literal).value as string)
+
+              if (isClientComponent && children?.type === 'ObjectExpression') {
                 const nonFallbackSlots = children.properties.filter(prop => prop.type === 'Property' && prop.key.type === 'Identifier' && !PLACEHOLDER_EXACT_RE.test(prop.key.name)) as AcornNode<Property>[]
 
                 for (const slot of nonFallbackSlots) {

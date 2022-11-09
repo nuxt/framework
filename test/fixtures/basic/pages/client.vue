@@ -3,7 +3,8 @@
 import BreaksServer from '../components/BreaksServer.client'
 // ensure treeshake-client-only module remove theses imports without breaking
 import TestGlobal from '../components/global/TestGlobal.vue'
-import { FunctionalComponent } from '#components'
+// direct import of .client components should be treeshaken
+import { FunctionalComponent, LazyClientOnlyScript } from '#components'
 
 onMounted(() => import('~/components/BreaksServer.client'))
 onBeforeMount(() => import('~/components/BreaksServer.client'))
@@ -28,32 +29,30 @@ onBeforeUnmount(() => import('~/components/BreaksServer.client'))
       <ClientOnly class="another">
         <span>rendered client-side</span>
         <BreaksServer />
-        <template #fallback>
-          <div>fallback for ClientOnly</div>
-        </template>
-        <template #test>
-          <div>This should not be rendered</div>
-        </template>
       </ClientOnly>
     </div>
     <div>
-      <ClientOnly>
+      <LazyClientOnly>
         <div class="red">
           i'm red
         </div>
         <div>
+          <BreaksServer />
           <FunctionalComponent />
           <TestGlobal />
         </div>
-      </ClientOnly>
-      <ClientOnlyScript>
+        <template #fallback>
+          <div>fallback for ClientOnly</div>
+        </template>
+      </LazyClientOnly>
+      <LazyClientOnlyScript>
         <template #test>
           <BreaksServer />
           <div id="client-side">
             This should be rendered client-side
           </div>
         </template>
-      </ClientOnlyScript>
+      </LazyClientOnlyScript>
       <div class="blue">
         i'm blue
       </div>

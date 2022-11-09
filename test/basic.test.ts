@@ -418,11 +418,10 @@ describe('server tree shaking', () => {
 
     expect(html).toContain('This page should not crash when rendered')
     expect(html).toContain('fallback for ClientOnly')
-    expect(html).not.toContain('This should not be rendered')
     expect(html).not.toContain('rendered client-side')
     expect(html).not.toContain('id="client-side"')
-    const page = await createPage('/client')
 
+    const page = await createPage('/client')
     await page.waitForLoadState('networkidle')
     // ensure scoped classes are correctly assigned between client and server
     expect(await page.$eval('.red', e => getComputedStyle(e).color)).toBe('rgb(255, 0, 0)')
