@@ -23,7 +23,7 @@ refreshNuxtData(keys?: string | string[])
 
 ## Examples
 
-### refresh all data
+### Refresh All data
 
 This example below refreshes all data being fetched using `useAsyncData` and `useFetch` on the current page.
 
