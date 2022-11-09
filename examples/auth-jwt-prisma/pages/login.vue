@@ -46,18 +46,6 @@
             console.log(data);
             //On login success
             if(data.success){
-                if(!process.server){
-                    //Store user data
-                    localStorage.userData = JSON.stringify({
-                        id: data.id,
-                        name: data.name,
-                        email: data.email,
-                        phone: data.phone,
-                        currentLoggedInAt: data.currentLoggedInAt,
-                        createdAt: data.createdAt
-                    });
-                }
-
                 //Go to home page
                 window.location.href = "/";
             }else{
