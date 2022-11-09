@@ -23,7 +23,7 @@ In the browser, `useRequestHeaders` will return an empty object.
 
 We can use `useRequestHeaders` to access and proxy the initial request's `authorization` header to any future internal requests during SSR.
 
-The example below adds an `authorization` request headers to an isomorphic `$fetch` call.
+The example below adds the `authorization` request header to an isomorphic `$fetch` call.
 
 ```vue [pages/some-page.vue]
 <script setup>
