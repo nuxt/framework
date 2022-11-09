@@ -29,11 +29,11 @@ This example below refreshes all data being fetched using `useAsyncData` and `us
 
 ```vue [pages/some-page.vue]
 <template>
-<div>
+  <div>
     <button :disabled="refreshing" @click="refreshAll">
-        Refetch All Data
+      Refetch All Data
     </button>
-</div>
+  </div>
 </template>
 
 <script setup>
