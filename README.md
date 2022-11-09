@@ -97,16 +97,9 @@ Follow the docs to [Set Up Your Local Development Environment](https://v3.nuxtjs
 
 ## Follow us
 
-<table>
-<tbody>
-<tr>
-  <td><a href="https://discord.nuxtjs.org/"><img src="/assets/discord.svg" alt="Discord"></a></td>
-  <td><a href="https://twitter.com/nuxt_js"><img src="/assets/twitter.svg" alt="Twitter"></a></td>
-  <td><a href="https://github.com/nuxt"><img src="/assets/github.svg" alt="GitHub"></a></td>
-</tr>
-</tbody>
-</table>
-
+<p valign="center">
+  <a href="https://discord.nuxtjs.org/"><img width="20px" src="/assets/discord.svg" alt="Discord"></a>&nbsp;&nbsp;<a href="https://twitter.com/nuxt_js"><img width="20px" src="/assets/twitter.svg" alt="Twitter"></a>&nbsp;&nbsp;<a href="https://github.com/nuxt"><img width="20px" src="/assets/github.svg" alt="GitHub"></a>
+</p>
 
 ## License
 
