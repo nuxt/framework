@@ -21,7 +21,7 @@ In the browser, `useRequestHeaders` will return an empty object.
 
 ## Example
 
-We can use `useRequestHeaders` to access and proxy browser's `authorization` header to the server-side and also make sure that there are no unintended side effects during SSR.
+We can use `useRequestHeaders` to access and proxy the initial request's `authorization` header to any future internal requests during SSR.
 
 The example below adds an `authorization` request headers to an isomorphic `$fetch` call.
 
