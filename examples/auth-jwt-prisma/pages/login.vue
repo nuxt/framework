@@ -1,7 +1,7 @@
 <template>
     <main>
         <div class="container">
-            <h2>Nuxt Login Page</h2>
+            <h2>Nuxt JWT Prisma Login Page</h2>
             <h3 class="mt-3">Sign in to continue.</h3>
             <h4>{{ login_message }}</h4>
             <form @submit.prevent="login">

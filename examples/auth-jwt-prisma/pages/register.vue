@@ -1,7 +1,7 @@
 <template>
     <main>
         <div class="container">
-            <h2>Nuxt Register Page</h2>
+            <h2>Nuxt JWT Prisma Register Page</h2>
             <h4>{{ register_message }}</h4>
             <form @submit.prevent="register">
                 <div class="form-group">
