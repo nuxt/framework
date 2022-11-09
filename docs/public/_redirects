@@ -7,7 +7,6 @@
 /bridge                           /bridge/overview 302!
 /guide                            /guide/concepts/auto-imports 302!
 /guide/concepts                   /guide/concepts/auto-imports 302!
-/guide/directory-structure/utils  /guide/directory-structure/composables 302!
 
 # Concepts
 /concepts/introduction            /getting-started/introduction 302!
