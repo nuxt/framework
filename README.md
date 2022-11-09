@@ -1,11 +1,11 @@
 <div align="center">
 
-![Nuxt banner](/assets/banner.png)
+[![Nuxt banner](/assets/banner.png)](https://nuxt.com)
 
 # 👋 Welcome to Nuxt
 
 
-Nuxt's goal is to make web development intuitive and performant, with a great developer experience.<br>Learn more in the ['What is Nuxt?'](https://v3.nuxtjs.org/getting-started/introduction#what-is-nuxt) section of our documentation.
+Nuxt's goal is to make web development intuitive and performant, with a great developer experience.<br>Learn more in the ['What is Nuxt?'](https://nuxt.com/docs/getting-started/introduction) section of our documentation.
 
 </div>
 
@@ -13,7 +13,6 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
   <a href="https://www.npmjs.com/package/nuxt/v/rc"><img src="https://img.shields.io/npm/v/nuxt/rc.svg?style=flat&colorA=002438&colorB=28CF8D" alt="Version"></a>
   <a href="https://www.npmjs.com/package/nuxt/v/rc"><img src="https://img.shields.io/npm/dm/nuxt.svg?style=flat&colorA=002438&colorB=28CF8D" alt="Downloads"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/github/license/nuxt/framework.svg?style=flat&colorA=002438&colorB=28CF8D" alt="License"></a>
-  <a href="https://discord.nuxtjs.org/"><img src="https://badgen.net/badge/Discord/join-us/7289DA" alt="Discord"></a>
  </p>
 
 <table>
@@ -33,7 +32,7 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
   <td rowspan="2">
     <h3>Documentation</h3>
     <p>
-      We highly recommend you take a look at <a href="https://v3.nuxtjs.org/">the Nuxt documentation</a> to level up.
+      We highly recommend you take a look at <a href="https://nuxt.com">the Nuxt documentation</a> to level up.
     </p>
     <p>
       <img src="/assets/documentation.png">
