@@ -32,8 +32,8 @@ export const writeTypes = async (nuxt: Nuxt) => {
     ],
     exclude: [
       // nitro generate output
-      resolve(nuxt.options.rootDir, 'dist')
-    ].map(p => relative(nuxt.options.buildDir, p))
+      relative(nuxt.options.buildDir, resolve(nuxt.options.rootDir, 'dist'))
+    ]
   })
 
   const aliases: Record<string, string> = {
