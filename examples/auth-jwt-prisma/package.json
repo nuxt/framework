@@ -1,0 +1,21 @@
+{
+  "name": "example-auth-jwt-prisma",
+  "private": true,
+  "scripts": {
+    "build": "nuxi build",
+    "dev": "nuxi dev",
+    "start": "nuxi preview"
+  },
+  "devDependencies": {
+    "@nuxt/ui": "^0.3.3",
+    "nuxt": "^3.0.0-rc.13"
+  },
+  "dependencies": {
+    "@prisma/client": "^4.5.0",
+    "@types/jsonwebtoken": "^8.5.9",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "jsonwebtoken": "^8.5.1",
+    "prisma": "^4.5.0"
+  }
+}
