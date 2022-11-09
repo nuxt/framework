@@ -49,7 +49,7 @@ const refreshAll = async () => {
 </script>
 ```
 
-### refresh specific data
+### Refresh Specific Data
 
 This example below refreshes only data where the key matches to `count`.
 
