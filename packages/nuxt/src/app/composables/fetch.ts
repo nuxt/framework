@@ -44,13 +44,14 @@ export function useFetch<
   arg2?: string
 ) {
   const [opts = {}, autoKey] = typeof arg1 === 'string' ? [{}, arg1] : [arg1, arg2]
-  const key = opts.key || (autoKey && typeof autoKey === 'string' ? '$f' + autoKey : undefined)
-  if (!key || typeof key !== 'string') {
-    throw new TypeError('[nuxt] [useFetch] key must be a string: ' + key)
+  const _key = opts.key || autoKey
+  if (!_key || typeof _key !== 'string') {
+    throw new TypeError('[nuxt] [useFetch] key must be a string: ' + _key)
   }
   if (!request) {
     throw new Error('[nuxt] [useFetch] request is missing.')
   }
+  const key = _key === autoKey ? '$f' + _key : _key
 
   const _request = computed(() => {
     let r = request
