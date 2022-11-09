@@ -16,14 +16,14 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
   <a href="https://discord.nuxtjs.org/"><img src="https://badgen.net/badge/Discord/join-us/7289DA" alt="Discord"></a>
  </p>
 
-<table border="0">
-<tbody border="0">
-<tr border="0">
+<table>
+<tbody>
+<tr>
   <td width="80" align="center" valign="top">
     <br>
     <img src="/assets/modules.png">
   </td>
-  <td border="0" valign="top">
+  <td valign="top">
     <h3>Modules</h3>
     <p>
       Discover our <a href="https://modules.nuxtjs.org/">list of modules</a> to supercharge your Nuxt project. Created by the Nuxt team and community.
@@ -64,21 +64,24 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
 </thead>
 <tbody>
 <tr>
-  <td width="33%">
+  <td width="33%" valign="top">
+    <br>
     <img src="/assets/reporting-bugs.png">
     <h3>Reporting bugs</h3>
     <p>
       Check out the <a href="https://v3.nuxtjs.org/community/reporting-bugs">Reporting Bugs</a> page.</p>
     </p>
   </td>
-  <td width="33%">
+  <td width="33%" valign="top">
+    <br>
     <img src="/assets/suggestions.png">
     <h3>Suggestions</h3>
     <p>
       Check out the <a href="https://v3.nuxtjs.org/community/contribution">Contribution</a> page.
     </p>
   </td>
-  <td width="33%">
+  <td width="33%" valign="top">
+    <br>
     <img src="/assets/questions.png">
     <h3>Questions</h3>
     <p>
