@@ -39,12 +39,6 @@ export interface RuntimeNuxtHooks {
   'vue:error': (...args: Parameters<Parameters<typeof onErrorCaptured>[0]>) => HookResult
 }
 
-declare module '@vue/runtime-core' {
-  interface ComponentCustomProperties {
-    $nuxt: NuxtApp
-  }
-}
-
 export interface NuxtSSRContext extends SSRContext {
   url: string
   event: H3Event
@@ -160,6 +154,7 @@ export function createNuxtApp (options: CreateOptions) {
 
   // Inject $nuxt
   defineGetter(nuxtApp.vueApp, '$nuxt', nuxtApp)
+  // @ts-expect-error
   defineGetter(nuxtApp.vueApp.config.globalProperties, '$nuxt', nuxtApp)
 
   if (process.server) {
