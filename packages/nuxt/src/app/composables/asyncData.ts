@@ -106,13 +106,14 @@ export function useAsyncData<
   // Setup nuxt instance payload
   const nuxt = useNuxtApp()
 
-  const usePayloadData = () => nuxt.isHydrating && nuxt.payload.data[key] !== undefined
+  const getCachedData = () => nuxt.isHydrating ? nuxt.payload.data[key] : nuxt.static.data[key]
+  const hasCachedData = () => getCachedData() !== undefined
 
   // Create or use a shared asyncData entity
   if (!nuxt._asyncData[key]) {
     nuxt._asyncData[key] = {
-      data: ref(usePayloadData() ? nuxt.payload.data[key] : options.default?.() ?? null),
-      pending: ref(!usePayloadData()),
+      data: ref(getCachedData() ?? options.default?.() ?? null),
+      pending: ref(!hasCachedData()),
       error: ref(nuxt.payload._errors[key] ? createError(nuxt.payload._errors[key]) : null)
     }
   }
@@ -128,8 +129,8 @@ export function useAsyncData<
       (nuxt._asyncDataPromises[key] as any).cancelled = true
     }
     // Avoid fetching same key that is already fetched
-    if (opts._initial && usePayloadData()) {
-      return nuxt.payload.data[key]
+    if (opts._initial && hasCachedData()) {
+      return getCachedData()
     }
     asyncData.pending.value = true
     // TODO: Cancel previous promise
@@ -202,7 +203,7 @@ export function useAsyncData<
       }
     }
 
-    if (fetchOnServer && nuxt.isHydrating && key in nuxt.payload.data) {
+    if (fetchOnServer && nuxt.isHydrating && hasCachedData()) {
       // 1. Hydration (server: true): no fetch
       asyncData.pending.value = false
     } else if (instance && ((nuxt.payload.serverRendered && nuxt.isHydrating) || options.lazy) && options.immediate) {
