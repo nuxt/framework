@@ -130,6 +130,7 @@ export default defineNuxtModule({
 
     // Extract macros from pages
     const pageMetaOptions: PageMetaPluginOptions = {
+      root: nuxt.options.rootDir,
       dev: nuxt.options.dev,
       sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client,
       dirs: nuxt.options._layers.map(

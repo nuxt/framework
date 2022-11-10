@@ -1,13 +1,16 @@
 import { pathToFileURL } from 'node:url'
 import { createUnplugin } from 'unplugin'
+import fs from 'fs/promises'
 import { parseQuery, parseURL, stringifyQuery } from 'ufo'
 import { findStaticImports, findExports, StaticImport, parseStaticImport } from 'mlly'
 import type { CallExpression, Identifier, Expression } from 'estree'
 import { walk } from 'estree-walker'
 import MagicString from 'magic-string'
-import { isAbsolute, normalize } from 'pathe'
+import { isAbsolute, join, normalize } from 'pathe'
+import { transformWithEsbuild } from 'vite'
 
 export interface PageMetaPluginOptions {
+  root: string,
   dirs: Array<string | RegExp>
   dev?: boolean
   sourcemap?: boolean
@@ -17,6 +20,85 @@ export const PageMetaPlugin = createUnplugin((options: PageMetaPluginOptions) =>
   return {
     name: 'nuxt:pages-macros-transform',
     enforce: 'post',
+    resolveId(id) {
+      if (id.endsWith('.nuxt-pages-macro')) {
+        return id
+      }
+    },
+    loadInclude(id) {
+      return id.endsWith('.nuxt-pages-macro')
+    },
+   async load(id) {
+      const file = id.replace(/\.nuxt-pages-macro$/, '')
+      const filename = join(options.root, file.slice(1))
+      const content = await fs.readFile(filename, 'utf-8')
+      const raw = Array.from(content.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g) || []).map(i=>i[1]).join('\n')
+      const { code } = await transformWithEsbuild(raw, filename, { loader: 'ts' })
+
+      const hasMacro = code.match(/\bdefinePageMeta\s*\(\s*/)
+      let result = 'export default {}'
+
+      if (!hasMacro)
+        return result
+
+      const imports = findStaticImports(code)
+     
+      const importMap = new Map<string, StaticImport>()
+      const addedImports = new Set()
+      for (const i of imports) {
+        const parsed = parseStaticImport(i)
+        for (const name of [
+          parsed.defaultImport,
+          ...Object.keys(parsed.namedImports || {}),
+          parsed.namespacedImport
+        ].filter(Boolean) as string[]) {
+          importMap.set(name, i)
+        }
+      }
+      
+      walk(this.parse(code, {
+        sourceType: 'module',
+        ecmaVersion: 'latest'
+      }), {
+        enter (_node) {
+          if (_node.type !== 'CallExpression' || (_node as CallExpression).callee.type !== 'Identifier') { return }
+          const node = _node as CallExpression & { start: number, end: number }
+          const name = 'name' in node.callee && node.callee.name
+          if (name !== 'definePageMeta') { return }
+
+          const meta = node.arguments[0] as Expression & { start: number, end: number }
+
+          let contents = `const __nuxt_page_meta = ${code!.slice(meta.start, meta.end) || '{}'}\nexport default __nuxt_page_meta`
+
+          function addImport (name: string | false) {
+            if (name && importMap.has(name)) {
+              const importValue = importMap.get(name)!.code
+              if (!addedImports.has(importValue)) {
+                contents = importMap.get(name)!.code + '\n' + contents
+                addedImports.add(importValue)
+              }
+            }
+          }
+
+          walk(meta, {
+            enter (_node) {
+              if (_node.type === 'CallExpression') {
+                const node = _node as CallExpression & { start: number, end: number }
+                addImport('name' in node.callee && node.callee.name)
+              }
+              if (_node.type === 'Identifier') {
+                const node = _node as Identifier & { start: number, end: number }
+                addImport(node.name)
+              }
+            }
+          })
+
+          result = contents
+        }
+      })
+
+      return result
+    },
     transformInclude (id) {
       const query = parseMacroQuery(id)
       id = normalize(id)
@@ -91,66 +173,6 @@ export const PageMetaPlugin = createUnplugin((options: PageMetaPluginOptions) =>
         s.overwrite(0, code.length, 'export default {}')
         return result()
       }
-
-      const importMap = new Map<string, StaticImport>()
-      const addedImports = new Set()
-      for (const i of imports) {
-        const parsed = parseStaticImport(i)
-        for (const name of [
-          parsed.defaultImport,
-          ...Object.keys(parsed.namedImports || {}),
-          parsed.namespacedImport
-        ].filter(Boolean) as string[]) {
-          importMap.set(name, i)
-        }
-      }
-
-      walk(this.parse(code, {
-        sourceType: 'module',
-        ecmaVersion: 'latest'
-      }), {
-        enter (_node) {
-          if (_node.type !== 'CallExpression' || (_node as CallExpression).callee.type !== 'Identifier') { return }
-          const node = _node as CallExpression & { start: number, end: number }
-          const name = 'name' in node.callee && node.callee.name
-          if (name !== 'definePageMeta') { return }
-
-          const meta = node.arguments[0] as Expression & { start: number, end: number }
-
-          let contents = `const __nuxt_page_meta = ${code!.slice(meta.start, meta.end) || '{}'}\nexport default __nuxt_page_meta`
-
-          function addImport (name: string | false) {
-            if (name && importMap.has(name)) {
-              const importValue = importMap.get(name)!.code
-              if (!addedImports.has(importValue)) {
-                contents = importMap.get(name)!.code + '\n' + contents
-                addedImports.add(importValue)
-              }
-            }
-          }
-
-          walk(meta, {
-            enter (_node) {
-              if (_node.type === 'CallExpression') {
-                const node = _node as CallExpression & { start: number, end: number }
-                addImport('name' in node.callee && node.callee.name)
-              }
-              if (_node.type === 'Identifier') {
-                const node = _node as Identifier & { start: number, end: number }
-                addImport(node.name)
-              }
-            }
-          })
-
-          s.overwrite(0, code.length, contents)
-        }
-      })
-
-      if (!s.hasChanged() && !code.includes('__nuxt_page_meta')) {
-        s.overwrite(0, code.length, 'export default {}')
-      }
-
-      return result()
     }
   }
 })
