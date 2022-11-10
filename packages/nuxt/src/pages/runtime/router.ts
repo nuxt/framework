@@ -50,11 +50,6 @@ function createCurrentLocation (
 }
 
 export default defineNuxtPlugin(async (nuxtApp) => {
-  nuxtApp.vueApp.component('NuxtPage', NuxtPage)
-  // TODO: remove before release - present for backwards compatibility & intentionally undocumented
-  nuxtApp.vueApp.component('NuxtNestedPage', NuxtPage)
-  nuxtApp.vueApp.component('NuxtChild', NuxtPage)
-
   let routerBase = useRuntimeConfig().app.baseURL
   if (routerOptions.hashMode && !routerBase.includes('#')) {
     // allow the user to provide a `#` in the middle: `/base/#/app`
@@ -159,9 +154,11 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       if (process.server || (!nuxtApp.payload.serverRendered && nuxtApp.isHydrating)) {
         if (result === false || result instanceof Error) {
           const error = result || createError({
-            statusMessage: `Route navigation aborted: ${initialURL}`
+            statusCode: 404,
+            statusMessage: `Page Not Found: ${initialURL}`
           })
-          return callWithNuxt(nuxtApp, showError, [error])
+          await callWithNuxt(nuxtApp, showError, [error])
+          return false
         }
       }
       if (result || result === false) { return result }
@@ -181,8 +178,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         fatal: false,
         statusMessage: `Page not found: ${to.fullPath}`
       })])
-    } else if (process.server && to.matched[0].name === '404' && nuxtApp.ssrContext) {
-      nuxtApp.ssrContext.event.res.statusCode = 404
     } else if (process.server) {
       const currentURL = to.fullPath || '/'
       if (!isEqual(currentURL, initialURL)) {

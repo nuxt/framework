@@ -27,7 +27,12 @@ export const writeTypes = async (nuxt: Nuxt) => {
     include: [
       './nuxt.d.ts',
       join(relative(nuxt.options.buildDir, nuxt.options.rootDir), '**/*'),
-      ...nuxt.options.srcDir !== nuxt.options.rootDir ? [join(relative(nuxt.options.buildDir, nuxt.options.srcDir), '**/*')] : []
+      ...nuxt.options.srcDir !== nuxt.options.rootDir ? [join(relative(nuxt.options.buildDir, nuxt.options.srcDir), '**/*')] : [],
+      ...nuxt.options.typescript.includeWorkspace && nuxt.options.workspaceDir !== nuxt.options.rootDir ? [join(relative(nuxt.options.buildDir, nuxt.options.workspaceDir), '**/*')] : []
+    ],
+    exclude: [
+      // nitro generate output: https://github.com/nuxt/framework/blob/main/packages/nuxt/src/core/nitro.ts#L186
+      relative(nuxt.options.buildDir, resolve(nuxt.options.rootDir, 'dist'))
     ]
   })
 
@@ -99,6 +104,7 @@ export const writeTypes = async (nuxt: Nuxt) => {
 
   // This is needed for Nuxt 2 which clears the build directory again before building
   // https://github.com/nuxt/nuxt.js/blob/dev/packages/builder/src/builder.js#L144
+  // @ts-expect-error
   nuxt.hook('builder:prepared', writeFile)
 
   await writeFile()

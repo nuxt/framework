@@ -1,8 +1,9 @@
 import { KeepAlive, h } from 'vue'
-import { RouterView, RouteLocationMatched, RouteLocationNormalizedLoaded } from 'vue-router'
+import type { RouterView, RouteLocationMatched, RouteLocationNormalizedLoaded } from 'vue-router'
 
 type InstanceOf<T> = T extends new (...args: any[]) => infer R ? R : never
-export type RouterViewSlotProps = Parameters<InstanceOf<typeof RouterView>['$slots']['default']>[0]
+type RouterViewSlot = Exclude<InstanceOf<typeof RouterView>['$slots']['default'], undefined>
+export type RouterViewSlotProps = Parameters<RouterViewSlot>[0]
 
 const interpolatePath = (route: RouteLocationNormalizedLoaded, match: RouteLocationMatched) => {
   return match.path

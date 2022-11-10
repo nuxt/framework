@@ -1,7 +1,8 @@
 import { statSync } from 'node:fs'
 import { relative, resolve } from 'pathe'
-import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate, updateTemplates } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
+import { distDir } from '../dirs'
 import { componentsPluginTemplate, componentsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
 import { loaderPlugin } from './loader'
@@ -121,12 +122,12 @@ export default defineNuxtModule<ComponentsOptions>({
 
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       const mode = isClient ? 'client' : 'server'
-      ;(config.resolve!.alias as any)['#components'] = resolve(nuxt.options.buildDir, `components.${mode}.mjs`)
+        ; (config.resolve!.alias as any)['#components'] = resolve(nuxt.options.buildDir, `components.${mode}.mjs`)
     })
     nuxt.hook('webpack:config', (configs) => {
       for (const config of configs) {
         const mode = config.name === 'server' ? 'server' : 'client'
-        ;(config.resolve!.alias as any)['#components'] = resolve(nuxt.options.buildDir, `components.${mode}.mjs`)
+          ; (config.resolve!.alias as any)['#components'] = resolve(nuxt.options.buildDir, `components.${mode}.mjs`)
       }
     })
 
@@ -146,6 +147,17 @@ export default defineNuxtModule<ComponentsOptions>({
     nuxt.hook('app:templates', async () => {
       const newComponents = await scanComponents(componentDirs, nuxt.options.srcDir!)
       await nuxt.callHook('components:extend', newComponents)
+      // add server placeholder for .client components server side. issue: #7085
+      for (const component of newComponents) {
+        if (component.mode === 'client' && !newComponents.some(c => c.pascalName === component.pascalName && c.mode === 'server')) {
+          newComponents.push({
+            ...component,
+            mode: 'server',
+            filePath: resolve(distDir, 'app/components/server-placeholder'),
+            chunkName: 'components/' + component.kebabName
+          })
+        }
+      }
       context.components = newComponents
     })
 
@@ -161,7 +173,14 @@ export default defineNuxtModule<ComponentsOptions>({
       }
       const fPath = resolve(nuxt.options.srcDir, path)
       if (componentDirs.find(dir => fPath.startsWith(dir.path))) {
-        await nuxt.callHook('builder:generateApp')
+        await updateTemplates({
+          filter: template => [
+            'components.plugin.mjs',
+            'components.d.ts',
+            'components.server.mjs',
+            'components.client.mjs'
+          ].includes(template.filename)
+        })
       }
     })
 

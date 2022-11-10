@@ -4,7 +4,7 @@ import { joinURL } from 'ufo'
 import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer, createPage, url } from '@nuxt/test-utils'
 // eslint-disable-next-line import/order
-import { expectNoClientErrors, renderPage } from './utils'
+import { expectNoClientErrors, renderPage, withLogs } from './utils'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
@@ -26,6 +26,12 @@ describe('server api', () => {
     expect(await $fetch('/api/counter')).toEqual({ count: 1 })
     expect(await $fetch('/api/counter')).toEqual({ count: 2 })
     expect(await $fetch('/api/counter')).toEqual({ count: 3 })
+  })
+})
+
+describe('route rules', () => {
+  it('should enable spa mode', async () => {
+    expect(await $fetch('/route-rules/spa')).toContain('serverRendered:false')
   })
 })
 
@@ -53,6 +59,21 @@ describe('pages', () => {
     expect(html).toContain('global component via suffix')
 
     await expectNoClientErrors('/')
+  })
+
+  it('respects aliases in page metadata', async () => {
+    const html = await $fetch('/some-alias')
+    expect(html).toContain('Hello Nuxt 3!')
+  })
+
+  it('respects redirects in page metadata', async () => {
+    const { headers } = await fetch('/redirect', { redirect: 'manual' })
+    expect(headers.get('location')).toEqual('/')
+  })
+
+  it('validates routes', async () => {
+    const { status } = await fetch('/forbidden')
+    expect(status).toEqual(404)
   })
 
   it('render 404', async () => {
@@ -135,18 +156,92 @@ describe('pages', () => {
 
   it('/client-only-components', async () => {
     const html = await $fetch('/client-only-components')
+    // ensure fallbacks with classes and arbitrary attributes are rendered
     expect(html).toContain('<div class="client-only-script" foo="bar">')
     expect(html).toContain('<div class="client-only-script-setup" foo="hello">')
     expect(html).toContain('<div>Fallback</div>')
+    // ensure components are not rendered server-side
     expect(html).not.toContain('Should not be server rendered')
 
     await expectNoClientErrors('/client-only-components')
+
+    const page = await createPage('/client-only-components')
+
+    await page.waitForLoadState('networkidle')
+
+    const hiddenSelectors = [
+      '.string-stateful-should-be-hidden',
+      '.client-script-should-be-hidden',
+      '.string-stateful-script-should-be-hidden',
+      '.no-state-hidden'
+    ]
+    const visibleSelectors = [
+      '.string-stateful',
+      '.string-stateful-script',
+      '.client-only-script',
+      '.client-only-script-setup',
+      '.no-state'
+    ]
+    // ensure directives are correctly applied
+    await Promise.all(hiddenSelectors.map(selector => page.locator(selector).isHidden()))
+      .then(results => results.forEach(isHidden => expect(isHidden).toBeTruthy()))
+    // ensure hidden components are still rendered
+    await Promise.all(hiddenSelectors.map(selector => page.locator(selector).innerHTML()))
+      .then(results => results.forEach(innerHTML => expect(innerHTML).not.toBe('')))
+
+    // ensure single root node components are rendered once on client (should not be empty)
+    await Promise.all(visibleSelectors.map(selector => page.locator(selector).innerHTML()))
+      .then(results => results.forEach(innerHTML => expect(innerHTML).not.toBe('')))
+
+    // ensure multi-root-node is correctly rendered
+    expect(await page.locator('.multi-root-node-count').innerHTML()).toContain('0')
+    expect(await page.locator('.multi-root-node-button').innerHTML()).toContain('add 1 to count')
+    expect(await page.locator('.multi-root-node-script-count').innerHTML()).toContain('0')
+    expect(await page.locator('.multi-root-node-script-button').innerHTML()).toContain('add 1 to count')
+
+    // ensure components reactivity
+    await page.locator('.multi-root-node-button').click()
+    await page.locator('.multi-root-node-script-button').click()
+    await page.locator('.client-only-script button').click()
+    await page.locator('.client-only-script-setup button').click()
+
+    expect(await page.locator('.multi-root-node-count').innerHTML()).toContain('1')
+    expect(await page.locator('.multi-root-node-script-count').innerHTML()).toContain('1')
+    expect(await page.locator('.client-only-script-setup button').innerHTML()).toContain('1')
+    expect(await page.locator('.client-only-script button').innerHTML()).toContain('1')
+
+    // ensure components ref is working and reactive
+    await page.locator('button.test-ref-1').click()
+    await page.locator('button.test-ref-2').click()
+    await page.locator('button.test-ref-3').click()
+    await page.locator('button.test-ref-4').click()
+    expect(await page.locator('.client-only-script-setup button').innerHTML()).toContain('2')
+    expect(await page.locator('.client-only-script button').innerHTML()).toContain('2')
+    expect(await page.locator('.string-stateful-script').innerHTML()).toContain('1')
+    expect(await page.locator('.string-stateful').innerHTML()).toContain('1')
+
+    // ensure directives are reactive
+    await page.locator('button#show-all').click()
+    await Promise.all(hiddenSelectors.map(selector => page.locator(selector).isVisible()))
+      .then(results => results.forEach(isVisible => expect(isVisible).toBeTruthy()))
+  })
+
+  it('/client-only-explicit-import', async () => {
+    const html = await $fetch('/client-only-explicit-import')
+
+    // ensure fallbacks with classes and arbitrary attributes are rendered
+    expect(html).toContain('<div class="client-only-script" foo="bar">')
+    expect(html).toContain('<div class="lazy-client-only-script-setup" foo="hello">')
+    // ensure components are not rendered server-side
+    expect(html).not.toContain('client only script')
+    await expectNoClientErrors('/client-only-explicit-import')
   })
 })
 
 describe('head tags', () => {
   it('should render tags', async () => {
     const headHtml = await $fetch('/head')
+
     expect(headHtml).toContain('<title>Using a dynamic component - Title Template Fn Change</title>')
     expect(headHtml).not.toContain('<meta name="description" content="first">')
     expect(headHtml).toContain('<meta charset="utf-16">')
@@ -158,7 +253,7 @@ describe('head tags', () => {
     expect(headHtml).toMatch(/<html[^>]*class="html-attrs-test"/)
     expect(headHtml).toMatch(/<body[^>]*class="body-attrs-test"/)
     expect(headHtml).toContain('script>console.log("works with useMeta too")</script>')
-    expect(headHtml).toContain('<script src="https://a-body-appended-script.com" data-meta-body="true"></script></body>')
+    expect(headHtml).toContain('<script src="https://a-body-appended-script.com" data-meta-body></script></body>')
 
     const indexHtml = await $fetch('/')
     // should render charset by default
@@ -399,6 +494,93 @@ describe('extends support', () => {
   })
 })
 
+// Bug #7337
+describe('deferred app suspense resolve', () => {
+  async function behaviour (path: string) {
+    await withLogs(async (page, logs) => {
+      await page.goto(url(path))
+      await page.waitForLoadState('networkidle')
+
+      // Wait for all pending micro ticks to be cleared in case hydration haven't finished yet.
+      await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 0)))
+
+      const hydrationLogs = logs.filter(log => log.includes('isHydrating'))
+      expect(hydrationLogs.length).toBe(3)
+      expect(hydrationLogs.every(log => log === 'isHydrating: true'))
+    })
+  }
+  it('should wait for all suspense instance on initial hydration', async () => {
+    await behaviour('/async-parent/child')
+  })
+  it('should wait for all suspense instance on initial hydration', async () => {
+    await behaviour('/internal-layout/async-parent/child')
+  })
+})
+
+// Bug #6592
+describe('page key', () => {
+  it('should not cause run of setup if navigation not change page key and layout', async () => {
+    async function behaviour (path: string) {
+      await withLogs(async (page, logs) => {
+        await page.goto(url(`${path}/0`))
+        await page.waitForLoadState('networkidle')
+
+        await page.click(`[href="${path}/1"]`)
+        await page.waitForSelector('#page-1')
+
+        // Wait for all pending micro ticks to be cleared,
+        // so we are not resolved too early when there are repeated page loading
+        await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 0)))
+
+        expect(logs.filter(l => l.includes('Child Setup')).length).toBe(1)
+      })
+    }
+    await behaviour('/fixed-keyed-child-parent')
+    await behaviour('/internal-layout/fixed-keyed-child-parent')
+  })
+  it('will cause run of setup if navigation changed page key', async () => {
+    async function behaviour (path: string) {
+      await withLogs(async (page, logs) => {
+        await page.goto(url(`${path}/0`))
+        await page.waitForLoadState('networkidle')
+
+        await page.click(`[href="${path}/1"]`)
+        await page.waitForSelector('#page-1')
+
+        // Wait for all pending micro ticks to be cleared,
+        // so we are not resolved too early when there are repeated page loading
+        await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 0)))
+
+        expect(logs.filter(l => l.includes('Child Setup')).length).toBe(2)
+      })
+    }
+    await behaviour('/keyed-child-parent')
+    await behaviour('/internal-layout/keyed-child-parent')
+  })
+})
+
+// Bug #6592
+describe('layout change not load page twice', () => {
+  async function behaviour (path1: string, path2: string) {
+    await withLogs(async (page, logs) => {
+      await page.goto(url(path1))
+      await page.waitForLoadState('networkidle')
+      await page.click(`[href="${path2}"]`)
+      await page.waitForSelector('#with-layout2')
+
+      // Wait for all pending micro ticks to be cleared,
+      // so we are not resolved too early when there are repeated page loading
+      await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 0)))
+
+      expect(logs.filter(l => l.includes('Layout2 Page Setup')).length).toBe(1)
+    })
+  }
+  it('should not cause run of page setup to repeat if layout changed', async () => {
+    await behaviour('/with-layout', '/with-layout2')
+    await behaviour('/internal-layout/with-layout', '/internal-layout/with-layout2')
+  })
+})
+
 describe('automatically keyed composables', () => {
   it('should automatically generate keys', async () => {
     const html = await $fetch('/keyed-composables')
@@ -416,22 +598,20 @@ describe.skipIf(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)('inl
     for (const style of [
       '{--assets:"assets"}', // <script>
       '{--scoped:"scoped"}', // <style lang=css>
-      '{--postcss:"postcss"}', // <style lang=postcss>
-      '{--global:"global"}', // entryfile dependency
-      '{--plugin:"plugin"}', // plugin dependency
-      '{--functional:"functional"}' // functional component with css import
+      '{--postcss:"postcss"}' // <style lang=postcss>
     ]) {
       expect(html).toContain(style)
     }
   })
 
-  it('only renders prefetch for entry styles', async () => {
+  it('does not load stylesheet for page styles', async () => {
     const html: string = await $fetch('/styles')
-    expect(html.match(/<link [^>]*href="[^"]*\.css">/)?.map(m => m.replace(/\.[^.]*\.css/, '.css'))).toMatchInlineSnapshot(`
-        [
-          "<link rel=\\"prefetch stylesheet\\" href=\\"/_nuxt/entry.css\\">",
-        ]
-      `)
+    expect(html.match(/<link [^>]*href="[^"]*\.css">/g)?.filter(m => m.includes('entry'))?.map(m => m.replace(/\.[^.]*\.css/, '.css'))).toMatchInlineSnapshot(`
+      [
+        "<link rel=\\"preload\\" as=\\"style\\" href=\\"/_nuxt/entry.css\\">",
+        "<link rel=\\"stylesheet\\" href=\\"/_nuxt/entry.css\\">",
+      ]
+    `)
   })
 
   it('still downloads client-only styles', async () => {
@@ -598,7 +778,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () 
   it('renders a payload', async () => {
     const payload = await $fetch('/random/a/_payload.js', { responseType: 'text' })
     expect(payload).toMatch(
-      /export default \{data:\{\$frand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
+      /export default \{data:\{rand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
     )
   })
 
@@ -658,6 +838,10 @@ describe.skipIf(isWindows)('useAsyncData', () => {
 
   it('two requests resolve and sync', async () => {
     await $fetch('/useAsyncData/refresh')
+  })
+
+  it('requests can be cancelled/overridden', async () => {
+    await expectNoClientErrors('/useAsyncData/override')
   })
 
   it('two requests made at once resolve and sync', async () => {

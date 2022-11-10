@@ -28,12 +28,9 @@ export async function runTests (opts: RunTestOptions) {
 
   process.env.NUXT_TEST_OPTIONS = JSON.stringify(opts)
 
-  // TODO: add `as typeof import('vitest/dist/node')` and remove workaround
-  // when we upgrade vitest: see https://github.com/nuxt/framework/issues/6297
-
-  // @ts-ignore missing types
-  const { startVitest } = await import('vitest/dist/node.mjs')
-  const args: any[] = [
+  const { startVitest } = await import('vitest/node')
+  const succeeded = await startVitest(
+    'test',
     [] /* argv */,
     // Vitest options
     {
@@ -65,9 +62,7 @@ export async function runTests (opts: RunTestOptions) {
         ]
       }
     }
-  ]
-  if (startVitest.length >= 4) { args.unshift('test') }
-  const succeeded = await startVitest(...args)
+  )
 
   if (!succeeded) {
     process.exit(1)
