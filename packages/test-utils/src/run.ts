@@ -26,6 +26,7 @@ export async function runTests (opts: RunTestOptions) {
     process.env.NUXT_TEST_DEV = 'true'
   }
 
+  // Consumed by recoverContextFromEnv()
   process.env.NUXT_TEST_OPTIONS = JSON.stringify(opts)
 
   const { startVitest } = await import('vitest/node')
@@ -56,9 +57,7 @@ export async function runTests (opts: RunTestOptions) {
         },
         globals: true,
         globalSetup: [
-          opts.globalSetup
-            ? resolve(distDir, './runtime/global-setup.mjs')
-            : undefined
+          ...opts.globalSetup ? [resolve(distDir, './runtime/global-setup')] : []
         ]
       }
     }

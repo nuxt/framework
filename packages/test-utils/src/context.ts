@@ -48,20 +48,12 @@ export function isDev () {
 }
 
 export function recoverContextFromEnv () {
-  if (process.env.NUXT_TEST_CONTEXT && !currentContext) {
+  if (!currentContext && process.env.NUXT_TEST_CONTEXT) {
     setTestContext(JSON.parse(process.env.NUXT_TEST_CONTEXT))
   }
 }
 
 export function exposeContextToEnv () {
-  const {
-    options,
-    browser,
-    url
-  } = currentContext!
-  process.env.NUXT_TEST_CONTEXT = JSON.stringify({
-    options,
-    browser,
-    url
-  })
+  const { options, browser, url } = currentContext!
+  process.env.NUXT_TEST_CONTEXT = JSON.stringify({ options, browser, url })
 }
