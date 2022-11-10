@@ -67,9 +67,22 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const router = createRouter({
     ...routerOptions,
     history,
-    routes
+    routes: []
   })
+  let clearRoutes = router.addRoute({ path: '', children: routes })
   nuxtApp.vueApp.use(router)
+
+  // Routes HMR
+  if (import.meta.hot) {
+    // @ts-expect-error
+    import('#build/routes').then(({ onUpdate }) => {
+      onUpdate((newRoutes: any) => {
+        const routes = routerOptions.routes?.(newRoutes) ?? newRoutes
+        clearRoutes()
+        clearRoutes = router.addRoute({ path: '', children: routes })
+      })
+    })
+  }
 
   const previousRoute = shallowRef(router.currentRoute.value)
   router.afterEach((_to, from) => {

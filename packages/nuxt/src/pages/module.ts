@@ -159,7 +159,17 @@ export default defineNuxtModule({
         const pages = await resolvePagesRoutes()
         await nuxt.callHook('pages:extend', pages)
         const { routes, imports } = normalizeRoutes(pages)
-        return [...imports, `export default ${routes}`].join('\n')
+        return [
+          ...imports,
+          `export default ${routes}`,
+          'export function onUpdate(fn) { onUpdate._fn = fn }',
+          'if (import.meta.hot) {',
+          '  import.meta.hot.accept((mod) => {',
+          '    onUpdate._fn?.(mod.default)',
+          '    mod.onUpdate._fn = onUpdate._fn',
+          '  })',
+          '}'
+        ].join('\n')
       }
     })
 
