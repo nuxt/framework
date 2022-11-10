@@ -29,7 +29,6 @@ export interface AsyncDataOptions<
   transform?: Transform
   pick?: PickKeys
   watch?: MultiWatchSources
-  initialCache?: boolean
   immediate?: boolean
 }
 
@@ -102,19 +101,18 @@ export function useAsyncData<
     console.warn('[useAsyncData] `defer` has been renamed to `lazy`. Support for `defer` will be removed in RC.')
   }
   options.lazy = options.lazy ?? (options as any).defer ?? false
-  options.initialCache = options.initialCache ?? true
   options.immediate = options.immediate ?? true
 
   // Setup nuxt instance payload
   const nuxt = useNuxtApp()
 
-  const useInitialCache = () => (nuxt.isHydrating || options.initialCache) && nuxt.payload.data[key] !== undefined
+  const usePayloadData = () => nuxt.isHydrating && nuxt.payload.data[key] !== undefined
 
   // Create or use a shared asyncData entity
   if (!nuxt._asyncData[key]) {
     nuxt._asyncData[key] = {
-      data: ref(useInitialCache() ? nuxt.payload.data[key] : options.default?.() ?? null),
-      pending: ref(!useInitialCache()),
+      data: ref(usePayloadData() ? nuxt.payload.data[key] : options.default?.() ?? null),
+      pending: ref(!usePayloadData()),
       error: ref(nuxt.payload._errors[key] ? createError(nuxt.payload._errors[key]) : null)
     }
   }
@@ -130,7 +128,7 @@ export function useAsyncData<
       (nuxt._asyncDataPromises[key] as any).cancelled = true
     }
     // Avoid fetching same key that is already fetched
-    if (opts._initial && useInitialCache()) {
+    if (opts._initial && usePayloadData()) {
       return nuxt.payload.data[key]
     }
     asyncData.pending.value = true
