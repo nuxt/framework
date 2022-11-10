@@ -49,7 +49,7 @@ export function isDev () {
 
 export function recoverContextFromEnv () {
   if (!currentContext && process.env.NUXT_TEST_CONTEXT) {
-    setTestContext(JSON.parse(process.env.NUXT_TEST_CONTEXT))
+    setTestContext(JSON.parse(process.env.NUXT_TEST_CONTEXT || '{}'))
   }
 }
 
