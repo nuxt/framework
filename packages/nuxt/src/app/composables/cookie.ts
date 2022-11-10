@@ -1,11 +1,11 @@
 import { ref, Ref, watch } from 'vue'
 import { parse, serialize, CookieParseOptions, CookieSerializeOptions } from 'cookie-es'
 import { appendHeader } from 'h3'
-import type { CompatibilityEvent } from 'h3'
+import type { H3Event } from 'h3'
 import destr from 'destr'
 import { isEqual } from 'ohash'
+import { useNuxtApp } from '../nuxt'
 import { useRequestEvent } from './ssr'
-import { useNuxtApp } from '#app'
 
 type _CookieOptions = Omit<CookieSerializeOptions & CookieParseOptions, 'decode' | 'encode'>
 
@@ -15,7 +15,7 @@ export interface CookieOptions<T = any> extends _CookieOptions {
   default?: () => T | Ref<T>
 }
 
-export interface CookieRef<T> extends Ref<T> {}
+export interface CookieRef<T> extends Ref<T | null> {}
 
 const CookieDefaults: CookieOptions<any> = {
   path: '/',
@@ -70,7 +70,7 @@ function writeClientCookie (name: string, value: any, opts: CookieSerializeOptio
   }
 }
 
-function writeServerCookie (event: CompatibilityEvent, name: string, value: any, opts: CookieSerializeOptions = {}) {
+function writeServerCookie (event: H3Event, name: string, value: any, opts: CookieSerializeOptions = {}) {
   if (event) {
     // TODO: Try to smart join with existing Set-Cookie headers
     appendHeader(event, 'Set-Cookie', serializeCookie(name, value, opts))

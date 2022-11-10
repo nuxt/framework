@@ -7,6 +7,7 @@ import { NuxtConfigSchema } from '@nuxt/schema'
 export interface LoadNuxtConfigOptions extends LoadConfigOptions<NuxtConfig> {}
 
 export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<NuxtOptions> {
+  (globalThis as any).defineNuxtConfig = (c: any) => c
   const result = await loadConfig<NuxtConfig>({
     name: 'nuxt',
     configFile: 'nuxt.config',
@@ -16,6 +17,7 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
     globalRc: true,
     ...opts
   })
+  delete (globalThis as any).defineNuxtConfig
   const { configFile, layers = [], cwd } = result
   const nuxtConfig = result.config!
 
@@ -32,11 +34,12 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
   }
 
   // Filter layers
-  nuxtConfig._layers = layers.filter(layer => layer.configFile && !layer.configFile.endsWith('.nuxtrc'))
+  const _layers = layers.filter(layer => layer.configFile && !layer.configFile.endsWith('.nuxtrc'))
+  ;(nuxtConfig as any)._layers = _layers
 
   // Ensure at least one layer remains (without nuxt.config)
-  if (!nuxtConfig._layers.length) {
-    nuxtConfig._layers.push({
+  if (!_layers.length) {
+    _layers.push({
       cwd,
       config: {
         rootDir: cwd,
@@ -46,5 +49,5 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
   }
 
   // Resolve and apply defaults
-  return applyDefaults(NuxtConfigSchema, nuxtConfig) as NuxtOptions
+  return await applyDefaults(NuxtConfigSchema, nuxtConfig) as NuxtOptions
 }

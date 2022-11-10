@@ -1,5 +1,5 @@
 ---
-template: Example
+toc: false
 ---
 
 # Reactivity Transform
@@ -10,3 +10,4 @@ This example demonstrates the support of Reactivity Transform in Nuxt 3.
 ::
 
 ::sandbox{repo="nuxt/framework" branch="main" dir="examples/experimental/reactivity-transform" file="app.vue"}
+::

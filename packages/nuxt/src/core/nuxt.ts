@@ -1,6 +1,6 @@
 import { join, normalize, resolve } from 'pathe'
-import { createHooks } from 'hookable'
-import type { Nuxt, NuxtOptions, NuxtConfig, ModuleContainer, NuxtHooks } from '@nuxt/schema'
+import { createHooks, createDebugger } from 'hookable'
+import type { Nuxt, NuxtOptions, NuxtConfig, NuxtHooks } from '@nuxt/schema'
 import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule, addPlugin } from '@nuxt/kit'
 // Temporary until finding better placement
 /* eslint-disable import/no-restricted-paths */
@@ -17,6 +17,7 @@ import { version } from '../../package.json'
 import { ImportProtectionPlugin, vueAppPatterns } from './plugins/import-protection'
 import { UnctxTransformPlugin } from './plugins/unctx'
 import { TreeShakePlugin } from './plugins/tree-shake'
+import { DevOnlyPlugin } from './plugins/dev-only'
 import { addModuleTranspiles } from './modules'
 import { initNitro } from './nitro'
 
@@ -57,6 +58,13 @@ async function initNuxt (nuxt: Nuxt) {
     // Add module augmentations directly to NuxtConfig
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/schema.d.ts') })
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/app.config.d.ts') })
+
+    for (const layer of nuxt.options._layers) {
+      const declaration = join(layer.cwd, 'index.d.ts')
+      if (fse.existsSync(declaration)) {
+        opts.references.push({ path: declaration })
+      }
+    }
   })
 
   // Add import protection
@@ -82,10 +90,14 @@ async function initNuxt (nuxt: Nuxt) {
     addVitePlugin(TreeShakePlugin.vite({ sourcemap: nuxt.options.sourcemap.client, treeShake: removeFromClient }), { server: false })
     addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap.server, treeShake: removeFromServer }), { client: false })
     addWebpackPlugin(TreeShakePlugin.webpack({ sourcemap: nuxt.options.sourcemap.client, treeShake: removeFromClient }), { server: false })
+
+    // DevOnly component tree-shaking - build time only
+    addVitePlugin(DevOnlyPlugin.vite({ sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client }))
+    addWebpackPlugin(DevOnlyPlugin.webpack({ sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client }))
   }
 
   // TODO: [Experimental] Avoid emitting assets when flag is enabled
-  if (nuxt.options.experimental.noScripts) {
+  if (nuxt.options.experimental.noScripts && !nuxt.options.dev) {
     nuxt.hook('build:manifest', async (manifest) => {
       for (const file in manifest) {
         if (manifest[file].resourceType === 'script') {
@@ -102,7 +114,7 @@ async function initNuxt (nuxt: Nuxt) {
   )
 
   // Init user modules
-  await nuxt.callHook('modules:before', { nuxt } as ModuleContainer)
+  await nuxt.callHook('modules:before')
   const modulesToInstall = [
     ...nuxt.options.buildModules,
     ...nuxt.options.modules,
@@ -130,6 +142,12 @@ async function initNuxt (nuxt: Nuxt) {
   addComponent({
     name: 'ClientOnly',
     filePath: resolve(nuxt.options.appDir, 'components/client-only')
+  })
+
+  // Add <DevOnly>
+  addComponent({
+    name: 'DevOnly',
+    filePath: resolve(nuxt.options.appDir, 'components/dev-only')
   })
 
   // Add <ServerPlaceholder>
@@ -167,7 +185,24 @@ async function initNuxt (nuxt: Nuxt) {
   })
 
   // Add prerender payload support
-  addPlugin(resolve(nuxt.options.appDir, 'plugins/payload.client'))
+  if (!nuxt.options.dev && nuxt.options.experimental.payloadExtraction) {
+    addPlugin(resolve(nuxt.options.appDir, 'plugins/payload.client'))
+  }
+
+  // Add experimental cross-origin prefetch support using Speculation Rules API
+  if (nuxt.options.experimental.crossOriginPrefetch) {
+    addPlugin(resolve(nuxt.options.appDir, 'plugins/cross-origin-prefetch.client'))
+  }
+
+  // Track components used to render for webpack
+  if (nuxt.options.builder === '@nuxt/webpack-builder') {
+    addPlugin(resolve(nuxt.options.appDir, 'plugins/preload.server'))
+  }
+
+  // Add nuxt app debugger
+  if (nuxt.options.debug) {
+    addPlugin(resolve(nuxt.options.appDir, 'plugins/debug'))
+  }
 
   for (const m of modulesToInstall) {
     if (Array.isArray(m)) {
@@ -177,7 +212,7 @@ async function initNuxt (nuxt: Nuxt) {
     }
   }
 
-  await nuxt.callHook('modules:done', { nuxt } as ModuleContainer)
+  await nuxt.callHook('modules:done')
 
   // Normalize windows transpile paths added by modules
   nuxt.options.build.transpile = nuxt.options.build.transpile.map(t => typeof t === 'string' ? normalize(t) : t)
@@ -204,6 +239,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
         .map(i => new RegExp(`(^|\\/)${escapeRE(i.cwd!.split('node_modules/').pop()!)}(\\/|$)(?!node_modules\\/)`))
     }
   }])
+  options.modulesDir.push(resolve(options.workspaceDir, 'node_modules'))
   options.modulesDir.push(resolve(pkgDir, 'node_modules'))
   options.build.transpile.push('@nuxt/ui-templates')
   options.alias['vue-demi'] = resolve(options.appDir, 'compat/vue-demi')
@@ -214,6 +250,10 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
 
   const nuxt = createNuxt(options)
 
+  if (nuxt.options.debug) {
+    createDebugger(nuxt.hooks, { tag: 'nuxt' })
+  }
+
   if (opts.ready !== false) {
     await nuxt.ready()
   }
@@ -221,9 +261,11 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
   return nuxt
 }
 
+/** @deprecated `defineNuxtConfig` is auto imported. Remove import or alternatively use `import { defineNuxtConfig } from  'nuxt/config'`. */
 export function defineNuxtConfig (config: NuxtConfig): NuxtConfig {
   return config
 }
 
-// For a convenience import together with `defineNuxtConfig`
-export type { NuxtConfig }
+/** @deprecated Use `import type { NuxtConfig } from  'nuxt/config'`.  */
+type _NuxtConfig = NuxtConfig
+export type { _NuxtConfig as NuxtConfig }

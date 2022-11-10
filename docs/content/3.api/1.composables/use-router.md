@@ -1,6 +1,13 @@
+---
+title: "useRouter"
+description: "The useRouter composable returns the router instance."
+---
+
 # `useRouter`
 
-The `useRouter` composable returns the router instance and must be called in a `setup` function, plugin, or route middleware. (Within the template of a Vue component, you can access the router using `$router` instead.)
+The useRouter composable returns the router instance and must be called in a setup function, plugin, or route middleware.
+
+Within the template of a Vue component, you can access the router using `$router` instead.
 
 If you have a `pages/` folder, `useRouter` is identical in behavior to the one provided by `vue-router`. Feel free to read the router documentation for more information on what each method does.
 
@@ -57,6 +64,3 @@ However, Nuxt has a concept of **route middleware** that simplifies the implemen
 ## Universal Router Instance
 
 If you do not have a `pages/` folder, then `useRouter` will return a universal router instance with similar helper methods, but be aware that not all features may be supported or behave in exactly the same way as with `vue-router`.
-
-::ReadMore{link="/guide/features/routing"}
-::

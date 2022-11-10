@@ -30,12 +30,12 @@ export function defineNuxtModule<OptionsT extends ModuleOptions> (definition: Mo
   }
 
   // Resolves module options from inline options, [configKey] in nuxt.config, defaults and schema
-  function getOptions (inlineOptions?: OptionsT, nuxt: Nuxt = useNuxt()) {
+  async function getOptions (inlineOptions?: OptionsT, nuxt: Nuxt = useNuxt()) {
     const configKey = definition.meta!.configKey || definition.meta!.name!
     const _defaults = definition.defaults instanceof Function ? definition.defaults(nuxt) : definition.defaults
     let _options = defu(inlineOptions, nuxt.options[configKey as keyof NuxtOptions], _defaults) as OptionsT
     if (definition.schema) {
-      _options = applyDefaults(definition.schema, _options) as OptionsT
+      _options = await applyDefaults(definition.schema, _options) as OptionsT
     }
     return Promise.resolve(_options)
   }
@@ -109,12 +109,14 @@ function nuxt2Shims (nuxt: Nuxt) {
 
   // Support virtual templates with getContents() by writing them to .nuxt directory
   let virtualTemplates: ResolvedNuxtTemplate[]
+  // @ts-ignore Nuxt 2 hook
   nuxt.hook('builder:prepared', (_builder, buildOptions) => {
-    virtualTemplates = buildOptions.templates.filter(t => t.getContents)
+    virtualTemplates = buildOptions.templates.filter((t: any) => t.getContents)
     for (const template of virtualTemplates) {
       buildOptions.templates.splice(buildOptions.templates.indexOf(template), 1)
     }
   })
+  // @ts-ignore Nuxt 2 hook
   nuxt.hook('build:templates', async (templates) => {
     const context = {
       nuxt,

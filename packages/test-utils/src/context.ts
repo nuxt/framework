@@ -9,7 +9,7 @@ export function createTestContext (options: Partial<TestOptions>): TestContext {
     testDir: resolve(process.cwd(), 'test'),
     fixture: 'fixture',
     configFile: 'nuxt.config',
-    setupTimeout: 60000,
+    setupTimeout: 120 * 1000,
     dev: !!JSON.parse(process.env.NUXT_TEST_DEV || 'false'),
     logLevel: 1,
     server: true,
@@ -28,6 +28,7 @@ export function createTestContext (options: Partial<TestOptions>): TestContext {
 }
 
 export function useTestContext (): TestContext {
+  recoverContextFromEnv()
   if (!currentContext) {
     throw new Error('No context is available. (Forgot calling setup or createContext?)')
   }
@@ -44,4 +45,15 @@ export function setTestContext (context?: TestContext): TestContext | undefined 
 export function isDev () {
   const ctx = useTestContext()
   return ctx.options.dev
+}
+
+export function recoverContextFromEnv () {
+  if (!currentContext && process.env.NUXT_TEST_CONTEXT) {
+    setTestContext(JSON.parse(process.env.NUXT_TEST_CONTEXT || '{}'))
+  }
+}
+
+export function exposeContextToEnv () {
+  const { options, browser, url } = currentContext!
+  process.env.NUXT_TEST_CONTEXT = JSON.stringify({ options, browser, url })
 }
