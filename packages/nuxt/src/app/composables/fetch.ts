@@ -30,7 +30,7 @@ export function useFetch<
 > (
   request: Ref<ReqT> | ReqT | (() => ReqT),
   opts?: UseFetchOptions<_ResT, Transform, PickKeys>
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | null | true>
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | null>
 export function useFetch<
   ResT = void,
   ErrorT = FetchError,
@@ -51,7 +51,7 @@ export function useFetch<
   if (!request) {
     throw new Error('[nuxt] [useFetch] request is missing.')
   }
-  const key = '$f' + _key
+  const key = _key === autoKey ? '$f' + _key : _key
 
   const _request = computed(() => {
     let r = request
@@ -114,7 +114,7 @@ export function useLazyFetch<
 > (
   request: Ref<ReqT> | ReqT | (() => ReqT),
   opts?: Omit<UseFetchOptions<_ResT, Transform, PickKeys>, 'lazy'>
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | null | true>
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, ErrorT | null>
 export function useLazyFetch<
   ResT = void,
   ErrorT = FetchError,

@@ -1,7 +1,7 @@
 import { createRenderer, renderResourceHeaders } from 'vue-bundle-renderer/runtime'
 import type { RenderResponse } from 'nitropack'
 import type { Manifest } from 'vite'
-import { appendHeader, getQuery, writeEarlyHints } from 'h3'
+import { appendHeader, createError, getQuery, writeEarlyHints } from 'h3'
 import devalue from '@nuxt/devalue'
 import { joinURL } from 'ufo'
 import { renderToString as _renderToString } from 'vue/server-renderer'
@@ -21,7 +21,7 @@ export interface NuxtRenderHTMLContext {
   htmlAttrs: string[]
   head: string[]
   bodyAttrs: string[]
-  bodyPreprend: string[]
+  bodyPrepend: string[]
   body: string[]
   bodyAppend: string[]
 }
@@ -121,6 +121,10 @@ export default defineRenderHandler(async (event) => {
   const ssrError = event.req.url?.startsWith('/__nuxt_error')
     ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error>
     : null
+  if (ssrError && event.req.socket.readyState !== 'readOnly' /* direct request */) {
+    throw createError('Cannot directly render error page!')
+  }
+
   let url = ssrError?.url as string || event.req.url!
 
   // Whether we are rendering payload route
@@ -219,7 +223,7 @@ export default defineRenderHandler(async (event) => {
       ssrContext.styles
     ]),
     bodyAttrs: normalizeChunks([renderedMeta.bodyAttrs!]),
-    bodyPreprend: normalizeChunks([
+    bodyPrepend: normalizeChunks([
       renderedMeta.bodyScriptsPrepend,
       ssrContext.teleports?.body
     ]),
@@ -284,23 +288,19 @@ function renderHTMLDocument (html: NuxtRenderHTMLContext) {
   return `<!DOCTYPE html>
 <html ${joinAttrs(html.htmlAttrs)}>
 <head>${joinTags(html.head)}</head>
-<body ${joinAttrs(html.bodyAttrs)}>${joinTags(html.bodyPreprend)}${joinTags(html.body)}${joinTags(html.bodyAppend)}</body>
+<body ${joinAttrs(html.bodyAttrs)}>${joinTags(html.bodyPrepend)}${joinTags(html.body)}${joinTags(html.bodyAppend)}</body>
 </html>`
 }
 
 async function renderInlineStyles (usedModules: Set<string> | string[]) {
-  const { entryCSS } = await getClientManifest()
   const styleMap = await getSSRStyles()
   const inlinedStyles = new Set<string>()
-  for (const mod of ['entry', ...usedModules]) {
+  for (const mod of usedModules) {
     if (mod in styleMap) {
       for (const style of await styleMap[mod]()) {
         inlinedStyles.add(`<style>${style}</style>`)
       }
     }
-  }
-  for (const css of entryCSS?.css || []) {
-    inlinedStyles.add(`<link rel="stylesheet" href=${JSON.stringify(buildAssetsURL(css))} media="print" onload="this.media='all'; this.onload=null;">`)
   }
   return Array.from(inlinedStyles).join('')
 }

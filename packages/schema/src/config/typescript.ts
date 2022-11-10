@@ -11,7 +11,7 @@ export default defineUntypedSchema({
      * Once you’ve converted your codebase to TypeScript, you can start enabling these checks for greater safety.
      * [Read More](https://www.typescriptlang.org/docs/handbook/migrating-from-javascript.html#getting-stricter-checks)
      */
-    strict: false,
+    strict: true,
 
     /**
      * Include parent workspace in the Nuxt project. Mostly useful for themes and module authors.
@@ -22,6 +22,9 @@ export default defineUntypedSchema({
      * Enable build-time type checking.
      *
      * If set to true, this will type check in development. You can restrict this to build-time type checking by setting it to `build`.
+     * Requires to install `typescript` and `vue-tsc` as dev dependencies.
+     *
+     * @see https://v3.nuxtjs.org/guide/concepts/typescript#type-checking
      *
      * @type {boolean | 'build'}
      */

@@ -598,22 +598,20 @@ describe.skipIf(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)('inl
     for (const style of [
       '{--assets:"assets"}', // <script>
       '{--scoped:"scoped"}', // <style lang=css>
-      '{--postcss:"postcss"}', // <style lang=postcss>
-      '{--global:"global"', // entryfile dependency
-      '{--plugin:"plugin"}', // plugin dependency
-      '{--functional:"functional"}' // functional component with css import
+      '{--postcss:"postcss"}' // <style lang=postcss>
     ]) {
       expect(html).toContain(style)
     }
   })
 
-  it('only renders prefetch for entry styles', async () => {
+  it('does not load stylesheet for page styles', async () => {
     const html: string = await $fetch('/styles')
-    expect(html.match(/<link [^>]*href="[^"]*\.css">/)?.map(m => m.replace(/\.[^.]*\.css/, '.css'))).toMatchInlineSnapshot(`
-        [
-          "<link rel=\\"prefetch\\" as=\\"style\\" href=\\"/_nuxt/entry.css\\">",
-        ]
-      `)
+    expect(html.match(/<link [^>]*href="[^"]*\.css">/g)?.filter(m => m.includes('entry'))?.map(m => m.replace(/\.[^.]*\.css/, '.css'))).toMatchInlineSnapshot(`
+      [
+        "<link rel=\\"preload\\" as=\\"style\\" href=\\"/_nuxt/entry.css\\">",
+        "<link rel=\\"stylesheet\\" href=\\"/_nuxt/entry.css\\">",
+      ]
+    `)
   })
 
   it('still downloads client-only styles', async () => {
@@ -780,7 +778,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () 
   it('renders a payload', async () => {
     const payload = await $fetch('/random/a/_payload.js', { responseType: 'text' })
     expect(payload).toMatch(
-      /export default \{data:\{\$frand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
+      /export default \{data:\{rand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
     )
   })
 

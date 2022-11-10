@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/schema",
-  "version": "3.0.0-rc.12",
+  "version": "3.0.0-rc.13",
   "repository": "nuxt/framework",
   "license": "MIT",
   "type": "module",
@@ -18,9 +18,9 @@
     "@types/semver": "^7",
     "@vitejs/plugin-vue": "^3.2.0",
     "@vueuse/head": "~1.0.0-rc.14",
-    "nitropack": "^0.6.0",
+    "nitropack": "^0.6.1",
     "unbuild": "latest",
-    "vite": "~3.2.0"
+    "vite": "~3.2.3"
   },
   "dependencies": {
     "c12": "^0.2.13",

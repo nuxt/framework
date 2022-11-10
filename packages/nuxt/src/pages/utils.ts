@@ -68,7 +68,6 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
 
       const tokens = parseSegment(segment)
       const segmentName = tokens.map(({ value }) => value).join('')
-      const isSingleSegment = segments.length === 1
 
       // ex: parent/[slug].vue -> parent-slug
       route.name += (route.name && '-') + segmentName
@@ -79,8 +78,6 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
       if (child && child.children) {
         parent = child.children
         route.path = ''
-      } else if (segmentName === '404' && isSingleSegment) {
-        route.path += '/:catchAll(.*)*'
       } else if (segmentName === 'index' && !route.path) {
         route.path += '/'
       } else if (segmentName !== 'index') {
@@ -231,7 +228,7 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
     routes: genArrayFromRaw(routes.map((route) => {
       const file = normalize(route.file)
       const metaImportName = genSafeVariableName(file) + 'Meta'
-      metaImports.add(genImport(`${file}?macro=true`, [{ name: 'meta', as: metaImportName }]))
+      metaImports.add(genImport(`${file}?macro=true`, [{ name: 'default', as: metaImportName }]))
 
       let aliasCode = `${metaImportName}?.alias || []`
       if (Array.isArray(route.alias) && route.alias.length) {
@@ -240,6 +237,8 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
 
       return {
         ...Object.fromEntries(Object.entries(route).map(([key, value]) => [key, JSON.stringify(value)])),
+        name: `${metaImportName}?.name ?? ${route.name ? JSON.stringify(route.name) : 'undefined'}`,
+        path: `${metaImportName}?.path ?? ${JSON.stringify(route.path)}`,
         children: route.children ? normalizeRoutes(route.children, metaImports).routes : [],
         meta: route.meta ? `{...(${metaImportName} || {}), ...${JSON.stringify(route.meta)}}` : metaImportName,
         alias: aliasCode,

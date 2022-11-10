@@ -7,7 +7,7 @@ import type { NuxtApp, NuxtPage } from '@nuxt/schema'
 import { joinURL } from 'ufo'
 import { distDir } from '../dirs'
 import { resolvePagesRoutes, normalizeRoutes } from './utils'
-import { TransformMacroPlugin, TransformMacroPluginOptions } from './macros'
+import { PageMetaPlugin, PageMetaPluginOptions } from './page-meta'
 
 export default defineNuxtModule({
   meta: {
@@ -64,7 +64,9 @@ export default defineNuxtModule({
 
       const pathPattern = new RegExp(`(^|\\/)(${dirs.map(escapeRE).join('|')})/`)
       if (event !== 'change' && path.match(pathPattern)) {
-        await updateTemplates()
+        await updateTemplates({
+          filter: template => template.filename === 'routes.mjs'
+        })
       }
     })
 
@@ -88,6 +90,8 @@ export default defineNuxtModule({
           prerenderRoutes.clear()
           const processPages = (pages: NuxtPage[], currentPath = '/') => {
             for (const page of pages) {
+              // Add root of optional dynamic paths and catchalls
+              if (page.path.match(/^\/?:.*(\?|\(\.\*\)\*)$/) && !page.children?.length) { prerenderRoutes.add(currentPath) }
               // Skip dynamic paths
               if (page.path.includes(':')) { continue }
               const route = joinURL(currentPath, page.path)
@@ -100,6 +104,9 @@ export default defineNuxtModule({
       })
       nuxt.hook('nitro:build:before', (nitro) => {
         for (const route of nitro.options.prerender.routes || []) {
+          // Skip default route value as we only generate it if it is already
+          // in the detected routes from `~/pages`.
+          if (route === '/') { continue }
           prerenderRoutes.add(route)
         }
         nitro.options.prerender.routes = Array.from(prerenderRoutes)
@@ -114,15 +121,15 @@ export default defineNuxtModule({
     })
 
     // Extract macros from pages
-    const macroOptions: TransformMacroPluginOptions = {
+    const pageMetaOptions: PageMetaPluginOptions = {
       dev: nuxt.options.dev,
       sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client,
-      macros: {
-        definePageMeta: 'meta'
-      }
+      dirs: nuxt.options._layers.map(
+        layer => resolve(layer.config.srcDir, layer.config.dir?.pages || 'pages')
+      )
     }
-    addVitePlugin(TransformMacroPlugin.vite(macroOptions))
-    addWebpackPlugin(TransformMacroPlugin.webpack(macroOptions))
+    addVitePlugin(PageMetaPlugin.vite(pageMetaOptions))
+    addWebpackPlugin(PageMetaPlugin.webpack(pageMetaOptions))
 
     // Add router plugin
     addPlugin(resolve(runtimeDir, 'router'))
@@ -161,6 +168,11 @@ export default defineNuxtModule({
       filename: 'pages.mjs',
       getContents: () => 'export { useRoute } from \'vue-router\''
     })
+
+    // Optimize vue-router to ensure we share the same injection symbol
+    nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
+    nuxt.options.vite.optimizeDeps.include = nuxt.options.vite.optimizeDeps.include || []
+    nuxt.options.vite.optimizeDeps.include.push('vue-router')
 
     // Add router options template
     addTemplate({

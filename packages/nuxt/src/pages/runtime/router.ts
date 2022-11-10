@@ -157,7 +157,8 @@ export default defineNuxtPlugin(async (nuxtApp) => {
             statusCode: 404,
             statusMessage: `Page Not Found: ${initialURL}`
           })
-          return callWithNuxt(nuxtApp, showError, [error])
+          await callWithNuxt(nuxtApp, showError, [error])
+          return false
         }
       }
       if (result || result === false) { return result }
@@ -177,8 +178,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         fatal: false,
         statusMessage: `Page not found: ${to.fullPath}`
       })])
-    } else if (process.server && to.matched[0].name === '404' && nuxtApp.ssrContext) {
-      nuxtApp.ssrContext.event.res.statusCode = 404
     } else if (process.server) {
       const currentURL = to.fullPath || '/'
       if (!isEqual(currentURL, initialURL)) {
