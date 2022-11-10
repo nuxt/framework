@@ -352,6 +352,7 @@ importers:
       '@types/flat': ^5.0.2
       '@types/mri': ^1.1.1
       '@types/semver': ^7
+      '@types/which-pm-runs': ^1.0.0
       c12: ^0.2.13
       chokidar: ^3.5.3
       clear: ^0.1.0
@@ -375,6 +376,7 @@ importers:
       scule: ^0.3.2
       semver: ^7.3.8
       unbuild: ^0.9.4
+      which-pm-runs: ^1.1.0
     optionalDependencies:
       fsevents: 2.3.2
     devDependencies:
@@ -384,6 +386,7 @@ importers:
       '@types/flat': 5.0.2
       '@types/mri': 1.1.1
       '@types/semver': 7.3.12
+      '@types/which-pm-runs': 1.0.0
       c12: 0.2.13
       chokidar: 3.5.3
       clear: 0.1.0
@@ -406,6 +409,7 @@ importers:
       scule: 0.3.2
       semver: 7.3.8
       unbuild: 0.9.4
+      which-pm-runs: 1.1.0
 
   packages/nuxt:
     specifiers:
@@ -1945,6 +1949,10 @@ packages:
       '@types/webpack-sources': 3.2.0
       anymatch: 3.1.2
       source-map: 0.6.1
+    dev: true
+
+  /@types/which-pm-runs/1.0.0:
+    resolution: {integrity: sha512-BXfdlYLWvRhngJbih4N57DjO+63Z7AxiFiip8yq3rD46U7V4I2W538gngPvBsZiMehhD8sfGf4xLI6k7TgXvNw==}
     dev: true
 
   /@types/yargs-parser/21.0.0:
@@ -9121,6 +9129,11 @@ packages:
       is-number-object: 1.0.7
       is-string: 1.0.7
       is-symbol: 1.0.4
+    dev: true
+
+  /which-pm-runs/1.1.0:
+    resolution: {integrity: sha512-n1brCuqClxfFfq/Rb0ICg9giSZqCS+pLtccdag6C2HyufBrh3fBOiy9nb6ggRMvWOVH5GrdJskj5iGTZNxd7SA==}
+    engines: {node: '>=4'}
     dev: true
 
   /which/2.0.2:
