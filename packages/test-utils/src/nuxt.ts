@@ -11,6 +11,7 @@ const isNuxtApp = (dir: string) => {
     existsSync(resolve(dir, 'pages')) ||
     existsSync(resolve(dir, 'nuxt.config.js')) ||
     existsSync(resolve(dir, 'nuxt.config.mjs')) ||
+    existsSync(resolve(dir, 'nuxt.config.cjs')) ||
     existsSync(resolve(dir, 'nuxt.config.ts'))
   )
 }
