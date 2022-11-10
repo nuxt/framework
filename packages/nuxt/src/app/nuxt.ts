@@ -39,6 +39,12 @@ export interface RuntimeNuxtHooks {
   'vue:error': (...args: Parameters<Parameters<typeof onErrorCaptured>[0]>) => HookResult
 }
 
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $nuxt: NuxtApp
+  }
+}
+
 export interface NuxtSSRContext extends SSRContext {
   url: string
   event: H3Event
