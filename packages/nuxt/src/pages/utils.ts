@@ -1,9 +1,16 @@
+import fsp from 'node:fs/promises'
 import { extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
 import { NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
 import { genImport, genDynamicImport, genArrayFromRaw, genSafeVariableName } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
+import { walk } from 'estree-walker'
+import { parse as parseSFC } from '@vue/compiler-sfc'
+import { parse } from 'acorn'
+import type { CallExpression, Expression } from 'estree'
+import { findStaticImports, parseStaticImport, StaticImport } from 'mlly'
+import { transform } from 'esbuild'
 import { uniqueBy } from '../core/utils'
 
 enum SegmentParserState {
@@ -248,4 +255,65 @@ export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = 
       }
     }))
   }
+}
+
+export async function extractMetadata (path: string) {
+  const nuxt = useNuxt()
+  const source: string | null = nuxt.vfs[path] || await fsp.readFile(path, 'utf-8').catch(() => null)
+
+  if (!source) { return 'export default {}' }
+  let code: string | null = source
+
+  // Extract <script> or <script setup> block
+  if (path.endsWith('.vue')) {
+    const { descriptor } = parseSFC(source)
+    const block = descriptor.scriptSetup?.content.includes('definePageMeta') ? descriptor.scriptSetup : descriptor.script
+
+    code = block?.lang
+      ? await transform(block.content, { loader: block.lang as 'ts' }).then(r => r.code)
+      : block?.content || null
+  }
+
+  if (!code) { return 'export default {}' }
+
+  const importMap = new Map<string, StaticImport>()
+  for (const i of findStaticImports(code)) {
+    const parsed = parseStaticImport(i)
+    for (const name of [
+      parsed.defaultImport,
+      ...Object.keys(parsed.namedImports || {}),
+      parsed.namespacedImport
+    ].filter(Boolean) as string[]) {
+      importMap.set(name, i)
+    }
+  }
+
+  let contents = 'export default {}'
+
+  walk(parse(code, { ecmaVersion: 'latest', sourceType: 'module', sourceFile: path }), {
+    enter (_node) {
+      if (_node.type !== 'CallExpression' || (_node as CallExpression).callee.type !== 'Identifier') { return }
+      const node = _node as CallExpression & { start: number, end: number }
+      const name = 'name' in node.callee && node.callee.name
+      if (name !== 'definePageMeta') { return }
+
+      const meta = node.arguments[0] as Expression & { start: number, end: number }
+
+      contents = `export default ${code!.slice(meta.start, meta.end) || '{}'}`
+
+      walk(meta, {
+        enter (_node) {
+          if (_node.type === 'CallExpression') {
+            const node = _node as CallExpression & { start: number, end: number }
+            const name = 'name' in node.callee && node.callee.name
+            if (name && importMap.has(name)) {
+              contents = importMap.get(name)!.code + '\n' + contents
+            }
+          }
+        }
+      })
+    }
+  })
+
+  return contents
 }
