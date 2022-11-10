@@ -60,7 +60,7 @@ export default defineUntypedSchema({
      * @type {boolean | ((id?: string) => boolean)}
      */
     inlineSSRStyles: {
-      async $resolve(val, get) {
+      async $resolve (val, get) {
         if (val === false || (await get('dev')) || (await get('ssr')) === false || (await get('builder')) === '@nuxt/webpack-builder') {
           return false
         }
@@ -75,9 +75,9 @@ export default defineUntypedSchema({
     noScripts: false,
 
     /**
-     * When this option is enabled (by default) payload of pages generated with `nuxt generate` are extracted
+     * When this option is enabled, payloads of pages generated with `nuxt generate` are extracted
      */
-    payloadExtraction: true,
+    payloadExtraction: false,
 
     /** Enable cross-origin prefetch using the Speculation Rules API. */
     crossOriginPrefetch: false,
