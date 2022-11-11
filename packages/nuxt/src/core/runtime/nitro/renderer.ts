@@ -7,6 +7,7 @@ import destr from 'destr'
 import { joinURL } from 'ufo'
 import { renderToString as _renderToString } from 'vue/server-renderer'
 import { useRuntimeConfig, useNitroApp, defineRenderHandler, getRouteRules } from '#internal/nitro'
+import { hash } from 'ohash'
 // eslint-disable-next-line import/no-restricted-paths
 import type { NuxtApp, NuxtSSRContext } from '#app'
 // @ts-ignore
@@ -41,7 +42,10 @@ export interface NuxtIslandResponse {
   id?: string
   html: string
   state: Record<string, any>
-  tags: [tag: string, attrs?: Record<string, string>][]
+  head: {
+    link: (Record<string, string>)[]
+    style: ({ innerHTML: string })[]
+  }
 }
 
 export interface NuxtRenderResponse {
@@ -288,11 +292,23 @@ export default defineRenderHandler(async (event) => {
 
   // Response for component islands
   if (islandContext && islandContext.format !== 'html') {
+    const _tags = htmlContext.head.flatMap(head => extractHTMLTags(head))
+    const head: NuxtIslandResponse['head'] = {
+      link: _tags.filter(tag => tag.tagName === 'link' && tag.attrs.rel === 'stylesheet' && tag.attrs.href.includes('scoped') && !tag.attrs.href.includes('pages/')).map(tag => ({
+        key: 'island-link-' + hash(tag.attrs.href),
+        ...tag.attrs
+      })),
+      style: _tags.filter(tag => tag.tagName === 'style' && tag.innerHTML).map(tag => ({
+        key: 'island-style-' + hash(tag.innerHTML),
+        innerHTML: tag.innerHTML
+      }))
+    }
+
     const islandResponse: NuxtIslandResponse = {
       id: islandContext.id,
+      head,
       html: ssrContext.teleports!['nuxt-island'].replace(/<!--.*-->/g, ''),
-      state: ssrContext.payload.state,
-      tags: htmlContext.head.flatMap(head => extractHTMLTags(head))
+      state: ssrContext.payload.state
     }
 
     await nitroApp.hooks.callHook('render:island', islandResponse, { event, islandContext })
@@ -354,19 +370,17 @@ function renderHTMLDocument (html: NuxtRenderHTMLContext) {
 }
 
 // TOOD: Move to external library
-const HTML_TAG_RE = /<(?<tag>[a-z]+)(?<rawAttrs> [^>]*)?>(?:(?<children>[\s\S]*?)<\/\k<tag>)?/g
+const HTML_TAG_RE = /<(?<tag>[a-z]+)(?<rawAttrs> [^>]*)?>(?:(?<innerHTML>[\s\S]*?)<\/\k<tag>)?/g
 const HTML_TAG_ATTR_RE = /(?<name>[a-z]+)="(?<value>[^"]*)"/g
 function extractHTMLTags (html: string) {
-  const tags: [tag: string, attrs?: Record<string, string>][] = []
+  const tags: { tagName: string, attrs: Record<string, string>, innerHTML: string }[] = []
   for (const tagMatch of html.matchAll(HTML_TAG_RE)) {
     const attrs: Record<string, string> = {}
     for (const attrMatch of tagMatch.groups!.rawAttrs?.matchAll(HTML_TAG_ATTR_RE) || []) {
       attrs[attrMatch.groups!.name] = attrMatch.groups!.value
     }
-    if (tagMatch.groups!.children) {
-      attrs.children = tagMatch.groups!.children
-    }
-    tags.push([tagMatch.groups!.tag, attrs])
+    const innerHTML = tagMatch.groups!.innerHTML || ''
+    tags.push({ tagName: tagMatch.groups!.tag, attrs, innerHTML })
   }
   return tags
 }

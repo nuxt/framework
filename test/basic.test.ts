@@ -778,185 +778,19 @@ describe('app config', () => {
 describe('component islands', () => {
   it('renders components with route', async () => {
     const result: NuxtIslandResponse = await $fetch('/__nuxt_island/RouteComponent?url=/foo')
-    expect(result.state).toMatchInlineSnapshot('{}')
-    expect(Object.keys(result)).toMatchInlineSnapshot(`
-      [
-        "html",
-        "state",
-        "tags",
-      ]
-    `)
-
-    expect(result.html).toMatchInlineSnapshot(`
-      "<pre>    Route: /foo
-        </pre>"
-    `)
-
-    if (process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK) { return }
-
-    const tags = result.tags
-      .map(([tag, attrs]) => attrs?.href ? [tag, { ...attrs, href: attrs.href.replace(/\.[\w\d]+(\.[\w]+)$/, '$1') }] : [tag, attrs])
-      .sort((a: any, b: any) => a[0].localeCompare(b[0]) || a[1]?.href?.localeCompare(b[1]?.href || '') || 0)
-    expect(tags).toMatchInlineSnapshot(`
-      [
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/custom-async.js",
-            "rel": "prefetch",
-          },
-        ],
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/custom.js",
-            "rel": "prefetch",
-          },
-        ],
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/custom2.js",
-            "rel": "prefetch",
-          },
-        ],
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/default.js",
-            "rel": "prefetch",
-          },
-        ],
-        [
-          "link",
-          {
-            "href": "/_nuxt/entry.css",
-            "rel": "prefetch stylesheet",
-          },
-        ],
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/entry.js",
-            "rel": "modulepreload",
-          },
-        ],
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/error-component.js",
-            "rel": "prefetch",
-          },
-        ],
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/foo.js",
-            "rel": "prefetch",
-          },
-        ],
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/injectAuth.js",
-            "rel": "prefetch",
-          },
-        ],
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/invalid-root.js",
-            "rel": "prefetch",
-          },
-        ],
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/override.js",
-            "rel": "prefetch",
-          },
-        ],
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/override.js",
-            "rel": "prefetch",
-          },
-        ],
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/PascalCase.js",
-            "rel": "prefetch",
-          },
-        ],
-        [
-          "link",
-          {
-            "as": "script",
-            "href": "/_nuxt/sets-layout.js",
-            "rel": "prefetch",
-          },
-        ],
-        [
-          "meta",
-          {
-            "charset": "utf-8",
-          },
-        ],
-        [
-          "meta",
-          {
-            "content": "width=1024, initial-scale=1",
-            "name": "viewport",
-          },
-        ],
-        [
-          "meta",
-          {
-            "content": "2",
-            "name": "head:count",
-          },
-        ],
-        [
-          "style",
-          {
-            "children": ":root{--global:\\"global\\"}",
-          },
-        ],
-        [
-          "style",
-          {
-            "children": ":root{--functional:\\"functional\\"}",
-          },
-        ],
-        [
-          "style",
-          {
-            "children": ":root{--plugin:\\"plugin\\"}",
-          },
-        ],
-        [
-          "title",
-          {
-            "children": " - Fixture",
-          },
-        ],
-      ]
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "head": {
+          "link": [],
+          "style": [],
+        },
+        "html": "<pre>    Route: /foo
+        </pre>",
+        "state": {},
+      }
     `)
   })
+
   it('renders pure components', async () => {
     const result: NuxtIslandResponse = await $fetch(withQuery('/__nuxt_island/PureComponent', {
       props: JSON.stringify({
@@ -967,30 +801,50 @@ describe('component islands', () => {
       })
     }))
 
-    expect(result.html.replace(/data-v-\w+|"|<!--.*-->/g, '')).toMatchInlineSnapshot(`
-      "<div > Was router enabled: true <br > Props: <pre >{
-        number: 3487,
-        str: something,
-        obj: {
-          foo: 42,
-          bar: false,
-          me: hi
-        },
-        bool: false
-      }</pre></div>"
+    if (!(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)) {
+      expect(result.head).toMatchInlineSnapshot(`
+      {
+        "link": [],
+        "style": [
+          {
+            "innerHTML": "pre[data-v-ab4cf0eb]{color:blue}",
+            "key": "island-style-5SeNzXEz0a",
+          },
+        ],
+      }
     `)
+    } else if (process.env.NUXT_TEST_DEV) {
+      expect(result.head).toMatchInlineSnapshot(`
+        {
+          "link": [
+            {
+              "href": "/_nuxt/components/islands/PureComponent.vue?vue&type=style&index=0&scoped=c0c0cf89&lang.css",
+              "key": "island-link-gH9jFOYxRw",
+              "rel": "stylesheet",
+            },
+          ],
+          "style": [],
+        }
+      `)
+    }
+
+    expect(result.html.replace(/data-v-\w+|"|<!--.*-->/g, '')).toMatchInlineSnapshot(`
+    "<div > Was router enabled: true <br > Props: <pre >{
+      number: 3487,
+      str: something,
+      obj: {
+        foo: 42,
+        bar: false,
+        me: hi
+      },
+      bool: false
+    }</pre></div>"
+  `)
+
     expect(result.state).toMatchInlineSnapshot(`
       {
         "$shasRouter": true,
       }
-    `)
-
-    expect(Object.keys(result)).toMatchInlineSnapshot(`
-      [
-        "html",
-        "state",
-        "tags",
-      ]
     `)
   })
 })

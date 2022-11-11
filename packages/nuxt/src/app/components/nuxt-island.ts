@@ -27,8 +27,8 @@ export default defineComponent({
   async setup (props) {
     const nuxtApp = useNuxtApp()
     const hashId = computed(() => hash([props.name, props.props, props.context]))
-    const html = ref('')
-    const cHead = ref<MetaObject>({ link: [] })
+    const html = ref<string>('')
+    const cHead = ref<MetaObject>({ link: [], style: [] })
     useHead(cHead)
 
     function _fetchComponent () {
@@ -49,7 +49,8 @@ export default defineComponent({
         })
       }
       const res: NuxtIslandResponse = await nuxtApp[pKey][hashId.value]
-      cHead.value.link = res.tags.filter(tag => tag[0] === 'link').map(tag => tag[1] || {})
+      cHead.value.link = res.head.link
+      cHead.value.style = res.head.style
       html.value = res.html
     }
 
