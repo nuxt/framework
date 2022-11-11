@@ -1,5 +1,5 @@
-import type { MetaObject } from '@nuxt/schema'
-import type { MaybeComputedRef } from '@vueuse/head'
+import type { UseHeadInput } from '@vueuse/head'
+import type { HeadAugmentations } from '@nuxt/schema'
 import { useNuxtApp } from '#app'
 
 /**
@@ -9,12 +9,12 @@ import { useNuxtApp } from '#app'
  * Alternatively, for reactive meta state, you can pass in a function
  * that returns a meta object.
  */
-export function useHead (meta: MaybeComputedRef<MetaObject>) {
+export function useHead<T extends HeadAugmentations> (meta: UseHeadInput<T>) {
   useNuxtApp()._useHead(meta)
 }
 
 // TODO: remove useMeta support when Nuxt 3 is stable
 /** @deprecated Please use new `useHead` composable instead */
-export function useMeta (meta: MaybeComputedRef<MetaObject>) {
+export function useMeta<T extends HeadAugmentations> (meta: UseHeadInput<T>) {
   return useHead(meta)
 }

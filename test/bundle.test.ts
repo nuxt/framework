@@ -29,6 +29,7 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
     expect(stats.client.totalBytes).toBeLessThan(110000)
     expect(stats.client.files.map(f => f.replace(/\..*\.js/, '.js'))).toMatchInlineSnapshot(`
       [
+        "_nuxt/composables.js",
         "_nuxt/entry.js",
         "_nuxt/error-404.js",
         "_nuxt/error-500.js",
@@ -51,6 +52,9 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
     expect(packages).toMatchInlineSnapshot(`
       [
         "@babel/parser",
+        "@unhead/dom",
+        "@unhead/ssr",
+        "@unhead/vue",
         "@vue/compiler-core",
         "@vue/compiler-dom",
         "@vue/compiler-ssr",
@@ -78,6 +82,7 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
         "ufo",
         "unctx",
         "unenv",
+        "unhead",
         "unstorage",
         "vue",
         "vue-bundle-renderer",
