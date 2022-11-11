@@ -1,17 +1,4 @@
 <script setup lang="ts">
-useHead({
-  title: 'Hello World',
-  htmlAttrs: {
-    lang: 'en',
-    style: 'background-color: salmon;'
-  },
-  meta: [
-    {
-      name: 'description',
-      content: 'Hello World'
-    }
-  ]
-})
 </script>
 
 <template>
