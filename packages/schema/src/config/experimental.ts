@@ -1,7 +1,6 @@
 import { defineUntypedSchema } from 'untyped'
 
 export default defineUntypedSchema({
-  /** @version 3 */
   experimental: {
     /**
      * Set to true to generate an async entry point for the Vue bundle (for module federation support).
@@ -61,7 +60,7 @@ export default defineUntypedSchema({
      * @type {boolean | ((id?: string) => boolean)}
      */
     inlineSSRStyles: {
-      async $resolve (val, get) {
+      async $resolve(val, get) {
         if (val === false || (await get('dev')) || (await get('ssr')) === false || (await get('builder')) === '@nuxt/webpack-builder') {
           return false
         }
@@ -79,5 +78,15 @@ export default defineUntypedSchema({
      * When this option is enabled (by default) payload of pages generated with `nuxt generate` are extracted
      */
     payloadExtraction: true,
+
+    /** Enable cross-origin prefetch using the Speculation Rules API. */
+    crossOriginPrefetch: false,
+
+    /**
+     * Write early hints when using node server.
+     *
+     * @note nginx does not support 103 Early hints in the current version.
+     */
+    writeEarlyHints: false
   }
 })

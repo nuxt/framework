@@ -1,4 +1,4 @@
-import { getCurrentInstance, inject } from 'vue'
+import { getCurrentInstance, inject, onUnmounted } from 'vue'
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure, RouteLocationPathRaw } from 'vue-router'
 import { sendRedirect } from 'h3'
 import { hasProtocol, joinURL, parseURL } from 'ufo'
@@ -15,6 +15,19 @@ export const useRoute = (): RouteLocationNormalizedLoaded => {
     return inject('_route', useNuxtApp()._route)
   }
   return useNuxtApp()._route
+}
+
+export const onBeforeRouteLeave = (guard: NavigationGuard) => {
+  const unsubscribe = useRouter().beforeEach((to, from, next) => {
+    if (to === from) { return }
+    return guard(to, from, next)
+  })
+  onUnmounted(unsubscribe)
+}
+
+export const onBeforeRouteUpdate = (guard: NavigationGuard) => {
+  const unsubscribe = useRouter().beforeEach(guard)
+  onUnmounted(unsubscribe)
 }
 
 /** @deprecated Use `useRoute` instead. */
@@ -119,9 +132,15 @@ export const abortNavigation = (err?: string | Partial<NuxtError>) => {
 
 export const setPageLayout = (layout: string) => {
   if (process.server) {
+    if (process.dev && getCurrentInstance() && useState('_layout').value !== layout) {
+      console.warn('[warn] [nuxt] `setPageLayout` should not be called to change the layout on the server within a component as this will cause hydration errors.')
+    }
     useState('_layout').value = layout
   }
   const nuxtApp = useNuxtApp()
+  if (process.dev && nuxtApp.isHydrating && useState('_layout').value !== layout) {
+    console.warn('[warn] [nuxt] `setPageLayout` should not be called to change the layout during hydration as this will cause hydration errors.')
+  }
   const inMiddleware = isProcessingMiddleware()
   if (inMiddleware || process.server || nuxtApp.isHydrating) {
     const unsubscribe = useRouter().beforeResolve((to) => {

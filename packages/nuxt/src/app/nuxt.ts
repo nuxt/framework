@@ -5,7 +5,7 @@ import { createHooks, Hookable } from 'hookable'
 import type { RuntimeConfig, AppConfigInput } from '@nuxt/schema'
 import { getContext } from 'unctx'
 import type { SSRContext } from 'vue-bundle-renderer/runtime'
-import type { CompatibilityEvent } from 'h3'
+import type { H3Event } from 'h3'
 // eslint-disable-next-line import/no-restricted-paths
 import type { NuxtIslandContext } from '../core/runtime/nitro/renderer'
 
@@ -36,17 +36,14 @@ export interface RuntimeNuxtHooks {
   'link:prefetch': (link: string) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
+  'page:transition:finish': (Component?: VNode) => HookResult
   'vue:setup': () => void
   'vue:error': (...args: Parameters<Parameters<typeof onErrorCaptured>[0]>) => HookResult
 }
 
 export interface NuxtSSRContext extends SSRContext {
   url: string
-  event: CompatibilityEvent
-  /** @deprecated Use `event` instead. */
-  req?: CompatibilityEvent['req']
-  /** @deprecated Use `event` instead. */
-  res?: CompatibilityEvent['res']
+  event: H3Event
   runtimeConfig: RuntimeConfig
   noSSR: boolean
   /** whether we are rendering an SSR error */
@@ -95,6 +92,9 @@ interface _NuxtApp {
     } | null
     [key: string]: any
   }
+  static: {
+    data: Record<string, any>
+  }
 
   provide: (name: string, value: any) => void
 }
@@ -124,6 +124,9 @@ export function createNuxtApp (options: CreateOptions) {
       _errors: {},
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
+    static: {
+      data: {}
+    },
     isHydrating: process.client,
     deferHydration () {
       if (!nuxtApp.isHydrating) { return () => {} }
@@ -160,6 +163,7 @@ export function createNuxtApp (options: CreateOptions) {
 
   // Inject $nuxt
   defineGetter(nuxtApp.vueApp, '$nuxt', nuxtApp)
+  // @ts-expect-error
   defineGetter(nuxtApp.vueApp.config.globalProperties, '$nuxt', nuxtApp)
 
   if (process.server) {

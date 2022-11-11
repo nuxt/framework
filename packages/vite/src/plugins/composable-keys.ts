@@ -24,7 +24,7 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
     enforce: 'post',
     transformInclude (id) {
       const { pathname, search } = parseURL(decodeURIComponent(pathToFileURL(id).href))
-      return !pathname.match(/node_modules\/nuxt3?\//) && pathname.match(/\.(m?[jt]sx?|vue)/) && parseQuery(search).type !== 'style'
+      return !pathname.match(/node_modules\/nuxt3?\//) && pathname.match(/\.(m?[jt]sx?|vue)/) && parseQuery(search).type !== 'style' && !parseQuery(search).macro
     },
     transform (code, id) {
       if (!KEYED_FUNCTIONS_RE.test(code)) { return }
@@ -59,9 +59,12 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
               break
           }
 
+          // TODO: Optimize me (https://github.com/nuxt/framework/pull/8529)
+          const endsWithComma = code.slice(codeIndex + (node as any).start, codeIndex + (node as any).end - 1).trim().endsWith(',')
+
           s.appendLeft(
             codeIndex + (node as any).end - 1,
-            (node.arguments.length ? ', ' : '') + "'$" + hash(`${relativeID}-${++count}`) + "'"
+            (node.arguments.length && !endsWithComma ? ', ' : '') + "'$" + hash(`${relativeID}-${++count}`) + "'"
           )
         }
       })

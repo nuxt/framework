@@ -30,6 +30,12 @@ describe('server api', () => {
   })
 })
 
+describe('route rules', () => {
+  it('should enable spa mode', async () => {
+    expect(await $fetch('/route-rules/spa')).toContain('serverRendered:false')
+  })
+})
+
 describe('pages', () => {
   it('render index', async () => {
     const html = await $fetch('/')
@@ -64,6 +70,11 @@ describe('pages', () => {
   it('respects redirects in page metadata', async () => {
     const { headers } = await fetch('/redirect', { redirect: 'manual' })
     expect(headers.get('location')).toEqual('/')
+  })
+
+  it('validates routes', async () => {
+    const { status } = await fetch('/forbidden')
+    expect(status).toEqual(404)
   })
 
   it('render 404', async () => {
@@ -215,11 +226,23 @@ describe('pages', () => {
     await Promise.all(hiddenSelectors.map(selector => page.locator(selector).isVisible()))
       .then(results => results.forEach(isVisible => expect(isVisible).toBeTruthy()))
   })
+
+  it('/client-only-explicit-import', async () => {
+    const html = await $fetch('/client-only-explicit-import')
+
+    // ensure fallbacks with classes and arbitrary attributes are rendered
+    expect(html).toContain('<div class="client-only-script" foo="bar">')
+    expect(html).toContain('<div class="lazy-client-only-script-setup" foo="hello">')
+    // ensure components are not rendered server-side
+    expect(html).not.toContain('client only script')
+    await expectNoClientErrors('/client-only-explicit-import')
+  })
 })
 
 describe('head tags', () => {
   it('should render tags', async () => {
     const headHtml = await $fetch('/head')
+
     expect(headHtml).toContain('<title>Using a dynamic component - Title Template Fn Change</title>')
     expect(headHtml).not.toContain('<meta name="description" content="first">')
     expect(headHtml).toContain('<meta charset="utf-16">')
@@ -231,7 +254,7 @@ describe('head tags', () => {
     expect(headHtml).toMatch(/<html[^>]*class="html-attrs-test"/)
     expect(headHtml).toMatch(/<body[^>]*class="body-attrs-test"/)
     expect(headHtml).toContain('script>console.log("works with useMeta too")</script>')
-    expect(headHtml).toContain('<script src="https://a-body-appended-script.com" data-meta-body="true"></script></body>')
+    expect(headHtml).toContain('<script src="https://a-body-appended-script.com" data-meta-body></script></body>')
 
     const indexHtml = await $fetch('/')
     // should render charset by default
@@ -576,22 +599,20 @@ describe.skipIf(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)('inl
     for (const style of [
       '{--assets:"assets"}', // <script>
       '{--scoped:"scoped"}', // <style lang=css>
-      '{--postcss:"postcss"}', // <style lang=postcss>
-      '{--global:"global"}', // entryfile dependency
-      '{--plugin:"plugin"}', // plugin dependency
-      '{--functional:"functional"}' // functional component with css import
+      '{--postcss:"postcss"}' // <style lang=postcss>
     ]) {
       expect(html).toContain(style)
     }
   })
 
-  it('only renders prefetch for entry styles', async () => {
+  it('does not load stylesheet for page styles', async () => {
     const html: string = await $fetch('/styles')
-    expect(html.match(/<link [^>]*href="[^"]*\.css">/)?.map(m => m.replace(/\.[^.]*\.css/, '.css'))).toMatchInlineSnapshot(`
-        [
-          "<link rel=\\"prefetch stylesheet\\" href=\\"/_nuxt/entry.css\\">",
-        ]
-      `)
+    expect(html.match(/<link [^>]*href="[^"]*\.css">/g)?.filter(m => m.includes('entry'))?.map(m => m.replace(/\.[^.]*\.css/, '.css'))).toMatchInlineSnapshot(`
+      [
+        "<link rel=\\"preload\\" as=\\"style\\" href=\\"/_nuxt/entry.css\\">",
+        "<link rel=\\"stylesheet\\" href=\\"/_nuxt/entry.css\\">",
+      ]
+    `)
   })
 
   it('still downloads client-only styles', async () => {
@@ -978,7 +999,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () 
   it('renders a payload', async () => {
     const payload = await $fetch('/random/a/_payload.js', { responseType: 'text' })
     expect(payload).toMatch(
-      /export default \{data:\{\$frand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
+      /export default \{data:\{rand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
     )
   })
 
@@ -1038,6 +1059,10 @@ describe.skipIf(isWindows)('useAsyncData', () => {
 
   it('two requests resolve and sync', async () => {
     await $fetch('/useAsyncData/refresh')
+  })
+
+  it('requests can be cancelled/overridden', async () => {
+    await expectNoClientErrors('/useAsyncData/override')
   })
 
   it('two requests made at once resolve and sync', async () => {

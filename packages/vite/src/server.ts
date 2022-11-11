@@ -5,7 +5,6 @@ import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import { logger, resolveModule } from '@nuxt/kit'
 import { joinURL, withoutLeadingSlash, withTrailingSlash } from 'ufo'
 import { ViteBuildContext, ViteOptions } from './vite'
-import { wpfs } from './utils/wpfs'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { initViteNodeServer } from './vite-node'
 import { ssrStylesPlugin } from './plugins/ssr-styles'
@@ -127,23 +126,13 @@ export async function buildServer (ctx: ViteBuildContext) {
         if (shouldRemoveCSS) {
           entry.css = []
         }
-        // Add entry CSS as prefetch (non-blocking)
-        if (entry.isEntry) {
-          manifest[key + '-css'] = {
-            file: '',
-            css: entry.css
-          }
-          entry.css = []
-          entry.dynamicImports = entry.dynamicImports || []
-          entry.dynamicImports.push(key + '-css')
-        }
       }
     })
   }
 
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
 
-  const onBuild = () => ctx.nuxt.callHook('build:resources', wpfs)
+  const onBuild = () => ctx.nuxt.callHook('vite:compiled')
 
   // Production build
   if (!ctx.nuxt.options.dev) {

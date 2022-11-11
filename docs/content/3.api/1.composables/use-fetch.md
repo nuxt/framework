@@ -15,6 +15,7 @@ function useFetch(
 type UseFetchOptions = {
   key?: string
   method?: string
+  query?: SearchParams
   params?: SearchParams
   body?: RequestInit['body'] | Record<string, any>
   headers?: { key: string, value: string }[]
@@ -26,13 +27,12 @@ type UseFetchOptions = {
   transform?: (input: DataT) => DataT
   pick?: string[]
   watch?: WatchSource[]
-  initialCache?: boolean
 }
 
 type AsyncData<DataT> = {
   data: Ref<DataT>
   pending: Ref<boolean>
-  refresh: () => Promise<void>
+  refresh: (opts?: { dedupe?: boolean }) => Promise<void>
   execute: () => Promise<void>
   error: Ref<Error | boolean>
 }
@@ -43,17 +43,22 @@ type AsyncData<DataT> = {
 * **Url**: The URL to fetch.
 * **Options (extends [unjs/ohmyfetch](https://github.com/unjs/ohmyfetch) options & [AsyncDataOptions](/api/composables/use-async-data#params))**:
   * `method`: Request method.
-  * `params`: Query params.
+  * `query`: Adds query search params to URL using [ufo](https://github.com/unjs/ufo)
+  * `params`: Alias for `query`
   * `body`: Request body - automatically stringified (if an object is passed).
   * `headers`: Request headers.
   * `baseURL`: Base URL for the request.
+
+::alert{type=info}
+All fetch options can be given a `computed` or `ref` value. These will be watched and new requests made automatically with any new values if they are updated.
+::
+
 * **Options (from `useAsyncData`)**:
   * `key`: a unique key to ensure that data fetching can be properly de-duplicated across requests, if not provided, it will be generated based on the static code location where `useAyncData` is used.
   * `server`: Whether to fetch the data on the server (defaults to `true`).
   * `default`: A factory function to set the default value of the data, before the async function resolves - particularly useful with the `lazy: true` option.
   * `pick`: Only pick specified keys in this array from the `handler` function result.
   * `watch`: watch reactive sources to auto-refresh.
-  * `initialCache`: When set to `false`, will skip payload cache for initial fetch (defaults to `true`).
   * `transform`: A function that can be used to alter `handler` function result after resolving.
   * `immediate`: When set to `false`, will prevent the request from firing immediately. (defaults to `true`)
 
@@ -82,6 +87,19 @@ const { data, pending, error, refresh } = await useFetch('https://api.nuxtjs.dev
 })
 ```
 
+Adding Query Search Params:
+
+Using the `query` option, you can add search parameters to your query. This option is extended from [unjs/ohmyfetch](https://github.com/unjs/ohmyfetch) and is using [ufo](https://github.com/unjs/ufo) to create the URL. Objects are automatically stringified.
+
+```ts
+const param1 = ref('value1')
+const { data, pending, error, refresh } = await useFetch('https://api.nuxtjs.dev/mountains',{
+    query: { param1, param2: 'value2' }
+})
+```
+
+Results in `https://api.nuxtjs.dev/mountains?param1=value1&param2=value2`
+
 Using [interceptors](https://github.com/unjs/ohmyfetch#%EF%B8%8F-interceptors):
 
 ```ts
@@ -106,4 +124,5 @@ const { data, pending, error, refresh } = await useFetch('/api/auth/login', {
 
 :ReadMore{link="/getting-started/data-fetching"}
 
-:LinkExample{link="/examples/composables/use-fetch"}
+::LinkExample{link="/examples/composables/use-fetch"}
+::

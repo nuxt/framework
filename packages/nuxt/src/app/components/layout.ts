@@ -1,7 +1,9 @@
 import { computed, defineComponent, h, inject, nextTick, onMounted, Ref, Transition, unref, VNode } from 'vue'
-import { RouteLocationNormalizedLoaded, useRoute as useVueRouterRoute } from 'vue-router'
+import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { _wrapIf } from './utils'
 import { useRoute } from '#app'
+// @ts-ignore
+import { useRoute as useVueRouterRoute } from '#build/pages'
 // @ts-ignore
 import layouts from '#build/layouts'
 // @ts-ignore
@@ -72,7 +74,7 @@ export default defineComponent({
 
       // We avoid rendering layout transition if there is no layout to render
       return _wrapIf(Transition, hasLayout && transitionProps, {
-        default: () => _wrapIf(LayoutLoader, hasLayout && { key: layout.value, name: layout.value, hasTransition: !!transitionProps }, context.slots).default()
+        default: () => _wrapIf(LayoutLoader, hasLayout && { key: layout.value, name: layout.value, hasTransition: process.dev ? !!transitionProps : undefined }, context.slots).default()
       }).default()
     }
   }

@@ -1,3 +1,4 @@
+import { parseURL } from 'ufo'
 import { defineNuxtPlugin, loadPayload, isPrerendered, useRouter } from '#app'
 
 export default defineNuxtPlugin((nuxtApp) => {
@@ -8,13 +9,17 @@ export default defineNuxtPlugin((nuxtApp) => {
   }
 
   // Load payload into cache
-  nuxtApp.hooks.hook('link:prefetch', to => loadPayload(to))
+  nuxtApp.hooks.hook('link:prefetch', (url) => {
+    if (!parseURL(url).protocol) {
+      return loadPayload(url)
+    }
+  })
 
   // Load payload after middleware & once final route is resolved
   useRouter().beforeResolve(async (to, from) => {
     if (to.path === from.path) { return }
     const payload = await loadPayload(to.path)
     if (!payload) { return }
-    Object.assign(nuxtApp.payload.data, payload.data)
+    Object.assign(nuxtApp.static.data, payload.data)
   })
 })
