@@ -38,7 +38,7 @@ export interface PageMeta {
 }
 
 declare module 'vue-router' {
-  interface RouteMeta extends UnwrapRef<PageMeta> { }
+  interface RouteMeta extends UnwrapRef<PageMeta> {}
 }
 
 const warnRuntimeUsage = (method: string) =>
