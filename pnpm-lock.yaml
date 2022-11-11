@@ -417,6 +417,7 @@ importers:
       '@nuxt/vite-builder': workspace:*
       '@types/fs-extra': ^9.0.13
       '@types/hash-sum': ^1.0.0
+      '@unhead/ssr': ^0.4.8
       '@vue/reactivity': ^3.2.44
       '@vue/shared': ^3.2.44
       '@vueuse/head': ~1.0.0-next.2
@@ -462,6 +463,7 @@ importers:
       '@nuxt/telemetry': 2.1.6
       '@nuxt/ui-templates': 0.4.0
       '@nuxt/vite-builder': link:../vite
+      '@unhead/ssr': 0.4.8
       '@vue/reactivity': 3.2.44
       '@vue/shared': 3.2.44
       '@vueuse/head': 1.0.0-next.2_vue@3.2.44
@@ -2095,10 +2097,17 @@ packages:
       '@zhead/schema': 1.0.0-beta.13
       hookable: 5.4.1
 
-  /@unhead/ssr/0.4.7:
-    resolution: {integrity: sha512-6oreguPm++t9HhS+M9lK52ZnVOpO9K0p+XatQQFGBHL2n3jhagTw1odT6xgKlZp7Yg/0QpbZqG36U4ozg0TkpQ==}
+  /@unhead/schema/0.4.8:
+    resolution: {integrity: sha512-b1zm3CBADsJzdm7ghhcS5fF5wO2I8Pwx0Lf3iKs/ktna2wz2tky9cOUt/fTNJDUMHgUZcGSjLuDXQ3sqnz3ENg==}
     dependencies:
-      '@unhead/schema': 0.4.7
+      '@zhead/schema': 1.0.0-beta.13
+      hookable: 5.4.1
+    dev: false
+
+  /@unhead/ssr/0.4.8:
+    resolution: {integrity: sha512-xgQtF5VtbtpjViv0lQgDnk2J5L4ta415F+bwooLuGcK+YmAufL4JFInNbAcmQua102v5cY6y2bJPKwcinvDaCQ==}
+    dependencies:
+      '@unhead/schema': 0.4.8
     dev: false
 
   /@unhead/vue/0.4.7_vue@3.2.44:
@@ -2584,7 +2593,7 @@ packages:
       vue: '>=2.7 || >=3'
     dependencies:
       '@unhead/schema': 0.4.7
-      '@unhead/ssr': 0.4.7
+      '@unhead/ssr': 0.4.8
       '@unhead/vue': 0.4.7_vue@3.2.44
       vue: 3.2.44
     transitivePeerDependencies:
