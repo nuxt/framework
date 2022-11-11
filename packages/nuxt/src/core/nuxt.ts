@@ -2,12 +2,10 @@ import { join, normalize, resolve } from 'pathe'
 import { createHooks, createDebugger } from 'hookable'
 import type { Nuxt, NuxtOptions, NuxtConfig, NuxtHooks } from '@nuxt/schema'
 import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule, addPlugin } from '@nuxt/kit'
-// Temporary until finding better placement
 /* eslint-disable import/no-restricted-paths */
 import escapeRE from 'escape-string-regexp'
 import fse from 'fs-extra'
 import { withoutLeadingSlash } from 'ufo'
-// Temporary until finding better placement
 /* eslint-disable import/no-restricted-paths */
 import pagesModule from '../pages/module'
 import metaModule from '../head/module'
@@ -171,10 +169,12 @@ async function initNuxt (nuxt: Nuxt) {
   })
 
   // Add <NuxtIsland>
-  addComponent({
-    name: 'NuxtIsland',
-    filePath: resolve(nuxt.options.appDir, 'components/nuxt-island')
-  })
+  if (nuxt.options.experimental.componentIslands) {
+    addComponent({
+      name: 'NuxtIsland',
+      filePath: resolve(nuxt.options.appDir, 'components/nuxt-island')
+    })
+  }
 
   // Deprecate hooks
   nuxt.hooks.deprecateHooks({

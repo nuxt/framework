@@ -32,10 +32,9 @@ export interface NuxtRenderHTMLContext {
 
 export interface NuxtIslandContext {
   id?: string
-  url?: string
-  format?: 'html' | 'json'
   name: string
   props?: Record<string, any>
+  url?: string
 }
 
 export interface NuxtIslandResponse {
@@ -169,7 +168,9 @@ export default defineRenderHandler(async (event) => {
   }
 
   // Check for island component rendering
-  const islandContext = event.req.url?.startsWith('/__nuxt_island') ? await getIslandContext(event) : undefined
+  const islandContext = (process.env.NUXT_COMPONENT_ISLANDS && event.req.url?.startsWith('/__nuxt_island'))
+    ? await getIslandContext(event)
+    : undefined
 
   // Request url
   let url = ssrError?.url as string || islandContext?.url || event.req.url!
@@ -271,9 +272,7 @@ export default defineRenderHandler(async (event) => {
       renderedMeta.bodyScriptsPrepend,
       ssrContext.teleports?.body
     ]),
-    body: islandContext
-      ? []
-      : [_rendered.html],
+    body: (process.env.NUXT_COMPONENT_ISLANDS && islandContext) ? [] : [_rendered.html],
     bodyAppend: normalizeChunks([
       process.env.NUXT_NO_SCRIPTS
         ? undefined
@@ -291,7 +290,7 @@ export default defineRenderHandler(async (event) => {
   await nitroApp.hooks.callHook('render:html', htmlContext, { event })
 
   // Response for component islands
-  if (islandContext && islandContext.format !== 'html') {
+  if (process.env.NUXT_COMPONENT_ISLANDS && islandContext) {
     const _tags = htmlContext.head.flatMap(head => extractHTMLTags(head))
     const head: NuxtIslandResponse['head'] = {
       link: _tags.filter(tag => tag.tagName === 'link' && tag.attrs.rel === 'stylesheet' && tag.attrs.href.includes('scoped') && !tag.attrs.href.includes('pages/')).map(tag => ({

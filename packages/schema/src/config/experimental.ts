@@ -87,6 +87,11 @@ export default defineUntypedSchema({
      *
      * @note nginx does not support 103 Early hints in the current version.
      */
-    writeEarlyHints: false
+    writeEarlyHints: false,
+
+    /**
+     * Experimental component islands support with <NuxtIsland> and .island.vue files.
+     */
+    componentIslands: false
   }
 })
