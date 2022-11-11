@@ -38,7 +38,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
           .flatMap(c => [c.pascalName, c.kebabName.replaceAll('-', '_')])
           .concat(['ClientOnly', 'client_only'])
 
-        regexpMap.set(components, [new RegExp(`(${clientOnlyComponents.join('|')})`), new RegExp(`^(${clientOnlyComponents.map(c => `^(?:_component_)?${c}`).join('|')})$`), clientOnlyComponents])
+        regexpMap.set(components, [new RegExp(`(${clientOnlyComponents.join('|')})`), new RegExp(`^(${clientOnlyComponents.map(c => `^(?:_component_)?(?:Lazy|lazy_ )?${c}`).join('|')})$`), clientOnlyComponents])
       }
 
       const s = new MagicString(code)
@@ -67,14 +67,15 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
 
                 for (const slot of nonFallbackSlots) {
                   s.remove(slot.start, slot.end + 1)
-                  const removedCode = code.slice(slot.start, slot.end + 1)
+                  const removedCode = `({${code.slice(slot.start, slot.end + 1)}})`
                   const componentsSet = new Set<string>()
                   const currentCode = s.toString()
-                  walk(parse('({' + removedCode + '})', { sourceType: 'module', ecmaVersion: 'latest' }), {
+                  walk(parse(removedCode, { sourceType: 'module', ecmaVersion: 'latest' }), {
                     enter (_node) {
                       const node = _node as AcornNode<CallExpression>
                       if (node.type === 'CallExpression' && node.callee.type === 'Identifier' && SSR_RENDER_RE.test(node.callee.name)) {
                         const componentNode = node.arguments[0]
+
                         if (componentNode.type === 'CallExpression') {
                           const identifier = componentNode.arguments[0] as Identifier
                           if (!isRenderedInCode(currentCode, identifier.name)) { componentsSet.add(identifier.name) }
@@ -83,7 +84,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
                         } else if (componentNode.type === 'MemberExpression') {
                           // expect componentNode to be a memberExpression (mostly used in dev with $setup[])
                           const { start, end } = componentNode as AcornNode<MemberExpression>
-                          if (!isRenderedInCode(currentCode, code.slice(start, end))) {
+                          if (!isRenderedInCode(currentCode, removedCode.slice(start, end))) {
                             componentsSet.add(((componentNode as MemberExpression).property as Literal).value as string)
                             // remove the component from the return statement of `setup()`
                             walk(parse(code, { sourceType: 'module', ecmaVersion: 'latest' }), {
@@ -124,7 +125,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
                         if (declaration.specifiers.length > 1) {
                           const componentSpecifier = declaration.specifiers.find(s => s.local.name === componentName) as AcornNode<Identifier> | undefined
 
-                          if (componentSpecifier) { s.remove(componentSpecifier.start, componentSpecifier.end) }
+                          if (componentSpecifier) { s.remove(componentSpecifier.start, componentSpecifier.end + 1) }
                         } else {
                           s.remove(declaration.start, declaration.end)
                         }
