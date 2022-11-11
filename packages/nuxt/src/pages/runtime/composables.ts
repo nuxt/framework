@@ -38,14 +38,14 @@ export interface PageMeta {
 }
 
 declare module 'vue-router' {
-  interface RouteMeta extends UnwrapRef<PageMeta> {}
+  interface RouteMeta extends UnwrapRef<PageMeta> { }
 }
 
 const warnRuntimeUsage = (method: string) =>
   console.warn(
     `${method}() is a compiler-hint helper that is only usable inside ` +
-      'the script block of a single file component. Its arguments should be ' +
-      'compiled away and passing it at runtime has no effect.'
+    'the script block of a single file component which is also a page. Its arguments should be ' +
+    'compiled away and passing it at runtime has no effect.'
   )
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
