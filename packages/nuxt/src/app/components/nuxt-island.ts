@@ -33,8 +33,7 @@ export default defineComponent({
 
     function _fetchComponent () {
       // TODO: Validate response
-      return $fetch<NuxtIslandResponse>(`${props.name}:${hashId.value}`, {
-        baseURL: '/__nuxt_island',
+      return $fetch<NuxtIslandResponse>(`/__nuxt_island/${props.name}:${hashId.value}`, {
         params: {
           ...props.context,
           props: props.props ? JSON.stringify(props.props) : undefined

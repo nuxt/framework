@@ -160,12 +160,14 @@ export default defineRenderHandler(async (event) => {
   const ssrError = event.req.url?.startsWith('/__nuxt_error')
     ? getQuery(event) as Exclude<NuxtApp['payload']['error'], Error>
     : null
-  const islandContext = event.req.url?.startsWith('/__nuxt_island') ? await getIslandContext(event) : undefined
-
   if (ssrError && event.req.socket.readyState !== 'readOnly' /* direct request */) {
     throw createError('Cannot directly render error page!')
   }
 
+  // Check for island component rendering
+  const islandContext = event.req.url?.startsWith('/__nuxt_island') ? await getIslandContext(event) : undefined
+
+  // Request url
   let url = ssrError?.url as string || islandContext?.url || event.req.url!
 
   // Whether we are rendering payload route
