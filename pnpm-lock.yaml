@@ -419,7 +419,7 @@ importers:
       '@types/hash-sum': ^1.0.0
       '@vue/reactivity': ^3.2.44
       '@vue/shared': ^3.2.44
-      '@vueuse/head': 1.0.0-next.2
+      '@vueuse/head': ~1.0.0-next.2
       chokidar: ^3.5.3
       cookie-es: ^0.5.0
       defu: ^6.1.0
@@ -508,7 +508,7 @@ importers:
     specifiers:
       '@types/lodash.template': ^4
       '@types/semver': ^7
-      '@unhead/schema': latest
+      '@unhead/schema': ~0.4.7
       '@vitejs/plugin-vue': ^3.2.0
       c12: ^0.2.13
       create-require: ^1.1.1
