@@ -802,6 +802,7 @@ describe('component islands', () => {
     }))
 
     if (!(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)) {
+      console.log('Head:', JSON.stringify(result.head, null, 1))
       expect(result.head).toMatchInlineSnapshot(`
       {
         "link": [],
@@ -814,6 +815,7 @@ describe('component islands', () => {
       }
     `)
     } else if (process.env.NUXT_TEST_DEV) {
+      console.log('Head (dev):', JSON.stringify(result.head, null, 1))
       expect(result.head).toMatchInlineSnapshot(`
         {
           "link": [
