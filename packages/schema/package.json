@@ -19,7 +19,7 @@
     "@vitejs/plugin-vue": "^3.2.0",
     "nitropack": "^0.6.1",
     "unbuild": "latest",
-    "@unhead/schema": "^0.5.1",
+    "@unhead/schema": "^0.6.0",
     "vite": "~3.2.3"
   },
   "dependencies": {
