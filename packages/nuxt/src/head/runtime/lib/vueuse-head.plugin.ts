@@ -8,6 +8,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   head.push(appHead, {
     // for SSR we don't need to hydrate this entry
+    // @todo conditionally skip this for SPA, we are hydrating when we don't need to
     mode: nuxtApp.ssrContext?.noSSR ? 'all' : 'server'
   })
 
