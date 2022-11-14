@@ -118,7 +118,7 @@ Follow the docs to [Set Up Your Local Development Environment](https://nuxt.com/
 ## Follow us
 
 <p valign="center">
-  <a href="https://discord.com/invite/ps2h6QT"><img width="20px" src="/assets/discord.svg" alt="Discord"></a>&nbsp;&nbsp;<a href="https://twitter.com/nuxt_js"><img width="20px" src="/assets/twitter.svg" alt="Twitter"></a>&nbsp;&nbsp;<a href="https://github.com/nuxt"><img width="20px" src="/assets/github.svg" alt="GitHub"></a>
+  <a href="https://chat.nuxt.dev"><img width="20px" src="/assets/discord.svg" alt="Discord"></a>&nbsp;&nbsp;<a href="https://twitter.nuxt.dev"><img width="20px" src="/assets/twitter.svg" alt="Twitter"></a>&nbsp;&nbsp;<a href="https://github.nuxt.dev"><img width="20px" src="/assets/github.svg" alt="GitHub"></a>
 </p>
 
 ## License
