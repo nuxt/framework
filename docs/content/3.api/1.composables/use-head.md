@@ -4,7 +4,7 @@ description: useHead customizes the head properties of individual pages of your 
 
 # `useHead`
 
-Nuxt provides the `useHead` composable to add and customize the head properties of individual pages of your Nuxt app. 
+Nuxt provides the `useHead` composable to add and customize the head properties of individual pages of your Nuxt app.
 
 `useHead` is powered by [@vueuse/head](https://github.com/vueuse/head), you can find more in-depth documentation [here](https://unhead.harlanzw.com/)
 
