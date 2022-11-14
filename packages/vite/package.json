@@ -34,7 +34,7 @@
     "fs-extra": "^10.1.0",
     "get-port-please": "^2.6.1",
     "h3": "^0.8.6",
-    "knitwork": "^0.1.2",
+    "knitwork": "^1.0.0",
     "magic-string": "^0.26.7",
     "mlly": "^0.5.16",
     "ohash": "^0.1.5",

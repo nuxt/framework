@@ -121,7 +121,7 @@ importers:
     devDependencies:
       '@nuxt/test-utils': link:../../../packages/test-utils
       nuxt: link:../../../packages/nuxt
-      vitest: 0.25.1
+      vitest: 0.25.2
 
   examples/app-config:
     specifiers:
@@ -309,7 +309,7 @@ importers:
       hash-sum: ^2.0.0
       ignore: ^5.2.0
       jiti: ^1.16.0
-      knitwork: ^0.1.2
+      knitwork: ^1.0.0
       lodash.template: ^4.5.0
       mlly: ^0.5.16
       pathe: ^0.3.9
@@ -329,7 +329,7 @@ importers:
       hash-sum: 2.0.0
       ignore: 5.2.0
       jiti: 1.16.0
-      knitwork: 0.1.2
+      knitwork: 1.0.0
       lodash.template: 4.5.0
       mlly: 0.5.16
       pathe: 0.3.9
@@ -431,7 +431,7 @@ importers:
       h3: ^0.8.6
       hash-sum: ^2.0.0
       hookable: ^5.4.1
-      knitwork: ^0.1.2
+      knitwork: ^1.0.0
       magic-string: ^0.26.7
       mlly: ^0.5.16
       nitropack: ^0.6.1
@@ -476,7 +476,7 @@ importers:
       h3: 0.8.6
       hash-sum: 2.0.0
       hookable: 5.4.1
-      knitwork: 0.1.2
+      knitwork: 1.0.0
       magic-string: 0.26.7
       mlly: 0.5.16
       nitropack: 0.6.1
@@ -595,7 +595,7 @@ importers:
       fs-extra: ^10.1.0
       get-port-please: ^2.6.1
       h3: ^0.8.6
-      knitwork: ^0.1.2
+      knitwork: ^1.0.0
       magic-string: ^0.26.7
       mlly: ^0.5.16
       ohash: ^0.1.5
@@ -631,7 +631,7 @@ importers:
       fs-extra: 10.1.0
       get-port-please: 2.6.1
       h3: 0.8.6
-      knitwork: 0.1.2
+      knitwork: 1.0.0
       magic-string: 0.26.7
       mlly: 0.5.16
       ohash: 0.1.5
@@ -6090,6 +6090,10 @@ packages:
   /knitwork/0.1.2:
     resolution: {integrity: sha512-2ekmY2S/VB3YGVhrIFadyJQpkjMFSf48tsXCnA+kjs4FEQIT+5FLyOF0No/X58z/2E/VaMyeJfukRoVT4gMsfQ==}
 
+  /knitwork/1.0.0:
+    resolution: {integrity: sha512-dWl0Dbjm6Xm+kDxhPQJsCBTxrJzuGl0aP9rhr+TG8D3l+GL90N8O8lYUi7dTSAN2uuDqCtNgb6aEuQH5wsiV8Q==}
+    dev: false
+
   /kolorist/1.6.0:
     resolution: {integrity: sha512-dLkz37Ab97HWMx9KTes3Tbi3D1ln9fCAy2zr2YVExJasDRPGRaKcoE4fycWNtnCAJfjFqe0cnY+f8KT2JePEXQ==}
     dev: true
@@ -8782,6 +8786,51 @@ packages:
 
   /vitest/0.25.1:
     resolution: {integrity: sha512-eH74h6MkuEgsqR4mAQZeMK9O0PROiKY+i+1GMz/fBi5A3L2ml5U7JQs7LfPU7+uWUziZyLHagl+rkyfR8SLhlA==}
+    engines: {node: '>=v14.16.0'}
+    hasBin: true
+    peerDependencies:
+      '@edge-runtime/vm': '*'
+      '@vitest/browser': '*'
+      '@vitest/ui': '*'
+      happy-dom: '*'
+      jsdom: '*'
+    peerDependenciesMeta:
+      '@edge-runtime/vm':
+        optional: true
+      '@vitest/browser':
+        optional: true
+      '@vitest/ui':
+        optional: true
+      happy-dom:
+        optional: true
+      jsdom:
+        optional: true
+    dependencies:
+      '@types/chai': 4.3.3
+      '@types/chai-subset': 1.3.3
+      '@types/node': 18.11.9
+      acorn: 8.8.0
+      acorn-walk: 8.2.0
+      chai: 4.3.6
+      debug: 4.3.4
+      local-pkg: 0.4.2
+      source-map: 0.6.1
+      strip-literal: 0.4.2
+      tinybench: 2.3.1
+      tinypool: 0.3.0
+      tinyspy: 1.0.2
+      vite: 3.2.3_@types+node@18.11.9
+    transitivePeerDependencies:
+      - less
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+    dev: true
+
+  /vitest/0.25.2:
+    resolution: {integrity: sha512-qqkzfzglEFbQY7IGkgSJkdOhoqHjwAao/OrphnHboeYHC5JzsVFoLCaB2lnAy8krhj7sbrFTVRApzpkTOeuDWQ==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
     peerDependencies:
