@@ -38,7 +38,6 @@ export interface RuntimeNuxtHooks {
   'page:transition:finish': (Component?: VNode) => HookResult
   'vue:setup': () => void
   'vue:error': (...args: Parameters<Parameters<typeof onErrorCaptured>[0]>) => HookResult
-  'head:tags:resolve': (ctx: { tags: HeadTag[] }) => HookResult
 }
 
 export interface NuxtSSRContext extends SSRContext {
