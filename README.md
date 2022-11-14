@@ -16,6 +16,12 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
  </p>
 
 <table>
+<thead>
+<tr>
+<th width="2000" colspan="2">
+</th>
+</tr>
+</thead>
 <tbody>
 <tr>
   <td width="80" align="center" valign="top">
@@ -28,14 +34,16 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
       Discover our <a href="https://modules.nuxtjs.org/">list of modules</a> to supercharge your Nuxt project. Created by the Nuxt team and community.
     </p>
   </td>
-  <td rowspan="2"></td>
-  <td rowspan="2">
+</tr>
+<tr>
+  <td width="80" align="center" valign="top">
+    <br>
+    <img src="/assets/documentation.png">
+  </td>
+  <td valign="top">
     <h3>Documentation</h3>
     <p>
       We highly recommend you take a look at <a href="https://nuxt.com">the Nuxt documentation</a> to level up.
-    </p>
-    <p>
-      <img src="/assets/documentation.png">
     </p>
   </td>
 </tr>
@@ -57,31 +65,41 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
 <table>
 <thead>
 <tr>
-<th width="2000">
+<th width="2000" colspan="2">
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-  <td width="33%" valign="top">
+  <td width="80" align="center" valign="top">
     <br>
-    <img src="/assets/reporting-bugs.png" height="80">
+    <img src="/assets/reporting-bugs.png">
+  </td>
+  <td valign="top">
     <h3>Reporting bugs</h3>
     <p>
       Check out the <a href="https://v3.nuxtjs.org/community/reporting-bugs">Reporting Bugs</a> page.</p>
     </p>
   </td>
-  <td width="33%" valign="top">
+</tr>
+<tr>
+  <td width="80" align="center" valign="top">
     <br>
-    <img src="/assets/suggestions.png" height="80">
+    <img src="/assets/suggestions.png">
+  </td>
+  <td valign="top">
     <h3>Suggestions</h3>
     <p>
       Check out the <a href="https://v3.nuxtjs.org/community/contribution">Contribution</a> page.
     </p>
   </td>
-  <td width="33%" valign="top">
+</tr>
+<tr>
+  <td width="80" align="center" valign="top">
     <br>
-    <img src="/assets/questions.png" height="80">
+    <img src="/assets/questions.png">
+  </td>
+  <td valign="top">
     <h3>Questions</h3>
     <p>
       Check out the <a href="https://v3.nuxtjs.org/community/getting-help">Getting Help</a> page.
