@@ -30,6 +30,9 @@ export default defineNuxtPlugin((nuxtApp) => {
     nuxtApp.hooks.hook('app:mounted', unpauseDom)
   }
 
+  // basic support for users to modify tags before render
+  head.internalHooks.hook('tags:resolve', ctx => nuxtApp.hooks.callHook('head:tags:resolve', ctx))
+
   // useHead does not depend on a vue component context, we keep it on the nuxtApp for backwards compatibility
   nuxtApp._useHead = useHead
 

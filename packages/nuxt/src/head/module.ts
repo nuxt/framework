@@ -29,14 +29,13 @@ export default defineNuxtModule({
       })
     }
 
+    // add non useHead composables
     nuxt.hooks.hook('imports:sources', (sources) => {
       sources.push({
-        from: '#head',
+        from: '@vueuse/head',
         imports: [
-          'useHead',
-          'injectHead',
-          'useServerHead',
-          'useTagMetaFlat'
+          'useSeoMeta',
+          'injectHead'
         ]
       })
     })

@@ -1,6 +1,6 @@
 import type { HeadEntryOptions, UseHeadInput } from '@vueuse/head'
 import type { HeadAugmentations } from '@nuxt/schema'
-import { useHead as _useHead, useTagMetaFlat as _useTagMetaFlat } from '@vueuse/head'
+import { useHead as _useHead } from '@vueuse/head'
 
 /**
  * You can pass in a meta object, which has keys corresponding to meta tags:
@@ -19,6 +19,8 @@ export function useServerHead<T extends HeadAugmentations> (input: UseHeadInput<
   }
 }
 
-export { injectHead } from '@vueuse/head'
-
-export const useTagMetaFlat = _useTagMetaFlat
+// TODO: remove useMeta support when Nuxt 3 is stable
+/** @deprecated Please use new `useHead` composable instead */
+export function useMeta<T extends HeadAugmentations> (input: UseHeadInput<T>) {
+  return useHead(input)
+}
