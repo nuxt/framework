@@ -58,7 +58,7 @@
     "hookable": "^5.4.1",
     "knitwork": "^0.1.2",
     "magic-string": "^0.26.7",
-    "mlly": "^0.5.16",
+    "mlly": "^1.0.0",
     "nitropack": "^0.6.1",
     "nuxi": "3.0.0-rc.13",
     "ohash": "^0.1.5",
