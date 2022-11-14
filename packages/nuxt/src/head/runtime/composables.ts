@@ -1,6 +1,6 @@
-import type { MetaObject } from '@nuxt/schema'
-import type { MaybeComputedRef } from '@vueuse/head'
-import { useNuxtApp } from '#app'
+import type { HeadEntryOptions, UseHeadInput } from '@vueuse/head'
+import type { HeadAugmentations } from '@nuxt/schema'
+import { useHead as _useHead, useTagMetaFlat as _useTagMetaFlat } from '@vueuse/head'
 
 /**
  * You can pass in a meta object, which has keys corresponding to meta tags:
@@ -9,12 +9,16 @@ import { useNuxtApp } from '#app'
  * Alternatively, for reactive meta state, you can pass in a function
  * that returns a meta object.
  */
-export function useHead (meta: MaybeComputedRef<MetaObject>) {
-  useNuxtApp()._useHead(meta)
+export function useHead<T extends HeadAugmentations> (input: UseHeadInput<T>, options?: HeadEntryOptions) {
+  return _useHead(input, options)
 }
 
-// TODO: remove useMeta support when Nuxt 3 is stable
-/** @deprecated Please use new `useHead` composable instead */
-export function useMeta (meta: MaybeComputedRef<MetaObject>) {
-  return useHead(meta)
+export function useServerHead<T extends HeadAugmentations> (input: UseHeadInput<T>) {
+  if (process.server) {
+    return _useHead(input, { mode: 'server' })
+  }
 }
+
+export { injectHead } from '@vueuse/head'
+
+export const useTagMetaFlat = _useTagMetaFlat

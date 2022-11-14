@@ -29,6 +29,18 @@ export default defineNuxtModule({
       })
     }
 
+    nuxt.hooks.hook('imports:sources', (sources) => {
+      sources.push({
+        from: '#head',
+        imports: [
+          'useHead',
+          'injectHead',
+          'useServerHead',
+          'useTagMetaFlat'
+        ]
+      })
+    })
+
     // Add mixin plugin
     addPlugin({ src: resolve(runtimeDir, 'mixin-plugin') })
 

@@ -1,14 +1,6 @@
 import { defineUnimportPreset, InlinePreset } from 'unimport'
 
 const commonPresets: InlinePreset[] = [
-  // #head
-  defineUnimportPreset({
-    from: '#head',
-    imports: [
-      'useHead',
-      'useMeta'
-    ]
-  }),
   // vue-demi (mocked)
   defineUnimportPreset({
     from: 'vue-demi',

@@ -33,6 +33,7 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
         "_nuxt/error-404.js",
         "_nuxt/error-500.js",
         "_nuxt/error-component.js",
+        "_nuxt/index.js",
       ]
     `)
   })
@@ -51,6 +52,9 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
     expect(packages).toMatchInlineSnapshot(`
       [
         "@babel/parser",
+        "@unhead/dom",
+        "@unhead/ssr",
+        "@unhead/vue",
         "@vue/compiler-core",
         "@vue/compiler-dom",
         "@vue/compiler-ssr",
@@ -59,7 +63,6 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
         "@vue/runtime-dom",
         "@vue/server-renderer",
         "@vue/shared",
-        "@vueuse/shared",
         "buffer-from",
         "cookie-es",
         "defu",
@@ -81,7 +84,6 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
         "unstorage",
         "vue",
         "vue-bundle-renderer",
-        "vue-demi",
       ]
     `)
   })
