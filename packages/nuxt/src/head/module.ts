@@ -29,17 +29,6 @@ export default defineNuxtModule({
       })
     }
 
-    // add non useHead composables
-    nuxt.hooks.hook('imports:sources', (sources) => {
-      sources.push({
-        from: '@vueuse/head',
-        imports: [
-          'useSeoMeta',
-          'injectHead'
-        ]
-      })
-    })
-
     // Add mixin plugin
     addPlugin({ src: resolve(runtimeDir, 'mixin-plugin') })
 

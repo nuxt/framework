@@ -21,17 +21,12 @@ export default defineNuxtPlugin((nuxtApp) => {
       // triggers dom update
       head.internalHooks.callHook('entries:updated', head.unhead)
     }
-    head.internalHooks.hook('dom:beforeRender', (context) => {
-      context.shouldRender = !pauseDOMUpdates
-    })
+    head.internalHooks.hook('dom:beforeRender', (context) => { context.shouldRender = !pauseDOMUpdates })
     nuxtApp.hooks.hook('page:start', () => { pauseDOMUpdates = true })
-    // watch for new route before unpausing dom updates (triggered after suspense resolved)
+    // wait for new page before unpausing dom updates (triggered after suspense resolved)
     nuxtApp.hooks.hook('page:finish', unpauseDom)
     nuxtApp.hooks.hook('app:mounted', unpauseDom)
   }
-
-  // basic support for users to modify tags before render
-  head.internalHooks.hook('tags:resolve', ctx => nuxtApp.hooks.callHook('head:tags:resolve', ctx))
 
   // useHead does not depend on a vue component context, we keep it on the nuxtApp for backwards compatibility
   nuxtApp._useHead = useHead

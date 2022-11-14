@@ -1,4 +1,4 @@
-import type { HeadEntryOptions, UseHeadInput, ActiveHeadEntry } from '@vueuse/head'
+import type { HeadEntryOptions, UseHeadInput, ActiveHeadEntry } from '@unhead/vue'
 import type { HeadAugmentations } from '@nuxt/schema'
 import { useNuxtApp } from '#app'
 
@@ -11,12 +11,6 @@ import { useNuxtApp } from '#app'
  */
 export function useHead<T extends HeadAugmentations> (input: UseHeadInput<T>, options?: HeadEntryOptions): ActiveHeadEntry<UseHeadInput<T>> | void {
   return useNuxtApp()._useHead(input, options)
-}
-
-export function useServerHead<T extends HeadAugmentations> (input: UseHeadInput<T>) {
-  if (process.server) {
-    return useHead(input, { mode: 'server' })
-  }
 }
 
 // TODO: remove useMeta support when Nuxt 3 is stable

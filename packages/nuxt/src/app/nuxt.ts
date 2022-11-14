@@ -6,7 +6,7 @@ import type { RuntimeConfig, AppConfigInput } from '@nuxt/schema'
 import { getContext } from 'unctx'
 import type { SSRContext } from 'vue-bundle-renderer/runtime'
 import type { H3Event } from 'h3'
-import type { HeadTag } from '@vueuse/head'
+import type { HeadTag } from '@unhead/vue'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
