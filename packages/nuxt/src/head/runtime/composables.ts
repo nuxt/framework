@@ -1,4 +1,4 @@
-import type { HeadEntryOptions, UseHeadInput } from '@vueuse/head'
+import type { HeadEntryOptions, UseHeadInput, ActiveHeadEntry } from '@vueuse/head'
 import type { HeadAugmentations } from '@nuxt/schema'
 import { useHead as _useHead } from '@vueuse/head'
 
@@ -9,13 +9,13 @@ import { useHead as _useHead } from '@vueuse/head'
  * Alternatively, for reactive meta state, you can pass in a function
  * that returns a meta object.
  */
-export function useHead<T extends HeadAugmentations> (input: UseHeadInput<T>, options?: HeadEntryOptions) {
+export function useHead<T extends HeadAugmentations> (input: UseHeadInput<T>, options?: HeadEntryOptions): ActiveHeadEntry<UseHeadInput<T>> | void {
   return _useHead(input, options)
 }
 
 export function useServerHead<T extends HeadAugmentations> (input: UseHeadInput<T>) {
   if (process.server) {
-    return _useHead(input, { mode: 'server' })
+    return useHead(input, { mode: 'server' })
   }
 }
 

@@ -420,7 +420,7 @@ importers:
       '@unhead/ssr': ^0.6.6
       '@vue/reactivity': ^3.2.45
       '@vue/shared': ^3.2.45
-      '@vueuse/head': ^1.0.11
+      '@vueuse/head': ^1.0.12
       chokidar: ^3.5.3
       cookie-es: ^0.5.0
       defu: ^6.1.0
@@ -467,7 +467,7 @@ importers:
       '@unhead/ssr': 0.6.6
       '@vue/reactivity': 3.2.45
       '@vue/shared': 3.2.45
-      '@vueuse/head': 1.0.11_vue@3.2.45
+      '@vueuse/head': 1.0.12_vue@3.2.45
       chokidar: 3.5.3
       cookie-es: 0.5.0
       defu: 6.1.0
@@ -2578,8 +2578,8 @@ packages:
       - vue
     dev: true
 
-  /@vueuse/head/1.0.11_vue@3.2.45:
-    resolution: {integrity: sha512-0cHoXAS0YsIju6672uGnk7T7MmXcmhUi8mFXuKQhjFykdTqkHM0QhmZtEGyxqtcXHo3nrnt9tUeEhviXOTyAqg==}
+  /@vueuse/head/1.0.12_vue@3.2.45:
+    resolution: {integrity: sha512-ra2mnr8doC+ZmlKir3Jv2H0b9zkjxcBlkdb7Hi7kXpjXJ2E5U5S/c3QF3tNyO4WnxTjV/hEw2Is0wkfX924szg==}
     peerDependencies:
       vue: '>=2.7 || >=3'
     dependencies:
