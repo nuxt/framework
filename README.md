@@ -65,7 +65,7 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
 <tr>
   <td width="33%" valign="top">
     <br>
-    <img src="/assets/reporting-bugs.png" height="80" width="80">
+    <img src="/assets/reporting-bugs.png" height="80">
     <h3>Reporting bugs</h3>
     <p>
       Check out the <a href="https://v3.nuxtjs.org/community/reporting-bugs">Reporting Bugs</a> page.</p>
@@ -73,7 +73,7 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
   </td>
   <td width="33%" valign="top">
     <br>
-    <img src="/assets/suggestions.png" height="80" width="80">
+    <img src="/assets/suggestions.png" height="80">
     <h3>Suggestions</h3>
     <p>
       Check out the <a href="https://v3.nuxtjs.org/community/contribution">Contribution</a> page.
@@ -81,7 +81,7 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
   </td>
   <td width="33%" valign="top">
     <br>
-    <img src="/assets/questions.png" height="80" width="80">
+    <img src="/assets/questions.png" height="80">
     <h3>Questions</h3>
     <p>
       Check out the <a href="https://v3.nuxtjs.org/community/getting-help">Getting Help</a> page.
