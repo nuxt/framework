@@ -3546,7 +3546,7 @@ __metadata:
     "@nuxt-themes/website": 0.1.9
     jiti: ^1.16.0
     nuxt: ^3.0.0-rc.12
-    pathe: ^0.3.9
+    pathe: ^1.0.0
     scule: ^0.3.2
     untyped: ^0.5.0
   languageName: unknown
@@ -7591,6 +7591,13 @@ __metadata:
   version: 0.3.9
   resolution: "pathe@npm:0.3.9"
   checksum: 9afcbaa79c5f8ec603b6b0a20b9accfcec8de57e26738f4a844de4625cfb07cc733b7234387ef42c7ab23a49b91846b6b51cb247584793842a3179539af463df
+  languageName: node
+  linkType: hard
+
+"pathe@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "pathe@npm:1.0.0"
+  checksum: 7b71a4930a5b46111c92149632f74b0e87bade3eabe6c9168dcc4846857a4e124eacc0c2bf044fe0d2a8b7f87ae62b9b2cb11938c61899d485cc36dd1a243a23
   languageName: node
   linkType: hard
 

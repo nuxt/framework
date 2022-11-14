@@ -65,7 +65,7 @@
     "nuxi": "workspace:*",
     "nuxt": "workspace:*",
     "ohmyfetch": "^0.4.21",
-    "pathe": "^0.3.9",
+    "pathe": "^1.0.0",
     "rimraf": "^3.0.2",
     "semver": "^7.3.8",
     "std-env": "^3.3.0",
