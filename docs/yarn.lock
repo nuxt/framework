@@ -3547,7 +3547,7 @@ __metadata:
     jiti: ^1.16.0
     nuxt: ^3.0.0-rc.12
     pathe: ^0.3.9
-    scule: ^0.3.2
+    scule: ^1.0.0
     untyped: ^0.5.0
   languageName: unknown
   linkType: soft
@@ -8881,6 +8881,13 @@ __metadata:
   version: 0.3.2
   resolution: "scule@npm:0.3.2"
   checksum: cac6c0e66e474fcac8b0a581cd206055a4984b9da04f4cfef8883689c045a2ac0b70bda6851fe714e5f22998fab365fa0f4ad218bdddd41c15a55c0b43f3be47
+  languageName: node
+  linkType: hard
+
+"scule@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "scule@npm:1.0.0"
+  checksum: 57f745022ef391868c6adfc77cd8bf1e8a10096cb4e7ba7bbb04f57fab5651804b419da9435692cd012abf1fd020f4b3f823385536f4ddc7247ea725488451c4
   languageName: node
   linkType: hard
 

@@ -13,7 +13,7 @@
     "jiti": "^1.16.0",
     "nuxt": "^3.0.0-rc.12",
     "pathe": "^0.3.9",
-    "scule": "^0.3.2",
+    "scule": "^1.0.0",
     "untyped": "^0.5.0"
   },
   "packageManager": "yarn@3.2.4"
