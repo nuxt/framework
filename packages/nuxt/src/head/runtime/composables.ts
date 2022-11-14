@@ -1,6 +1,6 @@
 import type { HeadEntryOptions, UseHeadInput, ActiveHeadEntry } from '@vueuse/head'
 import type { HeadAugmentations } from '@nuxt/schema'
-import { useHead as _useHead } from '@vueuse/head'
+import { useNuxtApp } from '#app'
 
 /**
  * You can pass in a meta object, which has keys corresponding to meta tags:
@@ -10,7 +10,7 @@ import { useHead as _useHead } from '@vueuse/head'
  * that returns a meta object.
  */
 export function useHead<T extends HeadAugmentations> (input: UseHeadInput<T>, options?: HeadEntryOptions): ActiveHeadEntry<UseHeadInput<T>> | void {
-  return _useHead(input, options)
+  return useNuxtApp()._useHead(input, options)
 }
 
 export function useServerHead<T extends HeadAugmentations> (input: UseHeadInput<T>) {
