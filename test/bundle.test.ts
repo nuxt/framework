@@ -33,7 +33,6 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
         "_nuxt/error-404.js",
         "_nuxt/error-500.js",
         "_nuxt/error-component.js",
-        "_nuxt/index.js",
       ]
     `)
   })

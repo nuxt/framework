@@ -417,7 +417,7 @@ importers:
       '@nuxt/vite-builder': workspace:*
       '@types/fs-extra': ^9.0.13
       '@types/hash-sum': ^1.0.0
-      '@unhead/ssr': ^0.6.6
+      '@unhead/ssr': ^0.6.7
       '@vue/reactivity': ^3.2.45
       '@vue/shared': ^3.2.45
       '@vueuse/head': ^1.0.13
@@ -448,7 +448,7 @@ importers:
       unbuild: ^0.9.4
       unctx: ^2.0.2
       unenv: ^0.6.2
-      unhead: ^0.6.6
+      unhead: ^0.6.7
       unimport: ^0.7.0
       unplugin: ^0.10.2
       untyped: ^0.5.0
@@ -464,7 +464,7 @@ importers:
       '@nuxt/telemetry': 2.1.6
       '@nuxt/ui-templates': 0.4.0
       '@nuxt/vite-builder': link:../vite
-      '@unhead/ssr': 0.6.6
+      '@unhead/ssr': 0.6.7
       '@vue/reactivity': 3.2.45
       '@vue/shared': 3.2.45
       '@vueuse/head': 1.0.13_vue@3.2.45
@@ -494,7 +494,7 @@ importers:
       ultrahtml: 1.0.0
       unctx: 2.0.2
       unenv: 0.6.2
-      unhead: 0.6.6
+      unhead: 0.6.7
       unimport: 0.7.0
       unplugin: 0.10.2
       untyped: 0.5.0
@@ -512,7 +512,7 @@ importers:
     specifiers:
       '@types/lodash.template': ^4
       '@types/semver': ^7
-      '@unhead/schema': ^0.6.6
+      '@unhead/schema': ^0.6.7
       '@vitejs/plugin-vue': ^3.2.0
       c12: ^0.2.13
       create-require: ^1.1.1
@@ -545,7 +545,7 @@ importers:
     devDependencies:
       '@types/lodash.template': 4.5.1
       '@types/semver': 7.3.12
-      '@unhead/schema': 0.6.6
+      '@unhead/schema': 0.6.7
       '@vitejs/plugin-vue': 3.2.0_vite@3.2.3
       nitropack: 0.6.1
       unbuild: 0.9.4
@@ -2087,36 +2087,17 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@unhead/dom/0.6.6:
-    resolution: {integrity: sha512-iKKv6s+oRvsvF3EeHE1n5xVf2oKtED1M4q0ECzFmM+oSihGUGzZJAn+UgN5MOcx1ilJQcHxBQQwzO9pppW/3aQ==}
-    dependencies:
-      '@unhead/schema': 0.6.6
-    dev: false
-
   /@unhead/dom/0.6.7:
     resolution: {integrity: sha512-HUp8ygfQ7VfpEouy26nLsuk6Y5ii5UldoC1NdTuzHSxkYwlq0v4rMpiO1f7T/0i9D7RJDpAp8LdhsHKgcEmRiA==}
     dependencies:
       '@unhead/schema': 0.6.7
     dev: false
 
-  /@unhead/schema/0.6.6:
-    resolution: {integrity: sha512-hcJLBTW7LlS1KzaUZ4nxBFaQmx3g7SxfJyX37/UET2JlH+8ycQgojFCZbnrHn5QIJz7zU1VcWv9gGfeS9i2lSQ==}
-    dependencies:
-      '@zhead/schema': 1.0.0-beta.13
-      hookable: 5.4.1
-
   /@unhead/schema/0.6.7:
     resolution: {integrity: sha512-wVf3Zu7deua63J/HYKoUXUkG0wZLPnKws1DNpSJkhNrjbpdzvsfI08lPIkW1ISqddQiLFXOgcnbhYrhcD7ZZYw==}
     dependencies:
       '@zhead/schema': 1.0.0-beta.13
       hookable: 5.4.1
-    dev: false
-
-  /@unhead/ssr/0.6.6:
-    resolution: {integrity: sha512-Dmt6E5BqJ3HRLh5fSlICCJ1YtYoyijl1jXdJ+D6jXHN8ut21/65qiwGPNPQOXAwBtBLLRRX3yvvDvTtlWN+zLQ==}
-    dependencies:
-      '@unhead/schema': 0.6.6
-    dev: false
 
   /@unhead/ssr/0.6.7:
     resolution: {integrity: sha512-jvEJER7dMSEtI6u60OrEz4gwhmQDGbo086HXdIYoT7RoaJ/YQa/CUAHRfLTO6F657iYs42VPFM3yRCVUbexZhA==}
@@ -8444,11 +8425,11 @@ packages:
       node-fetch-native: 0.1.7
       pathe: 0.3.9
 
-  /unhead/0.6.6:
-    resolution: {integrity: sha512-ohc/5H3nbL0bozRzjkrPqKKDmaZZ8RTUiDRwQgOyjhafK4hN2A08ZeABPg0cya+CUTMfLmkaz5aXw4Di0Q1o0w==}
+  /unhead/0.6.7:
+    resolution: {integrity: sha512-YIVkGHHCUXbh0xFItqvJi08uk390ondXr+ge9lYwDiGQms8ykSGkDUbpMEXDrC8WnwoGXFkwaEZXRPIWx4ZxfA==}
     dependencies:
-      '@unhead/dom': 0.6.6
-      '@unhead/schema': 0.6.6
+      '@unhead/dom': 0.6.7
+      '@unhead/schema': 0.6.7
       hookable: 5.4.1
     dev: false
 
