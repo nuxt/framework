@@ -809,21 +809,25 @@ describe('component islands', () => {
     if (process.env.NUXT_TEST_DEV) {
       result.head.link = result.head.link.filter(l => !l.href.includes('@nuxt+ui-templates'))
     }
+    result.head.style = result.head.style.map(s => ({
+      ...s,
+      innerHTML: (s.innerHTML || '').replace(/data-v-[a-z0-9]+/, 'data-v-xxxxx'),
+      key: s.key.replace(/-[a-zA-Z0-9]+$/, '')
+    }))
 
     if (!(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)) {
       expect(result.head).toMatchInlineSnapshot(`
-      {
-        "link": [],
-        "style": [
-          {
-            "innerHTML": "pre[data-v-ab4cf0eb]{color:blue}",
-            "key": "island-style-5SeNzXEz0a",
-          },
-        ],
-      }
-    `)
+        {
+          "link": [],
+          "style": [
+            {
+              "innerHTML": "pre[data-v-xxxxx]{color:blue}",
+              "key": "island-style",
+            },
+          ],
+        }
+      `)
     } else if (process.env.NUXT_TEST_DEV) {
-      console.log('Head (dev):', JSON.stringify(result.head, null, 1))
       expect(result.head).toMatchInlineSnapshot(`
         {
           "link": [
