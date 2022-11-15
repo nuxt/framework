@@ -69,7 +69,7 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
         "hookable",
         "node-fetch-native",
         "ohash",
-        "ohmyfetch",
+        "ofetch",
         "pathe",
         "radix3",
         "scule",
