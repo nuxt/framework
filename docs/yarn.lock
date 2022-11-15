@@ -897,7 +897,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/content@npm:^2.2.1":
+"@nuxt/content@npm:^2.2.2":
   version: 2.2.2
   resolution: "@nuxt/content@npm:2.2.2"
   dependencies:
@@ -1195,7 +1195,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxthq/ui@npm:^0.1.5":
+"@nuxthq/ui@npm:^0.1.6":
   version: 0.1.6
   resolution: "@nuxthq/ui@npm:0.1.6"
   dependencies:
@@ -4059,7 +4059,7 @@ __metadata:
   dependencies:
     jiti: ^1.16.0
     nuxt: "npm:nuxt3@latest"
-    nuxt-website-theme: ^0.0.14
+    nuxt-website-theme: ^0.0.15
     pathe: ^1.0.0
     scule: ^1.0.0
     untyped: ^0.5.0
@@ -4085,15 +4085,6 @@ __metadata:
     domhandler: ^5.0.2
     entities: ^4.2.0
   checksum: cd1810544fd8cdfbd51fa2c0c1128ec3a13ba92f14e61b7650b5de421b88205fd2e3f0cc6ace82f13334114addb90ed1c2f23074a51770a8e9c1273acbc7f3e6
-  languageName: node
-  linkType: hard
-
-"dom7@npm:^4.0.4":
-  version: 4.0.4
-  resolution: "dom7@npm:4.0.4"
-  dependencies:
-    ssr-window: ^4.0.0
-  checksum: b38604f74e915b4d05b6634f9ff239a708c468180f498a28ff67f2a61233697d9bd7192703b788a24541c3591e7f1a6e83a2cbf70bc871a85e033f82e19abc31
   languageName: node
   linkType: hard
 
@@ -8796,16 +8787,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxt-website-theme@npm:^0.0.14":
-  version: 0.0.14
-  resolution: "nuxt-website-theme@npm:0.0.14"
+"nuxt-website-theme@npm:^0.0.15":
+  version: 0.0.15
+  resolution: "nuxt-website-theme@npm:0.0.15"
   dependencies:
     "@docsearch/css": ^3.3.0
     "@docsearch/js": ^3.3.0
     "@nuxt-themes/typography": ^0.0.12
-    "@nuxt/content": ^2.2.1
+    "@nuxt/content": ^2.2.2
     "@nuxthq/studio": ^0.2.2
-    "@nuxthq/ui": ^0.1.5
+    "@nuxthq/ui": ^0.1.6
     "@nuxtjs/algolia": ^1.1.5
     "@nuxtjs/fontaine": ^0.2.2
     "@nuxtlabs/github-module": ^1.4.13
@@ -8817,11 +8808,10 @@ __metadata:
     nuxt-icon: ^0.1.7
     nuxt-newsletter: ^0.2.0
     nuxt-plausible: ^0.1.1
-    swiper: ^8.4.4
     tailwindcss-border-gradient-radius: ^3.0.1
     three: ^0.146.0
     vue-lite-youtube-embed: ^1.0.4
-  checksum: 5e838e1cba1af7f1d3fcb3d9d96bd2706d39e214129af2f6dc0c4a8bd0dff6580951d10a0a71a8d7376cf608891f22642ce439e69a33c35cdac40bfde7e8f5ed
+  checksum: 2270549fb3abe324ac16b0283667be986514685e5164139e7dd6533718cc73b256d38094da0c18bf0ad2cc303331c5e87f6f185c9c442db279307e1848a6b97e
   languageName: node
   linkType: hard
 
@@ -10943,13 +10933,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ssr-window@npm:^4.0.0, ssr-window@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "ssr-window@npm:4.0.2"
-  checksum: df182600927f4f3225224cf8c02338ea637c9750519505bbfb9a9236741a2a7ec088386fb948bca7b447b8303d9109e7dc7672e3de041c79ac2a0e03665af7d2
-  languageName: node
-  linkType: hard
-
 "ssri@npm:^9.0.0":
   version: 9.0.1
   resolution: "ssri@npm:9.0.1"
@@ -11230,16 +11213,6 @@ __metadata:
   bin:
     svgo: bin/svgo
   checksum: b92f71a8541468ffd0b81b8cdb36b1e242eea320bf3c1a9b2c8809945853e9d8c80c19744267eb91cabf06ae9d5fff3592d677df85a31be4ed59ff78534fa420
-  languageName: node
-  linkType: hard
-
-"swiper@npm:^8.4.4":
-  version: 8.4.4
-  resolution: "swiper@npm:8.4.4"
-  dependencies:
-    dom7: ^4.0.4
-    ssr-window: ^4.0.2
-  checksum: 1b016e2be22573f764d00963c919dc3338a47e261bce3d5b50d6e2abb5e1760c606441739b789c96a777675457e85595d76d851a80c3d34417e0c78c9886cb93
   languageName: node
   linkType: hard
 
