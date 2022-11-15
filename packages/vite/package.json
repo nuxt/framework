@@ -30,7 +30,7 @@
     "esbuild": "^0.15.13",
     "escape-string-regexp": "^5.0.0",
     "estree-walker": "^3.0.1",
-    "externality": "^0.2.2",
+    "externality": "^1.0.0",
     "fs-extra": "^10.1.0",
     "get-port-please": "^2.6.1",
     "h3": "^1.0.1",
