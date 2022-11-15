@@ -2,7 +2,7 @@ import { pathToFileURL } from 'node:url'
 import { parseURL } from 'ufo'
 import MagicString from 'magic-string'
 import { walk } from 'estree-walker'
-import type { CallExpression, Property, Identifier, ImportDeclaration } from 'estree'
+import type { CallExpression, Property, Identifier, ImportDeclaration, MemberExpression, Literal, ReturnStatement, VariableDeclaration, ObjectExpression } from 'estree'
 import { createUnplugin } from 'unplugin'
 
 interface TreeShakeTemplatePluginOptions {
@@ -52,15 +52,34 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
                       const node = _node as AcornNode<CallExpression>
                       if (node.type === 'CallExpression' && node.callee.type === 'Identifier' && SSR_RENDER_RE.test(node.callee.name)) {
                         const componentNode = node.arguments[0]
-                        if (componentNode.type === 'CallExpression') {
-                          // expect componentNode to be an unref()
-                          const identifier = componentNode.arguments[0] as Identifier
-                          const isUsedOutsideClientOnly = new RegExp(`ssrRenderComponent\\((${(componentNode.callee as Identifier).name}\\()?${identifier.name}`).test(currentCode)
-                          if (!isUsedOutsideClientOnly) { componentsSet.add(identifier.name) }
-                        } else {
-                          // expect componentNode to be an identifier
-                          const isUsedOutsideClientOnly = new RegExp(`ssrRenderComponent\\(${(componentNode as Identifier).name}`).test(currentCode)
-                          if (!isUsedOutsideClientOnly) { componentsSet.add((componentNode as Identifier).name) }
+                        if (componentNode.type === 'CallExpression' && !isRenderedInCode(currentCode, identifier.name)) {
+                          componentsSet.add(identifier.name)
+                        } else if (componentNode.type === 'Identifier' && !isRenderedInCode(currentCode, componentNode.name)) {
+                          componentsSet.add(componentNode.name)
+                        } else if (componentNode.type === 'MemberExpression') {
+                          // expect componentNode to be a memberExpression (mostly used in dev with $setup[])
+                          const { start, end } = componentNode as AcornNode<MemberExpression>
+                          if (!isRenderedInCode(currentCode, code.slice(start, end))) {
+                            componentsSet.add(((componentNode as MemberExpression).property as Literal).value as string)
+                            // remove the component from the return statement of `setup()`
+                            walk(parse(code, { sourceType: 'module', ecmaVersion: 'latest' }), {
+                              enter (_node) {
+                                const node = _node as Property
+                                if (node.type === 'Property' && node.key.type === 'Identifier' && node.key.name === 'setup' && node.value.type === 'FunctionExpression') {
+                                  const returnStatement = node.value.body.body.find(n => n.type === 'ReturnStatement') as ReturnStatement|undefined
+                                  if (returnStatement?.argument?.type === 'Identifier') {
+                                    const returnIdentifier = returnStatement.argument.name
+                                    const returnedDeclaration = node.value.body.body.find(n => n.type === 'VariableDeclaration' && (n.declarations[0].id as Identifier).name === returnIdentifier) as AcornNode<VariableDeclaration>
+                                    const componentProperty = (returnedDeclaration?.declarations[0].init as ObjectExpression)?.properties.find(p => ((p as Property).key as Identifier).name === ((componentNode as MemberExpression).property as Literal).value) as AcornNode<Property>
+                                    if (componentProperty) { s.remove(componentProperty.start, componentProperty.end + 1) }
+                                  } else if (returnStatement?.argument?.type === 'ObjectExpression') {
+                                    const componentProperty = returnStatement.argument?.properties.find(p => ((p as Property).key as Identifier).name === ((componentNode as MemberExpression).property as Literal).value) as AcornNode<Property>
+                                    if (componentProperty) { s.remove(componentProperty.start, componentProperty.end + 1) }
+                                  }
+                                }
+                              }
+                            })
+                          }
                         }
                       }
                     }
@@ -121,4 +140,18 @@ function findImportDeclaration (declarations: AcornNode<ImportDeclaration>[], im
   })
 
   if (declaration) { return declaration }
+}
+
+/**
+ * test if the name argument is used to render a component in the code
+ *
+ * @param code code to test
+ * @param name component name
+ */
+function isRenderedInCode (code: string, name: string) {
+  return new RegExp(`ssrRenderComponent\\(${escapeRegExp(name)}`).test(code)
+}
+
+function escapeRegExp (string: string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
