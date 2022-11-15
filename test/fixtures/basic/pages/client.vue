@@ -1,6 +1,9 @@
 <script setup lang="ts">
 // explicit import to bypass client import protection
 import BreaksServer from '../components/BreaksServer.client'
+// ensure treeshake-client-only module remove theses imports without breaking
+import TestGlobal from '../components/global/TestGlobal.vue'
+import { FunctionalComponent } from '#components'
 
 onMounted(() => import('~/components/BreaksServer.client'))
 onBeforeMount(() => import('~/components/BreaksServer.client'))
@@ -27,5 +30,28 @@ onBeforeUnmount(() => import('~/components/BreaksServer.client'))
         <BreaksServer />
       </ClientOnly>
     </div>
+    <div>
+      <ClientOnly>
+        <div class="red">
+          i'm red
+        </div>
+        <div>
+          <FunctionalComponent />
+          <TestGlobal />
+        </div>
+      </ClientOnly>
+      <div class="blue">
+        i'm blue
+      </div>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.red {
+  color: rgb(255, 0, 0);
+}
+.blue {
+  color: rgb(0, 0, 255);
+}
+</style>
