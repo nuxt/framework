@@ -40,8 +40,8 @@ type AsyncData<DataT> = {
 
 ## Params
 
-* **URL**: The URL to fetch.
-* **Options (extends [unjs/ohmyfetch](https://github.com/unjs/ohmyfetch) options & [AsyncDataOptions](/docs/api/composables/use-async-data#params))**:
+* **Url**: The URL to fetch.
+* **Options (extends [unjs/ofetch](https://github.com/unjs/ofetch) options & [AsyncDataOptions](/api/composables/use-async-data#params))**:
   * `method`: Request method.
   * `query`: Adds query search params to URL using [ufo](https://github.com/unjs/ufo)
   * `params`: Alias for `query`
@@ -89,7 +89,7 @@ const { data, pending, error, refresh } = await useFetch('https://api.nuxtjs.dev
 
 Adding Query Search Params:
 
-Using the `query` option, you can add search parameters to your query. This option is extended from [unjs/ohmyfetch](https://github.com/unjs/ohmyfetch) and is using [ufo](https://github.com/unjs/ufo) to create the URL. Objects are automatically stringified.
+Using the `query` option, you can add search parameters to your query. This option is extended from [unjs/ofetch](https://github.com/unjs/ofetch) and is using [unjs/ufo](https://github.com/unjs/ufo) to create the URL. Objects are automatically stringified.
 
 ```ts
 const param1 = ref('value1')
@@ -100,7 +100,7 @@ const { data, pending, error, refresh } = await useFetch('https://api.nuxtjs.dev
 
 Results in `https://api.nuxtjs.dev/mountains?param1=value1&param2=value2`
 
-Using [interceptors](https://github.com/unjs/ohmyfetch#%EF%B8%8F-interceptors):
+Using [interceptors](https://github.com/unjs/ofetch#%EF%B8%8F-interceptors):
 
 ```ts
 const { data, pending, error, refresh } = await useFetch('/api/auth/login', {
