@@ -12,9 +12,3 @@ import { useNuxtApp } from '#app'
 export function useHead<T extends HeadAugmentations> (input: UseHeadInput<T>, options?: HeadEntryOptions): ActiveHeadEntry<UseHeadInput<T>> | void {
   return useNuxtApp()._useHead(input, options)
 }
-
-// TODO: remove useMeta support when Nuxt 3 is stable
-/** @deprecated Please use new `useHead` composable instead */
-export function useMeta<T extends HeadAugmentations> (input: UseHeadInput<T>) {
-  return useHead(input)
-}
