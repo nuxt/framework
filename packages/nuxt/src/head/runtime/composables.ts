@@ -1,4 +1,4 @@
-import type { HeadEntryOptions, UseHeadInput, ActiveHeadEntry } from '@unhead/vue'
+import type { HeadEntryOptions, UseHeadInput, ActiveHeadEntry } from '@vueuse/head'
 import type { HeadAugmentations } from '@nuxt/schema'
 import { useNuxtApp } from '#app'
 
