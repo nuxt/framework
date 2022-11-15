@@ -1022,16 +1022,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxtlabs/github-module@npm:^1.4.12":
-  version: 1.4.12
-  resolution: "@nuxtlabs/github-module@npm:1.4.12"
+"@nuxtlabs/github-module@npm:^1.4.13":
+  version: 1.4.13
+  resolution: "@nuxtlabs/github-module@npm:1.4.13"
   dependencies:
     "@nuxt/kit": ^3.0.0-rc.13
     "@octokit/graphql": ^5.0.1
     "@octokit/rest": ^19.0.4
     remark-gfm: ^3.0.1
     remark-github: ^11.2.4
-  checksum: 8d1ca015dd97124f41413b0ddd131c057caf87606a700c5f5034c3d4e97c8518e9838ce902a090e4f54af593e96c9c4c0711ecdd881899bca7dad4e6d905e9ae
+  checksum: bb97aab936572e89cdc76cdbe442bfd55f6cd8b55c811254a8072976affadcbb69b164e4ac1cc6782a93bbba62b2b4e384ba8f3ee00502c189bee75cd2b80f59
   languageName: node
   linkType: hard
 
@@ -3622,7 +3622,7 @@ __metadata:
   dependencies:
     jiti: ^1.16.0
     nuxt: "npm:nuxt3@latest"
-    nuxt-website-theme: ^0.0.9
+    nuxt-website-theme: ^0.0.10
     pathe: ^0.3.9
     scule: ^0.3.2
     untyped: ^0.5.0
@@ -8203,16 +8203,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxt-website-theme@npm:^0.0.9":
-  version: 0.0.9
-  resolution: "nuxt-website-theme@npm:0.0.9"
+"nuxt-website-theme@npm:^0.0.10":
+  version: 0.0.10
+  resolution: "nuxt-website-theme@npm:0.0.10"
   dependencies:
     "@nuxt-themes/typography": ^0.0.12
     "@nuxt/content": ^2.2.1
     "@nuxthq/studio": ^0.2.2
     "@nuxthq/ui": ^0.1.5
     "@nuxtjs/fontaine": ^0.2.2
-    "@nuxtlabs/github-module": ^1.4.12
+    "@nuxtlabs/github-module": ^1.4.13
     "@vueuse/core": ^9.5.0
     "@vueuse/motion": ^2.0.0-beta.12
     joi: ^17.7.0
@@ -8225,7 +8225,7 @@ __metadata:
     tailwindcss-border-gradient-radius: ^3.0.1
     three: ^0.146.0
     vue-lite-youtube-embed: ^1.0.4
-  checksum: 2fd53dbc1dfded27cba4f373130e92aa33936816efb6f93ec6addc176f548d2e7d962d44d99e743c5e722f65aaa0f0f2536f2dba00e081e820c5e6c2b68b8298
+  checksum: 9eeaadb423f6a5f954fa49dcca4eb8804faa7baebcc5d3600f77065073a9b60cbb3162ec2a6156b83cde539eff05495fe3f13ec6e4ddbafc89e50389b4001ab2
   languageName: node
   linkType: hard
 
