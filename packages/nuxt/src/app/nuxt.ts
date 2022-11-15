@@ -1,11 +1,11 @@
 /* eslint-disable no-use-before-define */
-import { getCurrentInstance, reactive } from 'vue'
+import { getCurrentInstance, reactive, Ref } from 'vue'
 import type { App, onErrorCaptured, VNode } from 'vue'
 import { createHooks, Hookable } from 'hookable'
-import type { RuntimeConfig } from '@nuxt/schema'
+import type { RuntimeConfig, AppConfigInput } from '@nuxt/schema'
 import { getContext } from 'unctx'
 import type { SSRContext } from 'vue-bundle-renderer/runtime'
-import type { CompatibilityEvent } from 'h3'
+import type { H3Event } from 'h3'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
@@ -31,20 +31,17 @@ export interface RuntimeNuxtHooks {
   'app:error': (err: any) => HookResult
   'app:error:cleared': (options: { redirect?: string }) => HookResult
   'app:data:refresh': (keys?: string[]) => HookResult
+  'link:prefetch': (link: string) => HookResult
   'page:start': (Component?: VNode) => HookResult
   'page:finish': (Component?: VNode) => HookResult
-  'meta:register': (metaRenderers: Array<(nuxt: NuxtApp) => NuxtMeta | Promise<NuxtMeta>>) => HookResult
+  'page:transition:finish': (Component?: VNode) => HookResult
   'vue:setup': () => void
   'vue:error': (...args: Parameters<Parameters<typeof onErrorCaptured>[0]>) => HookResult
 }
 
 export interface NuxtSSRContext extends SSRContext {
   url: string
-  event: CompatibilityEvent
-  /** @deprecated Use `event` instead. */
-  req?: CompatibilityEvent['req']
-  /** @deprecated Use `event` instead. */
-  res?: CompatibilityEvent['res']
+  event: H3Event
   runtimeConfig: RuntimeConfig
   noSSR: boolean
   /** whether we are rendering an SSR error */
@@ -66,10 +63,19 @@ interface _NuxtApp {
   [key: string]: any
 
   _asyncDataPromises: Record<string, Promise<any> | undefined>
+  _asyncData: Record<string, {
+    data: Ref<any>
+    pending: Ref<boolean>
+    error: Ref<any>
+  } | undefined>
+
+  isHydrating?: boolean
+  deferHydration: () => () => void | Promise<void>
 
   ssrContext?: NuxtSSRContext
   payload: {
     serverRendered?: boolean
+    prerenderedAt?: number
     data: Record<string, any>
     state: Record<string, any>
     rendered?: Function
@@ -80,14 +86,17 @@ interface _NuxtApp {
       message: string
       description: string
       data?: any
-    }
+    } | null
     [key: string]: any
+  }
+  static: {
+    data: Record<string, any>
   }
 
   provide: (name: string, value: any) => void
 }
 
-export interface NuxtApp extends _NuxtApp { }
+export interface NuxtApp extends _NuxtApp {}
 
 export const NuxtPluginIndicator = '__nuxt_plugin'
 export interface Plugin<Injections extends Record<string, any> = Record<string, any>> {
@@ -102,6 +111,7 @@ export interface CreateOptions {
 }
 
 export function createNuxtApp (options: CreateOptions) {
+  let hydratingCount = 0
   const nuxtApp: NuxtApp = {
     provide: undefined,
     globalName: 'nuxt',
@@ -111,8 +121,30 @@ export function createNuxtApp (options: CreateOptions) {
       _errors: {},
       ...(process.client ? window.__NUXT__ : { serverRendered: true })
     }),
+    static: {
+      data: {}
+    },
     isHydrating: process.client,
+    deferHydration () {
+      if (!nuxtApp.isHydrating) { return () => {} }
+
+      hydratingCount++
+      let called = false
+
+      return () => {
+        if (called) { return }
+
+        called = true
+        hydratingCount--
+
+        if (hydratingCount === 0) {
+          nuxtApp.isHydrating = false
+          return nuxtApp.callHook('app:suspense:resolve')
+        }
+      }
+    },
     _asyncDataPromises: {},
+    _asyncData: {},
     ...options
   } as any as NuxtApp
 
@@ -128,6 +160,7 @@ export function createNuxtApp (options: CreateOptions) {
 
   // Inject $nuxt
   defineGetter(nuxtApp.vueApp, '$nuxt', nuxtApp)
+  // @ts-expect-error
   defineGetter(nuxtApp.vueApp.config.globalProperties, '$nuxt', nuxtApp)
 
   if (process.server) {
@@ -231,7 +264,7 @@ export function normalizePlugins (_plugins: Plugin[]) {
   return plugins as Plugin[]
 }
 
-export function defineNuxtPlugin<T> (plugin: Plugin<T>) {
+export function defineNuxtPlugin<T extends Record<string, any>> (plugin: Plugin<T>) {
   plugin[NuxtPluginIndicator] = true
   return plugin
 }
@@ -280,4 +313,8 @@ export function useRuntimeConfig (): RuntimeConfig {
 
 function defineGetter<K extends string | number | symbol, V> (obj: Record<K, V>, key: K, val: V) {
   Object.defineProperty(obj, key, { get: () => val })
+}
+
+export function defineAppConfig<C extends AppConfigInput> (config: C): C {
+  return config
 }

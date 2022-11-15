@@ -13,7 +13,7 @@ export function registerVirtualModules () {
   }
 
   // Workaround to initialize virtual modules
-  nuxt.hook('build:compile', ({ compiler }) => {
+  nuxt.hook('webpack:compile', ({ compiler }) => {
     if (compiler.name === 'server') { writeFiles() }
   })
   // Update virtual modules when templates are updated
@@ -21,6 +21,6 @@ export function registerVirtualModules () {
 
   nuxt.hook('webpack:config', configs => configs.forEach((config) => {
     // Support virtual modules (input)
-    config.plugins.push(virtualModules)
+    config.plugins!.push(virtualModules)
   }))
 }

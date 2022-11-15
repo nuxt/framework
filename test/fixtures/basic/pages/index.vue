@@ -12,7 +12,7 @@
     <NuxtLink to="/">
       Link
     </NuxtLink>
-    <SugarCounter :count="12" />
+    <NestedSugarCounter :count="12" />
     <CustomComponent />
     <component :is="`test${'-'.toString()}global`" />
     <component :is="`with${'-'.toString()}suffix`" />
@@ -20,10 +20,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import { useRuntimeConfig } from '#imports'
+import { importedValue, importedRE } from '~/some-exports'
+
+setupDevtoolsPlugin({}, () => {}) as any
 
 const config = useRuntimeConfig()
+
+definePageMeta({
+  alias: '/some-alias',
+  other: ref('test'),
+  imported: importedValue,
+  something: importedRE.test('an imported regex')
+})
 
 // reset title template example
 useHead({

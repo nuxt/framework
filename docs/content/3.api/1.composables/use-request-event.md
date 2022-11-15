@@ -1,6 +1,9 @@
-# `useRequestEvent`
+---
+title: "useRequestEvent"
+description: "You can use useRequestEvent to access the incoming request."
+---
 
-Nuxt provides composables and utilities for first-class server-side-rendering support.
+# `useRequestEvent`
 
 Within your pages, components, and plugins you can use `useRequestEvent` to access the incoming request.
 
@@ -9,7 +12,7 @@ Within your pages, components, and plugins you can use `useRequestEvent` to acce
 const event = useRequestEvent()
 
 // Get the URL
-const url = event.req.url
+const url = event.node.req.url
 ```
 
 ::alert{icon=👉}

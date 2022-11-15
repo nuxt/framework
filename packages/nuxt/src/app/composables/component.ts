@@ -1,8 +1,11 @@
 import { defineComponent, getCurrentInstance, reactive, toRefs } from 'vue'
 import type { DefineComponent } from 'vue'
-import { useRoute } from 'vue-router'
 import { NuxtApp, useNuxtApp } from '../nuxt'
 import { useAsyncData } from './asyncData'
+import { useRoute } from './router'
+
+// eslint-disable-next-line import/no-restricted-paths
+import { useHead } from '#head'
 
 export const NuxtComponentIndicator = '__nuxt_component'
 
@@ -25,7 +28,7 @@ export const defineNuxtComponent: typeof defineComponent =
     const { setup } = options
 
     // Avoid wrapping if no options api is used
-    if (!setup && !options.asyncData) {
+    if (!setup && !options.asyncData && !options.head) {
       return {
         [NuxtComponentIndicator]: true,
         ...options
@@ -41,6 +44,11 @@ export const defineNuxtComponent: typeof defineComponent =
         const promises: Promise<any>[] = []
         if (options.asyncData) {
           promises.push(runLegacyAsyncData(res, options.asyncData))
+        }
+
+        if (options.head) {
+          const nuxtApp = useNuxtApp()
+          useHead(typeof options.head === 'function' ? () => options.head(nuxtApp) : options.head)
         }
 
         return Promise.resolve(res)

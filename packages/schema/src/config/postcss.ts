@@ -1,12 +1,13 @@
 import defu from 'defu'
 import createResolver from 'postcss-import-resolver'
+import { defineUntypedSchema } from 'untyped'
 
-export default {
-  /** @version 3 */
+export default defineUntypedSchema({
   postcss: {
     /** Path to postcss config file. */
     /** @type string | false */
     config: false,
+
     /**
      * Options for configuring PostCSS plugins.
      *
@@ -18,13 +19,13 @@ export default {
        * https://github.com/postcss/postcss-import
        */
       'postcss-import': {
-        $resolve: (val, get) => val !== false ? defu(val || {}, {
+        $resolve: async (val, get) => val !== false ? defu(val || {}, {
           resolve: createResolver({
-            alias: { ...get('alias') },
+            alias: { ...(await get('alias')) },
             modules: [
-              get('srcDir'),
-              get('rootDir'),
-              ...get('modulesDir')
+              await get('srcDir'),
+              await get('rootDir'),
+              ...(await get('modulesDir'))
             ]
           })
         }) : val,
@@ -41,7 +42,7 @@ export default {
       autoprefixer: {},
 
       cssnano: {
-        $resolve: (val, get) => val ?? (!get('dev') && {
+        $resolve: async (val, get) => val ?? !(await get('dev') && {
           preset: ['default', {
             // Keep quotes in font values to prevent from HEX conversion
             // https://github.com/nuxt/nuxt.js/issues/6306
@@ -51,4 +52,4 @@ export default {
       }
     }
   }
-}
+})

@@ -21,10 +21,12 @@ export const DynamicBasePlugin = createUnplugin((options: DynamicBasePluginOptio
         return
       }
       const s = new MagicString(code)
-      s.append(`${options.globalPublicPath} = buildAssetsURL();\n`)
+      s.append(`\n${options.globalPublicPath} = buildAssetsURL();\n`)
       return {
         code: s.toString(),
-        map: options.sourcemap && s.generateMap({ source: id, includeContent: true })
+        map: options.sourcemap
+          ? s.generateMap({ source: id, includeContent: true })
+          : undefined
       }
     }
   }

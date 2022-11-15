@@ -1,11 +1,14 @@
-import { computed, DefineComponent, defineComponent, h, inject, provide, reactive, Suspense, Transition } from 'vue'
-import { RouteLocation, RouteLocationNormalized, RouteLocationNormalizedLoaded, RouterView } from 'vue-router'
+import { computed, defineComponent, h, provide, reactive, onMounted, nextTick, Suspense, Transition, KeepAliveProps, TransitionProps } from 'vue'
+import type { DefineComponent, VNode } from 'vue'
+import { RouterView } from 'vue-router'
+import { defu } from 'defu'
+import type { RouteLocationNormalized, RouteLocationNormalizedLoaded, RouteLocation } from 'vue-router'
 
 import { generateRouteKey, RouterViewSlotProps, wrapInKeepAlive } from './utils'
 import { useNuxtApp } from '#app'
 import { _wrapIf } from '#app/components/utils'
-
-const isNestedKey = Symbol('isNested')
+// @ts-ignore
+import { appPageTransition as defaultPageTransition, appKeepalive as defaultKeepaliveConfig } from '#build/nuxt.config.mjs'
 
 export default defineComponent({
   name: 'NuxtPage',
@@ -13,6 +16,14 @@ export default defineComponent({
   props: {
     name: {
       type: String
+    },
+    transition: {
+      type: [Boolean, Object] as any as () => boolean | TransitionProps,
+      default: undefined
+    },
+    keepalive: {
+      type: [Boolean, Object] as any as () => boolean | KeepAliveProps,
+      default: undefined
     },
     route: {
       type: Object as () => RouteLocationNormalized
@@ -24,25 +35,27 @@ export default defineComponent({
   },
   setup (props, { attrs }) {
     const nuxtApp = useNuxtApp()
-
-    const isNested = inject(isNestedKey, false)
-    provide(isNestedKey, true)
-
     return () => {
       return h(RouterView, { name: props.name, route: props.route, ...attrs }, {
         default: (routeProps: RouterViewSlotProps) => {
           if (!routeProps.Component) { return }
 
           const key = generateRouteKey(props.pageKey, routeProps)
+          const done = nuxtApp.deferHydration()
 
-          return _wrapIf(Transition, routeProps.route.meta.pageTransition ?? defaultPageTransition,
-            wrapInKeepAlive(routeProps.route.meta.keepalive, isNested && nuxtApp.isHydrating
-            // Include route children in parent suspense
-              ? h(Component, { key, routeProps, pageKey: key } as {})
-              : h(Suspense, {
-                onPending: () => nuxtApp.callHook('page:start', routeProps.Component),
-                onResolve: () => nuxtApp.callHook('page:finish', routeProps.Component)
-              }, { default: () => h(Component, { key, routeProps, pageKey: key } as {}) })
+          const hasTransition = !!(props.transition ?? routeProps.route.meta.pageTransition ?? defaultPageTransition)
+          const transitionProps = hasTransition && _mergeTransitionProps([
+            props.transition,
+            routeProps.route.meta.pageTransition,
+            defaultPageTransition,
+            { onAfterLeave: () => { nuxtApp.callHook('page:transition:finish', routeProps.Component) } }
+          ].filter(Boolean))
+
+          return _wrapIf(Transition, hasTransition && transitionProps,
+            wrapInKeepAlive(props.keepalive ?? routeProps.route.meta.keepalive ?? (defaultKeepaliveConfig as KeepAliveProps), h(Suspense, {
+              onPending: () => nuxtApp.callHook('page:start', routeProps.Component),
+              onResolve: () => { nextTick(() => nuxtApp.callHook('page:finish', routeProps.Component).finally(done)) }
+            }, { default: () => h(Component, { key, routeProps, pageKey: key, hasTransition } as {}) })
             )).default()
         }
       })
@@ -55,15 +68,28 @@ export default defineComponent({
   [key: string]: any
 }>
 
-const defaultPageTransition = { name: 'page', mode: 'out-in' }
+function _toArray (val: any) {
+  return Array.isArray(val) ? val : (val ? [val] : [])
+}
+
+function _mergeTransitionProps (routeProps: TransitionProps[]): TransitionProps {
+  const _props: TransitionProps[] = routeProps.map(prop => ({
+    ...prop,
+    onAfterLeave: _toArray(prop.onAfterLeave)
+  }))
+  // @ts-ignore
+  return defu(..._props)
+}
 
 const Component = defineComponent({
   // TODO: Type props
   // eslint-disable-next-line vue/require-prop-types
-  props: ['routeProps', 'pageKey'],
+  props: ['routeProps', 'pageKey', 'hasTransition'],
   setup (props) {
     // Prevent reactivity when the page will be rerendered in a different suspense fork
+    // eslint-disable-next-line vue/no-setup-props-destructure
     const previousKey = props.pageKey
+    // eslint-disable-next-line vue/no-setup-props-destructure
     const previousRoute = props.routeProps.route
 
     // Provide a reactive route within the page
@@ -73,6 +99,26 @@ const Component = defineComponent({
     }
 
     provide('_route', reactive(route))
-    return () => h(props.routeProps.Component)
+
+    let vnode: VNode
+    if (process.dev && process.client && props.hasTransition) {
+      onMounted(() => {
+        nextTick(() => {
+          if (['#comment', '#text'].includes(vnode?.el?.nodeName)) {
+            const filename = (vnode?.type as any).__file
+            console.warn(`[nuxt] \`${filename}\` does not have a single root node and will cause errors when navigating between routes.`)
+          }
+        })
+      })
+    }
+
+    return () => {
+      if (process.dev && process.client) {
+        vnode = h(props.routeProps.Component)
+        return vnode
+      }
+
+      return h(props.routeProps.Component)
+    }
   }
 })

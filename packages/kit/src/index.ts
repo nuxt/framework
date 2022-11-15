@@ -1,5 +1,4 @@
 // Module
-export * from './module/container'
 export * from './module/define'
 export * from './module/install'
 
@@ -8,7 +7,7 @@ export * from './loader/config'
 export * from './loader/nuxt'
 
 // Utils
-export * from './auto-import'
+export * from './imports'
 export * from './build'
 export * from './compatibility'
 export * from './components'
@@ -18,7 +17,7 @@ export * from './layout'
 export * from './pages'
 export * from './plugin'
 export * from './resolve'
-export * from './server'
+export * from './nitro'
 export * from './template'
 export * from './logger'
 

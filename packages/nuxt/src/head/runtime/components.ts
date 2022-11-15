@@ -1,13 +1,13 @@
-import { defineComponent, PropType } from 'vue'
-import type { SetupContext } from 'vue'
+import { defineComponent } from 'vue'
+import type { PropType, SetupContext } from 'vue'
 import { useHead } from './composables'
 import type {
-  Props,
-  FetchPriority,
   CrossOrigin,
+  FetchPriority,
   HTTPEquiv,
-  ReferrerPolicy,
   LinkRelationship,
+  Props,
+  ReferrerPolicy,
   Target
 } from './types'
 
@@ -66,7 +66,12 @@ const globalProps = {
 }
 
 // <script>
+
+let scriptDeprecated = false
+
+/** @deprecated */
 export const Script = defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Script',
   inheritAttrs: false,
   props: {
@@ -87,11 +92,28 @@ export const Script = defineComponent({
     /** @deprecated **/
     charset: String,
     /** @deprecated **/
-    language: String
+    language: String,
+    body: Boolean,
+    renderPriority: [String, Number]
   },
-  setup: setupForUseMeta(script => ({
-    script: [script]
-  }))
+  setup: setupForUseMeta((props, { slots }) => {
+    if (process.dev && !scriptDeprecated) {
+      console.log('[nuxt] `<Script>` is deprecated and may be removed in a future release. We advise using `useHead()` directly.')
+      scriptDeprecated = true
+    }
+
+    const script = { ...props }
+    const textContent = (slots.default?.() || [])
+      .filter(({ children }) => children)
+      .map(({ children }) => children)
+      .join('')
+    if (textContent) {
+      script.children = textContent
+    }
+    return {
+      script: [script]
+    }
+  })
 })
 
 // <noscript>
@@ -100,7 +122,9 @@ export const NoScript = defineComponent({
   inheritAttrs: false,
   props: {
     ...globalProps,
-    title: String
+    title: String,
+    body: Boolean,
+    renderPriority: [String, Number]
   },
   setup: setupForUseMeta((props, { slots }) => {
     const noscript = { ...props }
@@ -119,6 +143,7 @@ export const NoScript = defineComponent({
 
 // <link>
 export const Link = defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Link',
   inheritAttrs: false,
   props: {
@@ -145,7 +170,9 @@ export const Link = defineComponent({
     /** @deprecated **/
     methods: String,
     /** @deprecated **/
-    target: String as PropType<Target>
+    target: String as PropType<Target>,
+    body: Boolean,
+    renderPriority: [String, Number]
   },
   setup: setupForUseMeta(link => ({
     link: [link]
@@ -154,6 +181,7 @@ export const Link = defineComponent({
 
 // <base>
 export const Base = defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Base',
   inheritAttrs: false,
   props: {
@@ -168,6 +196,7 @@ export const Base = defineComponent({
 
 // <title>
 export const Title = defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Title',
   inheritAttrs: false,
   setup: setupForUseMeta((_, { slots }) => {
@@ -183,6 +212,7 @@ export const Title = defineComponent({
 
 // <meta>
 export const Meta = defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Meta',
   inheritAttrs: false,
   props: {
@@ -190,15 +220,26 @@ export const Meta = defineComponent({
     charset: String,
     content: String,
     httpEquiv: String as PropType<HTTPEquiv>,
-    name: String
+    name: String,
+    body: Boolean,
+    renderPriority: [String, Number]
   },
-  setup: setupForUseMeta(meta => ({
-    meta: [meta]
-  }))
+  setup: setupForUseMeta((props) => {
+    const meta = { ...props }
+    // fix casing for http-equiv
+    if (meta.httpEquiv) {
+      meta['http-equiv'] = meta.httpEquiv
+      delete meta.httpEquiv
+    }
+    return {
+      meta: [meta]
+    }
+  })
 })
 
 // <style>
 export const Style = defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Style',
   inheritAttrs: false,
   props: {
@@ -211,7 +252,9 @@ export const Style = defineComponent({
     scoped: {
       type: Boolean,
       default: undefined
-    }
+    },
+    body: Boolean,
+    renderPriority: [String, Number]
   },
   setup: setupForUseMeta((props, { slots }) => {
     const style = { ...props }
@@ -230,6 +273,7 @@ export const Style = defineComponent({
 
 // <head>
 export const Head = defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Head',
   inheritAttrs: false,
   setup: (_props, ctx) => () => ctx.slots.default?.()
@@ -237,21 +281,27 @@ export const Head = defineComponent({
 
 // <html>
 export const Html = defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Html',
   inheritAttrs: false,
   props: {
     ...globalProps,
     manifest: String,
     version: String,
-    xmlns: String
+    xmlns: String,
+    renderPriority: [String, Number]
   },
   setup: setupForUseMeta(htmlAttrs => ({ htmlAttrs }), true)
 })
 
 // <body>
 export const Body = defineComponent({
+  // eslint-disable-next-line vue/no-reserved-component-names
   name: 'Body',
   inheritAttrs: false,
-  props: globalProps,
+  props: {
+    ...globalProps,
+    renderPriority: [String, Number]
+  },
   setup: setupForUseMeta(bodyAttrs => ({ bodyAttrs }), true)
 })

@@ -1,6 +1,8 @@
 import { resolve } from 'pathe'
-import { addPlugin, addTemplate, defineNuxtModule } from '@nuxt/kit'
+import { addComponent, addPlugin, defineNuxtModule } from '@nuxt/kit'
 import { distDir } from '../dirs'
+
+const components = ['Script', 'NoScript', 'Link', 'Base', 'Title', 'Meta', 'Style', 'Head', 'Html', 'Body']
 
 export default defineNuxtModule({
   meta: {
@@ -15,14 +17,17 @@ export default defineNuxtModule({
     // Add #head alias
     nuxt.options.alias['#head'] = runtimeDir
 
-    // Add global meta configuration
-    addTemplate({
-      filename: 'meta.config.mjs',
-      getContents: () => 'export default ' + JSON.stringify({ globalMeta: nuxt.options.app.head })
-    })
-
-    // Add generic plugin
-    addPlugin({ src: resolve(runtimeDir, 'plugin') })
+    // Register components
+    const componentsPath = resolve(runtimeDir, 'components')
+    for (const componentName of components) {
+      addComponent({
+        name: componentName,
+        filePath: componentsPath,
+        export: componentName,
+        // kebab case version of these tags is not valid
+        kebabName: componentName
+      })
+    }
 
     // Add library specific plugin
     addPlugin({ src: resolve(runtimeDir, 'lib/vueuse-head.plugin') })

@@ -1,7 +1,8 @@
 import { resolve } from 'pathe'
 import { withoutLeadingSlash } from 'ufo'
+import { defineUntypedSchema } from 'untyped'
 
-export default {
+export default defineUntypedSchema({
   /**
    * Configuration that will be passed directly to Vite.
    *
@@ -9,19 +10,18 @@ export default {
    * Please note that not all vite options are supported in Nuxt.
    *
    * @type {typeof import('../src/types/config').ViteConfig}
-   * @version 3
    */
   vite: {
     root: {
-      $resolve: (val, get) => val ?? get('srcDir')
+      $resolve: async (val, get) => val ?? (await get('srcDir'))
     },
     mode: {
-      $resolve: (val, get) => val ?? (get('dev') ? 'development' : 'production')
+      $resolve: async (val, get) => val ?? (await get('dev') ? 'development' : 'production')
     },
     logLevel: 'warn',
     define: {
-      $resolve: (val, get) => ({
-        'process.dev': get('dev'),
+      $resolve: async (val, get) => ({
+        'process.dev': await get('dev'),
         ...val || {}
       })
     },
@@ -29,23 +29,23 @@ export default {
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
     },
     publicDir: {
-      $resolve: (val, get) => val ?? resolve(get('srcDir'), get('dir').public)
+      $resolve: async (val, get) => val ?? resolve((await get('srcDir')), (await get('dir')).public)
     },
     vue: {
       isProduction: {
-        $resolve: (val, get) => val ?? !get('dev')
+        $resolve: async (val, get) => val ?? !(await get('dev'))
       },
       template: {
         compilerOptions: {
-          $resolve: (val, get) => val ?? get('vue').compilerOptions
+          $resolve: async (val, get) => val ?? (await get('vue')).compilerOptions
         }
       }
     },
     optimizeDeps: {
       exclude: {
-        $resolve: (val, get) => [
+        $resolve: async (val, get) => [
           ...val || [],
-          ...get('build.transpile').filter((i) => typeof i === 'string'),
+          ...(await get('build.transpile')).filter((i: string) => typeof i === 'string'),
           'vue-demi'
         ]
       }
@@ -58,23 +58,23 @@ export default {
     clearScreen: false,
     build: {
       assetsDir: {
-        $resolve: (val, get) => val ?? withoutLeadingSlash(get('app').buildAssetsDir)
+        $resolve: async (val, get) => val ?? withoutLeadingSlash((await get('app')).buildAssetsDir)
       },
       emptyOutDir: false
     },
     server: {
       fs: {
-        strict: false,
         allow: {
-          $resolve: (val, get) => [
-            get('buildDir'),
-            get('srcDir'),
-            get('rootDir'),
-            ...get('modulesDir'),
+          $resolve: async (val, get) => [
+            await get('buildDir'),
+            await get('srcDir'),
+            await get('rootDir'),
+            await get('workspaceDir'),
+            ...(await get('modulesDir')),
             ...val ?? []
           ]
         }
       }
     }
   }
-}
+})
