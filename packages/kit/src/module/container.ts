@@ -10,6 +10,13 @@ import { installModule } from './install'
 
 const MODULE_CONTAINER_KEY = '__module_container__'
 
+export function wrapLegacyModule (nuxtModule: Function) {
+  return function (...args: any) {
+    const container = useModuleContainer()
+    return nuxtModule.call(container, ...args)
+  }
+}
+
 export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
   // @ts-ignore
   if (nuxt[MODULE_CONTAINER_KEY]) { return nuxt[MODULE_CONTAINER_KEY] }
@@ -44,7 +51,7 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
     addModule: requireModule,
 
     // TODO
-    addServerMiddleware: () => { },
+    addServerMiddleware: () => {},
 
     addTemplate (template) {
       if (typeof template === 'string') {
@@ -66,7 +73,7 @@ export function useModuleContainer (nuxt: Nuxt = useNuxt()): ModuleContainer {
 
     addErrorLayout (dst) {
       const relativeBuildDir = relative(nuxt.options.rootDir, nuxt.options.buildDir)
-      ;(nuxt as any).options.ErrorPage = `~/${relativeBuildDir}/${dst}`
+        ; (nuxt as any).options.ErrorPage = `~/${relativeBuildDir}/${dst}`
     },
 
     extendBuild (fn) {
