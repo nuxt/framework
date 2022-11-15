@@ -434,7 +434,7 @@ importers:
       knitwork: ^1.0.0
       magic-string: ^0.26.7
       mlly: ^1.0.0
-      nitropack: npm:nitropack-edge@0.6.3-27808601.85da221
+      nitropack: ^1.0.0-0
       nuxi: workspace:*
       ofetch: ^1.0.0
       ohash: ^1.0.0
@@ -479,7 +479,7 @@ importers:
       knitwork: 1.0.0
       magic-string: 0.26.7
       mlly: 1.0.0
-      nitropack: /nitropack-edge/0.6.3-27808601.85da221
+      nitropack: 1.0.0-0
       nuxi: link:../nuxi
       ofetch: 1.0.0
       ohash: 1.0.0
@@ -514,7 +514,7 @@ importers:
       create-require: ^1.1.1
       defu: ^6.1.0
       jiti: ^1.16.0
-      nitropack: npm:nitropack-edge@0.6.3-27808601.85da221
+      nitropack: ^1.0.0-0
       pathe: ^1.0.0
       pkg-types: ^1.0.1
       postcss-import-resolver: ^2.0.0
@@ -543,7 +543,7 @@ importers:
       '@types/semver': 7.3.12
       '@vitejs/plugin-vue': 3.2.0_vite@3.2.3
       '@vueuse/head': 1.0.0-rc.14
-      nitropack: /nitropack-edge/0.6.3-27808601.85da221
+      nitropack: 1.0.0-0
       unbuild: 0.9.4
       vite: 3.2.3
 
@@ -6806,8 +6806,8 @@ packages:
   /neo-async/2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
-  /nitropack-edge/0.6.3-27808601.85da221:
-    resolution: {integrity: sha512-NLNkTAOpzP1TyUF2DY053DxpXUxjEYI7F4k1H4f8W3/1cQ+iUvFOShY7E9wqtZJzKj8S5uByIyoi39pWogu6ww==}
+  /nitropack/1.0.0-0:
+    resolution: {integrity: sha512-DlaHkN6o4nxUd1XV444UmlXDa85ZwzWpEAgn1aaKS8cVmymgcSIGxcvtpf0sAcCdmMRKBsYWSnsXy+k0o2jgSA==}
     engines: {node: ^14.16.0 || ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0}
     hasBin: true
     dependencies:
@@ -6867,7 +6867,7 @@ packages:
       std-env: 3.3.1
       ufo: 1.0.0
       unenv: 1.0.0
-      unimport: 0.7.0_rollup@2.79.1
+      unimport: 1.0.0_rollup@2.79.1
       unstorage: 1.0.1
     transitivePeerDependencies:
       - bufferutil
@@ -8305,12 +8305,12 @@ packages:
     resolution: {integrity: sha512-pv48ybn4iE1O9RLgCAN0iU4Xv7RlBTiit6DKmMiErbs9x1wH6vXBs45tWc0H5wUIF6TLTrKweqkmYF/iraQKNw==}
     dependencies:
       acorn: 8.8.1
+    dev: true
 
   /strip-literal/1.0.0:
     resolution: {integrity: sha512-5o4LsH1lzBzO9UFH63AJ2ad2/S2AVx6NtjOcaz+VTT2h1RiRvbipW72z8M/lxEhcPHDBQwpDrnTF7sXy/7OwCQ==}
     dependencies:
       acorn: 8.8.1
-    dev: false
 
   /style-resources-loader/1.5.0_webpack@5.75.0:
     resolution: {integrity: sha512-fIfyvQ+uvXaCBGGAgfh+9v46ARQB1AWdaop2RpQw0PBVuROsTBqGvx8dj0kxwjGOAyq3vepe4AOK3M6+Q/q2jw==}
@@ -8738,23 +8738,6 @@ packages:
       node-fetch-native: 1.0.1
       pathe: 1.0.0
 
-  /unimport/0.7.0_rollup@2.79.1:
-    resolution: {integrity: sha512-Cr0whz4toYVid3JHlni/uThwavDVVCk6Zw0Gxnol1c7DprTA+Isr4T+asO6rDGkhkgV7r3vSdSs5Ym8F15JA+w==}
-    dependencies:
-      '@rollup/pluginutils': 5.0.2_rollup@2.79.1
-      escape-string-regexp: 5.0.0
-      fast-glob: 3.2.12
-      local-pkg: 0.4.2
-      magic-string: 0.26.7
-      mlly: 0.5.16
-      pathe: 0.3.9
-      pkg-types: 0.3.6
-      scule: 0.3.2
-      strip-literal: 0.4.2
-      unplugin: 0.10.2
-    transitivePeerDependencies:
-      - rollup
-
   /unimport/1.0.0:
     resolution: {integrity: sha512-7M2+6uC6Ik3/imN0VhEBJGnnH5SWLPxhPAPKdMMIt2Bh+YW7F42aZFC9APW3h82r4bvS5qQWaMJko2G9m7SDYA==}
     dependencies:
@@ -8772,6 +8755,23 @@ packages:
     transitivePeerDependencies:
       - rollup
     dev: false
+
+  /unimport/1.0.0_rollup@2.79.1:
+    resolution: {integrity: sha512-7M2+6uC6Ik3/imN0VhEBJGnnH5SWLPxhPAPKdMMIt2Bh+YW7F42aZFC9APW3h82r4bvS5qQWaMJko2G9m7SDYA==}
+    dependencies:
+      '@rollup/pluginutils': 5.0.2_rollup@2.79.1
+      escape-string-regexp: 5.0.0
+      fast-glob: 3.2.12
+      local-pkg: 0.4.2
+      magic-string: 0.26.7
+      mlly: 1.0.0
+      pathe: 1.0.0
+      pkg-types: 1.0.1
+      scule: 1.0.0
+      strip-literal: 1.0.0
+      unplugin: 1.0.0
+    transitivePeerDependencies:
+      - rollup
 
   /universalify/2.0.0:
     resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
@@ -8847,6 +8847,7 @@ packages:
       chokidar: 3.5.3
       webpack-sources: 3.2.3
       webpack-virtual-modules: 0.4.5
+    dev: false
 
   /unplugin/0.9.6:
     resolution: {integrity: sha512-YYLtfoNiie/lxswy1GOsKXgnLJTE27la/PeCGznSItk+8METYZErO+zzV9KQ/hXhPwzIJsfJ4s0m1Rl7ZCWZ4Q==}
@@ -8863,7 +8864,6 @@ packages:
       chokidar: 3.5.3
       webpack-sources: 3.2.3
       webpack-virtual-modules: 0.4.6
-    dev: false
 
   /unstorage/1.0.1:
     resolution: {integrity: sha512-J1c4b8K2KeihHrQtdgl/ybIapArUbPaPb+TyJy/nGSauDwDYqciZsEKdkee568P3c8SSH4TIgnGRHDWMPGw+Lg==}
@@ -9405,6 +9405,7 @@ packages:
 
   /webpack-virtual-modules/0.4.5:
     resolution: {integrity: sha512-8bWq0Iluiv9lVf9YaqWQ9+liNgXSHICm+rg544yRgGYaR8yXZTVBaHZkINZSB2yZSWo4b0F6MIxqJezVfOEAlg==}
+    dev: false
 
   /webpack-virtual-modules/0.4.6:
     resolution: {integrity: sha512-5tyDlKLqPfMqjT3Q9TAqf2YqjwmnUleZwzJi1A5qXnlBCdj2AtOJ6wAWdglTIDOPgOiOrXeBeFcsQ8+aGQ6QbA==}
