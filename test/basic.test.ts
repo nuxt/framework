@@ -778,6 +778,11 @@ describe('app config', () => {
 describe('component islands', () => {
   it('renders components with route', async () => {
     const result: NuxtIslandResponse = await $fetch('/__nuxt_island/RouteComponent?url=/foo')
+
+    if (process.env.NUXT_TEST_DEV) {
+      result.head.link = result.head.link.filter(l => !l.href.includes('@nuxt+ui-templates'))
+    }
+
     expect(result).toMatchInlineSnapshot(`
       {
         "head": {
@@ -801,8 +806,11 @@ describe('component islands', () => {
       })
     }))
 
+    if (process.env.NUXT_TEST_DEV) {
+      result.head.link = result.head.link.filter(l => !l.href.includes('@nuxt+ui-templates'))
+    }
+
     if (!(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)) {
-      console.log('Head:', JSON.stringify(result.head, null, 1))
       expect(result.head).toMatchInlineSnapshot(`
       {
         "link": [],
