@@ -1,18 +1,14 @@
-import { join } from 'pathe'
+import { withTrailingSlash } from 'ufo'
 
 export default defineNuxtConfig({
-  app: {
-    pageTransition: false,
-    layoutTransition: false
-  },
-  extends: process.env.WEBSITE_THEME ? join(process.env.WEBSITE_THEME, 'theme') : '@nuxt-themes/website',
-  build: {
-    transpile: [/content-edge/]
-  },
-  nitro: {
-    prerender: {
-      crawlLinks: true,
-      routes: ['/', '/404.html', '/guide/directory-structure/app.config']
+  extends: process.env.WEBSITE_THEME ? withTrailingSlash(process.env.WEBSITE_THEME) : 'nuxt-website-theme',
+  vite: {
+    server: {
+      fs: {
+        allow: [
+          process.env.WEBSITE_THEME || '.'
+        ]
+      }
     }
   }
 })
