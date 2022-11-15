@@ -1,66 +1,97 @@
 import { pathToFileURL } from 'node:url'
 import { parseURL } from 'ufo'
 import MagicString from 'magic-string'
-import { parse, walk, ELEMENT_NODE, Node } from 'ultrahtml'
+import { walk } from 'estree-walker'
+import type { CallExpression, Property, Identifier, ImportDeclaration } from 'estree'
 import { createUnplugin } from 'unplugin'
-import type { Component } from '@nuxt/schema'
 
 interface TreeShakeTemplatePluginOptions {
   sourcemap?: boolean
-  getComponents (): Component[]
 }
 
-const PLACEHOLDER_RE = /^(v-slot|#)(fallback|placeholder)/
+type AcornNode<N> = N & { start: number, end: number }
 
 export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplatePluginOptions) => {
-  const regexpMap = new WeakMap<Component[], [RegExp, string[]]>()
   return {
     name: 'nuxt:tree-shake-template',
-    enforce: 'pre',
+    enforce: 'post',
     transformInclude (id) {
       const { pathname } = parseURL(decodeURIComponent(pathToFileURL(id).href))
       return pathname.endsWith('.vue')
     },
-    async transform (code, id) {
-      const template = code.match(/<template>([\s\S]*)<\/template>/)
-      if (!template) { return }
-
-      const components = options.getComponents()
-
-      if (!regexpMap.has(components)) {
-        const clientOnlyComponents = components
-          .filter(c => c.mode === 'client' && !components.some(other => other.mode !== 'client' && other.pascalName === c.pascalName))
-          .flatMap(c => [c.pascalName, c.kebabName])
-          .concat(['ClientOnly', 'client-only'])
-        const tags = clientOnlyComponents
-          .map(component => `<(${component})[^>]*>[\\s\\S]*?<\\/(${component})>`)
-
-        regexpMap.set(components, [new RegExp(`(${tags.join('|')})`, 'g'), clientOnlyComponents])
-      }
-
-      const [COMPONENTS_RE, clientOnlyComponents] = regexpMap.get(components)!
-      if (!COMPONENTS_RE.test(code)) { return }
+    transform (code, id) {
+      const CLIENTONLY_RE = /[c|C]lient[_|-]?[O|o]nly/
+      const hasClientOnly = CLIENTONLY_RE.test(code)
+      if (!hasClientOnly) { return }
 
       const s = new MagicString(code)
+      const SSR_RENDER_RE = /ssrRender/
+      const parse = this.parse
+      const importDeclarations: AcornNode<ImportDeclaration>[] = []
 
-      const ast = parse(template[0])
-      await walk(ast, (node) => {
-        if (node.type !== ELEMENT_NODE || !clientOnlyComponents.includes(node.name) || !node.children?.length) {
-          return
-        }
+      walk(parse(code, { sourceType: 'module', ecmaVersion: 'latest' }), {
+        enter (_node) {
+          const node = _node as AcornNode<CallExpression | ImportDeclaration>
+          if (node.type === 'ImportDeclaration') {
+            importDeclarations.push(node)
+          } else if (node.type === 'CallExpression' &&
+            node.callee.type === 'Identifier' &&
+            SSR_RENDER_RE.test(node.callee.name)) {
+            const [identifier, _, children] = node.arguments
+            if (identifier.type === 'Identifier' && CLIENTONLY_RE.test(identifier.name)) {
+              if (children?.type === 'ObjectExpression') {
+                const defaultSlot = children.properties.find(prop => prop.type === 'Property' && prop.key.type === 'Identifier' && prop.key.name === 'default') as AcornNode<Property>
 
-        const fallback = node.children.find(
-          (n: Node) => n.name === 'template' &&
-            Object.entries(n.attributes as Record<string, string>)?.flat().some(attr => PLACEHOLDER_RE.test(attr))
-        )
+                if (defaultSlot) {
+                  s.remove(defaultSlot.start, defaultSlot.end + 1)
+                  const removedCode = code.slice(defaultSlot.start, defaultSlot.end + 1)
+                  const componentsSet = new Set<string>()
+                  const currentCode = s.toString()
+                  walk(parse('({' + removedCode + '})', { sourceType: 'module', ecmaVersion: 'latest' }), {
+                    enter (_node) {
+                      const node = _node as AcornNode<CallExpression>
+                      if (node.type === 'CallExpression' && node.callee.type === 'Identifier' && SSR_RENDER_RE.test(node.callee.name)) {
+                        const componentNode = node.arguments[0]
+                        if (componentNode.type === 'CallExpression') {
+                          // expect componentNode to be an unref()
+                          const identifier = componentNode.arguments[0] as Identifier
+                          const isUsedOutsideClientOnly = new RegExp(`ssrRenderComponent\\((${(componentNode.callee as Identifier).name}\\()?${identifier.name}`).test(currentCode)
+                          if (!isUsedOutsideClientOnly) { componentsSet.add(identifier.name) }
+                        } else {
+                          // expect componentNode to be an identifier
+                          const isUsedOutsideClientOnly = new RegExp(`ssrRenderComponent\\(${(componentNode as Identifier).name}`).test(currentCode)
+                          if (!isUsedOutsideClientOnly) { componentsSet.add((componentNode as Identifier).name) }
+                        }
+                      }
+                    }
+                  })
+                  const component = [...componentsSet]
+                  for (const componentName of component) {
+                    let removed = false
+                    // remove const _component_ = resolveComponent...
+                    const VAR_RE = new RegExp(`(?:const|let|var) ${componentName} = ([^;]*);`)
+                    s.replace(VAR_RE, () => {
+                      removed = true
+                      return ''
+                    })
+                    if (!removed) {
+                      // remove direct import
+                      const declaration = findImportDeclaration(importDeclarations, componentName)
+                      if (declaration) {
+                        if (declaration.specifiers.length > 1) {
+                          const componentSpecifier = declaration.specifiers.find(s => s.local.name === componentName) as AcornNode<Identifier> | undefined
 
-        try {
-          // Replace node content
-          const text = fallback ? code.slice(template.index! + fallback.loc[0].start, template.index! + fallback.loc[fallback.loc.length - 1].end) : ''
-          s.overwrite(template.index! + node.loc[0].end, template.index! + node.loc[node.loc.length - 1].start, text)
-        } catch (err) {
-          // This may fail if we have a nested client-only component and are trying
-          // to replace some text that has already been replaced
+                          if (componentSpecifier) { s.remove(componentSpecifier.start, componentSpecifier.end) }
+                        } else {
+                          s.remove(declaration.start, declaration.end)
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       })
 
@@ -75,3 +106,19 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
     }
   }
 })
+
+/**
+ * find and return the import that contain the import specifier
+ *
+ * @param {AcornNode<ImportDeclaration>[]} declarations - list of import declarations
+ * @param {string} importName - name of the import
+ */
+function findImportDeclaration (declarations: AcornNode<ImportDeclaration>[], importName: string): AcornNode<ImportDeclaration> | undefined {
+  const declaration = declarations.find((d) => {
+    const specifier = d.specifiers.find(s => s.local.name === importName)
+    if (specifier) { return true }
+    return false
+  })
+
+  if (declaration) { return declaration }
+}
