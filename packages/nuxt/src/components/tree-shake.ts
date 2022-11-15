@@ -25,7 +25,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
       if (!hasClientOnly) { return }
 
       const s = new MagicString(code)
-      const SSR_RENDER_RE = /ssrRender/
+      const SSR_RENDER_RE = /ssrRenderComponent/
       const parse = this.parse
       const importDeclarations: AcornNode<ImportDeclaration>[] = []
 
@@ -108,7 +108,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
 })
 
 /**
- * find and return the import that contain the import specifier
+ * find and return the importDeclaration that contain the import specifier
  *
  * @param {AcornNode<ImportDeclaration>[]} declarations - list of import declarations
  * @param {string} importName - name of the import
