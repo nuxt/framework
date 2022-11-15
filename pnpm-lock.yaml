@@ -434,7 +434,7 @@ importers:
       knitwork: ^1.0.0
       magic-string: ^0.26.7
       mlly: ^1.0.0
-      nitropack: ^1.0.0-0
+      nitropack: ^0.6.1
       nuxi: workspace:*
       ofetch: ^1.0.0
       ohash: ^1.0.0
@@ -479,7 +479,7 @@ importers:
       knitwork: 1.0.0
       magic-string: 0.26.7
       mlly: 1.0.0
-      nitropack: 1.0.0-0
+      nitropack: 0.6.1
       nuxi: link:../nuxi
       ofetch: 1.0.0
       ohash: 1.0.0
@@ -514,7 +514,7 @@ importers:
       create-require: ^1.1.1
       defu: ^6.1.0
       jiti: ^1.16.0
-      nitropack: ^1.0.0-0
+      nitropack: ^0.6.1
       pathe: ^1.0.0
       pkg-types: ^1.0.1
       postcss-import-resolver: ^2.0.0
@@ -543,7 +543,7 @@ importers:
       '@types/semver': 7.3.12
       '@vitejs/plugin-vue': 3.2.0_vite@3.2.3
       '@vueuse/head': 1.0.0-rc.14
-      nitropack: 1.0.0-0
+      nitropack: 0.6.1
       unbuild: 0.9.4
       vite: 3.2.3
 
@@ -3172,7 +3172,6 @@ packages:
       pathe: 0.3.9
       pkg-types: 0.3.6
       rc9: 1.2.2
-    dev: true
 
   /c12/1.0.1:
     resolution: {integrity: sha512-EN9Rqix2q9X3PseFkUvRFZ/0fvncF35ZR5nykLDwv4Ml/Q1WYPLkcdqlrczFll2G9t4qmxgM4my3EF3IrRGl5Q==}
@@ -5736,6 +5735,14 @@ packages:
     dependencies:
       duplexer: 0.1.2
 
+  /h3/0.8.6:
+    resolution: {integrity: sha512-CSWNOKa3QGo67rFU2PhbFTp0uPJtilNji2Z0pMiSRQt3+OkIW0u3E1WMJqIycLqaTgb9JyFqH/S4mcTyyGtvyQ==}
+    dependencies:
+      cookie-es: 0.5.0
+      destr: 1.2.1
+      radix3: 0.2.1
+      ufo: 0.8.6
+
   /h3/1.0.1:
     resolution: {integrity: sha512-gDCGpRvjchZW2JBlTqbJ9IOs+mdkXXuwSQkSye+jubHAv/UhdamKqoQvd4RFgyBNjHSId8Y+b10UdTcPlP/V+w==}
     dependencies:
@@ -5805,9 +5812,6 @@ packages:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
     dev: true
-
-  /hookable/1.0.0:
-    resolution: {integrity: sha512-l0TZBwD/70hYs79OEakoEONSJOEVBUHNR2aLSswS1LlnQRH8i2ZOu/Dr1OJzVbmZSi4PUAaDjQJnncQ7Ye3/8Q==}
 
   /hookable/5.4.1:
     resolution: {integrity: sha512-i808BglQ1OuSIcgPSZoWsDapCMLXKe5wLS6XZvIXpaBWdWLUZARM8vOLayu6cXewj5TSbaZaMzKnq+pRnfscEQ==}
@@ -6314,8 +6318,12 @@ packages:
     resolution: {integrity: sha512-pJiBpiXMbt7dkzXe8Ghj/u4FfXOOa98fPW+bihOJ4SjnoijweJrNThJfd3ifXpXhREjpoF2mZVH1GfS9LV3kHQ==}
     engines: {node: '>= 8'}
 
+  /knitwork/0.1.3:
+    resolution: {integrity: sha512-f6Mz4kK8k0BAlGZn9Eb7mCUwSyRLoKTLr//u75tyLKm0jgt0ydnI8ubcTPwZjSJredpBZV7ry1EOrNbMJYT0mA==}
+
   /knitwork/1.0.0:
     resolution: {integrity: sha512-dWl0Dbjm6Xm+kDxhPQJsCBTxrJzuGl0aP9rhr+TG8D3l+GL90N8O8lYUi7dTSAN2uuDqCtNgb6aEuQH5wsiV8Q==}
+    dev: false
 
   /kolorist/1.6.0:
     resolution: {integrity: sha512-dLkz37Ab97HWMx9KTes3Tbi3D1ln9fCAy2zr2YVExJasDRPGRaKcoE4fycWNtnCAJfjFqe0cnY+f8KT2JePEXQ==}
@@ -6359,19 +6367,6 @@ packages:
       ip-regex: 5.0.0
       node-forge: 1.3.1
       ufo: 0.8.6
-    dev: true
-
-  /listhen/1.0.0:
-    resolution: {integrity: sha512-frdf7TVqT/JSHzRjEuo/vWIgbBYzEuY3oeTq8Yv1XkQVTKDPs2M4yotXICqYZYj2QxbkqKssSo8Wa6QCtBnFhg==}
-    dependencies:
-      clipboardy: 3.0.0
-      colorette: 2.0.19
-      defu: 6.1.1
-      get-port-please: 2.6.1
-      http-shutdown: 1.2.2
-      ip-regex: 5.0.0
-      node-forge: 1.3.1
-      ufo: 1.0.0
 
   /loader-runner/4.3.0:
     resolution: {integrity: sha512-3R/1M+yS3j5ou80Me59j7F9IMs4PXs3VqRrm0TU3AbKPxlmpoY1TNscJV/oGJXo8qCatFGTfDbY6W6ipGOYXfg==}
@@ -6737,7 +6732,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      defu: 6.1.0
+      defu: 6.1.1
       esbuild: 0.14.54
       fs-extra: 10.1.0
       globby: 11.1.0
@@ -6806,9 +6801,9 @@ packages:
   /neo-async/2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
-  /nitropack/1.0.0-0:
-    resolution: {integrity: sha512-DlaHkN6o4nxUd1XV444UmlXDa85ZwzWpEAgn1aaKS8cVmymgcSIGxcvtpf0sAcCdmMRKBsYWSnsXy+k0o2jgSA==}
-    engines: {node: ^14.16.0 || ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0}
+  /nitropack/0.6.1:
+    resolution: {integrity: sha512-BQQTRMvz/PtWg4v9O9C7FTm6SwtxUXa7n6rxe1vYwPNphsVRD8LzSSTB8iFKCgkQssrwunYF/k/Bpg2IQ7ZsmA==}
+    engines: {node: ^14.16.0 || ^16.11.0 || ^17.0.0 || ^18.0.0}
     hasBin: true
     dependencies:
       '@cloudflare/kv-asset-handler': 0.2.0
@@ -6823,7 +6818,7 @@ packages:
       '@rollup/pluginutils': 5.0.2_rollup@2.79.1
       '@vercel/nft': 0.22.1
       archiver: 5.3.1
-      c12: 1.0.1
+      c12: 0.2.13
       chalk: 5.1.2
       chokidar: 3.5.3
       consola: 2.15.3
@@ -6837,38 +6832,38 @@ packages:
       fs-extra: 10.1.0
       globby: 13.1.2
       gzip-size: 7.0.0
-      h3: 1.0.1
-      hookable: 1.0.0
+      h3: 0.8.6
+      hookable: 5.4.1
       http-proxy: 1.18.1
       is-primitive: 3.0.1
       jiti: 1.16.0
       klona: 2.0.5
-      knitwork: 1.0.0
-      listhen: 1.0.0
+      knitwork: 0.1.3
+      listhen: 0.3.5
       mime: 3.0.0
-      mlly: 1.0.0
+      mlly: 0.5.16
       mri: 1.2.0
-      node-fetch-native: 1.0.1
-      ofetch: 1.0.0
-      ohash: 1.0.0
-      pathe: 1.0.0
+      node-fetch-native: 0.1.8
+      ohash: 0.1.5
+      ohmyfetch: 0.4.21
+      pathe: 0.3.9
       perfect-debounce: 0.1.3
-      pkg-types: 1.0.1
+      pkg-types: 0.3.6
       pretty-bytes: 6.0.0
-      radix3: 1.0.0
+      radix3: 0.2.1
       rollup: 2.79.1
       rollup-plugin-terser: 7.0.2_rollup@2.79.1
       rollup-plugin-visualizer: 5.8.3_rollup@2.79.1
-      scule: 1.0.0
+      scule: 0.3.2
       semver: 7.3.8
       serve-placeholder: 2.0.1
       serve-static: 1.15.0
       source-map-support: 0.5.21
       std-env: 3.3.1
-      ufo: 1.0.0
-      unenv: 1.0.0
-      unimport: 1.0.0_rollup@2.79.1
-      unstorage: 1.0.1
+      ufo: 0.8.6
+      unenv: 0.6.2
+      unimport: 0.7.1_rollup@2.79.1
+      unstorage: 0.6.0
     transitivePeerDependencies:
       - bufferutil
       - debug
@@ -7033,8 +7028,12 @@ packages:
       node-fetch-native: 1.0.1
       ufo: 1.0.0
 
+  /ohash/0.1.5:
+    resolution: {integrity: sha512-qynly1AFIpGWEAW88p6DhMNqok/Swb52/KsiU+Toi7er058Ptvno3tkfTML6wYcEgFgp2GsUziW4Nqn62ciuyw==}
+
   /ohash/1.0.0:
     resolution: {integrity: sha512-kxSyzq6tt+6EE/xCnD1XaFhCCjUNUaz3X30rJp6mnjGLXAAvuPFqohMdv0aScWzajR45C29HyBaXZ8jXBwnh9A==}
+    dev: false
 
   /ohmyfetch/0.4.21:
     resolution: {integrity: sha512-VG7f/JRvqvBOYvL0tHyEIEG7XHWm7OqIfAs6/HqwWwDfjiJ1g0huIpe5sFEmyb+7hpFa1EGNH2aERWR72tlClw==}
@@ -7686,6 +7685,9 @@ packages:
 
   /queue-microtask/1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  /radix3/0.2.1:
+    resolution: {integrity: sha512-FnhArTl5Tq7dodiLeSPKrDUyCQuJqEncP8cKdyy399g8F/cz7GH6FmzA3Rkosu2IZMkpswFFwXfb2ERSiL06pg==}
 
   /radix3/1.0.0:
     resolution: {integrity: sha512-6n3AEXth91ASapMVKiEh2wrbFJmI+NBilrWE0AbiGgfm0xet0QXC8+a3K19r1UVYjUjctUgB053c3V/J6V0kCQ==}
@@ -8728,15 +8730,23 @@ packages:
       mime: 3.0.0
       node-fetch-native: 0.1.7
       pathe: 0.3.9
-    dev: false
 
-  /unenv/1.0.0:
-    resolution: {integrity: sha512-vlyi2Rzj4CNlA1JsEXufX+ItkGr3Z5DfLzKniYEneMlBVtuxS+57f1LwTPj2eiBPSPaGHMUVzEnjSCGE7l8JQg==}
+  /unimport/0.7.1_rollup@2.79.1:
+    resolution: {integrity: sha512-rn/hRpCtFxVVT3T8a6sG738xiA6yp8eFzzMLVr+ebp2FBU1gF0Qo6SfOGrrXATDmKruskhYAvPN7djhydgHU8A==}
     dependencies:
-      defu: 6.1.1
-      mime: 3.0.0
-      node-fetch-native: 1.0.1
+      '@rollup/pluginutils': 5.0.2_rollup@2.79.1
+      escape-string-regexp: 5.0.0
+      fast-glob: 3.2.12
+      local-pkg: 0.4.2
+      magic-string: 0.26.7
+      mlly: 1.0.0
       pathe: 1.0.0
+      pkg-types: 1.0.1
+      scule: 1.0.0
+      strip-literal: 1.0.0
+      unplugin: 1.0.0
+    transitivePeerDependencies:
+      - rollup
 
   /unimport/1.0.0:
     resolution: {integrity: sha512-7M2+6uC6Ik3/imN0VhEBJGnnH5SWLPxhPAPKdMMIt2Bh+YW7F42aZFC9APW3h82r4bvS5qQWaMJko2G9m7SDYA==}
@@ -8755,23 +8765,6 @@ packages:
     transitivePeerDependencies:
       - rollup
     dev: false
-
-  /unimport/1.0.0_rollup@2.79.1:
-    resolution: {integrity: sha512-7M2+6uC6Ik3/imN0VhEBJGnnH5SWLPxhPAPKdMMIt2Bh+YW7F42aZFC9APW3h82r4bvS5qQWaMJko2G9m7SDYA==}
-    dependencies:
-      '@rollup/pluginutils': 5.0.2_rollup@2.79.1
-      escape-string-regexp: 5.0.0
-      fast-glob: 3.2.12
-      local-pkg: 0.4.2
-      magic-string: 0.26.7
-      mlly: 1.0.0
-      pathe: 1.0.0
-      pkg-types: 1.0.1
-      scule: 1.0.0
-      strip-literal: 1.0.0
-      unplugin: 1.0.0
-    transitivePeerDependencies:
-      - rollup
 
   /universalify/2.0.0:
     resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
@@ -8865,19 +8858,19 @@ packages:
       webpack-sources: 3.2.3
       webpack-virtual-modules: 0.4.6
 
-  /unstorage/1.0.1:
-    resolution: {integrity: sha512-J1c4b8K2KeihHrQtdgl/ybIapArUbPaPb+TyJy/nGSauDwDYqciZsEKdkee568P3c8SSH4TIgnGRHDWMPGw+Lg==}
+  /unstorage/0.6.0:
+    resolution: {integrity: sha512-X05PIq28pVNA1BypX6Y00YNqAsHM25MGemvpjHeYvwJ8/wg936GoO1YD+VdWlqm3LmVX4fNJ5tlC7uhXsMPgeg==}
     dependencies:
       anymatch: 3.1.2
       chokidar: 3.5.3
       destr: 1.2.1
-      h3: 1.0.1
+      h3: 0.8.6
       ioredis: 5.2.4
-      listhen: 1.0.0
+      listhen: 0.3.5
       mkdir: 0.0.2
       mri: 1.2.0
-      ofetch: 1.0.0
-      ufo: 1.0.0
+      ohmyfetch: 0.4.21
+      ufo: 0.8.6
       ws: 8.11.0
     transitivePeerDependencies:
       - bufferutil
