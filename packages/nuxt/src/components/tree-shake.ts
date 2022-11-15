@@ -52,8 +52,9 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
                       const node = _node as AcornNode<CallExpression>
                       if (node.type === 'CallExpression' && node.callee.type === 'Identifier' && SSR_RENDER_RE.test(node.callee.name)) {
                         const componentNode = node.arguments[0]
-                        if (componentNode.type === 'CallExpression' && !isRenderedInCode(currentCode, identifier.name)) {
-                          componentsSet.add(identifier.name)
+                        if (componentNode.type === 'CallExpression') {
+                          const identifier = componentNode.arguments[0] as Identifier
+                          if (!isRenderedInCode(currentCode, identifier.name)) { componentsSet.add(identifier.name) }
                         } else if (componentNode.type === 'Identifier' && !isRenderedInCode(currentCode, componentNode.name)) {
                           componentsSet.add(componentNode.name)
                         } else if (componentNode.type === 'MemberExpression') {
@@ -66,7 +67,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
                               enter (_node) {
                                 const node = _node as Property
                                 if (node.type === 'Property' && node.key.type === 'Identifier' && node.key.name === 'setup' && node.value.type === 'FunctionExpression') {
-                                  const returnStatement = node.value.body.body.find(n => n.type === 'ReturnStatement') as ReturnStatement|undefined
+                                  const returnStatement = node.value.body.body.find(n => n.type === 'ReturnStatement') as ReturnStatement | undefined
                                   if (returnStatement?.argument?.type === 'Identifier') {
                                     const returnIdentifier = returnStatement.argument.name
                                     const returnedDeclaration = node.value.body.body.find(n => n.type === 'VariableDeclaration' && (n.declarations[0].id as Identifier).name === returnIdentifier) as AcornNode<VariableDeclaration>
@@ -84,8 +85,8 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
                       }
                     }
                   })
-                  const component = [...componentsSet]
-                  for (const componentName of component) {
+                  const components = [...componentsSet]
+                  for (const componentName of components) {
                     let removed = false
                     // remove const _component_ = resolveComponent...
                     const VAR_RE = new RegExp(`(?:const|let|var) ${componentName} = ([^;]*);`)
