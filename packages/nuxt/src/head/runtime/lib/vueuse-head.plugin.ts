@@ -5,11 +5,7 @@ import { appHead } from '#build/nuxt.config.mjs'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const head = createHead()
-
-  head.push(appHead, {
-    // when SSR we don't need to hydrate this entry
-    mode: nuxtApp.ssrContext?.noSSR ? 'all' : 'server'
-  })
+  head.push(appHead)
 
   nuxtApp.vueApp.use(head)
 
