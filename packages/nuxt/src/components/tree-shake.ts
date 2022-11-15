@@ -42,14 +42,13 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
       }
 
       const s = new MagicString(code)
-      const parse = this.parse
       const importDeclarations: AcornNode<ImportDeclaration>[] = []
 
       const [COMPONENTS_RE, COMPONENTS_IDENTIFIERS_RE] = regexpMap.get(components)!
       if (!COMPONENTS_RE.test(code)) { return }
 
-      walk(parse(code, { sourceType: 'module', ecmaVersion: 'latest' }), {
-        enter (_node) {
+      walk(this.parse(code, { sourceType: 'module', ecmaVersion: 'latest' }), {
+        enter: (_node) => {
           const node = _node as AcornNode<CallExpression | ImportDeclaration>
           if (node.type === 'ImportDeclaration') {
             importDeclarations.push(node)
@@ -60,18 +59,19 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
           ) {
             const [componentCall, _, children] = node.arguments
             if (componentCall.type === 'Identifier' || componentCall.type === 'MemberExpression') {
-              const isClientComponent = COMPONENTS_IDENTIFIERS_RE.test(componentCall.type === 'Identifier' ? componentCall.name : (componentCall.property as Literal).value as string)
-
+              const componentName = componentCall.type === 'Identifier' ? componentCall.name : (componentCall.property as Literal).value as string
+              const isClientComponent = COMPONENTS_IDENTIFIERS_RE.test(componentName)
+              const isClientOnlyComponent = /^(?:_component_)?(?:Lazy|lazy_)?(?:client_only|ClientOnly)$/.test(componentName)
               if (isClientComponent && children?.type === 'ObjectExpression') {
-                const nonFallbackSlots = children.properties.filter(prop => prop.type === 'Property' && prop.key.type === 'Identifier' && !PLACEHOLDER_EXACT_RE.test(prop.key.name)) as AcornNode<Property>[]
+                const slotsToRemove = isClientOnlyComponent ? children.properties.filter(prop => prop.type === 'Property' && prop.key.type === 'Identifier' && !PLACEHOLDER_EXACT_RE.test(prop.key.name)) as AcornNode<Property>[] : children.properties as AcornNode<Property>[]
 
-                for (const slot of nonFallbackSlots) {
+                for (const slot of slotsToRemove) {
+                  const componentsSet = new Set<string>()
                   s.remove(slot.start, slot.end + 1)
                   const removedCode = `({${code.slice(slot.start, slot.end + 1)}})`
-                  const componentsSet = new Set<string>()
                   const currentCode = s.toString()
-                  walk(parse(removedCode, { sourceType: 'module', ecmaVersion: 'latest' }), {
-                    enter (_node) {
+                  walk(this.parse(removedCode, { sourceType: 'module', ecmaVersion: 'latest' }), {
+                    enter: (_node) => {
                       const node = _node as AcornNode<CallExpression>
                       if (node.type === 'CallExpression' && node.callee.type === 'Identifier' && SSR_RENDER_RE.test(node.callee.name)) {
                         const componentNode = node.arguments[0]
@@ -87,8 +87,8 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
                           if (!isRenderedInCode(currentCode, removedCode.slice(start, end))) {
                             componentsSet.add(((componentNode as MemberExpression).property as Literal).value as string)
                             // remove the component from the return statement of `setup()`
-                            walk(parse(code, { sourceType: 'module', ecmaVersion: 'latest' }), {
-                              enter (_node) {
+                            walk(this.parse(code, { sourceType: 'module', ecmaVersion: 'latest' }), {
+                              enter: (_node) => {
                                 const node = _node as Property
                                 if (node.type === 'Property' && node.key.type === 'Identifier' && node.key.name === 'setup' && node.value.type === 'FunctionExpression') {
                                   const returnStatement = node.value.body.body.find(n => n.type === 'ReturnStatement') as ReturnStatement | undefined

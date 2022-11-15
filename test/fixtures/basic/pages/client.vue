@@ -52,6 +52,11 @@ onBeforeUnmount(() => import('~/components/BreaksServer.client'))
             This should be rendered client-side
           </div>
         </template>
+        <template #fallback>
+          <FunctionalComponent />
+          <!-- this should be treeshaken on .client -->
+          <BreaksServer />
+        </template>
       </LazyClientOnlyScript>
       <div class="blue">
         i'm blue
