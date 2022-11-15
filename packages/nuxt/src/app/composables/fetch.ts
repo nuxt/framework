@@ -1,7 +1,6 @@
 import type { FetchError, FetchOptions } from 'ofetch'
 import type { TypedInternalResponse, NitroFetchRequest } from 'nitropack'
 import { computed, unref, Ref, reactive } from 'vue'
-import { withBase, withQuery } from 'ufo'
 import { hash } from 'ohash'
 import type { AsyncDataOptions, _Transform, KeyOfRes, AsyncData, PickFrom } from './asyncData'
 import { useAsyncData } from './asyncData'
@@ -46,7 +45,7 @@ export function useFetch<
   arg2?: string
 ) {
   const [opts = {}, autoKey] = typeof arg1 === 'string' ? [{}, arg1] : [arg1, arg2]
-  const _key = opts.key || (typeof request === 'string' ? hash(withBase(unref(opts.baseURL) || '', withQuery(request as string, unref(opts.params) || {}))) : autoKey)
+  const _key = opts.key || hash([autoKey, unref(opts.baseURL), typeof request === 'string' ? request : '', unref(opts.params)])
   if (!_key || typeof _key !== 'string') {
     throw new TypeError('[nuxt] [useFetch] key must be a string: ' + _key)
   }
