@@ -123,6 +123,8 @@ export default defineNuxtModule<ComponentsOptions>({
     // components.islands.mjs
     if (nuxt.options.experimental.componentIslands) {
       addTemplate({ ...componentsIslandsTemplate, filename: 'components.islands.mjs', options: { getComponents } })
+    } else {
+      addTemplate({ filename: 'components.islands.mjs', getContents: () => 'export default {}' })
     }
 
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
