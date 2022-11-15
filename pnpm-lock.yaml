@@ -47,7 +47,7 @@ importers:
       semver: ^7.3.8
       std-env: ^3.3.0
       typescript: ^4.8.4
-      ufo: ^0.8.6
+      ufo: ^1.0.0
       unbuild: ^0.9.4
       vite: ^3.2.3
       vitest: ^0.25.1
@@ -83,7 +83,7 @@ importers:
       semver: 7.3.8
       std-env: 3.3.0
       typescript: 4.8.4
-      ufo: 0.8.6
+      ufo: 1.0.0
       unbuild: 0.9.4
       vite: 3.2.3_@types+node@18.11.9
       vitest: 0.25.1
@@ -121,7 +121,7 @@ importers:
     devDependencies:
       '@nuxt/test-utils': link:../../../packages/test-utils
       nuxt: link:../../../packages/nuxt
-      vitest: 0.25.1
+      vitest: 0.25.2
 
   examples/app-config:
     specifiers:
@@ -442,7 +442,7 @@ importers:
       perfect-debounce: ^0.1.3
       scule: ^0.3.2
       strip-literal: ^0.4.2
-      ufo: ^0.8.6
+      ufo: ^1.0.0
       ultrahtml: ^1.0.0
       unbuild: ^0.9.4
       unctx: ^2.0.2
@@ -487,7 +487,7 @@ importers:
       perfect-debounce: 0.1.3
       scule: 0.3.2
       strip-literal: 0.4.2
-      ufo: 0.8.6
+      ufo: 1.0.0
       ultrahtml: 1.0.0
       unctx: 2.0.2
       unenv: 0.6.2
@@ -520,7 +520,7 @@ importers:
       postcss-import-resolver: ^2.0.0
       scule: ^0.3.2
       std-env: ^3.3.0
-      ufo: ^0.8.6
+      ufo: ^1.0.0
       unbuild: ^0.9.4
       unimport: ^0.7.0
       untyped: ^0.5.0
@@ -535,7 +535,7 @@ importers:
       postcss-import-resolver: 2.0.0
       scule: 0.3.2
       std-env: 3.3.0
-      ufo: 0.8.6
+      ufo: 1.0.0
       unimport: 0.7.0
       untyped: 0.5.0
     devDependencies:
@@ -607,7 +607,7 @@ importers:
       postcss-url: ^10.1.3
       rollup: ^2.79.1
       rollup-plugin-visualizer: ^5.8.3
-      ufo: ^0.8.6
+      ufo: ^1.0.0
       unbuild: ^0.9.4
       unplugin: ^0.10.2
       vite: ^3.2.3
@@ -643,7 +643,7 @@ importers:
       postcss-url: 10.1.3_postcss@8.4.19
       rollup: 2.79.1
       rollup-plugin-visualizer: 5.8.3_rollup@2.79.1
-      ufo: 0.8.6
+      ufo: 1.0.0
       unplugin: 0.10.2
       vite: 3.2.3
       vite-node: 0.25.1
@@ -692,7 +692,7 @@ importers:
       postcss-url: ^10.1.3
       style-resources-loader: ^1.5.0
       time-fix-plugin: ^2.0.7
-      ufo: ^0.8.6
+      ufo: ^1.0.0
       unbuild: ^0.9.4
       unplugin: ^0.10.2
       url-loader: ^4.1.1
@@ -734,7 +734,7 @@ importers:
       postcss-url: 10.1.3_postcss@8.4.19
       style-resources-loader: 1.5.0_webpack@5.75.0
       time-fix-plugin: 2.0.7_webpack@5.75.0
-      ufo: 0.8.6
+      ufo: 1.0.0
       unplugin: 0.10.2
       url-loader: 4.1.1_p5dl6emkcwslbw72e37w4ug7em
       vue-bundle-renderer: 0.5.0
@@ -8368,6 +8368,9 @@ packages:
   /ufo/0.8.6:
     resolution: {integrity: sha512-fk6CmUgwKCfX79EzcDQQpSCMxrHstvbLswFChHS0Vump+kFkw7nJBfTZoC1j0bOGoY9I7R3n2DGek5ajbcYnOw==}
 
+  /ufo/1.0.0:
+    resolution: {integrity: sha512-DRty0ZBNlJ2R59y4mEupJRKLbkLQsc4qtxjpQv78AwEDuBkaUogMc2LkeqW3HddFlw6NwnXYfdThEZOiNgkmmQ==}
+
   /ultrahtml/1.0.0:
     resolution: {integrity: sha512-BOtReLegZ/OlSTVOSt4aH+wrUPwxoXvapUHXjwhDE4k4kMISWdfUR4PH5wvt/vgKjFcAcEUPFEZQiPiB87XO3Q==}
     dev: false
@@ -8782,6 +8785,51 @@ packages:
 
   /vitest/0.25.1:
     resolution: {integrity: sha512-eH74h6MkuEgsqR4mAQZeMK9O0PROiKY+i+1GMz/fBi5A3L2ml5U7JQs7LfPU7+uWUziZyLHagl+rkyfR8SLhlA==}
+    engines: {node: '>=v14.16.0'}
+    hasBin: true
+    peerDependencies:
+      '@edge-runtime/vm': '*'
+      '@vitest/browser': '*'
+      '@vitest/ui': '*'
+      happy-dom: '*'
+      jsdom: '*'
+    peerDependenciesMeta:
+      '@edge-runtime/vm':
+        optional: true
+      '@vitest/browser':
+        optional: true
+      '@vitest/ui':
+        optional: true
+      happy-dom:
+        optional: true
+      jsdom:
+        optional: true
+    dependencies:
+      '@types/chai': 4.3.3
+      '@types/chai-subset': 1.3.3
+      '@types/node': 18.11.9
+      acorn: 8.8.0
+      acorn-walk: 8.2.0
+      chai: 4.3.6
+      debug: 4.3.4
+      local-pkg: 0.4.2
+      source-map: 0.6.1
+      strip-literal: 0.4.2
+      tinybench: 2.3.1
+      tinypool: 0.3.0
+      tinyspy: 1.0.2
+      vite: 3.2.3_@types+node@18.11.9
+    transitivePeerDependencies:
+      - less
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+    dev: true
+
+  /vitest/0.25.2:
+    resolution: {integrity: sha512-qqkzfzglEFbQY7IGkgSJkdOhoqHjwAao/OrphnHboeYHC5JzsVFoLCaB2lnAy8krhj7sbrFTVRApzpkTOeuDWQ==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
     peerDependencies:
