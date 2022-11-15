@@ -19,10 +19,19 @@ export default __nuxt_page_meta
 `
 
 const CODE_HMR = `
-if (import.meta.hot) {
-  import.meta.hot.accept(mod => {
-    Object.assign(__nuxt_page_meta, mod)
-  })
+if (process.dev) {
+  // Vite
+  if (import.meta.hot) {
+    import.meta.hot.accept(mod => {
+      Object.assign(__nuxt_page_meta, mod)
+    })
+  }
+  // Webpack
+  if (import.meta.webpackHot) {
+    import.meta.webpackHot.accept((err) => {
+      if (err) { window.location = window.location.href }
+    })
+  }
 }`
 
 export const PageMetaPlugin = createUnplugin((options: PageMetaPluginOptions) => {
