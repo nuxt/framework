@@ -121,7 +121,7 @@ importers:
     devDependencies:
       '@nuxt/test-utils': link:../../../packages/test-utils
       nuxt: link:../../../packages/nuxt
-      vitest: 0.25.1
+      vitest: 0.25.2
 
   examples/app-config:
     specifiers:
@@ -420,7 +420,7 @@ importers:
       '@unhead/ssr': ^0.6.6
       '@vue/reactivity': ^3.2.45
       '@vue/shared': ^3.2.45
-      '@vueuse/head': ^1.0.12
+      '@vueuse/head': ^1.0.13
       chokidar: ^3.5.3
       cookie-es: ^0.5.0
       defu: ^6.1.0
@@ -467,7 +467,7 @@ importers:
       '@unhead/ssr': 0.6.6
       '@vue/reactivity': 3.2.45
       '@vue/shared': 3.2.45
-      '@vueuse/head': 1.0.12_vue@3.2.45
+      '@vueuse/head': 1.0.13_vue@3.2.45
       chokidar: 3.5.3
       cookie-es: 0.5.0
       defu: 6.1.0
@@ -2093,11 +2093,24 @@ packages:
       '@unhead/schema': 0.6.6
     dev: false
 
+  /@unhead/dom/0.6.7:
+    resolution: {integrity: sha512-HUp8ygfQ7VfpEouy26nLsuk6Y5ii5UldoC1NdTuzHSxkYwlq0v4rMpiO1f7T/0i9D7RJDpAp8LdhsHKgcEmRiA==}
+    dependencies:
+      '@unhead/schema': 0.6.7
+    dev: false
+
   /@unhead/schema/0.6.6:
     resolution: {integrity: sha512-hcJLBTW7LlS1KzaUZ4nxBFaQmx3g7SxfJyX37/UET2JlH+8ycQgojFCZbnrHn5QIJz7zU1VcWv9gGfeS9i2lSQ==}
     dependencies:
       '@zhead/schema': 1.0.0-beta.13
       hookable: 5.4.1
+
+  /@unhead/schema/0.6.7:
+    resolution: {integrity: sha512-wVf3Zu7deua63J/HYKoUXUkG0wZLPnKws1DNpSJkhNrjbpdzvsfI08lPIkW1ISqddQiLFXOgcnbhYrhcD7ZZYw==}
+    dependencies:
+      '@zhead/schema': 1.0.0-beta.13
+      hookable: 5.4.1
+    dev: false
 
   /@unhead/ssr/0.6.6:
     resolution: {integrity: sha512-Dmt6E5BqJ3HRLh5fSlICCJ1YtYoyijl1jXdJ+D6jXHN8ut21/65qiwGPNPQOXAwBtBLLRRX3yvvDvTtlWN+zLQ==}
@@ -2105,12 +2118,18 @@ packages:
       '@unhead/schema': 0.6.6
     dev: false
 
-  /@unhead/vue/0.6.6_vue@3.2.45:
-    resolution: {integrity: sha512-oXkWEbW8astq5xhIS7HS+q6Q9vT/HGYM/gaHUpHQlXVFwc2t7KcBcDoFQMONLLw/eEovMudnwUGXRi6/8kwz8Q==}
+  /@unhead/ssr/0.6.7:
+    resolution: {integrity: sha512-jvEJER7dMSEtI6u60OrEz4gwhmQDGbo086HXdIYoT7RoaJ/YQa/CUAHRfLTO6F657iYs42VPFM3yRCVUbexZhA==}
+    dependencies:
+      '@unhead/schema': 0.6.7
+    dev: false
+
+  /@unhead/vue/0.6.7_vue@3.2.45:
+    resolution: {integrity: sha512-9qQ90WtOoQpXihM/MzDHiLWZ53HcZg9Xynf8PhY+004wLfj9e2cE2jSms1mjdP+BC7wVoeENQ9NCv4fOa6l6MQ==}
     peerDependencies:
       vue: '>=2.7 || >=3'
     dependencies:
-      '@unhead/schema': 0.6.6
+      '@unhead/schema': 0.6.7
       hookable: 5.4.1
       vue: 3.2.45
     dev: false
@@ -2578,15 +2597,15 @@ packages:
       - vue
     dev: true
 
-  /@vueuse/head/1.0.12_vue@3.2.45:
-    resolution: {integrity: sha512-ra2mnr8doC+ZmlKir3Jv2H0b9zkjxcBlkdb7Hi7kXpjXJ2E5U5S/c3QF3tNyO4WnxTjV/hEw2Is0wkfX924szg==}
+  /@vueuse/head/1.0.13_vue@3.2.45:
+    resolution: {integrity: sha512-QJ69f+V0blbroHPuOAYBQZek31kMmFttgUj+QmL+rnXgFUfRXj5rqIDC2chFBSsjHcWl6KfzwPbou5mjCVJAgw==}
     peerDependencies:
       vue: '>=2.7 || >=3'
     dependencies:
-      '@unhead/dom': 0.6.6
-      '@unhead/schema': 0.6.6
-      '@unhead/ssr': 0.6.6
-      '@unhead/vue': 0.6.6_vue@3.2.45
+      '@unhead/dom': 0.6.7
+      '@unhead/schema': 0.6.7
+      '@unhead/ssr': 0.6.7
+      '@unhead/vue': 0.6.7_vue@3.2.45
       vue: 3.2.45
     dev: false
 
@@ -8768,6 +8787,51 @@ packages:
 
   /vitest/0.25.1:
     resolution: {integrity: sha512-eH74h6MkuEgsqR4mAQZeMK9O0PROiKY+i+1GMz/fBi5A3L2ml5U7JQs7LfPU7+uWUziZyLHagl+rkyfR8SLhlA==}
+    engines: {node: '>=v14.16.0'}
+    hasBin: true
+    peerDependencies:
+      '@edge-runtime/vm': '*'
+      '@vitest/browser': '*'
+      '@vitest/ui': '*'
+      happy-dom: '*'
+      jsdom: '*'
+    peerDependenciesMeta:
+      '@edge-runtime/vm':
+        optional: true
+      '@vitest/browser':
+        optional: true
+      '@vitest/ui':
+        optional: true
+      happy-dom:
+        optional: true
+      jsdom:
+        optional: true
+    dependencies:
+      '@types/chai': 4.3.3
+      '@types/chai-subset': 1.3.3
+      '@types/node': 18.11.9
+      acorn: 8.8.0
+      acorn-walk: 8.2.0
+      chai: 4.3.6
+      debug: 4.3.4
+      local-pkg: 0.4.2
+      source-map: 0.6.1
+      strip-literal: 0.4.2
+      tinybench: 2.3.1
+      tinypool: 0.3.0
+      tinyspy: 1.0.2
+      vite: 3.2.3_@types+node@18.11.9
+    transitivePeerDependencies:
+      - less
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+    dev: true
+
+  /vitest/0.25.2:
+    resolution: {integrity: sha512-qqkzfzglEFbQY7IGkgSJkdOhoqHjwAao/OrphnHboeYHC5JzsVFoLCaB2lnAy8krhj7sbrFTVRApzpkTOeuDWQ==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
     peerDependencies:
