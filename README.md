@@ -1,4 +1,3 @@
-<div align="center">
 
 [![Nuxt banner](/assets/banner.png)](https://nuxt.com)
 
@@ -7,9 +6,8 @@
 
 Nuxt's goal is to make web development intuitive and performant, with a great developer experience.<br>Learn more in the ['What is Nuxt?'](https://nuxt.com/docs/getting-started/introduction) section of our documentation.
 
-</div>
 
- <p align="center">
+ <p>
   <a href="https://www.npmjs.com/package/nuxt/v/rc"><img src="https://img.shields.io/npm/v/nuxt/rc.svg?style=flat&colorA=002438&colorB=28CF8D" alt="Version"></a>
   <a href="https://www.npmjs.com/package/nuxt/v/rc"><img src="https://img.shields.io/npm/dm/nuxt.svg?style=flat&colorA=002438&colorB=28CF8D" alt="Downloads"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/github/license/nuxt/framework.svg?style=flat&colorA=002438&colorB=28CF8D" alt="License"></a>
@@ -109,8 +107,6 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
 </tbody>
 </table>
 
-<div align="center">
-
 ## Local Development
 
 Follow the docs to [Set Up Your Local Development Environment](https://nuxt.com/docs/community/framework-contribution#set-up-your-local-development-environment) to contribute to the framework and documentation.
@@ -125,4 +121,3 @@ Follow the docs to [Set Up Your Local Development Environment](https://nuxt.com/
 
 [MIT](./LICENSE)
 
-</div>
