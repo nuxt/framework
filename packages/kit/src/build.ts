@@ -30,13 +30,6 @@ export interface ExtendConfigOptions {
 }
 
 export interface ExtendWebpackConfigOptions extends ExtendConfigOptions {
-  /**
-   * Install plugin on modern build
-   *
-   * @default true
-   * @deprecated Nuxt 2 only
-   */
-  modern?: boolean
 }
 
 export interface ExtendViteConfigOptions extends ExtendConfigOptions {}

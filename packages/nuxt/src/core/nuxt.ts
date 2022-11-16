@@ -168,22 +168,6 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: resolve(nuxt.options.appDir, 'components/nuxt-loading-indicator')
   })
 
-  // Deprecate hooks
-  nuxt.hooks.deprecateHooks({
-    'autoImports:sources': {
-      to: 'imports:sources',
-      message: '`autoImports:sources` hook is deprecated. Use `addImportsSources()` from `@nuxt/kit` or `imports:dirs` with `nuxt>=3.0.0-rc.10`.'
-    },
-    'autoImports:dirs': {
-      to: 'imports:dirs',
-      message: '`autoImports:dirs` hook is deprecated. Use `addImportsDir()` from `@nuxt/kit` or `imports:dirs` with `nuxt>=3.0.0-rc.9`.'
-    },
-    'autoImports:extend': {
-      to: 'imports:extend',
-      message: '`autoImports:extend` hook is deprecated. Use `addImports()` from `@nuxt/kit` or `imports:extend` with `nuxt>=3.0.0-rc.9`.'
-    }
-  })
-
   // Add prerender payload support
   if (!nuxt.options.dev && nuxt.options.experimental.payloadExtraction) {
     addPlugin(resolve(nuxt.options.appDir, 'plugins/payload.client'))
@@ -260,12 +244,3 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
 
   return nuxt
 }
-
-/** @deprecated `defineNuxtConfig` is auto imported. Remove import or alternatively use `import { defineNuxtConfig } from  'nuxt/config'`. */
-export function defineNuxtConfig (config: NuxtConfig): NuxtConfig {
-  return config
-}
-
-/** @deprecated Use `import type { NuxtConfig } from  'nuxt/config'`.  */
-type _NuxtConfig = NuxtConfig
-export type { _NuxtConfig as NuxtConfig }

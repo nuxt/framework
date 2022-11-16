@@ -199,9 +199,6 @@ export default defineUntypedSchema({
    */
   modules: [],
 
-  /** @deprecated Use `modules` instead */
-  buildModules: [],
-
   /**
    * Customize default directory structure used by Nuxt.
    *
@@ -437,18 +434,6 @@ export default defineUntypedSchema({
       }
     })
   },
-
-  /**
-   * @type {typeof import('../src/types/config').PrivateRuntimeConfig}
-   * @deprecated Use `runtimeConfig` option.
-   */
-  privateRuntimeConfig: {},
-
-  /**
-   * @type {typeof import('../src/types/config').PublicRuntimeConfig}
-   * @deprecated Use `runtimeConfig` option with `public` key (`runtimeConfig.public.*`).
-   */
-  publicRuntimeConfig: {},
 
   /**
    * Additional app configuration

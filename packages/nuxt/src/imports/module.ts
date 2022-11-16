@@ -23,14 +23,6 @@ export default defineNuxtModule<Partial<ImportsOptions>>({
     }
   },
   async setup (options, nuxt) {
-    // TODO: remove deprecation warning
-    // @ts-ignore
-    if (nuxt.options.autoImports) {
-      logger.warn('`autoImports` config is deprecated, use `imports` instead.')
-      // @ts-ignore
-      options = defu(nuxt.options.autoImports, options)
-    }
-
     // TODO: fix sharing of defaults between invocations of modules
     const presets = JSON.parse(JSON.stringify(options.presets)) as ImportPresetWithDeprecation[]
 
