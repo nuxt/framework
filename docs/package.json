@@ -16,7 +16,7 @@
     "untyped": "^1.0.0"
   },
   "resolutions": {
-    "parse5": "6.0.1"
+    "parse5": "7.1.1"
   },
   "packageManager": "yarn@3.3.0"
 }
