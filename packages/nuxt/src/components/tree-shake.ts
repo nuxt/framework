@@ -38,7 +38,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
           .flatMap(c => [c.pascalName, c.kebabName.replaceAll('-', '_')])
           .concat(['ClientOnly', 'client_only'])
 
-        regexpMap.set(components, [new RegExp(`(${clientOnlyComponents.join('|')})`), new RegExp(`^(${clientOnlyComponents.map(c => `^(?:_component_)?(?:Lazy|lazy_ )?${c}`).join('|')})$`), clientOnlyComponents])
+        regexpMap.set(components, [new RegExp(`(${clientOnlyComponents.join('|')})`), new RegExp(`^(${clientOnlyComponents.map(c => `(?:(?:_unref\\()?(?:_component_)?(?:Lazy|lazy_)?${c}\\)?)`).join('|')})$`), clientOnlyComponents])
       }
 
       const s = new MagicString(code)
@@ -58,10 +58,10 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
             SSR_RENDER_RE.test(node.callee.name)
           ) {
             const [componentCall, _, children] = node.arguments
-            if (componentCall.type === 'Identifier' || componentCall.type === 'MemberExpression') {
-              const componentName = componentCall.type === 'Identifier' ? componentCall.name : (componentCall.property as Literal).value as string
+            if (componentCall.type === 'Identifier' || componentCall.type === 'MemberExpression' || componentCall.type === 'CallExpression') {
+              const componentName = getComponentName(node)
               const isClientComponent = COMPONENTS_IDENTIFIERS_RE.test(componentName)
-              const isClientOnlyComponent = /^(?:_component_)?(?:Lazy|lazy_)?(?:client_only|ClientOnly)$/.test(componentName)
+              const isClientOnlyComponent = /^(?:_unref\()?(?:_component_)?(?:Lazy|lazy_)?(?:client_only|ClientOnly\)?)$/.test(componentName)
               if (isClientComponent && children?.type === 'ObjectExpression') {
                 const slotsToRemove = isClientOnlyComponent ? children.properties.filter(prop => prop.type === 'Property' && prop.key.type === 'Identifier' && !PLACEHOLDER_EXACT_RE.test(prop.key.name)) as AcornNode<Property>[] : children.properties as AcornNode<Property>[]
 
@@ -78,7 +78,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
 
                         if (componentNode.type === 'CallExpression') {
                           const identifier = componentNode.arguments[0] as Identifier
-                          if (!isRenderedInCode(currentCode, identifier.name)) { componentsSet.add(identifier.name) }
+                          if (!isRenderedInCode(currentCode, removedCode.slice((componentNode as AcornNode<CallExpression>).start, (componentNode as AcornNode<CallExpression>).end))) { componentsSet.add(identifier.name) }
                         } else if (componentNode.type === 'Identifier' && !isRenderedInCode(currentCode, componentNode.name)) {
                           componentsSet.add(componentNode.name)
                         } else if (componentNode.type === 'MemberExpression') {
@@ -175,4 +175,20 @@ function findImportDeclaration (declarations: AcornNode<ImportDeclaration>[], im
  */
 function isRenderedInCode (code: string, name: string) {
   return new RegExp(`ssrRenderComponent\\(${escapeStringRegexp(name)}`).test(code)
+}
+
+/**
+ * retrieve the component identifier being used on ssrRender callExpression
+ *
+ * @param {CallExpression} ssrRenderNode - ssrRender callExpression
+ */
+function getComponentName (ssrRenderNode: AcornNode<CallExpression>): string {
+  const componentCall = ssrRenderNode.arguments[0] as Identifier | MemberExpression | CallExpression
+
+  if (componentCall.type === 'Identifier') {
+    return componentCall.name
+  } else if (componentCall.type === 'MemberExpression') {
+    return (componentCall.property as Literal).value as string
+  }
+  return (componentCall.arguments[0] as Identifier).name
 }
