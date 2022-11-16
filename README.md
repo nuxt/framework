@@ -1,5 +1,5 @@
 
-[![Nuxt banner](/assets/banner.png)](https://nuxt.com)
+[![Nuxt banner](./.github/assets/banner.png)](https://nuxt.com)
 
 # 👋 Welcome to Nuxt
 
@@ -24,7 +24,7 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
 <tr>
   <td width="80" align="center" valign="top">
     <br>
-    <a href="https://nuxt.com/docs"><img src="/assets/documentation.png"></a>
+    <a href="https://nuxt.com/docs"><img src="./.github/assets/documentation.png"></a>
   </td>
   <td valign="top">
     <h3>Documentation</h3>
@@ -36,7 +36,7 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
 <tr>
   <td width="80" align="center" valign="top">
     <br>
-    <a href="https://nuxt.com/modules"><img src="/assets/modules.png"></a>
+    <a href="https://nuxt.com/modules"><img src="./.github/assets/modules.png"></a>
   </td>
   <td valign="top">
     <h3>Modules</h3>
@@ -48,7 +48,7 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
 <tr>
   <td width="80" align="center" valign="top">
     <br>
-    <a href="https://nuxt.com/docs/examples/hello-world"><img src="/assets/examples.png"></a>
+    <a href="https://nuxt.com/docs/examples/hello-world"><img src="./.github/assets/examples.png"></a>
   </td>
   <td>
     <h3>Examples</h3>
@@ -71,7 +71,7 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
 <tr>
   <td width="80" align="center" valign="top">
     <br>
-    <a href="https://nuxt.com/docs/community/reporting-bugs"><img src="/assets/reporting-bugs.png"></a>
+    <a href="https://nuxt.com/docs/community/reporting-bugs"><img src="./.github/assets/reporting-bugs.png"></a>
   </td>
   <td valign="top">
     <h3>Reporting bugs</h3>
@@ -83,7 +83,7 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
 <tr>
   <td width="80" align="center" valign="top">
     <br>
-    <a href="https://nuxt.com/docs/community/contribution"><img src="/assets/suggestions.png"></a>
+    <a href="https://nuxt.com/docs/community/contribution"><img src="./.github/assets/suggestions.png"></a>
   </td>
   <td valign="top">
     <h3>Suggestions</h3>
@@ -95,7 +95,7 @@ Nuxt's goal is to make web development intuitive and performant, with a great de
 <tr>
   <td width="80" align="center" valign="top">
     <br>
-    <a href="https://nuxt.com/docs/community/getting-help"><img src="/assets/questions.png"></a>
+    <a href="https://nuxt.com/docs/community/getting-help"><img src="./.github/assets/questions.png"></a>
   </td>
   <td valign="top">
     <h3>Questions</h3>
@@ -114,7 +114,7 @@ Follow the docs to [Set Up Your Local Development Environment](https://nuxt.com/
 ## Follow us
 
 <p valign="center">
-  <a href="https://chat.nuxt.dev"><img width="20px" src="/assets/discord.svg" alt="Discord"></a>&nbsp;&nbsp;<a href="https://twitter.nuxt.dev"><img width="20px" src="/assets/twitter.svg" alt="Twitter"></a>&nbsp;&nbsp;<a href="https://github.nuxt.dev"><img width="20px" src="/assets/github.svg" alt="GitHub"></a>
+  <a href="https://chat.nuxt.dev"><img width="20px" src="./.github/assets/discord.svg" alt="Discord"></a>&nbsp;&nbsp;<a href="https://twitter.nuxt.dev"><img width="20px" src="./.github/assets/twitter.svg" alt="Twitter"></a>&nbsp;&nbsp;<a href="https://github.nuxt.dev"><img width="20px" src="./.github/assets/github.svg" alt="GitHub"></a>
 </p>
 
 ## License
