@@ -4120,7 +4120,7 @@ __metadata:
   dependencies:
     jiti: ^1.16.0
     nuxt: ^3.0.0
-    nuxt-website-theme: ^0.1.4
+    nuxt-website-theme: ^0.1.3
     pathe: ^1.0.0
     scule: ^1.0.0
     untyped: ^1.0.0
@@ -8908,7 +8908,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxt-website-theme@npm:^0.1.4":
+"nuxt-website-theme@npm:^0.1.3":
   version: 0.1.4
   resolution: "nuxt-website-theme@npm:0.1.4"
   dependencies:
