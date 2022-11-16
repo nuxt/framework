@@ -64,7 +64,6 @@ describe('API routes', () => {
     expectTypeOf(useLazyFetch('/api/union').data).toEqualTypeOf<Ref<{ type: 'a', foo: string } | { type: 'b', baz: string } | null>>()
     expectTypeOf(useLazyFetch('/api/union', { pick: ['type'] }).data).toEqualTypeOf<Ref<{ type: 'a' } | { type: 'b' } | null>>()
     expectTypeOf(useLazyFetch('/api/other').data).toEqualTypeOf<Ref<unknown>>()
-    expectTypeOf(useLazyFetch('/api/other').data).toEqualTypeOf<Ref<unknown>>()
     expectTypeOf(useLazyFetch<TestResponse>('/test').data).toEqualTypeOf<Ref<TestResponse | null>>()
 
     expectTypeOf(useLazyFetch('/error').error).toEqualTypeOf<Ref<FetchError | null>>()
