@@ -27,5 +27,5 @@ export function addImportsSources (presets: ImportPresetWithDeprecation | Import
     for (const preset of (Array.isArray(presets) ? presets : [presets])) {
       _presets.push(preset)
     }
-  }, { allowDeprecated: true })
+  })
 }
