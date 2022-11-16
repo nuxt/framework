@@ -424,8 +424,6 @@ export default defineUntypedSchema({
    */
   runtimeConfig: {
     $resolve: async (val: RuntimeConfig, get) => defu(val, {
-      ...await get('publicRuntimeConfig'),
-      ...await get('privateRuntimeConfig'),
       public: await get('publicRuntimeConfig'),
       app: {
         baseURL: (await get('app')).baseURL,

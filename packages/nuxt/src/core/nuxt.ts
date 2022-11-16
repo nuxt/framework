@@ -116,7 +116,6 @@ async function initNuxt (nuxt: Nuxt) {
   // Init user modules
   await nuxt.callHook('modules:before')
   const modulesToInstall = [
-    ...nuxt.options.buildModules,
     ...nuxt.options.modules,
     ...nuxt.options._modules
   ]
