@@ -417,7 +417,7 @@ importers:
       '@nuxt/vite-builder': workspace:*
       '@types/fs-extra': ^9.0.13
       '@types/hash-sum': ^1.0.0
-      '@unhead/ssr': ^0.6.9
+      '@unhead/ssr': ^1.0.0
       '@vue/reactivity': ^3.2.45
       '@vue/shared': ^3.2.45
       '@vueuse/head': ^1.0.13
@@ -464,7 +464,7 @@ importers:
       '@nuxt/telemetry': 2.1.7
       '@nuxt/ui-templates': 0.4.0
       '@nuxt/vite-builder': link:../vite
-      '@unhead/ssr': 0.6.9
+      '@unhead/ssr': 1.0.0
       '@vue/reactivity': 3.2.45
       '@vue/shared': 3.2.45
       '@vueuse/head': 1.0.13_vue@3.2.45
@@ -2056,10 +2056,23 @@ packages:
       '@zhead/schema': 1.0.0-beta.13
       hookable: 5.4.2
 
+  /@unhead/schema/1.0.0:
+    resolution: {integrity: sha512-RDjizmCwEBpY7zzLgwMPFCb1h6P/chopg9uvrZS233HEND1IkzGm/tX7IgbPos/wOmDlebjsnUUBwmYBGoq6pQ==}
+    dependencies:
+      '@zhead/schema': 1.0.1
+      hookable: 5.4.2
+    dev: false
+
   /@unhead/ssr/0.6.9:
     resolution: {integrity: sha512-vD4B1omq/eRhBf1qaYkt5n0hWL5XKc3AeaUKVbJxRquNnBXVch128Wc5q+lXzrzDppbTvSYEUVZMpBpOs6BYWw==}
     dependencies:
       '@unhead/schema': 0.6.9
+    dev: false
+
+  /@unhead/ssr/1.0.0:
+    resolution: {integrity: sha512-mOX7b5M3fFC7uPqnl5JWATsGe6CLfLFpf/LySfpTE2UHEL1AzDwqkA9xNyz3BTBwJbccRW76Vn/bcHF/I85CuQ==}
+    dependencies:
+      '@unhead/schema': 1.0.0
     dev: false
 
   /@unhead/vue/0.6.7_vue@3.2.45:
@@ -2719,6 +2732,10 @@ packages:
 
   /@zhead/schema/1.0.0-beta.13:
     resolution: {integrity: sha512-P1A1vRGFBhITco8Iw4/hvnDYoE/SoVrd71dW1pBFdXJb3vP+pBtoOuhbEKy0ROJGOyzQuqvFibcwzyLlWMqNiQ==}
+
+  /@zhead/schema/1.0.1:
+    resolution: {integrity: sha512-n6BDs+MjSOesuv6krG2QGyCPfdndxWX0M/G2wEGu1SPHc5jLHHi3EY1+vQvudFVXRVXquZHKsDPE7pSyeyGgHg==}
+    dev: false
 
   /abbrev/1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
