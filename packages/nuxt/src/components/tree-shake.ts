@@ -10,7 +10,7 @@ import { resolve } from 'pathe'
 import { distDir } from '../dirs'
 
 interface TreeShakeTemplatePluginOptions {
-  sourcemap?: boolean,
+  sourcemap?: boolean
   getComponents (): Component[]
 }
 
@@ -20,6 +20,7 @@ const SSR_RENDER_RE = /ssrRenderComponent/
 const PLACEHOLDER_EXACT_RE = /^(fallback|placeholder)$/
 
 export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplatePluginOptions) => {
+  const regexpMap = new WeakMap<Component[], [RegExp, RegExp, string[]]>()
   return {
     name: 'nuxt:tree-shake-template',
     enforce: 'post',
@@ -28,8 +29,6 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
       return pathname.endsWith('.vue')
     },
     transform (code, id) {
-      const regexpMap = new WeakMap<Component[], [RegExp, RegExp, string[]]>()
-
       const components = options.getComponents()
 
       if (!regexpMap.has(components)) {
