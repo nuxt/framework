@@ -444,7 +444,6 @@ importers:
       scule: ^1.0.0
       strip-literal: ^1.0.0
       ufo: ^1.0.0
-      ultrahtml: ^1.0.0
       unbuild: ^1.0.0
       unctx: ^2.1.0
       unenv: ^1.0.0
