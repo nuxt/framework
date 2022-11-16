@@ -66,13 +66,6 @@ export function extendWebpackConfig (
         fn(config)
       }
     }
-    // Nuxt 2 backwards compatibility
-    if (options.modern !== false) {
-      const config = configs.find(i => i.name === 'modern')
-      if (config) {
-        fn(config)
-      }
-    }
   })
 }
 

@@ -1,6 +1,6 @@
 import { join, normalize, resolve } from 'pathe'
 import { createHooks, createDebugger } from 'hookable'
-import type { Nuxt, NuxtOptions, NuxtConfig, NuxtHooks } from '@nuxt/schema'
+import type { Nuxt, NuxtOptions, NuxtHooks } from '@nuxt/schema'
 import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule, addPlugin } from '@nuxt/kit'
 // Temporary until finding better placement
 /* eslint-disable import/no-restricted-paths */
