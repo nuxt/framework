@@ -13,7 +13,14 @@ export type PickFrom<T, K extends Array<string>> = T extends Array<any>
     : Pick<T, K[number]>
   : T
 
-export type KeysOf<T> = Array<keyof T extends string ? keyof T : string>
+export type KeysOf<T> = Array<
+  T extends T // Include all keys of union types, not just common keys
+  ? keyof T extends string
+    ? keyof T
+    : string
+  : never
+>
+
 export type KeyOfRes<Transform extends _Transform> = KeysOf<ReturnType<Transform>>
 
 type MultiWatchSources = (WatchSource<unknown> | object)[]
@@ -96,11 +103,7 @@ export function useAsyncData<
   options.server = options.server ?? true
   options.default = options.default ?? getDefault
 
-  // TODO: remove support for `defer` in Nuxt 3 RC
-  if ((options as any).defer) {
-    console.warn('[useAsyncData] `defer` has been renamed to `lazy`. Support for `defer` will be removed in RC.')
-  }
-  options.lazy = options.lazy ?? (options as any).defer ?? false
+  options.lazy = options.lazy ?? false
   options.immediate = options.immediate ?? true
 
   // Setup nuxt instance payload
