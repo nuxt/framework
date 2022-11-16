@@ -40,10 +40,6 @@ export type NuxtLayout = {
 }
 
 export interface ImportPresetWithDeprecation extends InlinePreset {
-  /**
-   * @deprecated renamed to `imports`
-   */
-  names?: string[]
 }
 
 export interface GenerateAppOptions {
