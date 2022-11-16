@@ -74,6 +74,8 @@ export interface AppConfigInput extends Record<string, any> {
   nuxt?: never
   /** @deprecated reserved */
   nitro?: never
+  /** @deprecated reserved */
+  server?: never
 }
 
 export interface NuxtAppConfig {
