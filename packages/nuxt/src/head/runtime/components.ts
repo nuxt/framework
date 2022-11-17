@@ -26,7 +26,7 @@ const globalProps = {
     type: Boolean,
     default: undefined
   },
-  class: String,
+  class: [String, Object],
   contenteditable: {
     type: Boolean,
     default: undefined
