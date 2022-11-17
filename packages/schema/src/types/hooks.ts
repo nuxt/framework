@@ -9,6 +9,7 @@ import type { Compiler, Configuration, Stats } from 'webpack'
 import type { Nuxt, NuxtApp, ResolvedNuxtTemplate } from './nuxt'
 import type { Nitro, NitroConfig } from 'nitropack'
 import type { Component, ComponentsOptions } from './components'
+import type { RouteRecordRedirectOption } from "vue-router"
 import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
 
 export type HookResult = Promise<void> | void
@@ -24,7 +25,7 @@ export type NuxtPage = {
   file: string
   meta?: Record<string, any>
   alias?: string[] | string
-  redirect?: string
+  redirect?: RouteRecordRedirectOption
   children?: NuxtPage[]
 }
 
