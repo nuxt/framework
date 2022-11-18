@@ -222,8 +222,8 @@ export default defineNuxtPlugin<{ route: Route, router: Router }>((nuxtApp) => {
   nuxtApp.hooks.hookOnce('app:created', async () => {
     router.beforeEach(async (to, from) => {
       to.meta = reactive(to.meta || {})
-      if (nuxtApp.isHydrating) {
-        to.meta.layout = initialLayout.value ?? to.meta.layout
+      if (nuxtApp.isHydrating && initialLayout.value !== undefined && initialLayout.value !== null) {
+        to.meta.layout = initialLayout.value
       }
       nuxtApp._processingMiddleware = true
 
