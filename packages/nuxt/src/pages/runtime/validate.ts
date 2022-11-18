@@ -1,12 +1,11 @@
-import { createError, defineNuxtRouteMiddleware } from '#app'
+import { RouteLocation } from 'vue-router'
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default async (to: RouteLocation) => {
   if (!to.meta?.validate) { return }
 
   const result = await Promise.resolve(to.meta.validate(to))
-  if (typeof result === 'boolean') {
-    return result
+  if (result === true) {
+    return
   }
-
-  return createError(result)
-})
+  return result
+}
