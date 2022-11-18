@@ -402,6 +402,16 @@ describe('layouts', () => {
     expect(html).toContain('Custom Layout:')
     await expectNoClientErrors('/with-dynamic-layout')
   })
+  it('should work with a computed layout', async () => {
+    const html = await $fetch('/with-computed-layout')
+
+    // Snapshot
+    // expect(html).toMatchInlineSnapshot()
+
+    expect(html).toContain('with-computed-layout')
+    expect(html).toContain('Custom Layout')
+    await expectNoClientErrors('/with-computed-layout')
+  })
 })
 
 describe('reactivity transform', () => {
