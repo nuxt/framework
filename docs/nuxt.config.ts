@@ -10,6 +10,9 @@ export default defineNuxtConfig({
       options: {
         exclude: []
       }
+    },
+    prerender: {
+      routes: ['/sitemap.xml']
     }
   },
   vite: {
