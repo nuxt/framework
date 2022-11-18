@@ -20,9 +20,13 @@
   </div>
 </template>
 
-<script setup>
-const layout = ref('custom')
+<script>
 definePageMeta({
-  layout: computed(() => layout.value)
+  layout: false
 })
+export default {
+  data: () => ({
+    layout: 'custom'
+  })
+}
 </script>
