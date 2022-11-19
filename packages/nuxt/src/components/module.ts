@@ -7,6 +7,7 @@ import { componentsPluginTemplate, componentsTemplate, componentsTypeTemplate } 
 import { scanComponents } from './scan'
 import { loaderPlugin } from './loader'
 import { TreeShakeTemplatePlugin } from './tree-shake'
+import { clientNextTickPlugin } from './client'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
 const isDirectory = (p: string) => { try { return statSync(p).isDirectory() } catch (_e) { return false } }
@@ -190,6 +191,9 @@ export default defineNuxtModule<ComponentsOptions>({
         sourcemap: nuxt.options.sourcemap[mode],
         getComponents,
         mode
+      }),
+      clientNextTickPlugin.vite({
+        sourcemap: nuxt.options.sourcemap[mode]
       }))
       if (nuxt.options.experimental.treeshakeClientOnly && isServer) {
         config.plugins.push(TreeShakeTemplatePlugin.vite({
@@ -206,6 +210,9 @@ export default defineNuxtModule<ComponentsOptions>({
           sourcemap: nuxt.options.sourcemap[mode],
           getComponents,
           mode
+        }),
+        clientNextTickPlugin.webpack({
+          sourcemap: nuxt.options.sourcemap[mode]
         }))
         if (nuxt.options.experimental.treeshakeClientOnly && mode === 'server') {
           config.plugins.push(TreeShakeTemplatePlugin.webpack({
