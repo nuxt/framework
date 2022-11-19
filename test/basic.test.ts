@@ -221,6 +221,9 @@ describe('pages', () => {
     expect(await page.locator('.string-stateful-script').innerHTML()).toContain('1')
     expect(await page.locator('.string-stateful').innerHTML()).toContain('1')
 
+    // ensure .client component onMounted hook is executed after the first tick
+    expect(await page.locator('[data-test-id=mount-hook-ref-1]').innerHTML()).toContain('HTMLInputElement')
+
     // ensure directives are reactive
     await page.locator('button#show-all').click()
     await Promise.all(hiddenSelectors.map(selector => page.locator(selector).isVisible()))
