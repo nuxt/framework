@@ -37,7 +37,7 @@ export default defineComponent({
         default: (routeProps: RouterViewSlotProps) => {
           if (!routeProps.Component) { return }
 
-          const key = generateRouteKey(props.pageKey, routeProps)
+          const key = generateRouteKey(routeProps, props.pageKey)
           const done = nuxtApp.deferHydration()
 
           const hasTransition = !!(props.transition ?? routeProps.route.meta.pageTransition ?? defaultPageTransition)
