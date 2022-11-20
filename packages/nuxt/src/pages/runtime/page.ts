@@ -18,19 +18,16 @@ export default defineComponent({
       type: String
     },
     transition: {
-      type: [Boolean, Object] as any as () => boolean | TransitionProps,
-      default: undefined
+      type: [Boolean, Object] as any as () => boolean | TransitionProps
     },
     keepalive: {
-      type: [Boolean, Object] as any as () => boolean | KeepAliveProps,
-      default: undefined
+      type: [Boolean, Object] as any as () => boolean | KeepAliveProps
     },
     route: {
       type: Object as () => RouteLocationNormalized
     },
     pageKey: {
-      type: [Function, String] as unknown as () => string | ((route: RouteLocationNormalizedLoaded) => string),
-      default: null
+      type: [Function, String] as unknown as () => string | ((route: RouteLocationNormalizedLoaded) => string)
     }
   },
   setup (props, { attrs }) {
@@ -62,7 +59,9 @@ export default defineComponent({
     }
   }
 }) as DefineComponent<{
-  name?: string,
+  name?: string
+  transition?: boolean | TransitionProps
+  keepalive?: boolean | KeepAliveProps
   route?: RouteLocationNormalized
   pageKey?: string | ((route: RouteLocationNormalizedLoaded) => string)
   [key: string]: any
