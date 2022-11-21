@@ -32,7 +32,7 @@
     "hash-sum": "^2.0.0",
     "lodash-es": "^4.17.21",
     "magic-string": "^0.26.7",
-    "memfs": "^3.4.11",
+    "memfs": "^3.4.12",
     "mini-css-extract-plugin": "^2.7.0",
     "mlly": "^1.0.0",
     "ohash": "^1.0.0",
@@ -51,7 +51,7 @@
     "vue-loader": "^17.0.1",
     "webpack": "^5.75.0",
     "webpack-bundle-analyzer": "^4.7.0",
-    "webpack-dev-middleware": "^5.3.3",
+    "webpack-dev-middleware": "^6.0.0",
     "webpack-hot-middleware": "^2.25.3",
     "webpack-virtual-modules": "^0.4.6",
     "webpackbar": "^5.0.2"
