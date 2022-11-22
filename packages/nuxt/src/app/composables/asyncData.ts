@@ -268,6 +268,11 @@ export function useLazyAsyncData<
   return useAsyncData(key, handler, { ...options, lazy: true }, null)
 }
 
+export function useNuxtData (key?: string) {
+  const nuxt = useNuxtApp()
+  return key ? nuxt.payload.data[key] : nuxt.payload.data
+}
+
 export async function refreshNuxtData (keys?: string | string[]): Promise<void> {
   if (process.server) {
     return Promise.resolve()
