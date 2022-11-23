@@ -26,7 +26,7 @@ const { data } = await useFetch(`/api/posts/${postId}`, {
   key: `post-${postId}`,
   default: () => {
     // Find the individual post from the cache and set it as the default value.
-    return useNuxtData().posts.find(post => post.id === id)
+    return useNuxtData().posts.find(post => post.id === postId)
   }
 })
 ```
