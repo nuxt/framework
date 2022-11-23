@@ -5,8 +5,7 @@ const commonPresets: InlinePreset[] = [
   defineUnimportPreset({
     from: '#head',
     imports: [
-      'useHead',
-      'useMeta'
+      'useHead'
     ]
   }),
   // vue-demi (mocked)
@@ -40,12 +39,10 @@ const appPreset = defineUnimportPreset({
     'setPageLayout',
     'useRouter',
     'useRoute',
-    'useActiveRoute',
     'defineNuxtRouteMiddleware',
     'navigateTo',
     'abortNavigation',
     'addRouteMiddleware',
-    'throwError',
     'showError',
     'clearError',
     'isNuxtError',

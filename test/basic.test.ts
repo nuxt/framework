@@ -9,7 +9,8 @@ import { expectNoClientErrors, renderPage, withLogs } from './utils'
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
   server: true,
-  browser: true
+  browser: true,
+  setupTimeout: (isWindows ? 240 : 120) * 1000
 })
 
 describe('server api', () => {
@@ -252,8 +253,7 @@ describe('head tags', () => {
     expect(headHtml).toContain('<meta name="description" content="overriding with an inline useHead call">')
     expect(headHtml).toMatch(/<html[^>]*class="html-attrs-test"/)
     expect(headHtml).toMatch(/<body[^>]*class="body-attrs-test"/)
-    expect(headHtml).toContain('script>console.log("works with useMeta too")</script>')
-    expect(headHtml).toContain('<script src="https://a-body-appended-script.com" data-meta-body></script></body>')
+    expect(headHtml).toContain('<script src="https://a-body-appended-script.com"></script></body>')
 
     const indexHtml = await $fetch('/')
     // should render charset by default

@@ -2,7 +2,7 @@ import { resolve } from 'pathe'
 import { addComponent, addPlugin, defineNuxtModule } from '@nuxt/kit'
 import { distDir } from '../dirs'
 
-const components = ['Script', 'NoScript', 'Link', 'Base', 'Title', 'Meta', 'Style', 'Head', 'Html', 'Body']
+const components = ['NoScript', 'Link', 'Base', 'Title', 'Meta', 'Style', 'Head', 'Html', 'Body']
 
 export default defineNuxtModule({
   meta: {
@@ -28,9 +28,6 @@ export default defineNuxtModule({
         kebabName: componentName
       })
     }
-
-    // Add mixin plugin
-    addPlugin({ src: resolve(runtimeDir, 'mixin-plugin') })
 
     // Add library specific plugin
     addPlugin({ src: resolve(runtimeDir, 'lib/vueuse-head.plugin') })
