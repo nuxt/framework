@@ -52,7 +52,7 @@ const { data } = await useFetch('/api/addTodo', {
   key: 'addTodo',
   method: 'post',
   body: {
-    todo: todo.value
+    todo: newTodo.value
   },
   onRequest () {
     previousTodos.value = useNuxtData().todos // Store the previously cached value to restore if fetch fails.
