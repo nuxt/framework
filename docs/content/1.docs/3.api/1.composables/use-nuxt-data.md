@@ -11,6 +11,7 @@ useNuxtData():‌ Recod<string, any>
 ## Examples
 
 ### Show stale data while fetching in the background
+
 The example below shows how you can use cached data as a placeholder while the most recent data is being fetched from the server.
 
 ```ts
