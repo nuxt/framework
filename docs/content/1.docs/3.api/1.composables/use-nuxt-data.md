@@ -31,3 +31,33 @@ const { data } = await useFetch(`/api/posts/${postId}`, {
   }
 })
 ```
+
+### Optimistic Updates
+
+We can leverage the cache to update the UI after a mutation, while the data is being invalidated in the background.
+
+```ts
+// In Todos.vue
+const { data } = await useFetch('/api/todos', {
+  key: 'todos'
+})
+```
+
+```ts
+// In AddTodo.vue
+const newTodo = ref('')
+const previousTodos = ref([])
+
+const { data } = await useFetch('/api/addTodo', {
+  key: 'addTodo',
+  method: 'post',
+  onRequest () {
+    previousTodos.value = useNuxtData().todos // Store the previously cached value to restore if fetch fails.
+
+    useNuxtData().todos.push(newTodo.value) // Optimistically update the todos.
+  },
+  onRequestError () {
+    useNuxtData().todos = previousTodos.value // Rollback the data if the request failed.
+  },
+})
+```
