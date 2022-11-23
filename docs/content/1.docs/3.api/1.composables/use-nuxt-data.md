@@ -59,5 +59,8 @@ const { data } = await useFetch('/api/addTodo', {
   onRequestError () {
     useNuxtData().todos = previousTodos.value // Rollback the data if the request failed.
   },
+  async onResponse () {
+    await refreshNuxtData('todos') // Invalidate todos in the background if the request succeeded.
+  }
 })
 ```
