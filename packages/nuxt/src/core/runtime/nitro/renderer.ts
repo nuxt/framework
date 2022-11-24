@@ -43,7 +43,7 @@ export interface NuxtIslandResponse {
   state: Record<string, any>
   head: {
     link: (Record<string, string>)[]
-    style: ({ innerHTML: string })[]
+    style: ({ innerHTML: string, key: string })[]
   }
 }
 
