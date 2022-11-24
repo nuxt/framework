@@ -10,15 +10,6 @@ export interface Component {
   global?: boolean
   island?: boolean
   mode?: 'client' | 'server' | 'all'
-
-  /** @deprecated */
-  level?: number
-  /** @deprecated */
-  import?: string
-  /** @deprecated */
-  asyncImport?: string
-  /** @deprecated */
-  async?: boolean
 }
 
 export interface ScanDir {
@@ -47,11 +38,6 @@ export interface ScanDir {
    * Ignore scanning this directory if set to `true`
    */
   enabled?: boolean
-  /**
-   * Level is used to define a hint when overwriting the components which have the same name in two different directories.
-   * @deprecated Not used by Nuxt 3 anymore
-   */
-  level?: number
   /**
    * These properties (prefetch/preload) are used in production to configure how components with Lazy prefix are handled by Webpack via its magic comments.
    * Learn more on Webpack documentation: https://webpack.js.org/api/module-methods/#magic-comments
