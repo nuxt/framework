@@ -10,13 +10,18 @@ import { TreeShakeTemplatePlugin } from './tree-shake'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
 const isDirectory = (p: string) => { try { return statSync(p).isDirectory() } catch (_e) { return false } }
-function compareDirByPathLength ({ path: pathA }: { path: string }, { path: pathB }: { path: string }) {
+function compareDirByPathLength({ path: pathA }: { path: string }, { path: pathB }: { path: string }) {
   return pathB.split(/[\\/]/).filter(Boolean).length - pathA.split(/[\\/]/).filter(Boolean).length
 }
 
 const DEFAULT_COMPONENTS_DIRS_RE = /\/components(\/global|\/islands)?$/
 
 type getComponentsT = (mode?: 'client' | 'server' | 'all') => Component[]
+
+enum Loader {
+  WEBPACK = 'webpack',
+  VITE = 'vite'
+}
 
 export default defineNuxtModule<ComponentsOptions>({
   meta: {
@@ -26,7 +31,7 @@ export default defineNuxtModule<ComponentsOptions>({
   defaults: {
     dirs: []
   },
-  setup (componentOptions, nuxt) {
+  setup(componentOptions, nuxt) {
     let componentDirs: ComponentsDir[] = []
     const context = {
       components: [] as Component[]
@@ -36,6 +41,21 @@ export default defineNuxtModule<ComponentsOptions>({
       return (mode && mode !== 'all')
         ? context.components.filter(c => c.mode === mode || c.mode === 'all')
         : context.components
+    }
+
+    const addLoaderAndTreeShakeToConfigPlugins = (config: any, mode: string, loader: Loader) => {
+      const sourcemap = nuxt.options.sourcemap[mode]
+      config.plugins.push(loaderPlugin[loader]({
+        sourcemap,
+        getComponents,
+        mode
+      }))
+      if (nuxt.options.experimental.treeshakeClientOnly && mode === 'server') {
+        config.plugins.push(TreeShakeTemplatePlugin[loader]({
+          sourcemap,
+          getComponents
+        }))
+      }
     }
 
     const normalizeDirs = (dir: any, cwd: string): ComponentsDir[] => {
@@ -189,37 +209,16 @@ export default defineNuxtModule<ComponentsOptions>({
       }
     })
 
-    nuxt.hook('vite:extendConfig', (config, { isClient, isServer }) => {
+    nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       const mode = isClient ? 'client' : 'server'
-
       config.plugins = config.plugins || []
-      config.plugins.push(loaderPlugin.vite({
-        sourcemap: nuxt.options.sourcemap[mode],
-        getComponents,
-        mode
-      }))
-      if (nuxt.options.experimental.treeshakeClientOnly && isServer) {
-        config.plugins.push(TreeShakeTemplatePlugin.vite({
-          sourcemap: nuxt.options.sourcemap[mode],
-          getComponents
-        }))
-      }
+      addLoaderAndTreeShakeToConfigPlugins(config, mode, Loader.VITE)
     })
     nuxt.hook('webpack:config', (configs) => {
       configs.forEach((config) => {
         const mode = config.name === 'client' ? 'client' : 'server'
         config.plugins = config.plugins || []
-        config.plugins.push(loaderPlugin.webpack({
-          sourcemap: nuxt.options.sourcemap[mode],
-          getComponents,
-          mode
-        }))
-        if (nuxt.options.experimental.treeshakeClientOnly && mode === 'server') {
-          config.plugins.push(TreeShakeTemplatePlugin.webpack({
-            sourcemap: nuxt.options.sourcemap[mode],
-            getComponents
-          }))
-        }
+        addLoaderAndTreeShakeToConfigPlugins(config, mode, Loader.WEBPACK)
       })
     })
   }
