@@ -5,7 +5,7 @@
 ## Type
 
 ```ts
-useNuxtData(key: string):‌ Ref<any>
+useNuxtData<T = any> (key: string): Ref<T>
 useNuxtData():‌ Recod<string, any>
 ```
 
