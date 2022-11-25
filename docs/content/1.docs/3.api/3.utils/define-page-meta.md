@@ -9,12 +9,12 @@ title: "definePageMeta"
 ```vue [pages/some-page.vue]
 <script setup>
   definePageMeta({
-    title: 'Articles'
+    layout: 'default'
   })
 </script>
 ```
 
-::ReadMore{link="/guide/directory-structure/pages/#page-metadata"}
+::ReadMore{link="/docs/guide/directory-structure/pages/#page-metadata"}
 ::
 
 ## Type
