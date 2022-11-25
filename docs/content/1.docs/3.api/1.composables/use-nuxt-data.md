@@ -5,6 +5,7 @@
 ## Type
 
 ```ts
+useNuxtData(key: string):‌ Ref<any>
 useNuxtData():‌ Recod<string, any>
 ```
 
@@ -27,7 +28,7 @@ const { data } = await useFetch(`/api/posts/${postId}`, {
   key: `post-${postId}`,
   default: () => {
     // Find the individual post from the cache and set it as the default value.
-    return useNuxtData().posts.find(post => post.id === postId)
+    return useNuxtData('posts').value.find(post => post.id === postId)
   }
 })
 ```
@@ -55,12 +56,12 @@ const { data } = await useFetch('/api/addTodo', {
     todo: newTodo.value
   },
   onRequest () {
-    previousTodos.value = useNuxtData().todos // Store the previously cached value to restore if fetch fails.
+    previousTodos.value = useNuxtData('todos').value // Store the previously cached value to restore if fetch fails.
 
-    useNuxtData().todos.push(newTodo.value) // Optimistically update the todos.
+    useNuxtData('todos').value.push(newTodo.value) // Optimistically update the todos.
   },
   onRequestError () {
-    useNuxtData().todos = previousTodos.value // Rollback the data if the request failed.
+    useNuxtData('todos').value = previousTodos.value // Rollback the data if the request failed.
   },
   async onResponse () {
     await refreshNuxtData('todos') // Invalidate todos in the background if the request succeeded.
