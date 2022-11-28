@@ -1,4 +1,4 @@
-import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch, unref } from 'vue'
+import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch, unref, toRef, toRefs } from 'vue'
 import type { Ref, WatchSource } from 'vue'
 import { NuxtApp, useNuxtApp } from '../nuxt'
 import { createError } from './error'
@@ -269,10 +269,16 @@ export function useLazyAsyncData<
 }
 
 export function useNuxtData<T = any> (key: string): Ref<T>
-export function useNuxtData (): Record<string, any>
+export function useNuxtData (): Ref<Record<string, any>>
 export function useNuxtData (key?: string): unknown {
-  const nuxt = useNuxtApp()
-  return key ? ref(nuxt.payload.data[key]) : nuxt.payload.data
+  const data = useNuxtApp().payload.data
+
+  // initialize value when key is not already set
+  if (key && data[key] === undefined) {
+    data[key] = null
+  }
+
+  return key ? toRef(data, key) : toRefs(data)
 }
 
 export async function refreshNuxtData (keys?: string | string[]): Promise<void> {
