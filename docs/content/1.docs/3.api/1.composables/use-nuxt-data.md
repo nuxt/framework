@@ -6,7 +6,7 @@
 
 ```ts
 useNuxtData<T = any> (key: string): Ref<T>
-useNuxtData():‌ Recod<string, any>
+useNuxtData():‌ Ref<Recod<string, any>>
 ```
 
 ## Examples
