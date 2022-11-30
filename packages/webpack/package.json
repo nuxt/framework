@@ -16,7 +16,7 @@
     "prepack": "unbuild"
   },
   "dependencies": {
-    "@babel/core": "^7.20.2",
+    "@babel/core": "^7.20.5",
     "@nuxt/friendly-errors-webpack-plugin": "^2.5.2",
     "@nuxt/kit": "3.0.0",
     "autoprefixer": "^10.4.13",
@@ -51,7 +51,7 @@
     "vue-loader": "^17.0.1",
     "webpack": "^5.75.0",
     "webpack-bundle-analyzer": "^4.7.0",
-    "webpack-dev-middleware": "^6.0.0",
+    "webpack-dev-middleware": "^6.0.1",
     "webpack-hot-middleware": "^2.25.3",
     "webpack-virtual-modules": "^0.4.6",
     "webpackbar": "^5.0.2"
