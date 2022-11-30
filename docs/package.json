@@ -13,6 +13,7 @@
     "nuxt-website-theme": "^0.1.12",
     "pathe": "^1.0.0",
     "scule": "^1.0.0",
+    "sitemap": "^7.1.1",
     "untyped": "^1.0.0"
   },
   "resolutions": {
