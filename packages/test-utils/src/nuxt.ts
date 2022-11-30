@@ -59,8 +59,6 @@ export async function loadFixture () {
     configFile: ctx.options.configFile
   })
 
-  kit.logger.level = ctx.options.logLevel
-
   await fsp.mkdir(ctx.nuxt.options.buildDir, { recursive: true })
 }
 
