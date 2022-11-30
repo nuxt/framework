@@ -19,7 +19,7 @@
     "defu": "^6.1.1",
     "globby": "^13.1.2",
     "hash-sum": "^2.0.0",
-    "ignore": "^5.2.0",
+    "ignore": "^5.2.1",
     "jiti": "^1.16.0",
     "knitwork": "^1.0.0",
     "lodash.template": "^4.5.0",
@@ -28,7 +28,7 @@
     "pkg-types": "^1.0.1",
     "scule": "^1.0.0",
     "semver": "^7.3.8",
-    "unctx": "^2.1.0",
+    "unctx": "^2.1.1",
     "unimport": "^1.0.1",
     "untyped": "^1.0.0"
   },
