@@ -64,5 +64,9 @@ export async function loadFixture () {
 
 export async function buildFixture () {
   const ctx = useTestContext()
+  // hint build info for test
+  const prevLevel = kit.logger.level
+  kit.logger.level = ctx.options.logLevel
   await kit.buildNuxt(ctx.nuxt!)
+  kit.logger.level = prevLevel
 }
