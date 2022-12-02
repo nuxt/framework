@@ -213,7 +213,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
               })
             }
             if (nuxtApp.isHydrating) {
-              nuxtApp.hook('app:suspense:resolve', registerCallback)
+              nuxtApp.hooks.hookOnce('app:suspense:resolve', registerCallback)
             } else {
               registerCallback()
             }
