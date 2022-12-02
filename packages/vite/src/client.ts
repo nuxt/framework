@@ -1,27 +1,38 @@
-import { join, resolve } from 'pathe'
+import { join, relative, resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { ServerOptions } from 'vite'
 import { logger } from '@nuxt/kit'
 import { getPort } from 'get-port-please'
-import { joinURL, withoutLeadingSlash } from 'ufo'
+import { joinURL, withoutLeadingSlash, withoutTrailingSlash } from 'ufo'
 import defu from 'defu'
 import type { OutputOptions } from 'rollup'
 import { defineEventHandler } from 'h3'
+import { genString } from 'knitwork'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
+  const buildAssetsDir = withoutLeadingSlash(
+    withoutTrailingSlash(ctx.nuxt.options.app.buildAssetsDir)
+  )
+  const relativeToBuildAssetsDir = (filename: string) => './' + relative(buildAssetsDir, filename)
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     entry: ctx.entry,
     base: ctx.nuxt.options.dev
       ? joinURL(ctx.nuxt.options.app.baseURL.replace(/^\.\//, '/') || '/', ctx.nuxt.options.app.buildAssetsDir)
       : './',
     experimental: {
-      renderBuiltUrl: (filename, { type, hostType }) => {
+      renderBuiltUrl: (filename, { type, hostType, hostId }) => {
+        // When rendering inline styles, we can skip loading CSS chunk that matches the current page
+        if (ctx.nuxt.options.experimental.inlineSSRStyles && hostType === 'js' && filename.endsWith('.css')) {
+          return {
+            runtime: `!globalThis.__hydrated ? ${genString(relativeToBuildAssetsDir(hostId))} : ${genString(relativeToBuildAssetsDir(filename))}`
+          }
+        }
         if (hostType !== 'js' || type === 'asset') {
           // In CSS we only use relative paths until we craft a clever runtime CSS hack
           return { relative: true }
@@ -58,7 +69,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       viteJsxPlugin(),
       devStyleSSRPlugin({
         srcDir: ctx.nuxt.options.srcDir,
-        buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
+        buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, buildAssetsDir)
       }),
       viteNodePlugin(ctx)
     ],
@@ -77,8 +88,8 @@ export async function buildClient (ctx: ViteBuildContext) {
   // We want to respect users' own rollup output options
   clientConfig.build!.rollupOptions = defu(clientConfig.build!.rollupOptions!, {
     output: {
-      chunkFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].js')),
-      entryFileNames: ctx.nuxt.options.dev ? 'entry.js' : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].js'))
+      chunkFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(buildAssetsDir, '[name].[hash].js')),
+      entryFileNames: ctx.nuxt.options.dev ? 'entry.js' : withoutLeadingSlash(join(buildAssetsDir, '[name].[hash].js'))
     } as OutputOptions
   }) as any
 
