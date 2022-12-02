@@ -69,7 +69,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       viteJsxPlugin(),
       devStyleSSRPlugin({
         srcDir: ctx.nuxt.options.srcDir,
-        buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, buildAssetsDir)
+        buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
       }),
       viteNodePlugin(ctx)
     ],
@@ -88,8 +88,8 @@ export async function buildClient (ctx: ViteBuildContext) {
   // We want to respect users' own rollup output options
   clientConfig.build!.rollupOptions = defu(clientConfig.build!.rollupOptions!, {
     output: {
-      chunkFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(buildAssetsDir, '[name].[hash].js')),
-      entryFileNames: ctx.nuxt.options.dev ? 'entry.js' : withoutLeadingSlash(join(buildAssetsDir, '[name].[hash].js'))
+      chunkFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].js')),
+      entryFileNames: ctx.nuxt.options.dev ? 'entry.js' : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].js'))
     } as OutputOptions
   }) as any
 
