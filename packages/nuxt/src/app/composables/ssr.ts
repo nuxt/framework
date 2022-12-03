@@ -1,4 +1,4 @@
-/* eslint-disable no-redeclare */
+
 import type { H3Event } from 'h3'
 import { useNuxtApp, NuxtApp } from '../nuxt'
 
