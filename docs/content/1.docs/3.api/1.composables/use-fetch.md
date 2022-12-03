@@ -6,7 +6,7 @@ It automatically generates a key based on URL and fetch options, provides type h
 
 ## Type
 
-```ts [Signature]
+```typescript
 function useFetch(
   url: string | Request | Ref<string | Request> | () => string | Request,
   options?: UseFetchOptions<DataT>
