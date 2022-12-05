@@ -894,15 +894,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt-themes/typography@npm:^0.0.12":
-  version: 0.0.12
-  resolution: "@nuxt-themes/typography@npm:0.0.12"
+"@nuxt-themes/typography@npm:^0.0.14":
+  version: 0.0.14
+  resolution: "@nuxt-themes/typography@npm:0.0.14"
   dependencies:
     "@nuxt-themes/tokens": latest
     "@nuxtjs/color-mode": ^3.1.8
     nuxt-icon: ^0.1.7
     pinceau: latest
-  checksum: 6df8822b0162666b1364b06ea526e1e207e1acc46c3327bb27535e09a9573d9cf5880354624412b95341aadcbeaa6b83f81ddd18f07694a9443788393f17d8a6
+  checksum: d3097b0999dff4f2ba8e389444d5d0ae06060c7ebda270c1cb95253fcc9f8bc1278a7cfe7bdc47b1a6a26d7283f13f79ea1fa98ed041351d5dad4c064f94a5ec
   languageName: node
   linkType: hard
 
@@ -1204,13 +1204,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxthq/ui@npm:^0.1.7":
-  version: 0.1.7
-  resolution: "@nuxthq/ui@npm:0.1.7"
+"@nuxthq/ui@npm:^0.1.8":
+  version: 0.1.8
+  resolution: "@nuxthq/ui@npm:0.1.8"
   dependencies:
     "@headlessui/vue": ^1.7.4
     "@iconify/vue": ^4.0.0
-    "@nuxt/kit": ^3.0.0-rc.14
+    "@nuxt/kit": ^3.0.0
     "@nuxtjs/color-mode": ^3.1.8
     "@nuxtjs/tailwindcss": ^6.1.3
     "@popperjs/core": ^2.11.6
@@ -1224,11 +1224,11 @@ __metadata:
     fuse.js: ^6.6.2
     lodash-es: ^4.17.21
     tailwindcss: ^3.2.4
-  checksum: dd6970f77a76aa48f1ca78b1b251bb44c438ef3ea7d1fc2e4d483651b6b925d139fcfa46071385ce8bdbf1fdf13ffffecfd2ad050199da045fedee0845253aae
+  checksum: 9f95c86b1e1834688c4cb9a81b4264953fdb229a2852a999dfc1bb4fa62e176f97f65fdd82c4f868003775320875d75ad5bf03a59f057ec761cafbc3e8f9f16e
   languageName: node
   linkType: hard
 
-"@nuxtjs/algolia@npm:^1.1.5":
+"@nuxtjs/algolia@npm:^1.2.0":
   version: 1.2.0
   resolution: "@nuxtjs/algolia@npm:1.2.0"
   dependencies:
@@ -1808,6 +1808,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^17.0.5":
+  version: 17.0.45
+  resolution: "@types/node@npm:17.0.45"
+  checksum: aa04366b9103b7d6cfd6b2ef64182e0eaa7d4462c3f817618486ea0422984c51fc69fd0d436eae6c9e696ddfdbec9ccaa27a917f7c2e8c75c5d57827fe3d95e8
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
@@ -1842,6 +1849,15 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: e99fc7cc6265407987b30deda54c1c24bb1478803faf6037557a774b2f034c5b097ffd65847daa87e82a61a250d919f35c3588654b0fdaa816906650f596d1b0
+  languageName: node
+  linkType: hard
+
+"@types/sax@npm:^1.2.1":
+  version: 1.2.4
+  resolution: "@types/sax@npm:1.2.4"
+  dependencies:
+    "@types/node": "*"
+  checksum: 2aa50cbf1d1f0cf8541ef1787f94c7442e58e63900afd3b45c354e4140ed5efc5cf26fca8eb9df9970a74c7ea582293ae2083271bd046dedf4c3cc2689a40892
   languageName: node
   linkType: hard
 
@@ -2551,7 +2567,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"arg@npm:^5.0.2":
+"arg@npm:^5.0.0, arg@npm:^5.0.2":
   version: 5.0.2
   resolution: "arg@npm:5.0.2"
   checksum: 6c69ada1a9943d332d9e5382393e897c500908d91d5cb735a01120d5f71daf1b339b7b8980cbeaba8fd1afc68e658a739746179e4315a26e8a28951ff9930078
@@ -4120,7 +4136,7 @@ __metadata:
   dependencies:
     jiti: ^1.16.0
     nuxt: ^3.0.0
-    nuxt-website-theme: ^0.1.4
+    nuxt-website-theme: ^0.1.16
     pathe: ^1.0.0
     scule: ^1.0.0
     untyped: ^1.0.0
@@ -8896,29 +8912,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxt-plausible@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "nuxt-plausible@npm:0.1.1"
+"nuxt-plausible@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "nuxt-plausible@npm:0.1.2"
   dependencies:
-    "@nuxt/kit": ^3.0.0-rc.12
-    defu: ^6.1.0
-    pathe: ^0.3.9
+    "@nuxt/kit": ^3.0.0
+    defu: ^6.1.1
+    pathe: ^1.0.0
     plausible-tracker: ^0.3.8
-  checksum: 01bf90486642926356bd30d95db18641d924ed4813f7b3ad6b845c44eaf31f4ca7647a4bea44574890068d7ca932e4c8f82ff1773cef12156b0532d82c6af27d
+  checksum: f560bdf32363006b6028395193f46c056896760a50e6a47169ef4c8e0caaaad511c9a5397f7249353e02a02e9d483d4e56d42920f1f1e8e713c3bd301af03a29
   languageName: node
   linkType: hard
 
-"nuxt-website-theme@npm:^0.1.4":
-  version: 0.1.4
-  resolution: "nuxt-website-theme@npm:0.1.4"
+"nuxt-website-theme@npm:^0.1.16":
+  version: 0.1.16
+  resolution: "nuxt-website-theme@npm:0.1.16"
   dependencies:
     "@docsearch/css": ^3.3.0
     "@docsearch/js": ^3.3.0
-    "@nuxt-themes/typography": ^0.0.12
+    "@nuxt-themes/typography": ^0.0.14
     "@nuxt/content": ^2.2.2
     "@nuxthq/studio": ^0.2.3
-    "@nuxthq/ui": ^0.1.7
-    "@nuxtjs/algolia": ^1.1.5
+    "@nuxthq/ui": ^0.1.8
+    "@nuxtjs/algolia": ^1.2.0
     "@nuxtjs/fontaine": ^0.2.2
     "@nuxtjs/html-validator": ^1.1.1
     "@nuxtlabs/github-module": ^1.5.3
@@ -8929,11 +8945,12 @@ __metadata:
     node-mailjet: ^5.1.1
     nuxt-icon: ^0.1.7
     nuxt-newsletter: ^0.2.0
-    nuxt-plausible: ^0.1.1
+    nuxt-plausible: ^0.1.2
+    sitemap: ^7.1.1
     tailwindcss-border-gradient-radius: ^3.0.1
     three: ^0.146.0
     vue-lite-youtube-embed: ^1.0.4
-  checksum: 7bb091dd44111235b3a3a3fa09ecd5d1e6a537832be5e84c810c9eb003d8fa0b588b0d3ca92b662d5d39603e5f5b42f049319e5f3ef7e1b81a42ed425854e786
+  checksum: 9f75d80e90cb41e2f322031c0b9f42df8e19ae6c0c08e35333952141c5fe594141f66c601936d285d91e6b3fbcfc2de0c28b12f17a1eadff280337d76c72b7fe
   languageName: node
   linkType: hard
 
@@ -10749,6 +10766,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sax@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "sax@npm:1.2.4"
+  checksum: d3df7d32b897a2c2f28e941f732c71ba90e27c24f62ee918bd4d9a8cfb3553f2f81e5493c7f0be94a11c1911b643a9108f231dd6f60df3fa9586b5d2e3e9e1fe
+  languageName: node
+  linkType: hard
+
 "schema-utils@npm:^3.0.0":
   version: 3.1.1
   resolution: "schema-utils@npm:3.1.1"
@@ -10954,6 +10978,20 @@ __metadata:
   version: 1.0.5
   resolution: "sisteransi@npm:1.0.5"
   checksum: aba6438f46d2bfcef94cf112c835ab395172c75f67453fe05c340c770d3c402363018ae1ab4172a1026a90c47eaccf3af7b6ff6fa749a680c2929bd7fa2b37a4
+  languageName: node
+  linkType: hard
+
+"sitemap@npm:^7.1.1":
+  version: 7.1.1
+  resolution: "sitemap@npm:7.1.1"
+  dependencies:
+    "@types/node": ^17.0.5
+    "@types/sax": ^1.2.1
+    arg: ^5.0.0
+    sax: ^1.2.4
+  bin:
+    sitemap: dist/cli.js
+  checksum: 87a6d21b0d4a33b8c611d3bb8543d02b813c0ebfce014213ef31849b5c1439005644f19ad1593ec89815f6101355f468c9a02c251d09aa03f6fddd17e23c4be4
   languageName: node
   linkType: hard
 
