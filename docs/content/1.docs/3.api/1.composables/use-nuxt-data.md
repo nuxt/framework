@@ -48,6 +48,7 @@ const { data } = await useFetch('/api/todos', {
 const newTodo = ref('')
 const previousTodos = ref([])
 
+const { data: todos } = useNuxtData('todos')
 const { data } = await useFetch('/api/addTodo', {
   key: 'addTodo',
   method: 'post',
@@ -55,12 +56,12 @@ const { data } = await useFetch('/api/addTodo', {
     todo: newTodo.value
   },
   onRequest () {
-    previousTodos.value = useNuxtData('todos').data.value // Store the previously cached value to restore if fetch fails.
+    previousTodos.value = todos.value // Store the previously cached value to restore if fetch fails.
 
-    useNuxtData('todos').data.value.push(newTodo.value) // Optimistically update the todos.
+    todos.value.push(newTodo.value) // Optimistically update the todos.
   },
   onRequestError () {
-    useNuxtData('todos').data.value = previousTodos.value // Rollback the data if the request failed.
+    todos.value = previousTodos.value // Rollback the data if the request failed.
   },
   async onResponse () {
     await refreshNuxtData('todos') // Invalidate todos in the background if the request succeeded.
