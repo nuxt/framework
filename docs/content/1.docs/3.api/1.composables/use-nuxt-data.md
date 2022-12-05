@@ -1,6 +1,10 @@
 # `useNuxtData`
 
-`useNuxtData` gives you access to the current value of `useAsyncData`, `useLazyAsyncData`, `useFetch` and `useLazyFetch` with explicitly provided key.
+`useNuxtData` gives you access to the current cached value of `useAsyncData`, `useLazyAsyncData`, `useFetch` and `useLazyFetch` with explicitly provided key.
+
+::Alert
+This feature is not released yet. You can beta test using [Edge Channel](https://nuxt.com/docs/guide/going-further/edge-channel).
+::
 
 ## Type
 
@@ -14,20 +18,20 @@ useNuxtData<DataT = any> (key: string): { data: Ref<DataT | null> }
 
 The example below shows how you can use cached data as a placeholder while the most recent data is being fetched from the server.
 
-```ts
-// In Archive.vue
-const { data } = await useFetch('/api/posts', {
-  key: 'posts', // You need to set a key to access the data later.
-})
+```ts [archive.vue]
+// We can access same data later using 'posts' key
+const { data } = await useFetch('/api/posts', { key: 'posts' })
 ```
 
-```ts
-// In Single.vue
+```ts [single.vue]
+// Access to the cached value of useFetch in archive.vue
+const { data: posts } = useNuxtData('posts')
+
 const { data } = await useFetch(`/api/posts/${postId}`, {
   key: `post-${postId}`,
   default: () => {
     // Find the individual post from the cache and set it as the default value.
-    return useNuxtData('posts').data.value.find(post => post.id === postId)
+    return posts.value.find(post => post.id === postId)
   }
 })
 ```
@@ -36,19 +40,18 @@ const { data } = await useFetch(`/api/posts/${postId}`, {
 
 We can leverage the cache to update the UI after a mutation, while the data is being invalidated in the background.
 
-```ts
-// In Todos.vue
-const { data } = await useFetch('/api/todos', {
-  key: 'todos'
-})
+```ts [todos.vue]
+// We can access same data later using 'todos' key
+const { data } = await useFetch('/api/todos', { key: 'todos' })
 ```
 
-```ts
-// In AddTodo.vue
+```ts [add-todo.vue]
 const newTodo = ref('')
 const previousTodos = ref([])
 
+// Access to the cached value of useFetch in todos.vue
 const { data: todos } = useNuxtData('todos')
+
 const { data } = await useFetch('/api/addTodo', {
   key: 'addTodo',
   method: 'post',
