@@ -6,7 +6,6 @@
 
 ```ts
 useNuxtData<T = any> (key: string): Ref<T>
-useNuxtData():‌ Ref<Record<string, any>>
 ```
 
 ## Examples

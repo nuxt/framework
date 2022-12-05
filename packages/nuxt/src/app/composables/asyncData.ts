@@ -268,17 +268,15 @@ export function useLazyAsyncData<
   return useAsyncData(key, handler, { ...options, lazy: true }, null)
 }
 
-export function useNuxtData<T = any> (key: string): Ref<T>
-export function useNuxtData (): Ref<Record<string, any>>
-export function useNuxtData (key?: string): unknown {
+export function useNuxtData<T = any> (key: string): Ref<T> {
   const nuxt = useNuxtApp()
 
-  // initialize value when key is not already set
-  if (key && nuxt.payload.data[key] === undefined) {
+  // Initialize value when key is not already set
+  if (nuxt.payload.data[key] === undefined) {
     nuxt.payload.data[key] = null
   }
 
-  return key ? toRef(nuxt.payload.data, key) : ref(nuxt.payload.data)
+  return toRef(nuxt.payload.data, key)
 }
 
 export async function refreshNuxtData (keys?: string | string[]): Promise<void> {
