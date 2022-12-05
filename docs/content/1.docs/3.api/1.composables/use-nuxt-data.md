@@ -1,6 +1,6 @@
 # `useNuxtData`
 
-`useNuxtData` gives you access to the cache of `useAsyncData`, `useLazyAsyncData`, `useFetch` and `useLazyFetch`.
+`useNuxtData` gives you access to the current value of `useAsyncData`, `useLazyAsyncData`, `useFetch` and `useLazyFetch` with explicitly provided key.
 
 ## Type
 
