@@ -75,7 +75,10 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   // Resolve error component
   if (!app.errorComponent) {
     app.errorComponent = await findPath(
-      nuxt.options._layers.map(layer => `${layer.config.srcDir}/error`)
+      [
+        ...nuxt.options._layers.map(layer => `${layer.config.srcDir}/error`),
+        resolve(nuxt.options.appDir, 'components/nuxt-error-page.vue')
+      ]
     )
   }
 
