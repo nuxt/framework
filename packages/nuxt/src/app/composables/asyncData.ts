@@ -272,7 +272,7 @@ export function useNuxtData<DataT = any> (key: string): { data: Ref<DataT | null
   const nuxt = useNuxtApp()
 
   // Initialize value when key is not already set
-  if (nuxt.payload.data[key] === undefined) {
+  if (!(key in nuxt.payload.data)) {
     nuxt.payload.data[key] = null
   }
 
