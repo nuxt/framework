@@ -6,6 +6,7 @@ import { isWindows } from 'std-env'
 import { setup, fetch, $fetch, startServer, createPage, url } from '@nuxt/test-utils'
 import type { NuxtIslandResponse } from '../packages/nuxt/src/core/runtime/nitro/renderer'
 import { expectNoClientErrors, renderPage, withLogs } from './utils'
+import { normalize } from 'pathe'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
@@ -813,8 +814,9 @@ describe('component islands', () => {
 
     if (process.env.NUXT_TEST_DEV) {
       result.head.link = result.head.link.filter(l => !l.href.includes('@nuxt+ui-templates'))
+      const fixtureDir = normalize(fileURLToPath(new URL('./fixtures/basic', import.meta.url)))
       for (const link of result.head.link) {
-        link.href = link.href.replace(fileURLToPath(new URL('./fixtures/basic', import.meta.url)), '<rootDir>')
+        link.href = link.href.replace(fixtureDir, '<rootDir>')
         link.key = link.key.replace(/-[a-zA-Z0-9]+$/, '')
       }
     }
