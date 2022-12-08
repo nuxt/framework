@@ -11,7 +11,8 @@ title: "preloadRouteComponents"
 ::Alert
 Nuxt already automaticlly preload the nessecary routes if you're using `NuxtLink` component.
 ::
-:ReadMore{link="/docs/api/components/nuxt-link"}
+::ReadMore{link="/docs/api/components/nuxt-link"}
+::
 
 ## Example
 
@@ -29,7 +30,8 @@ const submit = async () => {
 }
 ```
 
-:ReadMore{link="/docs/api/composables/navigate-to"}
+::ReadMore{link="/docs/api/composables/navigate-to"}
+::
 
 ::alert{icon=👉}
 Currently, on server, `preloadRouteComponents` will have no effect.
