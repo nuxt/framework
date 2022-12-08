@@ -813,6 +813,9 @@ describe('component islands', () => {
 
     if (process.env.NUXT_TEST_DEV) {
       result.head.link = result.head.link.filter(l => !l.href.includes('@nuxt+ui-templates'))
+      for (const link of result.head.link) {
+        link.href = link.href.replace(fileURLToPath(new URL('./fixtures/basic', import.meta.url)), '<rootDir>')
+      }
     }
     result.head.style = result.head.style.map(s => ({
       ...s,
@@ -844,7 +847,7 @@ describe('component islands', () => {
               "rel": "stylesheet",
             },
             {
-              "href": "/_nuxt/Users/pooya/Code/framework/test/fixtures/basic/components/islands/PureComponent.vue?vue&type=style&index=0&scoped=c0c0cf89&lang.css",
+              "href": "/_nuxt<rootDir>/components/islands/PureComponent.vue?vue&type=style&index=0&scoped=c0c0cf89&lang.css",
               "key": "island-link-LEcZcT1R25",
               "rel": "stylesheet",
             },
