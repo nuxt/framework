@@ -24,8 +24,9 @@ export function isIgnored (pathname: string): boolean {
     }
   }
 
-  const layer = nuxt.options._layers?.find(layer => pathname.startsWith(layer.cwd))
-  const relativePath = relative(layer?.cwd ?? nuxt.options.rootDir, pathname)
+  const cwds = nuxt.options._layers?.map(layer => layer.cwd).sort((a, b) => b.length - a.length)
+  const layer = cwds?.find(cwd => pathname.startsWith(cwd))
+  const relativePath = relative(layer ?? nuxt.options.rootDir, pathname)
   if (relativePath.startsWith('..')) {
     return false
   }
