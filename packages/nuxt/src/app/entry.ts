@@ -31,8 +31,6 @@ if (process.server) {
 
     try {
       await applyPlugins(nuxt, plugins)
-      const asyncDataPromises = Object.keys(nuxt._asyncDataPromises).map((key) => nuxt._asyncDataPromises[key])
-      await Promise.all(asyncDataPromises)
       await nuxt.hooks.callHook('app:created', vueApp)
     } catch (err) {
       await nuxt.callHook('app:error', err)
