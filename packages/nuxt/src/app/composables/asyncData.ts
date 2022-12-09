@@ -187,7 +187,9 @@ export function useAsyncData<
   // Server side
   if (process.server && fetchOnServer && options.immediate) {
     const promise = initialFetch()
-    onServerPrefetch(() => promise)
+    if (getCurrentInstance()) {
+      onServerPrefetch(() => promise)
+    }
   }
 
   // Client side
