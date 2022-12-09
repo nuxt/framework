@@ -76,7 +76,7 @@ If you have not fetched data on the server (for example, with `server: false`), 
 ```ts
 const { data, pending, error, refresh } = await useAsyncData(
   'mountains',
-  () => $fetch('https://api.nuxtjs.dev/mountains')
+  async () => $fetch('https://api.nuxtjs.dev/mountains')
 )
 ```
 
