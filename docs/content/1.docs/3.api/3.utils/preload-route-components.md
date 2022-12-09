@@ -19,7 +19,9 @@ Nuxt already automatically preloads the necessary routes if you're using the `Nu
 Preload a route when using `navigateTo`.
 
 ```ts
-await preloadRouteComponents('/dashboard')
+// we don't await this async function, to avoid blocking rendering
+// this component's setup function
+preloadRouteComponents('/dashboard')
 
 const submit = async () => {
   const results = await $fetch('/api/authentication')
