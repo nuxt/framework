@@ -13,12 +13,7 @@ import type { NuxtApp, NuxtSSRContext } from '#app'
 // @ts-ignore
 import { appRootId, appRootTag } from '#internal/nuxt.config.mjs'
 // @ts-ignore
-import { buildAssetsURL, publicAssetsURL } from '#paths'
-
-// @ts-ignore
-globalThis.__buildAssetsURL = buildAssetsURL
-// @ts-ignore
-globalThis.__publicAssetsURL = publicAssetsURL
+import { buildAssetsURL } from '#paths'
 
 export interface NuxtRenderHTMLContext {
   island?: boolean
@@ -62,7 +57,7 @@ const getClientManifest: () => Promise<Manifest> = () => import('#build/dist/ser
   .then(r => typeof r === 'function' ? r() : r) as Promise<ClientManifest>
 
 // @ts-ignore
-const getStaticRenderedHead = () : Promise<NuxtMeta> => import('#head-static').then(r => r.default || r)
+const getStaticRenderedHead = (): Promise<NuxtMeta> => import('#head-static').then(r => r.default || r)
 
 // @ts-ignore
 const getServerEntry = () => import('#build/dist/server/server.mjs').then(r => r.default || r)
@@ -280,9 +275,9 @@ export default defineRenderHandler(async (event) => {
       process.env.NUXT_NO_SCRIPTS
         ? undefined
         : (_PAYLOAD_EXTRACTION
-            ? `<script type="module">import p from "${payloadURL}";window.__NUXT__={...p,...(${devalue(splitPayload(ssrContext).initial)})}</script>`
-            : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`
-          ),
+          ? `<script type="module">import p from "${payloadURL}";window.__NUXT__={...p,...(${devalue(splitPayload(ssrContext).initial)})}</script>`
+          : `<script>window.__NUXT__=${devalue(ssrContext.payload)}</script>`
+        ),
       _rendered.renderScripts(),
       // Note: bodyScripts may contain tags other than <script>
       renderedMeta.bodyScripts

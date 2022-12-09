@@ -24,11 +24,11 @@ export async function buildServer (ctx: ViteBuildContext) {
           return { relative: true }
         }
         if (type === 'public') {
-          return { runtime: `globalThis.__publicAssetsURL(${JSON.stringify(filename)})` }
+          return { runtime: `__publicAssetsURL(${JSON.stringify(filename)})` }
         }
         if (type === 'asset') {
           const relativeFilename = filename.replace(withTrailingSlash(withoutLeadingSlash(ctx.nuxt.options.app.buildAssetsDir)), '')
-          return { runtime: `globalThis.__buildAssetsURL(${JSON.stringify(relativeFilename)})` }
+          return { runtime: `__buildAssetsURL(${JSON.stringify(relativeFilename)})` }
         }
       }
     },
