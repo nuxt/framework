@@ -190,7 +190,7 @@ export function useAsyncData<
     if (getCurrentInstance()) {
       onServerPrefetch(() => promise)
     } else {
-      useNuxtApp().hook('app:created', () => promise)
+      nuxt.hook('app:created', () => promise)
     }
   }
 
