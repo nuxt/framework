@@ -15,6 +15,7 @@ export interface CookieOptions<T = any> extends _CookieOptions {
   decode?(value: string): T
   encode?(value: T): string
   default?: () => T | Ref<T>
+  deepWatch?: boolean
 }
 
 export interface CookieRef<T> extends Ref<T> {}
@@ -32,7 +33,9 @@ export function useCookie <T = string | null> (name: string, _opts?: CookieOptio
   const cookie = ref<T | undefined>(cookies[name] as any ?? opts.default?.())
 
   if (process.client) {
-    watch(cookie, () => { writeClientCookie(name, cookie.value, opts as CookieSerializeOptions) })
+    watch(cookie, () => { writeClientCookie(name, cookie.value, opts as CookieSerializeOptions) }, {
+      deep: opts.deepWatch
+    })
   } else if (process.server) {
     const nuxtApp = useNuxtApp()
     const writeFinalCookieValue = () => {
