@@ -24,6 +24,7 @@ const appPreset = defineUnimportPreset({
   imports: [
     'useAsyncData',
     'useLazyAsyncData',
+    'useNuxtData',
     'refreshNuxtData',
     'clearNuxtData',
     'defineNuxtComponent',
@@ -38,6 +39,7 @@ const appPreset = defineUnimportPreset({
     'useRequestEvent',
     'setResponseStatus',
     'setPageLayout',
+    'onNuxtReady',
     'useRouter',
     'useRoute',
     'defineNuxtRouteMiddleware',

@@ -1,4 +1,4 @@
-import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch, unref } from 'vue'
+import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch, unref, toRef } from 'vue'
 import type { Ref, WatchSource } from 'vue'
 import type { NuxtApp } from '../nuxt'
 import { useNuxtApp } from '../nuxt'
@@ -188,7 +188,11 @@ export function useAsyncData<
   // Server side
   if (process.server && fetchOnServer && options.immediate) {
     const promise = initialFetch()
-    onServerPrefetch(() => promise)
+    if (getCurrentInstance()) {
+      onServerPrefetch(() => promise)
+    } else {
+      nuxt.hook('app:created', () => promise)
+    }
   }
 
   // Client side
@@ -267,6 +271,19 @@ export function useLazyAsyncData<
   const [key, handler, options] = args as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
   // @ts-ignore
   return useAsyncData(key, handler, { ...options, lazy: true }, null)
+}
+
+export function useNuxtData<DataT = any> (key: string): { data: Ref<DataT | null> } {
+  const nuxt = useNuxtApp()
+
+  // Initialize value when key is not already set
+  if (!(key in nuxt.payload.data)) {
+    nuxt.payload.data[key] = null
+  }
+
+  return {
+    data: toRef(nuxt.payload.data, key)
+  }
 }
 
 export async function refreshNuxtData (keys?: string | string[]): Promise<void> {
