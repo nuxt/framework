@@ -223,11 +223,12 @@ function prepareRoutes (routes: NuxtPage[], parent?: NuxtPage) {
 }
 
 export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = new Set()): { imports: Set<string>, routes: string } {
+  const nuxt = useNuxt()
   return {
     imports: metaImports,
     routes: genArrayFromRaw(routes.map((route) => {
       const file = normalize(route.file)
-      const metaImportName = genSafeVariableName(file) + 'Meta'
+      const metaImportName = genSafeVariableName(relative(nuxt.options.rootDir, file)) + 'Meta'
       metaImports.add(genImport(`${file}?macro=true`, [{ name: 'default', as: metaImportName }]))
 
       let aliasCode = `${metaImportName}?.alias || []`
