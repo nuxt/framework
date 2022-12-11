@@ -12,7 +12,6 @@
     "noEmit": true,
     "noUnusedLocals": true,
     "resolveJsonModule": true,
-    "importsNotUsedAsValues": "error",
     "types": [
       "node"
     ],

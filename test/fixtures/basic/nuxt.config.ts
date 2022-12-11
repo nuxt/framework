@@ -11,6 +11,7 @@ declare module 'nitropack' {
 }
 
 export default defineNuxtConfig({
+  typescript: { tsConfig: { compilerOptions: { importsNotUsedAsValues: 'error' } } },
   app: {
     pageTransition: true,
     layoutTransition: true,
