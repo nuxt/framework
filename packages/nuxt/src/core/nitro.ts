@@ -142,6 +142,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
 
   // Register nuxt protection patterns
   nitroConfig.rollupConfig!.plugins!.push(
+    // @ts-expect-error TODO: remove when nitro migrates to rollup 3
     ImportProtectionPlugin.rollup({
       rootDir: nuxt.options.rootDir,
       patterns: [
