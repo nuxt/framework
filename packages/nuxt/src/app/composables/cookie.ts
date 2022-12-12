@@ -15,7 +15,7 @@ export interface CookieOptions<T = any> extends _CookieOptions {
   decode?(value: string): T
   encode?(value: T): string
   default?: () => T | Ref<T>
-  watch?: boolean | 'deep' | 'shallow'
+  watch?: boolean | 'shallow'
 }
 
 export interface CookieRef<T> extends Ref<T> {}
@@ -35,7 +35,7 @@ export function useCookie <T = string | null> (name: string, _opts?: CookieOptio
   if (process.client) {
     const callback = () => { writeClientCookie(name, cookie.value, opts as CookieSerializeOptions) }
     if (opts.watch) {
-      watch(cookie, callback, { deep: opts.watch === 'deep' })
+      watch(cookie, callback, { deep: opts.watch !== 'shallow' })
     } else {
       callback()
     }

@@ -25,16 +25,10 @@ The example below creates a cookie called `counter`. If the cookie doesn't exist
 ```vue
 <template>
   <div>
-    <h1> Counter: {{ counter || '-' }}</h1>
-    <button @click="counter = null">
-      reset
-    </button>
-    <button @click="counter--">
-      -
-    </button>
-    <button @click="counter++">
-      +
-    </button>
+    <h1>Counter: {{ counter || '-' }}</h1>
+    <button @click="counter = null">reset</button>
+    <button @click="counter--">-</button>
+    <button @click="counter++">+</button>
   </div>
 </template>
 
@@ -142,24 +136,26 @@ Specifies a function that returns the cookie's default value. The function can a
 
 Specifies the `boolean` or `string` value for [watch](https://vuejs.org/api/reactivity-core.html#watch) cookie ref data.
 
-- `true` or `shallow` will watch cookie ref data.
-- `false` will not watch cookie data.
-- `deep` will watch cookie ref data and data sources change.
+- `true` - Will watch cookie ref data changes and it's nested properties. (default)
+- `shallow` - Will watch cookie ref data changes for only top level properties
+- `false` Will not watch cookie ref data changes.
 
 ```vue
 <template>
   <div>
-    <h1> List: {{ list }}</h1>
-    <button @click="add">
-      Add
-    </button>
+    <h1>List: {{ list }}</h1>
+    <button @click="add">Add</button>
   </div>
 </template>
 
 <script setup>
-const list = useCookie('list', { default: () => [] }, {
-  deepWatch: true
-})
+const list = useCookie(
+  'list',
+  { default: () => [] },
+  {
+    watch: 'shallow'
+  }
+)
 
 function add() {
   list.value?.push(Math.round(Math.random() * 1000))
