@@ -136,7 +136,7 @@ Specifies a function that returns the cookie's default value. The function can a
 
 Specifies the `boolean` or `string` value for [watch](https://vuejs.org/api/reactivity-core.html#watch) cookie ref data.
 
-- `true` - Will watch cookie ref data changes and it's nested properties. (default)
+- `true` - Will watch cookie ref data changes and its nested properties. (default)
 - `shallow` - Will watch cookie ref data changes for only top level properties
 - `false` Will not watch cookie ref data changes.
 
@@ -151,8 +151,8 @@ Specifies the `boolean` or `string` value for [watch](https://vuejs.org/api/reac
 <script setup>
 const list = useCookie(
   'list',
-  { default: () => [] },
   {
+    default: () => [],
     watch: 'shallow'
   }
 )
