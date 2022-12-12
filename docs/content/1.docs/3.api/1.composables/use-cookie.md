@@ -138,10 +138,13 @@ be returned as the cookie's value.
 
 Specifies a function that returns the cookie's default value. The function can also return a `Ref`.
 
-### `deepWatch`
+### `watch`
 
-Specifies the `boolean` value for the deep watch Cookie ref. When truthy,
-Cookie update on deep data changed; otherwise it is not. By default, you need reassign your data.
+Specifies the `boolean` or `string` value for [watch](https://vuejs.org/api/reactivity-core.html#watch) cookie ref data.
+
+- `true` or `shallow` will watch cookie ref data.
+- `false` will not watch cookie data.
+- `deep` will watch cookie ref data and data sources change.
 
 ```vue
 <template>
