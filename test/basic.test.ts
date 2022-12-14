@@ -2,6 +2,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { joinURL, withQuery } from 'ufo'
 import { isWindows } from 'std-env'
+import { normalize } from 'pathe'
 // eslint-disable-next-line import/order
 import { setup, fetch, $fetch, startServer, createPage, url } from '@nuxt/test-utils'
 import type { NuxtIslandResponse } from '../packages/nuxt/src/core/runtime/nitro/renderer'
@@ -380,6 +381,7 @@ describe('plugins', () => {
   it('async plugin', async () => {
     const html = await $fetch('/plugins')
     expect(html).toContain('asyncPlugin: Async plugin works! 123')
+    expect(html).toContain('useFetch works!')
   })
 })
 
@@ -813,6 +815,11 @@ describe('component islands', () => {
 
     if (process.env.NUXT_TEST_DEV) {
       result.head.link = result.head.link.filter(l => !l.href.includes('@nuxt+ui-templates'))
+      const fixtureDir = normalize(fileURLToPath(new URL('./fixtures/basic', import.meta.url)))
+      for (const link of result.head.link) {
+        link.href = link.href.replace(fixtureDir, '/<rootDir>').replaceAll('//', '/')
+        link.key = link.key.replace(/-[a-zA-Z0-9]+$/, '')
+      }
     }
     result.head.style = result.head.style.map(s => ({
       ...s,
@@ -838,7 +845,7 @@ describe('component islands', () => {
           "link": [
             {
               "href": "/_nuxt/components/islands/PureComponent.vue?vue&type=style&index=0&scoped=c0c0cf89&lang.css",
-              "key": "island-link-gH9jFOYxRw",
+              "key": "island-link",
               "rel": "stylesheet",
             },
           ],
@@ -872,7 +879,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () 
   it('renders a payload', async () => {
     const payload = await $fetch('/random/a/_payload.js', { responseType: 'text' })
     expect(payload).toMatch(
-      /export default \{data:\{rand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
+      /export default \{data:\{hey:{[^}]*},rand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
     )
   })
 

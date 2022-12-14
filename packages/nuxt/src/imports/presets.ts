@@ -1,4 +1,5 @@
-import { defineUnimportPreset, InlinePreset } from 'unimport'
+import type { InlinePreset } from 'unimport'
+import { defineUnimportPreset } from 'unimport'
 
 const commonPresets: InlinePreset[] = [
   // #head
@@ -23,6 +24,7 @@ const appPreset = defineUnimportPreset({
   imports: [
     'useAsyncData',
     'useLazyAsyncData',
+    'useNuxtData',
     'refreshNuxtData',
     'clearNuxtData',
     'defineNuxtComponent',
