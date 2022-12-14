@@ -1,5 +1,0 @@
----
-contributors:
- - name:
-   link:
----
