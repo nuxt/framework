@@ -13,7 +13,12 @@ import type { NuxtApp, NuxtSSRContext } from '#app'
 // @ts-ignore
 import { appRootId, appRootTag } from '#internal/nuxt.config.mjs'
 // @ts-ignore
-import { buildAssetsURL } from '#paths'
+import { buildAssetsURL, publicAssetsURL } from '#paths'
+
+// @ts-ignore
+globalThis.__buildAssetsURL = buildAssetsURL
+// @ts-ignore
+globalThis.__publicAssetsURL = publicAssetsURL
 
 export interface NuxtRenderHTMLContext {
   island?: boolean
