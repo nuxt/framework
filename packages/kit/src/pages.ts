@@ -1,5 +1,6 @@
 import type { NuxtHooks } from '@nuxt/schema'
 import type { NitroRouteConfig } from 'nitropack'
+import { defu } from 'defu'
 import { useNuxt } from './context'
 import { isNuxt2 } from './compatibility'
 
@@ -13,14 +14,18 @@ export function extendPages (cb: NuxtHooks['pages:extend']) {
   }
 }
 
-export function extendRouteRules (route: string, rule: NitroRouteConfig) {
+export function extendRouteRules (route: string, rule: NitroRouteConfig, override = false) {
   const nuxt = useNuxt()
   if (!nuxt.options.routeRules) {
     nuxt.options.routeRules = {}
   }
-  nuxt.options.routeRules[route] = rule
+  nuxt.options.routeRules[route] = override
+    ? rule
+    : defu(rule, nuxt.options.routeRules[route] || {})
   if (!nuxt.options.nitro.routeRules) {
     nuxt.options.nitro.routeRules = {}
   }
-  nuxt.options.nitro.routeRules[route] = rule
+  nuxt.options.nitro.routeRules[route] = override
+    ? rule
+    : defu(rule, nuxt.options.nitro.routeRules[route] || {})
 }
