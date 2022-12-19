@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { Ref } from 'vue'
+import type { Ref } from 'vue'
 // bypass client import protection to ensure this is treeshaken from .client components
 import BreaksServer from '~~/components/BreaksServer.client'
 
