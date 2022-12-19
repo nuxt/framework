@@ -1,5 +1,5 @@
 import type { NuxtHooks } from '@nuxt/schema'
-import { NitroRouteConfig } from 'nitropack'
+import type { NitroRouteConfig } from 'nitropack'
 import { useNuxt } from './context'
 import { isNuxt2 } from './compatibility'
 
