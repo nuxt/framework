@@ -5,13 +5,13 @@ description: useError composable returns the global Nuxt error that is being han
 
 # `useError`
 
-`useError` composable returns the global Nuxt error that is being handled and it is available on both client-side and server-side.
+`useError` composable returns the global Nuxt error that is being handled and it is available on both client and server.
 
 ```ts
 const error = useError()
 ```
 
-`useError` sets an error in the state and creates a reactive as well as SSR-friendly global Nuxt error across components. `useError` exposes the following properties that we can use to identify global Nuxt error.
+`useError` sets an error in the state and creates a reactive as well as SSR-friendly global Nuxt error across components. Nuxt errors have the following properties:
 
 ## Properties
 
