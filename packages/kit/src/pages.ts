@@ -14,18 +14,27 @@ export function extendPages (cb: NuxtHooks['pages:extend']) {
   }
 }
 
-export function extendRouteRules (route: string, rule: NitroRouteConfig, override = false) {
+export interface ExtendRouteRulesOptions {
+  /**
+   * Override route rule config
+   *
+   * @default false
+   */
+  override?: boolean
+}
+
+export function extendRouteRules (route: string, rule: NitroRouteConfig, options: ExtendRouteRulesOptions = {}) {
   const nuxt = useNuxt()
   if (!nuxt.options.routeRules) {
     nuxt.options.routeRules = {}
   }
-  nuxt.options.routeRules[route] = override
+  nuxt.options.routeRules[route] = options.override
     ? rule
     : defu(rule, nuxt.options.routeRules[route] || {})
   if (!nuxt.options.nitro.routeRules) {
     nuxt.options.nitro.routeRules = {}
   }
-  nuxt.options.nitro.routeRules[route] = override
+  nuxt.options.nitro.routeRules[route] = options.override
     ? rule
     : defu(rule, nuxt.options.nitro.routeRules[route] || {})
 }
