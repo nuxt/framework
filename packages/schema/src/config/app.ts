@@ -165,6 +165,11 @@ export default defineUntypedSchema({
    *
    * It can also be an object with `src` and `mode` keys.
    *
+   * @note Plugins are also auto-registered from plugins/ directory and do not need to be listed. All plugins are deduplicated  by their src path.
+   *
+   * @see https://nuxt.com/docs/guide/directory-structure/plugins
+   *
+   *
    * @example
    * ```js
    * plugins: [
