@@ -10,7 +10,7 @@ import { TreeShakeTemplatePlugin } from './tree-shake'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
 const isDirectory = (p: string) => { try { return statSync(p).isDirectory() } catch (_e) { return false } }
-function compareDirByPathLength({ path: pathA }: { path: string }, { path: pathB }: { path: string }) {
+function compareDirByPathLength ({ path: pathA }: { path: string }, { path: pathB }: { path: string }) {
   return pathB.split(/[\\/]/).filter(Boolean).length - pathA.split(/[\\/]/).filter(Boolean).length
 }
 
@@ -33,7 +33,7 @@ export default defineNuxtModule<ComponentsOptions>({
   defaults: {
     dirs: []
   },
-  setup(componentOptions, nuxt) {
+  setup (componentOptions, nuxt) {
     let componentDirs: ComponentsDir[] = []
     const context = {
       components: [] as Component[]
