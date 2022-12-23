@@ -23,6 +23,8 @@ enum Loader {
   VITE = 'vite'
 }
 
+type ModeEnvironments = 'client' | 'server'
+
 export default defineNuxtModule<ComponentsOptions>({
   meta: {
     name: 'components',
@@ -43,7 +45,7 @@ export default defineNuxtModule<ComponentsOptions>({
         : context.components
     }
 
-    const addLoaderAndTreeShakeToConfigPlugins = (config: any, mode: string, loader: Loader) => {
+    const addLoaderAndTreeShakeToConfigPlugins = (config: any, mode: ModeEnvironments, loader: Loader) => {
       const sourcemap = nuxt.options.sourcemap[mode]
       config.plugins.push(loaderPlugin[loader]({
         sourcemap,
