@@ -1,4 +1,4 @@
-import { Nuxt, NuxtApp } from '@nuxt/schema'
+import type { Nuxt, NuxtApp } from '@nuxt/schema'
 import { normalize } from 'pathe'
 import { createTransformer } from 'unctx/transform'
 import { createUnplugin } from 'unplugin'
@@ -12,7 +12,7 @@ export const UnctxTransformPlugin = (nuxt: Nuxt) => {
   nuxt.hook('app:resolve', (_app) => { app = _app })
 
   return createUnplugin((options: { sourcemap?: boolean } = {}) => ({
-    name: 'unctx:transfrom',
+    name: 'unctx:transform',
     enforce: 'post',
     transformInclude (id) {
       id = normalize(id).replace(/\?.*$/, '')
