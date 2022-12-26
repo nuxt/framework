@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const route = useRoute()
+  const { path } = useRoute()
 </script>
 
 <template>
@@ -32,7 +32,7 @@ const route = useRoute()
 
     <template #footer>
       <div class="text-center p-4 op-50">
-        Current route: <code>{{ route.path }}</code>
+        Current route: <code>{{ path }}</code>
       </div>
     </template>
   </NuxtExampleLayout>
