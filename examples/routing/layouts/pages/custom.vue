@@ -8,8 +8,8 @@
   </div>
 </template>
 
-<script>
-definePageMeta({
-  layout: 'custom'
-})
+<script setup lang="ts">
+  definePageMeta({
+    layout: 'custom'
+  })
 </script>
