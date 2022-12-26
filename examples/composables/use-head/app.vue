@@ -1,3 +1,15 @@
+<script setup lang="ts">
+  useHead({
+    titleTemplate: '%s - useHead example',
+    title: 'Another title',
+    bodyAttrs: {
+      class: 'test'
+    }
+  })
+
+  const dynamic = ref(49)
+</script>
+
 <template>
   <NuxtExampleLayout example="composables/use-head">
     <div
@@ -22,20 +34,3 @@
     </div>
   </NuxtExampleLayout>
 </template>
-
-<script>
-export default {
-  setup () {
-    useHead({
-      titleTemplate: '%s - useHead example',
-      bodyAttrs: {
-        class: 'test'
-      }
-    })
-    return { dynamic: ref(49) }
-  },
-  head: {
-    title: 'Another title'
-  }
-}
-</script>
