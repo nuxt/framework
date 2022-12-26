@@ -1,7 +1,7 @@
-<script setup>
-const { data: mountain } = await useFetch(
-  'https://api.nuxtjs.dev/mountains/mount-everest'
-)
+<script setup lang="ts">
+  const { data: mountain } = await useFetch(
+    'https://api.nuxtjs.dev/mountains/mount-everest'
+  )
 </script>
 
 <template>
