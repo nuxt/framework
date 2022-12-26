@@ -1,17 +1,17 @@
 <script setup lang="ts">
-const user = useCookie<{ name: string }>('user')
-const logins = useCookie<number>('logins')
+  const user = useCookie<{ name: string }>('user')
+  const logins = useCookie<number>('logins')
 
-const name = ref('')
+  const name = ref('')
 
-const login = () => {
-  logins.value = (logins.value || 0) + 1
-  user.value = { name: name.value }
-}
+  const login = () => {
+    logins.value = (logins.value || 0) + 1
+    user.value = { name: name.value }
+  }
 
-const logout = () => {
-  user.value = null
-}
+  const logout = () => {
+    user.value = null
+  }
 </script>
 
 <template>
