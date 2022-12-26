@@ -1,15 +1,15 @@
-<script setup>
-const showMountain = ref(false)
+<script setup lang="ts">
+  const showMountain = ref(false)
 
-const refreshing = ref(false)
-const refreshAll = async () => {
-  refreshing.value = true
-  try {
-    await refreshNuxtData()
-  } finally {
-    refreshing.value = false
+  const refreshing = ref(false)
+  const refreshAll = async () => {
+    refreshing.value = true
+    try {
+      await refreshNuxtData()
+    } finally {
+      refreshing.value = false
+    }
   }
-}
 </script>
 
 <template>
