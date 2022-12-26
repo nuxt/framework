@@ -1,6 +1,6 @@
-<script setup>
-const counter = useState('counter', () => Math.round(Math.random() * 1000))
-const sameCounter = useState('counter')
+<script setup lang="ts">
+  const counter = useState('counter', () => Math.round(Math.random() * 1000))
+  const sameCounter = useState('counter')
 </script>
 
 <template>
