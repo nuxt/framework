@@ -5,9 +5,9 @@
 </template>
 
 <style>
-.example a {
-  font-family: Arial, Helvetica, sans-serif;
-  padding: 1rem 10rem;
-  display: block;
-}
+  .example a {
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 1rem 10rem;
+    display: block;
+  }
 </style>
