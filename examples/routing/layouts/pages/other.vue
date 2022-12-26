@@ -1,7 +1,7 @@
-<script setup>
-definePageMeta({
-  middleware: 'other'
-})
+<script setup lang="ts">
+  definePageMeta({
+    middleware: 'other'
+  })
 </script>
 
 <template>
