@@ -1,1 +1,5 @@
-export default defineEventHandler(event => `Hello world (${event.node.req.url.substr(1)}) (Generated at ${new Date().toUTCString()})`)
+export default defineEventHandler(event => {
+    const { slug } = event.context.params;
+    
+    return `Hello world (${ slug }) (Generated at ${new Date().toUTCString()}`
+})
