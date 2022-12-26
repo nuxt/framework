@@ -2,11 +2,11 @@
   <div class="p-4">
     Custom layout defined dynamically with the <code>NuxtLayout</code> component
     <br>
-    <NuxtLayout :name="layout">
+    <NuxtLayout :name="layout ? 'custom' : false">
       Default slot
       <br>
-      <button class="border p-1 rounded" @click="layout = layout ? null : 'custom'">
-        Switch layout
+      <button class="border p-1 rounded" @click="layout = !layout">
+        Toggle layout
       </button>
 
       <template #header>
@@ -20,13 +20,10 @@
   </div>
 </template>
 
-<script>
-definePageMeta({
-  layout: false
-})
-export default {
-  data: () => ({
-    layout: 'custom'
+<script setup lang="ts">
+  definePageMeta({
+    layout: false
   })
-}
+
+  const layout = ref(true);
 </script>
