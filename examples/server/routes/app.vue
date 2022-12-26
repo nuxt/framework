@@ -4,6 +4,6 @@
   </NuxtExampleLayout>
 </template>
 
-<script setup>
-const { data: mountain } = await useFetch('/api/mountain')
+<script setup lang="ts">
+  const { data: mountain } = await useFetch('/api/mountain')
 </script>
