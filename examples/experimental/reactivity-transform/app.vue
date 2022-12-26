@@ -1,12 +1,13 @@
 <script setup lang="ts">
-let count = $ref(0)
+  let count = $ref(0)
 
-function inc () {
-  count++
-}
-function dec () {
-  count--
-}
+  const inc = () => {
+    count++
+  }
+
+  const dec = () => {
+    count--
+  }
 </script>
 
 <template>
