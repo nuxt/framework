@@ -180,7 +180,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
         if (shouldPrefetch) {
           const nuxtApp = useNuxtApp()
           let idleId: number
-          let unobserve: Function | null = null
+          let unobserve: (() => void)| null = null
           onMounted(() => {
             const observer = useObserver()
             onNuxtReady(() => {
@@ -268,8 +268,14 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
 export default defineNuxtLink({ componentName: 'NuxtLink' })
 
 // --- Prefetching utils ---
+type CallbackFn = () => void
+type ObserveFn = (element: Element, callback: CallbackFn) => () => void
 
-function useObserver () {
+interface UseObserverReturn {
+  observe: ObserveFn
+}
+
+function useObserver (): UseObserverReturn | undefined {
   if (process.server) { return }
 
   const nuxtApp = useNuxtApp()
@@ -278,10 +284,10 @@ function useObserver () {
   }
 
   let observer: IntersectionObserver | null = null
-  type CallbackFn = () => void
+
   const callbacks = new Map<Element, CallbackFn>()
 
-  const observe = (element: Element, callback: CallbackFn) => {
+  const observe: ObserveFn = (element, callback) => {
     if (!observer) {
       observer = new IntersectionObserver((entries) => {
         for (const entry of entries) {
