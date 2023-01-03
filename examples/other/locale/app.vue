@@ -1,8 +1,8 @@
 <script setup lang="ts">
-// see ../compoables/locale.ts for the implementation
-const locales = useLocales()
-const locale = useLocale()
-const date = useLocaleDate(new Date('2016-10-26') /* NUXT_BIRTHDAY */)
+  // see ../composables/locale.ts for the implementation
+  const locales = useLocales()
+  const locale = useLocale()
+  const date = useLocaleDate(new Date('2016-10-26') /* NUXT_BIRTHDAY */)
 </script>
 
 <template>

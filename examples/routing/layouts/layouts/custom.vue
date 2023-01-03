@@ -9,10 +9,8 @@
   </div>
 </template>
 
-<script>
-export default {
-  created () {
+<script setup lang="ts">
+  onMounted(() => {
     console.log('layout created')
-  }
-}
+  })
 </script>

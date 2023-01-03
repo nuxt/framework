@@ -1,6 +1,6 @@
 <script setup lang="ts">
-const route = useRoute()
-const timer = useState('timer', () => 0)
+  const { path } = useRoute()
+  const timer = useState('timer', () => 0)
 </script>
 
 <template>
@@ -35,7 +35,7 @@ const timer = useState('timer', () => 0)
 
     <template #footer>
       <div class="text-center p-4 op-50">
-        Current route: <code>{{ route.path }}</code>
+        Current route: <code>{{ path }}</code>
       </div>
     </template>
   </NuxtExampleLayout>

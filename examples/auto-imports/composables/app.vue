@@ -8,10 +8,10 @@
   </NuxtExampleLayout>
 </template>
 
-<script setup>
-const a = useA()
-const b = useB()
-const c = useC()
-const d = useD()
-const foo = useFoo()
+<script setup lang="ts">
+  const a = useA()
+  const b = useB()
+  const c = useC()
+  const d = useD()
+  const foo = useFoo()
 </script>
