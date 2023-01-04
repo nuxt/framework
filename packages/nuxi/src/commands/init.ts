@@ -4,15 +4,6 @@ import { relative } from 'pathe'
 import consola from 'consola'
 import { defineNuxtCommand } from './index'
 
-const resolveTemplate = (template: string | boolean) => {
-  if (typeof template === 'boolean') {
-    consola.error('Please specify a template!')
-    process.exit(1)
-  }
-
-  return template || 'v3'
-}
-
 const rpath = (p: string) => relative(process.cwd(), p)
 
 const DEFAULT_REGISTRY = 'https://raw.githubusercontent.com/nuxt/starter/templates/templates'
@@ -25,7 +16,12 @@ export default defineNuxtCommand({
   },
   async invoke (args) {
     // Clone template
-    const template = resolveTemplate(args.template || args.t)
+    const template = args.template || args.t || 'v3'
+
+    if (typeof template === 'boolean') {
+      consola.error('Please specify a template!')
+      process.exit(1)
+    }
 
     const t = await downloadTemplate(template, {
       dir: args._[0] as string,
