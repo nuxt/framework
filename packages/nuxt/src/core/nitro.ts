@@ -17,6 +17,8 @@ import { ImportProtectionPlugin } from './plugins/import-protection'
 export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   // Resolve config
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
+  const excludePattern = new RegExp(`node_modules\\/(?!${nuxt.options._layers.map(l => l.cwd.match(/(?<=\/)(?:.+\.pnpm\/.+\/)?node_modules\/(.+)$/)?.[1]).filter(Boolean).map(dir => escapeRE(dir!)).join('|')})`)
+
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
     debug: nuxt.options.debug,
     rootDir: nuxt.options.rootDir,
@@ -27,9 +29,15 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     esbuild: {
       options: {
         exclude: [
-          new RegExp(`node_modules\\/(?!${nuxt.options._layers.map(l => l.cwd.match(/(?<=\/)node_modules\/(.+)$/)?.[1]).filter(Boolean).map(dir => escapeRE(dir!)).join('|')})`)
+          excludePattern
         ]
       }
+    },
+    imports: {
+      exclude: [
+        excludePattern,
+        /[\\/]\.git[\\/]/
+      ]
     },
     analyze: nuxt.options.build.analyze && {
       template: 'treemap',
