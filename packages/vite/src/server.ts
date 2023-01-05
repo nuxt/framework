@@ -33,13 +33,8 @@ export async function buildServer (ctx: ViteBuildContext) {
       }
     },
     define: {
-      'process.server': true,
-      'process.client': false,
-      'typeof window': '"undefined"',
-      'typeof document': '"undefined"',
-      'typeof navigator': '"undefined"',
-      'typeof location': '"undefined"',
-      'typeof XMLHttpRequest': '"undefined"'
+      'process.server': 'true',
+      'process.client': 'false'
     },
     optimizeDeps: {
       entries: [ctx.entry]
