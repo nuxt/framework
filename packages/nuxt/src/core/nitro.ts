@@ -19,16 +19,14 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
 
   const excludePattern = new RegExp(
-                `node_modules\\/(?!${nuxt.options._layers
-                    .flatMap((l) => {
-                        return [
-                            l.cwd.match(/(?<=\/)node_modules\/(.+)$/)?.[1],
-                            l.cwd.match(/\.pnpm\/.+\/node_modules\/(.+)$/)?.[1]
-                        ]
-                    })
-                    .filter((dir): dir is string => Boolean(dir))
-                    .map(dir => escapeRE(dir))
-                    .join('|')})`
+    `node_modules\\/(?!${nuxt.options._layers
+      .flatMap(l => [
+        l.cwd.match(/(?<=\/)node_modules\/(.+)$/)?.[1],
+        l.cwd.match(/\.pnpm\/.+\/node_modules\/(.+)$/)?.[1]
+      ])
+      .filter((dir): dir is string => Boolean(dir))
+      .map(dir => escapeRE(dir))
+      .join('|')})`
   )
 
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
