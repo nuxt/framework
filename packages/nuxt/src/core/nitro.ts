@@ -17,7 +17,19 @@ import { ImportProtectionPlugin } from './plugins/import-protection'
 export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   // Resolve config
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
-  const excludePattern = new RegExp(`node_modules\\/(?!${nuxt.options._layers.map(l => l.cwd.match(/(?<=\/)(?:.+\.pnpm\/.+\/)?node_modules\/(.+)$/)?.[1]).filter(Boolean).map(dir => escapeRE(dir!)).join('|')})`)
+
+  const excludePattern = new RegExp(
+                `node_modules\\/(?!${nuxt.options._layers
+                    .flatMap((l) => {
+                        return [
+                            l.cwd.match(/(?<=\/)node_modules\/(.+)$/)?.[1],
+                            l.cwd.match(/\.pnpm\/.+\/node_modules\/(.+)$/)?.[1]
+                        ]
+                    })
+                    .filter((dir): dir is string => Boolean(dir))
+                    .map(dir => escapeRE(dir))
+                    .join('|')})`
+  )
 
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
     debug: nuxt.options.debug,
