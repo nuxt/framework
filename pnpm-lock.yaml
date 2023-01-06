@@ -121,7 +121,7 @@ importers:
     devDependencies:
       '@nuxt/test-utils': link:../../../packages/test-utils
       nuxt: link:../../../packages/nuxt
-      vitest: 0.26.2
+      vitest: 0.26.3
 
   examples/app-config:
     specifiers:
@@ -318,7 +318,7 @@ importers:
       semver: ^7.3.8
       unbuild: ^1.0.2
       unctx: ^2.1.1
-      unimport: ^1.1.0
+      unimport: ^1.2.0
       untyped: ^1.2.0
     dependencies:
       '@nuxt/schema': link:../schema
@@ -337,7 +337,7 @@ importers:
       scule: 1.0.0
       semver: 7.3.8
       unctx: 2.1.1
-      unimport: 1.1.0
+      unimport: 1.2.0
       untyped: 1.2.0
     devDependencies:
       '@types/lodash.template': 4.5.1
@@ -449,7 +449,7 @@ importers:
       unctx: ^2.1.1
       unenv: ^1.0.0
       unhead: ^1.0.14
-      unimport: ^1.1.0
+      unimport: ^1.2.0
       unplugin: ^1.0.1
       untyped: ^1.2.0
       vue: 3.2.45
@@ -494,7 +494,7 @@ importers:
       unctx: 2.1.1
       unenv: 1.0.0
       unhead: 1.0.14
-      unimport: 1.1.0
+      unimport: 1.2.0
       unplugin: 1.0.1
       untyped: 1.2.0
       vue: 3.2.45
@@ -525,7 +525,7 @@ importers:
       std-env: ^3.3.1
       ufo: ^1.0.1
       unbuild: ^1.0.2
-      unimport: ^1.1.0
+      unimport: ^1.2.0
       untyped: ^1.2.0
       vite: ^4.0.3
     dependencies:
@@ -540,7 +540,7 @@ importers:
       scule: 1.0.0
       std-env: 3.3.1
       ufo: 1.0.1
-      unimport: 1.1.0
+      unimport: 1.2.0
       untyped: 1.2.0
     devDependencies:
       '@types/lodash.template': 4.5.1
@@ -6385,7 +6385,7 @@ packages:
       std-env: 3.3.1
       ufo: 1.0.1
       unenv: 1.0.0
-      unimport: 1.1.0_rollup@3.8.1
+      unimport: 1.2.0_rollup@3.8.1
       unstorage: 1.0.1
     transitivePeerDependencies:
       - bufferutil
@@ -8230,8 +8230,8 @@ packages:
       hookable: 5.4.2
     dev: false
 
-  /unimport/1.1.0:
-    resolution: {integrity: sha512-dSufi3POQWUVAMU6DxXu39U0cWzz5m3FtQBUbgDJTkCpeRfyiYhDg+BOz6UPKfDPtEhkbshV8JoMV3I8i/mQ+A==}
+  /unimport/1.2.0:
+    resolution: {integrity: sha512-yMok/ubppurBE7Png1QH70Om96AxIoWCcfdxW3J/pziozShMc1UGpPgWpSckfo9ndAO5M74yNnRDdLAZy/gWQg==}
     dependencies:
       '@rollup/pluginutils': 5.0.2
       escape-string-regexp: 5.0.0
@@ -8248,8 +8248,8 @@ packages:
       - rollup
     dev: false
 
-  /unimport/1.1.0_rollup@3.8.1:
-    resolution: {integrity: sha512-dSufi3POQWUVAMU6DxXu39U0cWzz5m3FtQBUbgDJTkCpeRfyiYhDg+BOz6UPKfDPtEhkbshV8JoMV3I8i/mQ+A==}
+  /unimport/1.2.0_rollup@3.8.1:
+    resolution: {integrity: sha512-yMok/ubppurBE7Png1QH70Om96AxIoWCcfdxW3J/pziozShMc1UGpPgWpSckfo9ndAO5M74yNnRDdLAZy/gWQg==}
     dependencies:
       '@rollup/pluginutils': 5.0.2_rollup@3.8.1
       escape-string-regexp: 5.0.0
@@ -8503,6 +8503,27 @@ packages:
       - terser
     dev: true
 
+  /vite-node/0.26.3_@types+node@18.11.17:
+    resolution: {integrity: sha512-Te2bq0Bfvq6XiO718I+1EinMjpNYKws6SNHKOmVbILAQimKoZKDd+IZLlkaYcBXPpK3HFe2U80k8Zw+m3w/a2w==}
+    engines: {node: '>=v14.16.0'}
+    hasBin: true
+    dependencies:
+      debug: 4.3.4
+      mlly: 1.0.0
+      pathe: 0.2.0
+      source-map: 0.6.1
+      source-map-support: 0.5.21
+      vite: 4.0.3_@types+node@18.11.17
+    transitivePeerDependencies:
+      - '@types/node'
+      - less
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+    dev: true
+
   /vite-plugin-checker/0.5.3_vite@4.0.3:
     resolution: {integrity: sha512-upPESKsQTypC2S7LPjxu9HknOymNSToAAHTYSFHb0at5GKLcN1QGMAR5Hb+7KqZclGMVniXAj7QdhZv+fTx83Q==}
     engines: {node: '>=14.16'}
@@ -8652,6 +8673,52 @@ packages:
       tinyspy: 1.0.2
       vite: 4.0.3_@types+node@18.11.17
       vite-node: 0.26.2_@types+node@18.11.17
+    transitivePeerDependencies:
+      - less
+      - sass
+      - stylus
+      - sugarss
+      - supports-color
+      - terser
+    dev: true
+
+  /vitest/0.26.3:
+    resolution: {integrity: sha512-FmHxU9aUCxTi23keF3vxb/Qp0lYXaaJ+jRLGOUmMS3qVTOJvgGE+f1VArupA6pEhaG2Ans4X+zV9dqM5WISMbg==}
+    engines: {node: '>=v14.16.0'}
+    hasBin: true
+    peerDependencies:
+      '@edge-runtime/vm': '*'
+      '@vitest/browser': '*'
+      '@vitest/ui': '*'
+      happy-dom: '*'
+      jsdom: '*'
+    peerDependenciesMeta:
+      '@edge-runtime/vm':
+        optional: true
+      '@vitest/browser':
+        optional: true
+      '@vitest/ui':
+        optional: true
+      happy-dom:
+        optional: true
+      jsdom:
+        optional: true
+    dependencies:
+      '@types/chai': 4.3.4
+      '@types/chai-subset': 1.3.3
+      '@types/node': 18.11.17
+      acorn: 8.8.1
+      acorn-walk: 8.2.0
+      chai: 4.3.7
+      debug: 4.3.4
+      local-pkg: 0.4.2
+      source-map: 0.6.1
+      strip-literal: 1.0.0
+      tinybench: 2.3.1
+      tinypool: 0.3.0
+      tinyspy: 1.0.2
+      vite: 4.0.3_@types+node@18.11.17
+      vite-node: 0.26.3_@types+node@18.11.17
     transitivePeerDependencies:
       - less
       - sass

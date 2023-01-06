@@ -42,6 +42,8 @@ export default defineNuxtModule<Partial<ImportsOptions>>({
       }
     })
 
+    await nuxt.callHook('imports:context', ctx)
+
     // composables/ dirs from all layers
     let composablesDirs: string[] = []
     for (const layer of nuxt.options._layers) {
