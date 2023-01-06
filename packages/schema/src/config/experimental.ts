@@ -60,7 +60,7 @@ export default defineUntypedSchema({
      * @type {boolean | ((id?: string) => boolean)}
      */
     inlineSSRStyles: {
-      async $resolve (val, get) {
+      async $resolve(val, get) {
         if (val === false || (await get('dev')) || (await get('ssr')) === false || (await get('builder')) === '@nuxt/webpack-builder') {
           return false
         }
@@ -78,7 +78,7 @@ export default defineUntypedSchema({
      * When this option is enabled (by default) payload of pages generated with `nuxt generate` are extracted
      */
     payloadExtraction: {
-      async $resolve (enabled, get) {
+      async $resolve(enabled, get) {
         enabled = enabled ?? false
         if (enabled) {
           console.warn('Using experimental payload extraction for full-static output. You can opt-out by setting `experimental.payloadExtraction` to `false`.')
@@ -98,9 +98,8 @@ export default defineUntypedSchema({
     writeEarlyHints: false,
 
     /**
-     * Experimental component islands support with <NuxtIsland> and .island.vue files
-     * (required for server-only components to work).
+     * Experimental component islands support with <NuxtIsland> and .island.vue files.
      */
-    componentIslands: false,
+    componentIslands: false
   }
 })
