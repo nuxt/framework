@@ -27,7 +27,7 @@ export default defineComponent({
   async setup (props) {
     const nuxtApp = useNuxtApp()
     const hashId = computed(() => hash([props.name, props.props, props.context]))
-    const html = ref<string>('')
+    const html = ref('')
     const cHead = ref<MetaObject>({ link: [], style: [] })
     useHead(cHead)
 

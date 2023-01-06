@@ -29,16 +29,21 @@ export const componentsPluginTemplate: NuxtPluginTemplate<ComponentsTemplateCont
   filename: 'components.plugin.mjs',
   getContents ({ options }) {
     const globalComponents = options.getComponents().filter(c => c.global === true)
+    const serverComponents = options.getComponents().filter(c => c.mode === 'server')
+
+    function genComponentsObject (components: Component[]) {
+      return genObjectFromRawEntries(components.map((c) => {
+        const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
+        const comment = createImportMagicComments(c)
+
+        return [c.pascalName, `defineAsyncComponent(${genDynamicImport(c.filePath, { comment })}.then(c => ${exp}))`]
+      }))
+    }
 
     return `import { defineAsyncComponent } from 'vue'
 import { defineNuxtPlugin } from '#app'
 
-const components = ${genObjectFromRawEntries(globalComponents.map((c) => {
-  const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
-  const comment = createImportMagicComments(c)
-
-  return [c.pascalName, `defineAsyncComponent(${genDynamicImport(c.filePath, { comment })}.then(c => ${exp}))`]
-}))}
+const components = ${genComponentsObject(globalComponents)}
 
 export default defineNuxtPlugin(nuxtApp => {
   for (const name in components) {
@@ -86,7 +91,12 @@ export const componentsTemplate: NuxtTemplate<ComponentsTemplateContext> = {
 export const componentsIslandsTemplate: NuxtTemplate<ComponentsTemplateContext> = {
   // components.islands.mjs'
   getContents ({ options }) {
-    return options.getComponents().filter(c => c.island).map(
+    const components = options.getComponents()
+    const islands = components.filter(component =>
+      component.island ||
+      (component.mode === 'server' && !components.some(c => c.pascalName === component.pascalName && c.mode === 'client'))
+    )
+    return islands.map(
       (c) => {
         const exp = c.export === 'default' ? 'c.default || c' : `c['${c.export}']`
         const comment = createImportMagicComments(c)
