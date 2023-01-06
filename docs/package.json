@@ -8,12 +8,12 @@
     "gendocs": "jiti ./scripts/gen-docs.ts"
   },
   "devDependencies": {
-    "jiti": "^1.16.0",
+    "jiti": "^1.16.1",
     "nuxt": "^3.0.0",
-    "nuxt-website-theme": "^0.2.1",
+    "nuxt-website-theme": "^0.2.5",
     "pathe": "^1.0.0",
     "scule": "^1.0.0",
-    "untyped": "^1.2.0"
+    "untyped": "^1.2.1"
   },
   "resolutions": {
     "parse5": "6.0.1"
