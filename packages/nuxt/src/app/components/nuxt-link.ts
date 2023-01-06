@@ -168,7 +168,7 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
           return false
         }
 
-        return to.value === '' || hasProtocol(to.value, true)
+        return to.value === '' || to.value.startsWith('#') || hasProtocol(to.value, true)
       })
 
       // Prefetching
@@ -235,7 +235,8 @@ export function defineNuxtLink (options: NuxtLinkOptions) {
 
         // Resolves `rel`
         checkPropConflicts(props, 'noRel', 'rel')
-        const rel = (props.noRel)
+        const rel = props.noRel || href?.startsWith('#')
+          // `noRel` is used or href is a fragment identifier
           ? null
           // converts `""` to `null` to prevent the attribute from being added as empty (`rel=""`)
           : firstNonUndefined<string | null>(props.rel, options.externalRelAttribute, href ? DEFAULT_EXTERNAL_REL_ATTRIBUTE : '') || null

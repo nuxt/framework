@@ -73,6 +73,7 @@ describe('nuxt-link:isExternal', () => {
     expect(nuxtLink({ to: '//nuxtjs.org' }).type).toBe(EXTERNAL)
     expect(nuxtLink({ to: 'tel:0123456789' }).type).toBe(EXTERNAL)
     expect(nuxtLink({ to: 'mailto:hello@nuxtlabs.com' }).type).toBe(EXTERNAL)
+    expect(nuxtLink({ to: '#id' }).type).toBe(EXTERNAL)
   })
 
   it('returns `false` when `to` is a route location object', () => {
@@ -144,6 +145,10 @@ describe('nuxt-link:propsOrAttributes', () => {
         // expect(consoleWarnSpy).toHaveBeenCalledOnce()
 
         consoleWarnSpy.mockRestore()
+      })
+
+      it('omits when href is a fragment identifier', () => {
+        expect(nuxtLink({ to: '#id' }).props.rel).toBe(null)
       })
     })
   })

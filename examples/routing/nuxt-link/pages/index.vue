@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="top">
     <NuxtLink to="/about">
       About page
     </NuxtLink>
@@ -29,6 +29,9 @@
     <MyNuxtLink to="/">
       Index page with a custom link component with a custom active class
     </MyNuxtLink>
+    <NuxtLink to="#top">
+      Link with a fragment identifier to element with id 'top'
+    </NuxtLink>
     <NuxtLink>Link without href and to</NuxtLink>
   </div>
 </template>
