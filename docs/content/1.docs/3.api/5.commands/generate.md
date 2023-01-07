@@ -14,3 +14,4 @@ The `generate` command pre-renders every route of your application and stores th
 Option        | Default          | Description
 -------------------------|-----------------|------------------
 `rootDir` | `.` | The root directory of the application to generate
+`--dotenv` | `.` | Point to another `.env` file to load, **relative** to the root directory.
