@@ -6,7 +6,7 @@ description: Pre-renders every route of the application and stores the result in
 # `nuxi generate`
 
 ```{bash}
-npx nuxi generate [rootDir]
+npx nuxi generate [rootDir] [--dotenv]
 ```
 
 The `generate` command pre-renders every route of your application and stores the result in plain HTML files that you can deploy on any static hosting services. The command triggers the `nuxi build` command with the `prerender` argument set to `true`
