@@ -11,6 +11,7 @@ interface LoaderOptions {
   mode: 'server' | 'client'
   sourcemap?: boolean
   transform?: ComponentsOptions['transform']
+  experimentalComponentIslands?: boolean
 }
 
 function isVueTemplate (id: string) {
@@ -77,6 +78,9 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
           if (isServerOnly) {
             imports.add(genImport(serverComponentRuntime, [{ name: 'createServerComponent' }]))
             imports.add(`const ${identifier} = createServerComponent(${JSON.stringify(name)})`)
+            if (!options.experimentalComponentIslands) {
+              console.warn(`Standalone server components (\`${name}\`) are not yet supported without enabling \`experimental.componentIslands\`.`)
+            }
             return identifier
           }
 
