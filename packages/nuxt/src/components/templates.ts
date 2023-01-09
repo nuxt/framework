@@ -89,6 +89,7 @@ export const componentsIslandsTemplate: NuxtTemplate<ComponentsTemplateContext> 
     const components = options.getComponents()
     const islands = components.filter(component =>
       component.island ||
+      // .server components without a corresponding .client component will need to be rendered as an island
       (component.mode === 'server' && !components.some(c => c.pascalName === component.pascalName && c.mode === 'client'))
     )
     return islands.map(
