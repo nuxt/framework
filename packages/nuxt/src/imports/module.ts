@@ -72,7 +72,7 @@ export default defineNuxtModule<Partial<ImportsOptions>>({
     addVitePlugin(TransformPlugin.vite({ ctx, options, sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client }))
     addWebpackPlugin(TransformPlugin.webpack({ ctx, options, sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client }))
 
-    const priorities = [...nuxt.options._layers].reverse().map((layer, i) => [layer.config.srcDir, i] as const).sort(([a], [b]) => b.length - a.length)
+    const priorities = nuxt.options._layers.map((layer, i) => [layer.config.srcDir, -i] as const).sort(([a], [b]) => b.length - a.length)
 
     const regenerateImports = async () => {
       ctx.clearDynamicImports()
