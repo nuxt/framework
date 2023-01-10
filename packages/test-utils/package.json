@@ -18,15 +18,15 @@
     "consola": "^2.15.3",
     "defu": "^6.1.1",
     "execa": "^6.1.0",
-    "get-port-please": "^2.6.1",
-    "jiti": "^1.16.0",
+    "get-port-please": "^3.0.1",
+    "jiti": "^1.16.1",
     "ofetch": "^1.0.0",
     "pathe": "^1.0.0"
   },
   "devDependencies": {
-    "playwright": "^1.29.0",
+    "playwright": "^1.29.2",
     "unbuild": "latest",
-    "vitest": "^0.26.1"
+    "vitest": "^0.26.3"
   },
   "peerDependencies": {
     "vue": "^3.2.45"
