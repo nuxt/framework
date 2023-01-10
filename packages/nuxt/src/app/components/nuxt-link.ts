@@ -271,11 +271,7 @@ export default defineNuxtLink({ componentName: 'NuxtLink' })
 type CallbackFn = () => void
 type ObserveFn = (element: Element, callback: CallbackFn) => () => void
 
-interface UseObserverReturn {
-  observe: ObserveFn
-}
-
-function useObserver (): UseObserverReturn | undefined {
+function useObserver (): { observe: ObserveFn } | undefined {
   if (process.server) { return }
 
   const nuxtApp = useNuxtApp()
