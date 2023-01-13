@@ -23,7 +23,6 @@ export interface ViteOptions extends InlineConfig {
 }
 
 export interface ViteBuildContext {
-  isDev: boolean
   nuxt: Nuxt
   config: ViteOptions
   entry: string
@@ -36,7 +35,6 @@ export async function bundle (nuxt: Nuxt) {
     (nuxt.options.vite.devBundler === 'vite-node' && nuxt.options.dev)
   const entry = await resolvePath(resolve(nuxt.options.appDir, useAsyncEntry ? 'entry.async' : 'entry'))
   const ctx: ViteBuildContext = {
-    isDev: nuxt.options.dev,
     nuxt,
     entry,
     config: vite.mergeConfig(

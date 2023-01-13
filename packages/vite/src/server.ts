@@ -65,7 +65,7 @@ export async function buildServer (ctx: ViteBuildContext) {
         ? ['#internal/nitro', '#internal/nitro/utils', 'vue', 'vue-router']
         : ['#internal/nitro', '#internal/nitro/utils'],
       noExternal: [
-        ...transpile({ isServer: true, isDev: ctx.isDev }),
+        ...transpile({ isServer: true, isDev: ctx.nuxt.options.dev }),
         // TODO: Use externality for production (rollup) build
         /\/esm\/.*\.js$/,
         /\.(es|esm|esm-browser|esm-bundler).js$/,
