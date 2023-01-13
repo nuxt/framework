@@ -8,13 +8,14 @@ interface Envs {
   isServer?: boolean
 }
 
-export function transpile (envs: Envs): RegExp[] {
+export function transpile (envs: Envs): Array<string | RegExp> {
   const nuxt = useNuxt()
   const transpile = []
 
   for (let pattern of nuxt.options.build.transpile) {
     if (typeof pattern === 'function') {
-      pattern = pattern(envs)
+      const result = pattern(envs)
+      if (result) { pattern = result }
     }
     if (typeof pattern === 'string') {
       transpile.push(new RegExp(escapeRegExp(normalize(pattern))))
