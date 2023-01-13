@@ -1,8 +1,19 @@
 import { addComponent, addVitePlugin, addWebpackPlugin } from '@nuxt/kit'
+import type { NuxtPage } from '@nuxt/schema'
 import { createUnplugin } from 'unplugin'
+import { withoutLeadingSlash } from 'ufo'
+
+// (defined in nuxt/src/core/nitro.ts)
+declare module 'nitropack' {
+  interface NitroRouteConfig {
+    ssr?: boolean
+  }
+}
 
 export default defineNuxtConfig({
   app: {
+    pageTransition: true,
+    layoutTransition: true,
     head: {
       charset: 'utf-8',
       link: [undefined],
@@ -17,6 +28,9 @@ export default defineNuxtConfig({
     './extends/node_modules/foo'
   ],
   nitro: {
+    routeRules: {
+      '/route-rules/spa': { ssr: false }
+    },
     output: { dir: process.env.NITRO_OUTPUT_DIR },
     prerender: {
       routes: [
@@ -26,11 +40,11 @@ export default defineNuxtConfig({
       ]
     }
   },
-  publicRuntimeConfig: {
-    testConfig: 123
-  },
-  privateRuntimeConfig: {
-    privateConfig: 'secret_key'
+  runtimeConfig: {
+    privateConfig: 'secret_key',
+    public: {
+      testConfig: 123
+    }
   },
   modules: [
     '~/modules/example',
@@ -50,9 +64,36 @@ export default defineNuxtConfig({
       }))
       addVitePlugin(plugin.vite())
       addWebpackPlugin(plugin.webpack())
+    },
+    function (_options, nuxt) {
+      const routesToDuplicate = ['/async-parent', '/fixed-keyed-child-parent', '/keyed-child-parent', '/with-layout', '/with-layout2']
+      const stripLayout = (page: NuxtPage): NuxtPage => ({
+        ...page,
+        children: page.children?.map(child => stripLayout(child)),
+        name: 'internal-' + page.name,
+        path: withoutLeadingSlash(page.path),
+        meta: {
+          ...page.meta || {},
+          layout: undefined,
+          _layout: page.meta?.layout
+        }
+      })
+      nuxt.hook('pages:extend', (pages) => {
+        const newPages = []
+        for (const page of pages) {
+          if (routesToDuplicate.includes(page.path)) {
+            newPages.push(stripLayout(page))
+          }
+        }
+        const internalParent = pages.find(page => page.path === '/internal-layout')
+        internalParent!.children = newPages
+      })
     }
   ],
   hooks: {
+    'prepare:types' ({ tsConfig }) {
+      tsConfig.include = tsConfig.include!.filter(i => i !== '../../../../**/*')
+    },
     'modules:done' () {
       addComponent({
         name: 'CustomComponent',
@@ -62,9 +103,11 @@ export default defineNuxtConfig({
     }
   },
   experimental: {
-    inlineSSRStyles: id => !id.includes('assets.vue'),
+    inlineSSRStyles: id => !!id && !id.includes('assets.vue'),
+    componentIslands: true,
     reactivityTransform: true,
-    treeshakeClientOnly: true
+    treeshakeClientOnly: true,
+    payloadExtraction: true
   },
   appConfig: {
     fromNuxtConfig: true,

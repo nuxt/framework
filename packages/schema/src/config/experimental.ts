@@ -1,7 +1,6 @@
 import { defineUntypedSchema } from 'untyped'
 
 export default defineUntypedSchema({
-  /** @version 3 */
   experimental: {
     /**
      * Set to true to generate an async entry point for the Vue bundle (for module federation support).
@@ -61,7 +60,7 @@ export default defineUntypedSchema({
      * @type {boolean | ((id?: string) => boolean)}
      */
     inlineSSRStyles: {
-      async $resolve (val, get) {
+      async $resolve(val, get) {
         if (val === false || (await get('dev')) || (await get('ssr')) === false || (await get('builder')) === '@nuxt/webpack-builder') {
           return false
         }
@@ -78,6 +77,29 @@ export default defineUntypedSchema({
     /**
      * When this option is enabled (by default) payload of pages generated with `nuxt generate` are extracted
      */
-    payloadExtraction: true,
+    payloadExtraction: {
+      async $resolve(enabled, get) {
+        enabled = enabled ?? false
+        if (enabled) {
+          console.warn('Using experimental payload extraction for full-static output. You can opt-out by setting `experimental.payloadExtraction` to `false`.')
+        }
+        return enabled
+      }
+    },
+
+    /** Enable cross-origin prefetch using the Speculation Rules API. */
+    crossOriginPrefetch: false,
+
+    /**
+     * Write early hints when using node server.
+     *
+     * @note nginx does not support 103 Early hints in the current version.
+     */
+    writeEarlyHints: false,
+
+    /**
+     * Experimental component islands support with <NuxtIsland> and .island.vue files.
+     */
+    componentIslands: false
   }
 })

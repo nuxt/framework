@@ -1,16 +1,12 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "@nuxtjs"
+    "github>nuxt/renovate-config-nuxt"
   ],
   "ignoreDeps": [
-    "docus",
-    "@docus/app",
-    "@docus/github",
-    "@docus/social-image",
-    "@docus/theme",
-    "@docus/twitter",
-    "vitest",
-    "unplugin",
-    "vue-tsc"
+    "nuxt",
+    "nuxt3",
+    "@nuxt/kit",
+    "parse5"
   ]
 }

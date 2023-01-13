@@ -1,6 +1,6 @@
 {
   "name": "@nuxt/schema",
-  "version": "3.0.0-rc.10",
+  "version": "3.0.0",
   "repository": "nuxt/framework",
   "license": "MIT",
   "type": "module",
@@ -16,24 +16,28 @@
   "devDependencies": {
     "@types/lodash.template": "^4",
     "@types/semver": "^7",
+    "@unhead/schema": "^1.0.15",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "nitropack": "npm:nitropack-edge@2.0.0-27890666.bece791",
     "unbuild": "latest",
-    "untyped": "^0.5.0",
-    "vite": "~3.1.2"
+    "vite": "~4.0.4"
   },
   "dependencies": {
-    "c12": "^0.2.12",
+    "c12": "^1.1.0",
     "create-require": "^1.1.1",
-    "defu": "^6.1.0",
-    "jiti": "^1.15.0",
-    "pathe": "^0.3.7",
-    "pkg-types": "^0.3.5",
+    "defu": "^6.1.1",
+    "hookable": "^5.4.2",
+    "jiti": "^1.16.2",
+    "pathe": "^1.0.0",
+    "pkg-types": "^1.0.1",
     "postcss-import-resolver": "^2.0.0",
-    "scule": "^0.3.2",
-    "std-env": "^3.2.1",
-    "ufo": "^0.8.5",
-    "unimport": "^0.6.7"
+    "scule": "^1.0.0",
+    "std-env": "^3.3.1",
+    "ufo": "^1.0.1",
+    "unimport": "^1.2.0",
+    "untyped": "^1.2.1"
   },
   "engines": {
-    "node": "^14.16.0 || ^16.11.0 || ^17.0.0 || ^18.0.0"
+    "node": "^14.16.0 || ^16.10.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
   }
 }

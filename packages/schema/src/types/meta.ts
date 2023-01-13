@@ -1,4 +1,21 @@
-export interface MetaObject extends Record<string, any> {
+import type { Head, MergeHead } from '@unhead/schema'
+
+export interface HeadAugmentations extends MergeHead {
+  // runtime type modifications
+  base?: {}
+  link?: {}
+  meta?: {}
+  style?: {}
+  script?: {}
+  noscript?: {}
+  htmlAttrs?: {}
+  bodyAttrs?: {}
+}
+
+export type MetaObjectRaw = Head<HeadAugmentations>
+export type MetaObject = MetaObjectRaw
+
+export type AppHeadMetaObject = MetaObjectRaw & {
   /**
    * The character encoding in which the document is encoded => `<meta charset="<value>" />`
    *
@@ -12,21 +29,4 @@ export interface MetaObject extends Record<string, any> {
    * @default `'width=device-width, initial-scale=1'`
    */
   viewport?: string
-
-  /** Each item in the array maps to a newly-created `<meta>` element, where object properties map to attributes. */
-  meta?: Array<Record<string, any>>
-  /** Each item in the array maps to a newly-created `<link>` element, where object properties map to attributes. */
-  link?: Array<Record<string, any>>
-  /** Each item in the array maps to a newly-created `<style>` element, where object properties map to attributes. */
-  style?: Array<Record<string, any>>
-  /** Each item in the array maps to a newly-created `<script>` element, where object properties map to attributes. */
-  script?: Array<Record<string, any>>
-  /** Each item in the array maps to a newly-created `<noscript>` element, where object properties map to attributes. */
-  noscript?: Array<Record<string, any>>
-
-  titleTemplate?: string | ((title: string) => string)
-  title?: string
-
-  bodyAttrs?: Record<string, any>
-  htmlAttrs?: Record<string, any>
 }

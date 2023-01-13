@@ -1,18 +1,23 @@
 <template>
   <Suspense @resolve="onResolve">
     <ErrorComponent v-if="error" :error="error" />
-    <App v-else />
+    <IslandRendererer v-else-if="islandContext" :context="islandContext" />
+    <AppComponent v-else />
   </Suspense>
 </template>
 
 <script setup>
 import { defineAsyncComponent, onErrorCaptured, provide } from 'vue'
 import { callWithNuxt, isNuxtError, showError, useError, useRoute, useNuxtApp } from '#app'
+import AppComponent from '#build/app-component.mjs'
 
 const ErrorComponent = defineAsyncComponent(() => import('#build/error-component.mjs').then(r => r.default || r))
+const IslandRendererer = process.server
+  ? defineAsyncComponent(() => import('./island-renderer').then(r => r.default || r))
+  : () => null
 
 const nuxtApp = useNuxtApp()
-const onResolve = () => nuxtApp.callHook('app:suspense:resolve')
+const onResolve = nuxtApp.deferHydration()
 
 // Inject default route (outside of pages) as active route
 provide('_route', useRoute())
@@ -31,4 +36,7 @@ onErrorCaptured((err, target, info) => {
     callWithNuxt(nuxtApp, showError, [err])
   }
 })
+
+// Component islands context
+const { islandContext } = process.server && nuxtApp.ssrContext
 </script>

@@ -1,12 +1,10 @@
-import { resolveTSConfig } from 'pkg-types'
 import { resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import { logger, resolveModule } from '@nuxt/kit'
 import { joinURL, withoutLeadingSlash, withTrailingSlash } from 'ufo'
-import { ViteBuildContext, ViteOptions } from './vite'
-import { wpfs } from './utils/wpfs'
+import type { ViteBuildContext, ViteOptions } from './vite'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { initViteNodeServer } from './vite-node'
 import { ssrStylesPlugin } from './plugins/ssr-styles'
@@ -86,10 +84,10 @@ export async function buildServer (ctx: ViteBuildContext) {
         external: ['#internal/nitro', ...ctx.nuxt.options.experimental.externalVue ? ['vue', 'vue-router'] : []],
         output: {
           entryFileNames: 'server.mjs',
-          preferConst: true,
-          // TODO: https://github.com/vitejs/vite/pull/8641
-          inlineDynamicImports: !ctx.nuxt.options.experimental.viteServerDynamicImports,
-          format: 'module'
+          format: 'module',
+          generatedCode: {
+            constBindings: true
+          }
         },
         onwarn (warning, rollupWarn) {
           if (warning.code && ['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
@@ -129,39 +127,21 @@ export async function buildServer (ctx: ViteBuildContext) {
         if (shouldRemoveCSS) {
           entry.css = []
         }
-        // Add entry CSS as prefetch (non-blocking)
-        if (entry.isEntry) {
-          manifest[key + '-css'] = {
-            file: '',
-            css: entry.css
-          }
-          entry.css = []
-          entry.dynamicImports = entry.dynamicImports || []
-          entry.dynamicImports.push(key + '-css')
-        }
       }
     })
   }
 
-  // Add type-checking
-  if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
-    const checker = await import('vite-plugin-checker').then(r => r.default)
-    serverConfig.plugins!.push(checker({
-      vueTsc: {
-        tsconfigPath: await resolveTSConfig(ctx.nuxt.options.rootDir)
-      }
-    }))
-  }
-
   await ctx.nuxt.callHook('vite:extendConfig', serverConfig, { isClient: false, isServer: true })
 
-  const onBuild = () => ctx.nuxt.callHook('build:resources', wpfs)
+  const onBuild = () => ctx.nuxt.callHook('vite:compiled')
 
   // Production build
   if (!ctx.nuxt.options.dev) {
     const start = Date.now()
     logger.info('Building server...')
+    logger.restoreAll()
     await vite.build(serverConfig)
+    logger.wrapAll()
     // Write production client manifest
     await writeManifest(ctx)
     await onBuild()

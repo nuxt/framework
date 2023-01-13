@@ -1,6 +1,6 @@
 {
   "name": "nuxi",
-  "version": "3.0.0-rc.10",
+  "version": "3.0.0",
   "repository": "nuxt/framework",
   "license": "MIT",
   "type": "module",
@@ -18,38 +18,39 @@
     "prepack": "unbuild"
   },
   "devDependencies": {
-    "@nuxt/kit": "3.0.0-rc.10",
-    "@nuxt/schema": "3.0.0-rc.10",
+    "@nuxt/kit": "3.0.0",
+    "@nuxt/schema": "3.0.0",
     "@types/clear": "^0",
     "@types/flat": "^5.0.2",
     "@types/mri": "^1.1.1",
     "@types/semver": "^7",
-    "c12": "^0.2.12",
+    "c12": "^1.1.0",
     "chokidar": "^3.5.3",
     "clear": "^0.1.0",
     "clipboardy": "^3.0.0",
     "colorette": "^2.0.19",
     "consola": "^2.15.3",
-    "deep-object-diff": "^1.1.7",
-    "destr": "^1.1.1",
+    "deep-object-diff": "^1.1.9",
+    "destr": "^1.2.2",
     "execa": "^6.1.0",
     "flat": "^5.0.2",
-    "giget": "^0.1.6",
-    "jiti": "^1.15.0",
-    "listhen": "^0.3.1",
-    "mlly": "^0.5.14",
+    "giget": "^1.0.0",
+    "h3": "^1.0.2",
+    "jiti": "^1.16.2",
+    "listhen": "^1.0.1",
+    "mlly": "^1.1.0",
     "mri": "^1.2.0",
-    "pathe": "^0.3.7",
+    "pathe": "^1.0.0",
     "perfect-debounce": "^0.1.3",
-    "pkg-types": "^0.3.5",
-    "scule": "^0.3.2",
-    "semver": "^7.3.7",
+    "pkg-types": "^1.0.1",
+    "scule": "^1.0.0",
+    "semver": "^7.3.8",
     "unbuild": "latest"
   },
   "optionalDependencies": {
     "fsevents": "~2.3.2"
   },
   "engines": {
-    "node": "^14.16.0 || ^16.11.0 || ^17.0.0 || ^18.0.0"
+    "node": "^14.16.0 || ^16.10.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
   }
 }
