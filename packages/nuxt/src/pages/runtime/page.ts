@@ -1,10 +1,11 @@
-import { computed, defineComponent, h, provide, reactive, onMounted, nextTick, Suspense, Transition, KeepAliveProps, TransitionProps } from 'vue'
-import type { DefineComponent, VNode } from 'vue'
+import { computed, defineComponent, h, provide, reactive, onMounted, nextTick, Suspense, Transition } from 'vue'
+import type { DefineComponent, VNode, KeepAliveProps, TransitionProps } from 'vue'
 import { RouterView } from 'vue-router'
 import { defu } from 'defu'
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded, RouteLocation } from 'vue-router'
 
-import { generateRouteKey, RouterViewSlotProps, wrapInKeepAlive } from './utils'
+import type { RouterViewSlotProps } from './utils'
+import { generateRouteKey, wrapInKeepAlive } from './utils'
 import { useNuxtApp } from '#app'
 import { _wrapIf } from '#app/components/utils'
 // @ts-ignore
@@ -40,7 +41,7 @@ export default defineComponent({
         default: (routeProps: RouterViewSlotProps) => {
           if (!routeProps.Component) { return }
 
-          const key = generateRouteKey(props.pageKey, routeProps)
+          const key = generateRouteKey(routeProps, props.pageKey)
           const done = nuxtApp.deferHydration()
 
           const hasTransition = !!(props.transition ?? routeProps.route.meta.pageTransition ?? defaultPageTransition)
@@ -62,7 +63,9 @@ export default defineComponent({
     }
   }
 }) as DefineComponent<{
-  name?: string,
+  name?: string
+  transition?: boolean | TransitionProps
+  keepalive?: boolean | KeepAliveProps
   route?: RouteLocationNormalized
   pageKey?: string | ((route: RouteLocationNormalizedLoaded) => string)
   [key: string]: any
