@@ -4,7 +4,7 @@ import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import { logger, resolveModule } from '@nuxt/kit'
 import { joinURL, withoutLeadingSlash, withTrailingSlash } from 'ufo'
-import { ViteBuildContext, ViteOptions } from './vite'
+import type { ViteBuildContext, ViteOptions } from './vite'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import { initViteNodeServer } from './vite-node'
 import { ssrStylesPlugin } from './plugins/ssr-styles'
@@ -12,6 +12,7 @@ import { writeManifest } from './manifest'
 
 export async function buildServer (ctx: ViteBuildContext) {
   const _resolve = (id: string) => resolveModule(id, { paths: ctx.nuxt.options.modulesDir })
+  const helper = ctx.nuxt.options.nitro.imports !== false ? '' : 'globalThis.'
   const serverConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     entry: ctx.entry,
     base: ctx.nuxt.options.dev
@@ -24,11 +25,11 @@ export async function buildServer (ctx: ViteBuildContext) {
           return { relative: true }
         }
         if (type === 'public') {
-          return { runtime: `globalThis.__publicAssetsURL(${JSON.stringify(filename)})` }
+          return { runtime: `${helper}__publicAssetsURL(${JSON.stringify(filename)})` }
         }
         if (type === 'asset') {
           const relativeFilename = filename.replace(withTrailingSlash(withoutLeadingSlash(ctx.nuxt.options.app.buildAssetsDir)), '')
-          return { runtime: `globalThis.__buildAssetsURL(${JSON.stringify(relativeFilename)})` }
+          return { runtime: `${helper}__buildAssetsURL(${JSON.stringify(relativeFilename)})` }
         }
       }
     },
@@ -83,10 +84,10 @@ export async function buildServer (ctx: ViteBuildContext) {
         external: ['#internal/nitro', ...ctx.nuxt.options.experimental.externalVue ? ['vue', 'vue-router'] : []],
         output: {
           entryFileNames: 'server.mjs',
-          preferConst: true,
-          // TODO: https://github.com/vitejs/vite/pull/8641
-          inlineDynamicImports: !ctx.nuxt.options.experimental.viteServerDynamicImports,
-          format: 'module'
+          format: 'module',
+          generatedCode: {
+            constBindings: true
+          }
         },
         onwarn (warning, rollupWarn) {
           if (warning.code && ['UNUSED_EXTERNAL_IMPORT'].includes(warning.code)) {
@@ -138,7 +139,9 @@ export async function buildServer (ctx: ViteBuildContext) {
   if (!ctx.nuxt.options.dev) {
     const start = Date.now()
     logger.info('Building server...')
+    logger.restoreAll()
     await vite.build(serverConfig)
+    logger.wrapAll()
     // Write production client manifest
     await writeManifest(ctx)
     await onBuild()

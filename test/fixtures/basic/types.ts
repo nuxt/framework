@@ -4,7 +4,7 @@ import type { Ref } from 'vue'
 import type { AppConfig } from '@nuxt/schema'
 
 import type { FetchError } from 'ofetch'
-import { NavigationFailure, RouteLocationNormalizedLoaded, RouteLocationRaw, useRouter as vueUseRouter } from 'vue-router'
+import type { NavigationFailure, RouteLocationNormalizedLoaded, RouteLocationRaw, useRouter as vueUseRouter } from 'vue-router'
 import type { NavigateToOptions } from '~~/../../../packages/nuxt/dist/app/composables/router'
 // eslint-disable-next-line import/order
 import { isVue3 } from '#app'
@@ -161,9 +161,9 @@ describe('composables', () => {
     expectTypeOf(useState('test', () => ref('hello'))).toEqualTypeOf<Ref<string>>()
     expectTypeOf(useState('test', () => 'hello')).toEqualTypeOf<Ref<string>>()
 
-    expectTypeOf(useCookie('test', { default: () => ref(500) })).toEqualTypeOf<Ref<number | null>>()
-    expectTypeOf(useCookie('test', { default: () => 500 })).toEqualTypeOf<Ref<number | null>>()
-    useCookie('test').value = null
+    expectTypeOf(useCookie('test', { default: () => ref(500) })).toEqualTypeOf<Ref<number>>()
+    expectTypeOf(useCookie('test', { default: () => 500 })).toEqualTypeOf<Ref<number>>()
+    useCookie<number | null>('test').value = null
 
     expectTypeOf(useAsyncData('test', () => Promise.resolve(500), { default: () => ref(500) }).data).toEqualTypeOf<Ref<number | null>>()
     expectTypeOf(useAsyncData('test', () => Promise.resolve(500), { default: () => 500 }).data).toEqualTypeOf<Ref<number | null>>()
@@ -178,7 +178,7 @@ describe('composables', () => {
 
   it('infer request url string literal from server/api routes', () => {
     // request can accept dynamic string type
-    const dynamicStringUrl: string = 'https://example.com/api'
+    const dynamicStringUrl = 'https://example.com/api'
     expectTypeOf(useFetch(dynamicStringUrl).data).toEqualTypeOf<Ref<unknown>>()
 
     // request param should infer string literal type / show auto-complete hint base on server routes, ex: '/api/hello'

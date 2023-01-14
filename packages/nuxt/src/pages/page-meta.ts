@@ -1,7 +1,8 @@
 import { pathToFileURL } from 'node:url'
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL, stringifyQuery } from 'ufo'
-import { findStaticImports, findExports, StaticImport, parseStaticImport } from 'mlly'
+import type { StaticImport } from 'mlly'
+import { findStaticImports, findExports, parseStaticImport } from 'mlly'
 import type { CallExpression, Identifier, Expression } from 'estree'
 import { walk } from 'estree-walker'
 import MagicString from 'magic-string'
@@ -25,7 +26,7 @@ if (import.meta.hot) {
     Object.assign(__nuxt_page_meta, mod)
   })
 }
-// Webpack
+// webpack
 if (import.meta.webpackHot) {
   import.meta.webpackHot.accept((err) => {
     if (err) { window.location = window.location.href }
