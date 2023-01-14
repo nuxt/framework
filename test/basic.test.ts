@@ -57,6 +57,8 @@ describe('pages', () => {
     expect(html).toContain('This is a custom component with a named export.')
     // should apply attributes to client-only components
     expect(html).toContain('<div style="color:red;" class="client-only"></div>')
+    // should render server-only components
+    expect(html).toContain('<div class="server-only" style="background-color:gray;"> server-only component </div>')
     // should register global components automatically
     expect(html).toContain('global component registered automatically')
     expect(html).toContain('global component via suffix')
@@ -87,6 +89,9 @@ describe('pages', () => {
 
     expect(html).toContain('[...slug].vue')
     expect(html).toContain('404 at not-found')
+
+    // Middleware still runs after validation: https://github.com/nuxt/framework/issues/9701
+    expect(html).toContain('Middleware ran: true')
 
     await expectNoClientErrors('/not-found')
   })
@@ -381,6 +386,7 @@ describe('plugins', () => {
   it('async plugin', async () => {
     const html = await $fetch('/plugins')
     expect(html).toContain('asyncPlugin: Async plugin works! 123')
+    expect(html).toContain('useFetch works!')
   })
 })
 
@@ -403,6 +409,16 @@ describe('layouts', () => {
     expect(html).toContain('with-dynamic-layout')
     expect(html).toContain('Custom Layout:')
     await expectNoClientErrors('/with-dynamic-layout')
+  })
+  it('should work with a computed layout', async () => {
+    const html = await $fetch('/with-computed-layout')
+
+    // Snapshot
+    // expect(html).toMatchInlineSnapshot()
+
+    expect(html).toContain('with-computed-layout')
+    expect(html).toContain('Custom Layout')
+    await expectNoClientErrors('/with-computed-layout')
   })
   it('should allow passing custom props to a layout', async () => {
     const html = await $fetch('/layouts/with-props')
@@ -676,7 +692,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV)('dynamic paths', () => {
     }
   })
 
-  // Webpack injects CSS differently
+  // webpack injects CSS differently
   it.skipIf(process.env.TEST_WITH_WEBPACK)('adds relative paths to CSS', async () => {
     const html: string = await $fetch('/assets')
     const urls = Array.from(html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)).map(m => m[2] || m[3])
@@ -839,18 +855,11 @@ describe('component islands', () => {
         }
       `)
     } else if (process.env.NUXT_TEST_DEV) {
-      // TODO: Investigate extra style
-      // Introduced by https://github.com/nuxt/framework/pull/9549
       expect(result.head).toMatchInlineSnapshot(`
         {
           "link": [
             {
               "href": "/_nuxt/components/islands/PureComponent.vue?vue&type=style&index=0&scoped=c0c0cf89&lang.css",
-              "key": "island-link",
-              "rel": "stylesheet",
-            },
-            {
-              "href": "/_nuxt/<rootDir>/components/islands/PureComponent.vue?vue&type=style&index=0&scoped=c0c0cf89&lang.css",
               "key": "island-link",
               "rel": "stylesheet",
             },
@@ -885,7 +894,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () 
   it('renders a payload', async () => {
     const payload = await $fetch('/random/a/_payload.js', { responseType: 'text' })
     expect(payload).toMatch(
-      /export default \{data:\{rand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
+      /export default \{data:\{hey:{[^}]*},rand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
     )
   })
 
