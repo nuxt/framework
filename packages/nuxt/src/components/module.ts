@@ -81,7 +81,6 @@ export default defineNuxtModule<ComponentsOptions>({
 
         const present = isDirectory(dirPath)
         if (!present && !DEFAULT_COMPONENTS_DIRS_RE.test(dirOptions.path)) {
-          // eslint-disable-next-line no-console
           console.warn('Components directory not found: `' + dirPath + '`')
         }
 
@@ -202,7 +201,8 @@ export default defineNuxtModule<ComponentsOptions>({
       config.plugins.push(loaderPlugin.vite({
         sourcemap: nuxt.options.sourcemap[mode],
         getComponents,
-        mode
+        mode,
+        experimentalComponentIslands: nuxt.options.experimental.componentIslands
       }))
     })
     nuxt.hook('webpack:config', (configs) => {
@@ -218,7 +218,8 @@ export default defineNuxtModule<ComponentsOptions>({
         config.plugins.push(loaderPlugin.webpack({
           sourcemap: nuxt.options.sourcemap[mode],
           getComponents,
-          mode
+          mode,
+          experimentalComponentIslands: nuxt.options.experimental.componentIslands
         }))
       })
     })
