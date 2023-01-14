@@ -3,7 +3,9 @@ import { expect, describe, it } from 'vitest'
 import { join } from 'pathe'
 import { createCommonJS, findExports } from 'mlly'
 import * as VueFunctions from 'vue'
-import { createUnimport, Import } from 'unimport'
+import type { Import } from 'unimport'
+import { createUnimport } from 'unimport'
+import type { Plugin } from 'vite'
 import { TransformPlugin } from '../src/imports/transform'
 import { defaultPresets } from '../src/imports/presets'
 
@@ -18,9 +20,9 @@ describe('imports:transform', () => {
     imports
   })
 
-  const transformPlugin = TransformPlugin.raw({ ctx, options: { transform: { exclude: [/node_modules/] } } }, { framework: 'rollup' })
+  const transformPlugin = TransformPlugin.raw({ ctx, options: { transform: { exclude: [/node_modules/] } } }, { framework: 'rollup' }) as Plugin
   const transform = async (source: string) => {
-    const result = await transformPlugin.transform!.call({ error: null, warn: null } as any, source, '')
+    const result = await (transformPlugin.transform! as Function).call({ error: null, warn: null } as any, source, '')
     return typeof result === 'string' ? result : result?.code
   }
 
@@ -65,11 +67,14 @@ describe('imports:nuxt', () => {
         continue
       }
       it(`should register ${name} globally`, () => {
-        expect(defaultPresets.find(a => a.from === '#app')!.imports).to.include(name)
+        expect(defaultPresets.flatMap(a => a.from === '#app' ? a.imports : [])).to.include(name)
       })
     }
   } catch (e) {
-    console.log(e)
+    it('should import composables', () => {
+      console.log(e)
+      expect(false).toBe(true)
+    })
   }
 })
 

@@ -1,29 +1,39 @@
-import { join, resolve } from 'pathe'
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import { join, relative, resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
-import type { Connect, HmrOptions } from 'vite'
+import type { ServerOptions } from 'vite'
 import { logger } from '@nuxt/kit'
 import { getPort } from 'get-port-please'
-import { joinURL, withLeadingSlash, withoutLeadingSlash, withTrailingSlash } from 'ufo'
-import escapeRE from 'escape-string-regexp'
+import { joinURL, withoutLeadingSlash, withoutTrailingSlash } from 'ufo'
 import defu from 'defu'
+import type { OutputOptions } from 'rollup'
+import { defineEventHandler } from 'h3'
+import { genString } from 'knitwork'
 import { cacheDirPlugin } from './plugins/cache-dir'
-import { wpfs } from './utils/wpfs'
 import type { ViteBuildContext, ViteOptions } from './vite'
-import { writeManifest } from './manifest'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
-  const useAsyncEntry = ctx.nuxt.options.experimental.asyncEntry
-  ctx.entry = resolve(ctx.nuxt.options.appDir, useAsyncEntry ? 'entry.async' : 'entry')
-
+  const buildAssetsDir = withoutLeadingSlash(
+    withoutTrailingSlash(ctx.nuxt.options.app.buildAssetsDir)
+  )
+  const relativeToBuildAssetsDir = (filename: string) => './' + relative(buildAssetsDir, filename)
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     entry: ctx.entry,
-    base: './',
+    base: ctx.nuxt.options.dev
+      ? joinURL(ctx.nuxt.options.app.baseURL.replace(/^\.\//, '/') || '/', ctx.nuxt.options.app.buildAssetsDir)
+      : './',
     experimental: {
-      renderBuiltUrl: (filename, { type, hostType }) => {
+      renderBuiltUrl: (filename, { type, hostType, hostId }) => {
+        // When rendering inline styles, we can skip loading CSS chunk that matches the current page
+        if (ctx.nuxt.options.experimental.inlineSSRStyles && hostType === 'js' && filename.endsWith('.css')) {
+          return {
+            runtime: `!globalThis.__hydrated ? ${genString(relativeToBuildAssetsDir(hostId))} : ${genString(relativeToBuildAssetsDir(filename))}`
+          }
+        }
         if (hostType !== 'js' || type === 'asset') {
           // In CSS we only use relative paths until we craft a clever runtime CSS hack
           return { relative: true }
@@ -47,6 +57,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       dedupe: ['vue']
     },
     build: {
+      sourcemap: ctx.nuxt.options.sourcemap.client ? ctx.config.build?.sourcemap ?? true : false,
       manifest: true,
       outDir: resolve(ctx.nuxt.options.buildDir, 'dist/client'),
       rollupOptions: {
@@ -76,14 +87,12 @@ export async function buildClient (ctx: ViteBuildContext) {
   }
 
   // We want to respect users' own rollup output options
-  ctx.config.build!.rollupOptions = defu(ctx.config.build!.rollupOptions!, {
+  clientConfig.build!.rollupOptions = defu(clientConfig.build!.rollupOptions!, {
     output: {
-      // https://github.com/vitejs/vite/tree/main/packages/vite/src/node/build.ts#L464-L478
-      assetFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].[ext]')),
       chunkFileNames: ctx.nuxt.options.dev ? undefined : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].js')),
       entryFileNames: ctx.nuxt.options.dev ? 'entry.js' : withoutLeadingSlash(join(ctx.nuxt.options.app.buildAssetsDir, '[name].[hash].js'))
-    }
-  })
+    } as OutputOptions
+  }) as any
 
   if (clientConfig.server && clientConfig.server.hmr !== false) {
     const hmrPortDefault = 24678 // Vite's default HMR port
@@ -91,10 +100,12 @@ export async function buildClient (ctx: ViteBuildContext) {
       port: hmrPortDefault,
       ports: Array.from({ length: 20 }, (_, i) => hmrPortDefault + 1 + i)
     })
-    clientConfig.server.hmr = defu(clientConfig.server.hmr as HmrOptions, {
-      // https://github.com/nuxt/framework/issues/4191
-      protocol: 'ws',
-      port: hmrPort
+    clientConfig.server = defu(clientConfig.server, <ServerOptions>{
+      https: ctx.nuxt.options.devServer.https,
+      hmr: {
+        protocol: ctx.nuxt.options.devServer.https ? 'wss' : 'ws',
+        port: hmrPort
+      }
     })
   }
 
@@ -110,29 +121,40 @@ export async function buildClient (ctx: ViteBuildContext) {
     const viteServer = await vite.createServer(clientConfig)
     ctx.clientServer = viteServer
     await ctx.nuxt.callHook('vite:serverCreated', viteServer, { isClient: true, isServer: false })
-    const baseURL = joinURL(ctx.nuxt.options.app.baseURL.replace(/^\./, '') || '/', ctx.nuxt.options.app.buildAssetsDir)
-    const BASE_RE = new RegExp(`^${escapeRE(withTrailingSlash(withLeadingSlash(baseURL)))}`)
-    const viteMiddleware: Connect.NextHandleFunction = (req, res, next) => {
+    const transformHandler = viteServer.middlewares.stack.findIndex(m => m.handle instanceof Function && m.handle.name === 'viteTransformMiddleware')
+    viteServer.middlewares.stack.splice(transformHandler, 0, {
+      route: '',
+      handle: (req: IncomingMessage & { _skip_transform?: boolean }, res: ServerResponse, next: (err?: any) => void) => {
+        // 'Skip' the transform middleware
+        if (req._skip_transform) { req.url = joinURL('/__skip_vite', req.url!) }
+        next()
+      }
+    })
+    const viteMiddleware = defineEventHandler(async (event) => {
       // Workaround: vite devmiddleware modifies req.url
-      const originalURL = req.url!
-      req.url = originalURL.replace(BASE_RE, '/')
-      viteServer.middlewares.handle(req, res, (err: unknown) => {
-        req.url = originalURL
-        next(err)
+      const originalURL = event.node.req.url!
+      // @ts-expect-error _skip_transform is a private property
+      event.node.req._skip_transform = !originalURL.startsWith(clientConfig.base!)
+      await new Promise((resolve, reject) => {
+        viteServer.middlewares.handle(event.node.req, event.node.res, (err: Error) => {
+          event.node.req.url = originalURL
+          return err ? reject(err) : resolve(null)
+        })
       })
-    }
-    await ctx.nuxt.callHook('server:devMiddleware', viteMiddleware)
+    })
+    await ctx.nuxt.callHook('server:devHandler', viteMiddleware)
 
     ctx.nuxt.hook('close', async () => {
       await viteServer.close()
     })
   } else {
     // Build
+    logger.info('Building client...')
     const start = Date.now()
+    logger.restoreAll()
     await vite.build(clientConfig)
-    await ctx.nuxt.callHook('build:resources', wpfs)
-    logger.info(`Client built in ${Date.now() - start}ms`)
+    logger.wrapAll()
+    await ctx.nuxt.callHook('vite:compiled')
+    logger.success(`Client built in ${Date.now() - start}ms`)
   }
-
-  await writeManifest(ctx)
 }

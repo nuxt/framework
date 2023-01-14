@@ -3,7 +3,7 @@ import { resolve } from 'pathe'
 import jiti from 'jiti'
 import { splitByCase } from 'scule'
 import clipboardy from 'clipboardy'
-import { NuxtModule } from '@nuxt/schema'
+import type { NuxtModule } from '@nuxt/schema'
 import { getPackageManager, getPackageManagerVersion } from '../utils/packageManagers'
 import { createGetDepVersion } from '../utils/packages'
 import { defineNuxtCommand } from './index'
@@ -57,11 +57,12 @@ export default defineNuxtCommand({
       OperatingSystem: os.type(),
       NodeVersion: process.version,
       NuxtVersion: nuxtVersion,
+      NitroVersion: getDepVersion('nitropack'),
       PackageManager: packageManager,
       Builder: builder,
       UserConfig: Object.keys(nuxtConfig).map(key => '`' + key + '`').join(', '),
       RuntimeModules: listModules(nuxtConfig.modules),
-      BuildModules: listModules(nuxtConfig.buildModules)
+      BuildModules: listModules(nuxtConfig.buildModules || [])
     }
 
     console.log('RootDir:', rootDir)
@@ -86,7 +87,7 @@ export default defineNuxtCommand({
     console.log([
       `👉 Report an issue: https://github.com/${repo}/issues/new`,
       `👉 Suggest an improvement: https://github.com/${repo}/discussions/new`,
-      `👉 Read documentation: ${isNuxt3OrBridge ? 'https://v3.nuxtjs.org' : 'https://nuxtjs.org'}`
+      `👉 Read documentation: ${isNuxt3OrBridge ? 'https://nuxt.com' : 'https://nuxtjs.org'}`
     ].join('\n\n') + '\n')
   }
 })
@@ -112,7 +113,10 @@ function normalizeConfigModule (module: NuxtModule | string | null | undefined, 
 
 function getNuxtConfig (rootDir: string) {
   try {
-    return jiti(rootDir, { interopDefault: true, esmResolve: true })('./nuxt.config')
+    (globalThis as any).defineNuxtConfig = (c: any) => c
+    const result = jiti(rootDir, { interopDefault: true, esmResolve: true })('./nuxt.config')
+    delete (globalThis as any).defineNuxtConfig
+    return result
   } catch (err) {
     // TODO: Show error as warning if it is not 404
     return {}

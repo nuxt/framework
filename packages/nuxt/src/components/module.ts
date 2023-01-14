@@ -1,19 +1,20 @@
 import { statSync } from 'node:fs'
 import { relative, resolve } from 'pathe'
-import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate } from '@nuxt/kit'
+import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate, updateTemplates } from '@nuxt/kit'
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
-import { componentsPluginTemplate, componentsTemplate, componentsTypeTemplate } from './templates'
+import { distDir } from '../dirs'
+import { componentsPluginTemplate, componentsTemplate, componentsIslandsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
 import { loaderPlugin } from './loader'
 import { TreeShakeTemplatePlugin } from './tree-shake'
 
 const isPureObjectOrString = (val: any) => (!Array.isArray(val) && typeof val === 'object') || typeof val === 'string'
 const isDirectory = (p: string) => { try { return statSync(p).isDirectory() } catch (_e) { return false } }
-function compareDirByPathLength ({ path: pathA }: { path: string}, { path: pathB }: { path: string}) {
+function compareDirByPathLength ({ path: pathA }: { path: string }, { path: pathB }: { path: string }) {
   return pathB.split(/[\\/]/).filter(Boolean).length - pathA.split(/[\\/]/).filter(Boolean).length
 }
 
-const DEFAULT_COMPONENTS_DIRS_RE = /\/components$|\/components\/global$/
+const DEFAULT_COMPONENTS_DIRS_RE = /\/components(\/global|\/islands)?$/
 
 type getComponentsT = (mode?: 'client' | 'server' | 'all') => Component[]
 
@@ -43,6 +44,7 @@ export default defineNuxtModule<ComponentsOptions>({
       }
       if (dir === true || dir === undefined) {
         return [
+          { path: resolve(cwd, 'components/islands'), island: true },
           { path: resolve(cwd, 'components/global'), global: true },
           { path: resolve(cwd, 'components') }
         ]
@@ -76,8 +78,6 @@ export default defineNuxtModule<ComponentsOptions>({
         const dirPath = resolveAlias(dirOptions.path)
         const transpile = typeof dirOptions.transpile === 'boolean' ? dirOptions.transpile : 'auto'
         const extensions = (dirOptions.extensions || nuxt.options.extensions).map(e => e.replace(/^\./g, ''))
-
-        dirOptions.level = Number(dirOptions.level || 0)
 
         const present = isDirectory(dirPath)
         if (!present && !DEFAULT_COMPONENTS_DIRS_RE.test(dirOptions.path)) {
@@ -118,15 +118,33 @@ export default defineNuxtModule<ComponentsOptions>({
     addTemplate({ ...componentsTemplate, filename: 'components.server.mjs', options: { getComponents, mode: 'server' } })
     // components.client.mjs
     addTemplate({ ...componentsTemplate, filename: 'components.client.mjs', options: { getComponents, mode: 'client' } })
+    // components.islands.mjs
+    if (nuxt.options.experimental.componentIslands) {
+      addTemplate({ ...componentsIslandsTemplate, filename: 'components.islands.mjs', options: { getComponents } })
+    } else {
+      addTemplate({ filename: 'components.islands.mjs', getContents: () => 'export default {}' })
+    }
 
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       const mode = isClient ? 'client' : 'server'
-      ;(config.resolve!.alias as any)['#components'] = resolve(nuxt.options.buildDir, `components.${mode}.mjs`)
+        ; (config.resolve!.alias as any)['#components'] = resolve(nuxt.options.buildDir, `components.${mode}.mjs`)
     })
     nuxt.hook('webpack:config', (configs) => {
       for (const config of configs) {
         const mode = config.name === 'server' ? 'server' : 'client'
-        ;(config.resolve!.alias as any)['#components'] = resolve(nuxt.options.buildDir, `components.${mode}.mjs`)
+          ; (config.resolve!.alias as any)['#components'] = resolve(nuxt.options.buildDir, `components.${mode}.mjs`)
+      }
+    })
+
+    // Do not prefetch global components chunks
+    nuxt.hook('build:manifest', (manifest) => {
+      const sourceFiles = getComponents().filter(c => c.global).map(c => relative(nuxt.options.srcDir, c.filePath))
+
+      for (const key in manifest) {
+        if (manifest[key].isEntry) {
+          manifest[key].dynamicImports =
+            manifest[key].dynamicImports?.filter(i => !sourceFiles.includes(i))
+        }
       }
     })
 
@@ -134,6 +152,17 @@ export default defineNuxtModule<ComponentsOptions>({
     nuxt.hook('app:templates', async () => {
       const newComponents = await scanComponents(componentDirs, nuxt.options.srcDir!)
       await nuxt.callHook('components:extend', newComponents)
+      // add server placeholder for .client components server side. issue: #7085
+      for (const component of newComponents) {
+        if (component.mode === 'client' && !newComponents.some(c => c.pascalName === component.pascalName && c.mode === 'server')) {
+          newComponents.push({
+            ...component,
+            mode: 'server',
+            filePath: resolve(distDir, 'app/components/server-placeholder'),
+            chunkName: 'components/' + component.kebabName
+          })
+        }
+      }
       context.components = newComponents
     })
 
@@ -149,35 +178,47 @@ export default defineNuxtModule<ComponentsOptions>({
       }
       const fPath = resolve(nuxt.options.srcDir, path)
       if (componentDirs.find(dir => fPath.startsWith(dir.path))) {
-        await nuxt.callHook('builder:generateApp')
+        await updateTemplates({
+          filter: template => [
+            'components.plugin.mjs',
+            'components.d.ts',
+            'components.server.mjs',
+            'components.client.mjs'
+          ].includes(template.filename)
+        })
       }
     })
 
-    nuxt.hook('vite:extendConfig', (config, { isClient }) => {
+    nuxt.hook('vite:extendConfig', (config, { isClient, isServer }) => {
+      const mode = isClient ? 'client' : 'server'
+
       config.plugins = config.plugins || []
       config.plugins.push(loaderPlugin.vite({
-        sourcemap: nuxt.options.sourcemap,
+        sourcemap: nuxt.options.sourcemap[mode],
         getComponents,
-        mode: isClient ? 'client' : 'server'
+        mode,
+        experimentalComponentIslands: nuxt.options.experimental.componentIslands
       }))
-      if (nuxt.options.experimental.treeshakeClientOnly) {
+      if (nuxt.options.experimental.treeshakeClientOnly && isServer) {
         config.plugins.push(TreeShakeTemplatePlugin.vite({
-          sourcemap: nuxt.options.sourcemap,
+          sourcemap: nuxt.options.sourcemap[mode],
           getComponents
         }))
       }
     })
     nuxt.hook('webpack:config', (configs) => {
       configs.forEach((config) => {
+        const mode = config.name === 'client' ? 'client' : 'server'
         config.plugins = config.plugins || []
         config.plugins.push(loaderPlugin.webpack({
-          sourcemap: nuxt.options.sourcemap,
+          sourcemap: nuxt.options.sourcemap[mode],
           getComponents,
-          mode: config.name === 'client' ? 'client' : 'server'
+          mode,
+          experimentalComponentIslands: nuxt.options.experimental.componentIslands
         }))
-        if (nuxt.options.experimental.treeshakeClientOnly) {
+        if (nuxt.options.experimental.treeshakeClientOnly && mode === 'server') {
           config.plugins.push(TreeShakeTemplatePlugin.webpack({
-            sourcemap: nuxt.options.sourcemap,
+            sourcemap: nuxt.options.sourcemap[mode],
             getComponents
           }))
         }

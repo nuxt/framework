@@ -1,8 +1,11 @@
-import { getCurrentInstance, inject } from 'vue'
+import { getCurrentInstance, inject, onUnmounted } from 'vue'
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure, RouteLocationPathRaw } from 'vue-router'
 import { sendRedirect } from 'h3'
 import { hasProtocol, joinURL, parseURL } from 'ufo'
-import { useNuxtApp, useRuntimeConfig } from '#app'
+import { useNuxtApp, useRuntimeConfig } from '../nuxt'
+import type { NuxtError } from './error'
+import { createError } from './error'
+import { useState } from './state'
 
 export const useRouter = () => {
   return useNuxtApp()?.$router as Router
@@ -15,9 +18,17 @@ export const useRoute = (): RouteLocationNormalizedLoaded => {
   return useNuxtApp()._route
 }
 
-/** @deprecated Use `useRoute` instead. */
-export const useActiveRoute = (): RouteLocationNormalizedLoaded => {
-  return useNuxtApp()._route
+export const onBeforeRouteLeave = (guard: NavigationGuard) => {
+  const unsubscribe = useRouter().beforeEach((to, from, next) => {
+    if (to === from) { return }
+    return guard(to, from, next)
+  })
+  onUnmounted(unsubscribe)
+}
+
+export const onBeforeRouteUpdate = (guard: NavigationGuard) => {
+  const unsubscribe = useRouter().beforeEach(guard)
+  onUnmounted(unsubscribe)
 }
 
 export interface RouteMiddleware {
@@ -62,14 +73,14 @@ export interface NavigateToOptions {
   external?: boolean
 }
 
-export const navigateTo = (to: RouteLocationRaw | undefined | null, options: NavigateToOptions = {}): Promise<void | NavigationFailure> | RouteLocationRaw => {
+export const navigateTo = (to: RouteLocationRaw | undefined | null, options?: NavigateToOptions): Promise<void | NavigationFailure> | RouteLocationRaw => {
   if (!to) {
     to = '/'
   }
 
   const toPath = typeof to === 'string' ? to : ((to as RouteLocationPathRaw).path || '/')
   const isExternal = hasProtocol(toPath, true)
-  if (isExternal && !options.external) {
+  if (isExternal && !options?.external) {
     throw new Error('Navigating to external URL is not allowed by default. Use `nagivateTo (url, { external: true })`.')
   }
   if (isExternal && parseURL(toPath).protocol === 'script:') {
@@ -77,7 +88,7 @@ export const navigateTo = (to: RouteLocationRaw | undefined | null, options: Nav
   }
 
   // Early redirect on client-side
-  if (!isExternal && isProcessingMiddleware()) {
+  if (process.client && !isExternal && isProcessingMiddleware()) {
     return to
   }
 
@@ -87,13 +98,13 @@ export const navigateTo = (to: RouteLocationRaw | undefined | null, options: Nav
     const nuxtApp = useNuxtApp()
     if (nuxtApp.ssrContext && nuxtApp.ssrContext.event) {
       const redirectLocation = isExternal ? toPath : joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
-      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext!.event, redirectLocation, options.redirectCode || 301))
+      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext!.event, redirectLocation, options?.redirectCode || 302))
     }
   }
 
   // Client-side redirection using vue-router
   if (isExternal) {
-    if (options.replace) {
+    if (options?.replace) {
       location.replace(toPath)
     } else {
       location.href = toPath
@@ -101,16 +112,39 @@ export const navigateTo = (to: RouteLocationRaw | undefined | null, options: Nav
     return Promise.resolve()
   }
 
-  return options.replace ? router.replace(to) : router.push(to)
+  return options?.replace ? router.replace(to) : router.push(to)
 }
 
 /** This will abort navigation within a Nuxt route middleware handler. */
-export const abortNavigation = (err?: Error | string) => {
+export const abortNavigation = (err?: string | Partial<NuxtError>) => {
   if (process.dev && !isProcessingMiddleware()) {
     throw new Error('abortNavigation() is only usable inside a route middleware handler.')
   }
   if (err) {
-    throw err instanceof Error ? err : new Error(err)
+    throw createError(err)
   }
   return false
+}
+
+export const setPageLayout = (layout: string) => {
+  if (process.server) {
+    if (process.dev && getCurrentInstance() && useState('_layout').value !== layout) {
+      console.warn('[warn] [nuxt] `setPageLayout` should not be called to change the layout on the server within a component as this will cause hydration errors.')
+    }
+    useState('_layout').value = layout
+  }
+  const nuxtApp = useNuxtApp()
+  if (process.dev && nuxtApp.isHydrating && useState('_layout').value !== layout) {
+    console.warn('[warn] [nuxt] `setPageLayout` should not be called to change the layout during hydration as this will cause hydration errors.')
+  }
+  const inMiddleware = isProcessingMiddleware()
+  if (inMiddleware || process.server || nuxtApp.isHydrating) {
+    const unsubscribe = useRouter().beforeResolve((to) => {
+      to.meta.layout = layout
+      unsubscribe()
+    })
+  }
+  if (!inMiddleware) {
+    useRoute().meta.layout = layout
+  }
 }

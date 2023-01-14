@@ -2,7 +2,6 @@ import { join } from 'pathe'
 import { defineUntypedSchema } from 'untyped'
 
 export default defineUntypedSchema({
-  /** @version 3 */
   webpack: {
     /**
      * Nuxt uses `webpack-bundle-analyzer` to visualize your bundles and how to optimize them.
@@ -18,11 +17,11 @@ export default defineUntypedSchema({
      * @type {boolean | typeof import('webpack-bundle-analyzer').BundleAnalyzerPlugin.Options}
      */
     analyze: {
-      $resolve: (val, get) => {
-        if(val !== true) {
+      $resolve: async (val, get) => {
+        if (val !== true) {
           return val ?? false
         }
-        const rootDir = get('rootDir')
+        const rootDir = await get('rootDir')
         return {
           template: 'treemap',
           projectRoot: rootDir,
@@ -95,7 +94,7 @@ export default defineUntypedSchema({
      * Enables CSS source map support (defaults to `true` in development).
      */
     cssSourceMap: {
-      $resolve: (val, get) => val ?? get('dev')
+      $resolve: async (val, get) => val ?? await get('dev')
     },
 
     /**
@@ -135,7 +134,7 @@ export default defineUntypedSchema({
      * Customize the options of Nuxt's integrated webpack loaders.
      */
     loaders: {
-      $resolve: (val, get) => {
+      $resolve: async (val, get) => {
         const styleLoaders = [
           'css', 'cssModules', 'less',
           'sass', 'scss', 'stylus', 'vueStyle'
@@ -143,7 +142,7 @@ export default defineUntypedSchema({
         for (const name of styleLoaders) {
           const loader = val[name]
           if (loader && loader.sourceMap === undefined) {
-            loader.sourceMap = Boolean(get('build.cssSourceMap'))
+            loader.sourceMap = Boolean(await get('build.cssSourceMap'))
           }
         }
         return val
@@ -153,14 +152,14 @@ export default defineUntypedSchema({
       imgUrl: { esModule: false, limit: 1000 },
       pugPlain: {},
       vue: {
-        productionMode: { $resolve: (val, get) => val ?? !get('dev') },
+        productionMode: { $resolve: async (val, get) => val ?? !(await get('dev')) },
         transformAssetUrls: {
           video: 'src',
           source: 'src',
           object: 'src',
           embed: 'src'
         },
-        compilerOptions: { $resolve: (val, get) => val ?? get('vue.compilerOptions') },
+        compilerOptions: { $resolve: async (val, get) => val ?? (await get('vue.compilerOptions')) },
       },
       css: {
         importLoaders: 0,
@@ -219,9 +218,7 @@ export default defineUntypedSchema({
      *
      * @type {false | typeof import('terser-webpack-plugin').BasePluginOptions & typeof import('terser-webpack-plugin').DefinedDefaultMinimizerAndOptions<any>}
      */
-    terser: {
-
-    },
+    terser: {},
 
     /**
      * Hard-replaces `typeof process`, `typeof window` and `typeof document` to tree-shake bundle.
@@ -238,7 +235,7 @@ export default defineUntypedSchema({
      * @type {false | typeof import('css-minimizer-webpack-plugin').BasePluginOptions & typeof import('css-minimizer-webpack-plugin').DefinedDefaultMinimizerAndOptions<any>}
      */
     optimizeCSS: {
-      $resolve: (val, get) => val ?? (get('build.extractCSS') ? {} : false)
+      $resolve: async (val, get) => val ?? (await get('build.extractCSS') ? {} : false)
     },
 
     /**
@@ -248,7 +245,7 @@ export default defineUntypedSchema({
     optimization: {
       runtimeChunk: 'single',
       /** Set minimize to `false` to disable all minimizers. (It is disabled in development by default). */
-      minimize: { $resolve: (val, get) => val ?? !get('dev') },
+      minimize: { $resolve: async (val, get) => val ?? !(await get('dev')) },
       /** You can set minimizer to a customized array of plugins. */
       minimizer: undefined,
       splitChunks: {
@@ -257,6 +254,7 @@ export default defineUntypedSchema({
         cacheGroups: {}
       }
     },
+
     /**
      * Customize PostCSS Loader.
      * Same options as https://github.com/webpack-contrib/postcss-loader#options
@@ -265,10 +263,10 @@ export default defineUntypedSchema({
       execute: undefined,
       postcssOptions: {
         config: {
-          $resolve:  (val, get) => val ?? get('postcss.config')
+          $resolve: async (val, get) => val ?? (await get('postcss.config'))
         },
         plugins: {
-          $resolve: (val, get) => val ?? get('postcss.plugins')
+          $resolve: async (val, get) => val ?? (await get('postcss.plugins'))
         }
       },
       sourceMap: undefined,
@@ -283,15 +281,18 @@ export default defineUntypedSchema({
     devMiddleware: {
       stats: 'none'
     },
+
     /**
      * See [webpack-hot-middleware](https://github.com/webpack-contrib/webpack-hot-middleware) for available options.
      * @type {typeof import('webpack-hot-middleware').MiddlewareOptions & { client?: typeof import('webpack-hot-middleware').ClientOptions }}
      */
     hotMiddleware: {},
+
     /**
      * Set to `false` to disable the overlay provided by [FriendlyErrorsWebpackPlugin](https://github.com/nuxt/friendly-errors-webpack-plugin).
      */
     friendlyErrors: true,
+
     /**
      * Filters to hide build warnings.
      * @type {Array<(warn: typeof import('webpack').WebpackError) => boolean>}

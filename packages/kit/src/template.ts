@@ -45,7 +45,7 @@ export function normalizeTemplate (template: NuxtTemplate<any> | string): Resolv
     }
     if (!template.filename) {
       const srcPath = parse(template.src)
-      template.filename = template.fileName ||
+      template.filename = (template as any).fileName ||
         `${basename(srcPath.dir)}.${srcPath.name}.${hash(template.src)}${srcPath.ext}`
     }
   }
@@ -70,4 +70,13 @@ export function normalizeTemplate (template: NuxtTemplate<any> | string): Resolv
   }
 
   return template as ResolvedNuxtTemplate<any>
+}
+
+/**
+ * Trigger rebuilding Nuxt templates
+ *
+ * You can pass a filter within the options to selectively regenerate a subset of templates.
+ */
+export function updateTemplates (options?: { filter?: (template: ResolvedNuxtTemplate<any>) => boolean }) {
+  return useNuxt().hooks.callHook('builder:generateApp', options)
 }

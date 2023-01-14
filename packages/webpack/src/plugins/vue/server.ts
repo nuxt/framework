@@ -1,4 +1,5 @@
-import webpack, { Compilation, Compiler } from 'webpack'
+import type { Compilation, Compiler } from 'webpack'
+import webpack from 'webpack'
 import { validate, isJS, extractQueryPartJS } from './util'
 
 export interface VueSSRServerPluginOptions {
@@ -30,7 +31,7 @@ export default class VueSSRServerPlugin {
           return cb()
         }
 
-        const entryAssets = entryInfo.assets!.filter((asset: { name:string }) => isJS(asset.name))
+        const entryAssets = entryInfo.assets!.filter((asset: { name: string }) => isJS(asset.name))
 
         if (entryAssets.length > 1) {
           throw new Error(

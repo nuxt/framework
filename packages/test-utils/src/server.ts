@@ -1,7 +1,8 @@
 import { resolve } from 'node:path'
 import { execa } from 'execa'
 import { getRandomPort, waitForPort } from 'get-port-please'
-import { fetch as _fetch, $fetch as _$fetch, FetchOptions } from 'ohmyfetch'
+import type { FetchOptions } from 'ofetch'
+import { fetch as _fetch, $fetch as _$fetch } from 'ofetch'
 import * as _kit from '@nuxt/kit'
 import { useTestContext } from './context'
 
@@ -21,6 +22,7 @@ export async function startServer () {
       env: {
         ...process.env,
         PORT: String(port),
+        NITRO_PORT: String(port),
         NODE_ENV: 'development'
       }
     })
@@ -43,6 +45,7 @@ export async function startServer () {
       env: {
         ...process.env,
         PORT: String(port),
+        NITRO_PORT: String(port),
         NODE_ENV: 'test'
       }
     })

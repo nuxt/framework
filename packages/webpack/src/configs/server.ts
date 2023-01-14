@@ -2,7 +2,8 @@ import { isAbsolute } from 'pathe'
 import webpack from 'webpack'
 import ForkTSCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 import { logger } from '@nuxt/kit'
-import { WebpackConfigContext, applyPresets, getWebpackConfig } from '../utils/config'
+import type { WebpackConfigContext } from '../utils/config'
+import { applyPresets, getWebpackConfig } from '../utils/config'
 import { nuxt } from '../presets/nuxt'
 import { node } from '../presets/node'
 
@@ -27,7 +28,8 @@ function serverPreset (ctx: WebpackConfigContext) {
   const { config } = ctx
 
   config.output!.filename = 'server.mjs'
-  config.devtool = 'cheap-module-source-map'
+
+  config.devtool = ctx.nuxt.options.sourcemap.server ? ctx.isDev ? 'cheap-module-source-map' : 'source-map' : false
 
   config.optimization = {
     splitChunks: false,

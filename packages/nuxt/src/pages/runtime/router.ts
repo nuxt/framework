@@ -1,33 +1,32 @@
-import { computed, reactive, shallowRef } from 'vue'
+import { computed, isReadonly, reactive, shallowRef } from 'vue'
+import type {
+  NavigationGuard,
+  RouteLocation
+} from 'vue-router'
 import {
   createRouter,
   createWebHistory,
   createMemoryHistory,
-  NavigationGuard,
-  RouteLocation
+  createWebHashHistory
 } from 'vue-router'
 import { createError } from 'h3'
 import { withoutBase, isEqual } from 'ufo'
-import NuxtPage from './page'
-import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, showError, clearError, navigateTo, useError } from '#app'
+import type NuxtPage from './page'
+import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, showError, clearError, navigateTo, useError, useState } from '#app'
 // @ts-ignore
-import routes from '#build/routes'
+import _routes from '#build/routes'
 // @ts-ignore
 import routerOptions from '#build/router.options'
 // @ts-ignore
 import { globalMiddleware, namedMiddleware } from '#build/middleware'
 
-declare module 'vue' {
+declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     NuxtPage: typeof NuxtPage
-    /** @deprecated */
-    NuxtNestedPage: typeof NuxtPage
-    /** @deprecated */
-    NuxtChild: typeof NuxtPage
   }
 }
 
-// https://github.dev/vuejs/router/blob/main/src/history/html5.ts#L33-L56
+// https://github.com/vuejs/router/blob/4a0cc8b9c1e642cdf47cc007fa5bbebde70afc66/packages/router/src/history/html5.ts#L37
 function createCurrentLocation (
   base: string,
   location: Location
@@ -49,20 +48,23 @@ function createCurrentLocation (
 }
 
 export default defineNuxtPlugin(async (nuxtApp) => {
-  nuxtApp.vueApp.component('NuxtPage', NuxtPage)
-  // TODO: remove before release - present for backwards compatibility & intentionally undocumented
-  nuxtApp.vueApp.component('NuxtNestedPage', NuxtPage)
-  nuxtApp.vueApp.component('NuxtChild', NuxtPage)
+  let routerBase = useRuntimeConfig().app.baseURL
+  if (routerOptions.hashMode && !routerBase.includes('#')) {
+    // allow the user to provide a `#` in the middle: `/base/#/app`
+    routerBase += '#'
+  }
 
-  const baseURL = useRuntimeConfig().app.baseURL
-  const routerHistory = process.client
-    ? createWebHistory(baseURL)
-    : createMemoryHistory(baseURL)
+  const history = routerOptions.history?.(routerBase) ?? (process.client
+    ? (routerOptions.hashMode ? createWebHashHistory(routerBase) : createWebHistory(routerBase))
+    : createMemoryHistory(routerBase)
+  )
 
-  const initialURL = process.server ? nuxtApp.ssrContext!.url : createCurrentLocation(baseURL, window.location)
+  const routes = routerOptions.routes?.(_routes) ?? _routes
+
+  const initialURL = process.server ? nuxtApp.ssrContext!.url : createCurrentLocation(routerBase, window.location)
   const router = createRouter({
     ...routerOptions,
-    history: routerHistory,
+    history,
     routes
   })
   nuxtApp.vueApp.use(router)
@@ -114,8 +116,12 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     callWithNuxt(nuxtApp, showError, [error])
   }
 
+  const initialLayout = useState('_layout')
   router.beforeEach(async (to, from) => {
     to.meta = reactive(to.meta)
+    if (nuxtApp.isHydrating && initialLayout.value && !isReadonly(to.meta.layout)) {
+      to.meta.layout = initialLayout.value
+    }
     nuxtApp._processingMiddleware = true
 
     type MiddlewareDef = string | NavigationGuard
@@ -146,9 +152,11 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       if (process.server || (!nuxtApp.payload.serverRendered && nuxtApp.isHydrating)) {
         if (result === false || result instanceof Error) {
           const error = result || createError({
-            statusMessage: `Route navigation aborted: ${initialURL}`
+            statusCode: 404,
+            statusMessage: `Page Not Found: ${initialURL}`
           })
-          return callWithNuxt(nuxtApp, showError, [error])
+          await callWithNuxt(nuxtApp, showError, [error])
+          return false
         }
       }
       if (result || result === false) { return result }
@@ -168,8 +176,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         fatal: false,
         statusMessage: `Page not found: ${to.fullPath}`
       })])
-    } else if (process.server && to.matched[0].name === '404' && nuxtApp.ssrContext) {
-      nuxtApp.ssrContext.event.res.statusCode = 404
     } else if (process.server) {
       const currentURL = to.fullPath || '/'
       if (!isEqual(currentURL, initialURL)) {

@@ -1,7 +1,7 @@
 import { promises as fsp } from 'node:fs'
-import { dirname, resolve } from 'pathe'
+import { dirname, resolve, join } from 'pathe'
 import defu from 'defu'
-import type { Nuxt, NuxtApp, NuxtPlugin, NuxtTemplate } from '@nuxt/schema'
+import type { Nuxt, NuxtApp, NuxtPlugin, NuxtTemplate, ResolvedNuxtTemplate } from '@nuxt/schema'
 import { findPath, resolveFiles, normalizePlugin, normalizeTemplate, compileTemplate, templateUtils, tryResolveModule, resolvePath, resolveAlias } from '@nuxt/kit'
 
 import * as defaultTemplates from './templates'
@@ -16,7 +16,7 @@ export function createApp (nuxt: Nuxt, options: Partial<NuxtApp> = {}): NuxtApp 
   } as unknown as NuxtApp) as NuxtApp
 }
 
-export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
+export async function generateApp (nuxt: Nuxt, app: NuxtApp, options: { filter?: (template: ResolvedNuxtTemplate<any>) => boolean } = {}) {
   // Resolve app
   await resolveApp(nuxt, app)
 
@@ -31,25 +31,27 @@ export async function generateApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Compile templates into vfs
   const templateContext = { utils: templateUtils, nuxt, app }
-  await Promise.all(app.templates.map(async (template) => {
-    const contents = await compileTemplate(template, templateContext)
+  await Promise.all((app.templates as Array<ReturnType<typeof normalizeTemplate>>)
+    .filter(template => !options.filter || options.filter(template))
+    .map(async (template) => {
+      const contents = await compileTemplate(template, templateContext)
 
-    const fullPath = template.dst || resolve(nuxt.options.buildDir, template.filename!)
-    nuxt.vfs[fullPath] = contents
+      const fullPath = template.dst || resolve(nuxt.options.buildDir, template.filename!)
+      nuxt.vfs[fullPath] = contents
 
-    const aliasPath = '#build/' + template.filename!.replace(/\.\w+$/, '')
-    nuxt.vfs[aliasPath] = contents
+      const aliasPath = '#build/' + template.filename!.replace(/\.\w+$/, '')
+      nuxt.vfs[aliasPath] = contents
 
-    // In case a non-normalized absolute path is called for on Windows
-    if (process.platform === 'win32') {
-      nuxt.vfs[fullPath.replace(/\//g, '\\')] = contents
-    }
+      // In case a non-normalized absolute path is called for on Windows
+      if (process.platform === 'win32') {
+        nuxt.vfs[fullPath.replace(/\//g, '\\')] = contents
+      }
 
-    if (template.write) {
-      await fsp.mkdir(dirname(fullPath), { recursive: true })
-      await fsp.writeFile(fullPath, contents, 'utf8')
-    }
-  }))
+      if (template.write) {
+        await fsp.mkdir(dirname(fullPath), { recursive: true })
+        await fsp.writeFile(fullPath, contents, 'utf8')
+      }
+    }))
 
   await nuxt.callHook('app:templatesGenerated', app)
 }
@@ -58,7 +60,10 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   // Resolve main (app.vue)
   if (!app.mainComponent) {
     app.mainComponent = await findPath(
-      nuxt.options._layers.flatMap(layer => [`${layer.config.srcDir}/App`, `${layer.config.srcDir}/app`])
+      nuxt.options._layers.flatMap(layer => [
+        join(layer.config.srcDir, 'App'),
+        join(layer.config.srcDir, 'app')
+      ])
     )
   }
   if (!app.mainComponent) {
@@ -72,7 +77,9 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
 
   // Resolve error component
   if (!app.errorComponent) {
-    app.errorComponent = (await findPath(['~/error'])) || resolve(nuxt.options.appDir, 'components/nuxt-error-page.vue')
+    app.errorComponent = (await findPath(
+      nuxt.options._layers.map(layer => join(layer.config.srcDir, 'error'))
+    )) ?? resolve(nuxt.options.appDir, 'components/nuxt-error-page.vue')
   }
 
   // Resolve layouts/ from all config layers
@@ -104,8 +111,8 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
       ...(config.plugins || []),
       ...config.srcDir
         ? await resolveFiles(config.srcDir, [
-          'plugins/*.{ts,js,mjs,cjs,mts,cts}',
-          'plugins/*/index.*{ts,js,mjs,cjs,mts,cts}'
+          `${config.dir?.plugins || 'plugins'}/*.{ts,js,mjs,cjs,mts,cts}`,
+          `${config.dir?.plugins || 'plugins'}/*/index.*{ts,js,mjs,cjs,mts,cts}`
         ])
         : []
     ].map(plugin => normalizePlugin(plugin as NuxtPlugin)))
@@ -132,7 +139,7 @@ export async function resolveApp (nuxt: Nuxt, app: NuxtApp) {
   app.plugins = uniqueBy(await resolvePaths(app.plugins, 'src'), 'src')
 }
 
-function resolvePaths <Item extends Record<string, any>> (items: Item[], key: { [K in keyof Item]: Item[K] extends string ? K : never }[keyof Item]) {
+function resolvePaths<Item extends Record<string, any>> (items: Item[], key: { [K in keyof Item]: Item[K] extends string ? K : never }[keyof Item]) {
   return Promise.all(items.map(async (item) => {
     if (!item[key]) { return item }
     return {
