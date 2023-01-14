@@ -1,4 +1,4 @@
-import { computed, reactive, shallowRef } from 'vue'
+import { computed, isReadonly, reactive, shallowRef } from 'vue'
 import type {
   NavigationGuard,
   RouteLocation
@@ -119,7 +119,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   const initialLayout = useState('_layout')
   router.beforeEach(async (to, from) => {
     to.meta = reactive(to.meta)
-    if (nuxtApp.isHydrating && initialLayout.value !== undefined && initialLayout.value !== null) {
+    if (nuxtApp.isHydrating && initialLayout.value && !isReadonly(to.meta.layout)) {
       to.meta.layout = initialLayout.value
     }
     nuxtApp._processingMiddleware = true
