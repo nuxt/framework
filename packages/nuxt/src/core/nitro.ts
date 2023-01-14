@@ -3,7 +3,7 @@ import { resolve, join } from 'pathe'
 import { createNitro, createDevServer, build, prepare, copyPublicAssets, writeTypes, scanHandlers, prerender } from 'nitropack'
 import type { NitroConfig, Nitro } from 'nitropack'
 import type { Nuxt } from '@nuxt/schema'
-import { resolvePath } from '@nuxt/kit'
+import { logger, resolvePath } from '@nuxt/kit'
 import escapeRE from 'escape-string-regexp'
 import defu from 'defu'
 import fsExtra from 'fs-extra'
@@ -96,6 +96,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
               '@nuxt/',
               nuxt.options.buildDir
             ]),
+        ...nuxt.options.build.transpile.filter(i => typeof i === 'string'),
         'nuxt/dist',
         'nuxt3/dist',
         distDir
@@ -216,7 +217,9 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
       await copyPublicAssets(nitro)
       await prerender(nitro)
       if (!nuxt.options._generate) {
+        logger.restoreAll()
         await build(nitro)
+        logger.wrapAll()
       } else {
         const distDir = resolve(nuxt.options.rootDir, 'dist')
         if (!existsSync(distDir)) {

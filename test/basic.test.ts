@@ -57,6 +57,8 @@ describe('pages', () => {
     expect(html).toContain('This is a custom component with a named export.')
     // should apply attributes to client-only components
     expect(html).toContain('<div style="color:red;" class="client-only"></div>')
+    // should render server-only components
+    expect(html).toContain('<div class="server-only" style="background-color:gray;"> server-only component </div>')
     // should register global components automatically
     expect(html).toContain('global component registered automatically')
     expect(html).toContain('global component via suffix')
@@ -87,6 +89,9 @@ describe('pages', () => {
 
     expect(html).toContain('[...slug].vue')
     expect(html).toContain('404 at not-found')
+
+    // Middleware still runs after validation: https://github.com/nuxt/framework/issues/9701
+    expect(html).toContain('Middleware ran: true')
 
     await expectNoClientErrors('/not-found')
   })
@@ -677,7 +682,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV)('dynamic paths', () => {
     }
   })
 
-  // Webpack injects CSS differently
+  // webpack injects CSS differently
   it.skipIf(process.env.TEST_WITH_WEBPACK)('adds relative paths to CSS', async () => {
     const html: string = await $fetch('/assets')
     const urls = Array.from(html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)).map(m => m[2] || m[3])
