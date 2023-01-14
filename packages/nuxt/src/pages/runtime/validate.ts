@@ -1,6 +1,6 @@
-import { RouteLocation } from 'vue-router'
+import { defineNuxtRouteMiddleware } from '#app'
 
-export default async (to: RouteLocation) => {
+export default defineNuxtRouteMiddleware(async (to) => {
   if (!to.meta?.validate) { return }
 
   const result = await Promise.resolve(to.meta.validate(to))
@@ -8,4 +8,4 @@ export default async (to: RouteLocation) => {
     return
   }
   return result
-}
+})

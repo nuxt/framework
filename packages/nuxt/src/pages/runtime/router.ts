@@ -12,7 +12,6 @@ import {
 import { createError } from 'h3'
 import { withoutBase, isEqual } from 'ufo'
 import type NuxtPage from './page'
-import validate from './validate'
 import { callWithNuxt, defineNuxtPlugin, useRuntimeConfig, showError, clearError, navigateTo, useError, useState } from '#app'
 // @ts-ignore
 import _routes from '#build/routes'
@@ -20,6 +19,7 @@ import _routes from '#build/routes'
 import routerOptions from '#build/router.options'
 // @ts-ignore
 import { globalMiddleware, namedMiddleware } from '#build/middleware'
+
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     NuxtPage: typeof NuxtPage
@@ -137,8 +137,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         middlewareEntries.add(componentMiddleware)
       }
     }
-
-    middlewareEntries.add(() => validate(to))
 
     for (const entry of middlewareEntries) {
       const middleware = typeof entry === 'string' ? nuxtApp._middleware.named[entry] || await namedMiddleware[entry]?.().then((r: any) => r.default || r) : entry
