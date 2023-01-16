@@ -28,14 +28,16 @@ export default defineComponent({
     const nuxtApp = useNuxtApp()
     const hashId = computed(() => hash([props.name, props.props, props.context]))
 
-    if (process.server && process.env.prerender) {
-      // Emit the island component output during prerendering
-      appendHeader(useRequestEvent(), 'x-nitro-prerender', `/__nuxt_island/${props.name}:${hashId.value}`)
-    }
+    const event = useRequestEvent()
 
     function _fetchComponent () {
+      const url = `/__nuxt_island/${props.name}:${hashId.value}`
+      if (process.server && process.env.prerender) {
+        // Hint to Nitro to prerender the island component
+        appendHeader(event, 'x-nitro-prerender', url)
+      }
       // TODO: Validate response
-      return $fetch<NuxtIslandResponse>(`/__nuxt_island/${props.name}:${hashId.value}`, {
+      return $fetch<NuxtIslandResponse>(url, {
         params: {
           ...props.context,
           props: props.props ? JSON.stringify(props.props) : undefined
@@ -74,7 +76,7 @@ export default defineComponent({
     useHead(() => res.data.value!.head)
 
     if (process.client) {
-      watch(props, debounce(() => res.execute({ _initial: true }), 100))
+      watch(props, debounce(() => res.execute(), 100))
     }
 
     await res
