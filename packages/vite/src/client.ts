@@ -136,7 +136,7 @@ export async function buildClient (ctx: ViteBuildContext) {
       const originalURL = event.node.req.url!
 
       const viteRoutes = viteServer.middlewares.stack.map(m => m.route).filter(r => r.length > 1)
-      if (!viteRoutes.some(route => originalURL.startsWith(route)) && !originalURL.startsWith(clientConfig.base!)) {
+      if (!originalURL.startsWith(clientConfig.base!) && !viteRoutes.some(route => originalURL.startsWith(route))) {
         // @ts-expect-error _skip_transform is a private property
         event.node.req._skip_transform = true
       }
