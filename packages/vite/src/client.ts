@@ -121,20 +121,17 @@ export async function buildClient (ctx: ViteBuildContext) {
     const viteServer = await vite.createServer(clientConfig)
     ctx.clientServer = viteServer
     await ctx.nuxt.callHook('vite:serverCreated', viteServer, { isClient: true, isServer: false })
-    const transformHandler = viteServer.middlewares.stack.findIndex(m => m.handle instanceof Function && m.handle.name === 'viteTransformMiddleware')
-    viteServer.middlewares.stack.splice(transformHandler, 0, {
-      route: '',
-      handle: (req: IncomingMessage & { _skip_transform?: boolean }, res: ServerResponse, next: (err?: any) => void) => {
-        // 'Skip' the transform middleware
-        if (req._skip_transform) { req.url = joinURL('/__skip_vite', req.url!) }
-        next()
-      }
-    })
+
     const viteMiddleware = defineEventHandler(async (event) => {
       // Workaround: vite devmiddleware modifies req.url
       const originalURL = event.node.req.url!
-      // @ts-expect-error _skip_transform is a private property
-      event.node.req._skip_transform = !originalURL.startsWith(clientConfig.base!)
+
+      // Forward vite middleware
+      const viteRoutes = viteServer.middlewares.stack.map(m => m.route).filter(r => r.length > 1)
+      if (!viteRoutes.some(route => originalURL.startsWith(route)) && !originalURL.startsWith(clientConfig.base!)) {
+        event.node.req.url = joinURL('/__url', originalURL)
+      }
+
       await new Promise((resolve, reject) => {
         viteServer.middlewares.handle(event.node.req, event.node.res, (err: Error) => {
           event.node.req.url = originalURL
