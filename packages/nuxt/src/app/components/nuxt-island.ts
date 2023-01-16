@@ -1,9 +1,10 @@
 import { defineComponent, createStaticVNode, computed, watch } from 'vue'
 import { debounce } from 'perfect-debounce'
 import { hash } from 'ohash'
+import { appendHeader } from 'h3'
 // eslint-disable-next-line import/no-restricted-paths
 import type { NuxtIslandResponse } from '../../core/runtime/nitro/renderer'
-import { useAsyncData, useHead, useNuxtApp } from '#app'
+import { useAsyncData, useHead, useNuxtApp, useRequestEvent } from '#app'
 
 const pKey = '_islandPromises'
 
@@ -26,6 +27,11 @@ export default defineComponent({
   async setup (props) {
     const nuxtApp = useNuxtApp()
     const hashId = computed(() => hash([props.name, props.props, props.context]))
+
+    if (process.server && process.env.prerender) {
+      // Emit the island component output during prerendering
+      appendHeader(useRequestEvent(), 'x-nitro-prerender', `/__nuxt_island/${props.name}:${hashId.value}`)
+    }
 
     function _fetchComponent () {
       // TODO: Validate response
