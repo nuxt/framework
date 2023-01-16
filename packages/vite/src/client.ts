@@ -6,7 +6,7 @@ import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { ServerOptions } from 'vite'
 import { logger } from '@nuxt/kit'
 import { getPort } from 'get-port-please'
-import { joinURL, withoutLeadingSlash, withoutTrailingSlash } from 'ufo'
+import { joinURL, withoutLeadingSlash, withTrailingSlash, withoutTrailingSlash } from 'ufo'
 import defu from 'defu'
 import type { OutputOptions } from 'rollup'
 import { defineEventHandler } from 'h3'
@@ -130,11 +130,12 @@ export async function buildClient (ctx: ViteBuildContext) {
         next()
       }
     })
+    const base = withTrailingSlash(clientConfig.base)
     const viteMiddleware = defineEventHandler(async (event) => {
       // Workaround: vite devmiddleware modifies req.url
       const originalURL = event.node.req.url!
       // @ts-expect-error _skip_transform is a private property
-      event.node.req._skip_transform = !originalURL.startsWith(clientConfig.base!)
+      event.node.req._skip_transform = !originalURL.startsWith(base)
       await new Promise((resolve, reject) => {
         viteServer.middlewares.handle(event.node.req, event.node.res, (err: Error) => {
           event.node.req.url = originalURL
