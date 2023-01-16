@@ -16,10 +16,7 @@
     "untyped": "^1.2.2"
   },
   "resolutions": {
-    "parse5": "6.0.1",
-    "@nuxthq/studio": "0.3.4",
-    "@nuxthq/ui": "0.1.17",
-    "@nuxtlabs/github-module": "1.5.4"
+    "parse5": "6.0.1"
   },
   "packageManager": "yarn@3.3.1"
 }
