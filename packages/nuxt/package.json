@@ -61,7 +61,7 @@
     "knitwork": "^1.0.0",
     "magic-string": "^0.27.0",
     "mlly": "^1.1.0",
-    "nitropack": "npm:nitropack-edge@2.0.0-27887983.dcc59c7",
+    "nitropack": "npm:nitropack-edge@2.0.0-27894171.0638f64",
     "nuxi": "3.0.0",
     "ohash": "^1.0.0",
     "ofetch": "^1.0.0",
@@ -75,14 +75,14 @@
     "unenv": "^1.0.1",
     "unimport": "^1.2.0",
     "unplugin": "^1.0.1",
-    "untyped": "^1.2.1",
+    "untyped": "^1.2.2",
     "vue": "^3.2.45",
     "vue-bundle-renderer": "^1.0.0",
     "vue-devtools-stub": "^0.1.0",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.13",
+    "@types/fs-extra": "^11.0.1",
     "@types/hash-sum": "^1.0.0",
     "unbuild": "latest"
   },

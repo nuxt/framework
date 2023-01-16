@@ -1,10 +1,12 @@
-import { fileURLToPath, pathToFileURL } from 'node:url'
+import { pathToFileURL } from 'node:url'
 import { createUnplugin } from 'unplugin'
 import { parseQuery, parseURL } from 'ufo'
 import type { Component, ComponentsOptions } from '@nuxt/schema'
 import { genDynamicImport, genImport } from 'knitwork'
 import MagicString from 'magic-string'
 import { pascalCase } from 'scule'
+import { resolve } from 'pathe'
+import { distDir } from '../dirs'
 
 interface LoaderOptions {
   getComponents (): Component[]
@@ -37,14 +39,14 @@ function isVueTemplate (id: string) {
     return false
   }
 
-  // Query `?vue&type=template` (in Webpack or external template)
+  // Query `?vue&type=template` (in webpack or external template)
   return true
 }
 
 export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
   const exclude = options.transform?.exclude || []
   const include = options.transform?.include || []
-  const serverComponentRuntime = fileURLToPath(new URL('./runtime/server-component', import.meta.url))
+  const serverComponentRuntime = resolve(distDir, 'components/runtime/server-component')
 
   return {
     name: 'nuxt:components-loader',
