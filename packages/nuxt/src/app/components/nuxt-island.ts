@@ -1,10 +1,9 @@
-import { defineComponent, createStaticVNode, computed, ref, watch } from 'vue'
+import { defineComponent, createStaticVNode, computed, watch } from 'vue'
 import { debounce } from 'perfect-debounce'
 import { hash } from 'ohash'
-import type { MetaObject } from '@nuxt/schema'
 // eslint-disable-next-line import/no-restricted-paths
 import type { NuxtIslandResponse } from '../../core/runtime/nitro/renderer'
-import { useHead, useNuxtApp } from '#app'
+import { useAsyncData, useHead, useNuxtApp } from '#app'
 
 const pKey = '_islandPromises'
 
@@ -27,9 +26,6 @@ export default defineComponent({
   async setup (props) {
     const nuxtApp = useNuxtApp()
     const hashId = computed(() => hash([props.name, props.props, props.context]))
-    const html = ref<string>('')
-    const cHead = ref<MetaObject>({ link: [], style: [] })
-    useHead(cHead)
 
     function _fetchComponent () {
       // TODO: Validate response
@@ -41,27 +37,42 @@ export default defineComponent({
       })
     }
 
-    async function fetchComponent () {
-      nuxtApp[pKey] = nuxtApp[pKey] || {}
-      if (!nuxtApp[pKey][hashId.value]) {
-        nuxtApp[pKey][hashId.value] = _fetchComponent().finally(() => {
-          delete nuxtApp[pKey][hashId.value]
+    const res = useAsyncData(
+      `${props.name}:${hashId.value}`,
+      async () => {
+        nuxtApp[pKey] = nuxtApp[pKey] || {}
+        if (!nuxtApp[pKey][hashId.value]) {
+          nuxtApp[pKey][hashId.value] = _fetchComponent().finally(() => {
+            delete nuxtApp[pKey][hashId.value]
+          })
+        }
+        const res: NuxtIslandResponse = await nuxtApp[pKey][hashId.value]
+        return {
+          html: res.html,
+          head: {
+            link: res.head.link,
+            style: res.head.style
+          }
+        }
+      }, {
+        immediate: process.server || !nuxtApp.isHydrating,
+        default: () => ({
+          html: '',
+          head: {
+            link: [], style: []
+          }
         })
       }
-      const res: NuxtIslandResponse = await nuxtApp[pKey][hashId.value]
-      cHead.value.link = res.head.link
-      cHead.value.style = res.head.style
-      html.value = res.html
-    }
+    )
+
+    useHead(() => res.data.value!.head)
 
     if (process.client) {
-      watch(props, debounce(fetchComponent, 100))
+      watch(props, debounce(() => res.execute({ _initial: true }), 100))
     }
 
-    if (process.server || !nuxtApp.isHydrating) {
-      await fetchComponent()
-    }
+    await res
 
-    return () => createStaticVNode(html.value, 1)
+    return () => createStaticVNode(res.data.value!.html, 1)
   }
 })
