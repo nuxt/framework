@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "jiti": "^1.16.2",
-    "nuxt": "npm:nuxt3@latest",
+    "nuxt": "3.0.0",
     "nuxt-website-theme": "^0.3.6",
     "pathe": "^1.0.0",
     "scule": "^1.0.0",
@@ -19,9 +19,7 @@
     "parse5": "6.0.1",
     "@nuxthq/studio": "0.3.4",
     "@nuxthq/ui": "0.1.17",
-    "@nuxtlabs/github-module": "1.5.4",
-    "@nuxt-themes/tokens": "1.1.4",
-    "@nuxt-themes/typography": "0.1.4"
+    "@nuxtlabs/github-module": "1.5.4"
   },
   "packageManager": "yarn@3.3.1"
 }
