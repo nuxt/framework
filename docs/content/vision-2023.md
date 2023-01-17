@@ -19,7 +19,7 @@ date: "Jan 17, 2023"
 This past year has been an exciting one. Looking into the new year, there is a lot we have planned as a team and we'd love to share it with you. :sparkles:
 #body
 
-This past year has been an exciting one, with the release of Nuxt 3 and Nitro and the launch of the new [nuxt.com](http://nuxt.com/) website. It's been the culmination of years of work, and has not only resulted in a new major version of Nuxt, but a new Nuxt architecture, a full-stack server framework ([Nitro](https://nitro.unjs.io/)), and a new GitHub organisation and ecosystem ([unjs](https://github.com/unjs/)).
+This past year has been an exciting one, with the release of Nuxt 3 and Nitro and the launch of the new [nuxt.com](http://nuxt.com/) website. It's been the culmination of years of work, and has not only resulted in a new major version of Nuxt, but a new Nuxt architecture, a full-stack server framework ([Nitro](https://nitro.unjs.io/)), and a new GitHub organisation and ecosystem ([UnJS](https://github.com/unjs/)).
 
 Throughout that whole time, Pooya Parsa has led the Nuxt team, putting in countless hours of work and thought into building Nuxt 3.
 
