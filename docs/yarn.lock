@@ -2100,7 +2100,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/reset@npm:^0.48.0":
+"@unocss/reset@npm:^0.48.4":
   version: 0.48.4
   resolution: "@unocss/reset@npm:0.48.4"
   checksum: f71763fdd1b04929277603d6c17c0f0e0872ad0348a3efc1db1797161da747c120063ca104dd7347187a53c5fca9399f61ff1503648c6490337cc9fb9863233a
@@ -2171,7 +2171,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@volar/vue-language-core@npm:1.0.24, @volar/vue-language-core@npm:^1.0.22":
+"@volar/vue-language-core@npm:1.0.24, @volar/vue-language-core@npm:^1.0.24":
   version: 1.0.24
   resolution: "@volar/vue-language-core@npm:1.0.24"
   dependencies:
@@ -2330,15 +2330,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:9.10.0, @vueuse/core@npm:^9.10.0, @vueuse/core@npm:^9.6.0":
-  version: 9.10.0
-  resolution: "@vueuse/core@npm:9.10.0"
+"@vueuse/core@npm:9.11.0, @vueuse/core@npm:^9.10.0, @vueuse/core@npm:^9.6.0":
+  version: 9.11.0
+  resolution: "@vueuse/core@npm:9.11.0"
   dependencies:
     "@types/web-bluetooth": ^0.0.16
-    "@vueuse/metadata": 9.10.0
-    "@vueuse/shared": 9.10.0
+    "@vueuse/metadata": 9.11.0
+    "@vueuse/shared": 9.11.0
     vue-demi: "*"
-  checksum: 9e3b0c0baa1e3daf3ae508f76acf4e73ec80a2089d420f5de7c203e9fecd8cd4596a5e4635bbf09a762e0bba022f26806ee23b69d5d01a5d0e4b76e2ad2878a4
+  checksum: 469bacd20709c3e68de1edf726edae3d68ad2c2cb6f37f197250a42e2ff12d2bd267b9f3c212a55e06a5351d6708fb59dd54d9eac2746ca0482b0aac1767b5b1
   languageName: node
   linkType: hard
 
@@ -2357,11 +2357,11 @@ __metadata:
   linkType: hard
 
 "@vueuse/integrations@npm:^9.10.0":
-  version: 9.10.0
-  resolution: "@vueuse/integrations@npm:9.10.0"
+  version: 9.11.0
+  resolution: "@vueuse/integrations@npm:9.11.0"
   dependencies:
-    "@vueuse/core": 9.10.0
-    "@vueuse/shared": 9.10.0
+    "@vueuse/core": 9.11.0
+    "@vueuse/shared": 9.11.0
     vue-demi: "*"
   peerDependencies:
     async-validator: "*"
@@ -2398,14 +2398,14 @@ __metadata:
       optional: true
     universal-cookie:
       optional: true
-  checksum: 5c80eb434bda2deac9db96e62a23c0fafa192f4cc74bbf0427f8efeaecde196110b3b9a8e5387a52e00846b0294aa59ce130cfd3a7a130850f8f127d9bc4a971
+  checksum: e31e8348c15eb19f6cfd1aa3c9983d25bf823199220760833f60ff6d134e8cbf65b119a079dd8cf6ea51b73f8719ed36e1b80c1fe93f950e1647e4edc64709a6
   languageName: node
   linkType: hard
 
-"@vueuse/metadata@npm:9.10.0":
-  version: 9.10.0
-  resolution: "@vueuse/metadata@npm:9.10.0"
-  checksum: ef9b4970cc1795e197279b59cfd82c7475323c17ae02701e5a6be26df1258330d4fafb7c05d005dfa7af97277509a8589d62467925319e1c5c17715805554bb7
+"@vueuse/metadata@npm:9.11.0":
+  version: 9.11.0
+  resolution: "@vueuse/metadata@npm:9.11.0"
+  checksum: 262ba0cfe89b65ead26b7d9bdb47221c6d8bf3e5a67dc6ff5fb2a67d5fe849b8854749f9bfa337bab6597d2f7e596f01a24028507cc511b9d198ea403f46f6ed
   languageName: node
   linkType: hard
 
@@ -2429,12 +2429,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/shared@npm:9.10.0, @vueuse/shared@npm:^9.6.0":
-  version: 9.10.0
-  resolution: "@vueuse/shared@npm:9.10.0"
+"@vueuse/shared@npm:9.11.0, @vueuse/shared@npm:^9.6.0":
+  version: 9.11.0
+  resolution: "@vueuse/shared@npm:9.11.0"
   dependencies:
     vue-demi: "*"
-  checksum: 1481ad7273eb8835a42fd49805d32ae97465188d260ddb28fdffebda7bedea5943bf49c3bd128121b32719307eaf1cb69b37b60fa1195c10a555e7aec3d78c22
+  checksum: 6ede8f66df880be27b447b4b95085ae223916328e10f86a87b2a9d69baf51184c313a7be6136b0c9ad0d38b68c5616fad64cf535911f3695aa53629d9ccaacba
   languageName: node
   linkType: hard
 
@@ -6935,9 +6935,9 @@ __metadata:
   linkType: hard
 
 "klona@npm:^2.0.4, klona@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "klona@npm:2.0.5"
-  checksum: 8c976126ea252b766e648a4866e1bccff9d3b08432474ad80c559f6c7265cf7caede2498d463754d8c88c4759895edd8210c85c0d3155e6aae4968362889466f
+  version: 2.0.6
+  resolution: "klona@npm:2.0.6"
+  checksum: ac9ee3732e42b96feb67faae4d27cf49494e8a3bf3fa7115ce242fe04786788e0aff4741a07a45a2462e2079aa983d73d38519c85d65b70ef11447bbc3c58ce7
   languageName: node
   linkType: hard
 
@@ -9593,11 +9593,11 @@ __metadata:
   linkType: hard
 
 "pinceau@npm:^0.10.7":
-  version: 0.10.10
-  resolution: "pinceau@npm:0.10.10"
+  version: 0.10.11
+  resolution: "pinceau@npm:0.10.11"
   dependencies:
-    "@unocss/reset": ^0.48.0
-    "@volar/vue-language-core": ^1.0.22
+    "@unocss/reset": ^0.48.4
+    "@volar/vue-language-core": ^1.0.24
     acorn: ^8.8.1
     chroma-js: ^2.4.2
     consola: ^2.15.3
@@ -9611,10 +9611,10 @@ __metadata:
     postcss-nested: ^6.0.0
     recast: ^0.22.0
     scule: ^1.0.0
-    style-dictionary-esm: ^1.0.15
-    unbuild: ^1.0.2
+    style-dictionary-esm: ^1.1.1
+    unbuild: ^1.1.1
     unplugin: ^1.0.1
-  checksum: aaf466d3b0c5d07c966fd9b9709dc37fe3562e77edb73660542d796f35a1c640d3cfc85622d19cf4bfc91db06dcd8fe25fea8e8e8e5eda8034666c1cbff58c2b
+  checksum: 3ae707d4d9d202c46b46203b484dcc7bbca28f80c81ee7a4c5f266567246a8c07c220d7464b2e5a7207603fdd5dc07159c36e038be1e609388cd9498c56ca8cf
   languageName: node
   linkType: hard
 
@@ -11526,11 +11526,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"style-dictionary-esm@npm:^1.0.15":
-  version: 1.1.0
-  resolution: "style-dictionary-esm@npm:1.1.0"
+"style-dictionary-esm@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "style-dictionary-esm@npm:1.1.1"
   dependencies:
-    chalk: ^5.2.0
+    chalk: ^4.1.2
     change-case: ^4.1.2
     commander: ^9.5.0
     consola: ^2.15.3
@@ -11543,7 +11543,7 @@ __metadata:
     tinycolor2: ^1.5.2
   bin:
     style-dictionary: bin/style-dictionary.js
-  checksum: 51bc2d81c56120dad89a30015736b00325d673f94ce2995644ae5c40c7d27dec06cfbf24a5afb9d7571c202711c7490a1e7bb03426095000b62ca810b8cd5e65
+  checksum: 7562ac2df5ef99e95e38680913ac9b2b67599ce64d743887a9c40b85e70ca56d6f7e83216e39bd22d957d768fd3f70ddacb5a3d4c0ab7083c6b0f7f6d23c57c7
   languageName: node
   linkType: hard
 
@@ -11982,7 +11982,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unbuild@npm:^1.0.2":
+"unbuild@npm:^1.1.1":
   version: 1.1.1
   resolution: "unbuild@npm:1.1.1"
   dependencies:
