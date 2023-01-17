@@ -1493,8 +1493,8 @@ __metadata:
   linkType: hard
 
 "@nuxthq/ui@npm:^0.1.17":
-  version: 0.1.28
-  resolution: "@nuxthq/ui@npm:0.1.28"
+  version: 0.1.30
+  resolution: "@nuxthq/ui@npm:0.1.30"
   dependencies:
     "@headlessui/vue": 1.7.4
     "@iconify/vue": ^4.0.2
@@ -1512,7 +1512,7 @@ __metadata:
     fuse.js: ^6.6.2
     lodash-es: ^4.17.21
     tailwindcss: ^3.2.4
-  checksum: 1cec9aa8b1c8742ea9dae8eb5ecc4cb61807d66b1808125f3d1c40732de448629e94cd44b5fb4449cc94c5a06a00337df42d7f328a8cb3546dfb09a59392e62b
+  checksum: e1c863d9df8c4de4dc0ec18a4258296c9a546ba8f551d3253ba08de83141d4eef4eeedaeac2c40aafef80ece6612b9395c11213adb2a1f789cade984d0fe2803
   languageName: node
   linkType: hard
 
@@ -4522,7 +4522,7 @@ __metadata:
   dependencies:
     jiti: ^1.16.2
     nuxt: "npm:nuxt3@latest"
-    nuxt-website-theme: ^0.3.6
+    nuxt-website-theme: ^0.3.8
     pathe: ^1.0.0
     scule: ^1.0.0
     untyped: ^1.2.2
@@ -9123,7 +9123,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxt-website-theme@npm:^0.3.6":
+"nuxt-website-theme@npm:^0.3.8":
   version: 0.3.8
   resolution: "nuxt-website-theme@npm:0.3.8"
   dependencies:
