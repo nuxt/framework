@@ -1314,18 +1314,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/kit@npm:@nuxt/kit-edge@3.0.1-rc.0-27898092.1e8da22":
-  version: 3.0.1-rc.0-27898092.1e8da22
-  resolution: "@nuxt/kit-edge@npm:3.0.1-rc.0-27898092.1e8da22"
+"@nuxt/kit@npm:@nuxt/kit-edge@3.0.1-rc.0-27889360.9de94c2":
+  version: 3.0.1-rc.0-27889360.9de94c2
+  resolution: "@nuxt/kit-edge@npm:3.0.1-rc.0-27889360.9de94c2"
   dependencies:
-    "@nuxt/schema": "npm:@nuxt/schema-edge@3.0.1-rc.0-27898092.1e8da22"
+    "@nuxt/schema": "npm:@nuxt/schema-edge@3.0.1-rc.0-27889360.9de94c2"
     c12: ^1.1.0
     consola: ^2.15.3
     defu: ^6.1.1
     globby: ^13.1.3
     hash-sum: ^2.0.0
     ignore: ^5.2.4
-    jiti: ^1.16.2
+    jiti: ^1.16.1
     knitwork: ^1.0.0
     lodash.template: ^4.5.0
     mlly: ^1.1.0
@@ -1335,8 +1335,8 @@ __metadata:
     semver: ^7.3.8
     unctx: ^2.1.1
     unimport: ^1.2.0
-    untyped: ^1.2.2
-  checksum: d9037ffbc6be23b9171333714755634bbafa7fa46011eb3e519f14178936ac6945f1e0701e1872079c6ea602892dc2e00f08740e07938652bc8f30ec22d17fd6
+    untyped: ^1.2.1
+  checksum: 8fc6e96d9c94630e84cf8bd00deeed7a6fd167bd941e5ef89a82f720e1d518672b7508c60834588eb532b8f425de0bfe805ffc2bc953095b1fe594dd4c3cabcb
   languageName: node
   linkType: hard
 
@@ -1376,15 +1376,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/schema@npm:@nuxt/schema-edge@3.0.1-rc.0-27898092.1e8da22":
-  version: 3.0.1-rc.0-27898092.1e8da22
-  resolution: "@nuxt/schema-edge@npm:3.0.1-rc.0-27898092.1e8da22"
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.1-rc.0-27889360.9de94c2":
+  version: 3.0.1-rc.0-27889360.9de94c2
+  resolution: "@nuxt/schema-edge@npm:3.0.1-rc.0-27889360.9de94c2"
   dependencies:
     c12: ^1.1.0
     create-require: ^1.1.1
     defu: ^6.1.1
     hookable: ^5.4.2
-    jiti: ^1.16.2
+    jiti: ^1.16.1
     pathe: ^1.0.0
     pkg-types: ^1.0.1
     postcss-import-resolver: ^2.0.0
@@ -1392,8 +1392,8 @@ __metadata:
     std-env: ^3.3.1
     ufo: ^1.0.1
     unimport: ^1.2.0
-    untyped: ^1.2.2
-  checksum: d1362dcef00113016679b8b0de27d47e0dc5849a6aba9de9248ee413767f5287676bcfc3df0a4c1e05d2dbcf8cd9023ebff0b38ceafb1e0c1a2c74b2717afe1f
+    untyped: ^1.2.1
+  checksum: d09b36ddb1b0ebcf09f6b0593d27b7ea8d7776a9c9ae82f442282c59f7350daafd7a8f294a7f5ff7dd1b4a6a4c768822e4ab9e253ef075e93720d7637aa68a7f
   languageName: node
   linkType: hard
 
@@ -1434,11 +1434,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/vite-builder@npm:@nuxt/vite-builder-edge@3.0.1-rc.0-27898092.1e8da22":
-  version: 3.0.1-rc.0-27898092.1e8da22
-  resolution: "@nuxt/vite-builder-edge@npm:3.0.1-rc.0-27898092.1e8da22"
+"@nuxt/vite-builder@npm:@nuxt/vite-builder-edge@3.0.1-rc.0-27889360.9de94c2":
+  version: 3.0.1-rc.0-27889360.9de94c2
+  resolution: "@nuxt/vite-builder-edge@npm:3.0.1-rc.0-27889360.9de94c2"
   dependencies:
-    "@nuxt/kit": "npm:@nuxt/kit-edge@3.0.1-rc.0-27898092.1e8da22"
+    "@nuxt/kit": "npm:@nuxt/kit-edge@3.0.1-rc.0-27889360.9de94c2"
     "@rollup/plugin-replace": ^5.0.2
     "@vitejs/plugin-vue": ^4.0.0
     "@vitejs/plugin-vue-jsx": ^3.0.0
@@ -1446,7 +1446,7 @@ __metadata:
     chokidar: ^3.5.3
     cssnano: ^5.1.14
     defu: ^6.1.1
-    esbuild: ^0.16.17
+    esbuild: ^0.16.16
     escape-string-regexp: ^5.0.0
     estree-walker: ^3.0.2
     externality: ^1.0.0
@@ -1463,17 +1463,17 @@ __metadata:
     postcss: ^8.4.21
     postcss-import: ^15.1.0
     postcss-url: ^10.1.3
-    rollup: ^3.10.0
+    rollup: ^3.9.1
     rollup-plugin-visualizer: ^5.9.0
     ufo: ^1.0.1
     unplugin: ^1.0.1
     vite: ~4.0.4
-    vite-node: ^0.27.1
+    vite-node: ^0.27.0
     vite-plugin-checker: ^0.5.3
     vue-bundle-renderer: ^1.0.0
   peerDependencies:
     vue: ^3.2.45
-  checksum: 70a395dec530e02e17a9778deb3ae52bc44895c1cd6dbc6c16a722cf82b991133283f6ebbc89cfa1e69599bbe64bf03d8d7b194a2610e9d98daf3518d9b93949
+  checksum: fce5adbeae8e9f9eed1d7b5225c5bf036d29a61010dd3e177cd4d04fbae650886ddcd408a0cc5e54961016a37ebe25e5e56768c61e96ea41a5c84312913750c0
   languageName: node
   linkType: hard
 
@@ -4521,7 +4521,7 @@ __metadata:
   resolution: "docs@workspace:."
   dependencies:
     jiti: ^1.16.2
-    nuxt: "npm:nuxt3@latest"
+    nuxt: "npm:nuxt3@3.0.1-rc.0-27889360.9de94c2"
     nuxt-website-theme: ^0.3.8
     pathe: ^1.0.0
     scule: ^1.0.0
@@ -6789,7 +6789,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jiti@npm:^1.13.0, jiti@npm:^1.15.0, jiti@npm:^1.16.0, jiti@npm:^1.16.2":
+"jiti@npm:^1.13.0, jiti@npm:^1.15.0, jiti@npm:^1.16.0, jiti@npm:^1.16.1, jiti@npm:^1.16.2":
   version: 1.16.2
   resolution: "jiti@npm:1.16.2"
   bin:
@@ -8765,7 +8765,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nitropack@npm:nitropack-edge@^2.0.0-27897925.b91db6f":
+"nitropack@npm:nitropack-edge@^2.0.0-27887983.dcc59c7":
   version: 2.0.0-27898373.d89fa5f
   resolution: "nitropack-edge@npm:2.0.0-27898373.d89fa5f"
   dependencies:
@@ -9074,9 +9074,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxi@npm:nuxi-edge@3.0.1-rc.0-27898092.1e8da22":
-  version: 3.0.1-rc.0-27898092.1e8da22
-  resolution: "nuxi-edge@npm:3.0.1-rc.0-27898092.1e8da22"
+"nuxi@npm:nuxi-edge@3.0.1-rc.0-27889360.9de94c2":
+  version: 3.0.1-rc.0-27889360.9de94c2
+  resolution: "nuxi-edge@npm:3.0.1-rc.0-27889360.9de94c2"
   dependencies:
     fsevents: ~2.3.2
   dependenciesMeta:
@@ -9084,7 +9084,7 @@ __metadata:
       optional: true
   bin:
     nuxi-edge: bin/nuxi.mjs
-  checksum: 0656c03316a70f9e88c4eae1dc121727992672b96ea45525cf65b3d375dcc7885d88350ca9b50011807f915254b959b17c40cf50bbf1366604e7862ed82efb81
+  checksum: ce0ba02d52fe3b7e1745213848fa5c839c65a0458dbcca83797f2ef9eceb8aff90197f52783ae2a3afbe56574adf185c461414d90df2b0ae88a7fe8031dd651c
   languageName: node
   linkType: hard
 
@@ -9158,16 +9158,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nuxt@npm:nuxt3@latest":
-  version: 3.0.1-rc.0-27898092.1e8da22
-  resolution: "nuxt3@npm:3.0.1-rc.0-27898092.1e8da22"
+"nuxt@npm:nuxt3@3.0.1-rc.0-27889360.9de94c2":
+  version: 3.0.1-rc.0-27889360.9de94c2
+  resolution: "nuxt3@npm:3.0.1-rc.0-27889360.9de94c2"
   dependencies:
     "@nuxt/devalue": ^2.0.0
-    "@nuxt/kit": "npm:@nuxt/kit-edge@3.0.1-rc.0-27898092.1e8da22"
-    "@nuxt/schema": "npm:@nuxt/schema-edge@3.0.1-rc.0-27898092.1e8da22"
+    "@nuxt/kit": "npm:@nuxt/kit-edge@3.0.1-rc.0-27889360.9de94c2"
+    "@nuxt/schema": "npm:@nuxt/schema-edge@3.0.1-rc.0-27889360.9de94c2"
     "@nuxt/telemetry": ^2.1.8
     "@nuxt/ui-templates": ^1.1.0
-    "@nuxt/vite-builder": "npm:@nuxt/vite-builder-edge@3.0.1-rc.0-27898092.1e8da22"
+    "@nuxt/vite-builder": "npm:@nuxt/vite-builder-edge@3.0.1-rc.0-27889360.9de94c2"
     "@unhead/ssr": ^1.0.15
     "@vue/reactivity": ^3.2.45
     "@vue/shared": ^3.2.45
@@ -9186,8 +9186,8 @@ __metadata:
     knitwork: ^1.0.0
     magic-string: ^0.27.0
     mlly: ^1.1.0
-    nitropack: "npm:nitropack-edge@^2.0.0-27897925.b91db6f"
-    nuxi: "npm:nuxi-edge@3.0.1-rc.0-27898092.1e8da22"
+    nitropack: "npm:nitropack-edge@^2.0.0-27887983.dcc59c7"
+    nuxi: "npm:nuxi-edge@3.0.1-rc.0-27889360.9de94c2"
     ofetch: ^1.0.0
     ohash: ^1.0.0
     pathe: ^1.0.0
@@ -9201,7 +9201,7 @@ __metadata:
     unhead: ^1.0.15
     unimport: ^1.2.0
     unplugin: ^1.0.1
-    untyped: ^1.2.2
+    untyped: ^1.2.1
     vue: ^3.2.45
     vue-bundle-renderer: ^1.0.0
     vue-devtools-stub: ^0.1.0
@@ -9209,7 +9209,7 @@ __metadata:
   bin:
     nuxi: bin/nuxt.mjs
     nuxt: bin/nuxt.mjs
-  checksum: bec249fc6e5001c9d5f0a401001ed02b36dbbf9b1f72e3e9246f98749ab251b906c6bb92b46efa42e310ce1ab9cb6d649c4c17c12aec036f19ef0d341692c4f4
+  checksum: cac87e04a1d6171cdb68facb1fbc164a0f44556854e3dc99a74c9a105845c2659a73c85c185ccd07c31646d5e6a0a01c15713c4051ee19a2dc22c63b414e8d4f
   languageName: node
   linkType: hard
 
@@ -10899,7 +10899,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^3.10.0, rollup@npm:^3.7.0":
+"rollup@npm:^3.10.0, rollup@npm:^3.7.0, rollup@npm:^3.9.1":
   version: 3.10.0
   resolution: "rollup@npm:3.10.0"
   dependencies:
@@ -12534,7 +12534,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-node@npm:^0.27.1":
+"vite-node@npm:^0.27.0":
   version: 0.27.2
   resolution: "vite-node@npm:0.27.2"
   dependencies:
