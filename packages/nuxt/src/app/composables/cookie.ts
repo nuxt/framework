@@ -1,5 +1,7 @@
-import { ref, Ref, watch } from 'vue'
-import { parse, serialize, CookieParseOptions, CookieSerializeOptions } from 'cookie-es'
+import type { Ref } from 'vue'
+import { ref, watch } from 'vue'
+import type { CookieParseOptions, CookieSerializeOptions } from 'cookie-es'
+import { parse, serialize } from 'cookie-es'
 import { appendHeader } from 'h3'
 import type { H3Event } from 'h3'
 import destr from 'destr'
@@ -15,7 +17,7 @@ export interface CookieOptions<T = any> extends _CookieOptions {
   default?: () => T | Ref<T>
 }
 
-export interface CookieRef<T> extends Ref<T | null> {}
+export interface CookieRef<T> extends Ref<T> {}
 
 const CookieDefaults: CookieOptions<any> = {
   path: '/',
@@ -23,7 +25,7 @@ const CookieDefaults: CookieOptions<any> = {
   encode: val => encodeURIComponent(typeof val === 'string' ? val : JSON.stringify(val))
 }
 
-export function useCookie <T = string> (name: string, _opts?: CookieOptions<T>): CookieRef<T> {
+export function useCookie <T = string | null> (name: string, _opts?: CookieOptions<T>): CookieRef<T> {
   const opts = { ...CookieDefaults, ..._opts }
   const cookies = readRawCookies(opts) || {}
 

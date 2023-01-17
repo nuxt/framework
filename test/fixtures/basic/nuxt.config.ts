@@ -40,11 +40,11 @@ export default defineNuxtConfig({
       ]
     }
   },
-  publicRuntimeConfig: {
-    testConfig: 123
-  },
-  privateRuntimeConfig: {
-    privateConfig: 'secret_key'
+  runtimeConfig: {
+    privateConfig: 'secret_key',
+    public: {
+      testConfig: 123
+    }
   },
   modules: [
     '~/modules/example',
@@ -104,8 +104,10 @@ export default defineNuxtConfig({
   },
   experimental: {
     inlineSSRStyles: id => !!id && !id.includes('assets.vue'),
+    componentIslands: true,
     reactivityTransform: true,
-    treeshakeClientOnly: true
+    treeshakeClientOnly: true,
+    payloadExtraction: true
   },
   appConfig: {
     fromNuxtConfig: true,

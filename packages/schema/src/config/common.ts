@@ -3,7 +3,7 @@ import { join, resolve } from 'pathe'
 import { isDebug, isDevelopment } from 'std-env'
 import defu from 'defu'
 import { findWorkspaceDir } from 'pkg-types'
-import { RuntimeConfig } from '../types/config'
+import type { RuntimeConfig } from '../types/config'
 
 export default defineUntypedSchema({
   /**
@@ -198,9 +198,6 @@ export default defineUntypedSchema({
    * @type {(typeof import('../src/types/module').NuxtModule | string | [typeof import('../src/types/module').NuxtModule | string, Record<string, any>])[]}
    */
   modules: [],
-
-  /** @deprecated Use `modules` instead */
-  buildModules: [],
 
   /**
    * Customize default directory structure used by Nuxt.
@@ -427,9 +424,7 @@ export default defineUntypedSchema({
    */
   runtimeConfig: {
     $resolve: async (val: RuntimeConfig, get) => defu(val, {
-      ...await get('publicRuntimeConfig'),
-      ...await get('privateRuntimeConfig'),
-      public: await get('publicRuntimeConfig'),
+      public: {},
       app: {
         baseURL: (await get('app')).baseURL,
         buildAssetsDir: (await get('app')).buildAssetsDir,
@@ -437,18 +432,6 @@ export default defineUntypedSchema({
       }
     })
   },
-
-  /**
-   * @type {typeof import('../src/types/config').PrivateRuntimeConfig}
-   * @deprecated Use `runtimeConfig` option.
-   */
-  privateRuntimeConfig: {},
-
-  /**
-   * @type {typeof import('../src/types/config').PublicRuntimeConfig}
-   * @deprecated Use `runtimeConfig` option with `public` key (`runtimeConfig.public.*`).
-   */
-  publicRuntimeConfig: {},
 
   /**
    * Additional app configuration

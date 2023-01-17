@@ -9,7 +9,7 @@ import type { Compiler, Configuration, Stats } from 'webpack'
 import type { Nuxt, NuxtApp, ResolvedNuxtTemplate } from './nuxt'
 import type { Nitro, NitroConfig } from 'nitropack'
 import type { Component, ComponentsOptions } from './components'
-import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
+import type { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
 
 export type HookResult = Promise<void> | void
 
@@ -40,10 +40,6 @@ export type NuxtLayout = {
 }
 
 export interface ImportPresetWithDeprecation extends InlinePreset {
-  /**
-   * @deprecated renamed to `imports`
-   */
-  names?: string[]
 }
 
 export interface GenerateAppOptions {
@@ -75,14 +71,6 @@ export interface NuxtHooks {
   'pages:extend': (pages: NuxtPage[]) => HookResult
 
   'server:devHandler': (handler: EventHandler) => HookResult
-
-  // Auto imports
-  /** @deprecated Please use `imports:sources` hook */
-  'autoImports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
-  /** @deprecated Please use `imports:extend` hook */
-  'autoImports:extend': (imports: Import[]) => HookResult
-  /** @deprecated Please use `imports:dirs` hook */
-  'autoImports:dirs': (dirs: string[]) => HookResult
 
   'imports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
   'imports:extend': (imports: Import[]) => HookResult

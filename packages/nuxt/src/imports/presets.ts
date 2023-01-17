@@ -1,12 +1,12 @@
-import { defineUnimportPreset, InlinePreset } from 'unimport'
+import type { InlinePreset } from 'unimport'
+import { defineUnimportPreset } from 'unimport'
 
 const commonPresets: InlinePreset[] = [
   // #head
   defineUnimportPreset({
     from: '#head',
     imports: [
-      'useHead',
-      'useMeta'
+      'useHead'
     ]
   }),
   // vue-demi (mocked)
@@ -24,6 +24,7 @@ const appPreset = defineUnimportPreset({
   imports: [
     'useAsyncData',
     'useLazyAsyncData',
+    'useNuxtData',
     'refreshNuxtData',
     'clearNuxtData',
     'defineNuxtComponent',
@@ -38,14 +39,13 @@ const appPreset = defineUnimportPreset({
     'useRequestEvent',
     'setResponseStatus',
     'setPageLayout',
+    'onNuxtReady',
     'useRouter',
     'useRoute',
-    'useActiveRoute',
     'defineNuxtRouteMiddleware',
     'navigateTo',
     'abortNavigation',
     'addRouteMiddleware',
-    'throwError',
     'showError',
     'clearError',
     'isNuxtError',

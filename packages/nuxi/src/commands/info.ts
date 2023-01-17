@@ -6,7 +6,7 @@ import jiti from 'jiti'
 import destr from 'destr'
 import { splitByCase } from 'scule'
 import clipboardy from 'clipboardy'
-import { NuxtModule } from '@nuxt/schema'
+import type { NuxtModule } from '@nuxt/schema'
 import { getPackageManager, getPackageManagerVersion } from '../utils/packageManagers'
 import { findup } from '../utils/fs'
 import { defineNuxtCommand } from './index'
@@ -68,7 +68,7 @@ export default defineNuxtCommand({
       Builder: builder,
       UserConfig: Object.keys(nuxtConfig).map(key => '`' + key + '`').join(', '),
       RuntimeModules: listModules(nuxtConfig.modules),
-      BuildModules: listModules(nuxtConfig.buildModules)
+      BuildModules: listModules(nuxtConfig.buildModules || [])
     }
 
     console.log('RootDir:', rootDir)

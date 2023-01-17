@@ -1,27 +1,39 @@
-import { join, resolve } from 'pathe'
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import { join, relative, resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { ServerOptions } from 'vite'
 import { logger } from '@nuxt/kit'
 import { getPort } from 'get-port-please'
-import { joinURL, withoutLeadingSlash } from 'ufo'
+import { joinURL, withoutLeadingSlash, withoutTrailingSlash } from 'ufo'
 import defu from 'defu'
 import type { OutputOptions } from 'rollup'
 import { defineEventHandler } from 'h3'
+import { genString } from 'knitwork'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
 import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
+  const buildAssetsDir = withoutLeadingSlash(
+    withoutTrailingSlash(ctx.nuxt.options.app.buildAssetsDir)
+  )
+  const relativeToBuildAssetsDir = (filename: string) => './' + relative(buildAssetsDir, filename)
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     entry: ctx.entry,
     base: ctx.nuxt.options.dev
       ? joinURL(ctx.nuxt.options.app.baseURL.replace(/^\.\//, '/') || '/', ctx.nuxt.options.app.buildAssetsDir)
       : './',
     experimental: {
-      renderBuiltUrl: (filename, { type, hostType }) => {
+      renderBuiltUrl: (filename, { type, hostType, hostId }) => {
+        // When rendering inline styles, we can skip loading CSS chunk that matches the current page
+        if (ctx.nuxt.options.experimental.inlineSSRStyles && hostType === 'js' && filename.endsWith('.css')) {
+          return {
+            runtime: `!globalThis.__hydrated ? ${genString(relativeToBuildAssetsDir(hostId))} : ${genString(relativeToBuildAssetsDir(filename))}`
+          }
+        }
         if (hostType !== 'js' || type === 'asset') {
           // In CSS we only use relative paths until we craft a clever runtime CSS hack
           return { relative: true }
@@ -109,16 +121,23 @@ export async function buildClient (ctx: ViteBuildContext) {
     const viteServer = await vite.createServer(clientConfig)
     ctx.clientServer = viteServer
     await ctx.nuxt.callHook('vite:serverCreated', viteServer, { isClient: true, isServer: false })
-    const viteRoutes = viteServer.middlewares.stack.map(m => m.route).filter(r => r.length > 1)
+    const transformHandler = viteServer.middlewares.stack.findIndex(m => m.handle instanceof Function && m.handle.name === 'viteTransformMiddleware')
+    viteServer.middlewares.stack.splice(transformHandler, 0, {
+      route: '',
+      handle: (req: IncomingMessage & { _skip_transform?: boolean }, res: ServerResponse, next: (err?: any) => void) => {
+        // 'Skip' the transform middleware
+        if (req._skip_transform) { req.url = joinURL('/__skip_vite', req.url!) }
+        next()
+      }
+    })
     const viteMiddleware = defineEventHandler(async (event) => {
       // Workaround: vite devmiddleware modifies req.url
-      const originalURL = event.req.url!
-      if (!viteRoutes.some(route => originalURL.startsWith(route)) && !originalURL.startsWith(clientConfig.base!)) {
-        event.req.url = joinURL('/__url', originalURL)
-      }
+      const originalURL = event.node.req.url!
+      // @ts-expect-error _skip_transform is a private property
+      event.node.req._skip_transform = !originalURL.startsWith(clientConfig.base!)
       await new Promise((resolve, reject) => {
-        viteServer.middlewares.handle(event.req, event.res, (err: Error) => {
-          event.req.url = originalURL
+        viteServer.middlewares.handle(event.node.req, event.node.res, (err: Error) => {
+          event.node.req.url = originalURL
           return err ? reject(err) : resolve(null)
         })
       })
@@ -130,9 +149,10 @@ export async function buildClient (ctx: ViteBuildContext) {
     })
   } else {
     // Build
+    logger.info('Building client...')
     const start = Date.now()
     await vite.build(clientConfig)
     await ctx.nuxt.callHook('vite:compiled')
-    logger.info(`Client built in ${Date.now() - start}ms`)
+    logger.success(`Client built in ${Date.now() - start}ms`)
   }
 }

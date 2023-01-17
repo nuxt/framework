@@ -3,7 +3,8 @@ import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocat
 import { sendRedirect } from 'h3'
 import { hasProtocol, joinURL, parseURL } from 'ufo'
 import { useNuxtApp, useRuntimeConfig } from '../nuxt'
-import { createError, NuxtError } from './error'
+import type { NuxtError } from './error'
+import { createError } from './error'
 import { useState } from './state'
 
 export const useRouter = () => {
@@ -28,11 +29,6 @@ export const onBeforeRouteLeave = (guard: NavigationGuard) => {
 export const onBeforeRouteUpdate = (guard: NavigationGuard) => {
   const unsubscribe = useRouter().beforeEach(guard)
   onUnmounted(unsubscribe)
-}
-
-/** @deprecated Use `useRoute` instead. */
-export const useActiveRoute = (): RouteLocationNormalizedLoaded => {
-  return useNuxtApp()._route
 }
 
 export interface RouteMiddleware {

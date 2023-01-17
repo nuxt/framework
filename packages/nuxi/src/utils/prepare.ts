@@ -1,6 +1,6 @@
 import { promises as fsp } from 'node:fs'
 import { isAbsolute, join, relative, resolve } from 'pathe'
-import { Nuxt, TSReference } from '@nuxt/schema'
+import type { Nuxt, TSReference } from '@nuxt/schema'
 import defu from 'defu'
 import type { TSConfig } from 'pkg-types'
 import { getModulePaths, getNearestPackage } from './cjs'
@@ -63,7 +63,6 @@ export const writeTypes = async (nuxt: Nuxt) => {
   }
 
   const references: TSReference[] = [
-    ...nuxt.options.buildModules,
     ...nuxt.options.modules,
     ...nuxt.options._modules
   ]
