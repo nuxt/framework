@@ -23,7 +23,7 @@ This past year has been an exciting one, with the release of Nuxt 3 and Nitro an
 
 Throughout that whole time, Pooya Parsa has led the Nuxt team, putting in countless hours of work and thought into building Nuxt 3.
 
-Now, at the start of 2023, he's handing over the helm of the Nuxt open-source work to me ([Daniel Roe](https://github.com/danielroe)). Pooya will continue to be actively contributing to the Nuxt project and of course driving the development of UnJs ecosystem and Nitro project.
+Now, at the start of 2023, he's handing over the helm of the Nuxt open-source work to me ([Daniel Roe](https://github.com/danielroe)). Pooya will continue to be actively contributing to the Nuxt project and of course driving the development of UnJS ecosystem and Nitro project.
 
 This is a real honour and I'm hugely pleased to be able to work with the rest of the team and the community to continue to drive Nuxt forward to be the intuitive way to build a web application using Vue. 😊
 
