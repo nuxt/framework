@@ -20,7 +20,7 @@ buttons:
   - label: 'Preview guidelines'
     size: 'lg'
     to: 'https://www.figma.com/file/DOO3neicujKl3ymcqUg9dK/%E2%9B%B0%EF%B8%8F---Nuxt-Brand-Guidelines?node-id=0%3A1&t=qBS3UqvGpjrIkxIm-1'
-    icon: "uil:arrow-right"
+    icon: 'uil:arrow-right'
     trailing: 'trailing'
     download: true
     target: '_blank'
