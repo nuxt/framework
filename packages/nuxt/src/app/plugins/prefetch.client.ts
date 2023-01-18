@@ -1,11 +1,11 @@
+import { hasProtocol } from 'ufo'
 import { defineNuxtPlugin, useNuxtApp, useRouter } from '#app'
 // @ts-ignore
 import layouts from '#build/layouts'
 // @ts-ignore
 import { namedMiddleware } from '#build/middleware'
-import { hasProtocol } from 'ufo'
 
-export default defineNuxtPlugin(async () => {
+export default defineNuxtPlugin(() => {
   const nuxtApp = useNuxtApp()
   const router = useRouter()
 
@@ -20,9 +20,9 @@ export default defineNuxtPlugin(async () => {
   })
   // Prefetch layouts & middleware
   nuxtApp.hooks.hook('link:prefetch', (url) => {
-    if (hasProtocol(url)) return
+    if (hasProtocol(url)) { return }
     const route = router.resolve(url)
-    if (!route) return
+    if (!route) { return }
     const layout = route?.meta?.layout
     let middleware = Array.isArray(route?.meta?.middleware) ? route?.meta?.middleware : [route?.meta?.middleware]
     middleware = middleware.filter(m => typeof m === 'string')
