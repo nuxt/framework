@@ -1,8 +1,0 @@
-{
-  "emmet.includeLanguages": {
-    "ejs": "javascript",
-  },
-  "githubPullRequests.ignoredPullRequestBranches": [
-    "dev"
-  ],
-}
