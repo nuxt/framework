@@ -21,7 +21,7 @@ export default defineComponent({
       default: 'repeating-linear-gradient(to right,#00dc82 0%,#34cdfe 50%,#0047e1 100%)'
     }
   },
-  setup (props) {
+  setup (props, { slots }) {
     const indicator = useLoadingIndicator({
       duration: props.duration,
       throttle: props.throttle
@@ -50,7 +50,7 @@ export default defineComponent({
         transition: 'width 0.1s, height 0.4s, opacity 0.4s',
         zIndex: 999999
       }
-    })
+    }, slots)
   }
 })
 
@@ -68,16 +68,16 @@ function useLoadingIndicator (opts: {
   function start () {
     clear()
     progress.value = 0
-    isLoading.value = true
-    if (opts.throttle) {
-      if (process.client) {
-        _throttle = setTimeout(_startTimer, opts.throttle)
-      }
+    if (opts.throttle && process.client) {
+      _throttle = setTimeout(() => {
+        isLoading.value = true
+        _startTimer()
+      }, opts.throttle)
     } else {
+      isLoading.value = true
       _startTimer()
     }
   }
-
   function finish () {
     progress.value = 100
     _hide()

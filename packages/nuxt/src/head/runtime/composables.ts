@@ -1,7 +1,5 @@
-import { isFunction } from '@vue/shared'
-import { computed } from 'vue'
-import type { ComputedGetter } from '@vue/reactivity'
-import type { MetaObject } from '@nuxt/schema'
+import type { HeadEntryOptions, UseHeadInput, ActiveHeadEntry } from '@vueuse/head'
+import type { HeadAugmentations } from '@nuxt/schema'
 import { useNuxtApp } from '#app'
 
 /**
@@ -11,13 +9,6 @@ import { useNuxtApp } from '#app'
  * Alternatively, for reactive meta state, you can pass in a function
  * that returns a meta object.
  */
-export function useHead (meta: MetaObject | ComputedGetter<MetaObject>) {
-  const resolvedMeta = isFunction(meta) ? computed(meta) : meta
-  useNuxtApp()._useHead(resolvedMeta)
-}
-
-// TODO: remove useMeta support when Nuxt 3 is stable
-/** @deprecated Please use new `useHead` composable instead */
-export function useMeta (meta: MetaObject | ComputedGetter<MetaObject>) {
-  return useHead(meta)
+export function useHead<T extends HeadAugmentations> (input: UseHeadInput<T>, options?: HeadEntryOptions): ActiveHeadEntry<UseHeadInput<T>> | void {
+  return useNuxtApp()._useHead(input, options)
 }

@@ -6,6 +6,7 @@ import jiti from 'jiti'
 import destr from 'destr'
 import { splitByCase } from 'scule'
 import clipboardy from 'clipboardy'
+import type { NuxtModule } from '@nuxt/schema'
 import { getPackageManager, getPackageManagerVersion } from '../utils/packageManagers'
 import { findup } from '../utils/fs'
 import { defineNuxtCommand } from './index'
@@ -27,13 +28,13 @@ export default defineNuxtCommand({
     const { dependencies = {}, devDependencies = {} } = findPackage(rootDir)
 
     // Utils to query a dependency version
-    const getDepVersion = name => getPkg(name, rootDir)?.version || dependencies[name] || devDependencies[name]
+    const getDepVersion = (name: string) => getPkg(name, rootDir)?.version || dependencies[name] || devDependencies[name]
 
     const listModules = (arr = []) => arr
-      .map(normalizeConfigModule)
+      .map(m => normalizeConfigModule(m, rootDir))
       .filter(Boolean)
       .map((name) => {
-        const npmName = name.split('/').splice(0, 2).join('/') // @foo/bar/baz => @foo/bar
+        const npmName = name!.split('/').splice(0, 2).join('/') // @foo/bar/baz => @foo/bar
         const v = getDepVersion(npmName)
         return '`' + (v ? `${name}@${v}` : name) + '`'
       })
@@ -54,6 +55,7 @@ export default defineNuxtCommand({
     if (packageManager) {
       packageManager += '@' + getPackageManagerVersion(packageManager)
     } else {
+      // @ts-expect-error
       packageManager = 'unknown'
     }
 
@@ -61,11 +63,12 @@ export default defineNuxtCommand({
       OperatingSystem: os.type(),
       NodeVersion: process.version,
       NuxtVersion: nuxtVersion,
+      NitroVersion: getDepVersion('nitropack'),
       PackageManager: packageManager,
       Builder: builder,
       UserConfig: Object.keys(nuxtConfig).map(key => '`' + key + '`').join(', '),
       RuntimeModules: listModules(nuxtConfig.modules),
-      BuildModules: listModules(nuxtConfig.buildModules)
+      BuildModules: listModules(nuxtConfig.buildModules || [])
     }
 
     console.log('RootDir:', rootDir)
@@ -90,19 +93,19 @@ export default defineNuxtCommand({
     console.log([
       `👉 Report an issue: https://github.com/${repo}/issues/new`,
       `👉 Suggest an improvement: https://github.com/${repo}/discussions/new`,
-      `👉 Read documentation: ${isNuxt3OrBridge ? 'https://v3.nuxtjs.org' : 'https://nuxtjs.org'}`
+      `👉 Read documentation: ${isNuxt3OrBridge ? 'https://nuxt.com' : 'https://nuxtjs.org'}`
     ].join('\n\n') + '\n')
   }
 })
 
-function normalizeConfigModule (module, rootDir) {
+function normalizeConfigModule (module: NuxtModule | string | null | undefined, rootDir: string): string | null {
   if (!module) {
     return null
   }
   if (typeof module === 'string') {
     return module
-      .split(rootDir).pop() // Strip rootDir
-      .split('node_modules').pop() // Strip node_modules
+      .split(rootDir).pop()! // Strip rootDir
+      .split('node_modules').pop()! // Strip node_modules
       .replace(/^\//, '')
   }
   if (typeof module === 'function') {
@@ -111,18 +114,22 @@ function normalizeConfigModule (module, rootDir) {
   if (Array.isArray(module)) {
     return normalizeConfigModule(module[0], rootDir)
   }
+  return null
 }
 
-function getNuxtConfig (rootDir) {
+function getNuxtConfig (rootDir: string) {
   try {
-    return jiti(rootDir, { interopDefault: true })('./nuxt.config')
+    (globalThis as any).defineNuxtConfig = (c: any) => c
+    const result = jiti(rootDir, { interopDefault: true, esmResolve: true })('./nuxt.config')
+    delete (globalThis as any).defineNuxtConfig
+    return result
   } catch (err) {
     // TODO: Show error as warning if it is not 404
     return {}
   }
 }
 
-function getPkg (name, rootDir) {
+function getPkg (name: string, rootDir: string) {
   // Assume it is in {rootDir}/node_modules/${name}/package.json
   let pkgPath = resolve(rootDir, 'node_modules', name, 'package.json')
 
@@ -135,7 +142,7 @@ function getPkg (name, rootDir) {
   return readJSONSync(pkgPath)
 }
 
-function findPackage (rootDir) {
+function findPackage (rootDir: string) {
   return findup(rootDir, (dir) => {
     const p = resolve(dir, 'package.json')
     if (existsSync(p)) {
@@ -144,7 +151,7 @@ function findPackage (rootDir) {
   }) || {}
 }
 
-function readJSONSync (filePath) {
+function readJSONSync (filePath: string) {
   try {
     return destr(readFileSync(filePath, 'utf-8'))
   } catch (err) {

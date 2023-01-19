@@ -1,7 +1,7 @@
-import { Plugin } from 'vite'
+import type { Plugin } from 'vite'
 import { transform } from 'esbuild'
 import { visualizer } from 'rollup-plugin-visualizer'
-import { ViteBuildContext } from '../vite'
+import type { ViteBuildContext } from '../vite'
 
 export function analyzePlugin (ctx: ViteBuildContext): Plugin[] {
   return [
@@ -17,9 +17,9 @@ export function analyzePlugin (ctx: ViteBuildContext): Plugin[] {
           }))
           bundle.modules = Object.fromEntries(minifiedEntries)
         }
-        return null
       }
     },
+    // @ts-ignore
     visualizer({
       ...ctx.nuxt.options.build.analyze as any,
       // @ts-ignore

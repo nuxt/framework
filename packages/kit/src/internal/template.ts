@@ -4,6 +4,7 @@ import { genSafeVariableName, genDynamicImport, genImport } from 'knitwork'
 
 import type { NuxtTemplate } from '@nuxt/schema'
 
+/** @deprecated */
 export async function compileTemplate (template: NuxtTemplate, ctx: any) {
   const data = { ...ctx, options: template.options }
   if (template.src) {
@@ -21,8 +22,10 @@ export async function compileTemplate (template: NuxtTemplate, ctx: any) {
   throw new Error('Invalid template: ' + JSON.stringify(template))
 }
 
+/** @deprecated */
 const serialize = (data: any) => JSON.stringify(data, null, 2).replace(/"{(.+)}"(?=,?$)/gm, r => JSON.parse(r).replace(/^{(.*)}$/, '$1'))
 
+/** @deprecated */
 const importSources = (sources: string | string[], { lazy = false } = {}) => {
   if (!Array.isArray(sources)) {
     sources = [sources]
@@ -35,4 +38,8 @@ const importSources = (sources: string | string[], { lazy = false } = {}) => {
   }).join('\n')
 }
 
-export const templateUtils = { serialize, importName: genSafeVariableName, importSources }
+/** @deprecated */
+const importName = genSafeVariableName
+
+/** @deprecated */
+export const templateUtils = { serialize, importName, importSources }

@@ -4,12 +4,14 @@ import { interopDefault } from 'mlly'
 import jiti from 'jiti'
 
 // TODO: use create-require for jest environment
-const _require = jiti(process.cwd(), { interopDefault: true })
+const _require = jiti(process.cwd(), { interopDefault: true, esmResolve: true })
 
+/** @deprecated Do not use CJS utils */
 export interface ResolveModuleOptions {
   paths?: string | string[]
 }
 
+/** @deprecated Do not use CJS utils */
 export interface RequireModuleOptions extends ResolveModuleOptions {
   // TODO: use create-require for jest environment
   // native?: boolean
@@ -20,11 +22,13 @@ export interface RequireModuleOptions extends ResolveModuleOptions {
   interopDefault?: boolean
 }
 
+/** @deprecated Do not use CJS utils */
 export function isNodeModules (id: string) {
   // TODO: Follow symlinks
   return /[/\\]node_modules[/\\]/.test(id)
 }
 
+/** @deprecated Do not use CJS utils */
 export function clearRequireCache (id: string) {
   if (isNodeModules(id)) {
     return
@@ -48,6 +52,7 @@ export function clearRequireCache (id: string) {
   delete _require.cache[id]
 }
 
+/** @deprecated Do not use CJS utils */
 export function scanRequireTree (id: string, files = new Set<string>()) {
   if (isNodeModules(id) || files.has(id)) {
     return files
@@ -69,7 +74,7 @@ export function scanRequireTree (id: string, files = new Set<string>()) {
   return files
 }
 
-/** Access the require cache by module id. */
+/** @deprecated Do not use CJS utils */
 export function getRequireCacheItem (id: string) {
   try {
     return _require.cache[id]
@@ -82,13 +87,13 @@ export function requireModulePkg (id: string, opts: RequireModuleOptions = {}) {
   return requireModule(join(id, 'package.json'), opts)
 }
 
-/** Resolve the path of a module. */
+/** @deprecated Do not use CJS utils */
 export function resolveModule (id: string, opts: ResolveModuleOptions = {}) {
   return normalize(_require.resolve(id, {
-    paths: [].concat(
+    paths: ([] as string[]).concat(
       // @ts-ignore
       global.__NUXT_PREPATHS__,
-      opts.paths,
+      opts.paths || [],
       process.cwd(),
       // @ts-ignore
       global.__NUXT_PATHS__
@@ -96,19 +101,19 @@ export function resolveModule (id: string, opts: ResolveModuleOptions = {}) {
   }))
 }
 
-/** Try to resolve the path of a module, but don't emit an error if it can't be found. */
+/** @deprecated Do not use CJS utils */
 export function tryResolveModule (path: string, opts: ResolveModuleOptions = {}): string | null {
   try {
     return resolveModule(path, opts)
-  } catch (error) {
-    if (error.code !== 'MODULE_NOT_FOUND') {
+  } catch (error: any) {
+    if (error?.code !== 'MODULE_NOT_FOUND') {
       throw error
     }
   }
   return null
 }
 
-/** Require a module and return it. */
+/** @deprecated Do not use CJS utils */
 export function requireModule (id: string, opts: RequireModuleOptions = {}) {
   // Resolve id
   const resolvedPath = resolveModule(id, opts)
@@ -124,6 +129,7 @@ export function requireModule (id: string, opts: RequireModuleOptions = {}) {
   return requiredModule
 }
 
+/** @deprecated Do not use CJS utils */
 export function importModule (id: string, opts: RequireModuleOptions = {}) {
   const resolvedPath = resolveModule(id, opts)
   if (opts.interopDefault !== false) {
@@ -132,13 +138,14 @@ export function importModule (id: string, opts: RequireModuleOptions = {}) {
   return import(pathToFileURL(resolvedPath).href)
 }
 
+/** @deprecated Do not use CJS utils */
 export function tryImportModule (id: string, opts: RequireModuleOptions = {}) {
   try {
     return importModule(id, opts).catch(() => undefined)
   } catch { }
 }
 
-/** Try to require a module, but don't emit an error if the module can't be required. */
+/** @deprecated Do not use CJS utils */
 export function tryRequireModule (id: string, opts: RequireModuleOptions = {}) {
   try {
     return requireModule(id, opts)

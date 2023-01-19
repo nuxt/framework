@@ -1,10 +1,13 @@
 import type { Argv } from 'mri'
 
-const _rDefault = r => r.default || r
+const _rDefault = (r: any) => r.default || r
 
 export const commands = {
   dev: () => import('./dev').then(_rDefault),
   build: () => import('./build').then(_rDefault),
+  'build-module': () => import('./build-module').then(_rDefault),
+  cleanup: () => import('./cleanup').then(_rDefault),
+  clean: () => import('./cleanup').then(_rDefault),
   preview: () => import('./preview').then(_rDefault),
   start: () => import('./preview').then(_rDefault),
   analyze: () => import('./analyze').then(_rDefault),

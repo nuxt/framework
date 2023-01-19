@@ -2,7 +2,8 @@ import { promises as fsp, existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { basename, dirname, resolve, join, normalize, isAbsolute } from 'pathe'
 import { globby } from 'globby'
-import { tryUseNuxt, useNuxt } from './context'
+import { resolveAlias as _resolveAlias } from 'pathe/utils'
+import { tryUseNuxt } from './context'
 import { tryResolveModule } from './internal/cjs'
 import { isIgnored } from './ignore'
 
@@ -28,12 +29,12 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
   path = normalize(path)
 
   // Fast return if the path exists
-  if (isAbsolute(path) && existsSync(path)) {
+  if (isAbsolute(path) && existsSync(path) && !(await isDirectory(path))) {
     return path
   }
 
   // Use current nuxt options
-  const nuxt = useNuxt()
+  const nuxt = tryUseNuxt()
   const cwd = opts.cwd || (nuxt ? nuxt.options.rootDir : process.cwd())
   const extensions = opts.extensions || (nuxt ? nuxt.options.extensions : ['.ts', '.mjs', '.cjs', '.json'])
   const modulesDir = nuxt ? nuxt.options.modulesDir : []
@@ -47,10 +48,10 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
   }
 
   // Check if resolvedPath is a file
-  let isDirectory = false
+  let _isDir = false
   if (existsSync(path)) {
-    isDirectory = (await fsp.lstat(path)).isDirectory()
-    if (!isDirectory) {
+    _isDir = await isDirectory(path)
+    if (!_isDir) {
       return path
     }
   }
@@ -64,7 +65,7 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
     }
     // path/index.[ext]
     const pathWithIndex = join(path, 'index' + ext)
-    if (isDirectory && existsSync(pathWithIndex)) {
+    if (_isDir && existsSync(pathWithIndex)) {
       return pathWithIndex
     }
   }
@@ -82,15 +83,15 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
 /**
  * Try to resolve first existing file in paths
  */
-export async function findPath (paths: string|string[], opts?: ResolvePathOptions, pathType: 'file' | 'dir' = 'file'): Promise<string|null> {
+export async function findPath (paths: string | string[], opts?: ResolvePathOptions, pathType: 'file' | 'dir' = 'file'): Promise<string | null> {
   if (!Array.isArray(paths)) {
     paths = [paths]
   }
   for (const path of paths) {
     const rPath = await resolvePath(path, opts)
     if (await existsSensitive(rPath)) {
-      const isDirectory = (await fsp.lstat(rPath)).isDirectory()
-      if (!pathType || (pathType === 'file' && !isDirectory) || (pathType === 'dir' && isDirectory)) {
+      const _isDir = await isDirectory(rPath)
+      if (!pathType || (pathType === 'file' && !_isDir) || (pathType === 'dir' && _isDir)) {
         return rPath
       }
     }
@@ -105,18 +106,12 @@ export function resolveAlias (path: string, alias?: Record<string, string>): str
   if (!alias) {
     alias = tryUseNuxt()?.options.alias || {}
   }
-  for (const key in alias) {
-    if (key === '@' && !path.startsWith('@/')) { continue } // Don't resolve @foo/bar
-    if (path.startsWith(key)) {
-      path = alias[key] + path.slice(key.length)
-    }
-  }
-  return path
+  return _resolveAlias(path, alias)
 }
 
 export interface Resolver {
-  resolve(...path): string
-  resolvePath(path: string, opts?: ResolvePathOptions): Promise<string>
+  resolve (...path: string[]): string
+  resolvePath (path: string, opts?: ResolvePathOptions): Promise<string>
 }
 
 /**
@@ -146,7 +141,12 @@ async function existsSensitive (path: string) {
   return dirFiles.includes(basename(path))
 }
 
-export async function resolveFiles (path: string, pattern: string | string[]) {
-  const files = await globby(pattern, { cwd: path, followSymbolicLinks: true })
-  return files.map(p => resolve(path, p)).filter(p => !isIgnored(p))
+// Usage note: We assume path existence is already ensured
+async function isDirectory (path: string) {
+  return (await fsp.lstat(path)).isDirectory()
+}
+
+export async function resolveFiles (path: string, pattern: string | string[], opts: { followSymbolicLinks?: boolean } = {}) {
+  const files = await globby(pattern, { cwd: path, followSymbolicLinks: opts.followSymbolicLinks ?? true })
+  return files.map(p => resolve(path, p)).filter(p => !isIgnored(p)).sort()
 }

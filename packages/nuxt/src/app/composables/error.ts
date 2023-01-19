@@ -1,19 +1,22 @@
-import { useNuxtApp, useState } from '#app'
+import type { H3Error } from 'h3'
+import { createError as _createError } from 'h3'
+import { toRef } from 'vue'
+import { useNuxtApp } from '../nuxt'
 
-export const useError = () => {
-  const nuxtApp = useNuxtApp()
-  return useState('error', () => process.server ? nuxtApp.ssrContext.error : nuxtApp.payload.error)
-}
+export const useError = () => toRef(useNuxtApp().payload, 'error')
 
-export const throwError = (_err: string | Error) => {
-  const nuxtApp = useNuxtApp()
-  const error = useError()
-  const err = typeof _err === 'string' ? new Error(_err) : _err
-  nuxtApp.callHook('app:error', err)
-  if (process.server) {
-    nuxtApp.ssrContext.error = nuxtApp.ssrContext.error || err
-  } else {
+export interface NuxtError extends H3Error {}
+
+export const showError = (_err: string | Error | Partial<NuxtError>) => {
+  const err = createError(_err)
+
+  try {
+    const nuxtApp = useNuxtApp()
+    nuxtApp.callHook('app:error', err)
+    const error = useError()
     error.value = error.value || err
+  } catch {
+    throw err
   }
 
   return err
@@ -27,4 +30,12 @@ export const clearError = async (options: { redirect?: string } = {}) => {
     await nuxtApp.$router.replace(options.redirect)
   }
   error.value = null
+}
+
+export const isNuxtError = (err?: string | object): err is NuxtError => !!(err && typeof err === 'object' && ('__nuxt_error' in err))
+
+export const createError = (err: string | Partial<NuxtError>): NuxtError => {
+  const _err: NuxtError = _createError(err)
+  ;(_err as any).__nuxt_error = true
+  return _err
 }

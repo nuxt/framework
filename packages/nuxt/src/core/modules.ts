@@ -9,7 +9,6 @@ export const addModuleTranspiles = (opts: AddModuleTranspilesOptions = {}) => {
 
   const modules = [
     ...opts.additionalModules || [],
-    ...nuxt.options.buildModules,
     ...nuxt.options.modules,
     ...nuxt.options._modules
   ]
@@ -20,6 +19,7 @@ export const addModuleTranspiles = (opts: AddModuleTranspilesOptions = {}) => {
   // Try to sanitize modules to better match imports
   nuxt.options.build.transpile =
     nuxt.options.build.transpile.map(m => typeof m === 'string' ? m.split('node_modules/').pop() : m)
+      .filter(<T>(x: T | undefined): x is T => !!x)
 
   function isTranspilePresent (mod: string) {
     return nuxt.options.build.transpile.some(t => !(t instanceof Function) && (t instanceof RegExp ? t.test(mod) : new RegExp(t).test(mod)))

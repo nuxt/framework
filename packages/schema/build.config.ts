@@ -15,30 +15,33 @@ export default defineBuildConfig({
         }
       }
     },
-    'src/index'
+    'src/index',
   ],
   externals: [
     // Type imports
-    'vue-meta',
     'vue-router',
+    'vue-bundle-renderer',
+    '@unhead/schema',
     'vue',
     'hookable',
     'nitropack',
     'webpack',
-    'pkg-types',
     'webpack-bundle-analyzer',
     'rollup-plugin-visualizer',
     'vite',
+    '@vitejs/plugin-vue',
     'mini-css-extract-plugin',
     'terser-webpack-plugin',
     'css-minimizer-webpack-plugin',
     'webpack-dev-middleware',
+    'h3',
     'webpack-hot-middleware',
     'postcss',
     'consola',
     'ignore',
     // Implicit
     '@vue/compiler-core',
-    '@vue/shared'
+    '@vue/shared',
+    'untyped'
   ]
 })

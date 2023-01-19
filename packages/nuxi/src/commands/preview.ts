@@ -1,7 +1,7 @@
 import { existsSync, promises as fsp } from 'node:fs'
 import { dirname, relative } from 'node:path'
 import { execa } from 'execa'
-import { loadDotenv } from 'c12'
+import { setupDotenv } from 'c12'
 import { resolve } from 'pathe'
 import consola from 'consola'
 
@@ -10,7 +10,7 @@ import { defineNuxtCommand } from './index'
 export default defineNuxtCommand({
   meta: {
     name: 'preview',
-    usage: 'npx nuxi preview|start [rootDir]',
+    usage: 'npx nuxi preview|start [--dotenv] [rootDir]',
     description: 'Launches nitro server for local testing after `nuxi build`.'
   },
   async invoke (args) {
@@ -35,9 +35,10 @@ export default defineNuxtCommand({
       process.exit(1)
     }
 
-    if (existsSync(resolve(rootDir, '.env'))) {
+    const envExists = args.dotenv ? existsSync(resolve(rootDir, args.dotenv)) : existsSync(rootDir)
+    if (envExists) {
       consola.info('Loading `.env`. This will not be loaded when running the server in production.')
-      process.env = await loadDotenv({ cwd: rootDir, fileName: '.env', env: process.env })
+      await setupDotenv({ cwd: rootDir, fileName: args.dotenv })
     }
 
     consola.info('Starting preview command:', nitroJSON.commands.preview)

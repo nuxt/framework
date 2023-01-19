@@ -3,7 +3,9 @@ import { globby } from 'globby'
 import { pascalCase, splitByCase } from 'scule'
 import type { Component, ComponentsDir } from '@nuxt/schema'
 import { isIgnored } from '@nuxt/kit'
+// eslint-disable-next-line vue/prefer-import-from-vue
 import { hyphenate } from '@vue/shared'
+import { withTrailingSlash } from 'ufo'
 
 /**
  * Scan the components inside different components folders
@@ -27,10 +29,11 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
     // A map from resolved path to component name (used for making duplicate warning message)
     const resolvedNames = new Map<string, string>()
 
-    for (const _file of await globby(dir.pattern!, { cwd: dir.path, ignore: dir.ignore })) {
+    const files = (await globby(dir.pattern!, { cwd: dir.path, ignore: dir.ignore })).sort()
+    for (const _file of files) {
       const filePath = join(dir.path, _file)
 
-      if (scannedPaths.find(d => filePath.startsWith(d)) || isIgnored(filePath)) {
+      if (scannedPaths.find(d => filePath.startsWith(withTrailingSlash(d))) || isIgnored(filePath)) {
         continue
       }
 
@@ -56,12 +59,14 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
        *
        * @example third-components/index.vue -> third-component
        * if not take the filename
-       * @example thid-components/Awesome.vue -> Awesome
+       * @example third-components/Awesome.vue -> Awesome
        */
       let fileName = basename(filePath, extname(filePath))
 
-      const mode = fileName.match(/(?<=\.)(client|server)$/)?.[0] as 'client' | 'server' || 'all'
-      fileName = fileName.replace(/\.(client|server)$/, '')
+      const island = /\.(island)(\.global)?$/.test(fileName) || dir.island
+      const global = /\.(global)(\.island)?$/.test(fileName) || dir.global
+      const mode = island ? 'server' : (fileName.match(/(?<=\.)(client|server)(\.global|\.island)*$/)?.[1] || 'all') as 'client' | 'server' | 'all'
+      fileName = fileName.replace(/(\.(client|server))?(\.global|\.island)*$/, '')
 
       if (fileName.toLowerCase() === 'index') {
         fileName = dir.pathPrefix === false ? basename(dirname(filePath)) : '' /* inherits from path */
@@ -101,16 +106,19 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
       const chunkName = 'components/' + kebabName + suffix
 
       let component: Component = {
+        // inheritable from directory configuration
+        mode,
+        global,
+        island,
+        prefetch: Boolean(dir.prefetch),
+        preload: Boolean(dir.preload),
+        // specific to the file
         filePath,
         pascalName,
         kebabName,
         chunkName,
         shortPath,
-        export: 'default',
-        global: dir.global,
-        prefetch: Boolean(dir.prefetch),
-        preload: Boolean(dir.preload),
-        mode
+        export: 'default'
       }
 
       if (typeof dir.extendComponent === 'function') {

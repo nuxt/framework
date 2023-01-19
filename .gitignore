@@ -3,7 +3,8 @@ node_modules
 jspm_packages
 
 package-lock.json
-# */**/yarn.lock
+*/**/yarn.lock
+/.yarn
 
 # Logs
 *.log
@@ -13,17 +14,12 @@ package-lock.json
 .tmp
 .cache
 
-# Yarn
-**/.yarn/cache
-**/.yarn/*state*
-
 # Generated dirs
 dist
 .nuxt
 .nuxt-*
 .output
 .gen
-nuxt.d.ts
 
 # Junit reports
 reports
