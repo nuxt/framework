@@ -82,7 +82,7 @@ function useScrollIndicator(element ? : string) {
 
   function init() {
     if (element != undefined) {
-      var elementTargetTop = document.getElementById('main-nav')?.offsetTop || 0;
+      var elementTargetTop = document.getElementById(element)?.offsetTop || 0;
       // TODO: Add breakpoints for mobile
       content.value = elementTargetTop;
     }
