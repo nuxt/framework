@@ -196,9 +196,6 @@ async function initNuxt (nuxt: Nuxt) {
     addPlugin(resolve(nuxt.options.appDir, 'plugins/debug'))
   }
 
-  // Add prefetching support for middleware & layouts
-  addPlugin(resolve(nuxt.options.appDir, 'plugins/prefetch.client'))
-
   for (const m of modulesToInstall) {
     if (Array.isArray(m)) {
       await installModule(m[0], m[1])
