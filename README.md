@@ -1,3 +1,10 @@
+# 🚧 Repository update 🚧
+
+The repository for Nuxt 3 has updated to be https://github.com/nuxt/nuxt - please raise new issues, discussions and pull requests there 🙏
+
+For progress you can follow https://github.com/nuxt/framework/issues/10147, and you can read more about our plans [in the Nuxt 2023 vision](https://nuxt.com/vision-2023).
+
+<hr>
 
 [![Nuxt banner](./.github/assets/banner.png)](https://nuxt.com)
 
