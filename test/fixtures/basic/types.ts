@@ -6,7 +6,7 @@ import type { AppConfig } from '@nuxt/schema'
 import type { FetchError } from 'ofetch'
 import type { NavigationFailure, RouteLocationNormalizedLoaded, RouteLocationRaw, useRouter as vueUseRouter } from 'vue-router'
 import type { NavigateToOptions } from '~~/../../../packages/nuxt/dist/app/composables/router'
-// eslint-disable-next-line import/order
+
 import { isVue3 } from '#app'
 import { defineNuxtConfig } from '~~/../../../packages/nuxt/config'
 import { useRouter } from '#imports'

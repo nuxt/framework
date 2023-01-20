@@ -2,10 +2,10 @@ import { defineComponent, createStaticVNode, computed, ref, watch } from 'vue'
 import { debounce } from 'perfect-debounce'
 import { hash } from 'ohash'
 import type { MetaObject } from '@nuxt/schema'
+import { appendHeader } from 'h3'
 // eslint-disable-next-line import/no-restricted-paths
 import type { NuxtIslandResponse } from '../../core/runtime/nitro/renderer'
 import { useHead, useNuxtApp, useRequestEvent } from '#app'
-import { appendHeader } from 'h3'
 
 const pKey = '_islandPromises'
 

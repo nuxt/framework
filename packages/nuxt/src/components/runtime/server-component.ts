@@ -2,7 +2,7 @@ import { defineComponent, createStaticVNode, computed, h, watch } from 'vue'
 import { debounce } from 'perfect-debounce'
 import { hash } from 'ohash'
 import { appendHeader } from 'h3'
-// eslint-disable-next-line import/no-restricted-paths
+
 import type { NuxtIslandResponse } from '../../core/runtime/nitro/renderer'
 import { useAsyncData, useHead, useNuxtApp, useRequestEvent } from '#app'
 
