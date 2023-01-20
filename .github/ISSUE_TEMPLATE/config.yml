@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 👉 Repository Moved!
+    url: https://github.com/nuxt/nuxt
+    about: You can use the new combined repository to open an issue or discussion.
