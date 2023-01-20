@@ -34,6 +34,9 @@ export default defineNuxtCommand({
         registry: process.env.NUXI_INIT_REGISTRY || DEFAULT_REGISTRY
       })
     } catch (err) {
+      if (process.env.DEBUG) {
+        throw err
+      }
       consola.error((err as Error).toString())
       process.exit(1)
     }
