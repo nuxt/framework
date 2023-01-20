@@ -90,7 +90,7 @@ describe('pages', () => {
     expect(html).toContain('[...slug].vue')
     expect(html).toContain('404 at not-found')
 
-    // Middleware still runs after validation: https://github.com/nuxt/framework/issues/9701
+    // Middleware still runs after validation: https://github.com/nuxt/nuxt/issues/15650
     expect(html).toContain('Middleware ran: true')
 
     await expectNoClientErrors('/not-found')
@@ -891,6 +891,16 @@ describe('component islands', () => {
         "$shasRouter": true,
       }
     `)
+  })
+})
+
+describe.runIf(process.env.NUXT_TEST_DEV && !process.env.TEST_WITH_WEBPACK)('vite plugins', () => {
+  it('does not override vite plugins', async () => {
+    expect(await $fetch('/vite-plugin-without-path')).toBe('vite-plugin without path')
+    expect(await $fetch('/__nuxt-test')).toBe('vite-plugin with __nuxt prefix')
+  })
+  it('does not allow direct access to nuxt source folder', async () => {
+    expect(await $fetch('/app.config')).toContain('404')
   })
 })
 
