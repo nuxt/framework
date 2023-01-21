@@ -7,7 +7,8 @@ import type { NuxtApp, NuxtPage } from '@nuxt/schema'
 import { joinURL } from 'ufo'
 import { distDir } from '../dirs'
 import { resolvePagesRoutes, normalizeRoutes } from './utils'
-import { PageMetaPlugin, PageMetaPluginOptions } from './page-meta'
+import type { PageMetaPluginOptions } from './page-meta'
+import { PageMetaPlugin } from './page-meta'
 
 export default defineNuxtModule({
   meta: {
@@ -52,6 +53,14 @@ export default defineNuxtModule({
     // Add $router types
     nuxt.hook('prepare:types', ({ references }) => {
       references.push({ types: 'vue-router' })
+    })
+
+    // Add vue-router route guard imports
+    nuxt.hook('imports:sources', (sources) => {
+      const routerImports = sources.find(s => s.from === '#app' && s.imports.includes('onBeforeRouteLeave'))
+      if (routerImports) {
+        routerImports.from = 'vue-router'
+      }
     })
 
     // Regenerate templates when adding or removing pages
@@ -131,8 +140,11 @@ export default defineNuxtModule({
     addVitePlugin(PageMetaPlugin.vite(pageMetaOptions))
     addWebpackPlugin(PageMetaPlugin.webpack(pageMetaOptions))
 
+    // Add prefetching support for middleware & layouts
+    addPlugin(resolve(runtimeDir, 'plugins/prefetch.client'))
+
     // Add router plugin
-    addPlugin(resolve(runtimeDir, 'router'))
+    addPlugin(resolve(runtimeDir, 'plugins/router'))
 
     const getSources = (pages: NuxtPage[]): string[] => pages.flatMap(p =>
       [relative(nuxt.options.srcDir, p.file), ...getSources(p.children || [])]

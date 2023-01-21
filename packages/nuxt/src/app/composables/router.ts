@@ -1,9 +1,10 @@
-import { getCurrentInstance, inject } from 'vue'
+import { getCurrentInstance, inject, onUnmounted } from 'vue'
 import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocationNormalized, RouteLocationRaw, NavigationFailure, RouteLocationPathRaw } from 'vue-router'
 import { sendRedirect } from 'h3'
 import { hasProtocol, joinURL, parseURL } from 'ufo'
 import { useNuxtApp, useRuntimeConfig } from '../nuxt'
-import { createError, NuxtError } from './error'
+import type { NuxtError } from './error'
+import { createError } from './error'
 import { useState } from './state'
 
 export const useRouter = () => {
@@ -17,9 +18,17 @@ export const useRoute = (): RouteLocationNormalizedLoaded => {
   return useNuxtApp()._route
 }
 
-/** @deprecated Use `useRoute` instead. */
-export const useActiveRoute = (): RouteLocationNormalizedLoaded => {
-  return useNuxtApp()._route
+export const onBeforeRouteLeave = (guard: NavigationGuard) => {
+  const unsubscribe = useRouter().beforeEach((to, from, next) => {
+    if (to === from) { return }
+    return guard(to, from, next)
+  })
+  onUnmounted(unsubscribe)
+}
+
+export const onBeforeRouteUpdate = (guard: NavigationGuard) => {
+  const unsubscribe = useRouter().beforeEach(guard)
+  onUnmounted(unsubscribe)
 }
 
 export interface RouteMiddleware {

@@ -1,6 +1,7 @@
 import { pathToFileURL } from 'node:url'
 import { createUnplugin } from 'unplugin'
 import { isAbsolute, relative } from 'pathe'
+import type { Node } from 'estree-walker'
 import { walk } from 'estree-walker'
 import MagicString from 'magic-string'
 import { hash } from 'ohash'
@@ -28,7 +29,7 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
     },
     transform (code, id) {
       if (!KEYED_FUNCTIONS_RE.test(code)) { return }
-      const { 0: script = code, index: codeIndex = 0 } = code.match(/(?<=<script[^>]*>)[\S\s.]*?(?=<\/script>)/) || []
+      const { 0: script = code, index: codeIndex = 0 } = code.match(/(?<=<script[^>]*>)[\S\s.]*?(?=<\/script>)/) || { index: 0, 0: code }
       const s = new MagicString(code)
       // https://github.com/unjs/unplugin/issues/90
       let count = 0
@@ -36,7 +37,7 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
       walk(this.parse(script, {
         sourceType: 'module',
         ecmaVersion: 'latest'
-      }), {
+      }) as Node, {
         enter (_node) {
           if (_node.type !== 'CallExpression' || (_node as CallExpression).callee.type !== 'Identifier') { return }
           const node: CallExpression = _node as CallExpression

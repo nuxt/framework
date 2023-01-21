@@ -7,6 +7,8 @@
     <div>RuntimeConfig | testConfig: {{ config.testConfig }}</div>
     <div>Composable | foo: {{ foo }}</div>
     <div>Composable | bar: {{ bar }}</div>
+    <DevOnly>Some dev-only info</DevOnly>
+    <div><DevOnly>Some dev-only info</DevOnly></div>
     <div>Composable | template: {{ templateAutoImport }}</div>
     <div>Path: {{ $route.fullPath }}</div>
     <NuxtLink to="/">
@@ -17,6 +19,7 @@
     <component :is="`test${'-'.toString()}global`" />
     <component :is="`with${'-'.toString()}suffix`" />
     <ClientWrapped ref="clientRef" style="color: red;" class="client-only" />
+    <ServerOnlyComponent class="server-only" style="background-color: gray;" />
   </div>
 </template>
 

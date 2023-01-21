@@ -1,6 +1,7 @@
-import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch, unref } from 'vue'
+import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch, unref, toRef } from 'vue'
 import type { Ref, WatchSource } from 'vue'
-import { NuxtApp, useNuxtApp } from '../nuxt'
+import type { NuxtApp } from '../nuxt'
+import { useNuxtApp } from '../nuxt'
 import { createError } from './error'
 
 export type _Transform<Input = any, Output = any> = (input: Input) => Output
@@ -13,7 +14,14 @@ export type PickFrom<T, K extends Array<string>> = T extends Array<any>
     : Pick<T, K[number]>
   : T
 
-export type KeysOf<T> = Array<keyof T extends string ? keyof T : string>
+export type KeysOf<T> = Array<
+  T extends T // Include all keys of union types, not just common keys
+  ? keyof T extends string
+    ? keyof T
+    : string
+  : never
+>
+
 export type KeyOfRes<Transform extends _Transform> = KeysOf<ReturnType<Transform>>
 
 type MultiWatchSources = (WatchSource<unknown> | object)[]
@@ -96,11 +104,7 @@ export function useAsyncData<
   options.server = options.server ?? true
   options.default = options.default ?? getDefault
 
-  // TODO: remove support for `defer` in Nuxt 3 RC
-  if ((options as any).defer) {
-    console.warn('[useAsyncData] `defer` has been renamed to `lazy`. Support for `defer` will be removed in RC.')
-  }
-  options.lazy = options.lazy ?? (options as any).defer ?? false
+  options.lazy = options.lazy ?? false
   options.immediate = options.immediate ?? true
 
   // Setup nuxt instance payload
@@ -184,7 +188,11 @@ export function useAsyncData<
   // Server side
   if (process.server && fetchOnServer && options.immediate) {
     const promise = initialFetch()
-    onServerPrefetch(() => promise)
+    if (getCurrentInstance()) {
+      onServerPrefetch(() => promise)
+    } else {
+      nuxt.hook('app:created', () => promise)
+    }
   }
 
   // Client side
@@ -263,6 +271,19 @@ export function useLazyAsyncData<
   const [key, handler, options] = args as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
   // @ts-ignore
   return useAsyncData(key, handler, { ...options, lazy: true }, null)
+}
+
+export function useNuxtData<DataT = any> (key: string): { data: Ref<DataT | null> } {
+  const nuxt = useNuxtApp()
+
+  // Initialize value when key is not already set
+  if (!(key in nuxt.payload.data)) {
+    nuxt.payload.data[key] = null
+  }
+
+  return {
+    data: toRef(nuxt.payload.data, key)
+  }
 }
 
 export async function refreshNuxtData (keys?: string | string[]): Promise<void> {

@@ -3,8 +3,9 @@ import { expect, describe, it } from 'vitest'
 import { join } from 'pathe'
 import { createCommonJS, findExports } from 'mlly'
 import * as VueFunctions from 'vue'
-import { createUnimport, Import } from 'unimport'
-import { Plugin } from 'vite'
+import type { Import } from 'unimport'
+import { createUnimport } from 'unimport'
+import type { Plugin } from 'vite'
 import { TransformPlugin } from '../src/imports/transform'
 import { defaultPresets } from '../src/imports/presets'
 
@@ -66,7 +67,7 @@ describe('imports:nuxt', () => {
         continue
       }
       it(`should register ${name} globally`, () => {
-        expect(defaultPresets.find(a => a.from === '#app')!.imports).to.include(name)
+        expect(defaultPresets.flatMap(a => a.from === '#app' ? a.imports : [])).to.include(name)
       })
     }
   } catch (e) {

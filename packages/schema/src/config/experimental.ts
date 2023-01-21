@@ -17,7 +17,7 @@ export default defineUntypedSchema({
 
     /**
      * Externalize `vue`, `@vue/*` and `vue-router` when building.
-     * @see https://github.com/nuxt/framework/issues/4084
+     * @see https://github.com/nuxt/nuxt/issues/13632
      */
     externalVue: true,
 
@@ -47,7 +47,7 @@ export default defineUntypedSchema({
     /**
      * Split server bundle into multiple chunks and dynamically import them.
      *
-     * @see https://github.com/nuxt/framework/issues/6432
+     * @see https://github.com/nuxt/nuxt/issues/14525
      */
     viteServerDynamicImports: true,
 
@@ -77,7 +77,15 @@ export default defineUntypedSchema({
     /**
      * When this option is enabled (by default) payload of pages generated with `nuxt generate` are extracted
      */
-    payloadExtraction: true,
+    payloadExtraction: {
+      async $resolve(enabled, get) {
+        enabled = enabled ?? false
+        if (enabled) {
+          console.warn('Using experimental payload extraction for full-static output. You can opt-out by setting `experimental.payloadExtraction` to `false`.')
+        }
+        return enabled
+      }
+    },
 
     /** Enable cross-origin prefetch using the Speculation Rules API. */
     crossOriginPrefetch: false,
@@ -87,6 +95,11 @@ export default defineUntypedSchema({
      *
      * @note nginx does not support 103 Early hints in the current version.
      */
-    writeEarlyHints: false
+    writeEarlyHints: false,
+
+    /**
+     * Experimental component islands support with <NuxtIsland> and .island.vue files.
+     */
+    componentIslands: false
   }
 })

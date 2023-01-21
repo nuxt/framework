@@ -1,12 +1,13 @@
 import { join, normalize, resolve } from 'pathe'
 import { createHooks, createDebugger } from 'hookable'
-import type { Nuxt, NuxtOptions, NuxtConfig, NuxtHooks } from '@nuxt/schema'
-import { loadNuxtConfig, LoadNuxtOptions, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule, addPlugin } from '@nuxt/kit'
-// Temporary until finding better placement
-/* eslint-disable import/no-restricted-paths */
+import type { Nuxt, NuxtOptions, NuxtHooks } from '@nuxt/schema'
+import type { LoadNuxtOptions } from '@nuxt/kit'
+import { loadNuxtConfig, nuxtCtx, installModule, addComponent, addVitePlugin, addWebpackPlugin, tryResolveModule, addPlugin } from '@nuxt/kit'
+
 import escapeRE from 'escape-string-regexp'
 import fse from 'fs-extra'
 import { withoutLeadingSlash } from 'ufo'
+/* eslint-disable import/no-restricted-paths */
 import pagesModule from '../pages/module'
 import metaModule from '../head/module'
 import componentsModule from '../components/module'
@@ -116,7 +117,6 @@ async function initNuxt (nuxt: Nuxt) {
   // Init user modules
   await nuxt.callHook('modules:before')
   const modulesToInstall = [
-    ...nuxt.options.buildModules,
     ...nuxt.options.modules,
     ...nuxt.options._modules
   ]
@@ -168,21 +168,13 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: resolve(nuxt.options.appDir, 'components/nuxt-loading-indicator')
   })
 
-  // Deprecate hooks
-  nuxt.hooks.deprecateHooks({
-    'autoImports:sources': {
-      to: 'imports:sources',
-      message: '`autoImports:sources` hook is deprecated. Use `addImportsSources()` from `@nuxt/kit` or `imports:dirs` with `nuxt>=3.0.0-rc.10`.'
-    },
-    'autoImports:dirs': {
-      to: 'imports:dirs',
-      message: '`autoImports:dirs` hook is deprecated. Use `addImportsDir()` from `@nuxt/kit` or `imports:dirs` with `nuxt>=3.0.0-rc.9`.'
-    },
-    'autoImports:extend': {
-      to: 'imports:extend',
-      message: '`autoImports:extend` hook is deprecated. Use `addImports()` from `@nuxt/kit` or `imports:extend` with `nuxt>=3.0.0-rc.9`.'
-    }
-  })
+  // Add <NuxtIsland>
+  if (nuxt.options.experimental.componentIslands) {
+    addComponent({
+      name: 'NuxtIsland',
+      filePath: resolve(nuxt.options.appDir, 'components/nuxt-island')
+    })
+  }
 
   // Add prerender payload support
   if (!nuxt.options.dev && nuxt.options.experimental.payloadExtraction) {
@@ -260,12 +252,3 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
 
   return nuxt
 }
-
-/** @deprecated `defineNuxtConfig` is auto imported. Remove import or alternatively use `import { defineNuxtConfig } from  'nuxt/config'`. */
-export function defineNuxtConfig (config: NuxtConfig): NuxtConfig {
-  return config
-}
-
-/** @deprecated Use `import type { NuxtConfig } from  'nuxt/config'`.  */
-type _NuxtConfig = NuxtConfig
-export type { _NuxtConfig as NuxtConfig }

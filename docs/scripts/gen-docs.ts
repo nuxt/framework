@@ -7,7 +7,7 @@ import { upperFirst } from 'scule'
 export async function main () {
   const rootDir = resolve(__dirname, '..')
   const configTemplate = resolve(__dirname, 'nuxt-config.md')
-  const configFile = resolve(rootDir, 'content/3.api/6.configuration/nuxt-config.md')
+  const configFile = resolve(rootDir, 'content/1.docs/3.api/6.configuration/nuxt-config.md')
   await generateDocs({ configFile, configTemplate })
 }
 
@@ -116,6 +116,7 @@ async function generateDocs ({ configFile, configTemplate }) {
   const start = Date.now()
   console.log(`Updating docs on ${configFile}`)
   const template = await readFile(configTemplate, 'utf8')
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const rootSchema = require('../../packages/schema/schema/config.schema.json') as Schema
   const keys = Object.keys(rootSchema.properties).sort()
   let generatedDocs = ''
