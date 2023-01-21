@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// eslint-disable-next-line vue/no-setup-props-destructure
 const { multiplier } = defineProps<{
   multiplier: number
 }>()
