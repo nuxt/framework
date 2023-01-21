@@ -35,6 +35,6 @@ export function extendRouteRules (route: string, rule: NitroRouteConfig, options
     nuxt.options.nitro.routeRules = {}
   }
   nuxt.options.nitro.routeRules[route] = options.override
-    ? rule
+    ? defu(rule, nuxt.options.nitro.routeRules[route])
     : defu(rule, nuxt.options.nitro.routeRules[route] || {})
 }
