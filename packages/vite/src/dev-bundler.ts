@@ -2,8 +2,8 @@ import { pathToFileURL } from 'node:url'
 import { existsSync } from 'node:fs'
 import { builtinModules } from 'node:module'
 import { isAbsolute, normalize, resolve } from 'pathe'
-import * as vite from 'vite'
-import { isExternal } from 'externality'
+import type * as vite from 'vite'
+import type { isExternal } from 'externality'
 import { genDynamicImport, genObjectFromRawEntries } from 'knitwork'
 import fse from 'fs-extra'
 import { debounce } from 'perfect-debounce'
@@ -11,7 +11,7 @@ import { isIgnored, logger } from '@nuxt/kit'
 import { hashId, isCSS, uniq } from './utils'
 import { createIsExternal } from './utils/external'
 import { writeManifest } from './manifest'
-import { ViteBuildContext } from './vite'
+import type { ViteBuildContext } from './vite'
 
 export interface TransformChunk {
   id: string,
@@ -51,13 +51,13 @@ async function transformRequest (opts: TransformOptions, id: string) {
   // On Windows, we prefix absolute paths with `/@fs/` to skip node resolution algorithm
   id = id.replace(/^\/?(?=\w:)/, '/@fs/')
 
-  // Vite will add ?v=123 to bypass browser cache
-  // Remove for externals
-  const withoutVersionQuery = id.replace(/\?v=\w+$/, '')
-  if (await opts.isExternal(withoutVersionQuery)) {
-    const path = builtinModules.includes(withoutVersionQuery.split('node:').pop())
-      ? withoutVersionQuery
-      : isAbsolute(withoutVersionQuery) ? pathToFileURL(withoutVersionQuery).href : withoutVersionQuery
+  // Remove query and @fs/ for external modules
+  const externalId = id.replace(/\?v=\w+$|^\/@fs/, '')
+
+  if (await opts.isExternal(externalId)) {
+    const path = builtinModules.includes(externalId.split('node:').pop()!)
+      ? externalId
+      : isAbsolute(externalId) ? pathToFileURL(externalId).href : externalId
     return {
       code: `(global, module, _, exports, importMeta, ssrImport, ssrDynamicImport, ssrExportAll) =>
 ${genDynamicImport(path, { wrapper: false })}
@@ -78,7 +78,6 @@ ${genDynamicImport(path, { wrapper: false })}
 
   // Transform
   const res: SSRTransformResult = await opts.viteServer.transformRequest(id, { ssr: true }).catch((err) => {
-    // eslint-disable-next-line no-console
     console.warn(`[SSR] Error transforming ${id}:`, err)
     // console.error(err)
   }) as SSRTransformResult || { code: '', map: {}, deps: [], dynamicDeps: [] }
@@ -90,7 +89,7 @@ ${res.code || '/* empty */'};
   return { code, deps: res.deps || [], dynamicDeps: res.dynamicDeps || [] }
 }
 
-async function transformRequestRecursive (opts: TransformOptions, id, parent = '<entry>', chunks: Record<string, TransformChunk> = {}) {
+async function transformRequestRecursive (opts: TransformOptions, id: string, parent = '<entry>', chunks: Record<string, TransformChunk> = {}) {
   if (chunks[id]) {
     chunks[id].parents.push(parent)
     return
@@ -111,7 +110,7 @@ async function transformRequestRecursive (opts: TransformOptions, id, parent = '
 }
 
 export async function bundleRequest (opts: TransformOptions, entryURL: string) {
-  const chunks = await transformRequestRecursive(opts, entryURL)
+  const chunks = (await transformRequestRecursive(opts, entryURL))!
 
   const listIds = (ids: string[]) => ids.map(id => `// - ${id} (${hashId(id)})`).join('\n')
   const chunksCode = chunks.map(chunk => `
@@ -227,7 +226,7 @@ async function __instantiateModule__(url, urlStack) {
 }
 
 export async function initViteDevBundler (ctx: ViteBuildContext, onBuild: () => Promise<any>) {
-  const viteServer = ctx.ssrServer
+  const viteServer = ctx.ssrServer!
   const options: TransformOptions = {
     viteServer,
     isExternal: createIsExternal(viteServer, ctx.nuxt.options.rootDir)

@@ -7,7 +7,7 @@ export async function createBrowser () {
 
   let playwright: typeof import('playwright')
   try {
-    // Workround for https://github.com/nuxt/framework/issues/3470
+    // Workround for https://github.com/nuxt/nuxt/issues/13441
     // TODO: Remove when upstream issue resolved
     playwright = await import(String('playwright'))
   } catch {
@@ -31,7 +31,7 @@ export async function getBrowser (): Promise<Browser> {
   if (!ctx.browser) {
     await createBrowser()
   }
-  return ctx.browser
+  return ctx.browser!
 }
 
 export async function createPage (path?: string, options?: BrowserContextOptions) {

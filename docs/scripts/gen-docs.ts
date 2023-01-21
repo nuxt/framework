@@ -6,26 +6,16 @@ import { upperFirst } from 'scule'
 
 export async function main () {
   const rootDir = resolve(__dirname, '..')
-  const configTemplate = resolve(__dirname, 'nuxt.config.md')
-  const configFile = resolve(rootDir, 'content/3.api/6.configuration/nuxt.config.md')
+  const configTemplate = resolve(__dirname, 'nuxt-config.md')
+  const configFile = resolve(rootDir, 'content/1.docs/3.api/6.configuration/nuxt-config.md')
   await generateDocs({ configFile, configTemplate })
 }
 
-function generateMarkdown (schema: Schema, title: string, level: string, parentVersions: string[] = []) {
+function generateMarkdown (schema: Schema, title: string, level: string) {
   const lines: string[] = []
 
   // Skip private
   if (schema.tags?.includes('@private')) {
-    return []
-  }
-
-  // Versions
-  const versions = (schema.tags || []).map(t => t.match(/@version (\d+)/)?.[1]).filter(Boolean)
-  if (!versions.length) {
-    // Inherit from parent if not specified
-    versions.push(...parentVersions)
-  }
-  if (!versions.includes('3')) {
     return []
   }
 
@@ -72,7 +62,7 @@ function generateMarkdown (schema: Schema, title: string, level: string, parentV
     const keys = Object.keys(schema.properties || {}).sort()
     for (const key of keys) {
       const val = schema.properties[key] as Schema
-      const propLines = generateMarkdown(val, `\`${key}\``, level + '#', versions)
+      const propLines = generateMarkdown(val, `\`${key}\``, level + '#')
       if (propLines.length) {
         lines.push('', ...propLines)
       }
@@ -126,6 +116,7 @@ async function generateDocs ({ configFile, configTemplate }) {
   const start = Date.now()
   console.log(`Updating docs on ${configFile}`)
   const template = await readFile(configTemplate, 'utf8')
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const rootSchema = require('../../packages/schema/schema/config.schema.json') as Schema
   const keys = Object.keys(rootSchema.properties).sort()
   let generatedDocs = ''

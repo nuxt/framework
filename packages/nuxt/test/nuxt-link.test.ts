@@ -1,6 +1,7 @@
 import { expect, describe, it, vi } from 'vitest'
-import { RouteLocationRaw } from 'vue-router'
-import { NuxtLinkOptions, NuxtLinkProps, defineNuxtLink } from '../src/app/components/nuxt-link'
+import type { RouteLocationRaw } from 'vue-router'
+import type { NuxtLinkOptions, NuxtLinkProps } from '../src/app/components/nuxt-link'
+import { defineNuxtLink } from '../src/app/components/nuxt-link'
 
 // Mocks `h()`
 vi.mock('vue', async () => {
@@ -8,16 +9,16 @@ vi.mock('vue', async () => {
   return {
     ...vue,
     resolveComponent: (name: string) => name,
-    h: (...args) => args
+    h: (...args: any[]) => args
   }
 })
 
 // Mocks Nuxt `useRouter()`
-vi.mock('#app', () => ({
+vi.mock('../src/app/composables/router', () => ({
   useRouter: () => ({ resolve: ({ to }: { to: string }) => ({ href: to }) })
 }))
 
-// Helpers for test lisibility
+// Helpers for test visibility
 const EXTERNAL = 'a'
 const INTERNAL = 'RouterLink'
 
@@ -44,7 +45,7 @@ describe('nuxt-link:to', () => {
   })
 
   it('renders link with `to` prop and warns about `href` prop conflict', () => {
-    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn())
+    const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn() as any)
 
     expect(nuxtLink({ to: '/to', href: '/href' }).props.to).toBe('/to')
     // TODO: Uncomment when `dev` mode for tests is available
@@ -136,7 +137,7 @@ describe('nuxt-link:propsOrAttributes', () => {
       })
 
       it('honors `noRel` prop and warns about `rel` prop conflict', () => {
-        const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn())
+        const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(vi.fn() as any)
 
         expect(nuxtLink({ to: 'https://nuxtjs.org', noRel: true, rel: 'foo' }).props.rel).toBe(null)
         // TODO: Uncomment when `dev` mode for tests is available

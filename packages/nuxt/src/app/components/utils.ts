@@ -1,11 +1,12 @@
-import { h } from 'vue'
+import { defineComponent, h } from 'vue'
 import type { Component } from 'vue'
 
-const Fragment = {
+const Fragment = defineComponent({
+  name: 'FragmentWrapper',
   setup (_props, { slots }) {
     return () => slots.default?.()
   }
-}
+})
 
 /**
  * Internal utility

@@ -8,22 +8,14 @@ export interface Component {
   prefetch: boolean
   preload: boolean
   global?: boolean
+  island?: boolean
   mode?: 'client' | 'server' | 'all'
-
-  /** @deprecated */
-  level?: number
-  /** @deprecated */
-  import?: string
-  /** @deprecated */
-  asyncImport?: string
-  /** @deprecated */
-  async?: boolean
 }
 
 export interface ScanDir {
   /**
    * Path (absolute or relative) to the directory containing your components.
-   * You can use Nuxt aliases (~ or @) to refer to directories inside project or directly use a npm package path similar to require.
+   * You can use Nuxt aliases (~ or @) to refer to directories inside project or directly use an npm package path similar to require.
    */
   path: string
   /**
@@ -39,7 +31,7 @@ export interface ScanDir {
    */
   prefix?: string
   /**
-   * Prefix component name by it's path.
+   * Prefix component name by its path.
    */
   pathPrefix?: boolean
   /**
@@ -47,32 +39,30 @@ export interface ScanDir {
    */
   enabled?: boolean
   /**
-   * Level is used to define a hint when overwriting the components which have the same name in two different directories.
-   * @deprecated Not used by Nuxt 3 anymore
-   */
-  level?: number
-  /**
-   * These properties (prefetch/preload) are used in production to configure how components with Lazy prefix are handled by Webpack via its magic comments.
-   * Learn more on Webpack documentation: https://webpack.js.org/api/module-methods/#magic-comments
+   * These properties (prefetch/preload) are used in production to configure how components with Lazy prefix are handled by webpack via its magic comments.
+   * Learn more on webpack documentation: https://webpack.js.org/api/module-methods/#magic-comments
    */
   prefetch?: boolean
   /**
-   * These properties (prefetch/preload) are used in production to configure how components with Lazy prefix are handled by Webpack via its magic comments.
-   * Learn more on Webpack documentation: https://webpack.js.org/api/module-methods/#magic-comments
+   * These properties (prefetch/preload) are used in production to configure how components with Lazy prefix are handled by webpack via its magic comments.
+   * Learn more on webpack documentation: https://webpack.js.org/api/module-methods/#magic-comments
    */
   preload?: boolean
   /**
-   * This flag indicates, component should be loaded async (with a seperate chunk) regardless of using Lazy prefix or not.
+   * This flag indicates, component should be loaded async (with a separate chunk) regardless of using Lazy prefix or not.
    */
   isAsync?: boolean
 
   extendComponent?: (component: Component) => Promise<Component | void> | (Component | void)
-
   /**
-   * If enabled, registers components to be globally available
+   * If enabled, registers components to be globally available.
    *
    */
   global?: boolean
+  /**
+   * If enabled, registers components as islands
+   */
+  island?: boolean
 }
 
 export interface ComponentsDir extends ScanDir {

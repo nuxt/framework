@@ -6,20 +6,20 @@ import { useNuxt } from './context'
 import { logger } from './logger'
 import { addTemplate } from './template'
 
-export function addLayout (tmpl: NuxtTemplate, name?: string) {
+export function addLayout (this: any, template: NuxtTemplate, name?: string) {
   const nuxt = useNuxt()
-  const { filename, src } = addTemplate(tmpl)
-  const layoutName = kebabCase(name || parse(tmpl.filename).name).replace(/["']/g, '')
+  const { filename, src } = addTemplate(template)
+  const layoutName = kebabCase(name || parse(filename).name).replace(/["']/g, '')
 
   if (isNuxt2(nuxt)) {
     // Nuxt 2 adds layouts in options
-    const layout = nuxt.options.layouts[layoutName]
+    const layout = (nuxt.options as any).layouts[layoutName]
     if (layout) {
       return logger.warn(
         `Not overriding \`${layoutName}\` (provided by \`${layout}\`) with \`${src || filename}\`.`
       )
     }
-    nuxt.options.layouts[layoutName] = `./${filename}`
+    (nuxt.options as any).layouts[layoutName] = `./${filename}`
     if (name === 'error') {
       this.addErrorLayout(filename)
     }

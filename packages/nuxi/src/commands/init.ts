@@ -1,68 +1,68 @@
-import { existsSync, readdirSync } from 'node:fs'
-import createTiged from 'tiged'
-import { relative, resolve } from 'pathe'
-import superb from 'superb'
+import { writeFile } from 'node:fs/promises'
+import { downloadTemplate, startShell } from 'giget'
+import { relative } from 'pathe'
 import consola from 'consola'
 import { defineNuxtCommand } from './index'
 
-const rpath = p => relative(process.cwd(), p)
+const rpath = (p: string) => relative(process.cwd(), p)
 
-const resolveTemplate = (template) => {
-  if (typeof template === 'boolean') {
-    consola.error('Please specify a template!')
-    process.exit(1)
-  }
-
-  if (!template) {
-    template = 'v3'
-  }
-
-  if (template.includes('/')) {
-    return template
-  }
-
-  return `nuxt/starter#${template}`
-}
+const DEFAULT_REGISTRY = 'https://raw.githubusercontent.com/nuxt/starter/templates/templates'
 
 export default defineNuxtCommand({
   meta: {
     name: 'init',
-    usage: 'npx nuxi init|create [--verbose|-v] [--template,-t] [dir]',
+    usage: 'npx nuxi init|create [--template,-t] [--force] [--offline] [--prefer-offline] [--shell] [dir]',
     description: 'Initialize a fresh project'
   },
   async invoke (args) {
     // Clone template
-    const src = resolveTemplate(args.template || args.t)
-    const dstDir = resolve(process.cwd(), args._[0] || 'nuxt-app')
-    const tiged = createTiged(src, { cache: false /* TODO: buggy */, verbose: (args.verbose || args.v) })
-    if (existsSync(dstDir) && readdirSync(dstDir).length) {
-      consola.error(`Directory ${dstDir} is not empty. Please pick another name or remove it first. Aborting.`)
+    const template = args.template || args.t || 'v3'
+
+    if (typeof template === 'boolean') {
+      consola.error('Please specify a template!')
       process.exit(1)
     }
-    const formatArgs = msg => msg.replace('options.', '--')
-    tiged.on('warn', event => consola.warn(formatArgs(event.message)))
-    tiged.on('info', event => consola.info(formatArgs(event.message)))
+
+    let t
+
     try {
-      await tiged.clone(dstDir)
-    } catch (e) {
-      if (e.toString().includes('could not find commit hash')) {
-        consola.error(`Failed to clone template from \`${src}\`. Please check the repo is valid and that you have installed \`git\` correctly.`)
-        process.exit(1)
+      t = await downloadTemplate(template, {
+        dir: args._[0] as string,
+        force: args.force,
+        offline: args.offline,
+        preferOffline: args['prefer-offline'],
+        registry: process.env.NUXI_INIT_REGISTRY || DEFAULT_REGISTRY
+      })
+    } catch (err) {
+      if (process.env.DEBUG) {
+        throw err
       }
-      throw e
+      consola.error((err as Error).toString())
+      process.exit(1)
     }
 
     // Show next steps
-    const relativeDist = rpath(dstDir)
+    const relativeDist = rpath(t.dir)
+
+    // Write .nuxtrc with `shamefully-hoist=true` for pnpm
+    const usingPnpm = (process.env.npm_config_user_agent || '').includes('pnpm')
+    if (usingPnpm) {
+      await writeFile(`${relativeDist}/.npmrc`, 'shamefully-hoist=true')
+    }
+
     const nextSteps = [
-      relativeDist.length > 1 && `📁  \`cd ${relativeDist}\``,
-      '💿  Install dependencies with `npm install` or `yarn install` or `pnpm install --shamefully-hoist`',
-      '🚀  Start development server with `npm run dev` or `yarn dev` or `pnpm run dev`'
+      !args.shell && relativeDist.length > 1 && `\`cd ${relativeDist}\``,
+      'Install dependencies with `npm install` or `yarn install` or `pnpm install`',
+      'Start development server with `npm run dev` or `yarn dev` or `pnpm run dev`'
     ].filter(Boolean)
 
-    consola.log(`\n ✨ Your ${superb.random()} Nuxt project is just created! Next steps:\n`)
+    consola.log(`✨ Nuxt project is created with \`${t.name}\` template. Next steps:`)
     for (const step of nextSteps) {
-      consola.log(` ${step}\n`)
+      consola.log(` › ${step}`)
+    }
+
+    if (args.shell) {
+      startShell(t.dir)
     }
   }
 })

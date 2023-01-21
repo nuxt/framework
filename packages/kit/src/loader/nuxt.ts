@@ -1,6 +1,7 @@
 import { readPackageJSON, resolvePackageJSON } from 'pkg-types'
 import type { Nuxt } from '@nuxt/schema'
-import { importModule, tryImportModule, RequireModuleOptions } from '../internal/cjs'
+import type { RequireModuleOptions } from '../internal/cjs'
+import { importModule, tryImportModule } from '../internal/cjs'
 import type { LoadNuxtConfigOptions } from './config'
 
 export interface LoadNuxtOptions extends LoadNuxtConfigOptions {
@@ -29,7 +30,7 @@ export async function loadNuxt (opts: LoadNuxtOptions): Promise<Nuxt> {
 
   const nearestNuxtPkg = await Promise.all(['nuxt3', 'nuxt', 'nuxt-edge']
     .map(pkg => resolvePackageJSON(pkg, { url: opts.cwd }).catch(() => null)))
-    .then(r => r.filter(Boolean).sort((a, b) => b.length - a.length)[0])
+    .then(r => (r.filter(Boolean) as string[]).sort((a, b) => b.length - a.length)[0])
   if (!nearestNuxtPkg) {
     throw new Error(`Cannot find any nuxt version from ${opts.cwd}`)
   }

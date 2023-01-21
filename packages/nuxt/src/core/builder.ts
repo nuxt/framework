@@ -15,21 +15,25 @@ export async function build (nuxt: Nuxt) {
     nuxt.hook('builder:watch', async (event, path) => {
       if (event !== 'change' && /^(app\.|error\.|plugins\/|middleware\/|layouts\/)/i.test(path)) {
         if (path.startsWith('app')) {
-          app.mainComponent = null
+          app.mainComponent = undefined
         }
         if (path.startsWith('error')) {
-          app.errorComponent = null
+          app.errorComponent = undefined
         }
         await generateApp()
       }
     })
-    nuxt.hook('builder:generateApp', generateApp)
+    nuxt.hook('builder:generateApp', (options) => {
+      // Bypass debounce if we are selectively invalidating templates
+      if (options) { return _generateApp(nuxt, app, options) }
+      return generateApp()
+    })
   }
 
-  await nuxt.callHook('build:before', { nuxt }, nuxt.options.build)
+  await nuxt.callHook('build:before')
   if (!nuxt.options._prepare) {
     await bundle(nuxt)
-    await nuxt.callHook('build:done', { nuxt })
+    await nuxt.callHook('build:done')
   }
 
   if (!nuxt.options.dev) {
@@ -38,7 +42,7 @@ export async function build (nuxt: Nuxt) {
 }
 
 function watch (nuxt: Nuxt) {
-  const watcher = chokidar.watch(nuxt.options._layers.map(i => i.config.srcDir), {
+  const watcher = chokidar.watch(nuxt.options._layers.map(i => i.config.srcDir as string).filter(Boolean), {
     ...nuxt.options.watchers.chokidar,
     cwd: nuxt.options.srcDir,
     ignoreInitial: true,
@@ -61,7 +65,7 @@ async function bundle (nuxt: Nuxt) {
       : nuxt.options.builder
 
     return bundle(nuxt)
-  } catch (error) {
+  } catch (error: any) {
     await nuxt.callHook('build:error', error)
 
     if (error.toString().includes('Cannot find module \'@nuxt/webpack-builder\'')) {

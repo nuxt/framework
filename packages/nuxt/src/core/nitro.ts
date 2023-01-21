@@ -1,35 +1,68 @@
 import { existsSync, promises as fsp } from 'node:fs'
 import { resolve, join } from 'pathe'
 import { createNitro, createDevServer, build, prepare, copyPublicAssets, writeTypes, scanHandlers, prerender } from 'nitropack'
-import type { NitroEventHandler, NitroDevEventHandler, NitroConfig } from 'nitropack'
+import type { NitroConfig, Nitro } from 'nitropack'
 import type { Nuxt } from '@nuxt/schema'
-import { resolvePath } from '@nuxt/kit'
+import { logger, resolvePath } from '@nuxt/kit'
+import escapeRE from 'escape-string-regexp'
 import defu from 'defu'
 import fsExtra from 'fs-extra'
-import { toEventHandler, dynamicEventHandler } from 'h3'
+import { dynamicEventHandler } from 'h3'
+import type { Plugin } from 'rollup'
+import { createHeadCore } from 'unhead'
+import { renderSSRHead } from '@unhead/ssr'
 import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
 
-export async function initNitro (nuxt: Nuxt) {
-  // Resolve handlers
-  const { handlers, devHandlers } = await resolveHandlers(nuxt)
-
+export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   // Resolve config
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
+    debug: nuxt.options.debug,
     rootDir: nuxt.options.rootDir,
-    srcDir: join(nuxt.options.srcDir, 'server'),
+    workspaceDir: nuxt.options.workspaceDir,
+    srcDir: nuxt.options.serverDir,
     dev: nuxt.options.dev,
-    preset: nuxt.options.dev ? 'nitro-dev' : undefined,
     buildDir: nuxt.options.buildDir,
-    scanDirs: nuxt.options._layers.map(layer => join(layer.config.srcDir, 'server')),
+    imports: {
+      imports: [
+        {
+          as: '__buildAssetsURL',
+          name: 'buildAssetsURL',
+          from: resolve(distDir, 'core/runtime/nitro/paths')
+        },
+        {
+          as: '__publicAssetsURL',
+          name: 'publicAssetsURL',
+          from: resolve(distDir, 'core/runtime/nitro/paths')
+        }
+      ]
+    },
+    esbuild: {
+      options: {
+        exclude: [
+          new RegExp(`node_modules\\/(?!${nuxt.options._layers.map(l => l.cwd.match(/(?<=\/)node_modules\/(.+)$/)?.[1]).filter(Boolean).map(dir => escapeRE(dir!)).join('|')})`)
+        ]
+      }
+    },
+    analyze: nuxt.options.build.analyze && {
+      template: 'treemap',
+      projectRoot: nuxt.options.rootDir,
+      filename: join(nuxt.options.rootDir, '.nuxt/stats', '{name}.html')
+    },
+    scanDirs: nuxt.options._layers.map(layer => (layer.config.serverDir || layer.config.srcDir) && resolve(layer.cwd, layer.config.serverDir || resolve(layer.config.srcDir, 'server'))).filter(Boolean),
     renderer: resolve(distDir, 'core/runtime/nitro/renderer'),
     errorHandler: resolve(distDir, 'core/runtime/nitro/error'),
     nodeModulesDirs: nuxt.options.modulesDir,
-    handlers,
+    handlers: nuxt.options.serverHandlers,
     devHandlers: [],
     baseURL: nuxt.options.app.baseURL,
-    virtual: {},
+    virtual: {
+      '#internal/nuxt.config.mjs': () => nuxt.vfs['#build/nuxt.config']
+    },
+    routeRules: {
+      '/__nuxt_error': { cache: false }
+    },
     runtimeConfig: {
       ...nuxt.options.runtimeConfig,
       nitro: {
@@ -48,12 +81,12 @@ export async function initNitro (nuxt: Nuxt) {
         .map(dir => ({ dir }))
     ],
     prerender: {
-      crawlLinks: nuxt.options._generate ? nuxt.options.generate.crawler : false,
-      routes: []
-        .concat(nuxt.options._generate ? ['/', ...nuxt.options.generate.routes] : [])
-        .concat(nuxt.options.ssr === false ? ['/', '/200.html', '/404.html'] : [])
+      crawlLinks: nuxt.options._generate ?? undefined,
+      routes: ([] as string[])
+        .concat(nuxt.options.generate.routes)
+        .concat(nuxt.options._generate ? [nuxt.options.ssr ? '/' : '/index.html', '/200.html', '/404.html'] : [])
     },
-    sourcemap: nuxt.options.sourcemap,
+    sourceMap: nuxt.options.sourcemap.server,
     externals: {
       inline: [
         ...(nuxt.options.dev
@@ -63,15 +96,16 @@ export async function initNitro (nuxt: Nuxt) {
               '@nuxt/',
               nuxt.options.buildDir
             ]),
+        ...nuxt.options.build.transpile.filter(i => typeof i === 'string'),
         'nuxt/dist',
-        'nuxt3/dist'
+        'nuxt3/dist',
+        distDir
       ]
     },
     alias: {
       ...nuxt.options.experimental.externalVue
         ? {}
         : {
-
             'vue/compiler-sfc': 'vue/compiler-sfc',
             'vue/server-renderer': 'vue/server-renderer',
             vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
@@ -82,7 +116,7 @@ export async function initNitro (nuxt: Nuxt) {
       '@vue/compiler-core': 'unenv/runtime/mock/proxy',
       '@vue/compiler-dom': 'unenv/runtime/mock/proxy',
       '@vue/compiler-ssr': 'unenv/runtime/mock/proxy',
-      '@vue/devtools-api': 'unenv/runtime/mock/proxy-cjs',
+      '@vue/devtools-api': 'vue-devtools-stub',
 
       // Paths
       '#paths': resolve(distDir, 'core/runtime/nitro/paths'),
@@ -92,27 +126,48 @@ export async function initNitro (nuxt: Nuxt) {
     },
     replace: {
       'process.env.NUXT_NO_SSR': nuxt.options.ssr === false,
-      'process.dev': nuxt.options.dev
+      'process.env.NUXT_EARLY_HINTS': nuxt.options.experimental.writeEarlyHints !== false,
+      'process.env.NUXT_NO_SCRIPTS': !!nuxt.options.experimental.noScripts && !nuxt.options.dev,
+      'process.env.NUXT_INLINE_STYLES': !!nuxt.options.experimental.inlineSSRStyles,
+      'process.env.NUXT_PAYLOAD_EXTRACTION': !!nuxt.options.experimental.payloadExtraction,
+      'process.env.NUXT_COMPONENT_ISLANDS': !!nuxt.options.experimental.componentIslands,
+      'process.dev': nuxt.options.dev,
+      __VUE_PROD_DEVTOOLS__: false
     },
     rollupConfig: {
+      output: {},
       plugins: []
     }
   })
 
+  // Add head chunk for SPA renders
+  const head = createHeadCore()
+  head.push(nuxt.options.app.head)
+  const headChunk = await renderSSRHead(head)
+  nitroConfig.virtual!['#head-static'] = `export default ${JSON.stringify(headChunk)}`
+
   // Add fallback server for `ssr: false`
   if (!nuxt.options.ssr) {
-    nitroConfig.virtual['#build/dist/server/server.mjs'] = 'export default () => {}'
+    nitroConfig.virtual!['#build/dist/server/server.mjs'] = 'export default () => {}'
+  }
+
+  if (!nuxt.options.experimental.inlineSSRStyles) {
+    nitroConfig.virtual!['#build/dist/server/styles.mjs'] = 'export default {}'
   }
 
   // Register nuxt protection patterns
-  nitroConfig.rollupConfig.plugins.push(ImportProtectionPlugin.rollup({
-    rootDir: nuxt.options.rootDir,
-    patterns: [
-      ...['#app', /^#build(\/|$)/]
-        .map(p => [p, 'Vue app aliases are not allowed in server routes.']) as [RegExp | string, string][]
-    ],
-    exclude: [/core[\\/]runtime[\\/]nitro[\\/]renderer/]
-  }))
+  nitroConfig.rollupConfig!.plugins = await nitroConfig.rollupConfig!.plugins || []
+  nitroConfig.rollupConfig!.plugins = Array.isArray(nitroConfig.rollupConfig!.plugins) ? nitroConfig.rollupConfig!.plugins : [nitroConfig.rollupConfig!.plugins]
+  nitroConfig.rollupConfig!.plugins!.push(
+    ImportProtectionPlugin.rollup({
+      rootDir: nuxt.options.rootDir,
+      patterns: [
+        ...['#app', /^#build(\/|$)/]
+          .map(p => [p, 'Vue app aliases are not allowed in server routes.']) as [RegExp | string, string][]
+      ],
+      exclude: [/core[\\/]runtime[\\/]nitro[\\/]renderer/]
+    }) as Plugin
+  )
 
   // Extend nitro config with hook
   await nuxt.callHook('nitro:config', nitroConfig)
@@ -120,7 +175,8 @@ export async function initNitro (nuxt: Nuxt) {
   // Init nitro
   const nitro = await createNitro(nitroConfig)
 
-  // Expose nitro to modules
+  // Expose nitro to modules and kit
+  nuxt._nitro = nitro
   await nuxt.callHook('nitro:init', nitro)
 
   // Connect vfs storages
@@ -128,11 +184,14 @@ export async function initNitro (nuxt: Nuxt) {
 
   // Connect hooks
   nuxt.hook('close', () => nitro.hooks.callHook('close'))
+  nitro.hooks.hook('prerender:routes', (routes) => {
+    nuxt.callHook('prerender:routes', { routes })
+  })
 
   // Setup handlers
-  const devMidlewareHandler = dynamicEventHandler()
-  nitro.options.devHandlers.unshift({ handler: devMidlewareHandler })
-  nitro.options.devHandlers.push(...devHandlers)
+  const devMiddlewareHandler = dynamicEventHandler()
+  nitro.options.devHandlers.unshift({ handler: devMiddlewareHandler })
+  nitro.options.devHandlers.push(...nuxt.options.devServerHandlers)
   nitro.options.handlers.unshift({
     route: '/__nuxt_error',
     lazy: true,
@@ -158,11 +217,13 @@ export async function initNitro (nuxt: Nuxt) {
       await copyPublicAssets(nitro)
       await prerender(nitro)
       if (!nuxt.options._generate) {
+        logger.restoreAll()
         await build(nitro)
+        logger.wrapAll()
       } else {
         const distDir = resolve(nuxt.options.rootDir, 'dist')
         if (!existsSync(distDir)) {
-          await fsp.symlink(nitro.options.output.publicDir, distDir, 'junction').catch(() => {})
+          await fsp.symlink(nitro.options.output.publicDir, distDir, 'junction').catch(() => { })
         }
       }
     }
@@ -170,44 +231,14 @@ export async function initNitro (nuxt: Nuxt) {
 
   // nuxt dev
   if (nuxt.options.dev) {
-    nuxt.hook('build:compile', ({ compiler }) => {
-      compiler.outputFileSystem = { ...fsExtra, join } as any
-    })
-    nuxt.hook('server:devMiddleware', (m) => { devMidlewareHandler.set(toEventHandler(m)) })
+    nuxt.hook('webpack:compile', ({ compiler }) => { compiler.outputFileSystem = { ...fsExtra, join } as any })
+    nuxt.hook('webpack:compiled', () => { nuxt.server.reload() })
+    nuxt.hook('vite:compiled', () => { nuxt.server.reload() })
+
+    nuxt.hook('server:devHandler', (h) => { devMiddlewareHandler.set(h) })
     nuxt.server = createDevServer(nitro)
-    nuxt.hook('build:resources', () => {
-      nuxt.server.reload()
-    })
+
     const waitUntilCompile = new Promise<void>(resolve => nitro.hooks.hook('compiled', () => resolve()))
     nuxt.hook('build:done', () => waitUntilCompile)
-  }
-}
-
-async function resolveHandlers (nuxt: Nuxt) {
-  const handlers: NitroEventHandler[] = [...nuxt.options.serverHandlers]
-  const devHandlers: NitroDevEventHandler[] = [...nuxt.options.devServerHandlers]
-
-  // Map legacy serverMiddleware to handlers
-  for (let m of nuxt.options.serverMiddleware) {
-    if (typeof m === 'string' || typeof m === 'function' /* legacy middleware */) { m = { handler: m } }
-    const route = m.path || m.route || '/'
-    const handler = m.handler || m.handle
-    if (typeof handler !== 'string' || typeof route !== 'string') {
-      devHandlers.push({ route, handler })
-    } else {
-      delete m.handler
-      delete m.path
-      handlers.push({
-        ...m,
-        route,
-        middleware: true,
-        handler: await resolvePath(handler)
-      })
-    }
-  }
-
-  return {
-    handlers,
-    devHandlers
   }
 }

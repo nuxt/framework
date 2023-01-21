@@ -1,16 +1,12 @@
 import { resolve } from 'pathe'
-import { addPlugin, addTemplate, defineNuxtModule } from '@nuxt/kit'
-import defu from 'defu'
+import { addComponent, addPlugin, defineNuxtModule } from '@nuxt/kit'
 import { distDir } from '../dirs'
-import type { MetaObject } from './runtime'
+
+const components = ['NoScript', 'Link', 'Base', 'Title', 'Meta', 'Style', 'Head', 'Html', 'Body']
 
 export default defineNuxtModule({
   meta: {
     name: 'meta'
-  },
-  defaults: {
-    charset: 'utf-8',
-    viewport: 'width=device-width, initial-scale=1'
   },
   setup (options, nuxt) {
     const runtimeDir = nuxt.options.alias['#head'] || resolve(distDir, 'head/runtime')
@@ -21,21 +17,17 @@ export default defineNuxtModule({
     // Add #head alias
     nuxt.options.alias['#head'] = runtimeDir
 
-    // Global meta -for Bridge, this is necessary to repeat here
-    // and in packages/schema/src/config/_app.ts
-    const globalMeta: MetaObject = defu(nuxt.options.app.head, {
-      charset: options.charset,
-      viewport: options.viewport
-    })
-
-    // Add global meta configuration
-    addTemplate({
-      filename: 'meta.config.mjs',
-      getContents: () => 'export default ' + JSON.stringify({ globalMeta })
-    })
-
-    // Add generic plugin
-    addPlugin({ src: resolve(runtimeDir, 'plugin') })
+    // Register components
+    const componentsPath = resolve(runtimeDir, 'components')
+    for (const componentName of components) {
+      addComponent({
+        name: componentName,
+        filePath: componentsPath,
+        export: componentName,
+        // kebab case version of these tags is not valid
+        kebabName: componentName
+      })
+    }
 
     // Add library specific plugin
     addPlugin({ src: resolve(runtimeDir, 'lib/vueuse-head.plugin') })

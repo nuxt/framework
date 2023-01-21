@@ -4,7 +4,8 @@ import webpack from 'webpack'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 
 import { joinURL } from 'ufo'
-import { applyPresets, WebpackConfigContext } from '../utils/config'
+import type { WebpackConfigContext } from '../utils/config'
+import { applyPresets } from '../utils/config'
 import { nuxt } from '../presets/nuxt'
 
 export function client (ctx: WebpackConfigContext) {
@@ -22,16 +23,17 @@ export function client (ctx: WebpackConfigContext) {
 }
 
 function clientDevtool (ctx: WebpackConfigContext) {
-  if (!ctx.isDev) {
+  if (!ctx.nuxt.options.sourcemap.client) {
     ctx.config.devtool = false
     return
   }
 
-  const scriptPolicy = getCspScriptPolicy(ctx)
-  const noUnsafeEval = scriptPolicy && !scriptPolicy.includes('\'unsafe-eval\'')
-  ctx.config.devtool = noUnsafeEval
-    ? 'cheap-module-source-map'
-    : 'eval-cheap-module-source-map'
+  if (!ctx.isDev) {
+    ctx.config.devtool = 'source-map'
+    return
+  }
+
+  ctx.config.devtool = 'eval-cheap-module-source-map'
 }
 
 function clientPerformance (ctx: WebpackConfigContext) {
@@ -64,10 +66,11 @@ function clientHMR (ctx: WebpackConfigContext) {
   // Add HMR support
   const app = (config.entry as any).app as any
   app.unshift(
-      // https://github.com/glenjamin/webpack-hot-middleware#config
-      `webpack-hot-middleware/client?${hotMiddlewareClientOptionsStr}`
+    // https://github.com/glenjamin/webpack-hot-middleware#config
+    `webpack-hot-middleware/client?${hotMiddlewareClientOptionsStr}`
   )
 
+  config.plugins = config.plugins || []
   config.plugins.push(new webpack.HotModuleReplacementPlugin())
 }
 
@@ -78,7 +81,7 @@ function clientOptimization (_ctx: WebpackConfigContext) {
 function clientPlugins (ctx: WebpackConfigContext) {
   const { options, config } = ctx
 
-  // Webpack Bundle Analyzer
+  // webpack Bundle Analyzer
   // https://github.com/webpack-contrib/webpack-bundle-analyzer
   if (!ctx.isDev && ctx.name === 'client' && options.webpack.analyze) {
     const statsDir = resolve(options.buildDir, 'stats')
@@ -88,18 +91,10 @@ function clientPlugins (ctx: WebpackConfigContext) {
       analyzerMode: 'static',
       defaultSizes: 'gzip',
       generateStatsFile: true,
-      openAnalyzer: !options.build.quiet,
+      openAnalyzer: true,
       reportFilename: resolve(statsDir, `${ctx.name}.html`),
       statsFilename: resolve(statsDir, `${ctx.name}.json`),
       ...options.webpack.analyze === true ? {} : options.webpack.analyze
     }))
-  }
-}
-
-function getCspScriptPolicy (ctx: WebpackConfigContext) {
-  const { csp } = ctx.options.render
-  if (typeof csp === 'object') {
-    const { policies = {} } = csp
-    return policies['script-src'] || policies['default-src'] || []
   }
 }
