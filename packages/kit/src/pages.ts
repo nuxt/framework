@@ -25,12 +25,12 @@ export interface ExtendRouteRulesOptions {
 
 export function extendRouteRules (route: string, rule: NitroRouteConfig, options: ExtendRouteRulesOptions = {}) {
   const nuxt = useNuxt()
-  for (const options of [nuxt.options, nuxt.options.nitro]) {
-	  if (!options.routeRules) {
-	    options.routeRules = {}
-	  }
-	  options.routeRules[route] = options.override
-	    ? defu(rule, options.routeRules[route])
-	    : defu(options.routeRules[route], rule)
+  for (const opts of [nuxt.options, nuxt.options.nitro]) {
+    if (!opts.routeRules) {
+      opts.routeRules = {}
+    }
+    opts.routeRules[route] = options.override
+      ? defu(rule, opts.routeRules[route])
+      : defu(opts.routeRules[route], rule)
   }
 }
