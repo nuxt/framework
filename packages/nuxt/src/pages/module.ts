@@ -173,13 +173,21 @@ export default defineNuxtModule({
         const { routes, imports } = normalizeRoutes(pages)
         return [
           ...imports,
-          `export default ${routes}`,
+          `const routes = ${routes}`,
+          'export default routes',
           'export function onUpdate(fn) { onUpdate._fn = fn }',
-          'if (import.meta.hot) {',
-          '  import.meta.hot.accept((mod) => {',
-          '    onUpdate._fn?.(mod.default)',
-          '    mod.onUpdate._fn = onUpdate._fn',
-          '  })',
+          'if (process.dev) {',
+          '  if (import.meta.hot) {',
+          '    import.meta.hot.accept((mod) => {',
+          '      onUpdate._fn?.(mod.default)',
+          '      mod.onUpdate._fn = onUpdate._fn',
+          '    })',
+          '  }',
+          '  if (import.meta.webpackHot) {',
+          '    import.meta.webpackHot.accept(\'#build/routes.mjs\', () => {',
+          '      onUpdate._fn?.(routes)',
+          '    })',
+          '  }',
           '}'
         ].join('\n')
       }

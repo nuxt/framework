@@ -71,7 +71,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   nuxtApp.vueApp.use(router)
 
   // Routes HMR
-  if (import.meta.hot) {
+  if (process.dev && (import.meta.hot || import.meta.webpackHot)) {
     // @ts-expect-error
     import('#build/routes').then(({ onUpdate }) => {
       onUpdate((newRoutes: any) => {
