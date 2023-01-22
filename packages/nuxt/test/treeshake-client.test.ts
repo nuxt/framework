@@ -83,7 +83,6 @@ describe('treeshake client only in ssr', () => {
       const [_, scopeId] = clientResult.match(/_pushScopeId\("(.*)"\)/)!
 
       // ensure the id is correctly passed between server and client
-      // const id = result.find()
       expect(clientResult).toContain(`pushScopeId("${scopeId}")`)
       expect(treeshaked).toContain(`<div ${scopeId}>`)
 
@@ -105,7 +104,7 @@ describe('treeshake client only in ssr', () => {
       expect(treeshaked).toContain('import { Glob, } from \'#components\'')
 
       if (state.options.isProduction === false) {
-        // treeshake at inlined
+        // treeshake at inlined template
         expect(treeshaked).not.toContain('ssrRenderComponent($setup["HelloWorld"]')
         expect(treeshaked).toContain('ssrRenderComponent($setup["Glob"]')
       } else {
