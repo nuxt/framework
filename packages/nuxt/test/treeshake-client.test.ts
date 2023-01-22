@@ -1,6 +1,7 @@
-import { resolve } from 'node:path'
+
 import { readFileSync } from 'node:fs'
-import { describe, it, expect } from 'vitest'
+import path from 'node:path'
+import { describe, it, expect, vi } from 'vitest'
 import * as VueCompilerSFC from 'vue/compiler-sfc'
 import type { Plugin } from 'vite'
 import { Parser } from 'acorn'
@@ -17,7 +18,7 @@ function vuePlugin (options: Options) {
   }
 }
 
-const WithClientOnly = readFileSync(resolve(fixtureDir, './components/client/WithClientOnlySetup.vue')).toString()
+const WithClientOnly = readFileSync(path.resolve(fixtureDir, './components/client/WithClientOnlySetup.vue')).toString()
 
 const treeshakeTemplatePlugin = TreeShakeTemplatePlugin.raw({ sourcemap: false, getComponents () { return [] } }, { framework: 'rollup' }) as Plugin
 
@@ -73,10 +74,12 @@ const stateToTest: {name: string, options: Partial<Options & {devServer: {config
 ]
 
 describe('treeshake client only in ssr', () => {
+  vi.spyOn(process, 'cwd').mockImplementation(() => '')
   for (const [index, state] of stateToTest.entries()) {
     it(`should treeshake ClientOnly correctly in ${state.name}`, async () => {
       // add index to avoid using vite vue plugin cache
       const clientResult = await SFCCompile(`SomeComponent${index}.vue`, WithClientOnly, state.options)
+
       const ssrResult = await SFCCompile(`SomeComponent${index}.vue`, WithClientOnly, state.options, true)
 
       const treeshaked = await treeshake(ssrResult)
