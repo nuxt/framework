@@ -2,7 +2,7 @@ import { pathToFileURL } from 'node:url'
 import { parseURL } from 'ufo'
 import MagicString from 'magic-string'
 import { walk } from 'estree-walker'
-import type { CallExpression, Property, Identifier, ImportDeclaration, MemberExpression, Literal, ReturnStatement, VariableDeclaration, ObjectExpression } from 'estree'
+import type { CallExpression, Property, Identifier, ImportDeclaration, MemberExpression, Literal, ReturnStatement, VariableDeclaration, ObjectExpression, Node } from 'estree'
 import { createUnplugin } from 'unplugin'
 import escapeStringRegexp from 'escape-string-regexp'
 import type { Component } from '@nuxt/schema'
@@ -46,7 +46,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
       const [COMPONENTS_RE, COMPONENTS_IDENTIFIERS_RE] = regexpMap.get(components)!
       if (!COMPONENTS_RE.test(code)) { return }
 
-      walk(this.parse(code, { sourceType: 'module', ecmaVersion: 'latest' }), {
+      walk(this.parse(code, { sourceType: 'module', ecmaVersion: 'latest' }) as Node, {
         enter: (_node) => {
           const node = _node as AcornNode<CallExpression | ImportDeclaration>
           if (node.type === 'ImportDeclaration') {
@@ -69,7 +69,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
                   s.remove(slot.start, slot.end + 1)
                   const removedCode = `({${code.slice(slot.start, slot.end + 1)}})`
                   const currentCode = s.toString()
-                  walk(this.parse(removedCode, { sourceType: 'module', ecmaVersion: 'latest' }), {
+                  walk(this.parse(removedCode, { sourceType: 'module', ecmaVersion: 'latest' }) as Node, {
                     enter: (_node) => {
                       const node = _node as AcornNode<CallExpression>
                       if (node.type === 'CallExpression' && node.callee.type === 'Identifier' && SSR_RENDER_RE.test(node.callee.name)) {
@@ -86,21 +86,9 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
                           if (!isRenderedInCode(currentCode, removedCode.slice(start, end))) {
                             componentsSet.add(((componentNode as MemberExpression).property as Literal).value as string)
                             // remove the component from the return statement of `setup()`
-                            walk(this.parse(code, { sourceType: 'module', ecmaVersion: 'latest' }), {
-                              enter: (_node) => {
-                                const node = _node as Property
-                                if (node.type === 'Property' && node.key.type === 'Identifier' && node.key.name === 'setup' && node.value.type === 'FunctionExpression') {
-                                  const returnStatement = node.value.body.body.find(n => n.type === 'ReturnStatement') as ReturnStatement | undefined
-                                  if (returnStatement?.argument?.type === 'Identifier') {
-                                    const returnIdentifier = returnStatement.argument.name
-                                    const returnedDeclaration = node.value.body.body.find(n => n.type === 'VariableDeclaration' && (n.declarations[0].id as Identifier).name === returnIdentifier) as AcornNode<VariableDeclaration>
-                                    const componentProperty = (returnedDeclaration?.declarations[0].init as ObjectExpression)?.properties.find(p => ((p as Property).key as Identifier).name === ((componentNode as MemberExpression).property as Literal).value) as AcornNode<Property>
-                                    if (componentProperty) { s.remove(componentProperty.start, componentProperty.end + 1) }
-                                  } else if (returnStatement?.argument?.type === 'ObjectExpression') {
-                                    const componentProperty = returnStatement.argument?.properties.find(p => ((p as Property).key as Identifier).name === ((componentNode as MemberExpression).property as Literal).value) as AcornNode<Property>
-                                    if (componentProperty) { s.remove(componentProperty.start, componentProperty.end + 1) }
-                                  }
-                                }
+                            walk(this.parse(code, { sourceType: 'module', ecmaVersion: 'latest' }) as Node, {
+                              enter: (node) => {
+                                removeFromSetupReturnStatement(s, node as Property, ((componentNode as MemberExpression).property as Literal).value as string)
                               }
                             })
                           }
@@ -190,4 +178,22 @@ function getComponentName (ssrRenderNode: AcornNode<CallExpression>): string {
     return (componentCall.property as Literal).value as string
   }
   return (componentCall.arguments[0] as Identifier).name
+}
+
+/**
+ * remove a key from the return statement of the setup function
+ */
+function removeFromSetupReturnStatement (s: MagicString, node: Property, name: string) {
+  if (node.type === 'Property' && node.key.type === 'Identifier' && node.key.name === 'setup' && node.value.type === 'FunctionExpression') {
+    const returnStatement = node.value.body.body.find(n => n.type === 'ReturnStatement') as ReturnStatement | undefined
+    if (returnStatement?.argument?.type === 'Identifier') {
+      const returnIdentifier = returnStatement.argument.name
+      const returnedDeclaration = node.value.body.body.find(n => n.type === 'VariableDeclaration' && (n.declarations[0].id as Identifier).name === returnIdentifier) as AcornNode<VariableDeclaration>
+      const componentProperty = (returnedDeclaration?.declarations[0].init as ObjectExpression)?.properties.find(p => ((p as Property).key as Identifier).name === name) as AcornNode<Property>
+      if (componentProperty) { s.remove(componentProperty.start, componentProperty.end + 1) }
+    } else if (returnStatement?.argument?.type === 'ObjectExpression') {
+      const componentProperty = returnStatement.argument?.properties.find(p => ((p as Property).key as Identifier).name === name) as AcornNode<Property>
+      if (componentProperty) { s.remove(componentProperty.start, componentProperty.end + 1) }
+    }
+  }
 }
