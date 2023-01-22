@@ -112,6 +112,7 @@ describe('treeshake client only in ssr', () => {
         expect(treeshaked).not.toContain('ssrRenderComponent(_unref(HelloWorld')
         expect(treeshaked).toContain('ssrRenderComponent(_unref(Glob')
       }
+      expect(treeshaked).toMatchSnapshot()
     })
   }
 })
