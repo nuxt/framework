@@ -10,6 +10,12 @@ import _vuePlugin from '@vitejs/plugin-vue'
 import { TreeShakeTemplatePlugin } from '../src/components/tree-shake'
 import { fixtureDir } from './utils'
 
+vi.mock('node:crypto', () => ({
+  update: vi.fn().mockReturnThis(),
+  digest: vi.fn().mockReturnValue('one-hash-to-rule-them-all'),
+  createHash: vi.fn().mockReturnThis()
+}))
+
 function vuePlugin (options: Options) {
   return {
     ..._vuePlugin(options),
