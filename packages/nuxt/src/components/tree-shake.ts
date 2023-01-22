@@ -112,7 +112,7 @@ export const TreeShakeTemplatePlugin = createUnplugin((options: TreeShakeTemplat
                   for (const componentName of componentsToRemove) {
                     let removed = false
                     // remove const _component_ = resolveComponent...
-                    const VAR_RE = new RegExp(`(?:const|let|var) ${componentName} = ([^;]*);`)
+                    const VAR_RE = new RegExp(`(?:const|let|var) ${componentName} = ([^;\\n]*);?`)
                     s.replace(VAR_RE, () => {
                       removed = true
                       return ''
