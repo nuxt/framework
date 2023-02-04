@@ -1,3 +1,4 @@
+import { writeFile } from 'node:fs/promises'
 import { downloadTemplate, startShell } from 'giget'
 import { relative } from 'pathe'
 import consola from 'consola'
@@ -17,19 +18,41 @@ export default defineNuxtCommand({
     // Clone template
     const template = args.template || args.t || 'v3'
 
-    const t = await downloadTemplate(template, {
-      dir: args._[0] as string,
-      force: args.force,
-      offline: args.offline,
-      preferOffline: args['prefer-offline'],
-      registry: process.env.NUXI_INIT_REGISTRY || DEFAULT_REGISTRY
-    })
+    if (typeof template === 'boolean') {
+      consola.error('Please specify a template!')
+      process.exit(1)
+    }
+
+    let t
+
+    try {
+      t = await downloadTemplate(template, {
+        dir: args._[0] as string,
+        force: args.force,
+        offline: args.offline,
+        preferOffline: args['prefer-offline'],
+        registry: process.env.NUXI_INIT_REGISTRY || DEFAULT_REGISTRY
+      })
+    } catch (err) {
+      if (process.env.DEBUG) {
+        throw err
+      }
+      consola.error((err as Error).toString())
+      process.exit(1)
+    }
 
     // Show next steps
     const relativeDist = rpath(t.dir)
+
+    // Write .nuxtrc with `shamefully-hoist=true` for pnpm
+    const usingPnpm = (process.env.npm_config_user_agent || '').includes('pnpm')
+    if (usingPnpm) {
+      await writeFile(`${relativeDist}/.npmrc`, 'shamefully-hoist=true')
+    }
+
     const nextSteps = [
       !args.shell && relativeDist.length > 1 && `\`cd ${relativeDist}\``,
-      'Install dependencies with `npm install` or `yarn install` or `pnpm install --shamefully-hoist`',
+      'Install dependencies with `npm install` or `yarn install` or `pnpm install`',
       'Start development server with `npm run dev` or `yarn dev` or `pnpm run dev`'
     ].filter(Boolean)
 

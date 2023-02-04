@@ -1,7 +1,10 @@
-import { computed, defineComponent, h, inject, nextTick, onMounted, Ref, Transition, unref, VNode } from 'vue'
-import { RouteLocationNormalizedLoaded, useRoute as useVueRouterRoute } from 'vue-router'
+import type { Ref, VNode } from 'vue'
+import { computed, defineComponent, h, inject, nextTick, onMounted, Transition, unref } from 'vue'
+import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import { _wrapIf } from './utils'
 import { useRoute } from '#app'
+// @ts-ignore
+import { useRoute as useVueRouterRoute } from '#build/pages'
 // @ts-ignore
 import layouts from '#build/layouts'
 // @ts-ignore
@@ -9,6 +12,8 @@ import { appLayoutTransition as defaultLayoutTransition } from '#build/nuxt.conf
 
 // TODO: revert back to defineAsyncComponent when https://github.com/vuejs/core/issues/6638 is resolved
 const LayoutLoader = defineComponent({
+  name: 'LayoutLoader',
+  inheritAttrs: false,
   props: {
     name: String,
     ...process.dev ? { hasTransition: Boolean } : {}
@@ -30,14 +35,16 @@ const LayoutLoader = defineComponent({
 
     return () => {
       if (process.dev && process.client && props.hasTransition) {
-        vnode = h(LayoutComponent, {}, context.slots)
+        vnode = h(LayoutComponent, context.attrs, context.slots)
         return vnode
       }
-      return h(LayoutComponent, {}, context.slots)
+      return h(LayoutComponent, context.attrs, context.slots)
     }
   }
 })
 export default defineComponent({
+  name: 'NuxtLayout',
+  inheritAttrs: false,
   props: {
     name: {
       type: [String, Boolean, Object] as unknown as () => string | false | Ref<string | false>,
@@ -72,7 +79,12 @@ export default defineComponent({
 
       // We avoid rendering layout transition if there is no layout to render
       return _wrapIf(Transition, hasLayout && transitionProps, {
-        default: () => _wrapIf(LayoutLoader, hasLayout && { key: layout.value, name: layout.value, hasTransition: !!transitionProps }, context.slots).default()
+        default: () => _wrapIf(LayoutLoader, hasLayout && {
+          key: layout.value,
+          name: layout.value,
+          ...(process.dev ? { hasTransition: !!transitionProps } : {}),
+          ...context.attrs
+        }, context.slots).default()
       }).default()
     }
   }

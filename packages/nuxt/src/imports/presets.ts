@@ -1,12 +1,14 @@
-import { defineUnimportPreset, Preset } from 'unimport'
+import type { InlinePreset } from 'unimport'
+import { defineUnimportPreset } from 'unimport'
 
-const commonPresets: Preset[] = [
+const commonPresets: InlinePreset[] = [
   // #head
   defineUnimportPreset({
     from: '#head',
     imports: [
       'useHead',
-      'useMeta'
+      'useSeoMeta',
+      'useServerSeoMeta'
     ]
   }),
   // vue-demi (mocked)
@@ -24,6 +26,7 @@ const appPreset = defineUnimportPreset({
   imports: [
     'useAsyncData',
     'useLazyAsyncData',
+    'useNuxtData',
     'refreshNuxtData',
     'clearNuxtData',
     'defineNuxtComponent',
@@ -38,14 +41,13 @@ const appPreset = defineUnimportPreset({
     'useRequestEvent',
     'setResponseStatus',
     'setPageLayout',
+    'onNuxtReady',
     'useRouter',
     'useRoute',
-    'useActiveRoute',
     'defineNuxtRouteMiddleware',
     'navigateTo',
     'abortNavigation',
     'addRouteMiddleware',
-    'throwError',
     'showError',
     'clearError',
     'isNuxtError',
@@ -56,10 +58,20 @@ const appPreset = defineUnimportPreset({
     'updateAppConfig',
     'defineAppConfig',
     'preloadComponents',
+    'preloadRouteComponents',
     'prefetchComponents',
     'loadPayload',
     'preloadPayload',
     'isPrerendered'
+  ]
+})
+
+// vue-router
+const routerPreset = defineUnimportPreset({
+  from: '#app',
+  imports: [
+    'onBeforeRouteLeave',
+    'onBeforeRouteUpdate'
   ]
 })
 
@@ -136,8 +148,9 @@ const vuePreset = defineUnimportPreset({
   ] as Array<keyof typeof import('vue')>
 })
 
-export const defaultPresets = [
+export const defaultPresets: InlinePreset[] = [
   ...commonPresets,
   appPreset,
+  routerPreset,
   vuePreset
 ]

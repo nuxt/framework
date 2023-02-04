@@ -1,12 +1,17 @@
+import { resolve } from 'pathe'
+import { distDir } from './dirs'
+
 export interface RunTestOptions {
   rootDir: string,
   dev?: boolean,
   watch?: boolean
   runner?: 'vitest'
+  globalSetup?: boolean
 }
 
 const RunTestDefaults: Partial<RunTestOptions> = {
-  runner: 'vitest'
+  runner: 'vitest',
+  globalSetup: true
 }
 
 export async function runTests (opts: RunTestOptions) {
@@ -21,12 +26,12 @@ export async function runTests (opts: RunTestOptions) {
     process.env.NUXT_TEST_DEV = 'true'
   }
 
-  // TODO: add `as typeof import('vitest/dist/node')` and remove workaround
-  // when we upgrade vitest: see https://github.com/nuxt/framework/issues/6297
+  // Consumed by recoverContextFromEnv()
+  process.env.NUXT_TEST_OPTIONS = JSON.stringify(opts)
 
-  // @ts-ignore missing types
-  const { startVitest } = await import('vitest/dist/node.mjs')
-  const args: any[] = [
+  const { startVitest } = await import('vitest/node')
+  const succeeded = await startVitest(
+    'test',
     [] /* argv */,
     // Vitest options
     {
@@ -40,11 +45,23 @@ export async function runTests (opts: RunTestOptions) {
     {
       esbuild: {
         tsconfigRaw: '{}'
+      },
+      test: {
+        dir: opts.rootDir,
+        deps: {
+          inline: [
+            distDir,
+            '@nuxt/test-utils',
+            '@nuxt/test-utils-edge'
+          ]
+        },
+        globals: true,
+        globalSetup: [
+          ...opts.globalSetup ? [resolve(distDir, './runtime/global-setup')] : []
+        ]
       }
     }
-  ]
-  if (startVitest.length >= 4) { args.unshift('test') }
-  const succeeded = await startVitest(...args)
+  )
 
   if (!succeeded) {
     process.exit(1)

@@ -3,8 +3,17 @@ import type { NuxtPage } from '@nuxt/schema'
 import { createUnplugin } from 'unplugin'
 import { withoutLeadingSlash } from 'ufo'
 
+// (defined in nuxt/src/core/nitro.ts)
+declare module 'nitropack' {
+  interface NitroRouteConfig {
+    ssr?: boolean
+  }
+}
+
 export default defineNuxtConfig({
   app: {
+    pageTransition: true,
+    layoutTransition: true,
     head: {
       charset: 'utf-8',
       link: [undefined],
@@ -13,13 +22,21 @@ export default defineNuxtConfig({
   },
   buildDir: process.env.NITRO_BUILD_DIR,
   builder: process.env.TEST_WITH_WEBPACK ? 'webpack' : 'vite',
+  build: {
+    transpile: [
+      (ctx) => {
+        if (typeof ctx.isDev !== 'boolean') { throw new TypeError('context not passed') }
+        return false
+      }
+    ]
+  },
   theme: './extends/bar',
   css: ['~/assets/global.css'],
   extends: [
     './extends/node_modules/foo'
   ],
   nitro: {
-    routes: {
+    routeRules: {
       '/route-rules/spa': { ssr: false }
     },
     output: { dir: process.env.NITRO_OUTPUT_DIR },
@@ -31,14 +48,24 @@ export default defineNuxtConfig({
       ]
     }
   },
-  publicRuntimeConfig: {
-    testConfig: 123
-  },
-  privateRuntimeConfig: {
-    privateConfig: 'secret_key'
+  runtimeConfig: {
+    privateConfig: 'secret_key',
+    public: {
+      needsFallback: undefined,
+      testConfig: 123
+    }
   },
   modules: [
-    '~/modules/example',
+    [
+      '~/modules/example',
+      {
+        typeTest (val) {
+          // @ts-expect-error module type defines val as boolean
+          const b: string = val
+          return !!b
+        }
+      }
+    ],
     function (_, nuxt) {
       if (process.env.TEST_WITH_WEBPACK) { return }
 
@@ -58,7 +85,7 @@ export default defineNuxtConfig({
     },
     function (_options, nuxt) {
       const routesToDuplicate = ['/async-parent', '/fixed-keyed-child-parent', '/keyed-child-parent', '/with-layout', '/with-layout2']
-      const stripLayout = (page: NuxtPage) => ({
+      const stripLayout = (page: NuxtPage): NuxtPage => ({
         ...page,
         children: page.children?.map(child => stripLayout(child)),
         name: 'internal-' + page.name,
@@ -83,7 +110,7 @@ export default defineNuxtConfig({
   ],
   hooks: {
     'prepare:types' ({ tsConfig }) {
-      tsConfig.include = tsConfig.include.filter(i => i !== '../../../../**/*')
+      tsConfig.include = tsConfig.include!.filter(i => i !== '../../../../**/*')
     },
     'modules:done' () {
       addComponent({
@@ -91,12 +118,37 @@ export default defineNuxtConfig({
         export: 'namedExport',
         filePath: '~/other-components-folder/named-export'
       })
+    },
+    'vite:extendConfig' (config) {
+      config.plugins!.push({
+        name: 'nuxt:server',
+        configureServer (server) {
+          server.middlewares.use((req, res, next) => {
+            if (req.url === '/vite-plugin-without-path') {
+              res.end('vite-plugin without path')
+              return
+            }
+            next()
+          })
+
+          server.middlewares.use((req, res, next) => {
+            if (req.url === '/__nuxt-test') {
+              res.end('vite-plugin with __nuxt prefix')
+              return
+            }
+            next()
+          })
+        }
+      })
     }
   },
   experimental: {
-    inlineSSRStyles: id => !id.includes('assets.vue'),
+    inlineSSRStyles: id => !!id && !id.includes('assets.vue'),
+    componentIslands: true,
     reactivityTransform: true,
-    treeshakeClientOnly: true
+    treeshakeClientOnly: true,
+    payloadExtraction: true,
+    configSchema: true
   },
   appConfig: {
     fromNuxtConfig: true,

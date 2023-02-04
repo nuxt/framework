@@ -23,13 +23,17 @@ export async function build (nuxt: Nuxt) {
         await generateApp()
       }
     })
-    nuxt.hook('builder:generateApp', generateApp)
+    nuxt.hook('builder:generateApp', (options) => {
+      // Bypass debounce if we are selectively invalidating templates
+      if (options) { return _generateApp(nuxt, app, options) }
+      return generateApp()
+    })
   }
 
-  await nuxt.callHook('build:before', { nuxt }, nuxt.options.build)
+  await nuxt.callHook('build:before')
   if (!nuxt.options._prepare) {
     await bundle(nuxt)
-    await nuxt.callHook('build:done', { nuxt })
+    await nuxt.callHook('build:done')
   }
 
   if (!nuxt.options.dev) {

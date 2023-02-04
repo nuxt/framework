@@ -1,10 +1,7 @@
-import { isFunction } from '@vue/shared'
-import { computed } from 'vue'
-import type { ComputedGetter, ComputedRef } from '@vue/reactivity'
-import type { MetaObject } from '@nuxt/schema'
+import type { HeadEntryOptions, UseHeadInput, ActiveHeadEntry } from '@vueuse/head'
+import type { HeadAugmentations } from '@nuxt/schema'
+import { useSeoMeta as _useSeoMeta } from '@vueuse/head'
 import { useNuxtApp } from '#app'
-
-type Computable<T> = T extends Record<string, any> ? ComputedGetter<T> | { [K in keyof T]: T[K] | ComputedRef<T[K]> } : T
 
 /**
  * You can pass in a meta object, which has keys corresponding to meta tags:
@@ -13,13 +10,30 @@ type Computable<T> = T extends Record<string, any> ? ComputedGetter<T> | { [K in
  * Alternatively, for reactive meta state, you can pass in a function
  * that returns a meta object.
  */
-export function useHead (meta: Computable<MetaObject>) {
-  const resolvedMeta = isFunction(meta) ? computed(meta) : meta
-  useNuxtApp()._useHead(resolvedMeta)
+export function useHead<T extends HeadAugmentations> (input: UseHeadInput<T>, options?: HeadEntryOptions): ActiveHeadEntry<UseHeadInput<T>> | void {
+  return useNuxtApp()._useHead(input, options)
 }
 
-// TODO: remove useMeta support when Nuxt 3 is stable
-/** @deprecated Please use new `useHead` composable instead */
-export function useMeta (meta: Computable<MetaObject>) {
-  return useHead(meta)
+/**
+ * The `useSeoMeta` composable lets you define your site's SEO meta tags
+ * as a flat object with full TypeScript support.
+ *
+ * This helps you avoid typos and common mistakes, such as using `name`
+ * instead of `property`.
+ *
+ * It is advised to use `useServerSeoMeta` unless you _need_ client-side
+ * rendering of your SEO meta tags.
+ */
+export const useSeoMeta: typeof _useSeoMeta = (meta) => {
+  return _useSeoMeta(meta)
+}
+
+/**
+ * The `useServerSeoMeta` composable is identical to `useSeoMeta` except that
+ * it will have no effect (and will return nothing) if called on the client.
+ */
+export const useServerSeoMeta: typeof _useSeoMeta = (meta) => {
+  if (process.server) {
+    return _useSeoMeta(meta)
+  }
 }

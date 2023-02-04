@@ -1,7 +1,8 @@
 import { resolve } from 'node:path'
 import { execa } from 'execa'
 import { getRandomPort, waitForPort } from 'get-port-please'
-import { fetch as _fetch, $fetch as _$fetch, FetchOptions } from 'ohmyfetch'
+import type { FetchOptions } from 'ofetch'
+import { fetch as _fetch, $fetch as _$fetch } from 'ofetch'
 import * as _kit from '@nuxt/kit'
 import { useTestContext } from './context'
 
@@ -21,6 +22,7 @@ export async function startServer () {
       env: {
         ...process.env,
         PORT: String(port),
+        NITRO_PORT: String(port),
         NODE_ENV: 'development'
       }
     })
@@ -28,12 +30,13 @@ export async function startServer () {
     for (let i = 0; i < 50; i++) {
       await new Promise(resolve => setTimeout(resolve, 100))
       try {
-        const res = await $fetch('/')
+        const res = await $fetch(ctx.nuxt!.options.app.baseURL)
         if (!res.includes('__NUXT_LOADING__')) {
           return
         }
       } catch {}
     }
+    ctx.serverProcess.kill()
     throw new Error('Timeout waiting for dev server!')
   } else {
     ctx.serverProcess = execa('node', [
@@ -43,6 +46,7 @@ export async function startServer () {
       env: {
         ...process.env,
         PORT: String(port),
+        NITRO_PORT: String(port),
         NODE_ENV: 'test'
       }
     })

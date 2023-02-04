@@ -1,16 +1,17 @@
 // We set __webpack_public_path via this import with webpack builder
 import { createSSRApp, createApp, nextTick } from 'vue'
-import { $fetch } from 'ohmyfetch'
+import { $fetch } from 'ofetch'
 // @ts-ignore
 import { baseURL } from '#build/paths.mjs'
-import { createNuxtApp, applyPlugins, normalizePlugins, CreateOptions } from '#app'
+import type { CreateOptions } from '#app'
+import { createNuxtApp, applyPlugins, normalizePlugins } from '#app'
 import '#build/css'
 // @ts-ignore
 import _plugins from '#build/plugins'
 // @ts-ignore
 import RootComponent from '#build/root-component.mjs'
 // @ts-ignore
-import AppComponent from '#build/app-component.mjs'
+import { appRootId } from '#build/nuxt.config.mjs'
 
 if (!globalThis.$fetch) {
   // @ts-ignore
@@ -26,7 +27,6 @@ const plugins = normalizePlugins(_plugins)
 if (process.server) {
   entry = async function createNuxtAppServer (ssrContext: CreateOptions['ssrContext']) {
     const vueApp = createApp(RootComponent)
-    vueApp.component('App', AppComponent)
 
     const nuxt = createNuxtApp({ vueApp, ssrContext })
 
@@ -54,7 +54,6 @@ if (process.client) {
   entry = async function initApp () {
     const isSSR = Boolean(window.__NUXT__?.serverRendered)
     const vueApp = isSSR ? createSSRApp(RootComponent) : createApp(RootComponent)
-    vueApp.component('App', AppComponent)
 
     const nuxt = createNuxtApp({ vueApp })
 
@@ -68,7 +67,7 @@ if (process.client) {
     try {
       await nuxt.hooks.callHook('app:created', vueApp)
       await nuxt.hooks.callHook('app:beforeMount', vueApp)
-      vueApp.mount('#__nuxt')
+      vueApp.mount('#' + appRootId)
       await nuxt.hooks.callHook('app:mounted', vueApp)
       await nextTick()
     } catch (err) {
@@ -78,7 +77,7 @@ if (process.client) {
   }
 
   entry().catch((error: unknown) => {
-    console.error('Error while mounting app:', error) // eslint-disable-line no-console
+    console.error('Error while mounting app:', error)
   })
 }
 

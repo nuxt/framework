@@ -1,9 +1,11 @@
 import { extname, normalize, relative, resolve } from 'pathe'
 import { encodePath } from 'ufo'
-import { NuxtPage } from '@nuxt/schema'
+import type { NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
 import { genImport, genDynamicImport, genArrayFromRaw, genSafeVariableName } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
+import { filename } from 'pathe/utils'
+import { hash } from 'ohash'
 import { uniqueBy } from '../core/utils'
 
 enum SegmentParserState {
@@ -68,7 +70,6 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
 
       const tokens = parseSegment(segment)
       const segmentName = tokens.map(({ value }) => value).join('')
-      const isSingleSegment = segments.length === 1
 
       // ex: parent/[slug].vue -> parent-slug
       route.name += (route.name && '-') + segmentName
@@ -79,8 +80,6 @@ export function generateRoutesFromFiles (files: string[], pagesDir: string): Nux
       if (child && child.children) {
         parent = child.children
         route.path = ''
-      } else if (segmentName === '404' && isSingleSegment) {
-        route.path += '/:catchAll(.*)*'
       } else if (segmentName === 'index' && !route.path) {
         route.path += '/'
       } else if (segmentName !== 'index') {
@@ -184,7 +183,7 @@ function parseSegment (segment: string) {
         } else if (PARAM_CHAR_RE.test(c)) {
           buffer += c
         } else {
-          // eslint-disable-next-line no-console
+
           // console.debug(`[pages]Ignored character "${c}" while building param "${buffer}" from "segment"`)
         }
         break
@@ -228,24 +227,31 @@ function prepareRoutes (routes: NuxtPage[], parent?: NuxtPage) {
 export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = new Set()): { imports: Set<string>, routes: string } {
   return {
     imports: metaImports,
-    routes: genArrayFromRaw(routes.map((route) => {
-      const file = normalize(route.file)
-      const metaImportName = genSafeVariableName(file) + 'Meta'
-      metaImports.add(genImport(`${file}?macro=true`, [{ name: 'meta', as: metaImportName }]))
+    routes: genArrayFromRaw(routes.map((page) => {
+      const file = normalize(page.file)
+      const metaImportName = genSafeVariableName(filename(file) + hash(file)) + 'Meta'
+      metaImports.add(genImport(`${file}?macro=true`, [{ name: 'default', as: metaImportName }]))
 
       let aliasCode = `${metaImportName}?.alias || []`
-      if (Array.isArray(route.alias) && route.alias.length) {
-        aliasCode = `${JSON.stringify(route.alias)}.concat(${aliasCode})`
+      if (Array.isArray(page.alias) && page.alias.length) {
+        aliasCode = `${JSON.stringify(page.alias)}.concat(${aliasCode})`
       }
 
-      return {
-        ...Object.fromEntries(Object.entries(route).map(([key, value]) => [key, JSON.stringify(value)])),
-        children: route.children ? normalizeRoutes(route.children, metaImports).routes : [],
-        meta: route.meta ? `{...(${metaImportName} || {}), ...${JSON.stringify(route.meta)}}` : metaImportName,
+      const route = {
+        ...Object.fromEntries(Object.entries(page).map(([key, value]) => [key, JSON.stringify(value)])),
+        file: undefined,
+        name: `${metaImportName}?.name ?? ${page.name ? JSON.stringify(page.name) : 'undefined'}`,
+        path: `${metaImportName}?.path ?? ${JSON.stringify(page.path)}`,
+        children: page.children ? normalizeRoutes(page.children, metaImports).routes : [],
+        meta: page.meta ? `{...(${metaImportName} || {}), ...${JSON.stringify(page.meta)}}` : metaImportName,
         alias: aliasCode,
-        redirect: route.redirect ? JSON.stringify(route.redirect) : `${metaImportName}?.redirect || undefined`,
+        redirect: page.redirect ? JSON.stringify(page.redirect) : `${metaImportName}?.redirect || undefined`,
         component: genDynamicImport(file, { interopDefault: true })
       }
+
+      delete route.file
+
+      return route
     }))
   }
 }
