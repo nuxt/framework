@@ -3,8 +3,10 @@ import type { Router, RouteLocationNormalizedLoaded, NavigationGuard, RouteLocat
 import { sendRedirect } from 'h3'
 import { hasProtocol, joinURL, parseURL } from 'ufo'
 import { useNuxtApp, useRuntimeConfig } from '../nuxt'
-import { createError, NuxtError } from './error'
+import type { NuxtError } from './error'
+import { createError } from './error'
 import { useState } from './state'
+import { setResponseStatus } from './ssr'
 
 export const useRouter = () => {
   return useNuxtApp()?.$router as Router
@@ -28,11 +30,6 @@ export const onBeforeRouteLeave = (guard: NavigationGuard) => {
 export const onBeforeRouteUpdate = (guard: NavigationGuard) => {
   const unsubscribe = useRouter().beforeEach(guard)
   onUnmounted(unsubscribe)
-}
-
-/** @deprecated Use `useRoute` instead. */
-export const useActiveRoute = (): RouteLocationNormalizedLoaded => {
-  return useNuxtApp()._route
 }
 
 export interface RouteMiddleware {
@@ -101,8 +98,15 @@ export const navigateTo = (to: RouteLocationRaw | undefined | null, options?: Na
   if (process.server) {
     const nuxtApp = useNuxtApp()
     if (nuxtApp.ssrContext && nuxtApp.ssrContext.event) {
+      // Let vue-router handle internal redirects within middleware
+      // to prevent the navigation happening after response is sent
+      if (isProcessingMiddleware() && !isExternal) {
+        setResponseStatus(options?.redirectCode || 302)
+        return to
+      }
       const redirectLocation = isExternal ? toPath : joinURL(useRuntimeConfig().app.baseURL, router.resolve(to).fullPath || '/')
-      return nuxtApp.callHook('app:redirected').then(() => sendRedirect(nuxtApp.ssrContext!.event, redirectLocation, options?.redirectCode || 302))
+      return nuxtApp.callHook('app:redirected')
+        .then(() => sendRedirect(nuxtApp.ssrContext!.event, redirectLocation, options?.redirectCode || 302))
     }
   }
 

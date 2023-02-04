@@ -4,12 +4,13 @@ import type { Server as HttpsServer } from 'node:https'
 import type { InlineConfig as ViteInlineConfig, ViteDevServer } from 'vite'
 import type { Manifest } from 'vue-bundle-renderer'
 import type { EventHandler } from 'h3'
-import type { Import, InlinePreset } from 'unimport'
+import type { Import, InlinePreset, Unimport } from 'unimport'
 import type { Compiler, Configuration, Stats } from 'webpack'
 import type { Nuxt, NuxtApp, ResolvedNuxtTemplate } from './nuxt'
 import type { Nitro, NitroConfig } from 'nitropack'
 import type { Component, ComponentsOptions } from './components'
-import { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
+import type { NuxtCompatibility, NuxtCompatibilityIssues } from '..'
+import type { Schema, SchemaDefinition } from 'untyped'
 
 export type HookResult = Promise<void> | void
 
@@ -40,10 +41,6 @@ export type NuxtLayout = {
 }
 
 export interface ImportPresetWithDeprecation extends InlinePreset {
-  /**
-   * @deprecated renamed to `imports`
-   */
-  names?: string[]
 }
 
 export interface GenerateAppOptions {
@@ -76,16 +73,9 @@ export interface NuxtHooks {
 
   'server:devHandler': (handler: EventHandler) => HookResult
 
-  // Auto imports
-  /** @deprecated Please use `imports:sources` hook */
-  'autoImports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
-  /** @deprecated Please use `imports:extend` hook */
-  'autoImports:extend': (imports: Import[]) => HookResult
-  /** @deprecated Please use `imports:dirs` hook */
-  'autoImports:dirs': (dirs: string[]) => HookResult
-
   'imports:sources': (presets: ImportPresetWithDeprecation[]) => HookResult
   'imports:extend': (imports: Import[]) => HookResult
+  'imports:context': (context: Unimport) => HookResult
   'imports:dirs': (dirs: string[]) => HookResult
 
   // Components
@@ -103,13 +93,19 @@ export interface NuxtHooks {
   'prepare:types': (options: { references: TSReference[], declarations: string[], tsConfig: TSConfig }) => HookResult
   'listen': (listenerServer: HttpServer | HttpsServer, listener: any) => HookResult
 
+  // Schema
+  'schema:extend': (schemas: SchemaDefinition[]) => void
+  'schema:resolved': (schema: Schema) => void
+  'schema:beforeWrite': (schema: Schema) => void
+  'schema:written': () => void
+
   // Vite
   'vite:extend': (viteBuildContext: { nuxt: Nuxt, config: ViteInlineConfig }) => HookResult
   'vite:extendConfig': (viteInlineConfig: ViteInlineConfig, env: { isClient: boolean, isServer: boolean }) => HookResult
   'vite:serverCreated': (viteServer: ViteDevServer, env: { isClient: boolean, isServer: boolean }) => HookResult
   'vite:compiled': () => HookResult
 
-  // Webpack
+  // webpack
   'webpack:config': (webpackConfigs: Configuration[]) => HookResult
   'webpack:compile': (options: { name: string, compiler: Compiler }) => HookResult
   'webpack:compiled': (options: { name: string, compiler: Compiler, stats: Stats }) => HookResult

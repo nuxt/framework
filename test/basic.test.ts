@@ -1,15 +1,21 @@
 import { fileURLToPath } from 'node:url'
+import { promises as fsp } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { joinURL } from 'ufo'
+import { joinURL, withQuery } from 'ufo'
 import { isWindows } from 'std-env'
-import { setup, fetch, $fetch, startServer, createPage, url } from '@nuxt/test-utils'
+import { join, normalize } from 'pathe'
 // eslint-disable-next-line import/order
-import { expectNoClientErrors, renderPage, withLogs } from './utils'
+import { setup, fetch, $fetch, startServer, isDev, createPage, url } from '@nuxt/test-utils'
 
+import type { NuxtIslandResponse } from '../packages/nuxt/src/core/runtime/nitro/renderer'
+import { expectNoClientErrors, fixturesDir, expectWithPolling, renderPage, withLogs } from './utils'
+
+const fixturePath = join(fixturesDir, 'basic')
 await setup({
-  rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
+  rootDir: fixturePath,
   server: true,
-  browser: true
+  browser: true,
+  setupTimeout: (isWindows ? 240 : 120) * 1000
 })
 
 describe('server api', () => {
@@ -46,6 +52,7 @@ describe('pages', () => {
     expect(html).toContain('Hello Nuxt 3!')
     // should inject runtime config
     expect(html).toContain('RuntimeConfig | testConfig: 123')
+    expect(html).toContain('needsFallback:')
     // composables auto import
     expect(html).toContain('Composable | foo: auto imported from ~/components/foo.ts')
     expect(html).toContain('Composable | bar: auto imported from ~/components/useBar.ts')
@@ -54,6 +61,8 @@ describe('pages', () => {
     expect(html).toContain('This is a custom component with a named export.')
     // should apply attributes to client-only components
     expect(html).toContain('<div style="color:red;" class="client-only"></div>')
+    // should render server-only components
+    expect(html).toContain('<div class="server-only" style="background-color:gray;"> server-only component </div>')
     // should register global components automatically
     expect(html).toContain('global component registered automatically')
     expect(html).toContain('global component via suffix')
@@ -84,6 +93,9 @@ describe('pages', () => {
 
     expect(html).toContain('[...slug].vue')
     expect(html).toContain('404 at not-found')
+
+    // Middleware still runs after validation: https://github.com/nuxt/nuxt/issues/15650
+    expect(html).toContain('Middleware ran: true')
 
     await expectNoClientErrors('/not-found')
   })
@@ -252,8 +264,7 @@ describe('head tags', () => {
     expect(headHtml).toContain('<meta name="description" content="overriding with an inline useHead call">')
     expect(headHtml).toMatch(/<html[^>]*class="html-attrs-test"/)
     expect(headHtml).toMatch(/<body[^>]*class="body-attrs-test"/)
-    expect(headHtml).toContain('script>console.log("works with useMeta too")</script>')
-    expect(headHtml).toContain('<script src="https://a-body-appended-script.com" data-meta-body></script></body>')
+    expect(headHtml).toContain('<script src="https://a-body-appended-script.com"></script></body>')
 
     const indexHtml = await $fetch('/')
     // should render charset by default
@@ -379,6 +390,7 @@ describe('plugins', () => {
   it('async plugin', async () => {
     const html = await $fetch('/plugins')
     expect(html).toContain('asyncPlugin: Async plugin works! 123')
+    expect(html).toContain('useFetch works!')
   })
 })
 
@@ -401,6 +413,21 @@ describe('layouts', () => {
     expect(html).toContain('with-dynamic-layout')
     expect(html).toContain('Custom Layout:')
     await expectNoClientErrors('/with-dynamic-layout')
+  })
+  it('should work with a computed layout', async () => {
+    const html = await $fetch('/with-computed-layout')
+
+    // Snapshot
+    // expect(html).toMatchInlineSnapshot()
+
+    expect(html).toContain('with-computed-layout')
+    expect(html).toContain('Custom Layout')
+    await expectNoClientErrors('/with-computed-layout')
+  })
+  it('should allow passing custom props to a layout', async () => {
+    const html = await $fetch('/layouts/with-props')
+    expect(html).toContain('some prop was passed')
+    await expectNoClientErrors('/layouts/with-props')
   })
 })
 
@@ -463,6 +490,10 @@ describe('extends support', () => {
     it('extends foo/composables/foo', async () => {
       const html = await $fetch('/foo')
       expect(html).toContain('Composable | useExtendsFoo: foo')
+    })
+    it('allows overriding composables', async () => {
+      const html = await $fetch('/extends')
+      expect(html).toContain('test from project')
     })
   })
 
@@ -669,7 +700,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV)('dynamic paths', () => {
     }
   })
 
-  // Webpack injects CSS differently
+  // webpack injects CSS differently
   it.skipIf(process.env.TEST_WITH_WEBPACK)('adds relative paths to CSS', async () => {
     const html: string = await $fetch('/assets')
     const urls = Array.from(html.matchAll(/(href|src)="(.*?)"|url\(([^)]*?)\)/g)).map(m => m[2] || m[3])
@@ -774,11 +805,114 @@ describe('app config', () => {
   })
 })
 
+describe('component islands', () => {
+  it('renders components with route', async () => {
+    const result: NuxtIslandResponse = await $fetch('/__nuxt_island/RouteComponent?url=/foo')
+
+    if (process.env.NUXT_TEST_DEV) {
+      result.head.link = result.head.link.filter(l => !l.href.includes('@nuxt+ui-templates'))
+    }
+
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "head": {
+          "link": [],
+          "style": [],
+        },
+        "html": "<pre>    Route: /foo
+        </pre>",
+        "state": {},
+      }
+    `)
+  })
+
+  it('renders pure components', async () => {
+    const result: NuxtIslandResponse = await $fetch(withQuery('/__nuxt_island/PureComponent', {
+      props: JSON.stringify({
+        bool: false,
+        number: 3487,
+        str: 'something',
+        obj: { foo: 42, bar: false, me: 'hi' }
+      })
+    }))
+
+    if (process.env.NUXT_TEST_DEV) {
+      result.head.link = result.head.link.filter(l => !l.href.includes('@nuxt+ui-templates'))
+      const fixtureDir = normalize(fileURLToPath(new URL('./fixtures/basic', import.meta.url)))
+      for (const link of result.head.link) {
+        link.href = link.href.replace(fixtureDir, '/<rootDir>').replaceAll('//', '/')
+        link.key = link.key.replace(/-[a-zA-Z0-9]+$/, '')
+      }
+    }
+    result.head.style = result.head.style.map(s => ({
+      ...s,
+      innerHTML: (s.innerHTML || '').replace(/data-v-[a-z0-9]+/, 'data-v-xxxxx'),
+      key: s.key.replace(/-[a-zA-Z0-9]+$/, '')
+    }))
+
+    if (!(process.env.NUXT_TEST_DEV || process.env.TEST_WITH_WEBPACK)) {
+      expect(result.head).toMatchInlineSnapshot(`
+        {
+          "link": [],
+          "style": [
+            {
+              "innerHTML": "pre[data-v-xxxxx]{color:blue}",
+              "key": "island-style",
+            },
+          ],
+        }
+      `)
+    } else if (process.env.NUXT_TEST_DEV) {
+      expect(result.head).toMatchInlineSnapshot(`
+        {
+          "link": [
+            {
+              "href": "/_nuxt/components/islands/PureComponent.vue?vue&type=style&index=0&scoped=c0c0cf89&lang.css",
+              "key": "island-link",
+              "rel": "stylesheet",
+            },
+          ],
+          "style": [],
+        }
+      `)
+    }
+
+    expect(result.html.replace(/data-v-\w+|"|<!--.*-->/g, '')).toMatchInlineSnapshot(`
+    "<div > Was router enabled: true <br > Props: <pre >{
+      number: 3487,
+      str: something,
+      obj: {
+        foo: 42,
+        bar: false,
+        me: hi
+      },
+      bool: false
+    }</pre></div>"
+  `)
+
+    expect(result.state).toMatchInlineSnapshot(`
+      {
+        "$shasRouter": true,
+      }
+    `)
+  })
+})
+
+describe.runIf(process.env.NUXT_TEST_DEV && !process.env.TEST_WITH_WEBPACK)('vite plugins', () => {
+  it('does not override vite plugins', async () => {
+    expect(await $fetch('/vite-plugin-without-path')).toBe('vite-plugin without path')
+    expect(await $fetch('/__nuxt-test')).toBe('vite-plugin with __nuxt prefix')
+  })
+  it('does not allow direct access to nuxt source folder', async () => {
+    expect(await $fetch('/app.config')).toContain('404')
+  })
+})
+
 describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () => {
   it('renders a payload', async () => {
     const payload = await $fetch('/random/a/_payload.js', { responseType: 'text' })
     expect(payload).toMatch(
-      /export default \{data:\{rand_a:\[[^\]]*\]\},prerenderedAt:\d*\}/
+      /export default \{data:\{hey:\{[^}]*\},rand_a:\[[^\]]*\],".*":\{html:".*server-only component.*",head:\{link:\[\],style:\[\]\}\}\},prerenderedAt:\d*\}/
     )
   })
 
@@ -800,6 +934,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () 
 
     // We are not triggering API requests in the payload
     expect(requests).not.toContain(expect.stringContaining('/api/random'))
+    expect(requests).not.toContain(expect.stringContaining('/__nuxt_island'))
     // requests.length = 0
 
     await page.click('[href="/random/b"]')
@@ -807,6 +942,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () 
 
     // We are not triggering API requests in the payload in client-side nav
     expect(requests).not.toContain('/api/random')
+    expect(requests).not.toContain(expect.stringContaining('/__nuxt_island'))
 
     // We are fetching a payload we did not prefetch
     expect(requests).toContain('/random/b/_payload.js' + importSuffix)
@@ -820,6 +956,7 @@ describe.skipIf(process.env.NUXT_TEST_DEV || isWindows)('payload rendering', () 
 
     // We are not triggering API requests in the payload in client-side nav
     expect(requests).not.toContain('/api/random')
+    expect(requests).not.toContain(expect.stringContaining('/__nuxt_island'))
 
     // We are not refetching payloads we've already prefetched
     // Note: we refetch on dev as urls differ between '' and '?import'
@@ -848,3 +985,64 @@ describe.skipIf(isWindows)('useAsyncData', () => {
     await expectNoClientErrors('/useAsyncData/promise-all')
   })
 })
+
+// HMR should be at the last
+// TODO: fix HMR on Windows
+if (isDev() && !isWindows) {
+  describe('hmr', () => {
+    it('should work', async () => {
+      const { page, pageErrors, consoleLogs } = await renderPage('/')
+
+      expect(await page.title()).toBe('Basic fixture')
+      expect((await page.$('.sugar-counter').then(r => r!.textContent()))!.trim())
+        .toEqual('Sugar Counter 12 x 2 = 24  Inc')
+
+      // reactive
+      await page.$('.sugar-counter button').then(r => r!.click())
+      expect((await page.$('.sugar-counter').then(r => r!.textContent()))!.trim())
+        .toEqual('Sugar Counter 13 x 2 = 26  Inc')
+
+      // modify file
+      let indexVue = await fsp.readFile(join(fixturePath, 'pages/index.vue'), 'utf8')
+      indexVue = indexVue
+        .replace('<Title>Basic fixture</Title>', '<Title>Basic fixture HMR</Title>')
+        .replace('<h1>Hello Nuxt 3!</h1>', '<h1>Hello Nuxt 3! HMR</h1>')
+      indexVue += '<style scoped>\nh1 { color: red }\n</style>'
+      await fsp.writeFile(join(fixturePath, 'pages/index.vue'), indexVue)
+
+      await expectWithPolling(
+        () => page.title(),
+        'Basic fixture HMR'
+      )
+
+      // content HMR
+      const h1 = await page.$('h1')
+      expect(await h1!.textContent()).toBe('Hello Nuxt 3! HMR')
+
+      // style HMR
+      const h1Color = await h1!.evaluate(el => window.getComputedStyle(el).getPropertyValue('color'))
+      expect(h1Color).toMatchInlineSnapshot('"rgb(255, 0, 0)"')
+
+      // ensure no errors
+      const consoleLogErrors = consoleLogs.filter(i => i.type === 'error')
+      const consoleLogWarnings = consoleLogs.filter(i => i.type === 'warn')
+      expect(pageErrors).toEqual([])
+      expect(consoleLogErrors).toEqual([])
+      expect(consoleLogWarnings).toEqual([])
+    }, 60_000)
+
+    it('should detect new routes', async () => {
+      const html = await $fetch('/some-404')
+      expect(html).toContain('404 at some-404')
+
+      // write new page route
+      const indexVue = await fsp.readFile(join(fixturePath, 'pages/index.vue'), 'utf8')
+      await fsp.writeFile(join(fixturePath, 'pages/some-404.vue'), indexVue)
+
+      await expectWithPolling(
+        () => $fetch('/some-404').then(r => r.includes('Hello Nuxt 3') ? 'ok' : 'fail'),
+        'ok'
+      )
+    })
+  })
+}

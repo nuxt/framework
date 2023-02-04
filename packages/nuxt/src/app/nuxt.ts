@@ -1,11 +1,14 @@
 /* eslint-disable no-use-before-define */
-import { getCurrentInstance, reactive, Ref } from 'vue'
-import type { App, onErrorCaptured, VNode } from 'vue'
-import { createHooks, Hookable } from 'hookable'
+import { getCurrentInstance, reactive } from 'vue'
+import type { App, onErrorCaptured, VNode, Ref } from 'vue'
+import type { Hookable } from 'hookable'
+import { createHooks } from 'hookable'
 import type { RuntimeConfig, AppConfigInput } from '@nuxt/schema'
 import { getContext } from 'unctx'
 import type { SSRContext } from 'vue-bundle-renderer/runtime'
 import type { H3Event } from 'h3'
+// eslint-disable-next-line import/no-restricted-paths
+import type { NuxtIslandContext } from '../core/runtime/nitro/renderer'
 
 const nuxtAppCtx = getContext<NuxtApp>('nuxt-app')
 
@@ -50,6 +53,7 @@ export interface NuxtSSRContext extends SSRContext {
   payload: _NuxtApp['payload']
   teleports?: Record<string, string>
   renderMeta?: () => Promise<NuxtMeta> | NuxtMeta
+  islandContext?: NuxtIslandContext
 }
 
 interface _NuxtApp {
@@ -280,9 +284,9 @@ export function isNuxtPlugin (plugin: unknown) {
  * @param setup The function to call
  */
 export function callWithNuxt<T extends (...args: any[]) => any> (nuxt: NuxtApp | _NuxtApp, setup: T, args?: Parameters<T>) {
-  const fn = () => args ? setup(...args as Parameters<T>) : setup()
+  const fn: () => ReturnType<T> = () => args ? setup(...args as Parameters<T>) : setup()
   if (process.server) {
-    return nuxtAppCtx.callAsync<ReturnType<T>>(nuxt, fn)
+    return nuxtAppCtx.callAsync(nuxt, fn)
   } else {
     // In client side we could assume nuxt app is singleton
     nuxtAppCtx.set(nuxt)

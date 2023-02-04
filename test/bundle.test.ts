@@ -26,9 +26,10 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
 
   it('default client bundle size', async () => {
     stats.client = await analyzeSizes('**/*.js', publicDir)
-    expect(stats.client.totalBytes).toBeLessThan(110000)
+    expect(stats.client.totalBytes).toBeLessThan(108000)
     expect(stats.client.files.map(f => f.replace(/\..*\.js/, '.js'))).toMatchInlineSnapshot(`
       [
+        "_nuxt/composables.js",
         "_nuxt/entry.js",
         "_nuxt/error-404.js",
         "_nuxt/error-500.js",
@@ -39,7 +40,7 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
 
   it('default server bundle size', async () => {
     stats.server = await analyzeSizes(['**/*.mjs', '!node_modules'], serverDir)
-    expect(stats.server.totalBytes).toBeLessThan(120000)
+    expect(stats.server.totalBytes).toBeLessThan(90000)
 
     const modules = await analyzeSizes('node_modules/**/*', serverDir)
     expect(modules.totalBytes).toBeLessThan(2700000)
@@ -51,6 +52,9 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
     expect(packages).toMatchInlineSnapshot(`
       [
         "@babel/parser",
+        "@unhead/dom",
+        "@unhead/ssr",
+        "@unhead/vue",
         "@vue/compiler-core",
         "@vue/compiler-dom",
         "@vue/compiler-ssr",
@@ -59,7 +63,6 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
         "@vue/runtime-dom",
         "@vue/server-renderer",
         "@vue/shared",
-        "@vueuse/shared",
         "buffer-from",
         "cookie-es",
         "defu",
@@ -68,8 +71,8 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
         "h3",
         "hookable",
         "node-fetch-native",
+        "ofetch",
         "ohash",
-        "ohmyfetch",
         "pathe",
         "radix3",
         "scule",
@@ -81,7 +84,6 @@ describe.skipIf(isWindows)('minimal nuxt application', () => {
         "unstorage",
         "vue",
         "vue-bundle-renderer",
-        "vue-demi",
       ]
     `)
   })
@@ -91,8 +93,13 @@ async function analyzeSizes (pattern: string | string[], rootDir: string) {
   const files: string[] = await globby(pattern, { cwd: rootDir })
   let totalBytes = 0
   for (const file of files) {
-    const bytes = Buffer.byteLength(await fsp.readFile(join(rootDir, file)))
-    totalBytes += bytes
+    const path = join(rootDir, file)
+    const isSymlink = (await fsp.lstat(path).catch(() => null))?.isSymbolicLink()
+
+    if (!isSymlink) {
+      const bytes = Buffer.byteLength(await fsp.readFile(path))
+      totalBytes += bytes
+    }
   }
   return { files, totalBytes }
 }
