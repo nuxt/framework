@@ -4,7 +4,7 @@ import { parseQuery } from 'vue-router'
 
 export default (url:string) => defineComponent({
   name: 'NuxtTestComponentWrapper',
-  // eslint-disable-next-line require-await
+
   async setup (props, { attrs }) {
     const query = parseQuery(parseURL(url).search)
     const urlProps = query.props ? JSON.parse(query.props as string) : {}
