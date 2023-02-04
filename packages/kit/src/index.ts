@@ -1,10 +1,10 @@
 // Module
-export * from './module/container'
 export * from './module/define'
 export * from './module/install'
 
 // Loader
 export * from './loader/config'
+export * from './loader/schema'
 export * from './loader/nuxt'
 
 // Utils
@@ -13,7 +13,7 @@ export * from './build'
 export * from './compatibility'
 export * from './components'
 export * from './context'
-export * from './ignore'
+export { isIgnored } from './ignore'
 export * from './layout'
 export * from './pages'
 export * from './plugin'

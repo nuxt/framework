@@ -10,7 +10,6 @@ export default defineUntypedSchema({
    * Please note that not all vite options are supported in Nuxt.
    *
    * @type {typeof import('../src/types/config').ViteConfig}
-   * @version 3
    */
   vite: {
     root: {
@@ -19,7 +18,9 @@ export default defineUntypedSchema({
     mode: {
       $resolve: async (val, get) => val ?? (await get('dev') ? 'development' : 'production')
     },
-    logLevel: 'warn',
+    logLevel:{
+      $resolve: async (val, get) => val ?? (await get('dev') ? 'warn' : 'info')
+    },
     define: {
       $resolve: async (val, get) => ({
         'process.dev': await get('dev'),
@@ -65,12 +66,12 @@ export default defineUntypedSchema({
     },
     server: {
       fs: {
-        strict: false,
         allow: {
           $resolve: async (val, get) => [
             await get('buildDir'),
             await get('srcDir'),
             await get('rootDir'),
+            await get('workspaceDir'),
             ...(await get('modulesDir')),
             ...val ?? []
           ]

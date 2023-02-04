@@ -1,6 +1,7 @@
 import { resolve } from 'pathe'
 import { applyDefaults } from 'untyped'
-import { loadConfig, LoadConfigOptions } from 'c12'
+import type { LoadConfigOptions } from 'c12'
+import { loadConfig } from 'c12'
 import type { NuxtOptions, NuxtConfig } from '@nuxt/schema'
 import { NuxtConfigSchema } from '@nuxt/schema'
 
@@ -34,11 +35,12 @@ export async function loadNuxtConfig (opts: LoadNuxtConfigOptions): Promise<Nuxt
   }
 
   // Filter layers
-  nuxtConfig._layers = layers.filter(layer => layer.configFile && !layer.configFile.endsWith('.nuxtrc'))
+  const _layers = layers.filter(layer => layer.configFile && !layer.configFile.endsWith('.nuxtrc'))
+  ;(nuxtConfig as any)._layers = _layers
 
   // Ensure at least one layer remains (without nuxt.config)
-  if (!nuxtConfig._layers.length) {
-    nuxtConfig._layers.push({
+  if (!_layers.length) {
+    _layers.push({
       cwd,
       config: {
         rootDir: cwd,

@@ -15,13 +15,13 @@ export default defineBuildConfig({
         }
       }
     },
-    'src/index'
+    'src/index',
   ],
   externals: [
     // Type imports
-    'vue-meta',
     'vue-router',
     'vue-bundle-renderer',
+    '@unhead/schema',
     'vue',
     'hookable',
     'nitropack',

@@ -10,7 +10,7 @@ import { defineNuxtCommand } from './index'
 export default defineNuxtCommand({
   meta: {
     name: 'build',
-    usage: 'npx nuxi build [--prerender] [rootDir]',
+    usage: 'npx nuxi build [--prerender] [--dotenv] [rootDir]',
     description: 'Build nuxt for production deployment'
   },
   async invoke (args) {
@@ -23,6 +23,15 @@ export default defineNuxtCommand({
 
     const nuxt = await loadNuxt({
       rootDir,
+      dotenv: {
+        cwd: rootDir,
+        fileName: args.dotenv
+      },
+      defaults: {
+        experimental: {
+          payloadExtraction: args.prerender ? true : undefined
+        }
+      },
       overrides: {
         _generate: args.prerender
       }

@@ -1,4 +1,4 @@
-import { NuxtApp } from '../nuxt'
+import type { NuxtApp } from '../nuxt'
 
 declare global {
   namespace NodeJS {
@@ -17,7 +17,7 @@ declare global {
   }
 }
 
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface App<HostElement> {
     $nuxt: NuxtApp

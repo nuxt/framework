@@ -1,11 +1,12 @@
 import type { Nuxt, NuxtApp, NuxtTemplate } from '@nuxt/schema'
 import { genArrayFromRaw, genDynamicImport, genExport, genImport, genObjectFromRawEntries, genString, genSafeVariableName } from 'knitwork'
-import { resolve, isAbsolute, join, relative } from 'pathe'
-
+import { isAbsolute, join, relative, resolve } from 'pathe'
 import { resolveSchema, generateTypes } from 'untyped'
 import escapeRE from 'escape-string-regexp'
 import { hash } from 'ohash'
 import { camelCase } from 'scule'
+import { resolvePath } from 'mlly'
+import { filename } from 'pathe/utils'
 
 export interface TemplateContext {
   nuxt: Nuxt
@@ -17,7 +18,7 @@ export const vueShim: NuxtTemplate = {
   getContents: () =>
     [
       'declare module \'*.vue\' {',
-      '  import { DefineComponent } from \'@vue/runtime-core\'',
+      '  import { DefineComponent } from \'vue\'',
       '  const component: DefineComponent<{}, {}, any>',
       '  export default component',
       '}'
@@ -58,7 +59,7 @@ export const clientPluginTemplate: NuxtTemplate<TemplateContext> = {
     const imports: string[] = []
     for (const plugin of clientPlugins) {
       const path = relative(ctx.nuxt.options.rootDir, plugin.src)
-      const variable = genSafeVariableName(path).replace(/_(45|46|47)/g, '_') + '_' + hash(path)
+      const variable = genSafeVariableName(filename(plugin.src)).replace(/_(45|46|47)/g, '_') + '_' + hash(path)
       exports.push(variable)
       imports.push(genImport(plugin.src, variable))
     }
@@ -77,7 +78,7 @@ export const serverPluginTemplate: NuxtTemplate<TemplateContext> = {
     const imports: string[] = []
     for (const plugin of serverPlugins) {
       const path = relative(ctx.nuxt.options.rootDir, plugin.src)
-      const variable = genSafeVariableName(path).replace(/_(45|46|47)/g, '_') + '_' + hash(path)
+      const variable = genSafeVariableName(filename(path)).replace(/_(45|46|47)/g, '_') + '_' + hash(path)
       exports.push(variable)
       imports.push(genImport(plugin.src, variable))
     }
@@ -107,7 +108,7 @@ declare module '#app' {
   interface NuxtApp extends NuxtAppInjections { }
 }
 
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   interface ComponentCustomProperties extends NuxtAppInjections { }
 }
 
@@ -125,13 +126,18 @@ export const schemaTemplate: NuxtTemplate<TemplateContext> = {
       importName: m.entryPath || m.meta?.name
     })).filter(m => m.configKey && m.name && !adHocModules.includes(m.name))
 
+    const relativeRoot = relative(resolve(nuxt.options.buildDir, 'types'), nuxt.options.rootDir)
+    const getImportName = (name: string) => (name.startsWith('.') ? './' + join(relativeRoot, name) : name).replace(/\.\w+$/, '')
+    const modules = moduleInfo.map(meta => [genString(meta.configKey), getImportName(meta.importName)])
+
     return [
       "import { NuxtModule } from '@nuxt/schema'",
       "declare module '@nuxt/schema' {",
       '  interface NuxtConfig {',
-      ...moduleInfo.filter(Boolean).map(meta =>
-        `    [${genString(meta.configKey)}]?: typeof ${genDynamicImport(meta.importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
+      ...modules.map(([configKey, importName]) =>
+        `    [${configKey}]?: typeof ${genDynamicImport(importName, { wrapper: false })}.default extends NuxtModule<infer O> ? Partial<O> : Record<string, any>`
       ),
+      modules.length > 0 ? `    modules?: (NuxtModule | string | [NuxtModule | string, Record<string, any>] | ${modules.map(([configKey, importName]) => `[${genString(importName)}, NuxtConfig[${configKey}]]`).join(' | ')})[],` : '',
       '  }',
       generateTypes(await resolveSchema(Object.fromEntries(Object.entries(nuxt.options.runtimeConfig).filter(([key]) => key !== 'public'))),
         {
@@ -159,10 +165,9 @@ export const layoutTemplate: NuxtTemplate<TemplateContext> = {
   filename: 'layouts.mjs',
   getContents ({ app }) {
     const layoutsObject = genObjectFromRawEntries(Object.values(app.layouts).map(({ name, file }) => {
-      return [name, `defineAsyncComponent(${genDynamicImport(file, { interopDefault: true })})`]
+      return [name, genDynamicImport(file, { interopDefault: true })]
     }))
     return [
-      'import { defineAsyncComponent } from \'vue\'',
       `export default ${layoutsObject}`
     ].join('\n')
   }
@@ -210,9 +215,9 @@ declare module '@nuxt/schema' {
 export const appConfigTemplate: NuxtTemplate = {
   filename: 'app.config.mjs',
   write: true,
-  getContents: ({ app, nuxt }) => {
+  getContents: async ({ app, nuxt }) => {
     return `
-import { defuFn } from 'defu'
+import { defuFn } from '${await _resolveId('defu')}'
 
 const inlineConfig = ${JSON.stringify(nuxt.options.appConfig, null, 2)}
 
@@ -225,9 +230,9 @@ export default defuFn(${app.configs.map((_id: string, index: number) => `cfg${in
 
 export const publicPathTemplate: NuxtTemplate = {
   filename: 'paths.mjs',
-  getContents ({ nuxt }) {
+  async getContents ({ nuxt }) {
     return [
-      'import { joinURL } from \'ufo\'',
+      `import { joinURL } from '${await _resolveId('ufo')}'`,
       !nuxt.options.dev && 'import { useRuntimeConfig } from \'#internal/nitro\'',
 
       nuxt.options.dev
@@ -244,8 +249,11 @@ export const publicPathTemplate: NuxtTemplate = {
       '  return path.length ? joinURL(publicBase, ...path) : publicBase',
       '}',
 
-      'globalThis.__buildAssetsURL = buildAssetsURL',
-      'globalThis.__publicAssetsURL = publicAssetsURL'
+      // On server these are registered directly in packages/nuxt/src/core/runtime/nitro/renderer.ts
+      'if (process.client) {',
+      '  globalThis.__buildAssetsURL = buildAssetsURL',
+      '  globalThis.__publicAssetsURL = publicAssetsURL',
+      '}'
     ].filter(Boolean).join('\n')
   }
 }
@@ -256,4 +264,18 @@ export const nuxtConfigTemplate = {
   getContents: (ctx: TemplateContext) => {
     return Object.entries(ctx.nuxt.options.app).map(([k, v]) => `export const ${camelCase('app-' + k)} = ${JSON.stringify(v)}`).join('\n\n')
   }
+}
+
+// TODO: Move to kit
+function _resolveId (id: string) {
+  return resolvePath(id, {
+    url: [
+      // @ts-ignore
+      global.__NUXT_PREPATHS__,
+      import.meta.url,
+      process.cwd(),
+      // @ts-ignore
+      global.__NUXT_PATHS__
+    ]
+  })
 }

@@ -2,12 +2,13 @@ import * as vite from 'vite'
 import { join, resolve } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import type { InlineConfig, SSROptions } from 'vite'
-import { logger, isIgnored, resolvePath } from '@nuxt/kit'
+import { logger, isIgnored, resolvePath, addVitePlugin } from '@nuxt/kit'
 import type { Options } from '@vitejs/plugin-vue'
 import replace from '@rollup/plugin-replace'
 import { sanitizeFilePath } from 'mlly'
 import { withoutLeadingSlash } from 'ufo'
 import { filename } from 'pathe/utils'
+import { resolveTSConfig } from 'pkg-types'
 import { buildClient } from './client'
 import { buildServer } from './server'
 import virtual from './plugins/virtual'
@@ -56,6 +57,7 @@ export async function bundle (nuxt: Nuxt) {
         },
         css: resolveCSSOptions(nuxt),
         build: {
+          copyPublicDir: false,
           rollupOptions: {
             output: {
               sanitizeFileName: sanitizeFilePath,
@@ -84,7 +86,8 @@ export async function bundle (nuxt: Nuxt) {
           watch: { ignored: isIgnored },
           fs: {
             allow: [
-              nuxt.options.appDir
+              nuxt.options.appDir,
+              ...nuxt.options._layers.map(l => l.config.rootDir)
             ]
           }
         }
@@ -102,6 +105,16 @@ export async function bundle (nuxt: Nuxt) {
 
   await nuxt.callHook('vite:extend', ctx)
 
+  // Add type-checking
+  if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
+    const checker = await import('vite-plugin-checker').then(r => r.default)
+    addVitePlugin(checker({
+      vueTsc: {
+        tsconfigPath: await resolveTSConfig(ctx.nuxt.options.rootDir)
+      }
+    }), { client: !nuxt.options.ssr, server: nuxt.options.ssr })
+  }
+
   nuxt.hook('vite:serverCreated', (server: vite.ViteDevServer, env) => {
     // Invalidate virtual modules when templates are re-generated
     ctx.nuxt.hook('app:templatesGenerated', () => {
@@ -114,7 +127,7 @@ export async function bundle (nuxt: Nuxt) {
 
     if (
       nuxt.options.vite.warmupEntry !== false &&
-      // https://github.com/nuxt/framework/issues/7510
+      // https://github.com/nuxt/nuxt/issues/14898
       !(env.isServer && ctx.nuxt.options.vite.devBundler !== 'legacy')
     ) {
       const start = Date.now()
