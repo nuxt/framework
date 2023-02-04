@@ -27,7 +27,7 @@ export function useState <T> (...args: any): Ref<T> {
     const newInit = init?.toString()
 
     if (defineInit && newInit && defineInit !== newInit) {
-      console.warn(`useState has been called for \`${key}\` with multiple initializers. This may be safe, or it may indicate an issue. Initializers:`, defineInit, newInit)
+      console.warn(`useState has been called for \`${key}\` with multiple initializers. This may be safe, or it may indicate an issue. Initializers:`, [defineInit, newInit].join(', '))
     }
     if (defineInit === undefined && newInit) {
       map.set(key, newInit)
