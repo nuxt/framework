@@ -4,6 +4,8 @@ import type { NuxtPage } from '@nuxt/schema'
 import { resolveFiles, useNuxt } from '@nuxt/kit'
 import { genImport, genDynamicImport, genArrayFromRaw, genSafeVariableName } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
+import { filename } from 'pathe/utils'
+import { hash } from 'ohash'
 import { uniqueBy } from '../core/utils'
 
 enum SegmentParserState {
@@ -181,7 +183,7 @@ function parseSegment (segment: string) {
         } else if (PARAM_CHAR_RE.test(c)) {
           buffer += c
         } else {
-          // eslint-disable-next-line no-console
+
           // console.debug(`[pages]Ignored character "${c}" while building param "${buffer}" from "segment"`)
         }
         break
@@ -223,12 +225,11 @@ function prepareRoutes (routes: NuxtPage[], parent?: NuxtPage) {
 }
 
 export function normalizeRoutes (routes: NuxtPage[], metaImports: Set<string> = new Set()): { imports: Set<string>, routes: string } {
-  const nuxt = useNuxt()
   return {
     imports: metaImports,
     routes: genArrayFromRaw(routes.map((page) => {
       const file = normalize(page.file)
-      const metaImportName = genSafeVariableName(relative(nuxt.options.rootDir, file)) + 'Meta'
+      const metaImportName = genSafeVariableName(filename(file) + hash(file)) + 'Meta'
       metaImports.add(genImport(`${file}?macro=true`, [{ name: 'default', as: metaImportName }]))
 
       let aliasCode = `${metaImportName}?.alias || []`

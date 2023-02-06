@@ -5,9 +5,9 @@ import type { AppConfig } from '@nuxt/schema'
 
 import type { FetchError } from 'ofetch'
 import type { NavigationFailure, RouteLocationNormalizedLoaded, RouteLocationRaw, useRouter as vueUseRouter } from 'vue-router'
+import { callWithNuxt, isVue3 } from '#app'
+import NuxtPage from '~~/../../../packages/nuxt/src/pages/runtime/page'
 import type { NavigateToOptions } from '~~/../../../packages/nuxt/dist/app/composables/router'
-// eslint-disable-next-line import/order
-import { isVue3 } from '#app'
 import { defineNuxtConfig } from '~~/../../../packages/nuxt/config'
 import { useRouter } from '#imports'
 
@@ -156,6 +156,12 @@ describe('head', () => {
   })
 })
 
+describe('components', () => {
+  it('includes types for NuxtPage', () => {
+    expectTypeOf(NuxtPage).not.toBeAny()
+  })
+})
+
 describe('composables', () => {
   it('allows providing default refs', () => {
     expectTypeOf(useState('test', () => ref('hello'))).toEqualTypeOf<Ref<string>>()
@@ -178,7 +184,7 @@ describe('composables', () => {
 
   it('infer request url string literal from server/api routes', () => {
     // request can accept dynamic string type
-    const dynamicStringUrl: string = 'https://example.com/api'
+    const dynamicStringUrl = 'https://example.com/api'
     expectTypeOf(useFetch(dynamicStringUrl).data).toEqualTypeOf<Ref<unknown>>()
 
     // request param should infer string literal type / show auto-complete hint base on server routes, ex: '/api/hello'
@@ -223,5 +229,12 @@ describe('app config', () => {
 describe('extends type declarations', () => {
   it('correctly adds references to tsconfig', () => {
     expectTypeOf<import('bing').BingInterface>().toEqualTypeOf<{ foo: 'bar' }>()
+  })
+})
+
+describe('composables inference', () => {
+  it('callWithNuxt', () => {
+    const bob = callWithNuxt({} as any, () => true)
+    expectTypeOf<typeof bob>().toEqualTypeOf<boolean | Promise<boolean>>()
   })
 })

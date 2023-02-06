@@ -1,5 +1,5 @@
 import { defineUntypedSchema } from 'untyped'
-import defu from 'defu'
+import { defu } from 'defu'
 import type { AppHeadMetaObject } from '../types/meta'
 
 export default defineUntypedSchema({
@@ -75,8 +75,8 @@ export default defineUntypedSchema({
      *       { children: ':root { color: red }', type: 'text/css' }
      *     ],
      *     noscript: [
-     *       // <noscript>Javascript is required</noscript>
-     *       { children: 'Javascript is required' }
+     *       // <noscript>JavaScript is required</noscript>
+     *       { children: 'JavaScript is required' }
      *     ]
      *   }
      * }

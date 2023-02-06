@@ -14,11 +14,13 @@
     <NuxtLink to="/">
       Link
     </NuxtLink>
-    <NestedSugarCounter :count="12" />
+    <NestedSugarCounter :multiplier="2" />
     <CustomComponent />
+    <Spin>Test</Spin>
     <component :is="`test${'-'.toString()}global`" />
     <component :is="`with${'-'.toString()}suffix`" />
     <ClientWrapped ref="clientRef" style="color: red;" class="client-only" />
+    <ServerOnlyComponent class="server-only" style="background-color: gray;" />
   </div>
 </template>
 

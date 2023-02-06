@@ -1,11 +1,13 @@
 import { pathToFileURL } from 'node:url'
 import { createUnplugin } from 'unplugin'
 import { isAbsolute, relative } from 'pathe'
+import type { Node } from 'estree-walker'
 import { walk } from 'estree-walker'
 import MagicString from 'magic-string'
 import { hash } from 'ohash'
 import type { CallExpression } from 'estree'
 import { parseQuery, parseURL } from 'ufo'
+import { findStaticImports, parseStaticImport } from 'mlly'
 
 export interface ComposableKeysOptions {
   sourcemap: boolean
@@ -31,17 +33,21 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
       const { 0: script = code, index: codeIndex = 0 } = code.match(/(?<=<script[^>]*>)[\S\s.]*?(?=<\/script>)/) || { index: 0, 0: code }
       const s = new MagicString(code)
       // https://github.com/unjs/unplugin/issues/90
+      let imports: Set<string> | undefined
       let count = 0
       const relativeID = isAbsolute(id) ? relative(options.rootDir, id) : id
       walk(this.parse(script, {
         sourceType: 'module',
         ecmaVersion: 'latest'
-      }), {
+      }) as Node, {
         enter (_node) {
           if (_node.type !== 'CallExpression' || (_node as CallExpression).callee.type !== 'Identifier') { return }
           const node: CallExpression = _node as CallExpression
           const name = 'name' in node.callee && node.callee.name
           if (!name || !keyedFunctions.includes(name) || node.arguments.length >= 4) { return }
+
+          imports = imports || detectImportNames(script)
+          if (imports.has(name)) { return }
 
           switch (name) {
             case 'useState':
@@ -79,3 +85,24 @@ export const composableKeysPlugin = createUnplugin((options: ComposableKeysOptio
     }
   }
 })
+
+const NUXT_IMPORT_RE = /nuxt|#app|#imports/
+
+function detectImportNames (code: string) {
+  const imports = findStaticImports(code)
+  const names = new Set<string>()
+  for (const i of imports) {
+    if (NUXT_IMPORT_RE.test(i.specifier)) { continue }
+    const { namedImports, defaultImport, namespacedImport } = parseStaticImport(i)
+    for (const name in namedImports || {}) {
+      names.add(namedImports![name])
+    }
+    if (defaultImport) {
+      names.add(defaultImport)
+    }
+    if (namespacedImport) {
+      names.add(namespacedImport)
+    }
+  }
+  return names
+}
