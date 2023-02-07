@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import path from 'pathe'
+import path from 'node:path'
 import { describe, it, expect, vi } from 'vitest'
 import * as VueCompilerSFC from 'vue/compiler-sfc'
 import type { Plugin } from 'vite'
@@ -17,10 +17,10 @@ vi.mock('node:crypto', () => ({
 
 // mock due to differences of results between windows and linux
 vi.spyOn(path, 'relative').mockImplementation((from: string, to: string) => {
-  if(to.includes('SomeComponent')) {
+  if (to.includes('SomeComponent')) {
     return to
   }
-  return path.relative(from, to)
+  return path.resolve(from, to)
 })
 
 function vuePlugin (options: Options) {
