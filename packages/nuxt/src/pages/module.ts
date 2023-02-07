@@ -140,8 +140,11 @@ export default defineNuxtModule({
     addVitePlugin(PageMetaPlugin.vite(pageMetaOptions))
     addWebpackPlugin(PageMetaPlugin.webpack(pageMetaOptions))
 
+    // Add prefetching support for middleware & layouts
+    addPlugin(resolve(runtimeDir, 'plugins/prefetch.client'))
+
     // Add router plugin
-    addPlugin(resolve(runtimeDir, 'router'))
+    addPlugin(resolve(runtimeDir, 'plugins/router'))
 
     const getSources = (pages: NuxtPage[]): string[] => pages.flatMap(p =>
       [relative(nuxt.options.srcDir, p.file), ...getSources(p.children || [])]
@@ -182,6 +185,10 @@ export default defineNuxtModule({
     nuxt.options.vite.optimizeDeps = nuxt.options.vite.optimizeDeps || {}
     nuxt.options.vite.optimizeDeps.include = nuxt.options.vite.optimizeDeps.include || []
     nuxt.options.vite.optimizeDeps.include.push('vue-router')
+
+    nuxt.options.vite.resolve = nuxt.options.vite.resolve || {}
+    nuxt.options.vite.resolve.dedupe = nuxt.options.vite.resolve.dedupe || []
+    nuxt.options.vite.resolve.dedupe.push('vue-router')
 
     // Add router options template
     addTemplate({

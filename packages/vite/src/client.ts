@@ -1,45 +1,38 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { join, relative, resolve } from 'pathe'
+import { join, resolve } from 'pathe'
 import * as vite from 'vite'
 import vuePlugin from '@vitejs/plugin-vue'
 import viteJsxPlugin from '@vitejs/plugin-vue-jsx'
 import type { ServerOptions } from 'vite'
 import { logger } from '@nuxt/kit'
 import { getPort } from 'get-port-please'
-import { joinURL, withoutLeadingSlash, withoutTrailingSlash } from 'ufo'
-import defu from 'defu'
+import { joinURL, withoutLeadingSlash } from 'ufo'
+import { defu } from 'defu'
 import type { OutputOptions } from 'rollup'
 import { defineEventHandler } from 'h3'
-import { genString } from 'knitwork'
 import { cacheDirPlugin } from './plugins/cache-dir'
 import type { ViteBuildContext, ViteOptions } from './vite'
 import { devStyleSSRPlugin } from './plugins/dev-ssr-css'
+import { runtimePathsPlugin } from './plugins/paths'
 import { viteNodePlugin } from './vite-node'
 
 export async function buildClient (ctx: ViteBuildContext) {
-  const buildAssetsDir = withoutLeadingSlash(
-    withoutTrailingSlash(ctx.nuxt.options.app.buildAssetsDir)
-  )
-  const relativeToBuildAssetsDir = (filename: string) => './' + relative(buildAssetsDir, filename)
   const clientConfig: vite.InlineConfig = vite.mergeConfig(ctx.config, {
     entry: ctx.entry,
     base: ctx.nuxt.options.dev
       ? joinURL(ctx.nuxt.options.app.baseURL.replace(/^\.\//, '/') || '/', ctx.nuxt.options.app.buildAssetsDir)
       : './',
     experimental: {
-      renderBuiltUrl: (filename, { type, hostType, hostId }) => {
-        // When rendering inline styles, we can skip loading CSS chunk that matches the current page
-        if (ctx.nuxt.options.experimental.inlineSSRStyles && hostType === 'js' && filename.endsWith('.css')) {
-          return {
-            runtime: `!globalThis.__hydrated ? ${genString(relativeToBuildAssetsDir(hostId))} : ${genString(relativeToBuildAssetsDir(filename))}`
-          }
-        }
+      renderBuiltUrl: (filename, { type, hostType }) => {
         if (hostType !== 'js' || type === 'asset') {
           // In CSS we only use relative paths until we craft a clever runtime CSS hack
           return { relative: true }
         }
         return { runtime: `globalThis.__publicAssetsURL(${JSON.stringify(filename)})` }
       }
+    },
+    css: {
+      devSourcemap: ctx.nuxt.options.sourcemap.client
     },
     define: {
       'process.server': false,
@@ -71,6 +64,9 @@ export async function buildClient (ctx: ViteBuildContext) {
       devStyleSSRPlugin({
         srcDir: ctx.nuxt.options.srcDir,
         buildAssetsURL: joinURL(ctx.nuxt.options.app.baseURL, ctx.nuxt.options.app.buildAssetsDir)
+      }),
+      runtimePathsPlugin({
+        sourcemap: ctx.nuxt.options.sourcemap.client
       }),
       viteNodePlugin(ctx)
     ],
@@ -130,11 +126,17 @@ export async function buildClient (ctx: ViteBuildContext) {
         next()
       }
     })
+
     const viteMiddleware = defineEventHandler(async (event) => {
       // Workaround: vite devmiddleware modifies req.url
       const originalURL = event.node.req.url!
-      // @ts-expect-error _skip_transform is a private property
-      event.node.req._skip_transform = !originalURL.startsWith(clientConfig.base!)
+
+      const viteRoutes = viteServer.middlewares.stack.map(m => m.route).filter(r => r.length > 1)
+      if (!originalURL.startsWith(clientConfig.base!) && !viteRoutes.some(route => originalURL.startsWith(route))) {
+        // @ts-expect-error _skip_transform is a private property
+        event.node.req._skip_transform = true
+      }
+
       await new Promise((resolve, reject) => {
         viteServer.middlewares.handle(event.node.req, event.node.res, (err: Error) => {
           event.node.req.url = originalURL

@@ -22,6 +22,14 @@ export default defineNuxtConfig({
   },
   buildDir: process.env.NITRO_BUILD_DIR,
   builder: process.env.TEST_WITH_WEBPACK ? 'webpack' : 'vite',
+  build: {
+    transpile: [
+      (ctx) => {
+        if (typeof ctx.isDev !== 'boolean') { throw new TypeError('context not passed') }
+        return false
+      }
+    ]
+  },
   theme: './extends/bar',
   css: ['~/assets/global.css'],
   extends: [
@@ -41,13 +49,25 @@ export default defineNuxtConfig({
     }
   },
   runtimeConfig: {
+    baseURL: '',
+    baseAPIToken: '',
     privateConfig: 'secret_key',
     public: {
+      needsFallback: undefined,
       testConfig: 123
     }
   },
   modules: [
-    '~/modules/example',
+    [
+      '~/modules/example',
+      {
+        typeTest (val) {
+          // @ts-expect-error module type defines val as boolean
+          const b: string = val
+          return !!b
+        }
+      }
+    ],
     function (_, nuxt) {
       if (process.env.TEST_WITH_WEBPACK) { return }
 
@@ -100,6 +120,28 @@ export default defineNuxtConfig({
         export: 'namedExport',
         filePath: '~/other-components-folder/named-export'
       })
+    },
+    'vite:extendConfig' (config) {
+      config.plugins!.push({
+        name: 'nuxt:server',
+        configureServer (server) {
+          server.middlewares.use((req, res, next) => {
+            if (req.url === '/vite-plugin-without-path') {
+              res.end('vite-plugin without path')
+              return
+            }
+            next()
+          })
+
+          server.middlewares.use((req, res, next) => {
+            if (req.url === '/__nuxt-test') {
+              res.end('vite-plugin with __nuxt prefix')
+              return
+            }
+            next()
+          })
+        }
+      })
     }
   },
   experimental: {
@@ -107,7 +149,8 @@ export default defineNuxtConfig({
     componentIslands: true,
     reactivityTransform: true,
     treeshakeClientOnly: true,
-    payloadExtraction: true
+    payloadExtraction: true,
+    configSchema: true
   },
   appConfig: {
     fromNuxtConfig: true,
