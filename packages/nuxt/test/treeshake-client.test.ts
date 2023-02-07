@@ -20,7 +20,7 @@ vi.spyOn(path, 'relative').mockImplementation((from: string, to: string) => {
   if(to.includes('SomeComponent')) {
     return to
   }
-  return path.resolve(from, to)
+  return path.relative(from, to)
 })
 
 function vuePlugin (options: Options) {
