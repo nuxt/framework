@@ -17,16 +17,14 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   // Resolve config
   const _nitroConfig = ((nuxt.options as any).nitro || {}) as NitroConfig
 
-  const excludePattern = new RegExp(
-    `node_modules\\/(?!${nuxt.options._layers
-      .flatMap(l => [
-        l.cwd.match(/(?<=\/)node_modules\/(.+)$/)?.[1],
-        l.cwd.match(/\.pnpm\/.+\/node_modules\/(.+)$/)?.[1]
-      ])
-      .filter((dir): dir is string => Boolean(dir))
-      .map(dir => escapeRE(dir))
-      .join('|')})`
-  )
+  const excludePaths = nuxt.options._layers
+    .flatMap(l => [
+      l.cwd.match(/(?<=\/)node_modules\/(.+)$/)?.[1],
+      l.cwd.match(/\.pnpm\/.+\/node_modules\/(.+)$/)?.[1]
+    ])
+    .filter((dir): dir is string => Boolean(dir))
+    .map(dir => escapeRE(dir))
+  const excludePattern = excludePaths.length ? [new RegExp(`node_modules\\/(?!${excludePaths.join('|')})`)] : []
 
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
     debug: nuxt.options.debug,
@@ -47,20 +45,11 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
           name: 'publicAssetsURL',
           from: resolve(distDir, 'core/runtime/nitro/paths')
         }
-      ]
+      ],
+      exclude: [...excludePattern, /[\\/]\.git[\\/]/]
     },
     esbuild: {
-      options: {
-        exclude: [
-          excludePattern
-        ]
-      }
-    },
-    imports: {
-      exclude: [
-        excludePattern,
-        /[\\/]\.git[\\/]/
-      ]
+      options: { exclude: excludePattern }
     },
     analyze: nuxt.options.build.analyze && {
       template: 'treemap',
