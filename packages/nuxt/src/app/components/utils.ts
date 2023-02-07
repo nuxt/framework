@@ -1,5 +1,6 @@
 import { defineComponent, h } from 'vue'
 import type { Component } from 'vue'
+// eslint-disable-next-line
 import { isString, isPromise, isArray } from '@vue/shared'
 
 const Fragment = defineComponent({
