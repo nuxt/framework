@@ -1,5 +1,7 @@
-import { ref, Ref, watch } from 'vue'
-import { parse, serialize, CookieParseOptions, CookieSerializeOptions } from 'cookie-es'
+import type { Ref } from 'vue'
+import { ref, watch } from 'vue'
+import type { CookieParseOptions, CookieSerializeOptions } from 'cookie-es'
+import { parse, serialize } from 'cookie-es'
 import { appendHeader } from 'h3'
 import type { H3Event } from 'h3'
 import destr from 'destr'
@@ -13,24 +15,31 @@ export interface CookieOptions<T = any> extends _CookieOptions {
   decode?(value: string): T
   encode?(value: T): string
   default?: () => T | Ref<T>
+  watch?: boolean | 'shallow'
 }
 
 export interface CookieRef<T> extends Ref<T> {}
 
 const CookieDefaults: CookieOptions<any> = {
   path: '/',
+  watch: true,
   decode: val => destr(decodeURIComponent(val)),
   encode: val => encodeURIComponent(typeof val === 'string' ? val : JSON.stringify(val))
 }
 
-export function useCookie <T = string> (name: string, _opts?: CookieOptions<T>): CookieRef<T> {
+export function useCookie <T = string | null> (name: string, _opts?: CookieOptions<T>): CookieRef<T> {
   const opts = { ...CookieDefaults, ..._opts }
   const cookies = readRawCookies(opts) || {}
 
   const cookie = ref<T | undefined>(cookies[name] as any ?? opts.default?.())
 
   if (process.client) {
-    watch(cookie, () => { writeClientCookie(name, cookie.value, opts as CookieSerializeOptions) })
+    const callback = () => { writeClientCookie(name, cookie.value, opts as CookieSerializeOptions) }
+    if (opts.watch) {
+      watch(cookie, callback, { deep: opts.watch !== 'shallow' })
+    } else {
+      callback()
+    }
   } else if (process.server) {
     const nuxtApp = useNuxtApp()
     const writeFinalCookieValue = () => {

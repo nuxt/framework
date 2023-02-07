@@ -2,9 +2,12 @@ import querystring from 'node:querystring'
 import { resolve } from 'pathe'
 import webpack from 'webpack'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
-
+import { logger } from '@nuxt/kit'
 import { joinURL } from 'ufo'
-import { applyPresets, WebpackConfigContext } from '../utils/config'
+import ForkTSCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
+
+import type { WebpackConfigContext } from '../utils/config'
+import { applyPresets } from '../utils/config'
 import { nuxt } from '../presets/nuxt'
 
 export function client (ctx: WebpackConfigContext) {
@@ -80,13 +83,12 @@ function clientOptimization (_ctx: WebpackConfigContext) {
 function clientPlugins (ctx: WebpackConfigContext) {
   const { options, config } = ctx
 
-  // Webpack Bundle Analyzer
+  // webpack Bundle Analyzer
   // https://github.com/webpack-contrib/webpack-bundle-analyzer
   if (!ctx.isDev && ctx.name === 'client' && options.webpack.analyze) {
     const statsDir = resolve(options.buildDir, 'stats')
 
-    // @ts-ignore
-    config.plugins.push(new BundleAnalyzerPlugin({
+    config.plugins!.push(new BundleAnalyzerPlugin({
       analyzerMode: 'static',
       defaultSizes: 'gzip',
       generateStatsFile: true,
@@ -95,5 +97,20 @@ function clientPlugins (ctx: WebpackConfigContext) {
       statsFilename: resolve(statsDir, `${ctx.name}.json`),
       ...options.webpack.analyze === true ? {} : options.webpack.analyze
     }))
+  }
+
+  // Normally type checking runs in server config, but in `ssr: false` there is
+  // no server build, so we inject here instead.
+  if (!ctx.nuxt.options.ssr) {
+    if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
+      config.plugins!.push(new ForkTSCheckerWebpackPlugin({
+        logger,
+        typescript: {
+          extensions: {
+            vue: { compiler: '@vue/compiler-sfc' }
+          }
+        }
+      }))
+    }
   }
 }

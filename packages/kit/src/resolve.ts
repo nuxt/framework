@@ -83,7 +83,7 @@ export async function resolvePath (path: string, opts: ResolvePathOptions = {}):
 /**
  * Try to resolve first existing file in paths
  */
-export async function findPath (paths: string|string[], opts?: ResolvePathOptions, pathType: 'file' | 'dir' = 'file'): Promise<string|null> {
+export async function findPath (paths: string | string[], opts?: ResolvePathOptions, pathType: 'file' | 'dir' = 'file'): Promise<string | null> {
   if (!Array.isArray(paths)) {
     paths = [paths]
   }
@@ -110,8 +110,8 @@ export function resolveAlias (path: string, alias?: Record<string, string>): str
 }
 
 export interface Resolver {
-  resolve(...path: string[]): string
-  resolvePath(path: string, opts?: ResolvePathOptions): Promise<string>
+  resolve (...path: string[]): string
+  resolvePath (path: string, opts?: ResolvePathOptions): Promise<string>
 }
 
 /**
@@ -141,7 +141,7 @@ async function existsSensitive (path: string) {
   return dirFiles.includes(basename(path))
 }
 
-// Usage note: We assume path existance is already ensured
+// Usage note: We assume path existence is already ensured
 async function isDirectory (path: string) {
   return (await fsp.lstat(path)).isDirectory()
 }

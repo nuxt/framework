@@ -1,8 +1,8 @@
-import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, useNuxt, addPluginTemplate, logger, updateTemplates } from '@nuxt/kit'
+import { addVitePlugin, addWebpackPlugin, defineNuxtModule, addTemplate, resolveAlias, useNuxt, updateTemplates } from '@nuxt/kit'
 import { isAbsolute, join, relative, resolve, normalize } from 'pathe'
-import { createUnimport, Import, scanDirExports, toImports, Unimport } from 'unimport'
-import { ImportsOptions, ImportPresetWithDeprecation } from '@nuxt/schema'
-import defu from 'defu'
+import type { Import, Unimport } from 'unimport'
+import { createUnimport, scanDirExports } from 'unimport'
+import type { ImportsOptions, ImportPresetWithDeprecation } from '@nuxt/schema'
 import { TransformPlugin } from './transform'
 import { defaultPresets } from './presets'
 
@@ -20,45 +20,36 @@ export default defineNuxtModule<Partial<ImportsOptions>>({
     transform: {
       include: [],
       exclude: undefined
-    }
+    },
+    virtualImports: ['#imports']
   },
   async setup (options, nuxt) {
-    // TODO: remove deprecation warning
-    // @ts-ignore
-    if (nuxt.options.autoImports) {
-      logger.warn('`autoImports` config is deprecated, use `imports` instead.')
-      // @ts-ignore
-      options = defu(nuxt.options.autoImports, options)
-    }
+    // TODO: fix sharing of defaults between invocations of modules
+    const presets = JSON.parse(JSON.stringify(options.presets)) as ImportPresetWithDeprecation[]
 
     // Allow modules extending sources
-    await nuxt.callHook('imports:sources', options.presets as ImportPresetWithDeprecation[])
-
-    options.presets?.forEach((_i) => {
-      const i = _i as ImportPresetWithDeprecation | string
-      if (typeof i !== 'string' && i.names && !i.imports) {
-        i.imports = i.names
-        logger.warn('imports: presets.names is deprecated, use presets.imports instead')
-      }
-    })
+    await nuxt.callHook('imports:sources', presets)
 
     // Filter disabled sources
     // options.sources = options.sources.filter(source => source.disabled !== true)
 
     // Create a context to share state between module internals
     const ctx = createUnimport({
-      presets: options.presets,
-      imports: options.imports,
-      virtualImports: ['#imports'],
+      ...options,
       addons: {
-        vueTemplate: options.autoImport
-      }
+        vueTemplate: options.autoImport,
+        ...options.addons
+      },
+      presets
     })
+
+    await nuxt.callHook('imports:context', ctx)
 
     // composables/ dirs from all layers
     let composablesDirs: string[] = []
     for (const layer of nuxt.options._layers) {
       composablesDirs.push(resolve(layer.config.srcDir, 'composables'))
+      composablesDirs.push(resolve(layer.config.srcDir, 'utils'))
       for (const dir of (layer.config.imports?.dirs ?? [])) {
         if (!dir) {
           continue
@@ -77,29 +68,21 @@ export default defineNuxtModule<Partial<ImportsOptions>>({
     })
     nuxt.options.alias['#imports'] = join(nuxt.options.buildDir, 'imports')
 
-    // Transpile and injection
-    if (nuxt.options.dev && options.global) {
-      // Add all imports to globalThis in development mode
-      addPluginTemplate({
-        filename: 'imports.mjs',
-        getContents: async () => {
-          const imports = await ctx.getImports()
-          const importStatement = toImports(imports)
-          const globalThisSet = imports.map(i => `globalThis.${i.as} = ${i.as};`).join('\n')
-          return `${importStatement}\n\n${globalThisSet}\n\nexport default () => {};`
-        }
-      })
-    } else {
-      // Transform to inject imports in production mode
-      addVitePlugin(TransformPlugin.vite({ ctx, options, sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client }))
-      addWebpackPlugin(TransformPlugin.webpack({ ctx, options, sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client }))
-    }
+    // Transform to inject imports in production mode
+    addVitePlugin(TransformPlugin.vite({ ctx, options, sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client }))
+    addWebpackPlugin(TransformPlugin.webpack({ ctx, options, sourcemap: nuxt.options.sourcemap.server || nuxt.options.sourcemap.client }))
+
+    const priorities = nuxt.options._layers.map((layer, i) => [layer.config.srcDir, -i] as const).sort(([a], [b]) => b.length - a.length)
 
     const regenerateImports = async () => {
       ctx.clearDynamicImports()
       await ctx.modifyDynamicImports(async (imports) => {
         // Scan composables/
-        imports.push(...await scanDirExports(composablesDirs))
+        const composableImports = await scanDirExports(composablesDirs)
+        for (const i of composableImports) {
+          i.priority = i.priority || priorities.find(([dir]) => i.from.startsWith(dir))?.[1]
+        }
+        imports.push(...composableImports)
         // Modules extending
         await nuxt.callHook('imports:extend', imports)
       })

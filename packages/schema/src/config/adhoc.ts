@@ -7,8 +7,7 @@ export default defineUntypedSchema({
    * Any components in the directories configured here can be used throughout your
    * pages, layouts (and other components) without needing to explicitly import them.
    *
-   * @default {{ dirs: [`~/components`] }}
-   * @see https://v3.nuxtjs.org/guide/directory-structure/components
+   * @see https://nuxt.com/docs/guide/directory-structure/components
    * @type {boolean | typeof import('../src/types/components').ComponentsOptions | typeof import('../src/types/components').ComponentsOptions['dirs']}
    */
   components: {
@@ -23,17 +22,26 @@ export default defineUntypedSchema({
     }
   },
 
-  /** @deprecated Please use `imports` config. */
-  autoImports: null,
-
   /**
    * Configure how Nuxt auto-imports composables into your application.
    *
-   * @see [Nuxt 3 documentation](https://v3.nuxtjs.org/guide/directory-structure/composables)
+   * @see [Nuxt 3 documentation](https://nuxt.com/docs/guide/directory-structure/composables)
    * @type {typeof import('../src/types/imports').ImportsOptions}
    */
   imports: {
     global: false,
+
+    /**
+     * An array of custom directories that will be auto-imported.
+     * Note that this option will not override the default directories (~/composables, ~/utils).
+     * @example
+     * ```js
+     * imports: {
+     *   // Auto-import pinia stores defined in `~/stores`
+     *   dirs: ['stores']
+     * }
+     * ```
+     */
     dirs: []
   },
 

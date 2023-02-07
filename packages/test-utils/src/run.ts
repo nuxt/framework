@@ -1,12 +1,17 @@
+import { resolve } from 'pathe'
+import { distDir } from './dirs'
+
 export interface RunTestOptions {
   rootDir: string,
   dev?: boolean,
   watch?: boolean
   runner?: 'vitest'
+  globalSetup?: boolean
 }
 
 const RunTestDefaults: Partial<RunTestOptions> = {
-  runner: 'vitest'
+  runner: 'vitest',
+  globalSetup: true
 }
 
 export async function runTests (opts: RunTestOptions) {
@@ -21,8 +26,10 @@ export async function runTests (opts: RunTestOptions) {
     process.env.NUXT_TEST_DEV = 'true'
   }
 
-  // @ts-ignore missing types
-  const { startVitest } = await import('vitest/dist/node.mjs') as typeof import('vitest/dist/node')
+  // Consumed by recoverContextFromEnv()
+  process.env.NUXT_TEST_OPTIONS = JSON.stringify(opts)
+
+  const { startVitest } = await import('vitest/node')
   const succeeded = await startVitest(
     'test',
     [] /* argv */,
@@ -38,6 +45,20 @@ export async function runTests (opts: RunTestOptions) {
     {
       esbuild: {
         tsconfigRaw: '{}'
+      },
+      test: {
+        dir: opts.rootDir,
+        deps: {
+          inline: [
+            distDir,
+            '@nuxt/test-utils',
+            '@nuxt/test-utils-edge'
+          ]
+        },
+        globals: true,
+        globalSetup: [
+          ...opts.globalSetup ? [resolve(distDir, './runtime/global-setup')] : []
+        ]
       }
     }
   )

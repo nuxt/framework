@@ -4,7 +4,7 @@ import { defineNuxtModule, resolveAlias, addTemplate, addPluginTemplate, updateT
 import type { Component, ComponentsDir, ComponentsOptions } from '@nuxt/schema'
 import { distDir } from '../dirs'
 import { clientFallbackAutoIdPlugin } from './client-fallback-auto-id'
-import { componentsPluginTemplate, componentsTemplate, componentsTypeTemplate } from './templates'
+import { componentsPluginTemplate, componentsTemplate, componentsIslandsTemplate, componentsTypeTemplate } from './templates'
 import { scanComponents } from './scan'
 import { loaderPlugin } from './loader'
 import { TreeShakeTemplatePlugin } from './tree-shake'
@@ -15,7 +15,7 @@ function compareDirByPathLength ({ path: pathA }: { path: string }, { path: path
   return pathB.split(/[\\/]/).filter(Boolean).length - pathA.split(/[\\/]/).filter(Boolean).length
 }
 
-const DEFAULT_COMPONENTS_DIRS_RE = /\/components$|\/components\/global$/
+const DEFAULT_COMPONENTS_DIRS_RE = /\/components(\/global|\/islands)?$/
 
 type getComponentsT = (mode?: 'client' | 'server' | 'all') => Component[]
 
@@ -45,6 +45,7 @@ export default defineNuxtModule<ComponentsOptions>({
       }
       if (dir === true || dir === undefined) {
         return [
+          { path: resolve(cwd, 'components/islands'), island: true },
           { path: resolve(cwd, 'components/global'), global: true },
           { path: resolve(cwd, 'components') }
         ]
@@ -79,11 +80,8 @@ export default defineNuxtModule<ComponentsOptions>({
         const transpile = typeof dirOptions.transpile === 'boolean' ? dirOptions.transpile : 'auto'
         const extensions = (dirOptions.extensions || nuxt.options.extensions).map(e => e.replace(/^\./g, ''))
 
-        dirOptions.level = Number(dirOptions.level || 0)
-
         const present = isDirectory(dirPath)
         if (!present && !DEFAULT_COMPONENTS_DIRS_RE.test(dirOptions.path)) {
-          // eslint-disable-next-line no-console
           console.warn('Components directory not found: `' + dirPath + '`')
         }
 
@@ -120,6 +118,12 @@ export default defineNuxtModule<ComponentsOptions>({
     addTemplate({ ...componentsTemplate, filename: 'components.server.mjs', options: { getComponents, mode: 'server' } })
     // components.client.mjs
     addTemplate({ ...componentsTemplate, filename: 'components.client.mjs', options: { getComponents, mode: 'client' } })
+    // components.islands.mjs
+    if (nuxt.options.experimental.componentIslands) {
+      addTemplate({ ...componentsIslandsTemplate, filename: 'components.islands.mjs', options: { getComponents } })
+    } else {
+      addTemplate({ filename: 'components.islands.mjs', getContents: () => 'export default {}' })
+    }
 
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       const mode = isClient ? 'client' : 'server'
@@ -197,7 +201,8 @@ export default defineNuxtModule<ComponentsOptions>({
       config.plugins.push(loaderPlugin.vite({
         sourcemap: nuxt.options.sourcemap[mode],
         getComponents,
-        mode
+        mode,
+        experimentalComponentIslands: nuxt.options.experimental.componentIslands
       }))
       if (nuxt.options.experimental.treeshakeClientOnly && isServer) {
         config.plugins.push(TreeShakeTemplatePlugin.vite({
@@ -217,7 +222,8 @@ export default defineNuxtModule<ComponentsOptions>({
         config.plugins.push(loaderPlugin.webpack({
           sourcemap: nuxt.options.sourcemap[mode],
           getComponents,
-          mode
+          mode,
+          experimentalComponentIslands: nuxt.options.experimental.componentIslands
         }))
         if (nuxt.options.experimental.treeshakeClientOnly && mode === 'server') {
           config.plugins.push(TreeShakeTemplatePlugin.webpack({

@@ -2,7 +2,8 @@ import { isAbsolute } from 'pathe'
 import webpack from 'webpack'
 import ForkTSCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 import { logger } from '@nuxt/kit'
-import { WebpackConfigContext, applyPresets, getWebpackConfig } from '../utils/config'
+import type { WebpackConfigContext } from '../utils/config'
+import { applyPresets, getWebpackConfig } from '../utils/config'
 import { nuxt } from '../presets/nuxt'
 import { node } from '../presets/node'
 
@@ -89,6 +90,13 @@ function serverPlugins (ctx: WebpackConfigContext) {
 
   // Add type-checking
   if (ctx.nuxt.options.typescript.typeCheck === true || (ctx.nuxt.options.typescript.typeCheck === 'build' && !ctx.nuxt.options.dev)) {
-    config.plugins.push(new ForkTSCheckerWebpackPlugin({ logger }))
+    config.plugins!.push(new ForkTSCheckerWebpackPlugin({
+      logger,
+      typescript: {
+        extensions: {
+          vue: { compiler: '@vue/compiler-sfc' }
+        }
+      }
+    }))
   }
 }

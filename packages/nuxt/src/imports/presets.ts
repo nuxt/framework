@@ -1,4 +1,5 @@
-import { defineUnimportPreset, InlinePreset } from 'unimport'
+import type { InlinePreset } from 'unimport'
+import { defineUnimportPreset } from 'unimport'
 
 const commonPresets: InlinePreset[] = [
   // #head
@@ -6,7 +7,8 @@ const commonPresets: InlinePreset[] = [
     from: '#head',
     imports: [
       'useHead',
-      'useMeta'
+      'useSeoMeta',
+      'useServerSeoMeta'
     ]
   }),
   // vue-demi (mocked)
@@ -24,6 +26,7 @@ const appPreset = defineUnimportPreset({
   imports: [
     'useAsyncData',
     'useLazyAsyncData',
+    'useNuxtData',
     'refreshNuxtData',
     'clearNuxtData',
     'defineNuxtComponent',
@@ -38,14 +41,13 @@ const appPreset = defineUnimportPreset({
     'useRequestEvent',
     'setResponseStatus',
     'setPageLayout',
+    'onNuxtReady',
     'useRouter',
     'useRoute',
-    'useActiveRoute',
     'defineNuxtRouteMiddleware',
     'navigateTo',
     'abortNavigation',
     'addRouteMiddleware',
-    'throwError',
     'showError',
     'clearError',
     'isNuxtError',
@@ -61,6 +63,15 @@ const appPreset = defineUnimportPreset({
     'loadPayload',
     'preloadPayload',
     'isPrerendered'
+  ]
+})
+
+// vue-router
+const routerPreset = defineUnimportPreset({
+  from: '#app',
+  imports: [
+    'onBeforeRouteLeave',
+    'onBeforeRouteUpdate'
   ]
 })
 
@@ -134,11 +145,27 @@ const vuePreset = defineUnimportPreset({
     'useCssVars',
     'useSlots',
     'useTransitionState'
-  ] as Array<keyof typeof import('vue')>
+  ]
+})
+
+const vueTypesPreset = defineUnimportPreset({
+  from: 'vue',
+  type: true,
+  imports: [
+    'Component',
+    'ComponentPublicInstance',
+    'ComputedRef',
+    'InjectionKey',
+    'PropType',
+    'Ref',
+    'VNode'
+  ]
 })
 
 export const defaultPresets: InlinePreset[] = [
   ...commonPresets,
   appPreset,
-  vuePreset
+  routerPreset,
+  vuePreset,
+  vueTypesPreset
 ]

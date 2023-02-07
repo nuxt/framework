@@ -19,10 +19,9 @@ export default defineBuildConfig({
   ],
   externals: [
     // Type imports
-    'vue-meta',
     'vue-router',
     'vue-bundle-renderer',
-    '@vueuse/head',
+    '@unhead/schema',
     'vue',
     'hookable',
     'nitropack',

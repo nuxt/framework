@@ -14,14 +14,14 @@
       <!-- don't render if one child fails in ssr -->
       <ClientFallback>
         <BreakInSetup />
-        <SugarCounter id="sugar-counter" :count="count" />
+        <SugarCounter id="sugar-counter" :multiplier="multiplier" />
       </ClientFallback>
       <!-- nested children fails -->
       <ClientFallback>
         <div>
           <BreakInSetup />
         </div>
-        <SugarCounter :count="count" />
+        <SugarCounter :multiplier="multiplier" />
       </ClientFallback>
       <!-- should be rendered -->
       <ClientFallback fallback-tag="p">
@@ -39,12 +39,12 @@
       <ClientFallbackNonStatefulSetup />
       <ClientFallbackNonStateful />
     </div>
-    <button id="increment-count" @click="count++">
+    <button id="increment-count" @click="multiplier++">
       increment count
     </button>
   </div>
 </template>
 
 <script setup>
-const count = ref(0)
+const multiplier = ref(0)
 </script>

@@ -1,4 +1,5 @@
 import type { NitroEventHandler, NitroDevEventHandler, Nitro } from 'nitropack'
+import { normalize } from 'pathe'
 import { useNuxt } from './context'
 
 /**
@@ -10,7 +11,8 @@ function normalizeHandlerMethod (handler: NitroEventHandler) {
   const [, method = undefined] = handler.handler.match(/\.(get|head|patch|post|put|delete|connect|options|trace)(\.\w+)*$/) || []
   return {
     method,
-    ...handler
+    ...handler,
+    handler: normalize(handler.handler)
   }
 }
 
@@ -28,6 +30,34 @@ export function addServerHandler (handler: NitroEventHandler) {
  */
 export function addDevServerHandler (handler: NitroDevEventHandler) {
   useNuxt().options.devServerHandlers.push(handler)
+}
+
+/**
+ * Adds a Nitro plugin
+ */
+export function addServerPlugin (plugin: string) {
+  const nuxt = useNuxt()
+  nuxt.options.nitro.plugins = nuxt.options.nitro.plugins || []
+  nuxt.options.nitro.plugins.push(normalize(plugin))
+}
+
+/**
+ * Adds routes to be prerendered
+ */
+export function addPrerenderRoutes (routes: string | string[]) {
+  const nuxt = useNuxt()
+  if (!Array.isArray(routes)) {
+    routes = [routes]
+  }
+  routes = routes.filter(Boolean)
+  if (!routes.length) {
+    return
+  }
+  nuxt.hook('prerender:routes', (ctx) => {
+    for (const route of routes) {
+      ctx.routes.add(route)
+    }
+  })
 }
 
 /**

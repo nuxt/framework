@@ -1,4 +1,4 @@
-import { KeepAliveProps, TransitionProps, UnwrapRef } from 'vue'
+import type { KeepAliveProps, TransitionProps, UnwrapRef } from 'vue'
 import type { RouteLocationNormalized, RouteLocationNormalizedLoaded, RouteRecordRedirectOption } from 'vue-router'
 import type { NuxtError } from '#app'
 
@@ -29,6 +29,10 @@ export interface PageMeta {
   layoutTransition?: boolean | TransitionProps
   key?: false | string | ((route: RouteLocationNormalizedLoaded) => string)
   keepalive?: boolean | KeepAliveProps
+  /** You may define a name for this page's route. */
+  name?: string
+  /** You may define a path matcher, if you have a more complex pattern than can be expressed with the file name. */
+  path?: string
   /** Set to `false` to avoid scrolling to top on page navigations */
   scrollToTop?: boolean
 }
@@ -40,8 +44,8 @@ declare module 'vue-router' {
 const warnRuntimeUsage = (method: string) =>
   console.warn(
     `${method}() is a compiler-hint helper that is only usable inside ` +
-      'the script block of a single file component. Its arguments should be ' +
-      'compiled away and passing it at runtime has no effect.'
+    'the script block of a single file component which is also a page. Its arguments should be ' +
+    'compiled away and passing it at runtime has no effect.'
   )
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

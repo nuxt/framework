@@ -3,6 +3,7 @@ import { globby } from 'globby'
 import { pascalCase, splitByCase } from 'scule'
 import type { Component, ComponentsDir } from '@nuxt/schema'
 import { isIgnored } from '@nuxt/kit'
+// eslint-disable-next-line vue/prefer-import-from-vue
 import { hyphenate } from '@vue/shared'
 import { withTrailingSlash } from 'ufo'
 
@@ -62,9 +63,10 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
        */
       let fileName = basename(filePath, extname(filePath))
 
-      const global = /\.(global)$/.test(fileName) || dir.global
-      const mode = (fileName.match(/(?<=\.)(client|server)(\.global)?$/)?.[1] || 'all') as 'client' | 'server' | 'all'
-      fileName = fileName.replace(/(\.(client|server))?(\.global)?$/, '')
+      const island = /\.(island)(\.global)?$/.test(fileName) || dir.island
+      const global = /\.(global)(\.island)?$/.test(fileName) || dir.global
+      const mode = island ? 'server' : (fileName.match(/(?<=\.)(client|server)(\.global|\.island)*$/)?.[1] || 'all') as 'client' | 'server' | 'all'
+      fileName = fileName.replace(/(\.(client|server))?(\.global|\.island)*$/, '')
 
       if (fileName.toLowerCase() === 'index') {
         fileName = dir.pathPrefix === false ? basename(dirname(filePath)) : '' /* inherits from path */
@@ -107,6 +109,7 @@ export async function scanComponents (dirs: ComponentsDir[], srcDir: string): Pr
         // inheritable from directory configuration
         mode,
         global,
+        island,
         prefetch: Boolean(dir.prefetch),
         preload: Boolean(dir.preload),
         // specific to the file

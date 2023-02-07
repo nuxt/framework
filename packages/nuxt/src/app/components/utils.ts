@@ -3,6 +3,7 @@ import type { Component } from 'vue'
 import { isString, isPromise, isArray } from '@vue/shared'
 
 const Fragment = defineComponent({
+  name: 'FragmentWrapper',
   setup (_props, { slots }) {
     return () => slots.default?.()
   }

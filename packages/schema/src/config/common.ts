@@ -1,9 +1,9 @@
 import { defineUntypedSchema } from 'untyped'
 import { join, resolve } from 'pathe'
 import { isDebug, isDevelopment } from 'std-env'
-import defu from 'defu'
+import { defu } from 'defu'
 import { findWorkspaceDir } from 'pkg-types'
-import { RuntimeConfig } from '../types/config'
+import type { RuntimeConfig } from '../types/config'
 
 export default defineUntypedSchema({
   /**
@@ -199,9 +199,6 @@ export default defineUntypedSchema({
    */
   modules: [],
 
-  /** @deprecated Use `modules` instead */
-  buildModules: [],
-
   /**
    * Customize default directory structure used by Nuxt.
    *
@@ -338,6 +335,7 @@ export default defineUntypedSchema({
     $resolve: async (val, get) => [
       '**/*.stories.{js,ts,jsx,tsx}', // ignore storybook files
       '**/*.{spec,test}.{js,ts,jsx,tsx}', // ignore tests
+      '**/*.d.ts', // ignore type declarations
       '.output',
       await get('ignorePrefix') && `**/${await get('ignorePrefix')}*.*`
     ].concat(val).filter(Boolean)
@@ -425,29 +423,18 @@ export default defineUntypedSchema({
    * @type {typeof import('../src/types/config').RuntimeConfig}
    */
   runtimeConfig: {
-    $resolve: async (val: RuntimeConfig, get) => defu(val, {
-      ...await get('publicRuntimeConfig'),
-      ...await get('privateRuntimeConfig'),
-      public: await get('publicRuntimeConfig'),
-      app: {
-        baseURL: (await get('app')).baseURL,
-        buildAssetsDir: (await get('app')).buildAssetsDir,
-        cdnURL: (await get('app')).cdnURL,
-      }
-    })
+    $resolve: async (val: RuntimeConfig, get) => {
+      provideFallbackValues(val)
+      return defu(val, {
+        public: {},
+        app: {
+          baseURL: (await get('app')).baseURL,
+          buildAssetsDir: (await get('app')).buildAssetsDir,
+          cdnURL: (await get('app')).cdnURL,
+        }
+      })
+    }
   },
-
-  /**
-   * @type {typeof import('../src/types/config').PrivateRuntimeConfig}
-   * @deprecated Use `runtimeConfig` option.
-   */
-  privateRuntimeConfig: {},
-
-  /**
-   * @type {typeof import('../src/types/config').PublicRuntimeConfig}
-   * @deprecated Use `runtimeConfig` option with `public` key (`runtimeConfig.public.*`).
-   */
-  publicRuntimeConfig: {},
 
   /**
    * Additional app configuration
@@ -458,4 +445,16 @@ export default defineUntypedSchema({
    * @type {typeof import('../src/types/config').AppConfig}
    */
   appConfig: {},
+
+  $schema: {}
 })
+
+function provideFallbackValues (obj: Record<string, any>) {
+  for (const key in obj) {
+    if (typeof obj[key] === 'undefined' || obj[key] === null) {
+      obj[key] = ''
+    } else if (typeof obj[key] === 'object') {
+      provideFallbackValues(obj[key])
+    }
+  }
+}

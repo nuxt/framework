@@ -26,7 +26,7 @@ const globalProps = {
     type: Boolean,
     default: undefined
   },
-  class: String,
+  class: [String, Object, Array],
   contenteditable: {
     type: Boolean,
     default: undefined
@@ -64,57 +64,6 @@ const globalProps = {
   title: String,
   translate: String
 }
-
-// <script>
-
-let scriptDeprecated = false
-
-/** @deprecated */
-export const Script = defineComponent({
-  // eslint-disable-next-line vue/no-reserved-component-names
-  name: 'Script',
-  inheritAttrs: false,
-  props: {
-    ...globalProps,
-    async: Boolean,
-    crossorigin: {
-      type: [Boolean, String as () => CrossOrigin],
-      default: undefined
-    },
-    defer: Boolean,
-    fetchpriority: String as PropType<FetchPriority>,
-    integrity: String,
-    nomodule: Boolean,
-    nonce: String,
-    referrerpolicy: String as PropType<ReferrerPolicy>,
-    src: String,
-    type: String,
-    /** @deprecated **/
-    charset: String,
-    /** @deprecated **/
-    language: String,
-    body: Boolean,
-    renderPriority: [String, Number]
-  },
-  setup: setupForUseMeta((props, { slots }) => {
-    if (process.dev && !scriptDeprecated) {
-      console.log('[nuxt] `<Script>` is deprecated and may be removed in a future release. We advise using `useHead()` directly.')
-      scriptDeprecated = true
-    }
-
-    const script = { ...props }
-    const textContent = (slots.default?.() || [])
-      .filter(({ children }) => children)
-      .map(({ children }) => children)
-      .join('')
-    if (textContent) {
-      script.children = textContent
-    }
-    return {
-      script: [script]
-    }
-  })
-})
 
 // <noscript>
 export const NoScript = defineComponent({

@@ -1,6 +1,8 @@
-import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch, unref } from 'vue'
+import { onBeforeMount, onServerPrefetch, onUnmounted, ref, getCurrentInstance, watch, unref, toRef } from 'vue'
 import type { Ref, WatchSource } from 'vue'
-import { NuxtApp, useNuxtApp } from '../nuxt'
+import type { NuxtApp } from '../nuxt'
+import { useNuxtApp } from '../nuxt'
+import { createError } from './error'
 
 export type _Transform<Input = any, Output = any> = (input: Input) => Output
 
@@ -12,7 +14,14 @@ export type PickFrom<T, K extends Array<string>> = T extends Array<any>
     : Pick<T, K[number]>
   : T
 
-export type KeysOf<T> = Array<keyof T extends string ? keyof T : string>
+export type KeysOf<T> = Array<
+  T extends T // Include all keys of union types, not just common keys
+  ? keyof T extends string
+    ? keyof T
+    : string
+  : never
+>
+
 export type KeyOfRes<Transform extends _Transform> = KeysOf<ReturnType<Transform>>
 
 type MultiWatchSources = (WatchSource<unknown> | object)[]
@@ -28,7 +37,6 @@ export interface AsyncDataOptions<
   transform?: Transform
   pick?: PickKeys
   watch?: MultiWatchSources
-  initialCache?: boolean
   immediate?: boolean
 }
 
@@ -61,7 +69,7 @@ export function useAsyncData<
 > (
   handler: (ctx?: NuxtApp) => Promise<DataT>,
   options?: AsyncDataOptions<DataT, Transform, PickKeys>
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true>
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null>
 export function useAsyncData<
   DataT,
   DataE = Error,
@@ -71,13 +79,13 @@ export function useAsyncData<
   key: string,
   handler: (ctx?: NuxtApp) => Promise<DataT>,
   options?: AsyncDataOptions<DataT, Transform, PickKeys>
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true>
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null>
 export function useAsyncData<
   DataT,
   DataE = Error,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-> (...args: any[]): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
+> (...args: any[]): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null> {
   const autoKey = typeof args[args.length - 1] === 'string' ? args.pop() : undefined
   if (typeof args[0] !== 'string') { args.unshift(autoKey) }
 
@@ -96,25 +104,21 @@ export function useAsyncData<
   options.server = options.server ?? true
   options.default = options.default ?? getDefault
 
-  // TODO: remove support for `defer` in Nuxt 3 RC
-  if ((options as any).defer) {
-    console.warn('[useAsyncData] `defer` has been renamed to `lazy`. Support for `defer` will be removed in RC.')
-  }
-  options.lazy = options.lazy ?? (options as any).defer ?? false
-  options.initialCache = options.initialCache ?? true
+  options.lazy = options.lazy ?? false
   options.immediate = options.immediate ?? true
 
   // Setup nuxt instance payload
   const nuxt = useNuxtApp()
 
-  const useInitialCache = () => (nuxt.isHydrating || options.initialCache) && nuxt.payload.data[key] !== undefined
+  const getCachedData = () => nuxt.isHydrating ? nuxt.payload.data[key] : nuxt.static.data[key]
+  const hasCachedData = () => getCachedData() !== undefined
 
   // Create or use a shared asyncData entity
   if (!nuxt._asyncData[key]) {
     nuxt._asyncData[key] = {
-      data: ref(useInitialCache() ? nuxt.payload.data[key] : options.default?.() ?? null),
-      pending: ref(!useInitialCache()),
-      error: ref(nuxt.payload._errors[key] ?? null)
+      data: ref(getCachedData() ?? options.default?.() ?? null),
+      pending: ref(!hasCachedData()),
+      error: ref(nuxt.payload._errors[key] ? createError(nuxt.payload._errors[key]) : null)
     }
   }
   // TODO: Else, Soemhow check for confliciting keys with different defaults or fetcher
@@ -129,8 +133,8 @@ export function useAsyncData<
       (nuxt._asyncDataPromises[key] as any).cancelled = true
     }
     // Avoid fetching same key that is already fetched
-    if (opts._initial && useInitialCache()) {
-      return nuxt.payload.data[key]
+    if (opts._initial && hasCachedData()) {
+      return getCachedData()
     }
     asyncData.pending.value = true
     // TODO: Cancel previous promise
@@ -168,7 +172,8 @@ export function useAsyncData<
         asyncData.pending.value = false
         nuxt.payload.data[key] = asyncData.data.value
         if (asyncData.error.value) {
-          nuxt.payload._errors[key] = true
+          // We use `createError` and its .toJSON() property to normalize the error
+          nuxt.payload._errors[key] = createError(asyncData.error.value)
         }
         delete nuxt._asyncDataPromises[key]
       })
@@ -183,7 +188,11 @@ export function useAsyncData<
   // Server side
   if (process.server && fetchOnServer && options.immediate) {
     const promise = initialFetch()
-    onServerPrefetch(() => promise)
+    if (getCurrentInstance()) {
+      onServerPrefetch(() => promise)
+    } else {
+      nuxt.hook('app:created', () => promise)
+    }
   }
 
   // Client side
@@ -202,7 +211,7 @@ export function useAsyncData<
       }
     }
 
-    if (fetchOnServer && nuxt.isHydrating && key in nuxt.payload.data) {
+    if (fetchOnServer && nuxt.isHydrating && hasCachedData()) {
       // 1. Hydration (server: true): no fetch
       asyncData.pending.value = false
     } else if (instance && ((nuxt.payload.serverRendered && nuxt.isHydrating) || options.lazy) && options.immediate) {
@@ -240,7 +249,7 @@ export function useLazyAsyncData<
 > (
   handler: (ctx?: NuxtApp) => Promise<DataT>,
   options?: Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'lazy'>
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true>
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null>
 export function useLazyAsyncData<
   DataT,
   DataE = Error,
@@ -250,18 +259,31 @@ export function useLazyAsyncData<
   key: string,
   handler: (ctx?: NuxtApp) => Promise<DataT>,
   options?: Omit<AsyncDataOptions<DataT, Transform, PickKeys>, 'lazy'>
-): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true>
+): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null>
 export function useLazyAsyncData<
   DataT,
   DataE = Error,
   Transform extends _Transform<DataT> = _Transform<DataT, DataT>,
   PickKeys extends KeyOfRes<Transform> = KeyOfRes<Transform>
-> (...args: any[]): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null | true> {
+> (...args: any[]): AsyncData<PickFrom<ReturnType<Transform>, PickKeys>, DataE | null> {
   const autoKey = typeof args[args.length - 1] === 'string' ? args.pop() : undefined
   if (typeof args[0] !== 'string') { args.unshift(autoKey) }
   const [key, handler, options] = args as [string, (ctx?: NuxtApp) => Promise<DataT>, AsyncDataOptions<DataT, Transform, PickKeys>]
   // @ts-ignore
   return useAsyncData(key, handler, { ...options, lazy: true }, null)
+}
+
+export function useNuxtData<DataT = any> (key: string): { data: Ref<DataT | null> } {
+  const nuxt = useNuxtApp()
+
+  // Initialize value when key is not already set
+  if (!(key in nuxt.payload.data)) {
+    nuxt.payload.data[key] = null
+  }
+
+  return {
+    data: toRef(nuxt.payload.data, key)
+  }
 }
 
 export async function refreshNuxtData (keys?: string | string[]): Promise<void> {
