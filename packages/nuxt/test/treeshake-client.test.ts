@@ -1,4 +1,3 @@
-
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, it, expect, vi } from 'vitest'
@@ -15,6 +14,14 @@ vi.mock('node:crypto', () => ({
   digest: vi.fn().mockReturnValue('one-hash-to-rule-them-all'),
   createHash: vi.fn().mockReturnThis()
 }))
+
+// mock due to differences of results between windows and linux
+vi.spyOn(path, 'relative').mockImplementation((from: string, to: string) => {
+  if(to.includes('SomeComponent')) {
+    return to
+  }
+  return path.resolve(from, to)
+})
 
 function vuePlugin (options: Options) {
   return {
