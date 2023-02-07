@@ -24,7 +24,9 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     ])
     .filter((dir): dir is string => Boolean(dir))
     .map(dir => escapeRE(dir))
-  const excludePattern = excludePaths.length ? [new RegExp(`node_modules\\/(?!${excludePaths.join('|')})`)] : []
+  const excludePattern = excludePaths.length
+    ? [new RegExp(`node_modules\\/(?!${excludePaths.join('|')})`)]
+    : [/node_modules/]
 
   const nitroConfig: NitroConfig = defu(_nitroConfig, <NitroConfig>{
     debug: nuxt.options.debug,
