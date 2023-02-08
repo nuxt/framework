@@ -193,7 +193,12 @@ export default defineNuxtModule<ComponentsOptions>({
       const mode = isClient ? 'client' : 'server'
 
       config.plugins = config.plugins || []
-
+      if (nuxt.options.experimental.treeshakeClientOnly && isServer) {
+        config.plugins.push(TreeShakeTemplatePlugin.vite({
+          sourcemap: nuxt.options.sourcemap[mode],
+          getComponents
+        }))
+      }
       config.plugins.push(clientFallbackAutoIdPlugin.vite({
         sourcemap: nuxt.options.sourcemap[mode],
         rootDir: nuxt.options.rootDir
@@ -204,17 +209,17 @@ export default defineNuxtModule<ComponentsOptions>({
         mode,
         experimentalComponentIslands: nuxt.options.experimental.componentIslands
       }))
-      if (nuxt.options.experimental.treeshakeClientOnly && isServer) {
-        config.plugins.push(TreeShakeTemplatePlugin.vite({
-          sourcemap: nuxt.options.sourcemap[mode],
-          getComponents
-        }))
-      }
     })
     nuxt.hook('webpack:config', (configs) => {
       configs.forEach((config) => {
         const mode = config.name === 'client' ? 'client' : 'server'
         config.plugins = config.plugins || []
+        if (nuxt.options.experimental.treeshakeClientOnly && mode === 'server') {
+          config.plugins.push(TreeShakeTemplatePlugin.webpack({
+            sourcemap: nuxt.options.sourcemap[mode],
+            getComponents
+          }))
+        }
         config.plugins.push(clientFallbackAutoIdPlugin.webpack({
           sourcemap: nuxt.options.sourcemap[mode],
           rootDir: nuxt.options.rootDir
@@ -225,12 +230,6 @@ export default defineNuxtModule<ComponentsOptions>({
           mode,
           experimentalComponentIslands: nuxt.options.experimental.componentIslands
         }))
-        if (nuxt.options.experimental.treeshakeClientOnly && mode === 'server') {
-          config.plugins.push(TreeShakeTemplatePlugin.webpack({
-            sourcemap: nuxt.options.sourcemap[mode],
-            getComponents
-          }))
-        }
       })
     })
   }
