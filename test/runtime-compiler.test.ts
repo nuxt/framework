@@ -1,14 +1,13 @@
-import { fileURLToPath } from 'node:url'
 import { isWindows } from 'std-env'
 import { describe, it, expect } from 'vitest'
-import { expectNoClientErrors, renderPage } from './utils'
+import { join } from 'pathe'
+import { expectNoClientErrors, renderPage, fixturesDir } from './utils'
 import { setup, $fetch } from '@nuxt/test-utils'
 
 await setup({
-  rootDir: fileURLToPath(new URL('./fixtures/runtime-compiler', import.meta.url)),
-  browser: true,
+  rootDir: join(fixturesDir, 'runtime-compiler'),
   server: true,
-  dev: !!process.env.NUXT_TEST_DEV,
+  browser: true,
   setupTimeout: (isWindows ? 240 : 120) * 1000
 })
 
