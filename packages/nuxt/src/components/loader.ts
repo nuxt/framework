@@ -4,9 +4,8 @@ import MagicString from 'magic-string'
 import { pascalCase } from 'scule'
 import { resolve } from 'pathe'
 import { distDir } from '../dirs'
-import type { Component, ComponentsOptions } from 'nuxt/schema'
-
 import { isVueTemplate } from './helpers'
+import type { Component, ComponentsOptions } from 'nuxt/schema'
 
 interface LoaderOptions {
   getComponents (): Component[]
