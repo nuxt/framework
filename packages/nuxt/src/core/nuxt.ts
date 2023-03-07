@@ -223,7 +223,14 @@ async function initNuxt (nuxt: Nuxt) {
   // Add <ClientFallback>
   addComponent({
     name: 'ClientFallback',
-    filePath: resolve(nuxt.options.appDir, 'components/client-fallback')
+    filePath: resolve(nuxt.options.appDir, 'components/client-fallback.client'),
+    mode: 'client'
+  })
+
+  addComponent({
+    name: 'ClientFallback',
+    filePath: resolve(nuxt.options.appDir, 'components/client-fallback.server'),
+    mode: 'server'
   })
 
   // Add <NuxtIsland>
