@@ -9,6 +9,6 @@
 
 <script>
 export default defineNuxtComponent({
-  name: 'NuxtClientFallbackStateful'
+  name: 'ClientFallbackStateful'
 })
 </script>

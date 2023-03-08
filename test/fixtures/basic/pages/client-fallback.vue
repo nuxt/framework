@@ -34,10 +34,10 @@
           <div>Hello world !</div>
         </template>
       </NuxtClientFallback>
-      <NuxtClientFallbackStateful />
-      <NuxtClientFallbackStatefulSetup />
-      <NuxtClientFallbackNonStatefulSetup />
-      <NuxtClientFallbackNonStateful />
+      <ClientFallbackStateful />
+      <ClientFallbackStatefulSetup />
+      <ClientFallbackNonStatefulSetup />
+      <ClientFallbackNonStateful />
     </div>
     <button id="increment-count" @click="multiplier++">
       increment count
