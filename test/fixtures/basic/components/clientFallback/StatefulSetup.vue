@@ -2,9 +2,9 @@
 <template>
   <div>
     stateful setup {{ state }}
-    <ClientFallback>
+    <NuxtClientFallback>
       <BreakInSetup class="clientfallback-stateful-setup" />
-    </ClientFallback>
+    </NuxtClientFallback>
   </div>
 </template>
 

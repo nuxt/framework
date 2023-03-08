@@ -220,15 +220,15 @@ async function initNuxt (nuxt: Nuxt) {
     filePath: resolve(nuxt.options.appDir, 'components/nuxt-loading-indicator')
   })
 
-  // Add <ClientFallback>
+  // Add <NuxtClientFallback>
   addComponent({
-    name: 'ClientFallback',
+    name: 'NuxtClientFallback',
     filePath: resolve(nuxt.options.appDir, 'components/client-fallback.client'),
     mode: 'client'
   })
 
   addComponent({
-    name: 'ClientFallback',
+    name: 'NuxtClientFallback',
     filePath: resolve(nuxt.options.appDir, 'components/client-fallback.server'),
     mode: 'server'
   })

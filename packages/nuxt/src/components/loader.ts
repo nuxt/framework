@@ -58,7 +58,7 @@ export const loaderPlugin = createUnplugin((options: LoaderOptions) => {
             return identifier
           }
 
-          const isClientOnly = component.mode === 'client' && component.pascalName !== 'ClientFallback'
+          const isClientOnly = component.mode === 'client' && component.pascalName !== 'NuxtClientFallback'
           if (isClientOnly) {
             imports.add(genImport('#app/components/client-only', [{ name: 'createClientOnly' }]))
             identifier += '_client'

@@ -3,41 +3,41 @@
     Hello World
     <div id="locator-for-playwright">
       <!-- single child -->
-      <ClientFallback fallback-tag="span" class="break-in-ssr" fallback="this failed to render">
+      <NuxtClientFallback fallback-tag="span" class="break-in-ssr" fallback="this failed to render">
         <BreakInSetup />
-      </ClientFallback>
+      </NuxtClientFallback>
       <!-- multi child -->
-      <ClientFallback>
+      <NuxtClientFallback>
         <BreakInSetup class="broke-in-ssr" />
         <BreakInSetup />
-      </ClientFallback>
+      </NuxtClientFallback>
       <!-- don't render if one child fails in ssr -->
-      <ClientFallback>
+      <NuxtClientFallback>
         <BreakInSetup />
         <SugarCounter id="sugar-counter" :multiplier="multiplier" />
-      </ClientFallback>
+      </NuxtClientFallback>
       <!-- nested children fails -->
-      <ClientFallback>
+      <NuxtClientFallback>
         <div>
           <BreakInSetup />
         </div>
         <SugarCounter :multiplier="multiplier" />
-      </ClientFallback>
+      </NuxtClientFallback>
       <!-- should be rendered -->
-      <ClientFallback fallback-tag="p">
+      <NuxtClientFallback fallback-tag="p">
         <FunctionalComponent />
-      </ClientFallback>
+      </NuxtClientFallback>
       <!-- fallback -->
-      <ClientFallback>
+      <NuxtClientFallback>
         <BreakInSetup />
         <template #fallback>
           <div>Hello world !</div>
         </template>
-      </ClientFallback>
-      <ClientFallbackStateful />
-      <ClientFallbackStatefulSetup />
-      <ClientFallbackNonStatefulSetup />
-      <ClientFallbackNonStateful />
+      </NuxtClientFallback>
+      <NuxtClientFallbackStateful />
+      <NuxtClientFallbackStatefulSetup />
+      <NuxtClientFallbackNonStatefulSetup />
+      <NuxtClientFallbackNonStateful />
     </div>
     <button id="increment-count" @click="multiplier++">
       increment count

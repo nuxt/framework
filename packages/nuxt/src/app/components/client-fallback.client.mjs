@@ -1,7 +1,7 @@
 import { defineComponent, createElementBlock } from 'vue'
 
 export default defineComponent({
-  name: 'ClientFallback',
+  name: 'NuxtClientFallback',
   inheritAttrs: false,
   props: {
     uid: {

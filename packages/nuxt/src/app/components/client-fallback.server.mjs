@@ -2,8 +2,8 @@ import { defineComponent, getCurrentInstance, onErrorCaptured } from 'vue'
 import { ssrRenderVNode, ssrRenderAttrs, ssrRenderSlot } from 'vue/server-renderer'
 import { createBuffer } from './utils'
 
-const ClientFallbackServer = defineComponent({
-  name: 'ClientFallback',
+const NuxtClientFallbackServer = defineComponent({
+  name: 'NuxtClientFallback',
   inheritAttrs: false,
   props: {
     uid: {
@@ -71,4 +71,4 @@ const ClientFallbackServer = defineComponent({
   }
 })
 
-export default ClientFallbackServer
+export default NuxtClientFallbackServer

@@ -1,8 +1,8 @@
 <template>
   <div>
     non stateful setup
-    <ClientFallback>
+    <NuxtClientFallback>
       <BreakInSetup class="clientfallback-non-stateful-setup" />
-    </ClientFallback>
+    </NuxtClientFallback>
   </div>
 </template>

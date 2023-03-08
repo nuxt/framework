@@ -1,14 +1,14 @@
 <template>
   <div>
     non stateful
-    <ClientFallback>
+    <NuxtClientFallback>
       <BreakInSetup class="clientfallback-non-stateful" />
-    </ClientFallback>
+    </NuxtClientFallback>
   </div>
 </template>
 
 <script>
 export default defineNuxtComponent({
-  name: 'ClientFallbackStateful'
+  name: 'NuxtClientFallbackStateful'
 })
 </script>

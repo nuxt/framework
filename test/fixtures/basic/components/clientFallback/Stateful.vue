@@ -1,15 +1,15 @@
 <template>
   <div>
     stateful test {{ state }}
-    <ClientFallback>
+    <NuxtClientFallback>
       <BreakInSetup class="clientfallback-stateful" />
-    </ClientFallback>
+    </NuxtClientFallback>
   </div>
 </template>
 
 <script>
 export default defineNuxtComponent({
-  name: 'ClientFallbackStateful',
+  name: 'NuxtClientFallbackStateful',
   setup () {
     const state = ref(0)
     return {
