@@ -49,6 +49,14 @@ export default defineNuxtConfig({
       ]
     }
   },
+  optimization: {
+    keyedComposables: [
+      {
+        name: 'useKeyedComposable',
+        argumentLength: 1
+      }
+    ]
+  },
   runtimeConfig: {
     baseURL: '',
     baseAPIToken: '',
@@ -162,7 +170,7 @@ export default defineNuxtConfig({
   },
   experimental: {
     clientFallback: true,
-    emitRouteChunkError: 'reload',
+    restoreState: true,
     inlineSSRStyles: id => !!id && !id.includes('assets.vue'),
     componentIslands: true,
     reactivityTransform: true,
