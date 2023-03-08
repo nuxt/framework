@@ -161,6 +161,7 @@ export default defineNuxtConfig({
     }
   },
   experimental: {
+    clientFallback: true,
     emitRouteChunkError: 'reload',
     inlineSSRStyles: id => !!id && !id.includes('assets.vue'),
     componentIslands: true,

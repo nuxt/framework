@@ -221,19 +221,21 @@ async function initNuxt (nuxt: Nuxt) {
   })
 
   // Add <NuxtClientFallback>
-  addComponent({
-    name: 'NuxtClientFallback',
-    priority: 10, // built-in that we do not expect the user to override
-    filePath: resolve(nuxt.options.appDir, 'components/client-fallback.client'),
-    mode: 'client'
-  })
+  if (nuxt.options.experimental.clientFallback) {
+    addComponent({
+      name: 'NuxtClientFallback',
+      priority: 10, // built-in that we do not expect the user to override
+      filePath: resolve(nuxt.options.appDir, 'components/client-fallback.client'),
+      mode: 'client'
+    })
 
-  addComponent({
-    name: 'NuxtClientFallback',
-    priority: 10, // built-in that we do not expect the user to override
-    filePath: resolve(nuxt.options.appDir, 'components/client-fallback.server'),
-    mode: 'server'
-  })
+    addComponent({
+      name: 'NuxtClientFallback',
+      priority: 10, // built-in that we do not expect the user to override
+      filePath: resolve(nuxt.options.appDir, 'components/client-fallback.server'),
+      mode: 'server'
+    })
+  }
 
   // Add <NuxtIsland>
   if (nuxt.options.experimental.componentIslands) {
