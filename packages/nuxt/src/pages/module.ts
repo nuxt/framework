@@ -3,12 +3,12 @@ import { defineNuxtModule, addTemplate, addPlugin, addVitePlugin, addWebpackPlug
 import { relative, resolve } from 'pathe'
 import { genString, genImport, genObjectFromRawEntries } from 'knitwork'
 import escapeRE from 'escape-string-regexp'
-import type { NuxtApp, NuxtPage } from '@nuxt/schema'
 import { joinURL } from 'ufo'
 import { distDir } from '../dirs'
 import { resolvePagesRoutes, normalizeRoutes } from './utils'
 import type { PageMetaPluginOptions } from './page-meta'
 import { PageMetaPlugin } from './page-meta'
+import type { NuxtApp, NuxtPage } from 'nuxt/schema'
 
 export default defineNuxtModule({
   meta: {
@@ -43,6 +43,7 @@ export default defineNuxtModule({
       })
       addComponent({
         name: 'NuxtPage',
+        priority: 10, // built-in that we do not expect the user to override
         filePath: resolve(distDir, 'pages/runtime/page-placeholder')
       })
       return
@@ -146,12 +147,15 @@ export default defineNuxtModule({
     // Add router plugin
     addPlugin(resolve(runtimeDir, 'plugins/router'))
 
-    const getSources = (pages: NuxtPage[]): string[] => pages.flatMap(p =>
-      [relative(nuxt.options.srcDir, p.file), ...getSources(p.children || [])]
-    )
+    const getSources = (pages: NuxtPage[]): string[] => pages
+      .filter(p => Boolean(p.file))
+      .flatMap(p =>
+        [relative(nuxt.options.srcDir, p.file as string), ...getSources(p.children || [])]
+      )
 
     // Do not prefetch page chunks
     nuxt.hook('build:manifest', async (manifest) => {
+      if (nuxt.options.dev) { return }
       const pages = await resolvePagesRoutes()
       await nuxt.callHook('pages:extend', pages)
 
@@ -253,6 +257,7 @@ export default defineNuxtModule({
     // Add <NuxtPage>
     addComponent({
       name: 'NuxtPage',
+      priority: 10, // built-in that we do not expect the user to override
       filePath: resolve(distDir, 'pages/runtime/page')
     })
 

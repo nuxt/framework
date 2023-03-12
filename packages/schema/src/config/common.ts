@@ -164,8 +164,7 @@ export default defineUntypedSchema({
 
   /**
    * Whether to enable rendering of HTML - either dynamically (in server mode) or at generate time.
-   * If set to `false` and combined with `static` target, generated pages will simply display
-   * a loading screen with no content.
+   * If set to `false` generated pages will have no content.
    */
   ssr: {
     $resolve: (val) => val ?? true,
@@ -219,6 +218,11 @@ export default defineUntypedSchema({
      * The middleware directory, each file of which will be auto-registered as a Nuxt middleware.
      */
     middleware: 'middleware',
+
+    /**
+     * The modules directory, each file in which will be auto-registered as a Nuxt module.
+     */
+    modules: 'modules',
 
     /**
      * The directory which will be processed to auto-generate your application page routes.

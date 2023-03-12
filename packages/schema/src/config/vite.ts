@@ -18,9 +18,6 @@ export default defineUntypedSchema({
     mode: {
       $resolve: async (val, get) => val ?? (await get('dev') ? 'development' : 'production')
     },
-    logLevel:{
-      $resolve: async (val, get) => val ?? (await get('dev') ? 'warn' : 'info')
-    },
     define: {
       $resolve: async (val, get) => ({
         'process.dev': await get('dev'),
@@ -40,6 +37,14 @@ export default defineUntypedSchema({
       template: {
         compilerOptions: {
           $resolve: async (val, get) => val ?? (await get('vue')).compilerOptions
+        }
+      }
+    },
+    vueJsx: {
+      $resolve: async (val, get) => {
+        return {
+          isCustomElement: (await get('vue')).compilerOptions?.isCustomElement,
+          ...(val || {})
         }
       }
     },
