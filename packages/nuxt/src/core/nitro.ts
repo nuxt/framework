@@ -136,7 +136,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
             vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
           },
       // Vue 3 mocks
-      'estree-walker': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? 'estree-walker' : 'unenv/runtime/mock/proxy',
+      'estree-walker': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? await resolvePath('estree-walker') : 'unenv/runtime/mock/proxy',
       '@babel/parser': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@babel/parser' : 'unenv/runtime/mock/proxy',
       '@vue/compiler-core': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@vue/compiler-core' : 'unenv/runtime/mock/proxy',
       '@vue/compiler-dom': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@vue/compiler-dom' : 'unenv/runtime/mock/proxy',

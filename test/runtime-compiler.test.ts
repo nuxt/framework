@@ -1,11 +1,11 @@
+import { fileURLToPath } from 'node:url'
 import { isWindows } from 'std-env'
 import { describe, it, expect } from 'vitest'
-import { join } from 'pathe'
-import { expectNoClientErrors, renderPage, fixturesDir } from './utils'
 import { setup, $fetch } from '@nuxt/test-utils'
+import { expectNoClientErrors, renderPage } from './utils'
 
 await setup({
-  rootDir: join(fixturesDir, 'runtime-compiler'),
+  rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
   server: true,
   browser: true,
   setupTimeout: (isWindows ? 240 : 120) * 1000
