@@ -117,10 +117,11 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
       ],
       traceInclude: [
         // force include files used in generated code from the runtime-compiler
-        ...(nuxt.options.experimental.externalVue && nuxt.options.vue.runtimeCompiler)
+        ...(nuxt.options.vue.runtimeCompiler)
           ? [
               ...nuxt.options.modulesDir.reduce<string[]>((targets, path) => {
-                targets.push(resolve(path, 'vue/server-renderer/index.js'))
+                const vuePath = resolve(path, 'vue/server-renderer/index.js')
+                if (existsSync(vuePath)) { targets.push(vuePath) }
                 return targets
               }, [])
             ]
@@ -136,11 +137,11 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
             vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
           },
       // Vue 3 mocks
-      'estree-walker': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? await resolvePath('estree-walker') : 'unenv/runtime/mock/proxy',
-      '@babel/parser': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@babel/parser' : 'unenv/runtime/mock/proxy',
-      '@vue/compiler-core': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@vue/compiler-core' : 'unenv/runtime/mock/proxy',
-      '@vue/compiler-dom': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@vue/compiler-dom' : 'unenv/runtime/mock/proxy',
-      '@vue/compiler-ssr': (nuxt.options.vue.runtimeCompiler && !nuxt.options.dev) ? '@vue/compiler-ssr' : 'unenv/runtime/mock/proxy',
+      'estree-walker': (nuxt.options.vue.runtimeCompiler) ? 'estree-walker' : 'unenv/runtime/mock/proxy',
+      '@babel/parser': (nuxt.options.vue.runtimeCompiler) ? '@babel/parser' : 'unenv/runtime/mock/proxy',
+      '@vue/compiler-core': (nuxt.options.vue.runtimeCompiler) ? '@vue/compiler-core' : 'unenv/runtime/mock/proxy',
+      '@vue/compiler-dom': (nuxt.options.vue.runtimeCompiler) ? '@vue/compiler-dom' : 'unenv/runtime/mock/proxy',
+      '@vue/compiler-ssr': (nuxt.options.vue.runtimeCompiler) ? '@vue/compiler-ssr' : 'unenv/runtime/mock/proxy',
       '@vue/devtools-api': 'vue-devtools-stub',
 
       // Paths
@@ -164,14 +165,15 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
       plugins: []
     },
     commonJS: {
-      dynamicRequireTargets: (!nuxt.options.experimental.externalVue && nuxt.options.vue.runtimeCompiler && !nuxt.options.dev)
+      dynamicRequireTargets: (!nuxt.options.experimental.externalVue && nuxt.options.vue.runtimeCompiler)
         ? [
             ...nuxt.options.modulesDir.reduce<string[]>((targets, path) => {
-              targets.push(resolve(path, 'vue'),
-                resolve(path, '@vue/compiler-core'),
-                resolve(path, '@vue/compiler-dom'),
-                resolve(path, '@vue/compiler-ssr'),
-                resolve(path, 'vue/server-renderer'))
+              if (existsSync(resolve(path, 'vue'))) { resolve(path, 'vue') }
+              if (existsSync(resolve(path, '@vue/compiler-core'))) { targets.push(resolve(path, '@vue/compiler-core')) }
+              if (existsSync(resolve(path, '@vue/compiler-dom'))) { targets.push(resolve(path, '@vue/compiler-dom')) }
+              if (existsSync(resolve(path, '@vue/compiler-ssr'))) { targets.push(resolve(path, '@vue/compiler-ssr')) }
+              if (existsSync(resolve(path, 'vue/server-renderer'))) { targets.push(resolve(path, 'vue/server-renderer')) }
+              if (existsSync(resolve(path, 'estree-walker'))) { targets.push(resolve(path, 'estree-walker')) }
               return targets
             }, [])
           ]
@@ -237,7 +239,6 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
 
   // Enable runtime compiler client side
   if (nuxt.options.vue.runtimeCompiler) {
-    // set vue esm on client
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       if (isClient) {
         if (Array.isArray(config.resolve!.alias)) {
