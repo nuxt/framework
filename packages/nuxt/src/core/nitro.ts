@@ -129,7 +129,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
       ],
       traceInclude: [
         // force include files used in generated code from the runtime-compiler
-        ...(nuxt.options.vue.runtimeCompiler && nuxt.options.experimental.externalVue)
+        ...(nuxt.options.vue.runtimeCompiler)
           ? [
               ...nuxt.options.modulesDir.reduce<string[]>((targets, path) => {
                 const serverRendererPath = resolve(path, 'vue/server-renderer/index.js')
