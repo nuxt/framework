@@ -5,7 +5,7 @@ import { setup, $fetch } from '@nuxt/test-utils'
 import { expectNoClientErrors, renderPage } from './utils'
 
 await setup({
-  rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
+  rootDir: fileURLToPath(new URL('./fixtures/runtime-compiler', import.meta.url)),
   server: true,
   browser: true,
   setupTimeout: (isWindows ? 240 : 120) * 1000
@@ -19,8 +19,6 @@ describe('test basic config', () => {
   it('test HelloWorld.vue', async () => {
     const html = await $fetch('/')
     const { page } = await renderPage('/')
-
-    console.log({ html })
 
     expect(html).toContain('<div id="hello-world">hello, Helloworld.vue here ! </div>')
     expect(await page.locator('body').innerHTML()).toContain('<div id="hello-world">hello, Helloworld.vue here ! </div>')
