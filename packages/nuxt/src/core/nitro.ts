@@ -183,15 +183,12 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     commonJS: {
       dynamicRequireTargets: (!nuxt.options.experimental.externalVue && nuxt.options.vue.runtimeCompiler)
         ? [
-            ...nuxt.options.modulesDir.reduce<string[]>((targets, path) => {
-              if (existsSync(resolve(path, 'vue'))) { resolve(path, 'vue') }
-              if (existsSync(resolve(path, '@vue/compiler-core'))) { targets.push(resolve(path, '@vue/compiler-core')) }
-              if (existsSync(resolve(path, '@vue/compiler-dom'))) { targets.push(resolve(path, '@vue/compiler-dom')) }
-              if (existsSync(resolve(path, '@vue/compiler-ssr'))) { targets.push(resolve(path, '@vue/compiler-ssr')) }
-              if (existsSync(resolve(path, 'vue/server-renderer'))) { targets.push(resolve(path, 'vue/server-renderer')) }
-              if (existsSync(resolve(path, 'estree-walker'))) { targets.push(resolve(path, 'estree-walker')) }
-              return targets
-            }, [])
+            'node_modules/**/vue',
+            'node_modules/**/@vue/compiler-core',
+            'node_modules/**/@vue/compiler-dom',
+            'node_modules/**/@vue/compiler-ssr',
+            'node_modules/**/vue/server-renderer',
+            'node_modules/**/estree-walker'
           ]
         : []
     }
