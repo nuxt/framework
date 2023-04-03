@@ -11,14 +11,16 @@ await setup({
   setupTimeout: (isWindows ? 240 : 120) * 1000
 })
 
-describe('test basic config', () => {
+describe.only('test basic config', () => {
   it('expect render page without any error or logs', async () => {
     await expectNoClientErrors('/')
   })
 
-  it('test HelloWorld.vue', async () => {
+  it.only('test HelloWorld.vue', async () => {
     const html = await $fetch('/')
     const { page } = await renderPage('/')
+
+    console.log({ html })
 
     expect(html).toContain('<div id="hello-world">hello, Helloworld.vue here ! </div>')
     expect(await page.locator('body').innerHTML()).toContain('<div id="hello-world">hello, Helloworld.vue here ! </div>')
