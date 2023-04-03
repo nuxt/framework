@@ -5,8 +5,9 @@ import { genImport, genDynamicImport, genArrayFromRaw, genSafeVariableName } fro
 import escapeRE from 'escape-string-regexp'
 import { filename } from 'pathe/utils'
 import { hash } from 'ohash'
-import { uniqueBy } from '../core/utils'
 import type { NuxtPage } from 'nuxt/schema'
+
+import { uniqueBy } from '../core/utils'
 
 enum SegmentParserState {
   initial,
@@ -100,7 +101,7 @@ function getRoutePath (tokens: SegmentToken[]): string {
       (token.type === SegmentTokenType.optional
         ? `:${token.value}?`
         : token.type === SegmentTokenType.dynamic
-          ? `:${token.value}`
+          ? `:${token.value}()`
           : token.type === SegmentTokenType.catchall
             ? `:${token.value}(.*)*`
             : encodePath(token.value))

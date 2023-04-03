@@ -1,5 +1,5 @@
 import { existsSync, promises as fsp } from 'node:fs'
-import { resolve, join } from 'pathe'
+import { resolve, join, relative } from 'pathe'
 import { createNitro, createDevServer, build, prepare, copyPublicAssets, writeTypes, scanHandlers, prerender } from 'nitropack'
 import type { NitroConfig, Nitro } from 'nitropack'
 import { logger, resolvePath } from '@nuxt/kit'
@@ -9,9 +9,10 @@ import fsExtra from 'fs-extra'
 import { dynamicEventHandler } from 'h3'
 import { createHeadCore } from '@unhead/vue'
 import { renderSSRHead } from '@unhead/ssr'
+import type { Nuxt } from 'nuxt/schema'
+
 import { distDir } from '../dirs'
 import { ImportProtectionPlugin } from './plugins/import-protection'
-import type { Nuxt } from 'nuxt/schema'
 
 export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   // Resolve config
@@ -46,6 +47,13 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
           as: '__publicAssetsURL',
           name: 'publicAssetsURL',
           from: resolve(distDir, 'core/runtime/nitro/paths')
+        },
+        {
+          // TODO: Remove after https://github.com/unjs/nitro/issues/1049
+          as: 'defineAppConfig',
+          name: 'defineAppConfig',
+          from: resolve(distDir, 'core/runtime/nitro/config'),
+          priority: -1
         }
       ],
       exclude: [...excludePattern, /[\\/]\.git[\\/]/]
@@ -78,6 +86,10 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
         ...nuxt.options.runtimeConfig.nitro
       }
     },
+    appConfig: nuxt.options.appConfig,
+    appConfigFiles: nuxt.options._layers.map(
+      layer => resolve(layer.config.srcDir, 'app.config')
+    ),
     typescript: {
       generateTsConfig: false
     },
@@ -204,6 +216,15 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     }
   }
 
+  // Add backward-compatible middleware to respect `x-nuxt-no-ssr` header
+  if (nuxt.options.experimental.respectNoSSRHeader) {
+    nitroConfig.handlers = nitroConfig.handlers || []
+    nitroConfig.handlers.push({
+      handler: resolve(distDir, 'core/runtime/nitro/no-ssr'),
+      middleware: true
+    })
+  }
+
   // Register nuxt protection patterns
   nitroConfig.rollupConfig!.plugins = await nitroConfig.rollupConfig!.plugins || []
   nitroConfig.rollupConfig!.plugins = Array.isArray(nitroConfig.rollupConfig!.plugins) ? nitroConfig.rollupConfig!.plugins : [nitroConfig.rollupConfig!.plugins]
@@ -278,12 +299,28 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     handler: resolve(distDir, 'core/runtime/nitro/renderer')
   })
 
+  if (nuxt.options.experimental.noVueServer) {
+    nitro.hooks.hook('rollup:before', (nitro) => {
+      if (nitro.options.preset === 'nitro-prerender') { return }
+      const nuxtErrorHandler = nitro.options.handlers.findIndex(h => h.route === '/__nuxt_error')
+      if (nuxtErrorHandler >= 0) {
+        nitro.options.handlers.splice(nuxtErrorHandler, 1)
+      }
+
+      nitro.options.renderer = undefined
+      nitro.options.errorHandler = '#internal/nitro/error'
+    })
+  }
+
   // Add typed route responses
   nuxt.hook('prepare:types', async (opts) => {
     if (!nuxt.options.dev) {
       await scanHandlers(nitro)
       await writeTypes(nitro)
     }
+    // Exclude nitro output dir from typescript
+    opts.tsConfig.exclude = opts.tsConfig.exclude || []
+    opts.tsConfig.exclude.push(relative(nuxt.options.buildDir, resolve(nuxt.options.rootDir, nitro.options.output.dir)))
     opts.references.push({ path: resolve(nuxt.options.buildDir, 'types/nitro.d.ts') })
   })
 
@@ -295,6 +332,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
     } else {
       await prepare(nitro)
       await copyPublicAssets(nitro)
+      await nuxt.callHook('nitro:build:public-assets', nitro)
       await prerender(nitro)
       if (!nuxt.options._generate) {
         logger.restoreAll()
@@ -303,7 +341,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
       } else {
         const distDir = resolve(nuxt.options.rootDir, 'dist')
         if (!existsSync(distDir)) {
-          await fsp.symlink(nitro.options.output.publicDir, distDir, 'junction').catch(() => { })
+          await fsp.symlink(nitro.options.output.publicDir, distDir, 'junction').catch(() => {})
         }
       }
     }

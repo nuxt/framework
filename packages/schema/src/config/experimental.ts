@@ -100,7 +100,7 @@ export default defineUntypedSchema({
      * @type {boolean | ((id?: string) => boolean)}
      */
     inlineSSRStyles: {
-      async $resolve(val, get) {
+      async $resolve (val, get) {
         if (val === false || (await get('dev')) || (await get('ssr')) === false || (await get('builder')) === '@nuxt/webpack-builder') {
           return false
         }
@@ -115,17 +115,14 @@ export default defineUntypedSchema({
     noScripts: false,
 
     /**
+     * Disable vue server renderer endpoint within nitro.
+    */
+    noVueServer: false,
+
+    /**
      * When this option is enabled (by default) payload of pages generated with `nuxt generate` are extracted
      */
-    payloadExtraction: {
-      async $resolve(enabled, get) {
-        enabled = enabled ?? false
-        if (enabled) {
-          console.warn('Using experimental payload extraction for full-static output. You can opt-out by setting `experimental.payloadExtraction` to `false`.')
-        }
-        return enabled
-      }
-    },
+    payloadExtraction: undefined,
 
     /**
      * Whether to enable the experimental `<NuxtClientFallback>` component for rendering content on the client
@@ -161,6 +158,12 @@ export default defineUntypedSchema({
      *
      * This can be disabled for most Nuxt sites to reduce the client-side bundle by ~0.5kb.
      */
-    polyfillVueUseHead: true
+    polyfillVueUseHead: true,
+
+    /** Allow disabling Nuxt SSR responses by setting the `x-nuxt-no-ssr` header. */
+    respectNoSSRHeader: false,
+
+    /** Resolve `~`, `~~`, `@` and `@@` aliases located within layers with respect to their layer source and root directories. */
+    localLayerAliases: true,
   }
 })
