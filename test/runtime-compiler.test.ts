@@ -11,12 +11,12 @@ await setup({
   setupTimeout: (isWindows ? 240 : 120) * 1000
 })
 
-describe.only('test basic config', () => {
+describe('test basic config', () => {
   it('expect render page without any error or logs', async () => {
     await expectNoClientErrors('/')
   })
 
-  it.only('test HelloWorld.vue', async () => {
+  it('test HelloWorld.vue', async () => {
     const html = await $fetch('/')
     const { page } = await renderPage('/')
 
