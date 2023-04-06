@@ -21,6 +21,7 @@ export default defineUntypedSchema({
      */
     externalVue: true,
 
+    // TODO: move to `vue.runtimeCompiler` in v3.5
     /**
      * Include Vue compiler in runtime bundle.
      */
