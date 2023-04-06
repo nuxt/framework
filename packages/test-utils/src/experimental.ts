@@ -3,6 +3,7 @@ import * as _kit from '@nuxt/kit'
 import { resolve } from 'pathe'
 import { stringifyQuery } from 'ufo'
 import { useTestContext } from './context'
+import { $fetch } from './server'
 
 /**
  * This is a function to render a component directly with the Nuxt server.
