@@ -2,11 +2,12 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { joinURL, withQuery } from 'ufo'
 import { isCI, isWindows } from 'std-env'
-import { join, normalize } from 'pathe'
-import { setup, fetch, $fetch, $fetchComponent, startServer, isDev, createPage, url } from '@nuxt/test-utils'
+import { normalize } from 'pathe'
+import { setup, fetch, $fetch, startServer, isDev, createPage, url } from '@nuxt/test-utils'
 
 import type { NuxtIslandResponse } from '../packages/nuxt/src/core/runtime/nitro/renderer'
 import { expectNoClientErrors, expectWithPolling, renderPage, withLogs } from './utils'
+import { $fetchComponent } from '@nuxt/test-utils/experimental'
 
 const isWebpack = process.env.TEST_BUILDER === 'webpack'
 
