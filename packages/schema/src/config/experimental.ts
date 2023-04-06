@@ -22,6 +22,11 @@ export default defineUntypedSchema({
     externalVue: true,
 
     /**
+     * Include Vue compiler in runtime bundle.
+     */
+    runtimeVueCompiler: true,
+
+    /**
      * Tree shakes contents of client-only components from server bundle.
      * @see https://github.com/nuxt/framework/pull/5750
      */

@@ -129,7 +129,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
       ],
       traceInclude: [
         // force include files used in generated code from the runtime-compiler
-        ...(nuxt.options.vue.runtimeCompiler)
+        ...(nuxt.options.experimental.runtimeVueCompiler)
           ? [
               ...nuxt.options.modulesDir.reduce<string[]>((targets, path) => {
                 const serverRendererPath = resolve(path, 'vue/server-renderer/index.js')
@@ -149,7 +149,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
             vue: await resolvePath(`vue/dist/vue.cjs${nuxt.options.dev ? '' : '.prod'}.js`)
           },
       // Vue 3 mocks
-      ...nuxt.options.vue.runtimeCompiler || nuxt.options.experimental.externalVue
+      ...nuxt.options.experimental.runtimeVueCompiler || nuxt.options.experimental.externalVue
         ? {}
         : {
             'estree-walker': 'unenv/runtime/mock/proxy',
@@ -248,7 +248,7 @@ export async function initNitro (nuxt: Nuxt & { _nitro?: Nitro }) {
   })
 
   // Enable runtime compiler client side
-  if (nuxt.options.vue.runtimeCompiler) {
+  if (nuxt.options.experimental.runtimeVueCompiler) {
     nuxt.hook('vite:extendConfig', (config, { isClient }) => {
       if (isClient) {
         if (Array.isArray(config.resolve!.alias)) {

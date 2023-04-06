@@ -13,11 +13,6 @@ export default defineUntypedSchema({
      * @type {typeof import('@vue/compiler-core').CompilerOptions}
      */
     compilerOptions: {},
-
-    /**
-     * set vue runtime compiler bundle
-     */
-    runtimeCompiler: false
   },
 
   /**
