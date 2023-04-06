@@ -1279,7 +1279,7 @@ describe.skipIf(isWindows)('useAsyncData', () => {
   })
 })
 
-describe.runIf(process.env.NUXT_TEST_DEV)('component testing', () => {
+describe.runIf(isDev())('component testing', () => {
   it('should work', async () => {
     const comp1 = await $fetchComponent('components/SugarCounter.vue', { multiplier: 2 })
     expect(comp1).toContain('12 x 2 = 24')
