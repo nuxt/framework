@@ -3,12 +3,17 @@ import { isWindows } from 'std-env'
 import { describe, it, expect } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils'
 import { expectNoClientErrors, renderPage } from './utils'
+const isWebpack = process.env.TEST_BUILDER === 'webpack'
 
 await setup({
   rootDir: fileURLToPath(new URL('./fixtures/runtime-compiler', import.meta.url)),
+  dev: process.env.TEST_ENV === 'dev',
   server: true,
   browser: true,
-  setupTimeout: (isWindows ? 240 : 120) * 1000
+  setupTimeout: (isWindows ? 240 : 120) * 1000,
+  nuxtConfig: {
+    builder: isWebpack ? 'webpack' : 'vite'
+  }
 })
 
 describe('test basic config', () => {
