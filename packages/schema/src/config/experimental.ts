@@ -25,7 +25,7 @@ export default defineUntypedSchema({
     /**
      * Include Vue compiler in runtime bundle.
      */
-    runtimeVueCompiler: true,
+    runtimeVueCompiler: false,
 
     /**
      * Tree shakes contents of client-only components from server bundle.
